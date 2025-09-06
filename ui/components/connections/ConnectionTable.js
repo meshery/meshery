@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import {
   CustomTooltip,
@@ -84,10 +84,6 @@ const ACTION_TYPES = {
     name: 'DELETE_CONNECTION',
     error_msg: 'Failed to delete connection',
   },
-  FETCH_CONNECTION_STATUS_TRANSITIONS: {
-    name: 'FETCH_CONNECTION_STATUS_TRANSITIONS',
-    error_msg: 'Failed to fetch connection transitions',
-  },
   FETCH_ENVIRONMENT: {
     name: 'FETCH_ENVIRONMENT',
     error_msg: 'Failed to fetch environment',
@@ -118,8 +114,9 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-  const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
-  const [useUpdateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
+  // CORRECTED NAMING: Removed 'use' prefix from mutator variables
+  const [updateConnectionMutator] = useUpdateConnectionMutation();
+  const [updateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
@@ -161,9 +158,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     setKindFilter(kindFilter);
     setStatusFilter(statusFilter);
   };
-  // lock for not allowing multiple updates at the same time
-  // needs to be a ref because it needs to be shared between renders
-  // and useState loses reactivity when down table custom cells
   const updatingConnection = useRef(false);
   const { notify } = useNotification();
 
@@ -173,7 +167,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     error: connectionError,
     refetch: getConnections,
     isLoading: isConnectionLoading,
-    isFetching: isConnectionFetching,
   } = useGetConnectionsQuery({
     page: page,
     pagesize: pageSize,
@@ -201,7 +194,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   let environments = environmentsResponse?.environments || [];
 
   useEffect(() => {
-    updateCols(columns);
     if (isEnvironmentsError) {
       notify({
         message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
@@ -215,7 +207,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         event_type: EVENT_TYPES.ERROR,
       });
     }
-  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
+  }, [environmentsError, connectionError, isEnvironmentsSuccess, notify]);
 
   const enhancedConnections = useMemo(() => {
     if (!connectionData?.connections) return [];
@@ -227,13 +219,16 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
         kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
       }));
-  }, [connectionData, isConnectionLoading, isConnectionFetching, connectionMetadataState]);
+  }, [connectionData, connectionMetadataState]);
 
-  const filteredConnections = enhancedConnections?.filter(({ status, kind }) => {
-    const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
-    const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
-    return statusMatch && kindMatch;
-  });
+  // PERFORMANCE: Memoized filteredConnections to avoid re-filtering on every render
+  const filteredConnections = useMemo(() => {
+    return enhancedConnections?.filter(({ status, kind }) => {
+      const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
+      const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+      return statusMatch && kindMatch;
+    });
+  }, [enhancedConnections, selectedFilters]);
 
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
@@ -249,165 +244,209 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     ['Actions', 'xs'],
     ['ConnectionID', 'na'],
   ];
-  const addConnectionToEnvironment = async (
-    environmentId,
-    environmentName,
-    connectionId,
-    connectionName,
-  ) => {
-    return addConnectionToEnvironmentMutator({ environmentId, connectionId })
-      .unwrap()
-      .then(() => {
-        notify({
-          message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      })
-      .catch((err) => {
-        notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-      });
-  };
 
-  const removeConnectionFromEnvironment = async (
-    environmentId,
-    environmentName,
-    connectionId,
-    connectionName,
-  ) => {
-    return removeConnectionFromEnvMutator({ environmentId, connectionId })
-      .unwrap()
-      .then(() => {
-        notify({
-          message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      })
-      .catch((err) => {
-        notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-      });
-  };
-
-  const saveEnvironment = async (connectionId, connectionName, environmentName) => {
-    return saveEnvironmentMutator({
-      body: {
-        name: environmentName,
-        organization_id: organization?.id,
-      },
-    })
-      .unwrap()
-      .then((resp) => {
-        notify({
-          message: `Environment "${resp.name}" created`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-        environments = [...environments, resp];
-        addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
-      })
-      .catch((err) => {
-        notify({
-          message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${err.error}`,
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-      });
-  };
-
-  const handleDeleteConnection = async (connectionId, connectionKind) => {
-    if (connectionId) {
-      let response = await modalRef.current.show({
-        title: `Delete Connection`,
-        subtitle: `Are you sure that you want to delete the connection?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (response === 'DELETE') {
-        const requestBody = JSON.stringify({
-          [connectionId]: CONNECTION_STATES.DELETED,
-        });
-        UpdateConnectionStatus(connectionKind, requestBody);
-      }
-    }
-  };
-
-  const handleDeleteConnections = async (selected) => {
-    if (selected) {
-      let response = await modalRef.current.show({
-        title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete the connections?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (response === 'DELETE') {
-        selected.data.map(({ index }) => {
-          const requestBody = JSON.stringify({
-            [filteredConnections[index].id]: CONNECTION_STATES.DELETED,
+  const addConnectionToEnvironment = useCallback(
+    async (environmentId, environmentName, connectionId, connectionName) => {
+      return addConnectionToEnvironmentMutator({ environmentId, connectionId })
+        .unwrap()
+        .then(() => {
+          notify({
+            message: `Connection: ${connectionName} assigned to environment: ${environmentName}`,
+            event_type: EVENT_TYPES.SUCCESS,
           });
-          UpdateConnectionStatus(filteredConnections[index].kind, requestBody);
+        })
+        .catch((err) => {
+          notify({
+            message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+            event_type: EVENT_TYPES.ERROR,
+            details: err.toString(),
+          });
         });
+    },
+    [addConnectionToEnvironmentMutator, notify],
+  );
+
+  const removeConnectionFromEnvironment = useCallback(
+    async (environmentId, environmentName, connectionId, connectionName) => {
+      return removeConnectionFromEnvMutator({ environmentId, connectionId })
+        .unwrap()
+        .then(() => {
+          notify({
+            message: `Connection: ${connectionName} removed from environment: ${environmentName}`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        })
+        .catch((err) => {
+          notify({
+            message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+            event_type: EVENT_TYPES.ERROR,
+            details: err.toString(),
+          });
+        });
+    },
+    [removeConnectionFromEnvMutator, notify],
+  );
+
+  const saveEnvironment = useCallback(
+    async (connectionId, connectionName, environmentName) => {
+      return saveEnvironmentMutator({
+        body: {
+          name: environmentName,
+          organization_id: organization?.id,
+        },
+      })
+        .unwrap()
+        .then((resp) => {
+          notify({
+            message: `Environment "${resp.name}" created`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+          environments = [...environments, resp];
+          addConnectionToEnvironment(resp.id, resp.name, connectionId, connectionName);
+        })
+        .catch((err) => {
+          notify({
+            message: `${ACTION_TYPES.CREATE_ENVIRONMENT.error_msg}: ${err.error}`,
+            event_type: EVENT_TYPES.ERROR,
+            details: err.toString(),
+          });
+        });
+    },
+    [saveEnvironmentMutator, organization, notify, addConnectionToEnvironment],
+  );
+
+  const UpdateConnectionStatus = useCallback(
+    (connectionKind, requestBody) => {
+      updateConnectionMutator({
+        connectionKind: connectionKind,
+        connectionPayload: requestBody,
+      })
+        .unwrap()
+        .then(() => {
+          notify({
+            message: `Connection status updated`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        })
+        .catch((err) => {
+          notify({
+            message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
+            event_type: EVENT_TYPES.ERROR,
+            details: err.toString(),
+          });
+        });
+    },
+    [updateConnectionMutator, notify],
+  );
+
+  const handleDeleteConnection = useCallback(
+    async (connectionId, connectionKind) => {
+      if (connectionId) {
+        let response = await modalRef.current.show({
+          title: `Delete Connection`,
+          subtitle: `Are you sure that you want to delete the connection?`,
+          primaryOption: 'DELETE',
+          showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+          variant: PROMPT_VARIANTS.DANGER,
+        });
+        if (response === 'DELETE') {
+          const requestBody = JSON.stringify({
+            [connectionId]: CONNECTION_STATES.DELETED,
+          });
+          UpdateConnectionStatus(connectionKind, requestBody);
+        }
       }
-    }
-  };
+    },
+    [UpdateConnectionStatus],
+  );
 
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
+  const handleDeleteConnections = useCallback(
+    async (selected) => {
+      if (selected) {
+        let response = await modalRef.current.show({
+          title: `Delete Connections`,
+          subtitle: `Are you sure that you want to delete the connections?`,
+          primaryOption: 'DELETE',
+          showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+          variant: PROMPT_VARIANTS.DANGER,
+        });
+        if (response === 'DELETE') {
+          selected.data.map(({ index }) => {
+            const requestBody = JSON.stringify({
+              [filteredConnections[index].id]: CONNECTION_STATES.DELETED,
+            });
+            UpdateConnectionStatus(filteredConnections[index].kind, requestBody);
+          });
+        }
+      }
+    },
+    [filteredConnections, UpdateConnectionStatus],
+  );
 
-  const handleActionMenuClose = () => {
+  const handleError = useCallback(
+    (action) => (error) => {
+      updateProgress({ showProgress: false });
+      notify({
+        message: `${action.error_msg}: ${error}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: error.toString(),
+      });
+    },
+    [notify],
+  );
+
+  const handleActionMenuClose = useCallback(() => {
     setAnchorEl(null);
     setRowData(null);
-  };
+  }, []);
 
-  const handleDeploymentModeMenuClose = () => {
+  const handleDeploymentModeMenuClose = useCallback(() => {
     setDeploymentModeAnchorEl(null);
-  };
+  }, []);
 
-  const handleDeploymentModeChange = async (newMode) => {
-    const connection = filteredConnections[rowData.rowIndex];
+  const handleDeploymentModeChange = useCallback(
+    async (newMode) => {
+      const connection = filteredConnections[rowData.rowIndex];
 
-    try {
-      await useUpdateConnectionByIdMutator({
-        connectionId: connection.id,
-        body: {
-          ...connection,
-          metadata: {
-            ...connection.metadata,
-            meshsync_deployment_mode: newMode,
+      try {
+        await updateConnectionByIdMutator({
+          // CORRECTED: Using renamed mutator
+          connectionId: connection.id,
+          body: {
+            ...connection,
+            metadata: {
+              ...connection.metadata,
+              meshsync_deployment_mode: newMode,
+            },
           },
-        },
-      }).unwrap();
+        }).unwrap();
 
-      notify({
-        message: `Deployment mode changed to ${newMode}`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-    } catch (err) {
-      notify({
-        message: `Failed to change deployment mode: ${err.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
+        notify({
+          message: `Deployment mode changed to ${newMode}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      } catch (err) {
+        notify({
+          message: `Failed to change deployment mode: ${err.error}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      }
 
-    handleDeploymentModeMenuClose();
-    handleActionMenuClose();
-  };
+      handleDeploymentModeMenuClose();
+      handleActionMenuClose();
+    },
+    [
+      rowData,
+      filteredConnections,
+      updateConnectionByIdMutator,
+      notify,
+      handleDeploymentModeMenuClose,
+      handleActionMenuClose,
+    ],
+  );
 
-  const handleFlushMeshSync = () => {
-    return async () => {
+  const handleFlushMeshSync = useCallback(
+    () => async () => {
       handleActionMenuClose();
       const connection = filteredConnections[rowData.rowIndex];
 
@@ -436,71 +475,54 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           error: handleError('Database is not reachable, try restarting server.'),
         });
       }
-    };
-  };
+    },
+    [handleActionMenuClose, rowData, filteredConnections, handleError, notify],
+  );
 
-  const handleEnvironmentSelect = async (
-    connectionId,
-    connName,
-    assignedEnvironments,
-    selectedEnvironments,
-    unSelectedEnvironments,
-  ) => {
-    if (updatingConnection.current) {
-      return;
-    }
+  const handleEnvironmentSelect = useCallback(
+    async (
+      connectionId,
+      connName,
+      assignedEnvironments,
+      selectedEnvironments,
+      unSelectedEnvironments,
+    ) => {
+      if (updatingConnection.current) {
+        return;
+      }
 
-    updatingConnection.current = true;
+      updatingConnection.current = true;
 
-    try {
-      let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
-        return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
-      });
+      try {
+        let newlySelectedEnvironments = selectedEnvironments.filter((env) => {
+          return !assignedEnvironments.some((assignedEnv) => assignedEnv.value === env.value);
+        });
 
-      for (let environment of newlySelectedEnvironments) {
-        let envName = environment.label;
-        let environmentId = environment.value || '';
-        let isNew = environment.__isNew__ || false;
+        for (let environment of newlySelectedEnvironments) {
+          let envName = environment.label;
+          let environmentId = environment.value || '';
+          let isNew = environment.__isNew__ || false;
 
-        if (isNew) {
-          await saveEnvironment(connectionId, connName, envName);
-          return;
+          if (isNew) {
+            await saveEnvironment(connectionId, connName, envName);
+            return;
+          }
+
+          addConnectionToEnvironment(environmentId, envName, connectionId, connName);
         }
+        for (let environment of unSelectedEnvironments) {
+          let envName = environment.label;
+          let environmentId = environment.value || '';
 
-        addConnectionToEnvironment(environmentId, envName, connectionId, connName);
+          await removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
+        }
+      } finally {
+        getConnections();
+        updatingConnection.current = false;
       }
-      for (let environment of unSelectedEnvironments) {
-        let envName = environment.label;
-        let environmentId = environment.value || '';
-
-        await removeConnectionFromEnvironment(environmentId, envName, connectionId, connName);
-      }
-    } finally {
-      getConnections();
-      updatingConnection.current = false;
-    }
-  };
-
-  const UpdateConnectionStatus = (connectionKind, requestBody) => {
-    useUpdateConnectionMutator({
-      connectionKind: connectionKind,
-      connectionPayload: requestBody,
-    })
-      .unwrap()
-      .then(() => {
-        notify({
-          message: `Connection status updated`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      })
-      .catch((err) => {
-        notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error}`,
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-      });
-  };
+    },
+    [saveEnvironment, addConnectionToEnvironment, removeConnectionFromEnvironment, getConnections],
+  );
 
   const kubernetesConnectionTransitions = {
     connected: {
@@ -534,12 +556,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   };
 
   const getStatusTransition = (connectionKind, connectionState, transitionState) => {
-    // This is for one connection kind that is kubernetes, and adding other connection kinds
-    // here will make it more complex.
-    // This issue can be resolved if we add the transition messages in the connection schemas
-    // and use the same schema to get the transition messages.
-    // Github issue: https://github.com/meshery/schemas/issues/303
-
     switch (connectionKind) {
       case 'kubernetes':
         return kubernetesConnectionTransitions[connectionState][transitionState];
@@ -548,33 +564,36 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     }
   };
 
-  const handleStatusChange = async (e, connectionId, connectionKind, connectionStatus) => {
-    e.stopPropagation();
-    const status = e.target.value;
-    let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
-    let response = await modalRef.current.show({
-      title: `Transition connection to ${status.toUpperCase()}?`,
-      subtitle,
-      primaryOption: 'Confirm',
-      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.WARNING,
-    });
-    if (response === 'Confirm') {
-      const requestBody = JSON.stringify({
-        [connectionId]: e.target.value,
+  const handleStatusChange = useCallback(
+    async (e, connectionId, connectionKind, connectionStatus) => {
+      e.stopPropagation();
+      const status = e.target.value;
+      let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
+      let response = await modalRef.current.show({
+        title: `Transition connection to ${status.toUpperCase()}?`,
+        subtitle,
+        primaryOption: 'Confirm',
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.WARNING,
       });
-      UpdateConnectionStatus(connectionKind, requestBody);
-    }
-  };
+      if (response === 'Confirm') {
+        const requestBody = JSON.stringify({
+          [connectionId]: e.target.value,
+        });
+        UpdateConnectionStatus(connectionKind, requestBody);
+      }
+    },
+    [UpdateConnectionStatus],
+  );
 
-  const handleActionMenuOpen = (event, tableMeta) => {
+  const handleActionMenuOpen = useCallback((event, tableMeta) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setRowData(tableMeta);
-  };
+  }, []);
+
   const theme = useTheme();
 
-  // Consolidate multiple useRef hooks into a single object
   const expansionFlags = useRef({
     isHandlingExpansion: false,
     isInitialLoad: true,
@@ -582,7 +601,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     lastProcessedId: null,
   });
 
-  // Update rowsExpanded when a specific connection ID is selected
   useEffect(() => {
     if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
@@ -601,449 +619,460 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [selectedConnectionId, filteredConnections]);
+  }, [selectedConnectionId, filteredConnections, updateUrlWithConnectionId]);
 
-  const columns = [
-    {
-      name: 'id',
-      label: 'ID',
-      options: {
-        display: false,
-      },
-    },
-    {
-      name: 'metadata.server_location',
-      label: 'Server Location',
-      options: {
-        display: false,
-      },
-    },
-    {
-      name: 'metadata.server',
-      label: 'Server',
-      options: {
-        display: false,
-      },
-    },
-    {
-      name: 'name',
-      label: 'Name',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
+  // PERFORMANCE: Memoized columns definition to prevent redefining on every render
+  const columns = useMemo(
+    () => [
+      {
+        name: 'id',
+        label: 'ID',
+        options: {
+          display: false,
         },
-        customBodyRender: (value, tableMeta) => {
-          const server =
-            getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
-            getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
-          const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
-          const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
-          return (
-            <>
-              <TooltipWrappedConnectionChip
-                tooltip={server && 'Server: ' + server}
-                title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
-                status={getColumnValue(tableMeta.rowData, 'status', columns)}
-                onDelete={() =>
-                  handleDeleteConnection(
-                    getColumnValue(tableMeta.rowData, 'id', columns),
-                    getColumnValue(tableMeta.rowData, 'kind', columns),
-                  )
-                }
-                handlePing={() => {
-                  // e.stopPropagation();
-                  if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
-                    ping(
-                      getColumnValue(tableMeta.rowData, 'metadata.name', columns),
-                      getColumnValue(tableMeta.rowData, 'metadata.server', columns),
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                    );
-                  }
-                }}
-                iconSrc={`/${
-                  getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
-                  getFallbackImageBasedOnKind(kind)
-                }`}
-                width="12rem"
+      },
+      {
+        name: 'metadata.server_location',
+        label: 'Server Location',
+        options: {
+          display: false,
+        },
+      },
+      {
+        name: 'metadata.server',
+        label: 'Server',
+        options: {
+          display: false,
+        },
+      },
+      {
+        name: 'name',
+        label: 'Name',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
               />
-              {kind == 'kubernetes' && (
-                <CustomTextTooltip
-                  placement="top"
-                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                >
-                  <div style={{ display: 'inline-block' }}>
-                    <IconButton
-                      color="default"
+            );
+          },
+          customBodyRender: (value, tableMeta) => {
+            const server =
+              getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
+              getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
+            const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
+            const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
+            return (
+              <>
+                <TooltipWrappedConnectionChip
+                  tooltip={server && 'Server: ' + server}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  status={getColumnValue(tableMeta.rowData, 'status', columns)}
+                  onDelete={() =>
+                    handleDeleteConnection(
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                    )
+                  }
+                  handlePing={() => {
+                    if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                      ping(
+                        getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                        getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                        getColumnValue(tableMeta.rowData, 'id', columns),
+                      );
+                    }
+                  }}
+                  iconSrc={`/${
+                    getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
+                    getFallbackImageBasedOnKind(kind)
+                  }`}
+                  width="12rem"
+                />
+                {kind == 'kubernetes' && (
+                  <CustomTextTooltip
+                    placement="top"
+                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                  >
+                    <div style={{ display: 'inline-block' }}>
+                      <IconButton
+                        color="default"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <InfoOutlinedIcon height={20} width={20} />
+                      </IconButton>
+                    </div>
+                  </CustomTextTooltip>
+                )}
+              </>
+            );
+          },
+        },
+      },
+      {
+        name: 'environments',
+        label: 'Environments',
+        options: {
+          sort: false,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ ...column }) {
+            return (
+              <DefaultTableCell
+                columnData={column}
+                icon={
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoOutlinedIcon
+                      style={{
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        e.preventDefault();
                       }}
-                    >
-                      <InfoOutlinedIcon height={20} width={20} />
-                    </IconButton>
-                  </div>
-                </CustomTextTooltip>
-              )}
-            </>
-          );
-        },
-      },
-    },
-    {
-      name: 'environments',
-      label: 'Environments',
-      options: {
-        sort: false,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ ...column }) {
-          return (
-            <DefaultTableCell
-              columnData={column}
-              icon={
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoOutlinedIcon
-                    style={{
-                      cursor: 'pointer',
-                      height: 20,
-                      width: 20,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
-              }
-              tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
-            />
-          );
-        },
-        customBodyRender: (value, tableMeta) => {
-          const getOptions = () => {
-            return environments.map((env) => ({ label: env.name, value: env.id }));
-          };
-          let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
-          let updatingEnvs = updatingConnection.current;
-          return (
-            isEnvironmentsSuccess && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                    <MultiSelectWrapper
-                      updating={updatingEnvs}
-                      onChange={(selected, unselected) =>
-                        handleEnvironmentSelect(
-                          getColumnValue(tableMeta.rowData, 'id', columns),
-                          getColumnValue(tableMeta.rowData, 'name', columns),
-                          cleanedEnvs,
-                          selected,
-                          unselected,
-                        )
-                      }
-                      options={getOptions()}
-                      value={cleanedEnvs}
-                      placeholder={`Assigned Environments`}
-                      isSelectAll={true}
-                      menuPlacement={'bottom'}
-                      disabled={
-                        !CAN(
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                        )
-                      }
                     />
-                  </Grid2>
-                </Grid2>
-              </div>
-            )
-          );
-        },
-      },
-    },
-    {
-      name: 'kind',
-      label: 'Kind',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'type',
-      label: 'Category',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'sub_type',
-      label: 'Sub Category',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'updated_at',
-      label: 'Updated At',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        display: false,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'created_at',
-      label: 'Discovered At',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value) {
-          const renderValue = formatDate(value);
-          return (
-            <CustomTooltip title={renderValue} placement="top" arrow interactive>
-              {renderValue}
-            </CustomTooltip>
-          );
-        },
-      },
-    },
-    {
-      name: 'ConnectionID',
-      label: 'Connection ID',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: (value, tableMeta) => {
-          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
-          return <FormatId id={connectionId} />;
-        },
-      },
-    },
-    {
-      name: 'status',
-      label: 'Status',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-              icon={
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoOutlinedIcon
-                    style={{
-                      cursor: 'pointer',
-                      height: 20,
-                      width: 20,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
-              }
-              tooltip={`Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not). [Learn more](${url})`}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value, tableMeta) {
-          const nextStatusCol = getColumnValue(tableMeta.rowData, 'nextStatus', columns);
-          const originalNextStatus = nextStatusCol && nextStatusCol[value];
-          let nextStatus = [];
-          if (originalNextStatus !== undefined) {
-            nextStatus = Object.values(originalNextStatus);
-            nextStatus.push(value);
-          } else {
-            nextStatus.push(value);
-          }
-          const disabled =
-            value === 'deleted'
-              ? true
-              : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
-          return (
-            <FormControl>
-              <ConnectionStyledSelect
-                labelId="connection-status-select-label"
-                id="connection-status-select"
-                disabled={disabled}
-                value={value}
-                defaultValue={value}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) =>
-                  handleStatusChange(
-                    e,
-                    getColumnValue(tableMeta.rowData, 'id', columns),
-                    getColumnValue(tableMeta.rowData, 'kind', columns),
-                    getColumnValue(tableMeta.rowData, 'status', columns),
-                  )
+                  </IconButton>
                 }
-                disableUnderline
-                MenuProps={{
-                  anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                  getContentAnchorEl: null,
-                  MenuListProps: { disablePadding: true },
-                  PaperProps: { square: true },
-                }}
-              >
-                {nextStatus &&
-                  nextStatus.map((status) => (
-                    <MenuItem
-                      disabled={status === value ? true : false}
+                tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
+              />
+            );
+          },
+          customBodyRender: (value, tableMeta) => {
+            const getOptions = () => {
+              return environments.map((env) => ({ label: env.name, value: env.id }));
+            };
+            let cleanedEnvs = value?.map((env) => ({ label: env.name, value: env.id })) || [];
+            let updatingEnvs = updatingConnection.current;
+            return (
+              isEnvironmentsSuccess && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                      <MultiSelectWrapper
+                        updating={updatingEnvs}
+                        onChange={(selected, unselected) =>
+                          handleEnvironmentSelect(
+                            getColumnValue(tableMeta.rowData, 'id', columns),
+                            getColumnValue(tableMeta.rowData, 'name', columns),
+                            cleanedEnvs,
+                            selected,
+                            unselected,
+                          )
+                        }
+                        options={getOptions()}
+                        value={cleanedEnvs}
+                        placeholder={`Assigned Environments`}
+                        isSelectAll={true}
+                        menuPlacement={'bottom'}
+                        disabled={
+                          !CAN(
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                          )
+                        }
+                      />
+                    </Grid2>
+                  </Grid2>
+                </div>
+              )
+            );
+          },
+        },
+      },
+      {
+        name: 'kind',
+        label: 'Kind',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+        },
+      },
+      {
+        name: 'type',
+        label: 'Category',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+        },
+      },
+      {
+        name: 'sub_type',
+        label: 'Sub Category',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+        },
+      },
+      {
+        name: 'updated_at',
+        label: 'Updated At',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          display: false,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+        },
+      },
+      {
+        name: 'created_at',
+        label: 'Discovered At',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+          customBodyRender: function CustomBody(value) {
+            const renderValue = formatDate(value);
+            return (
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            );
+          },
+        },
+      },
+      {
+        name: 'ConnectionID',
+        label: 'Connection ID',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+          customBodyRender: (value, tableMeta) => {
+            const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+            return <FormatId id={connectionId} />;
+          },
+        },
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+                icon={
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoOutlinedIcon
                       style={{
-                        padding: 0,
-                        display: status === value ? 'none' : 'flex',
-                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
                       }}
-                      value={status}
-                      key={status}
-                    >
-                      <ConnectionStateChip status={status} />
-                    </MenuItem>
-                  ))}
-              </ConnectionStyledSelect>
-            </FormControl>
-          );
-        },
-      },
-    },
-    {
-      name: 'Actions',
-      label: 'Actions',
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ ...column }) {
-          return (
-            <TableCell>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        customBodyRender: function CustomBody(_, tableMeta) {
-          return (
-            <Box display={'flex'} justifyContent={'center'}>
-              {getColumnValue(tableMeta.rowData, 'kind', columns) ===
-              CONNECTION_KINDS.KUBERNETES ? (
-                <IconButton
-                  aria-label="more"
-                  id="long-button"
-                  aria-haspopup="true"
-                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </IconButton>
+                }
+                tooltip={`Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not). [Learn more](${url})`}
+              />
+            );
+          },
+          customBodyRender: function CustomBody(value, tableMeta) {
+            const nextStatusCol = getColumnValue(tableMeta.rowData, 'nextStatus', columns);
+            const originalNextStatus = nextStatusCol && nextStatusCol[value];
+            let nextStatus = [];
+            if (originalNextStatus !== undefined) {
+              nextStatus = Object.values(originalNextStatus);
+              nextStatus.push(value);
+            } else {
+              nextStatus.push(value);
+            }
+            const disabled =
+              value === 'deleted'
+                ? true
+                : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
+            return (
+              <FormControl>
+                <ConnectionStyledSelect
+                  labelId="connection-status-select-label"
+                  id="connection-status-select"
+                  disabled={disabled}
+                  value={value}
+                  defaultValue={value}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) =>
+                    handleStatusChange(
+                      e,
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                      getColumnValue(tableMeta.rowData, 'status', columns),
+                    )
+                  }
+                  disableUnderline
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                    MenuListProps: { disablePadding: true },
+                    PaperProps: { square: true },
+                  }}
                 >
-                  <MoreVertIcon style={iconMedium} />
-                </IconButton>
-              ) : (
-                '-'
-              )}
-            </Box>
-          );
+                  {nextStatus &&
+                    nextStatus.map((status) => (
+                      <MenuItem
+                        disabled={status === value ? true : false}
+                        style={{
+                          padding: 0,
+                          display: status === value ? 'none' : 'flex',
+                          justifyContent: 'center',
+                        }}
+                        value={status}
+                        key={status}
+                      >
+                        <ConnectionStateChip status={status} />
+                      </MenuItem>
+                    ))}
+                </ConnectionStyledSelect>
+              </FormControl>
+            );
+          },
         },
       },
-    },
-    {
-      name: 'nextStatus',
-      label: 'nextStatus',
-      options: {
-        display: false,
+      {
+        name: 'Actions',
+        label: 'Actions',
+        options: {
+          filter: false,
+          sort: false,
+          searchable: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return (
+              <TableCell>
+                <b>{column.label}</b>
+              </TableCell>
+            );
+          },
+          customBodyRender: function CustomBody(_, tableMeta) {
+            return (
+              <Box display={'flex'} justifyContent={'center'}>
+                {getColumnValue(tableMeta.rowData, 'kind', columns) ===
+                CONNECTION_KINDS.KUBERNETES ? (
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-haspopup="true"
+                    onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                  >
+                    <MoreVertIcon style={iconMedium} />
+                  </IconButton>
+                ) : (
+                  '-'
+                )}
+              </Box>
+            );
+          },
+        },
       },
-    },
-    {
-      name: 'kindLogo',
-      label: 'kindLogo',
-      options: {
-        display: false,
+      {
+        name: 'nextStatus',
+        label: 'nextStatus',
+        options: {
+          display: false,
+        },
       },
-    },
-    {
-      name: 'metadata.name',
-      label: 'Name',
-      options: {
-        display: false,
+      {
+        name: 'kindLogo',
+        label: 'kindLogo',
+        options: {
+          display: false,
+        },
       },
-    },
-  ];
+      {
+        name: 'metadata.name',
+        label: 'Name',
+        options: {
+          display: false,
+        },
+      },
+    ],
+    [
+      ping,
+      handleDeleteConnection,
+      environments,
+      isEnvironmentsSuccess,
+      handleEnvironmentSelect,
+      handleStatusChange,
+      handleActionMenuOpen,
+    ],
+  );
 
   const options = {
     filter: false,
@@ -1170,9 +1199,12 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
 
   const [tableCols, updateCols] = useState(columns);
 
+  useEffect(() => {
+    updateCols(columns);
+  }, [columns]);
+
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
       initialVisibility[col.name] = showCols[col.name];
