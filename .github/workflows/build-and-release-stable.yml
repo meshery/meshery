@@ -4,8 +4,11 @@ on:
     tags:
       - "v*"
 
-jobs:
+permissions:
+  id-token: write # needed for Cosign keyless signing
+  contents: read #  needed for actions/checkout
 
+jobs:
   update-rest-api-docs:
     name: Update REST API Documentation
     if: github.repository == 'meshery/meshery'
@@ -26,16 +29,12 @@ jobs:
           version: v0.30.5
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-build
+        run: make swagger-build
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-docs-build
-
+        run: make swagger-docs-build
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -73,10 +72,8 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -92,18 +89,15 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
+      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Free up disk space
         run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
@@ -114,27 +108,43 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker stable and playground build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PLAYGROUND=true .
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
+            -t ${{ env.IMAGE_NAME }}:stable-latest \
+            --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
+            --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
+            --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} \
+            --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} \
+            --build-arg PLAYGROUND=true .
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-latest
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
       - name: Docker stable and playground push
         run: |
-          docker push ${{ secrets.IMAGE_NAME }}:stable-latest
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-      # SKIP STEP: FAILS BECAUSE README FILE SIZE IS TOO LARGE FOR DOCKER HUB
-      # - name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v3
-      #   env:
-      #     DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+          docker push ${{ env.IMAGE_NAME }}:stable-latest
+          docker push ${{ env.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ env.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          docker push ${{ env.IMAGE_NAME }}:playground-latest
+          docker push ${{ env.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ env.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.9.2
+      - name: Sign Docker images (keyless)
+        run: |
+          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
+            echo "Signing ${{ env.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --yes
+          done
+      - name: Verify Docker image signatures
+        run: |
+          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
+            echo "Verifying ${{ env.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ env.IMAGE_NAME }}:$tag \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
@@ -156,6 +166,25 @@ jobs:
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.9.2
+      - name: Sign mesheryctl artifacts (keyless)
+        run: |
+          for artifact in dist/*; do
+            cosign sign-blob \
+              --yes \
+              --bundle "${artifact}.sigstore" \
+              "$artifact"
+          done
+      - name: Verify mesheryctl artifacts
+        run: |
+          for artifact in dist/*; do
+            cosign verify-blob \
+              --bundle "${artifact}.sigstore" \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              "$artifact"
+          done
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
@@ -163,6 +192,7 @@ jobs:
           download-url: https://github.com/meshery/meshery.git
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
   call-dde-release-workflow:
     needs:
       - build
@@ -176,16 +206,11 @@ jobs:
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
-  # call-aks-playground-deploy-workflow:
-  #   needs: build
-  #   name: Deploy Meshery Playground
-  #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
-  #   secrets: inherit
   deploy-delay:
-    name: Playground Deploy Delay
-    runs-on: ubuntu-24.04
     needs:
       - build
+    name: Playground Deploy Delay
+    runs-on: ubuntu-24.04
     steps:
       - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
         run: sleep 780
@@ -202,7 +227,7 @@ jobs:
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     with:
-      release-tag: ${{github.ref_name}}
+      release-tag: ${{ github.ref_name }}
       to: developers@meshery.io
   call-cncf-playground-rollout:
     needs: [build, deploy-delay]
@@ -212,20 +237,28 @@ jobs:
       image: meshery/meshery:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
   email-on-failure:
-    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    needs:
+      [
+        update-rest-api-docs,
+        update-graphql-docs,
+        build,
+        ctlrelease,
+        call-dde-release-workflow,
+        call-helm-chart-releaser,
+        email-meshery-release-notes-workflow,
+        call-cncf-playground-rollout,
+      ]
     if: ${{ failure() }}
     runs-on: ubuntu-24.04
     steps:
-      - name: Find failed jobs.
+      - name: Find failed jobs
         run: |
           curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
-          # Save multi-line environment variables by using the delimiters syntex.
           echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
           echo "$(cat ./output.txt)" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       - name: Failed jobs summary
-        run: |
-          echo "${{ env.EMAIL_BODY }}"
+        run: echo "${{ env.EMAIL_BODY }}"
       - name: Send Email Notification
         if: env.EMAIL_BODY != ''
         uses: dawidd6/action-send-mail@v4
