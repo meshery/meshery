@@ -5,7 +5,8 @@ on:
       - "v*"
 
 permissions:
-  contents: read # needed for checkout
+  id-token: write # needed for Cosign keyless signing
+  contents: read #  needed for actions/checkout
 
 jobs:
   update-rest-api-docs:
@@ -90,9 +91,6 @@ jobs:
       RELEASE_CHANNEL: "stable"
       IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write # needed for Cosign keyless signing
-      contents: read # needed for checkout
     steps:
       - uses: actions/checkout@v4
         with:
@@ -151,9 +149,6 @@ jobs:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    permissions:
-      id-token: write # needed for Cosign keyless signing
-      contents: read # needed for actions/checkout
     steps:
       - name: Check out code
         uses: actions/checkout@v4

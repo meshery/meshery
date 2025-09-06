@@ -1,7 +1,5 @@
 name: Meshery Build and Releaser (edge)
 
-permissions:
-  contents: read
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +14,10 @@ on:
       - "docs/**"
       - ".github/**"
       - "install/**"
+
+permissions:
+  id-token: write # needed for Cosign keyless signing
+  contents: read # needed for actions/checkout
 
 jobs:
   update-rest-api-docs:
@@ -100,9 +102,6 @@ jobs:
       RELEASE_CHANNEL: "edge"
       IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write # needed for Cosign keyless signing
-      contents: read # needed for checkout
     steps:
       - name: Free up disk space
         run: |
