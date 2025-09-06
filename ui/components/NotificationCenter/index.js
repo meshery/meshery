@@ -422,6 +422,7 @@ const NotificationCenterDrawer = () => {
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
   const initialViewToLoad = useSelector((state) => state.events.view_to_fetch_on_open);
+  const currentFilters = useSelector((state) => state.events.current_view.filters);
 
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
 
@@ -484,7 +485,7 @@ const NotificationCenterDrawer = () => {
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
                 <Container>
-                  <Filter handleFilter={handleFilter}></Filter>
+                  <Filter handleFilter={handleFilter} currentFilters={currentFilters}></Filter>
                   <BulkActions />
 
                   {isLoadingFilters ? (
