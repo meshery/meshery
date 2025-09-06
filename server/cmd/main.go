@@ -72,11 +72,14 @@ func main() {
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
 	}
-	// Initialize Logger instance
-	log, err := logger.New("meshery", logger.Options{
+	logOption := logger.Options{
 		Format:   logger.SyslogLogFormat,
 		LogLevel: logLevel,
-	})
+		// if debug, output caller
+		EnableCallerInfo: logLevel == int(logrus.DebugLevel),
+	}
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logOption)
 	if err != nil {
 		logrus.Error(err)
 		os.Exit(1)
