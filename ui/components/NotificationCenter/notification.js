@@ -282,6 +282,12 @@ export const getErrorCodesFromEvent = (event) => {
 };
 export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
+
+  // If event doesn't exist, don't render anything
+  if (!event) {
+    return null;
+  }
+
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
