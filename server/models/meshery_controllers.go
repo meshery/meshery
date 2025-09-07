@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"maps"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/broker"
 	channelBroker "github.com/meshery/meshkit/broker/channel"
@@ -650,9 +652,7 @@ func (mch *MesheryControllersHelper) emitErrorEvent(description string, err erro
 
 	// Add additional metadata if provided
 	if metadata != nil {
-		for k, v := range metadata {
-			eventMetadata[k] = v
-		}
+		maps.Copy(eventMetadata, metadata)
 	}
 
 	mch.emitEvent(description, events.Error, eventMetadata, userID)
