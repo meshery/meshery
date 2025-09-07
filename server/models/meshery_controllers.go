@@ -136,7 +136,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 					"k8sContextName":         k8scontext.Name,
 					"connectionID":           k8scontext.ConnectionID,
 					"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-				})
+				}, userID)
 				return mch
 			}
 			stopFunc = stop
@@ -150,7 +150,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextName":         k8scontext.Name,
 				"connectionID":           k8scontext.ConnectionID,
 				"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
-			})
+			}, userID)
 			return mch
 		}
 
@@ -160,7 +160,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			})
+			}, userID)
 			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
@@ -173,7 +173,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			})
+			}, userID)
 			return mch
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
@@ -188,7 +188,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		"k8sContextName":         k8scontext.Name,
 		"connectionID":           k8scontext.ConnectionID,
 		"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
-	})
+	}, userID)
 
 	return mch
 }
@@ -209,7 +209,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			})
+			}, uuid.Nil)
 		}
 		mch.log.Info(
 			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
@@ -218,7 +218,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextID":   ctxID,
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
-		})
+		}, uuid.Nil)
 		return nil
 	}
 	brokerHandler, err := nats.New(nats.Options{
@@ -239,7 +239,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
 			"brokerEndpoint": brokerEndpoint,
-		})
+		}, uuid.Nil)
 		return nil
 	}
 	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
@@ -275,7 +275,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 				"k8sContextName":         k8sContext.Name,
 				"connectionID":           k8sContext.ConnectionID,
 				"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			})
+			}, uuid.Nil)
 		}
 	}()
 
@@ -315,7 +315,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 			"k8sContextID":   ctx.ID,
 			"k8sContextName": ctx.Name,
 			"connectionID":   ctx.ConnectionID,
-		})
+		}, uuid.Nil)
 	}
 
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
@@ -414,7 +414,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 					mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]interface{}{
 						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 						"operatorStatus":         mch.ctxOperatorStatus,
-					})
+					}, uuid.Nil)
 				}
 			}
 		}
@@ -442,7 +442,7 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 					mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]interface{}{
 						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 						"operatorStatus":         mch.ctxOperatorStatus,
-					})
+					}, uuid.Nil)
 				}
 			}
 		}
@@ -621,14 +621,16 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 }
 
 // General helper method to emit events for system-level operations
-func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]interface{}) {
+func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]interface{}, userID uuid.UUID) {
 	if mch.eventBroadcaster != nil && mch.systemID != nil {
 		prefixedDescription := fmt.Sprintf("MesheryControllersHelper: %s", description)
 		event := events.NewEvent().
+			FromSystem(*mch.systemID).
+			FromUser(userID).
 			WithCategory("connection").
 			WithAction("update").
+			ActedUpon(userID).
 			WithSeverity(severity).
-			FromSystem(*mch.systemID).
 			WithDescription(prefixedDescription).
 			WithMetadata(metadata).
 			Build()
@@ -636,12 +638,12 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 		if mch.provider != nil {
 			_ = mch.provider.PersistEvent(*event, nil)
 		}
-		go mch.eventBroadcaster.Publish(uuid.Nil, event) // System event, no specific user
+		go mch.eventBroadcaster.Publish(userID, event)
 	}
 }
 
 // Helper method to emit error events
-func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]interface{}) {
+func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]interface{}, userID uuid.UUID) {
 	eventMetadata := map[string]interface{}{
 		"error": err.Error(),
 	}
@@ -653,11 +655,11 @@ func (mch *MesheryControllersHelper) emitErrorEvent(description string, err erro
 		}
 	}
 
-	mch.emitEvent(description, events.Error, eventMetadata)
+	mch.emitEvent(description, events.Error, eventMetadata, userID)
 }
 
 // Helper method to emit warning events
-func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]interface{}) {
+func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]interface{}, userID uuid.UUID) {
 	eventMetadata := metadata
 	if eventMetadata == nil {
 		eventMetadata = make(map[string]interface{})
@@ -667,5 +669,5 @@ func (mch *MesheryControllersHelper) emitWarningEvent(description string, err er
 		eventMetadata["error"] = err.Error()
 	}
 
-	mch.emitEvent(description, events.Warning, eventMetadata)
+	mch.emitEvent(description, events.Warning, eventMetadata, userID)
 }
