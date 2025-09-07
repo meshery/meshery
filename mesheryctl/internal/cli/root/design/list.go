@@ -46,16 +46,16 @@ Documentation for design can be found at https://docs.meshery.io/reference/meshe
 `,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
-// Display a list all available designs
+// Display a list of all available designs
 mesheryctl design list
 
-// Display a list all available designs with verbose output
+// Display a list of all available designs with verbose output
 mesheryctl design list --verbose
 
-// Display a list all available designs with specified page number (10 designs per page by default)
+// Display a list of all available designs with specified page number (10 designs per page by default)
 mesheryctl design list --page [pange-number]
 
-// Display a list all available designs with custom page size (10 designs per page by default)
+// Display a list of all available designs with custom page size (10 designs per page by default)
 mesheryctl design list --pagesize [page-size]
 
 // Display only the count of all available designs
