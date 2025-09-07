@@ -124,13 +124,13 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		switch mch.meshsyncDeploymentMode {
 		case schemasConnection.MeshsyncDeploymentModeOperator:
-			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
+			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, userID)
 		case schemasConnection.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
 			// meshsync run must be stopped only when meshsync data handler is deregistered
 			// and ctx which is passed from above, could be closed earlier
-			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext)
+			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, userID)
 			if err != nil {
 				mch.log.Error(err)
 				mch.emitErrorEvent("Failed to start MeshSync library run", err, map[string]any{
@@ -197,6 +197,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 	k8scontext K8sContext,
+	userID uuid.UUID,
 ) broker.Handler {
 	ctxID := k8scontext.ID
 	controllerHandlers := mch.ctxControllerHandlers
@@ -211,7 +212,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			}, uuid.Nil)
+			}, userID)
 		}
 		mch.log.Info(
 			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
@@ -220,7 +221,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextID":   ctxID,
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
-		}, uuid.Nil)
+		}, userID)
 		return nil
 	}
 	brokerHandler, err := nats.New(nats.Options{
@@ -241,7 +242,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
 			"brokerEndpoint": brokerEndpoint,
-		}, uuid.Nil)
+		}, userID)
 		return nil
 	}
 	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
@@ -254,6 +255,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 	ctx context.Context,
 	brokerHandler broker.Handler,
 	k8sContext K8sContext,
+	userID uuid.UUID,
 ) (func(), error) {
 	kubeConfig, err := k8sContext.GenerateKubeConfig()
 	if err != nil {
@@ -277,7 +279,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 				"k8sContextName":         k8sContext.Name,
 				"connectionID":           k8sContext.ConnectionID,
 				"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			}, uuid.Nil)
+			}, userID)
 		}
 	}()
 
