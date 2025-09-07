@@ -644,36 +644,27 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 	}
 }
 
-// Helper method to emit error events
-func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
+// Common helper for both error and warning events with error information
+func (mch *MesheryControllersHelper) emitEventWithError(description string, severity events.EventSeverity, err error, metadata map[string]any, userID uuid.UUID) {
 	eventMetadata := make(map[string]any)
 
-	// Add additional metadata first if provided
 	if metadata != nil {
 		maps.Copy(eventMetadata, metadata)
 	}
 
-	// Add error information, taking precedence over any "error" key in metadata
 	if err != nil {
 		eventMetadata["error"] = err.Error()
 	}
 
-	mch.emitEvent(description, events.Error, eventMetadata, userID)
+	mch.emitEvent(description, severity, eventMetadata, userID)
+}
+
+// Helper method to emit error events
+func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
+	mch.emitEventWithError(description, events.Error, err, metadata, userID)
 }
 
 // Helper method to emit warning events
 func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
-	eventMetadata := make(map[string]any)
-
-	// Add additional metadata first if provided
-	if metadata != nil {
-		maps.Copy(eventMetadata, metadata)
-	}
-
-	// Add error information if present
-	if err != nil {
-		eventMetadata["error"] = err.Error()
-	}
-
-	mch.emitEvent(description, events.Warning, eventMetadata, userID)
+	mch.emitEventWithError(description, events.Warning, err, metadata, userID)
 }
