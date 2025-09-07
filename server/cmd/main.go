@@ -359,7 +359,7 @@ func main() {
 		operatorDeploymentConfig,
 		dbHandler,
 		hc.EventBroadcaster,
-		nil, // provider will be passed when needed
+		nil,
 		&instanceID,
 	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
