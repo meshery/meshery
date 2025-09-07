@@ -638,7 +638,9 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 			Build()
 
 		if mch.provider != nil {
-			_ = mch.provider.PersistEvent(*event, nil)
+			if err := mch.provider.PersistEvent(*event, nil); err != nil {
+				mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
+			}
 		}
 		go mch.eventBroadcaster.Publish(userID, event)
 	}
