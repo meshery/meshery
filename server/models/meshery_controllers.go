@@ -646,13 +646,16 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 
 // Helper method to emit error events
 func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
-	eventMetadata := map[string]any{
-		"error": err.Error(),
-	}
+	eventMetadata := make(map[string]any)
 
-	// Add additional metadata if provided
+	// Add additional metadata first if provided
 	if metadata != nil {
 		maps.Copy(eventMetadata, metadata)
+	}
+
+	// Add error information, taking precedence over any "error" key in metadata
+	if err != nil {
+		eventMetadata["error"] = err.Error()
 	}
 
 	mch.emitEvent(description, events.Error, eventMetadata, userID)
