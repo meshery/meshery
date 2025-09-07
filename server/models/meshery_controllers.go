@@ -663,11 +663,14 @@ func (mch *MesheryControllersHelper) emitErrorEvent(description string, err erro
 
 // Helper method to emit warning events
 func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
-	eventMetadata := metadata
-	if eventMetadata == nil {
-		eventMetadata = make(map[string]any)
+	eventMetadata := make(map[string]any)
+
+	// Add additional metadata first if provided
+	if metadata != nil {
+		maps.Copy(eventMetadata, metadata)
 	}
 
+	// Add error information if present
 	if err != nil {
 		eventMetadata["error"] = err.Error()
 	}
