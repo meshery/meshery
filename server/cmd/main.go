@@ -353,7 +353,15 @@ func main() {
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
-	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	// this mctrlHelper is not used it is being recreated per connection entity
+	mctrlHelper := models.NewMesheryControllersHelper(
+		log,
+		operatorDeploymentConfig,
+		dbHandler,
+		hc.EventBroadcaster,
+		nil, // provider will be passed when needed
+		&instanceID,
+	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
