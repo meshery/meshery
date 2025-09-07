@@ -39,7 +39,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 - Log in to the [Meshery Playground](https://play.meshery.io) using your credentials.  
 - On successful login, you should be at the dashboard. Close the **Where do you want to start?** popup (if required).  
 - Click **Kanvas** from the left menu to navigate to the [_Kanvas_ design](https://kanvas.new/extension/meshmap) page.
-  ![](./kubernetes-services/2025-09-04_01.png)
+  ![](./kubernetes-deployments/2025-02-27_16-59.png)
 
 > **_NOTE:_** Kanvas is still in beta.
 
@@ -125,9 +125,7 @@ To allow external access, we’ll use a NodePort service. For simplicity purpose
   ![](./kubernetes-services/2025-09-06_15.png)
 
 
-7. Create a **Network** link to the Deployment, by dragging a Network arrow from service-nodeport to nginx-deployment. *change this*
-
-Validate and deploy from the Action tab at the top right.
+7. Validate and deploy from the Action tab at the top right.
 
 > **_NOTE:_** Always undeploy your previous designs before deploying a new one.
 
@@ -164,7 +162,6 @@ Finally, we’ll create a LoadBalancer service. In a real cloud environment, thi
 5. Close the panel. 
   ![](./kubernetes-services/2025-09-06_19.png)
 
-Connect the service to the Pod by dragging a Network arrow from `service-loadbalancer` to the Pod.
 
 6. Validate and Deploy (undeploy the old design first).  
 
