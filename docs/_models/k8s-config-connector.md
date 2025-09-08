@@ -1782,7 +1782,11 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/color/bigtable-logical-view-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/white/bigtable-logical-view-white.svg
   description: 
-components-count: 443
+- name: service-networking-peered-dns-domain
+  colorIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/color/service-networking-peered-dns-domain-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/white/service-networking-peered-dns-domain-white.svg
+  description: 
+components-count: 444
 relationships: 
 relationship-count: 0
 featureList: [

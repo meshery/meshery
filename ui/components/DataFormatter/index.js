@@ -97,7 +97,7 @@ export const FormatId = ({ id }) => {
       </CustomTooltip>
       <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
-          <CopyIcon width="1rem" height="1rem" />
+          <CopyIcon width="16px" height="16px" />
         </IconButton>
       </CustomTooltip>
     </Box>
@@ -131,7 +131,7 @@ export const Link = ({ href, title }) => {
     >
       {title}
       <sup>
-        <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
+        <LaunchIcon style={{ width: '16px', height: '16px' }} />
       </sup>
     </a>
   );

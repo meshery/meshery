@@ -25,7 +25,7 @@ export const TitleLink = ({ href, children, ...props }) => {
       >
         {children}
         <sup>
-          <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
+          <LaunchIcon style={{ width: '16px', height: '16px' }} />
         </sup>
       </Typography>
     </a>
