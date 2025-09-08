@@ -169,7 +169,7 @@ export function MesheryExtensionEarlyAccessCard({
               aria-label="Close"
               color="inherit"
               onClick={closeForm}
-              style={{ height: '2.5rem' }}
+              style={{ height: '40px' }}
             >
               <CloseIcon />
             </IconButton>
