@@ -3,29 +3,27 @@ layout: default
 title: Configuring your Cloud Native Infrastructure and Applications
 abstract: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management/working-with-designs
-type: guides
-category: configuration
-language: en
-suggested-reading: false
-abstract: Learn how to use Meshery Designs effectively
 redirect_from:
   - /tasks/patterns
+category: configuration
+type: guides
+language: en
 ---
 
-As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
+
+As a cloud native management platform, Meshery has built-in support infrastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
 ## What is a Meshery Design?
 
-Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
+Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state to improve the environment.
 
 [![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
 )]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
 
 ## Creating a Meshery Design
 
-You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
+You have your choice of how you would like to create an infrastructure design. You can use the design configurator inside of the Meshery UI or extensions like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
 
-You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
 
 Use Meshery UI or mesheryctl to create designs.
 
