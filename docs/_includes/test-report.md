@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 11th 2025, 3:12:37 am
+- Testing started at: September 7th 2025, 11:49:06 pm
 
 **📦 Test Result Summary**
 
-- ✅ 73 passed
+- ✅ 85 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 39 seconds_
+⌛ _Duration: 7 minutes and 30 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>

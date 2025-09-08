@@ -125,7 +125,7 @@ mesheryctl version
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(ErrGettingRequestContext(err))
 			return
 		}
@@ -135,7 +135,7 @@ mesheryctl version
 		resp, err := client.Do(req)
 
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Warn(ErrConnectingToServer(err))
 			return
 		}
@@ -144,20 +144,20 @@ mesheryctl version
 		defer resp.Body.Close()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
 
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows)
+		utils.PrintToTable(header, rows, nil)
 	},
 }

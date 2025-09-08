@@ -78,8 +78,8 @@ export function useMeshsSyncController() {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
-  // takes connectionID as input not the contextID
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
 
@@ -96,9 +96,19 @@ export function useMeshsSyncController() {
           );
         } else if (
           res.controller.name === 'MeshSync' &&
-          !res.controller.status.includes('Unknown')
+          (res.controller.status === 'Running' || res.controller.status.includes('Running'))
         ) {
-          handleError('MeshSync is not publishing to Meshery Broker');
+          handleInfo(
+            `MeshSync is running (${res.controller.version}), but is not connected to Meshery Broker.`,
+          );
+        } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Deployed') {
+          handleInfo('MeshSync is deployed but connection status unclear');
+        } else if (
+          res.controller.name === 'MeshSync' &&
+          !res.controller.status.includes('Unknown') &&
+          !res.controller.status.includes('UNKNOWN')
+        ) {
+          handleInfo('MeshSync is not publishing to Meshery Broker');
         } else {
           handleError('MeshSync could not be reached');
         }
@@ -174,6 +184,7 @@ export const useNatsController = () => {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
@@ -188,6 +199,13 @@ export const useNatsController = () => {
           let runningEndpoint = res.controller.status.substring('Connected'.length);
           handleSuccess(
             `Broker was pinged. ${runningEndpoint != '' ? `Running at ${runningEndpoint}` : ''}`,
+          );
+        } else if (
+          res.controller.name === 'MesheryBroker' &&
+          (res.controller.status === 'Deployed' || res.controller.status === 'DEPLOYED')
+        ) {
+          handleInfo(
+            `Meshery Broker is deployed (${res.controller.version}) but not connected to Meshery Server`,
           );
         } else {
           handleError(

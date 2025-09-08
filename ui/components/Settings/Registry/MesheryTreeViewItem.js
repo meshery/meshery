@@ -16,7 +16,7 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }) => {
-  const imgSrc = modelDef?.metadata?.svgColor;
+  const imgSrc = modelDef?.metadata?.svgColor ? `/${modelDef.metadata.svgColor}` : null;
   return (
     <StyledTreeItem
       key={modelDef.id}
@@ -25,7 +25,7 @@ const MesheryTreeViewItem = ({
       top
       labelText={
         <StyledTreeItemDiv>
-          {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
+          {imgSrc ? <img src={imgSrc} style={{ height: '24px', width: '24px' }} /> : null}
           <StyledTreeItemNameDiv>
             {modelDef.displayName ? modelDef.displayName : modelDef.name}
           </StyledTreeItemNameDiv>

@@ -1,4 +1,6 @@
 //  The constants for API endpoints
+// Meshery Extension Point
+// See Meshery Docs to have your Remote Provider listed here
 export const MESHMODEL_ENDPOINT = '/api/meshmodels/models';
 export const MESHMODEL_COMPONENT_ENDPOINT = '/api/meshmodels';
 export const MESHMODEL_RELATIONSHIPS_ENDPOINT = '/api/meshmodels/models/core/relationships';

@@ -74,8 +74,8 @@ const ObjectFieldTemplate = ({
                 <AddIcon
                   style={{
                     backgroundColor: `${theme.palette.mode === 'dark' ? '#00b39F' : '#647881'}`,
-                    width: '1rem',
-                    height: '1rem',
+                    width: '16px',
+                    height: '16px',
                     color: '#ffffff',
                     borderRadius: '.2rem',
                   }}
@@ -117,8 +117,8 @@ const ObjectFieldTemplate = ({
                   size="small"
                 >
                   <HelpOutlineIcon
-                    width="1rem"
-                    height="1rem"
+                    width="16px"
+                    height="16px"
                     fill={theme.palette.mode === 'dark' ? 'white' : 'black'}
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
@@ -134,8 +134,8 @@ const ObjectFieldTemplate = ({
                   size="small"
                 >
                   <ErrorOutlineIcon
-                    width="1rem"
-                    height="1rem"
+                    width="16px"
+                    height="16px"
                     fill="#B32700"
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
