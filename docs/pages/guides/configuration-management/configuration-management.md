@@ -10,12 +10,11 @@ type: guides
 language: en
 ---
 
-
 As a cloud native management platform, Meshery has built-in support for infrastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
 ## What is a Meshery Design?
 
-Meshery's core construct of configuration management is that of a design. A design is ultimately a document that captures and describes your desired state to improve the environment.
+Meshery's core construct of configuration management is that of a design. A design is ultimately a document that captures and describes the desired state of your environment.
 
 [![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
 )]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
