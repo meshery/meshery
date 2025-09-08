@@ -18,7 +18,7 @@ func TestListWorkspaces(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List workspaces whithout providing organization ID",
 			Args:             []string{"list"},
