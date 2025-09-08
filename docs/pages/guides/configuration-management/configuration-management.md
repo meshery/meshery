@@ -11,18 +11,18 @@ language: en
 ---
 
 
-As a cloud native management platform, Meshery has built-in support infrastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
+As a cloud native management platform, Meshery has built-in support for infrastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
 ## What is a Meshery Design?
 
-Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state to improve the environment.
+Meshery's core construct of configuration management is that of a design. A design is ultimately a document that captures and describes your desired state to improve the environment.
 
 [![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
 )]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
 
 ## Creating a Meshery Design
 
-You have your choice of how you would like to create an infrastructure design. You can use the design configurator inside of the Meshery UI or extensions like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
+You can create an infrastructure design using the design configurator in the Meshery UI or extensions like Kanvas, or by hand-coding it with the mesh model spec.
 
 
 Use Meshery UI or mesheryctl to create designs.
@@ -37,7 +37,7 @@ Users can also import these patterns to their remote provider from this [sample 
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-import.png" width="50%" />
 
-Once these patterns are imported, you can then edit these patterns or use the pattern configurator to configure them according to your requirements.
+Once these patterns are imported, you can edit these patterns or use the pattern configurator to configure them according to your requirements.
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/pattern-configure-button.png" width="50%" />
 
