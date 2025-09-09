@@ -24,7 +24,7 @@ jobs:
           payload: |
             channel: CSK7N9TGX
             type: "mrkdwn"
-            text: "[${{ github.actor }}](https://github.com/${{ github.actor }}) just starred [${{ github.repository }}](https://github.com/${{ github.repository }}/stargazers) Total ⭐️s: ${{ env.STARS }}"
+            text: "<https://github.com/${{ github.actor }}|${{ github.actor }}> [${{ github.actor }}](https://github.com/${{ github.actor }}) just starred [${{ github.repository }}](https://github.com/${{ github.repository }}/stargazers) Total ⭐️s: ${{ env.STARS }}"
 
       # Alternative Slack notification method (commented out)
       # - name: Notify Slack
