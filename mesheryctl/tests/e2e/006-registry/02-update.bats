@@ -7,7 +7,7 @@ setup() {
     mkdir -p "$TESTDATA_DIR"  
     export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 
-    # Add creds and ID for accessing integration sheets
+    # Add secrets for accessing integration sheets
     export TEST_SPREADSHEET_ID=""
     export TEST_SPREADSHEET_CRED=""
 }
