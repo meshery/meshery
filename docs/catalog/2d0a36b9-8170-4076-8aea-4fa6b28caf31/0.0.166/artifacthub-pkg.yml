@@ -1,8 +1,8 @@
 version: 0.0.166
 name: match-labels-relationship
-displayName: Match-Labels-Relationship
+displayName: TagSets-Relationship
 createdAt: "2024-09-30T13:54:52Z"
-description: A Match Labels Relationship in Meshery refers to the configuration where Kubernetes components are linked based on shared labels. This relationship is essential for identifying and managing groups of Pods, Services, or other resources that share common characteristics. By using matching labels, Kubernetes can efficiently route traffic, apply policies, and manage workloads across components that are part of the same logical grouping.
+description: A TagSets Relationship in Meshery refers to the configuration where components are linked based on shared tags. This relationship is essential for identifying and managing groups of resources that share common characteristics. By using matching tags, platforms can efficiently route traffic, apply policies, and manage workloads across components that are part of the same logical grouping.
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
 license: Apache-2.0
 homeURL: https://docs.meshery.io/concepts/logical/designs

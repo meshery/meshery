@@ -199,7 +199,7 @@ Logical or declarative links between components where one component refers to an
 <script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
 </details>
 
-### 8. Match - Labels (Tagsets)
+### 8. TagSets
 
 This relationship type defines the associations between components based on shared Labels or Annotations.
 

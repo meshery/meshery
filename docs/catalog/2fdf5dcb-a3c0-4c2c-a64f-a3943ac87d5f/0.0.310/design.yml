@@ -1785,7 +1785,7 @@
       "styles": {
         "background-image": "none",
         "background-opacity": 1,
-        "body-text": "Match Labels Relationship",
+        "body-text": "TagSets Relationship",
         "body-text-color": "rgb(225,225,225)",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
