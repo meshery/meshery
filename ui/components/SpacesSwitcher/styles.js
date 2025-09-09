@@ -218,8 +218,8 @@ export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
     color: theme.palette.text.secondary,
   },
   '& .MuiSvgIcon-root': {
-    width: '1.25rem',
-    height: '1.25rem',
+    width: '20px',
+    height: '20px',
   },
 }));
 

@@ -10,13 +10,13 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.51 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.40 => ../meshkit
+// replace github.com/meshery/meshkit v0.8.43 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.20 => ../meshsync
 
 require (
 	cuelang.org/go v0.14.1
-	fortio.org/fortio v1.66.2
+	fortio.org/fortio v1.71.2
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
@@ -47,7 +47,7 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/meshkit v0.8.40
+	github.com/meshery/meshkit v0.8.43
 	github.com/meshery/meshsync v0.8.20
 	github.com/meshery/schemas v0.8.51
 	github.com/nsf/termbox-go v1.1.1
@@ -61,19 +61,19 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.7
 	github.com/spf13/viper v1.20.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/vektah/gqlparser/v2 v2.5.30
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/mod v0.26.0
 	golang.org/x/oauth2 v0.30.0
-	golang.org/x/text v0.27.0
+	golang.org/x/text v0.28.0
 	gonum.org/v1/gonum v0.16.0
 	google.golang.org/api v0.232.0
-	google.golang.org/grpc v1.74.2
+	google.golang.org/grpc v1.75.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/gorm v1.30.1
+	gorm.io/gorm v1.30.2
 	k8s.io/api v0.33.3
 	k8s.io/apiextensions-apiserver v0.33.3
 	k8s.io/apimachinery v0.33.3
@@ -93,12 +93,13 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.7.0 // indirect
 	dario.cat/mergo v1.0.1 // indirect
-	fortio.org/cli v1.9.0 // indirect
-	fortio.org/dflag v1.7.2 // indirect
-	fortio.org/log v1.16.0 // indirect
-	fortio.org/scli v1.15.2 // indirect
-	fortio.org/sets v1.2.0 // indirect
-	fortio.org/struct2env v0.4.1 // indirect
+	fortio.org/cli v1.10.0 // indirect
+	fortio.org/dflag v1.8.1 // indirect
+	fortio.org/log v1.17.2 // indirect
+	fortio.org/safecast v1.2.0 // indirect
+	fortio.org/scli v1.16.1 // indirect
+	fortio.org/sets v1.3.0 // indirect
+	fortio.org/struct2env v0.4.2 // indirect
 	fortio.org/version v1.0.4 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.1 // indirect
@@ -131,6 +132,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/bsm/redislock v0.7.2 // indirect
+	github.com/bufbuild/protocompile v0.14.1 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/capnm/sysinfo v0.0.0-20130621111458-5909a53897f3 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
@@ -218,6 +220,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+	github.com/jhump/protoreflect v1.17.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -323,17 +326,17 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.3 // indirect
-	golang.org/x/crypto v0.40.0 // indirect
-	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/crypto/x509roots/fallback v0.0.0-20250406160420-959f8f3db0fb // indirect
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
-	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/term v0.33.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/term v0.34.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	golang.org/x/tools v0.35.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
