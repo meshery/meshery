@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Exploring Kubernetes Services with Meshery(ClusterIP)
+title: Exploring Kubernetes Services with Meshery
 abstract: Learn Kubernetes Services
 permalink: guides/tutorials/kubernetes-services
 model: kubernetes
