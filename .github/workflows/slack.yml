@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: CSK7N9TGX
+            type: "mrkdwn"
             text: "${{ github.actor }} just starred ${{ github.repository }}! (https://github.com/${{ github.repository }}/stargazers) Total ⭐️: ${{ env.STARS }}"
 
       # Alternative Slack notification method (commented out)
