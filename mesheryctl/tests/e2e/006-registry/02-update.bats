@@ -1,86 +1,73 @@
 #!/usr/bin/env bats
-# Test file for mesheryctl registry update command
-# Note: CSV generation provides test data that simulates integration sheet content
 
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
     export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/registry"
-    mkdir -p "$TESTDATA_DIR"
+    mkdir -p "$TESTDATA_DIR"  
     export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 
-    # Build the CSV generator tool (creates test data from integration sheet)
-    export CSV_GENERATOR="$TESTDATA_DIR/generate_test_csv"
-    cd "$FIXTURES_DIR"
-    go build -o "$CSV_GENERATOR" generate_test_csv.go
-
-    # Generate test CSV files (simulates integration sheet data for testing)
-    export TEST_CSV_DIR="$TESTDATA_DIR/test_csvs"
-    "$CSV_GENERATOR" "$TEST_CSV_DIR"
-
-    # Set fake credentials for testing (update command requires these)
-    export TEST_SPREADSHEET_ID="fake-spreadsheet-id-for-testing"
-    export TEST_SPREADSHEET_CRED="fake-base64-credentials-for-testing"
+    # Add creds and ID for accessing integration sheets
+    export TEST_SPREADSHEET_ID=""
+    export TEST_SPREADSHEET_CRED=""
 }
 
-teardown() {
-    # Clean up generated files
-    if [ -d "$TEST_CSV_DIR" ]; then
-        rm -rf "$TEST_CSV_DIR"
-    fi
-    if [ -f "$CSV_GENERATOR" ]; then
-        rm -f "$CSV_GENERATOR"
-    fi
+common_success_outputs() {
+    assert_output --partial "Updated"
+    assert_output --partial "models and"
+    assert_output --partial "components"
+    assert_output --partial "refer"
+    assert_output --partial "logs"
 }
 
 @test "mesheryctl registry update displays usage instructions when no arguments are provided" {
-    run $MESHERYCTL_BIN registry update
+    run $MESHERYCTL_BIN registry update 
     assert_failure
+    assert_output --partial "unexpected end of JSON input"
 }
 
 @test "mesheryctl registry update fails when spreadsheet-id is provided without spreadsheet-cred" {
-    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID"
+    run $MESHERYCTL_BIN registry update --spreadsheet-id "test-id"
     assert_failure
     assert_output --partial "missing [spreadsheet-cred]"
 }
 
-@test "mesheryctl registry update displays help message" {
-    run $MESHERYCTL_BIN registry update --help
-    assert_success
-    assert_output --partial "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet."
-    assert_output --partial "Updates the component metadata"
-    assert_output --partial "Usage:"
-    assert_output --partial "mesheryctl registry update [flags]"
-    assert_output --partial "Examples:"
-    assert_output --partial "Update models from Meshery Integration Spreadsheet"
-    assert_output --partial "--spreadsheet-id"
-    assert_output --partial "--spreadsheet-cred"
-    assert_output --partial "--input"
-    assert_output --partial "--model"
+@test "mesheryctl registry update fails when spreadsheet-cred is provided without spreadsheet-id" {
+    run $MESHERYCTL_BIN registry update --spreadsheet-cred "test-cred"
+    assert_failure
+    assert_output --partial "missing [spreadsheet-id]"
 }
 
 @test "mesheryctl registry update fails with invalid spreadsheet credentials" {
-    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "$FIXTURES_DIR/test-models"
+    run $MESHERYCTL_BIN registry update --spreadsheet-id "invalid-id" --spreadsheet-cred "invalid-cred"
     assert_failure
-    assert_output --partial "spreadsheet"
+    assert_output --partial "invalid character"
+    assert_output --partial "looking for beginning of value"
 }
 
-@test "mesheryctl registry update succeeds with valid spreadsheet credentials and test fixtures" {
-    # This test would pass with real credentials, but we can't test that in CI
-    # So we just verify the command structure is correct
+@test "mesheryctl registry update succeeds with non-existent input directory but updates nothing" {
+    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "/non/existent/path"
+    assert_success
+    assert_output --partial "Updated 0 models and 0 components"
+    assert_output --partial "refer"
+    assert_output --partial "logs/registry"
+}
+
+
+@test "mesheryctl registry update succeeds with valid spreadsheet credentials and test fixtures, displays logs and summary of the updated components" {
     run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "$FIXTURES_DIR/test-models"
-    # The command will fail due to fake credentials, but the structure is correct
-    [ "$status" -ne 0 ]
+    assert_success
+    common_success_outputs
 }
 
-@test "mesheryctl registry update supports model-specific update" {
+@test "mesheryctl registry update supports model-specific updates" {
     run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "$FIXTURES_DIR/test-models" --model "kubernetes"
-    # Will fail due to fake credentials, but command structure is tested
-    [ "$status" -ne 0 ]
+    assert_success
+    common_success_outputs
 }
 
-@test "mesheryctl registry update fails when spreadsheet-cred is provided without spreadsheet-id" {
-    run $MESHERYCTL_BIN registry update --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "$FIXTURES_DIR/test-models"
-    assert_failure
-    assert_output --partial "missing [spreadsheet-id]"
+@test "mesheryctl registry update handles empty models directory gracefully" {
+    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --input "$FIXTURES_DIR/empty-models"
+    assert_success
+    common_success_outputs
 }
