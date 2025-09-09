@@ -3,11 +3,12 @@ package display
 import (
 	"bytes"
 	"encoding/json"
+	"os"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
 func TestHandlePaginationAsync(t *testing.T) {
@@ -47,7 +48,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 				{ID: "1", Name: "Item1"},
 				{ID: "2", Name: "Item2"},
 			},
-			exceptedResponse: "Total number of items: 2\nPage: 1\n  \x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
+			exceptedResponse: "Total number of items: 2\nPage: 1\n\x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
 			expectedError:    nil,
 		},
 		{
