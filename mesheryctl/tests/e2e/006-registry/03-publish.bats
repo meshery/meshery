@@ -18,6 +18,13 @@ setup() {
     mkdir -p "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
 }
 
+common_success_outputs(){
+    assert_output --partial "Downloaded CSV from:"
+    assert_output --partial "Parsing Models..."
+    assert_output --partial "Parsing Components..."
+    assert_output --partial "Parsing Relationships..."
+}
+
 assert_missing_argument_message() {
     assert_output --partial "[ system, google sheet credential, sheet-id, models output path, imgs output path] are required"
 }
@@ -43,20 +50,14 @@ assert_missing_argument_message() {
 @test "mesheryctl registry publish succeeds with meshery system" {
     run $MESHERYCTL_BIN registry publish meshery "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "Removing CSV file:"
 }
 
 @test "mesheryctl registry publish succeeds with remote-provider system" {
     run $MESHERYCTL_BIN registry publish remote-provider "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "Total model published: 1"
     assert_output --partial "Removing CSV file:"
 }
@@ -65,10 +66,7 @@ assert_missing_argument_message() {
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o md
     assert_success
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "no relationships found for contour-operator"
     assert_output --partial "Removing CSV file:"
 }
@@ -76,10 +74,7 @@ assert_missing_argument_message() {
 @test "mesheryctl registry publish succeeds with website system and mdx output format" {
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o mdx
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "no relationships found for contour-operator"
     assert_output --partial "Removing CSV file:"
 }
@@ -87,10 +82,7 @@ assert_missing_argument_message() {
 @test "mesheryctl registry publish succeeds with website system and js output format" {
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o js
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "no relationships found for contour-operator"
     assert_output --partial "Removing CSV file:"
 }
@@ -98,10 +90,7 @@ assert_missing_argument_message() {
 @test "mesheryctl registry publish fails with website system and invalid output format" {
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o invalid
     assert_failure
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "Error: invalid output format: invalid"
 }
 
@@ -111,10 +100,7 @@ assert_missing_argument_message() {
 
     run $MESHERYCTL_BIN registry publish remote-provider "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$new_models_dir" "$new_imgs_dir"
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "Total model published: 1"
     assert_output --partial "Removing CSV file:"
 }
@@ -122,10 +108,7 @@ assert_missing_argument_message() {
 @test "mesheryctl registry publish handles non-existent output paths gracefully" {
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TESTDATA_DIR/non/existent/models" "$TESTDATA_DIR/non/existent/imgs" -o md
     assert_success
-    assert_output --partial "Downloaded CSV from:"
-    assert_output --partial "Parsing Models..."
-    assert_output --partial "Parsing Components..."
-    assert_output --partial "Parsing Relationships..."
+    common_success_outputs
     assert_output --partial "no relationships found for contour-operator"
     assert_output --partial "Removing CSV file:"
 }
