@@ -95,8 +95,8 @@ import {
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
 
-const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
-const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
+const drawerIconsStyle = { height: '19.36px', width: '19.36px', fontSize: '1.45rem', ...iconSmall };
+const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
 const getNavigatorComponents = (
   /** @type {CapabilitiesRegistry} */ capabilityRegistryObj,
@@ -373,7 +373,7 @@ const Navigator_ = () => {
       title: 'Community',
       icon: (
         <SlackIcon
-          style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
+          style={{ ...drawerIconsStyle, height: '24px', width: '24px', marginTop: '' }}
         />
       ),
       external_icon: ExternalLinkIcon,
