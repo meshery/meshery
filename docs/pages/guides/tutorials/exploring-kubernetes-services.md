@@ -39,6 +39,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 - Log in to the [Meshery Playground](https://play.meshery.io) using your credentials.  
 - On successful login, you should be at the dashboard. Close the **Where do you want to start?** popup (if required).  
 - Click **Kanvas** from the left menu to navigate to the [_Kanvas_ design](https://kanvas.new/extension/meshmap) page.
+
   ![](./kubernetes-deployments/2025-02-27_16-59.png)
 
 > **_NOTE:_** Kanvas is still in beta.
@@ -47,26 +48,32 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 #### Create a Deployment
 
 1. In the _Kanvas Design_ page, start by renaming the design to a name of your choice for easier identification later.
+
     ![](./kubernetes-services/2025-09-04_02.png)
 
 2. From the floating dock below, click the **Kubernetes** icon and then click **Deployment** from the list. This will create the _Deployment_ component on the design canvas. 
+
     ![](./kubernetes-services/2025-09-04_03.png)
 
 3. Click or Drag the _Deployment_ component onto the canvas and the **Configure** tab automatically opens.
+
     ![](./kubernetes-services/2025-09-04_04.png)
     
 4. Change the **Name** of the deployment and the **Namespace** if required. For this demonstration, we will leave them as they are and deploy this to the _default_ namespace.
     
 5. Set **Replicas** to `2`. Under **Selector** and **MatchLabels**, Set a _matchLabel_ pair. Here we have set `app:9988110`.
 6. Under **Template → Metadata → Labels**, add the same label `app:9988110`. 
+
   ![](./kubernetes-services/2025-09-04_05.png)
 
 7. While still under **Template** and click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** next to **Containers**. This will create a container **Containers 1**, click on it and add:  
 - **Image**: `nginx:latest`  
 - **Name**: `nginx`  
+
   ![](./kubernetes-services/2025-09-04_06.png)
 
 8. Click outside to close the modal. The deployment is now ready and it will look similar to this:
+
   ![](./kubernetes-services/2025-09-04_07.png)
 
 
@@ -79,6 +86,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 #### Add a ClusterIP Service
 
 1. From **Components**, search for **Service** and drag it to the canvas, Rename the service, here I will go with `service-clusterip`. Click on the service component to open its config modal. 
+
   ![](./kubernetes-services/2025-09-04_08.png)
 
 2. In the service configuration modal:  
@@ -91,12 +99,15 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 - We will also add the same label as the deployment for easier identification in Operator Mode.
 
 3. Connect the Service to the Deployment: Click over the service component until green dots appear, click the arrow and select network. Drag to the deployment. This creates a Network link.  
+
   ![](./kubernetes-services/2025-09-05_09.png)
 
 From the Actions Tab, Undeploy the deployment first and then, validate and dry-run the new design, resolve any errors that may arise. Now, deploy the design. A pop up in the bottom right will confirm that the design is successfully configured.
+
   ![](./kubernetes-services/2025-09-05_10.png)
 
 Switch to Operator mode, explore the Service details. select the service-clusterip resource to see its details. Notice the ClusterIP listed under Addresses and that no external IP or NodePort is assigned. This confirms that a ClusterIP service provides an internal IP reachable only within the cluster.
+
   ![](./kubernetes-services/2025-09-05_11.png)
 
 
@@ -111,17 +122,20 @@ This Service has a ClusterIP (10.98.146.20) and a selector (app=9988110). Any Po
 To allow external access, we’ll use a NodePort service. For simplicity purposes, I will switch from using deployment to Pod for our next Service. 
 
 1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _nginx:latest_ for this exercise. Give the container a name and a unique label(This unique label will be used by the service selector.). 
+
   ![](./kubernetes-services/2025-09-06_13.png)
 
 2. Now, drag a Service component onto the canvas and rename it to `service-nodeport`.
 
 3. Under the config modal, Set **Type** to `NodePort` and the same selector as the Pod label, so that our service is connected with our Pod.
+
   ![](./kubernetes-services/2025-09-06_14.png)
 
 4. Click on **+ Add Item** under Ports to reveal **Ports-1**, expand **Ports-1** and add: 
 - **Port**: `80`  
 - **TargetPort**: `80`  
 - **NodePort**: `30091` (or leave blank to auto-assign). 
+
   ![](./kubernetes-services/2025-09-06_15.png)
 
 
@@ -130,14 +144,18 @@ To allow external access, we’ll use a NodePort service. For simplicity purpose
 > **_NOTE:_** Always undeploy your previous designs before deploying a new one.
 
 Now switch to Operator mode, click on any component to view details(like type or selector) about the Service or the Pod.
+
   ![](./kubernetes-services/2025-09-06_16.png)
 
 Note that this service is mapped NodePort and is accessible on the **Node’s IP address**.
 
-Expand the details section and you will see a NodePort value (30091), this means the service is exposed on each Node’s IP at port 30091. You can access the NGINX app externally via http://<NodeIP>:30091.
+Expand the details section and you will see a NodePort value (30091), this means the service is exposed on each Node’s IP at port 30091. You can access the NGINX app externally via http://<NodeIP>:30091. 
+
   ![](./kubernetes-services/2025-09-06_17.png)
 
+
 The Operator mode also provides a interactive terminal, click on the Pod to reveal the initiate terminal session option.
+
   ![](./kubernetes-services/2025-09-06_18.png)
  
  you can test things inside.
