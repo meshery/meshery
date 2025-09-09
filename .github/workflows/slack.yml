@@ -1,4 +1,4 @@
-    name: Slack Notify
+name: Slack Notify
 
 on:
   watch:
@@ -15,7 +15,7 @@ jobs:
       - name: Get current star count
         run: |
           echo "STARS=$(curl --silent 'https://api.github.com/repos/${{ github.repository }}' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
-          
+
       - name: Notify Slack
         uses: slackapi/slack-github-action@v2.1.1
         with:
@@ -23,9 +23,9 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: CSK7N9TGX
-            text: "${{ github.actor }} just starred ${{ github.repository }}! (https://github.com/${{ github.repository }}/stargazers) Total ⭐️: ${{ env.STARS }}\"
+            text: "${{ github.actor }} just starred ${{ github.repository }}! (https://github.com/${{ github.repository }}/stargazers) Total ⭐️: ${{ env.STARS }}"
 
-
+      # Alternative Slack notification method (commented out)
       # - name: Notify Slack
       #   env:
       #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -45,12 +45,13 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: C019426UBNY
-            text: ":new: Good first issue up for grabs: ${{ github.event.issue.title }} - ${{ github.event.issue.html_url }} \"
+            text: ":new: Good first issue up for grabs: ${{ github.event.issue.title }} - ${{ github.event.issue.html_url }}"
 
+      # Alternative Slack notification method (commented out)
       # - name: Notify Slack
       #   env:
       #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       #   uses: pullreminders/slack-action@master
       #   with:
       #     args: '{\"channel\":\"C019426UBNY\",\"type\":\"section\",\"text\":\":new: Good first issue up for grabs: ${{ github.event.issue.title }} - ${{ github.event.issue.html_url }} \"}'
-                                                                            
+
