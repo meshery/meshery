@@ -117,12 +117,7 @@ func init() {
 func (u *UrlModelGenerator) Generate() error {
 	utils.Log.Info("Generating model from URL: ", u.Url)
 
-	_, err := os.ReadFile(u.TemplateFile)
-	if err != nil {
-		return utils.ErrFileRead(err)
-	}
-
-	err = registerModel(nil, nil, nil, "", "urlImport", u.Url, true)
+	err := registerModel(nil, nil, nil, "", "urlImport", u.Url, !u.SkipRegister)
 	if err != nil {
 		return err
 	}
