@@ -64,9 +64,9 @@ The designs in this specification should result in enabling:
 {% include alert.html type="info" title="Windows User?" content="See <a href='https://docs.meshery.io/project/contributing/meshery-windows'>Setting up Meshery Development Environment on Windows</a>."
 %}
 
-### Node Version Recommendations
+### Required Node Version
 
-We recommend using Node 20 LTS. Meshery UI's build script supports other Node versions as well, including node16, node17, node18 and node19, but is recommended to use Node 20 LTS.
+Node 20 LTS
 
 ### Linting-UI
 
