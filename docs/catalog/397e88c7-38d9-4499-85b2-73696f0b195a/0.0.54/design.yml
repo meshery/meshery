@@ -2,11 +2,10 @@
   "id": "397e88c7-38d9-4499-85b2-73696f0b195a",
   "name": "Edge-Firewall-relationship",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.239",
+  "version": "0.0.242",
   "metadata": {
     "resolvedAliases": {
       "00a15419-566b-4a55-be3a-58dc20a83949": {
-        "relationship_id": "ac7c4485-dd18-43d8-94d3-0382383cd04a",
         "alias_component_id": "00a15419-566b-4a55-be3a-58dc20a83949",
         "immediate_parent_id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
         "immediate_ref_field_path": [
@@ -15,6 +14,7 @@
           "containers",
           "0"
         ],
+        "relationship_id": "ac7c4485-dd18-43d8-94d3-0382383cd04a",
         "resolved_parent_id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
         "resolved_ref_field_path": [
           "configuration",
@@ -24,7 +24,6 @@
         ]
       },
       "d8a3806e-488b-4527-b451-47272230bb35": {
-        "relationship_id": "588fe5db-3928-46e8-b5af-fce65af9a4cb",
         "alias_component_id": "d8a3806e-488b-4527-b451-47272230bb35",
         "immediate_parent_id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
         "immediate_ref_field_path": [
@@ -33,6 +32,7 @@
           "containers",
           "0"
         ],
+        "relationship_id": "588fe5db-3928-46e8-b5af-fce65af9a4cb",
         "resolved_parent_id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
         "resolved_ref_field_path": [
           "configuration",
@@ -69,10 +69,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2025-01-24T10:44:19.92197795Z",
           "updated_at": "2025-01-24T10:44:19.92197795Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "App Definition and Development",
@@ -89,16 +91,17 @@
         "model": {
           "version": "0.7.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "primaryColor": "#326CE5",
         "secondaryColor": "#00D3A9",
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
       },
       "capabilities": [
@@ -110,7 +113,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -125,7 +127,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -140,7 +141,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -156,7 +156,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -172,7 +171,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -187,7 +185,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -202,7 +199,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -217,7 +213,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -227,17 +222,19 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "",
         "hasInvalidSchema": true,
+        "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
         "published": false
       },
       "configuration": {},
       "component": {
+        "version": "core.meshery.io/v1alpha1",
         "kind": "Container",
-        "schema": "",
-        "version": "core.meshery.io/v1alpha1"
+        "schema": ""
       }
     },
     {
@@ -265,10 +262,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2025-01-24T10:44:19.92197795Z",
           "updated_at": "2025-01-24T10:44:19.92197795Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "App Definition and Development",
@@ -285,16 +284,17 @@
         "model": {
           "version": "0.7.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "primaryColor": "#326CE5",
         "secondaryColor": "#00D3A9",
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
       },
       "capabilities": [
@@ -306,7 +306,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -321,7 +320,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -336,7 +334,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -352,7 +349,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -368,7 +364,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -383,7 +378,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -398,7 +392,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -413,7 +406,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -423,17 +415,19 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "",
         "hasInvalidSchema": true,
+        "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
         "published": false
       },
       "configuration": {},
       "component": {
+        "version": "core.meshery.io/v1alpha1",
         "kind": "Container",
-        "schema": "",
-        "version": "core.meshery.io/v1alpha1"
+        "schema": ""
       }
     },
     {
@@ -461,12 +455,15 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-09-26T17:48:01.864031019Z",
           "updated_at": "2024-09-26T17:48:01.864031019Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
+        "subCategory": "",
         "metadata": {
           "isAnnotation": false,
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
@@ -475,10 +472,10 @@
         "model": {
           "version": "v1.25.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "background-image": "none",
@@ -505,7 +502,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -520,7 +516,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -535,7 +530,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -551,7 +545,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -567,7 +560,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -582,7 +574,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -597,7 +588,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -612,7 +602,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -622,7 +611,9 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "parent",
+        "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": false,
         "published": false
@@ -633,9 +624,9 @@
         }
       },
       "component": {
+        "version": "v1",
         "kind": "Namespace",
-        "schema": "",
-        "version": "v1"
+        "schema": ""
       }
     },
     {
@@ -663,10 +654,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-14T14:04:06.185628309+05:30",
           "updated_at": "2024-10-14T14:04:06.185628309+05:30",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -683,10 +676,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "background-opacity": 1,
@@ -701,13 +694,14 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": -42.82193343118047,
-          "y": -20.054198484311343
+          "x": -81.79627944374067,
+          "y": -28.78445199112483
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg",
         "width": 24
       },
@@ -720,7 +714,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -735,7 +728,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -750,7 +742,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -766,7 +757,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -782,7 +772,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -797,7 +786,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -812,7 +800,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -827,7 +814,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -837,7 +823,9 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "",
+        "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
         "published": false,
@@ -867,9 +855,9 @@
         }
       },
       "component": {
+        "version": "networking.k8s.io/v1",
         "kind": "NetworkPolicy",
-        "schema": "",
-        "version": "networking.k8s.io/v1"
+        "schema": ""
       }
     },
     {
@@ -897,10 +885,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-08T21:09:27.968829684Z",
           "updated_at": "2024-10-08T21:09:27.968829684Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -917,10 +907,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "background-opacity": 1,
@@ -942,6 +932,7 @@
         "secondaryColor": "#7aa1f0",
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg",
         "width": 24
       },
@@ -954,7 +945,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -969,7 +959,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -984,7 +973,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -1000,7 +988,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -1016,7 +1003,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -1031,7 +1017,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -1046,7 +1031,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -1061,7 +1045,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -1071,7 +1054,9 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "",
+        "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
         "published": false,
@@ -1083,9 +1068,9 @@
         }
       },
       "component": {
+        "version": "networking.k8s.io/v1",
         "kind": "NetworkPolicy",
-        "schema": "",
-        "version": "networking.k8s.io/v1"
+        "schema": ""
       }
     },
     {
@@ -1113,12 +1098,15 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-09-26T17:48:01.864031019Z",
           "updated_at": "2024-09-26T17:48:01.864031019Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
+        "subCategory": "",
         "metadata": {
           "isAnnotation": false,
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
@@ -1127,10 +1115,10 @@
         "model": {
           "version": "v1.25.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "background-image": "none",
@@ -1156,7 +1144,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -1171,7 +1158,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -1186,7 +1172,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -1202,7 +1187,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -1218,7 +1202,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -1233,7 +1216,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -1248,7 +1230,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -1263,7 +1244,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -1273,7 +1253,9 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "parent",
+        "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
         "published": false
@@ -1301,9 +1283,9 @@
         }
       },
       "component": {
+        "version": "v1",
         "kind": "Pod",
-        "schema": "",
-        "version": "v1"
+        "schema": ""
       }
     },
     {
@@ -1331,12 +1313,15 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-09-26T17:48:01.864031019Z",
           "updated_at": "2024-09-26T17:48:01.864031019Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
+        "subCategory": "",
         "metadata": {
           "isAnnotation": false,
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
@@ -1345,10 +1330,10 @@
         "model": {
           "version": "v1.25.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "styles": {
         "background-image": "none",
@@ -1374,7 +1359,6 @@
           ],
           "key": "",
           "kind": "action",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "perf-test",
@@ -1389,7 +1373,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "config",
@@ -1404,7 +1387,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "labels-and-annotations",
@@ -1420,7 +1402,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "relationship",
@@ -1436,7 +1417,6 @@
           ],
           "key": "",
           "kind": "view",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "definition",
@@ -1451,7 +1431,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "",
@@ -1466,7 +1445,6 @@
           ],
           "key": "",
           "kind": "mutate",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "shape",
@@ -1481,7 +1459,6 @@
           ],
           "key": "",
           "kind": "interaction",
-          "metadata": null,
           "schemaVersion": "capability.meshery.io/v1alpha1",
           "status": "enabled",
           "subType": "compoundDnd",
@@ -1491,7 +1468,9 @@
       ],
       "status": "enabled",
       "metadata": {
+        "configurationUISchema": "",
         "genealogy": "parent",
+        "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
         "published": false
@@ -1522,403 +1501,20 @@
         }
       },
       "component": {
+        "version": "v1",
         "kind": "Pod",
-        "schema": "",
-        "version": "v1"
+        "schema": ""
       }
     }
   ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
   "relationships": [
-    {
-      "id": "14804163-2057-41c1-8a36-729c05401521",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively",
-        "styles": null,
-        "isAnnotation": null
-      },
-      "model": {
-        "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-        "category": {
-          "name": "Orchestration \u0026 Management"
-        },
-        "metadata": {
-          "isAnnotation": false,
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-        },
-        "model": {
-          "version": "v1.25.2"
-        },
-        "components": null,
-        "relationships": null,
-        "components_count": 0,
-        "relationships_count": 0
-      },
-      "schemaVersion": "",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
-                "kind": "*",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
-                "kind": "Namespace",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ]
-          },
-          "deny": {
-            "from": [
-              {
-                "id": null,
-                "kind": "Namespace",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": null
-              }
-            ],
-            "to": [
-              {
-                "id": null,
-                "kind": "Namespace",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": null
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "deleted",
-      "type": "parent",
-      "version": ""
-    },
-    {
-      "id": "8abaeb37-ed41-473f-96b4-98bd5fa8a866",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively",
-        "styles": null,
-        "isAnnotation": null
-      },
-      "model": {
-        "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-        "category": {
-          "name": "Orchestration \u0026 Management"
-        },
-        "metadata": {
-          "isAnnotation": false,
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-        },
-        "model": {
-          "version": "v1.25.2"
-        },
-        "components": null,
-        "relationships": null,
-        "components_count": 0,
-        "relationships_count": 0
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "5caf89b4-7888-43dd-92f7-d806b4de4f93",
-                "kind": "*",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "f6b79602-158d-48b2-b010-eaa5ff611753",
-                "kind": "Namespace",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "deleted",
-      "type": "parent",
-      "version": "v1.0.0"
-    },
     {
       "id": "a9caa12d-7034-43e5-9f7e-5e8fc1850c53",
       "evaluationQuery": null,
@@ -1950,10 +1546,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -1970,10 +1568,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "",
       "selectors": [
@@ -2010,6 +1608,7 @@
                     }
                   ]
                 },
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2028,19 +1627,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": null
               }
@@ -2086,6 +1689,7 @@
                     }
                   ]
                 },
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2104,19 +1708,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": null
               }
@@ -2156,12 +1764,15 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
+        "subCategory": "",
         "metadata": {
           "isAnnotation": false,
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
@@ -2170,10 +1781,10 @@
         "model": {
           "version": "v1.25.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -2184,6 +1795,7 @@
                 "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
                 "kind": "*",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2202,19 +1814,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2233,6 +1849,7 @@
                 "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
                 "kind": "Namespace",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2251,19 +1868,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2314,10 +1935,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -2334,10 +1957,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "",
       "selectors": [
@@ -2367,6 +1990,7 @@
                     }
                   ]
                 },
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2385,19 +2009,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": null
               }
@@ -2426,6 +2054,7 @@
                     }
                   ]
                 },
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2444,19 +2073,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": null
               }
@@ -2496,12 +2129,15 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
+        "subCategory": "",
         "metadata": {
           "isAnnotation": false,
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
@@ -2510,10 +2146,10 @@
         "model": {
           "version": "v1.25.2"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -2524,6 +2160,7 @@
                 "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
                 "kind": "*",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2542,19 +2179,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2573,6 +2214,7 @@
                 "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
                 "kind": "Namespace",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2591,19 +2233,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2620,160 +2266,6 @@
       ],
       "subType": "inventory",
       "status": "approved",
-      "type": "parent",
-      "version": "v1.0.0"
-    },
-    {
-      "id": "edcb2897-a987-4872-9873-0e4780b45add",
-      "evaluationQuery": null,
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively",
-        "styles": null,
-        "isAnnotation": null
-      },
-      "model": {
-        "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-        "category": {
-          "name": "Orchestration \u0026 Management"
-        },
-        "metadata": {
-          "isAnnotation": false,
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-        },
-        "model": {
-          "version": "v1.25.2"
-        },
-        "components": null,
-        "relationships": null,
-        "components_count": 0,
-        "relationships_count": 0
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "5caf89b4-7888-43dd-92f7-d806b4de4f93",
-                "kind": "*",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
-                "kind": "Namespace",
-                "match": {},
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "name": ""
-                  },
-                  "model": {
-                    "version": ""
-                  },
-                  "components": null,
-                  "relationships": null,
-                  "components_count": 0,
-                  "relationships_count": 0
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "deleted",
       "type": "parent",
       "version": "v1.0.0"
     },
@@ -2808,10 +2300,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -2828,10 +2322,10 @@
         "model": {
           "version": "v1.32.0-alpha.3"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -2842,6 +2336,7 @@
                 "id": "d8a3806e-488b-4527-b451-47272230bb35",
                 "kind": "Container",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2860,19 +2355,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2900,6 +2399,7 @@
                 "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
                 "kind": "Pod",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -2918,19 +2418,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -2996,10 +2500,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -3016,10 +2522,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -3030,6 +2536,7 @@
                 "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
                 "kind": "*",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3048,19 +2555,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -3079,6 +2590,7 @@
                 "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
                 "kind": "Namespace",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3097,19 +2609,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -3160,10 +2676,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -3180,10 +2698,10 @@
         "model": {
           "version": "v1.32.0-alpha.3"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -3194,6 +2712,7 @@
                 "id": "00a15419-566b-4a55-be3a-58dc20a83949",
                 "kind": "Container",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3212,19 +2731,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -3252,6 +2775,7 @@
                 "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
                 "kind": "Pod",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3270,19 +2794,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -3348,10 +2876,12 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "9e04779c-94b6-6a03-575c-66f4c57541eb",
         "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
           "name": "Orchestration \u0026 Management"
         },
         "subCategory": "Scheduling \u0026 Orchestration",
@@ -3368,10 +2898,10 @@
         "model": {
           "version": "v1.32.0-alpha.1"
         },
-        "components": null,
-        "relationships": null,
         "components_count": 0,
-        "relationships_count": 0
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -3382,6 +2912,7 @@
                 "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
                 "kind": "*",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3400,19 +2931,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -3431,6 +2966,7 @@
                 "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
                 "kind": "Namespace",
                 "match": {},
+                "match_strategy_matrix": null,
                 "model": {
                   "id": "00000000-0000-0000-0000-000000000000",
                   "schemaVersion": "",
@@ -3449,19 +2985,23 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
                     "name": ""
                   },
+                  "subCategory": "",
+                  "metadata": null,
                   "model": {
                     "version": ""
                   },
-                  "components": null,
-                  "relationships": null,
                   "components_count": 0,
-                  "relationships_count": 0
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
                 },
                 "patch": {
                   "patchStrategy": "replace",

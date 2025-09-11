@@ -20,7 +20,7 @@ create_meshery_config_folder() {
 # Generate auth file to communicate with meshery server
 create_auth_file() {
     echo "start: authentication configuration" 
-    echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
+    echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
     echo "done: authentication configuration"
 }
 
