@@ -214,11 +214,7 @@ components:
   colorIcon: assets/img/integrations/kuma/components/mesh-trust/icons/color/mesh-trust-color.svg
   whiteIcon: assets/img/integrations/kuma/components/mesh-trust/icons/white/mesh-trust-white.svg
   description: 
-- name: mesh-trust
-  colorIcon: assets/img/integrations/kuma/components/mesh-trust/icons/color/mesh-trust-color.svg
-  whiteIcon: assets/img/integrations/kuma/components/mesh-trust/icons/white/mesh-trust-white.svg
-  description: 
-components-count: 52
+components-count: 51
 relationships: 
 relationship-count: 0
 featureList: [
