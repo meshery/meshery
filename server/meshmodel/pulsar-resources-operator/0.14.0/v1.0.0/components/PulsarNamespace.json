@@ -1,0 +1,192 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Pulsar Namespace",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "pulsar-resources-operator",
+    "displayName": "Pulsar Resources Operator",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Streaming \u0026 Messaging",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#448FF7",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.14.0/pulsar-resources-operator-v0.14.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill:#448FF7;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\u0026#xA;c46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\u0026#xA;c45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\u0026#xA;c-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\u0026#xA;c-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\u0026#xA;c46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\u0026#xA;c45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\u0026#xA;c-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\u0026#xA;c-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.14.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#448FF7",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#448FF7;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" width='800' height='565.1'\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.14.0/pulsar-resources-operator-v0.14.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "resource.streamnative.io/v1alpha1",
+    "kind": "PulsarNamespace",
+    "schema": "{\n \"description\": \"PulsarNamespace is the Schema for the pulsarnamespaces API\\nIt represents a Pulsar namespace in the Kubernetes cluster and includes both\\nthe desired state (Spec) and the observed state (Status) of the namespace.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarNamespaceSpec defines the desired state of a Pulsar namespace.\\nIt corresponds to the configuration options available in Pulsar's namespace admin API.\",\n   \"properties\": {\n    \"antiAffinityGroup\": {\n     \"description\": \"AntiAffinityGroup specifies the anti-affinity group for this namespace.\\nNamespaces in the same anti-affinity group will be placed on different brokers.\",\n     \"type\": \"string\"\n    },\n    \"backlogQuotaLimitSize\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"BacklogQuotaLimitSize specifies the size limit for message backlog.\\nWhen the limit is reached, older messages will be removed or handled according to the retention policy.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"backlogQuotaLimitTime\": {\n     \"description\": \"BacklogQuotaLimitTime specifies the time limit for message backlog.\\nMessages older than this limit will be removed or handled according to the retention policy.\",\n     \"type\": \"string\"\n    },\n    \"backlogQuotaRetentionPolicy\": {\n     \"description\": \"BacklogQuotaRetentionPolicy specifies the retention policy for messages when backlog quota is exceeded.\\nValid values are \\\"producer_request_hold\\\", \\\"producer_exception\\\", or \\\"consumer_backlog_eviction\\\".\",\n     \"type\": \"string\"\n    },\n    \"backlogQuotaType\": {\n     \"description\": \"BacklogQuotaType controls how the backlog quota is enforced.\\n\\\"destination_storage\\\" limits backlog by size (in bytes), while \\\"message_age\\\" limits by time.\",\n     \"enum\": [\n      \"destination_storage\",\n      \"message_age\"\n     ],\n     \"type\": \"string\"\n    },\n    \"bookieAffinityGroup\": {\n     \"description\": \"BookieAffinityGroup is the name of the namespace isolation policy to apply to the namespace.\",\n     \"properties\": {\n      \"bookkeeperAffinityGroupPrimary\": {\n       \"type\": \"string\"\n      },\n      \"bookkeeperAffinityGroupSecondary\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"bookkeeperAffinityGroupPrimary\"\n     ],\n     \"type\": \"object\"\n    },\n    \"bundles\": {\n     \"description\": \"Bundles specifies the number of bundles to split the namespace into.\\nThis affects how the namespace is distributed across the cluster.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"compactionThreshold\": {\n     \"description\": \"CompactionThreshold sets the compaction threshold for topics in this namespace.\\nTopics will be compacted when they reach this size threshold (in bytes).\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\\nused to connect to the Pulsar cluster for this namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"deduplication\": {\n     \"description\": \"Deduplication controls whether to enable message deduplication for the namespace.\",\n     \"type\": \"boolean\"\n    },\n    \"dispatchRate\": {\n     \"description\": \"DispatchRate sets the message dispatch rate for topics in this namespace.\\nThis controls how fast messages are delivered to consumers.\",\n     \"properties\": {\n      \"dispatchThrottlingRateInByte\": {\n       \"description\": \"DispatchThrottlingRateInByte specifies the maximum number of bytes per second allowed\\n-1 means unlimited\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"dispatchThrottlingRateInMsg\": {\n       \"description\": \"DispatchThrottlingRateInMsg specifies the maximum number of messages per second allowed\\n-1 means unlimited\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"ratePeriodInSecond\": {\n       \"default\": 1,\n       \"description\": \"RatePeriodInSecond specifies the time window in seconds for rate calculation\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"encryptionRequired\": {\n     \"description\": \"EncryptionRequired specifies whether message encryption is required for this namespace.\\nWhen enabled, all messages published to topics in this namespace must be encrypted.\",\n     \"type\": \"boolean\"\n    },\n    \"geoReplicationRefs\": {\n     \"description\": \"GeoReplicationRefs is a list of references to PulsarGeoReplication resources,\\nused to configure geo-replication for this namespace.\\nThis is **ONLY** used when you are using PulsarGeoReplication for setting up geo-replication\\nbetween two Pulsar instances.\\nPlease use `ReplicationClusters` instead if you are replicating clusters within the same Pulsar instance.\",\n     \"items\": {\n      \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n      \"properties\": {\n       \"name\": {\n        \"default\": \"\",\n        \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"inactiveTopicPolicies\": {\n     \"description\": \"InactiveTopicPolicies sets the policies for handling inactive topics in this namespace.\\nThis controls automatic cleanup of unused topics.\",\n     \"properties\": {\n      \"deleteWhileInactive\": {\n       \"description\": \"DeleteWhileInactive specifies whether to delete topics while they are inactive\",\n       \"type\": \"boolean\"\n      },\n      \"inactiveTopicDeleteMode\": {\n       \"description\": \"InactiveTopicDeleteMode specifies how inactive topics should be handled\\nValid values: \\\"delete_when_no_subscriptions\\\", \\\"delete_when_subscriptions_caught_up\\\"\",\n       \"enum\": [\n        \"delete_when_no_subscriptions\",\n        \"delete_when_subscriptions_caught_up\"\n       ],\n       \"type\": \"string\"\n      },\n      \"maxInactiveDurationInSeconds\": {\n       \"description\": \"MaxInactiveDurationInSeconds specifies how long a topic can remain inactive before being deleted\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"isAllowAutoUpdateSchema\": {\n     \"description\": \"IsAllowAutoUpdateSchema specifies whether to allow automatic schema updates.\\nWhen enabled, producers can automatically update schemas without manual approval.\",\n     \"type\": \"boolean\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"LifecyclePolicy determines whether to keep or delete the Pulsar namespace\\nwhen the Kubernetes resource is deleted.\",\n     \"enum\": [\n      \"CleanUpAfterDeletion\",\n      \"KeepAfterDeletion\"\n     ],\n     \"type\": \"string\"\n    },\n    \"maxConsumersPerSubscription\": {\n     \"description\": \"MaxConsumersPerSubscription sets the maximum number of consumers allowed on a single subscription in the namespace.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"maxConsumersPerTopic\": {\n     \"description\": \"MaxConsumersPerTopic sets the maximum number of consumers allowed on a single topic in the namespace.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"maxProducersPerTopic\": {\n     \"description\": \"MaxProducersPerTopic sets the maximum number of producers allowed on a single topic in the namespace.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"messageTTL\": {\n     \"description\": \"MessageTTL specifies the Time to Live (TTL) for messages in the namespace.\\nMessages older than this TTL will be automatically marked as consumed.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the fully qualified namespace name in the format \\\"tenant/namespace\\\".\",\n     \"type\": \"string\"\n    },\n    \"offloadThresholdSize\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"OffloadThresholdSize specifies the size limit for message offloading.\\nWhen the limit is reached, older messages will be offloaded to the tiered storage.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"offloadThresholdTime\": {\n     \"description\": \"OffloadThresholdTime specifies the time limit for message offloading.\\nMessages older than this limit will be offloaded to the tiered storage.\",\n     \"type\": \"string\"\n    },\n    \"persistencePolicies\": {\n     \"description\": \"PersistencePolicies sets the persistence policies for this namespace.\\nThis controls how data is stored and replicated in BookKeeper.\",\n     \"properties\": {\n      \"bookkeeperAckQuorum\": {\n       \"description\": \"BookkeeperAckQuorum specifies the number of replicas to wait for acknowledgment\\nMust be \\u003c= BookkeeperWriteQuorum\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"bookkeeperEnsemble\": {\n       \"description\": \"BookkeeperEnsemble specifies the number of bookies to use for a ledger\\nThis determines the replication factor for storing data\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"bookkeeperWriteQuorum\": {\n       \"description\": \"BookkeeperWriteQuorum specifies the number of replicas to write for each entry\\nMust be \\u003c= BookkeeperEnsemble\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"managedLedgerMaxMarkDeleteRate\": {\n       \"description\": \"ManagedLedgerMaxMarkDeleteRate specifies the maximum rate at which mark-delete operations can be performed\\nThis helps control the rate of acknowledgment processing\\nValue should be a decimal number as string (e.g., \\\"1.5\\\", \\\"2.0\\\")\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"properties\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Properties is a map of custom properties for this namespace.\\nThese are arbitrary key-value pairs that can be used for namespace metadata.\",\n     \"type\": \"object\"\n    },\n    \"publishRate\": {\n     \"description\": \"PublishRate sets the publish rate limit for producers in this namespace.\\nThis controls how fast producers can publish messages.\",\n     \"properties\": {\n      \"publishThrottlingRateInByte\": {\n       \"description\": \"PublishThrottlingRateInByte specifies the maximum number of bytes per second that producers can publish\\n-1 means unlimited\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"publishThrottlingRateInMsg\": {\n       \"description\": \"PublishThrottlingRateInMsg specifies the maximum number of messages per second that producers can publish\\n-1 means unlimited\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"replicationClusters\": {\n     \"description\": \"ReplicationClusters is the list of clusters to which the namespace is replicated\\nThis is **ONLY** used if you are replicating clusters within the same Pulsar instance.\\nPlease use `GeoReplicationRefs` instead if you are setting up geo-replication\\nbetween two Pulsar instances.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicatorDispatchRate\": {\n     \"description\": \"ReplicatorDispatchRate sets the replicator dispatch rate for topics in this namespace.\\nThis controls the rate at which messages are replicated across clusters.\",\n     \"properties\": {\n      \"dispatchThrottlingRateInByte\": {\n       \"description\": \"DispatchThrottlingRateInByte specifies the maximum number of bytes per second allowed\\n-1 means unlimited\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"dispatchThrottlingRateInMsg\": {\n       \"description\": \"DispatchThrottlingRateInMsg specifies the maximum number of messages per second allowed\\n-1 means unlimited\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"ratePeriodInSecond\": {\n       \"default\": 1,\n       \"description\": \"RatePeriodInSecond specifies the time window in seconds for rate calculation\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"retentionSize\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"RetentionSize specifies the maximum size of backlog retained in the namespace.\\nShould be set in conjunction with RetentionTime for effective retention policy.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"retentionTime\": {\n     \"description\": \"RetentionTime specifies the minimum time to retain messages in the namespace.\\nShould be set in conjunction with RetentionSize for effective retention policy.\\nRetention Quota must exceed configured backlog quota for namespace\",\n     \"type\": \"string\"\n    },\n    \"schemaAutoUpdateCompatibilityStrategy\": {\n     \"description\": \"SchemaAutoUpdateCompatibilityStrategy specifies the compatibility strategy for automatic schema updates.\\nThis controls how schema evolution is handled when schemas are automatically updated.\",\n     \"enum\": [\n      \"AutoUpdateDisabled\",\n      \"Backward\",\n      \"Forward\",\n      \"Full\",\n      \"AlwaysCompatible\",\n      \"BackwardTransitive\",\n      \"ForwardTransitive\",\n      \"FullTransitive\"\n     ],\n     \"type\": \"string\"\n    },\n    \"schemaCompatibilityStrategy\": {\n     \"description\": \"SchemaCompatibilityStrategy defines the schema compatibility strategy for this namespace.\\nIf not specified, the cluster's default schema compatibility strategy will be used.\\nThis setting controls how schema evolution is handled for topics within this namespace.\",\n     \"enum\": [\n      \"UNDEFINED\",\n      \"ALWAYS_INCOMPATIBLE\",\n      \"ALWAYS_COMPATIBLE\",\n      \"BACKWARD\",\n      \"FORWARD\",\n      \"FULL\",\n      \"BACKWARD_TRANSITIVE\",\n      \"FORWARD_TRANSITIVE\",\n      \"FULL_TRANSITIVE\"\n     ],\n     \"type\": \"string\"\n    },\n    \"schemaValidationEnforced\": {\n     \"description\": \"SchemaValidationEnforced controls whether schema validation is enforced for this namespace.\\nWhen enabled, producers must provide a schema when publishing messages.\\nIf not specified, the cluster's default schema validation enforcement setting will be used.\",\n     \"type\": \"boolean\"\n    },\n    \"subscribeRate\": {\n     \"description\": \"SubscribeRate sets the subscribe rate limit for consumers in this namespace.\\nThis controls how fast consumers can subscribe to topics.\",\n     \"properties\": {\n      \"ratePeriodInSecond\": {\n       \"default\": 30,\n       \"description\": \"RatePeriodInSecond specifies the time window in seconds for rate calculation\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"subscribeThrottlingRatePerConsumer\": {\n       \"description\": \"SubscribeThrottlingRatePerConsumer specifies the maximum subscribe rate per consumer\\n-1 means unlimited\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"subscriptionAuthMode\": {\n     \"description\": \"SubscriptionAuthMode specifies the subscription authentication mode for this namespace.\\nValid values are \\\"None\\\" and \\\"Prefix\\\".\",\n     \"enum\": [\n      \"None\",\n      \"Prefix\"\n     ],\n     \"type\": \"string\"\n    },\n    \"subscriptionDispatchRate\": {\n     \"description\": \"SubscriptionDispatchRate sets the subscription dispatch rate for topics in this namespace.\\nThis controls the rate at which subscriptions can dispatch messages.\",\n     \"properties\": {\n      \"dispatchThrottlingRateInByte\": {\n       \"description\": \"DispatchThrottlingRateInByte specifies the maximum number of bytes per second allowed\\n-1 means unlimited\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"dispatchThrottlingRateInMsg\": {\n       \"description\": \"DispatchThrottlingRateInMsg specifies the maximum number of messages per second allowed\\n-1 means unlimited\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"ratePeriodInSecond\": {\n       \"default\": 1,\n       \"description\": \"RatePeriodInSecond specifies the time window in seconds for rate calculation\",\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"subscriptionExpirationTime\": {\n     \"description\": \"SubscriptionExpirationTime specifies the time after which inactive subscriptions will expire.\\nSubscriptions that haven't consumed messages for this duration will be automatically deleted.\",\n     \"type\": \"string\"\n    },\n    \"topicAutoCreationConfig\": {\n     \"description\": \"TopicAutoCreationConfig controls whether automatic topic creation is allowed in this namespace\\nand configures properties of automatically created topics\",\n     \"properties\": {\n      \"allow\": {\n       \"description\": \"Allow specifies whether to allow automatic topic creation\",\n       \"type\": \"boolean\"\n      },\n      \"partitions\": {\n       \"description\": \"Partitions specifies the default number of partitions for automatically created topics\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type specifies the type of automatically created topics\",\n       \"enum\": [\n        \"partitioned\",\n        \"non-partitioned\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"validateProducerName\": {\n     \"description\": \"ValidateProducerName specifies whether to validate producer names.\\nWhen enabled, producer names must follow specific naming conventions.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Namespace\",\n \"type\": \"object\"\n}"
+  }
+}

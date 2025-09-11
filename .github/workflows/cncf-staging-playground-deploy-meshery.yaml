@@ -11,8 +11,8 @@ jobs:
         - name: Upgrade Meshery Helm Release
           uses: appleboy/ssh-action@v1.0.3
           with:
-              host: ${{ secrets.METAL_SERVER2 }}
+              host: ${{ secrets.METAL_SERVER5 }}
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
-                kubectl -n staging-fullstack rollout restart deployment/meshery
+                kubectl -n staging rollout restart deployment/playground
