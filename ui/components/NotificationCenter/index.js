@@ -31,7 +31,6 @@ import {
   SeverityChips,
   SeverityChip,
   SideList,
-  StyledBadge,
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
@@ -40,16 +39,18 @@ import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
+  removeDeletedEvents,
   selectAreAllEventsChecked,
   selectCheckedEvents,
-  selectEvents,
+  selectFilteredEvents,
   selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
+  selectUnreadCountsBySeverity,
+  selectReadCount,
 } from '../../store/slices/events';
 import {
   useDeleteEventsMutation,
-  useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
   useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
@@ -124,37 +125,6 @@ const EmptyState = () => {
 };
 
 const NavbarNotificationIcon = () => {
-  const { data, error, isLoading } = useGetEventsSummaryQuery({
-    status: STATUS.UNREAD,
-  });
-  if (error || (!data && !isLoading)) {
-    console.log(
-      '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
-      error,
-    );
-  }
-
-  const count_by_severity_level = data?.count_by_severity_level || [];
-
-  const currentTopSeverity =
-    getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
-      ? SEVERITY.ERROR
-      : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-        ? SEVERITY.WARNING
-        : null;
-  const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
-  const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
-  if (currentTopSeverity) {
-    return (
-      <StyledBadge
-        id="notification-badge"
-        badgeContent={topSeverityCount}
-        badgeColor={currentSeverityStyle?.color}
-      >
-        <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
-      </StyledBadge>
-    );
-  }
   return <BellIcon className={iconMedium} fill="#fff" />;
 };
 
@@ -193,14 +163,8 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
 
 const Header = ({ handleFilter, handleClose }) => {
   const uiConfig = useSelector((state) => state.events.ui);
-  const { data } = useGetEventsSummaryQuery({
-    status: STATUS.UNREAD,
-  });
-  const { count_by_severity_level, read_count } = data || {
-    count_by_severity_level: [],
-    total_count: 0,
-    read_count: 0,
-  };
+  const unreadCountsBySeverity = useSelector(selectUnreadCountsBySeverity);
+  const readCount = useSelector(selectReadCount);
 
   const onClickSeverity = (severity) => {
     handleFilter({
@@ -232,7 +196,7 @@ const Header = ({ handleFilter, handleClose }) => {
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
             type={`Unread ${severity}(s)`}
-            count={getSeverityCount(count_by_severity_level, severity)}
+            count={unreadCountsBySeverity[severity] || 0}
           />
         ))}
         <NotificationCountChip
@@ -240,7 +204,7 @@ const Header = ({ handleFilter, handleClose }) => {
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}
-          count={read_count}
+          count={readCount || 0}
         />
       </SeverityChips>
     </NotificationContainer>
@@ -257,7 +221,7 @@ const Loading = () => {
 
 const BulkActions = () => {
   const checkedEvents = useSelector(selectCheckedEvents);
-  const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
+  const noEventsPresent = useSelector((state) => selectFilteredEvents(state).length === 0);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
   const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
 
@@ -363,7 +327,7 @@ const BulkActions = () => {
 };
 
 const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
-  const events = useSelector(selectEvents);
+  const events = useSelector(selectFilteredEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
   const intersectionObserver = useRef(
@@ -426,6 +390,7 @@ const NotificationCenterDrawer = () => {
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
 
   useEffect(() => {
+    dispatch(removeDeletedEvents()); // Clean up any existing deleted events
     dispatch(
       loadEvents(fetchEvents, initialViewToLoad?.page || 0, initialViewToLoad?.filters || {}),
     );
@@ -440,6 +405,7 @@ const NotificationCenterDrawer = () => {
       return;
     }
     dispatch(closeNotificationCenter());
+    dispatch(removeDeletedEvents()); // Clean up deleted events when closing
     setAnchorEl(null);
   };
   // const { showFullNotificationCenter } = props;
