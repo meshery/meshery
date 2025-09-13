@@ -30,7 +30,7 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
       subscription.unsubscribe();
     },
     error: (err) => {
-      errorcb && errorcb(err ?? new Error("Unknown error from pingMesheryOperator"));
+      errorcb && errorcb(err ?? new Error('Unknown error from pingMesheryOperator'));
       subscription.unsubscribe();
     },
   });

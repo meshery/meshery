@@ -40,19 +40,21 @@ const handleErrorGenerator = (dispatch, notify) => (message, error) => {
   });
 };
 
-const handleSuccessGenerator = (dispatch, notify) => (message, variant = 'success') => {
-  dispatch(updateProgressAction({ showProgress: false }));
-  const variantMap = {
-    'success' : EVENT_TYPES.SUCCESS,
-    'info' : EVENT_TYPES.INFO,
-    'warning' : EVENT_TYPES.WARNING,
-    'error' : EVENT_TYPES.ERROR,
-  }
-  notify({
-    message,
-    event_type: variantMap[variant] ?? EVENT_TYPES.SUCCESS,
-  });
-};
+const handleSuccessGenerator =
+  (dispatch, notify) =>
+  (message, variant = 'success') => {
+    dispatch(updateProgressAction({ showProgress: false }));
+    const variantMap = {
+      success: EVENT_TYPES.SUCCESS,
+      info: EVENT_TYPES.INFO,
+      warning: EVENT_TYPES.WARNING,
+      error: EVENT_TYPES.ERROR,
+    };
+    notify({
+      message,
+      event_type: variantMap[variant] ?? EVENT_TYPES.SUCCESS,
+    });
+  };
 
 const handleInfoGenerator = (notify) => (message) => {
   notify({
@@ -71,20 +73,20 @@ export function useMesheryOperator() {
     dispatch(updateProgressAction({ showProgress: true }));
     pingMesheryOperator(
       connectionID,
-     (res) => {
-       const status = String(res?.operator?.status ?? 'UNKNOWN').trim().toUpperCase();
+      (res) => {
+        const status = String(res?.operator?.status ?? 'UNKNOWN')
+          .trim()
+          .toUpperCase();
 
-       let variant = 'warning';
-       if (status === 'DEPLOYED') {
-         variant = 'success';
-       } else if (status === 'DEPLOYING') {
-         variant = 'info';
-       } else if (status === 'NOTDEPLOYED') {
-         variant = 'error';
-       }
+        const statusToVariantMap = {
+          'DEPLOYED': 'success',
+          'DEPLOYING': 'info',
+          'NOTDEPLOYED': 'error',
+        };
+        const variant = statusToVariantMap[status] || 'warning';
 
-       handleSuccess(`Meshery Operator: Meshery Operator ${status}`, variant);
-     },
+        handleSuccess(`Meshery Operator status: ${status}`, variant);
+      },
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
   };
