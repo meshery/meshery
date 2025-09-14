@@ -74,14 +74,15 @@ export function useMesheryOperator() {
     pingMesheryOperator(
       connectionID,
       (res) => {
-        const status = String(res?.operator?.status ?? 'UNKNOWN')
+        const status = String(res?.operator?.status ??  CONTROLLER_STATES.UNKNOWN)
           .trim()
           .toUpperCase();
 
         const statusToVariantMap = {
-          'DEPLOYED': 'success',
-          'DEPLOYING': 'info',
-          'NOTDEPLOYED': 'error',
+          [CONTROLLER_STATES.DEPLOYED]: 'success',
+          [CONTROLLER_STATES.DEPLOYING]: 'info',
+          [CONTROLLER_STATES.NOTDEPLOYED]: 'error',
+          [CONTROLLER_STATES.UNKNOWN]: 'error',
         };
         const variant = statusToVariantMap[status] || 'warning';
 
