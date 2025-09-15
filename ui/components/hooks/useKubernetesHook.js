@@ -74,7 +74,7 @@ export function useMesheryOperator() {
     pingMesheryOperator(
       connectionID,
       (res) => {
-        const status = String(res?.operator?.status ??  CONTROLLER_STATES.UNKNOWN)
+        const status = String(res?.operator?.status ?? CONTROLLER_STATES.UNKNOWN)
           .trim()
           .toUpperCase();
 
