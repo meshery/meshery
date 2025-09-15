@@ -112,7 +112,7 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace
 To uninstall `meshery` helm release:
 
 ```console
-helm unistall meshery --namespace meshery
+helm uninstall meshery --namespace meshery
 
 ```
 
