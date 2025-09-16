@@ -32,12 +32,15 @@ Learn more about creating an [HA Cluster](https://kubernetes.io/docs/setup/produ
 
 For example, when installing Meshery with its [Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery) set `replicaCount` to `3`:
 
-```bash
+<pre class="codeblock-pre">
+<div class="codeblock">
+<div class="clipboardjs">
 helm repo add meshery https://meshery.io/charts/
 helm repo update
 
 helm install meshery meshery/meshery --namespace meshery --create-namespace --set replicaCount=3
-```
+</div></div>
+</pre>
 
 
 ### Scalability
