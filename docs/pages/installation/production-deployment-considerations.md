@@ -1,3 +1,14 @@
+---
+layout: default
+title: Production Deployment Considerations
+permalink: installation/prod-deployment-considerations
+type: guides
+category: installation
+display-title: "false"
+language: en
+abstract: Considerations when deploying Meshery in a production environment
+---
+
 # Production Deployment Considerations
 
 This document outlines key factors to consider when deploying Meshery in a production environment. 
@@ -33,7 +44,7 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace --se
 
 For mission-critical production systems, plan for Meshery to handle increased traffic on its workloads as your system grows.
 
-You may use [KEDA](https://keda.sh) (a Kubernetes Event-driven Autoscaling) or create `HorizontalPodAutoscaler` resources targeting Meshery workloads, such as `deployment/meshery` and `deployment/meshery-operator`, to autoscale up or down based on resource usage or traffic-related metrics such as `req/s` metric.
+You may use [KEDA](https://keda.sh) (a Kubernetes Event-driven Autoscaling) or create `HorizontalPodAutoscaler` resources targeting Meshery workloads, such as `deployment/meshery` and `deployment/meshery-operator`, to autoscale up or down based on resource usage or traffic-related metrics such as `req/s`.
 
 Learn more about the [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
 
@@ -54,7 +65,7 @@ Ports: 4222, 31214, 6222, 30315, 8222, 30791, 7777, 30400, 7422, 32493, 7522, 30
 Protocol: gRPC
 Ports: 10005, 10002, 10012, 10001, 10007, 10010, 10013, 10004, 10011, 10006
 ```
-Check what ports are required for your use-case and more details in [Meshery's Network Ports](https://docs.meshery.io/concepts/architecture#network-ports)
+Check what ports are required for your use-case and more details in [Meshery's Network Ports]({{site.baseurl}}/concepts/architecture#network-ports)
 
 
 
@@ -64,14 +75,15 @@ Another security consideration is to **avoid using the `Local Provider`**, since
 
 Below is an image of selecting provider in Meshery's UI, Local Provider is named **None** while Remote Provider is default to **Meshery** or **Layer5**
 
-<img src="../../assets/img/installation/provider_screenshot_new.png" width="100%" height="auto" alt="Meshery's Providers" />
+<a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png">
+<img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png" width="80%" height="auto" alt="Meshery's providers" /></a>
 
 
 Remote providers also can be implemented by anyone or an organization that wishes to integrate with Meshery.
 
-if you're [building a provider](https://docs.meshery.io/extensibility/providers#building-a-provider) please **configure OAuth Callback URL** for your connected remote provider, this is helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoint for the connected Remote Provider, check this [example](https://docs.meshery.io/extensibility/providers#example-deployment-scenario-meshery-cloud-istio-and-azure-kubernetes-service).
+if you're [building a provider]({{site.baseurl}}/extensibility/providers#building-a-provider) please **configure OAuth Callback URL** for your connected remote provider, this is helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoint for the connected Remote Provider, check this [example]({{site.baseurl}}/extensibility/providers#example-deployment-scenario-meshery-cloud-istio-and-azure-kubernetes-service).
 
-Learn more about [Providers](https://docs.meshery.io/extensibility/providers)
+Learn more about [Providers]({{site.baseurl}}/extensibility/providers)
 
 
 
@@ -109,6 +121,5 @@ Configure alerting systems to notify administrators of critical events, such as:
 
 ### Tooling
 
-To achieve Monitoring and Observability, consider leveraging tools such as OpenTelemetry, Prometheus, Grafana, Fluent Bit, Jaeger, Datadog, Dynatrace, ... for collecting, correlating, and visualizing metrics, traces and logs.
-
+To achieve Monitoring and Observability, consider leveraging tools such as OpenTelemetry, Prometheus, Grafana, Fluent Bit, Jaeger, Datadog or Dynatrace for collecting, correlating, and visualizing metrics, traces and logs.
 
