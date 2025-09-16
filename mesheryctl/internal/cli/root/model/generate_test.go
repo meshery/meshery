@@ -59,11 +59,11 @@ func TestModelGenerate(t *testing.T) {
 		},
 		{
 			Name:             "model generate: from URL with template",
-			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-managers/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.register.output.golden",
-			HttpCode:         200
+			HttpCode:         200,
 		},
 	}
 
