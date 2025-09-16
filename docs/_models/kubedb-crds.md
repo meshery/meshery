@@ -490,7 +490,11 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-autoscaler/icons/color/hazelcast-autoscaler-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-autoscaler/icons/white/hazelcast-autoscaler-white.svg
   description: 
-components-count: 120
+- name: ignite-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite-autoscaler/icons/color/ignite-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite-autoscaler/icons/white/ignite-autoscaler-white.svg
+  description: 
+components-count: 121
 relationships: 
 relationship-count: 0
 featureList: [

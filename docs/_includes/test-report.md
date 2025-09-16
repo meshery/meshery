@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 31st 2025, 2:09:17 pm
+- Testing started at: September 15th 2025, 11:53:29 pm
 
 **📦 Test Result Summary**
 
-- ✅ 0 passed
-- ❌ 2 failed
-- ⚠️ 0 flaked
+- ✅ 89 passed
+- ❌ 0 failed
+- ⚠️ 3 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 0 minutes and 3 seconds_
+⌛ _Duration: 9 minutes and 22 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -21,8 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | setup | authenticate as Meshery provider |  | ❌ |
-| 2 | setup | authenticate as None provider |  | ❌ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 2 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 3 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
