@@ -1,0 +1,192 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Policy",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nginx-ingress",
+    "displayName": "NGINX Ingress Controller",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#009639",
+      "secondaryColor": "#42C473",
+      "shape": "circle",
+      "source_uri": "https://helm.nginx.com/stable/nginx-ingress-2.3.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#090\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#FFF\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "2.3.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#009639",
+    "secondaryColor": "#42C473",
+    "shape": "circle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003cpath d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#090\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" width='333334' height='71436'\u003e\u003cpath d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#FFF\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-2.3.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "k8s.nginx.org/v1",
+    "kind": "Policy",
+    "schema": "{\n \"description\": \"Policy defines a Policy for VirtualServer and VirtualServerRoute resources.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PolicySpec is the spec of the Policy resource.\\nThe spec includes multiple fields, where each field represents a different policy.\\nOnly one policy (field) is allowed.\",\n   \"properties\": {\n    \"accessControl\": {\n     \"description\": \"The access control policy based on the client IP address.\",\n     \"properties\": {\n      \"allow\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"deny\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"apiKey\": {\n     \"description\": \"The API Key policy configures NGINX to authorize requests which provide a valid API Key in a specified header or query param.\",\n     \"properties\": {\n      \"clientSecret\": {\n       \"description\": \"The key to which the API key is applied. Can contain text, variables, or a combination of them. Accepted variables are $http_, $arg_, $cookie_.\",\n       \"type\": \"string\"\n      },\n      \"suppliedIn\": {\n       \"description\": \"The location of the API Key. For example, $http_auth, $arg_apikey, $cookie_auth. Accepted variables are $http_, $arg_, $cookie_.\",\n       \"properties\": {\n        \"header\": {\n         \"description\": \"The location of the API Key as a request header. For example, $http_auth. Accepted variables are $http_.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"query\": {\n         \"description\": \"The location of the API Key as a query param. For example, $arg_apikey. Accepted variables are $arg_.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"basicAuth\": {\n     \"description\": \"The basic auth policy configures NGINX to authenticate client requests using HTTP Basic authentication credentials.\",\n     \"properties\": {\n      \"realm\": {\n       \"description\": \"The realm for the basic authentication.\",\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the Htpasswd configuration. It must be in the same namespace as the Policy resource. The secret must be of the type nginx.org/htpasswd, and the config must be stored in the secret under the key htpasswd, otherwise the secret will be rejected as invalid.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cache\": {\n     \"description\": \"The Cache Key defines a cache policy for proxy caching\",\n     \"properties\": {\n      \"allowedCodes\": {\n       \"description\": \"AllowedCodes defines which HTTP response codes should be cached.\\nAccepts either:\\n- The string \\\"any\\\" to cache all response codes (must be the only element)\\n- A list of HTTP status codes as integers (100-599)\\nExamples: [\\\"any\\\"], [200, 301, 404], [200].\\nInvalid: [\\\"any\\\", 200] (cannot mix \\\"any\\\" with specific codes).\",\n       \"items\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"array\"\n      },\n      \"allowedMethods\": {\n       \"description\": \"AllowedMethods defines which HTTP methods should be cached.\\nOnly \\\"GET\\\", \\\"HEAD\\\", and \\\"POST\\\" are supported by NGINX proxy_cache_methods directive.\\nGET and HEAD are always cached by default even if not specified.\\nMaximum of 3 items allowed. Examples: [\\\"GET\\\"], [\\\"GET\\\", \\\"HEAD\\\", \\\"POST\\\"].\\nInvalid methods: PUT, DELETE, PATCH, etc.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"maxItems\": 3,\n       \"type\": \"array\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"allowed methods must be one of: GET, HEAD, POST\",\n         \"rule\": \"self.all(method, method in ['GET', 'HEAD', 'POST'])\"\n        }\n       ]\n      },\n      \"cachePurgeAllow\": {\n       \"description\": \"CachePurgeAllow defines IP addresses or CIDR blocks allowed to purge cache.\\nThis feature is only available in NGINX Plus.\\nExamples: [\\\"192.168.1.100\\\", \\\"10.0.0.0/8\\\", \\\"::1\\\"].\\nInvalid in NGINX OSS (will be ignored).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"cacheZoneName\": {\n       \"description\": \"CacheZoneName defines the name of the cache zone. Must start with a lowercase letter,\\nfollowed by alphanumeric characters or underscores, and end with an alphanumeric character.\\nSingle lowercase letters are also allowed. Examples: \\\"cache\\\", \\\"my_cache\\\", \\\"cache1\\\".\",\n       \"pattern\": \"^[a-z][a-zA-Z0-9_]*[a-zA-Z0-9]$|^[a-z]$\",\n       \"type\": \"string\"\n      },\n      \"cacheZoneSize\": {\n       \"description\": \"CacheZoneSize defines the size of the cache zone. Must be a number followed by a size unit:\\n'k' for kilobytes, 'm' for megabytes, or 'g' for gigabytes.\\nExamples: \\\"10m\\\", \\\"1g\\\", \\\"512k\\\".\",\n       \"pattern\": \"^[0-9]+[kmg]$\",\n       \"type\": \"string\"\n      },\n      \"levels\": {\n       \"description\": \"Levels defines the cache directory hierarchy levels for storing cached files.\\nMust be in format \\\"X:Y\\\" or \\\"X:Y:Z\\\" where X, Y, Z are either 1 or 2.\\nThis controls the number of subdirectory levels and their name lengths.\\nExamples: \\\"1:2\\\", \\\"2:2\\\", \\\"1:2:2\\\".\\nInvalid: \\\"3:1\\\", \\\"1:3\\\", \\\"1:2:3\\\".\",\n       \"pattern\": \"^[12](?::[12]){0,2}$\",\n       \"type\": \"string\"\n      },\n      \"overrideUpstreamCache\": {\n       \"default\": false,\n       \"description\": \"OverrideUpstreamCache controls whether to override upstream cache headers\\n(using proxy_ignore_headers directive). When true, NGINX will ignore\\ncache-related headers from upstream servers like Cache-Control, Expires, etc.\\nDefault: false.\",\n       \"type\": \"boolean\"\n      },\n      \"time\": {\n       \"description\": \"Time defines the default cache time. Required when allowedCodes is specified.\\nMust be a number followed by a time unit:\\n's' for seconds, 'm' for minutes, 'h' for hours, 'd' for days.\\nExamples: \\\"30s\\\", \\\"5m\\\", \\\"1h\\\", \\\"2d\\\".\",\n       \"pattern\": \"^[0-9]+[smhd]$\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"cacheZoneName\",\n      \"cacheZoneSize\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"time is required when allowedCodes is specified\",\n       \"rule\": \"!has(self.allowedCodes) || (has(self.allowedCodes) \\u0026\\u0026 has(self.time))\"\n      }\n     ]\n    },\n    \"egressMTLS\": {\n     \"description\": \"The EgressMTLS policy configures upstreams authentication and certificate verification.\",\n     \"properties\": {\n      \"ciphers\": {\n       \"description\": \"Specifies the enabled ciphers for requests to an upstream HTTPS server. The default is DEFAULT.\",\n       \"type\": \"string\"\n      },\n      \"protocols\": {\n       \"description\": \"Specifies the protocols for requests to an upstream HTTPS server. The default is TLSv1 TLSv1.1 TLSv1.2.\",\n       \"type\": \"string\"\n      },\n      \"serverName\": {\n       \"description\": \"Enables passing of the server name through Server Name Indication extension.\",\n       \"type\": \"boolean\"\n      },\n      \"sessionReuse\": {\n       \"description\": \"Enables reuse of SSL sessions to the upstreams. The default is true.\",\n       \"type\": \"boolean\"\n      },\n      \"sslName\": {\n       \"description\": \"Allows overriding the server name used to verify the certificate of the upstream HTTPS server.\",\n       \"type\": \"string\"\n      },\n      \"tlsSecret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the TLS certificate and key. It must be in the same namespace as the Policy resource. The secret must be of the type kubernetes.io/tls, the certificate must be stored in the secret under the key tls.crt, and the key must be stored under the key tls.key, otherwise the secret will be rejected as invalid.\",\n       \"type\": \"string\"\n      },\n      \"trustedCertSecret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the CA certificate. It must be in the same namespace as the Policy resource. The secret must be of the type nginx.org/ca, and the certificate must be stored in the secret under the key ca.crt, otherwise the secret will be rejected as invalid.\",\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"description\": \"Sets the verification depth in the proxied HTTPS server certificates chain. The default is 1.\",\n       \"type\": \"integer\"\n      },\n      \"verifyServer\": {\n       \"description\": \"Enables verification of the upstream HTTPS server certificate.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingressClassName\": {\n     \"description\": \"Specifies which instance of NGINX Ingress Controller must handle the Policy resource.\",\n     \"type\": \"string\"\n    },\n    \"ingressMTLS\": {\n     \"description\": \"The IngressMTLS policy configures client certificate verification.\",\n     \"properties\": {\n      \"clientCertSecret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the CA certificate. It must be in the same namespace as the Policy resource. The secret must be of the type nginx.org/ca, and the certificate must be stored in the secret under the key ca.crt, otherwise the secret will be rejected as invalid.\",\n       \"type\": \"string\"\n      },\n      \"crlFileName\": {\n       \"description\": \"The file name of the Certificate Revocation List. NGINX Ingress Controller will look for this file in /etc/nginx/secrets\",\n       \"type\": \"string\"\n      },\n      \"verifyClient\": {\n       \"description\": \"Verification for the client. Possible values are \\\"on\\\", \\\"off\\\", \\\"optional\\\", \\\"optional_no_ca\\\". The default is \\\"on\\\".\",\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"description\": \"Sets the verification depth in the client certificates chain. The default is 1.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"The JWT policy configures NGINX Plus to authenticate client requests using JSON Web Tokens.\",\n     \"properties\": {\n      \"jwksURI\": {\n       \"description\": \"The remote URI where the request will be sent to retrieve JSON Web Key set\",\n       \"type\": \"string\"\n      },\n      \"keyCache\": {\n       \"description\": \"Enables in-memory caching of JWKS (JSON Web Key Sets) that are obtained from the jwksURI and sets a valid time for expiration.\",\n       \"type\": \"string\"\n      },\n      \"realm\": {\n       \"description\": \"The realm of the JWT.\",\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the Htpasswd configuration. It must be in the same namespace as the Policy resource. The secret must be of the type nginx.org/htpasswd, and the config must be stored in the secret under the key htpasswd, otherwise the secret will be rejected as invalid.\",\n       \"type\": \"string\"\n      },\n      \"sniEnabled\": {\n       \"description\": \"Enables SNI (Server Name Indication) for the JWT policy. This is useful when the remote server requires SNI to serve the correct certificate.\",\n       \"type\": \"boolean\"\n      },\n      \"sniName\": {\n       \"description\": \"The SNI name to use when connecting to the remote server. If not set, the hostname from the ``jwksURI`` will be used.\",\n       \"type\": \"string\"\n      },\n      \"token\": {\n       \"description\": \"The token specifies a variable that contains the JSON Web Token. By default the JWT is passed in the Authorization header as a Bearer Token. JWT may be also passed as a cookie or a part of a query string, for example: $cookie_auth_token. Accepted variables are $http_, $arg_, $cookie_.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"The OpenID Connect policy configures NGINX to authenticate client requests by validating a JWT token against an OAuth2/OIDC token provider, such as Auth0 or Keycloak.\",\n     \"properties\": {\n      \"accessTokenEnable\": {\n       \"description\": \"Option of whether Bearer token is used to authorize NGINX to access protected backend.\",\n       \"type\": \"boolean\"\n      },\n      \"authEndpoint\": {\n       \"description\": \"URL for the authorization endpoint provided by your OpenID Connect provider.\",\n       \"type\": \"string\"\n      },\n      \"authExtraArgs\": {\n       \"description\": \"A list of extra URL arguments to pass to the authorization endpoint provided by your OpenID Connect provider. Arguments must be URL encoded, multiple arguments may be included in the list, for example [ arg1=value1, arg2=value2 ]\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"clientID\": {\n       \"description\": \"The client ID provided by your OpenID Connect provider.\",\n       \"type\": \"string\"\n      },\n      \"clientSecret\": {\n       \"description\": \"The name of the Kubernetes secret that stores the client secret provided by your OpenID Connect provider. It must be in the same namespace as the Policy resource. The secret must be of the type nginx.org/oidc, and the secret under the key client-secret, otherwise the secret will be rejected as invalid. If PKCE is enabled, this should be not configured.\",\n       \"type\": \"string\"\n      },\n      \"endSessionEndpoint\": {\n       \"description\": \"URL provided by your OpenID Connect provider to request the end user be logged out.\",\n       \"type\": \"string\"\n      },\n      \"jwksURI\": {\n       \"description\": \"URL for the JSON Web Key Set (JWK) document provided by your OpenID Connect provider.\",\n       \"type\": \"string\"\n      },\n      \"pkceEnable\": {\n       \"description\": \"Switches Proof Key for Code Exchange on. The OpenID client needs to be in public mode. clientSecret is not used in this mode.\",\n       \"type\": \"boolean\"\n      },\n      \"postLogoutRedirectURI\": {\n       \"description\": \"URI to redirect to after the logout has been performed. Requires endSessionEndpoint. The default is /_logout.\",\n       \"type\": \"string\"\n      },\n      \"redirectURI\": {\n       \"description\": \"Allows overriding the default redirect URI. The default is /_codexch.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"List of OpenID Connect scopes. The scope openid always needs to be present and others can be added concatenating them with a + sign, for example openid+profile+email, openid+email+userDefinedScope. The default is openid.\",\n       \"type\": \"string\"\n      },\n      \"tokenEndpoint\": {\n       \"description\": \"URL for the token endpoint provided by your OpenID Connect provider.\",\n       \"type\": \"string\"\n      },\n      \"zoneSyncLeeway\": {\n       \"description\": \"Specifies the maximum timeout in milliseconds for synchronizing ID/access tokens and shared values between Ingress Controller pods. The default is 200.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimit\": {\n     \"description\": \"The rate limit policy controls the rate of processing requests per a defined key.\",\n     \"properties\": {\n      \"burst\": {\n       \"description\": \"Excessive requests are delayed until their number exceeds the burst size, in which case the request is terminated with an error.\",\n       \"type\": \"integer\"\n      },\n      \"condition\": {\n       \"description\": \"Add a condition to a rate-limit policy.\",\n       \"properties\": {\n        \"default\": {\n         \"description\": \"sets the rate limit in this policy to be the default if no conditions are met. In a group of policies with the same condition, only one policy can be the default.\",\n         \"type\": \"boolean\"\n        },\n        \"jwt\": {\n         \"description\": \"defines a JWT condition to rate limit against.\",\n         \"properties\": {\n          \"claim\": {\n           \"description\": \"the JWT claim to be rate limit by. Nested claims should be separated by \\\".\\\"\",\n           \"pattern\": \"^([^$\\\\s\\\"'])*$\",\n           \"type\": \"string\"\n          },\n          \"match\": {\n           \"description\": \"the value of the claim to match against.\",\n           \"pattern\": \"^([^$\\\\s.\\\"'])*$\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"claim\",\n          \"match\"\n         ],\n         \"type\": \"object\"\n        },\n        \"variables\": {\n         \"description\": \"defines a Variables condition to rate limit against.\",\n         \"items\": {\n          \"description\": \"VariableCondition defines a condition to rate limit by a variable.\",\n          \"properties\": {\n           \"match\": {\n            \"description\": \"the value of the variable to match against.\",\n            \"pattern\": \"^([^\\\\s\\\"'])*$\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"the name of the variable to match against.\",\n            \"pattern\": \"^([^\\\\s\\\"'])*$\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"match\",\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"maxItems\": 1,\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"delay\": {\n       \"description\": \"The delay parameter specifies a limit at which excessive requests become delayed. If not set all excessive requests are delayed.\",\n       \"type\": \"integer\"\n      },\n      \"dryRun\": {\n       \"description\": \"Enables the dry run mode. In this mode, the rate limit is not actually applied, but the number of excessive requests is accounted as usual in the shared memory zone.\",\n       \"type\": \"boolean\"\n      },\n      \"key\": {\n       \"description\": \"The key to which the rate limit is applied. Can contain text, variables, or a combination of them.\\nVariables must be surrounded by ${}. For example: ${binary_remote_addr}. Accepted variables are\\n$binary_remote_addr, $request_uri, $request_method, $url, $http_, $args, $arg_, $cookie_,$jwt_claim_ .\",\n       \"type\": \"string\"\n      },\n      \"logLevel\": {\n       \"description\": \"Sets the desired logging level for cases when the server refuses to process requests due to rate exceeding, or delays request processing. Allowed values are info, notice, warn or error. Default is error.\",\n       \"type\": \"string\"\n      },\n      \"noDelay\": {\n       \"description\": \"Disables the delaying of excessive requests while requests are being limited. Overrides delay if both are set.\",\n       \"type\": \"boolean\"\n      },\n      \"rate\": {\n       \"description\": \"The rate of requests permitted. The rate is specified in requests per second (r/s) or requests per minute (r/m).\",\n       \"type\": \"string\"\n      },\n      \"rejectCode\": {\n       \"description\": \"Sets the status code to return in response to rejected requests. Must fall into the range 400..599. Default is 503.\",\n       \"type\": \"integer\"\n      },\n      \"scale\": {\n       \"description\": \"Enables a constant rate-limit by dividing the configured rate by the number of nginx-ingress pods currently serving traffic. This adjustment ensures that the rate-limit remains consistent, even as the number of nginx-pods fluctuates due to autoscaling. This will not work properly if requests from a client are not evenly distributed across all ingress pods (Such as with sticky sessions, long lived TCP Connections with many requests, and so forth). In such cases using zone-sync instead would give better results. Enabling zone-sync will suppress this setting.\",\n       \"type\": \"boolean\"\n      },\n      \"zoneSize\": {\n       \"description\": \"Size of the shared memory zone. Only positive values are allowed. Allowed suffixes are k or m, if none are present k is assumed.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"waf\": {\n     \"description\": \"The WAF policy configures WAF and log configuration policies for NGINX AppProtect\",\n     \"properties\": {\n      \"apBundle\": {\n       \"description\": \"The App Protect WAF policy bundle. Mutually exclusive with apPolicy.\",\n       \"type\": \"string\"\n      },\n      \"apPolicy\": {\n       \"description\": \"The App Protect WAF policy of the WAF. Accepts an optional namespace. Mutually exclusive with apBundle.\",\n       \"type\": \"string\"\n      },\n      \"enable\": {\n       \"description\": \"Enables NGINX App Protect WAF.\",\n       \"type\": \"boolean\"\n      },\n      \"securityLog\": {\n       \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n       \"properties\": {\n        \"apLogBundle\": {\n         \"description\": \"The App Protect WAF log bundle resource. Only works with apBundle.\",\n         \"type\": \"string\"\n        },\n        \"apLogConf\": {\n         \"description\": \"The App Protect WAF log conf resource. Accepts an optional namespace. Only works with apPolicy.\",\n         \"type\": \"string\"\n        },\n        \"enable\": {\n         \"description\": \"Enables security log.\",\n         \"type\": \"boolean\"\n        },\n        \"logDest\": {\n         \"description\": \"The log destination for the security log. Only accepted variables are syslog:server=\\u003cip-address\\u003e; localhost; fqdn\\u003e:\\u003cport\\u003e, stderr, \\u003cabsolute path to file\\u003e.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"securityLogs\": {\n       \"items\": {\n        \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n        \"properties\": {\n         \"apLogBundle\": {\n          \"description\": \"The App Protect WAF log bundle resource. Only works with apBundle.\",\n          \"type\": \"string\"\n         },\n         \"apLogConf\": {\n          \"description\": \"The App Protect WAF log conf resource. Accepts an optional namespace. Only works with apPolicy.\",\n          \"type\": \"string\"\n         },\n         \"enable\": {\n          \"description\": \"Enables security log.\",\n          \"type\": \"boolean\"\n         },\n         \"logDest\": {\n          \"description\": \"The log destination for the security log. Only accepted variables are syslog:server=\\u003cip-address\\u003e; localhost; fqdn\\u003e:\\u003cport\\u003e, stderr, \\u003cabsolute path to file\\u003e.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Policy\",\n \"type\": \"object\"\n}"
+  }
+}
