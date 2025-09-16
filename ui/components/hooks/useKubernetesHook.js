@@ -40,13 +40,21 @@ const handleErrorGenerator = (dispatch, notify) => (message, error) => {
   });
 };
 
-const handleSuccessGenerator = (dispatch, notify) => (message) => {
-  dispatch(updateProgressAction({ showProgress: false }));
-  notify({
-    message: message,
-    event_type: EVENT_TYPES.SUCCESS,
-  });
-};
+const handleSuccessGenerator =
+  (dispatch, notify) =>
+  (message, variant = 'success') => {
+    dispatch(updateProgressAction({ showProgress: false }));
+    const variantMap = {
+      success: EVENT_TYPES.SUCCESS,
+      info: EVENT_TYPES.INFO,
+      warning: EVENT_TYPES.WARNING,
+      error: EVENT_TYPES.ERROR,
+    };
+    notify({
+      message,
+      event_type: variantMap[variant] ?? EVENT_TYPES.SUCCESS,
+    });
+  };
 
 const handleInfoGenerator = (notify) => (message) => {
   notify({
@@ -65,7 +73,21 @@ export function useMesheryOperator() {
     dispatch(updateProgressAction({ showProgress: true }));
     pingMesheryOperator(
       connectionID,
-      () => handleSuccess(`Meshery Operator  pinged`),
+      (res) => {
+        const status = String(res?.operator?.status ?? CONTROLLER_STATES.UNKNOWN)
+          .trim()
+          .toUpperCase();
+
+        const statusToVariantMap = {
+          [CONTROLLER_STATES.DEPLOYED]: 'success',
+          [CONTROLLER_STATES.DEPLOYING]: 'info',
+          [CONTROLLER_STATES.NOTDEPLOYED]: 'error',
+          [CONTROLLER_STATES.UNKNOWN]: 'error',
+        };
+        const variant = statusToVariantMap[status] || 'warning';
+
+        handleSuccess(`Meshery Operator status: ${status}`, variant);
+      },
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
   };
