@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Fluentbit Skt
 subtitle: Collaborative and visual infrastructure as design for Fluentbit Skt

@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Linux
 subtitle: Collaborative and visual infrastructure as design for Linux

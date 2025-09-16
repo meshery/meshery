@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Gitlab Controller
 subtitle: Collaborative and visual infrastructure as design for Gitlab Controller

@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Fonio
 subtitle: Collaborative and visual infrastructure as design for Fonio

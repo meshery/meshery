@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Cloud Custodian
 subtitle: Collaborative and visual infrastructure as design for Cloud Custodian
