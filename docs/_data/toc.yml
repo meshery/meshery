@@ -181,6 +181,8 @@
       children:
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
+        - title: Exploring Canary Deployments
+          url: guides/tutorials/canary-deployment 
         - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
         - title: Exploring Kubernetes Pods
