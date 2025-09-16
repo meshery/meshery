@@ -536,8 +536,7 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
-	var clientMesh *meshkitkube.Client
-	clientMesh, err = meshkitkube.New([]byte(""))
+        clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return err
 	}
