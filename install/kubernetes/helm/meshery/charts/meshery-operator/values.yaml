@@ -1,0 +1,124 @@
+# Default values for meshery-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+mesheryOperator:
+  name: manager
+  image:
+    repository: meshery/meshery-operator:stable-latest
+    pullPolicy: Always
+  args:
+    - --metrics-addr=127.0.0.1:8080
+    - --enable-leader-election
+  command:
+    - /manager
+
+kubeRbac:
+  name: kube-rbac-proxy
+  image:
+    repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0
+    pullPolicy: Always
+  args:
+    - --secure-listen-address=0.0.0.0:8443
+    - --upstream=http://127.0.0.1:8080/
+    - --logtostderr=false
+    - --v=10
+
+env: {}
+
+probe:
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "meshery-operator"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: create
+  # The name of the service account to use.
+  # If not set and create is false, a name is generated using the fullname template
+  name: meshery-operator
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+annotations: {}
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: false
+  # runAsNonRoot: false
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 10000
+  annotations: {}
+
+ingress:
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "false"
+
+  hosts:
+    - host: chart-example.local
+      ## Paths to use for ingress rules
+      paths: []
+
+      ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
+      ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
+      # pathType: ImplementationSpecific
+      
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+testCase:
+  enabled: false
+
+# By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
+
+# If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
+# or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
+
+meshery-broker:
+  enabled: true
+  fullnameOverride: meshery-broker
+  serviceAccountNameOverride: meshery-server
+
+meshery-meshsync:
+  enabled: true
+  fullnameOverride: meshery-meshsync
+  serviceAccountNameOverride: meshery-server
