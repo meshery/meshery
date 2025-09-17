@@ -90,12 +90,9 @@ mesheryctl component view [component-name]
 
 // selectComponentPrompt lets user to select a model if models are more than one
 func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
-	componentNames := []string{}
-	componentArray := []component.ComponentDefinition{}
+	componentNames := make([]string, 0, len(components)) 
 
-	componentArray = append(componentArray, components...)
-
-	for _, component := range componentArray {
+	for _, component := range components {
 		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
 		componentNames = append(componentNames, componentName)
 	}
@@ -111,7 +108,7 @@ func selectComponentPrompt(components []component.ComponentDefinition) component
 			continue
 		}
 
-		return componentArray[i]
+		return components[i]
 	}
 }
 
@@ -131,11 +128,11 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		componenttKind := component.Component.Kind
-		if componenttKind == "" {
-			componenttKind = "N/A"
+		componentKind := component.Component.Kind
+		if componentKind == "" {
+			componentKind = "N/A"
 		}
-		rows = append(rows, []string{modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{modelName, componentKind, componentVersion})
 	}
 
 	return rows, int64(componentsResponse.Count)
