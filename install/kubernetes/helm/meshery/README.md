@@ -116,7 +116,7 @@ helm uninstall meshery --namespace meshery
 
 ```
 
-## Installing the Chart with a custom Meshery Adapters
+## Installing the Chart with one or more Meshery Adapters
 
 Eg: For [Meshery Adapter for Istio](https://github.com/meshery/meshery-istio)
 ```console
