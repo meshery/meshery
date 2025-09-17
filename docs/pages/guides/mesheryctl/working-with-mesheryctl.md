@@ -59,32 +59,32 @@ The `--config` flag is a global option that applies to all `mesheryctl` commands
 <div class="codeblock">
 <div class="clipboardjs">
 contexts:
-  <context1-name>:
-    endpoint: <url to meshery server rest api>
-    token: <name of token variable in this config file>
-    platform: <type of platform: ”docker” or “kubernetes”>
+  [context1-name]:
+    endpoint: [url to meshery server rest api]
+    token: [name of token variable in this config file]
+    platform: [type of platform: ”docker” or “kubernetes”]
     # Future: specify type of kubernetes (e.g. eks)
-    channel: <release channel: "stable", "stable-version", "edge", or "edge-version">
-    adapters: <collection of names of Meshery adapters:
-        “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”>
-    version: <version of Meshery client "latest", "v0.8.132", ...>
-    provider: <meshery's providers: "Meshery", "None", ...>
+    channel: [release channel: "stable", "stable-version", "edge", or "edge-version"]
+    adapters: [collection of names of Meshery adapters:
+        “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”]
+    version: [version of Meshery client "latest", "v0.8.132", ...]
+    provider: [meshery's providers: "Meshery", "None", ...]
     # add ENVs here
     env:
-      meshsync_deployment_mode: <"operator" or "embedded", default to "operator">
+      meshsync_deployment_mode: ["operator" or "embedded", default to "operator"]
 
-  <context2-name>:
-    endpoint: <url to meshery server rest api>
-    token: <name of token variable in this config file>
-    platform: <type of platform: ”docker” or “kubernetes”>
+  [context2-name]:
+    endpoint: [url to meshery server rest api]
+    token: [name of token variable in this config file]
+    platform: [type of platform: ”docker” or “kubernetes”]
 
-current-context: <context name>
+current-context: [context name]
 
 tokens:
-  - name: <token1-name>
-    location: <token-location>
-  - name: <token2-name>
-    value: <token-value>
+  - name: [token1-name]
+    location: [token-location]
+  - name: [token2-name]
+    value: [token-value]
     # Future: allow embedding of token certificate
 
 </div></div>
