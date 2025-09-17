@@ -53,6 +53,7 @@
           url: installation/playground
         - title: FAQs
           url: project/faq
+
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -94,11 +95,7 @@
           url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
-# - title: 📑 Features
-#   url: features
-#   links:
-#     - title: Meshery Playground
-#       url: features/playground
+
 - title: 📚 Guides & Tutorials
   url: guides
   links:
@@ -203,14 +200,17 @@
           url: guides/tutorials/publish-to-artifacthub
         - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
-# - title: ⚙️ Tasks
-#   url: tasks
-#   links:
+
 - title: 🛠 Integrations & Extensions
   url: "#"
   links:
-    - title: Integrations
-      url: extensions/integrations
+    - title: Integrations ↆ
+      url: extensibility/integrations
+      children:
+        - title: Jaeger
+          url: extensibility/integrations/jaeger
+        - title: ArgoCD
+          url: extensibility/integrations/argocd
     - title: Extensions ↆ
       url: extensions
       children:
@@ -306,6 +306,13 @@
           url: extensibility/verify-compatibility
         - title: UI Plugins
           url: extensibility/ui
+        - title: Integrations ↆ
+          url: extensibility/integrations
+          children:
+            - title: ArgoCD
+              url: extensibility/integrations/argocd
+            - title: Jaeger
+              url: extensibility/integrations/jaeger
     - title: Error Code
       url: reference/error-codes
     - title: Permission Keys
