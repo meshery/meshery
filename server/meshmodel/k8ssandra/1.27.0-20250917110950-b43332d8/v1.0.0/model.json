@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "pock-helm-chart",
-  "displayName": "Pock Helm Chart",
+  "name": "k8ssandra",
+  "displayName": "K8ssandra",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -20,9 +20,9 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Uncategorized"
+    "name": "App Definition and Development"
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Database",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
@@ -35,7 +35,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "0.1.0"
+    "version": "1.27.0-20250917110950-b43332d8"
   },
   "components_count": 0,
   "relationships_count": 0,
