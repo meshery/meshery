@@ -88,7 +88,7 @@ mesheryctl component view [component-name]
 	},
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
+// selectComponentPrompt lets user select a component when multiple components are found
 func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
 	componentNames := make([]string, 0, len(components)) 
 
