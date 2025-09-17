@@ -55,29 +55,41 @@ The following template is used to create a config file from scratch. Not all of 
 
 The `--config` flag is a global option that applies to all `mesheryctl` commands. It allows you to specify the location of a custom meshconfig file, overriding the default configuration. This config file is used to set up the `mesheryctl` context, which defines the configuration for a particular Meshery deployment.
 
-```
+<pre class="codeblock-pre">
+<div class="codeblock">
+<div class="clipboardjs">
 contexts:
-    <context1-name>:
-      endpoint: <url to meshery server rest api>
-      token: <name of token variable in this config file>
-      platform: <type of platform: ”docker” or “kubernetes”>
-      # Future: specify type of kubernetes (e.g. eks)
-      adapters: <collection of names of Meshery adapters:
-          “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”>
-
-   <context2-name>:
+  <context1-name>:
     endpoint: <url to meshery server rest api>
     token: <name of token variable in this config file>
     platform: <type of platform: ”docker” or “kubernetes”>
-    current-context: <context name>
+    # Future: specify type of kubernetes (e.g. eks)
+    channel: <release channel: "stable", "stable-version", "edge", or "edge-version">
+    adapters: <collection of names of Meshery adapters:
+        “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”>
+    version: <version of Meshery client "latest", "v0.8.132", ...>
+    provider: <meshery's providers: "Meshery", "None", ...>
+    # add ENVs here
+    env:
+      meshsync_deployment_mode: <"operator" or "embedded", default to "operator">
+
+  <context2-name>:
+    endpoint: <url to meshery server rest api>
+    token: <name of token variable in this config file>
+    platform: <type of platform: ”docker” or “kubernetes”>
+
+current-context: <context name>
 
 tokens:
-- name: <token1-name>
-  location: <token-location>
-- name: <token2-name>
-  value: <token-value>
-  # Future: allow embedding of token certificate
-```
+  - name: <token1-name>
+    location: <token-location>
+  - name: <token2-name>
+    value: <token-value>
+    # Future: allow embedding of token certificate
+
+</div></div>
+</pre>
+<br />
 
 Try it out and see for yourself. Run `mesheryctl system context create test` and `mesheryctl system context view test`.
 
