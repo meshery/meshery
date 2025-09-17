@@ -29,5 +29,8 @@ dependencies:
 - name: meshery-nighthawk
   repository: ""
   version: 0.7.0
-digest: sha256:2b66c37daa14297875735cc974409d2d1c58685eb9f6d48f81ef3b7e8939375d
-generated: "2024-03-29T21:54:28.552689051-04:00"
+- name: meshery-operator
+  repository: ""
+  version: 0.8.0
+digest: sha256:fccae2d28a432216da9afb02cc7320a0d4be0c503e69dff7f2dc410f8d245e6e
+generated: "2025-09-17T14:59:34.200831645+04:00"
