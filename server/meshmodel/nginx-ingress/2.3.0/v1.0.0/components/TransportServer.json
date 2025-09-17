@@ -1,0 +1,192 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Transport Server",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nginx-ingress",
+    "displayName": "NGINX Ingress Controller",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#009639",
+      "secondaryColor": "#42C473",
+      "shape": "circle",
+      "source_uri": "https://helm.nginx.com/stable/nginx-ingress-2.3.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#090\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#FFF\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "2.3.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#009639",
+    "secondaryColor": "#42C473",
+    "shape": "circle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003cpath d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#090\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 333334 71436\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" width='333334' height='71436'\u003e\u003cpath d=\"M62460 69726c-1883 0-3736-733-5122-2120L14483 24747v37738c0 4001-3242 7242-7242 7242-3998 0-7242-3242-7242-7242V7263c0-2931 1767-5570 4472-6691C5349 207 6292 19 7244 19c1920 0 3762 765 5118 2123l42855 42859V7263c0-4001 3242-7242 7242-7242 4001 0 7242 3242 7242 7242v55222c-2 3998-3244 7240-7242 7242M95994 91l-1990 3714-15390 27970-1990 3532 1990 3528 15391 27067 2079 3710h40284l1990-4072 11496-23174 5159-10500h-11676l-29419 90c-3826-52-7346 3415-7346 7242 0 3826 3520 7296 7346 7242l17742-90-4344 8780h-22812L93186 35215l11407-20639h24265l5657 11609h14576l-9187-22017-1993-4076H95994m73363-90c-3795 46-7201 3540-7152 7332v18872h14483V7334c46-3854-3482-7381-7332-7332m23214 69865c-3997-2-7239-3245-7239-7242V7403c0-4000 3242-7241 7242-7241 4001 0 7242 3241 7242 7242v37737l42856-42859c2704 1122 4469 3763 4469 6691v55224c0 3999-3242 7241-7242 7241-4001 0-7242-3242-7242-7242V24888l-42856 42859c-1356 1357-3197 2120-5116 2120h-5m123995-34908l22528-22445c2833-2821 2841-7407 17-10243-2821-2833-7404-2839-10239-18l-22562 22484-22562-22484c-2836-2824-7419-2815-10239 18-2824 2835-2816 7422 15 10243l22527 22446-22461 22382c-2836 2825-2842 7407-18 10240 1352 1364 3195 2132 5117 2132h13c1848 0 3696-704 5109-2114l22499-22417 22496 22417c1352 1353 3190 2114 5104 2114h9c1859 0 3714-709 5130-2132 2821-2833 2815-7415-18-10239l-22463-22383M169359 69662c-3795-46-7201-3539-7152-7331V32017h14483v30314c46 3850-3482 7377-7332 7331z\" fill=\"#FFF\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-2.3.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "k8s.nginx.org/v1",
+    "kind": "TransportServer",
+    "schema": "{\n \"description\": \"TransportServer defines the TransportServer resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TransportServerSpec is the spec of the TransportServer resource.\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The action to perform for a request.\",\n     \"properties\": {\n      \"pass\": {\n       \"description\": \"Passes connections/datagrams to an upstream. The upstream with that name must be defined in the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host\": {\n     \"description\": \"The host (domain name) of the server. Must be a valid subdomain as defined in RFC 1123, such as my-app or hello.example.com. When using a wildcard domain like *.example.com the domain must be contained in double quotes. The host value needs to be unique among all Ingress and VirtualServer resources.\",\n     \"type\": \"string\"\n    },\n    \"ingressClassName\": {\n     \"description\": \"Specifies which Ingress Controller must handle the VirtualServer resource.\",\n     \"type\": \"string\"\n    },\n    \"listener\": {\n     \"description\": \"Sets a custom HTTP and/or HTTPS listener. Valid fields are listener.http and listener.https. Each field must reference the name of a valid listener defined in a GlobalConfiguration resource\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"The name of a listener defined in a GlobalConfiguration resource.\",\n       \"type\": \"string\"\n      },\n      \"protocol\": {\n       \"description\": \"The protocol of the listener.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serverSnippets\": {\n     \"description\": \"Sets a custom snippet in server context. Overrides the server-snippets ConfigMap key.\",\n     \"type\": \"string\"\n    },\n    \"sessionParameters\": {\n     \"description\": \"The parameters of the session to be used for the Server context\",\n     \"properties\": {\n      \"timeout\": {\n       \"description\": \"The timeout between two successive read or write operations on client or proxied server connections. The default is 10m.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"streamSnippets\": {\n     \"description\": \"Sets a custom snippet in the stream context. Overrides the stream-snippets ConfigMap key.\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"The TLS termination configuration.\",\n     \"properties\": {\n      \"secret\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"upstreamParameters\": {\n     \"description\": \"UpstreamParameters defines parameters for an upstream.\",\n     \"properties\": {\n      \"connectTimeout\": {\n       \"description\": \"The timeout for establishing a connection with a proxied server.  The default is 60s.\",\n       \"type\": \"string\"\n      },\n      \"nextUpstream\": {\n       \"description\": \"If a connection to the proxied server cannot be established, determines whether a client connection will be passed to the next server. The default is true.\",\n       \"type\": \"boolean\"\n      },\n      \"nextUpstreamTimeout\": {\n       \"description\": \"The time allowed to pass a connection to the next server. The default is 0.\",\n       \"type\": \"string\"\n      },\n      \"nextUpstreamTries\": {\n       \"description\": \"The number of tries for passing a connection to the next server. The default is 0.\",\n       \"type\": \"integer\"\n      },\n      \"udpRequests\": {\n       \"description\": \"The number of datagrams, after receiving which, the next datagram from the same client starts a new session. The default is 0.\",\n       \"type\": \"integer\"\n      },\n      \"udpResponses\": {\n       \"description\": \"The number of datagrams expected from the proxied server in response to a client datagram.  By default, the number of datagrams is not limited.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"upstreams\": {\n     \"description\": \"A list of upstreams.\",\n     \"items\": {\n      \"description\": \"TransportServerUpstream defines an upstream.\",\n      \"properties\": {\n       \"backup\": {\n        \"description\": \"The name of the backup service of type ExternalName. This will be used when the primary servers are unavailable. Note: The parameter cannot be used along with the random, hash or ip_hash load balancing methods.\",\n        \"type\": \"string\"\n       },\n       \"backupPort\": {\n        \"description\": \"The port of the backup service. The backup port is required if the backup service name is provided. The port must fall into the range 1..65535.\",\n        \"type\": \"integer\"\n       },\n       \"failTimeout\": {\n        \"description\": \"Sets the number of unsuccessful attempts to communicate with the server that should happen in the duration set by the failTimeout parameter to consider the server unavailable. The default is 1.\",\n        \"type\": \"string\"\n       },\n       \"healthCheck\": {\n        \"description\": \"The health check configuration for the Upstream. Note: this feature is supported only in NGINX Plus.\",\n        \"properties\": {\n         \"enable\": {\n          \"description\": \"Enables a health check for an upstream server. The default is false.\",\n          \"type\": \"boolean\"\n         },\n         \"fails\": {\n          \"description\": \"The number of consecutive failed health checks of a particular upstream server after which this server will be considered unhealthy. The default is 1.\",\n          \"type\": \"integer\"\n         },\n         \"interval\": {\n          \"description\": \"The interval between two consecutive health checks. The default is 5s.\",\n          \"type\": \"string\"\n         },\n         \"jitter\": {\n          \"description\": \"The time within which each health check will be randomly delayed. By default, there is no delay.\",\n          \"type\": \"string\"\n         },\n         \"match\": {\n          \"description\": \"Controls the data to send and the response to expect for the healthcheck.\",\n          \"properties\": {\n           \"expect\": {\n            \"description\": \"A literal string or a regular expression that the data obtained from the server should match. The regular expression is specified with the preceding ~* modifier (for case-insensitive matching), or the ~ modifier (for case-sensitive matching). NGINX Ingress Controller validates a regular expression using the RE2 syntax.\",\n            \"type\": \"string\"\n           },\n           \"send\": {\n            \"description\": \"A string to send to an upstream server.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"passes\": {\n          \"description\": \"The number of consecutive passed health checks of a particular upstream server after which the server will be considered healthy. The default is 1.\",\n          \"type\": \"integer\"\n         },\n         \"port\": {\n          \"description\": \"The port used for health check requests. By default, the server port is used. Note: in contrast with the port of the upstream, this port is not a service port, but a port of a pod.\",\n          \"type\": \"integer\"\n         },\n         \"timeout\": {\n          \"description\": \"This overrides the timeout set by proxy_timeout which is set in SessionParameters for health checks. The default value is 5s.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"loadBalancingMethod\": {\n        \"description\": \"The method used to load balance the upstream servers. By default, connections are distributed between the servers using a weighted round-robin balancing method.\",\n        \"type\": \"string\"\n       },\n       \"maxConns\": {\n        \"description\": \"Sets the time during which the specified number of unsuccessful attempts to communicate with the server should happen to consider the server unavailable and the period of time the server will be considered unavailable. The default is 10s.\",\n        \"type\": \"integer\"\n       },\n       \"maxFails\": {\n        \"description\": \"Sets the number of maximum connections to the proxied server. Default value is zero, meaning there is no limit. The default is 0.\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"The name of the upstream. Must be a valid DNS label as defined in RFC 1035. For example, hello and upstream-123 are valid. The name must be unique among all upstreams of the resource.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"The port of the service. If the service doesn’t define that port, NGINX will assume the service has zero endpoints and close client connections/ignore datagrams. The port must fall into the range 1..65535.\",\n        \"type\": \"integer\"\n       },\n       \"service\": {\n        \"description\": \"The name of a service. The service must belong to the same namespace as the resource. If the service doesn’t exist, NGINX will assume the service has zero endpoints and close client connections/ignore datagrams.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Transport Server\",\n \"type\": \"object\"\n}"
+  }
+}
