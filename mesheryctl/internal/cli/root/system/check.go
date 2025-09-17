@@ -536,6 +536,9 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
+	if hc.Options.PrintLogs {
+		log.Info("\nMeshery Operators \n--------------")
+	}
 	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return err
