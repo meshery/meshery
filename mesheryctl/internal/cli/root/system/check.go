@@ -36,6 +36,8 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
 	"github.com/spf13/cobra"
@@ -578,16 +580,55 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		log.Info("✓ Meshery Operator is running")
 	}
 
-	if !brokerCheck {
-		log.Info("!! Meshery Broker is not running")
-	} else {
-		log.Info("✓ Meshery Broker is running")
-	}
-
 	if !meshsyncCheck {
 		log.Info("!! Meshsync is not running")
 	} else {
 		log.Info("✓ Meshsync is running")
+	}
+
+	if !brokerCheck {
+		log.Info("!! Meshery Broker is not running")
+	} else {
+		log.Info("✓ Meshery Broker is running")
+
+		// Check if broker CR contains Status.Endpoint object with External and Internal parts
+		brokerGVR := schema.GroupVersionResource{
+			Group:    "meshery.io",
+			Version:  "v1alpha1",
+			Resource: "brokers",
+		}
+
+		brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(context.TODO(), "meshery-broker", v1.GetOptions{})
+		if err != nil {
+			log.Info("!! Could not retrieve Meshery Broker CR")
+		} else {
+			// Check if status.endpoint exists with external and internal parts
+			status, found, err := unstructured.NestedMap(brokerCR.Object, "status")
+			if err == nil && found {
+				endpoint, endpointFound, err := unstructured.NestedMap(status, "endpoint")
+				if err == nil && endpointFound {
+					external, externalFound, _ := unstructured.NestedString(endpoint, "external")
+					internal, internalFound, _ := unstructured.NestedString(endpoint, "internal")
+
+					if externalFound && internalFound && external != "" && internal != "" {
+						log.Infof("✓ Meshery Broker CR contains Status.Endpoint (External: %s, Internal: %s)", external, internal)
+					} else {
+						missingParts := []string{}
+						if !externalFound || external == "" {
+							missingParts = append(missingParts, "External")
+						}
+						if !internalFound || internal == "" {
+							missingParts = append(missingParts, "Internal")
+						}
+						log.Infof("!! Meshery Broker CR Status.Endpoint missing: %s", strings.Join(missingParts, ", "))
+					}
+				} else {
+					log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
+				}
+			} else {
+				log.Info("!! Meshery Broker CR does not contain Status section")
+			}
+		}
 	}
 
 	return nil
