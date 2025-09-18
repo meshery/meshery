@@ -957,7 +957,6 @@ const Navigator_ = () => {
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
                     isCollapsed={state.openItems.includes(childId)}
-                    isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
                     hasChildren={!!children}
                   />
