@@ -24,7 +24,7 @@ import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
-import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullscreenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
 import CreateModelModal from './Settings/Registry/CreateModelModal';
@@ -84,7 +84,7 @@ function NavigatorExtension({ url }) {
   );
 
   return (
-    <DynamicFullScrrenLoader isLoading={loading}>
+    <DynamicFullscreenLoader isLoading={loading}>
       <RemoteComponent
         injectProps={{
           PatternServiceFormCore,
@@ -129,7 +129,7 @@ function NavigatorExtension({ url }) {
           openRegistryModal: registryModal,
         }}
       />
-    </DynamicFullScrrenLoader>
+    </DynamicFullscreenLoader>
   );
 }
 

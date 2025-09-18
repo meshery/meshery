@@ -4,7 +4,7 @@ import LoadingScreen from './LoadingComponentServer';
 import { createPortal } from 'react-dom/cjs/react-dom.production.min';
 import { NoSsr } from '@sistent/sistent';
 
-export const DynamicFullScrrenLoader = ({ children, ...props }) => {
+export const DynamicFullscreenLoader = ({ children, ...props }) => {
   if (!props.isLoading) return children;
 
   if (document.body) {
