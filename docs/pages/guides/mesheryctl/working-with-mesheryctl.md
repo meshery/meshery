@@ -66,7 +66,7 @@ contexts:
     # Future: specify type of kubernetes (e.g. eks)
     channel: [release channel: "stable", "stable-version", "edge", or "edge-version"]
     adapters: [collection of names of Meshery adapters:
-        "istio","linkerd","consul","nginx-sm","tanzu-sm","cilium","app-mesh","nighthawk","kuma","osm","nsm"]
+        "istio","linkerd","consul","nginx-sm","tanzu-sm","cilium","app-mesh","traefik-mesh","nighthawk","kuma","osm","nsm"]
     version: [version of Meshery client "latest", "v0.8.132", ...]
     provider: [meshery's providers: "Meshery", "None", ...]
     # add ENVs here
