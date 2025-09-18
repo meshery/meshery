@@ -186,7 +186,6 @@ const getNavigatorComponents = (
             <CatalogIcon
               primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
-              tertiaryFill="transparent"
               style={{ ...drawerIconsStyle }}
             />
           </>
