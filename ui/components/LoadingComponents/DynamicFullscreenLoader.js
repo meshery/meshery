@@ -10,21 +10,23 @@ export const DynamicFullScrrenLoader = ({ children, ...props }) => {
   if (document.body) {
     return (
       <NoSsr>
-        {createPortal(
-          <LoadingScreen
-            {...props}
-            message={randomLoadingMessage}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              zIndex: 9999999,
-              height: '100vh',
-              width: '100vw',
-            }}
-          />,
-          document.body,
-        )}
+        <>
+          {createPortal(
+            <LoadingScreen
+              {...props}
+              message={randomLoadingMessage}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 9999999,
+                height: '100vh',
+                width: '100vw',
+              }}
+            />,
+            document.body,
+          )}
+        </>
       </NoSsr>
     );
   }
