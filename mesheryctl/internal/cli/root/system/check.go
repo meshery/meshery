@@ -536,44 +536,10 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
-	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
-	_, err := utils.GetSessionData(hc.mctlCfg)
-	if err != nil {
-		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-	}
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Operators \n--------------")
 	}
-
-	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
-	if err != nil {
-		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-	}
-	var pages *models.MesheryK8sContextPage
-	var contexts []*models.K8sContext
-	resp, err := client.Do(req)
-	if err != nil || resp.StatusCode != 200 {
-		return errors.Errorf("\nFailed to connect to Meshery server : %v", err)
-	}
-	defer resp.Body.Close()
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Errorf("\n Invalid response: %v", err)
-	}
-
-	err = json.Unmarshal(data, &pages)
-	contexts = pages.Contexts
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	if len(contexts) == 0 {
-		return errors.New("!! Meshery is not connected to any contexts ")
-	}
-
-	var clientMesh *meshkitkube.Client
-	clientMesh, err = meshkitkube.New([]byte(""))
+	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return err
 	}
