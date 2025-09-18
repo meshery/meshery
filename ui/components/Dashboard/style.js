@@ -43,7 +43,9 @@ export const ConnectClusterText = styled(Typography)({
   marginBottom: '0.5rem',
 });
 
-export const HoneycombRoot = styled(Card)(({ theme, isEditMode }) => ({
+export const HoneycombRoot = styled(Card, {
+  shouldForwardProp: (prop) => prop !== 'isEditMode',
+})(({ theme, isEditMode }) => ({
   backgroundColor:
     theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white,
   padding: theme.spacing(2),
