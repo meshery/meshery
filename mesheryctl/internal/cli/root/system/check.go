@@ -592,10 +592,16 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		log.Info("✓ Meshery Broker is running")
 
 		// Check if broker CR contains Status.Endpoint object with External and Internal parts
+		const (
+			brokerGroup    = "meshery.io"
+			brokerVersion  = "v1alpha1"
+			brokerResource = "brokers"
+			brokerName     = "meshery-broker"
+		)
 		brokerGVR := schema.GroupVersionResource{
-			Group:    "meshery.io",
-			Version:  "v1alpha1",
-			Resource: "brokers",
+			Group:    brokerGroup,
+			Version:  brokerVersion,
+			Resource: brokerResource,
 		}
 
 		brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(context.TODO(), "meshery-broker", v1.GetOptions{})
