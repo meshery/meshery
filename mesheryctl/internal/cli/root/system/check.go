@@ -610,9 +610,17 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		} else {
 			// Check if status.endpoint exists with external and internal parts
 			status, found, err := unstructured.NestedMap(brokerCR.Object, "status")
-			if err == nil && found {
+			if err != nil {
+				log.Infof("!! Error parsing Meshery Broker CR status: %v", err)
+			} else if !found {
+				log.Info("!! Meshery Broker CR does not contain Status section")
+			} else {
 				endpoint, endpointFound, err := unstructured.NestedMap(status, "endpoint")
-				if err == nil && endpointFound {
+				if err != nil {
+					log.Infof("!! Error parsing Meshery Broker CR status.endpoint: %v", err)
+				} else if !endpointFound {
+					log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
+				} else {
 					external, externalFound, _ := unstructured.NestedString(endpoint, "external")
 					internal, internalFound, _ := unstructured.NestedString(endpoint, "internal")
 
@@ -628,11 +636,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 						}
 						log.Infof("!! Meshery Broker CR Status.Endpoint missing: %s", strings.Join(missingParts, ", "))
 					}
-				} else {
-					log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
 				}
-			} else {
-				log.Info("!! Meshery Broker CR does not contain Status section")
 			}
 		}
 	}
