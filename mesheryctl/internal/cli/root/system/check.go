@@ -604,7 +604,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 			Resource: brokerResource,
 		}
 
-brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(hc.ctx, brokerName, v1.GetOptions{})
+		brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(context.Background(), brokerName, v1.GetOptions{})
 		if err != nil {
 			log.Info("!! Could not retrieve Meshery Broker CR")
 		} else {
