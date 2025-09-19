@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kong Vault",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kong",
+    "displayName": "Kong API Gateway",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#003459",
+      "shape": "circle",
+      "source_uri": "https://github.com/Kong/charts/releases/download/kong-2.52.0/kong-2.52.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "2.52.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://github.com/Kong/charts/releases/download/kong-2.52.0/kong-2.52.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "configuration.konghq.com/v1alpha1",
+    "kind": "KongVault",
+    "schema": "{\n \"description\": \"KongVault is the schema for kongvaults API which defines a custom Kong vault.\\nA Kong vault is a storage to store sensitive data, where the values can be referenced in configuration of plugins.\\nSee: https://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongVaultSpec defines specification of a custom Kong vault.\",\n   \"properties\": {\n    \"backend\": {\n     \"description\": \"Backend is the type of the backend storing the secrets in the vault.\\nThe supported backends of Kong is listed here:\\nhttps://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/backends/\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"Config is the configuration of the vault. Varies for different backends.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"controlPlaneRef\": {\n     \"description\": \"ControlPlaneRef is a reference to a Konnect ControlPlane this KongVault is associated with.\",\n     \"properties\": {\n      \"konnectID\": {\n       \"description\": \"KonnectID is the schema for the KonnectID type.\\nThis field is required when the Type is konnectID.\",\n       \"pattern\": \"^[0-9a-f]{8}(?:\\\\-[0-9a-f]{4}){3}-[0-9a-f]{12}$\",\n       \"type\": \"string\"\n      },\n      \"konnectNamespacedRef\": {\n       \"description\": \"KonnectNamespacedRef is a reference to a Konnect Control Plane entity inside the cluster.\\nIt contains the name of the Konnect Control Plane.\\nThis field is required when the Type is konnectNamespacedRef.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name is the name of the Konnect Control Plane.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace is the namespace where the Konnect Control Plane is in.\\nCurrently only cluster scoped resources (KongVault) are allowed to set `konnectNamespacedRef.namespace`.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"default\": \"kic\",\n       \"description\": \"Type indicates the type of the control plane being referenced. Allowed values:\\n- konnectID\\n- konnectNamespacedRef\\n- kic\\n\\nThe default is kic, which implies that the Control Plane is KIC.\",\n       \"enum\": [\n        \"konnectID\",\n        \"konnectNamespacedRef\",\n        \"kic\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"'konnectID' type is not supported\",\n       \"rule\": \"self.type != 'konnectID'\"\n      },\n      {\n       \"message\": \"when type is konnectNamespacedRef, konnectNamespacedRef must be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectNamespacedRef') ? has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is konnectNamespacedRef, konnectID must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectNamespacedRef') ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is konnectID, konnectID must be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectID') ? has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is konnectID, konnectNamespacedRef must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectID') ? !has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is kic, konnectID must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'kic') ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is kic, konnectNamespacedRef must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'kic') ? !has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is unset, konnectID must not be set\",\n       \"rule\": \"!has(self.type) ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is unset, konnectNamespacedRef must not be set\",\n       \"rule\": \"!has(self.type) ? !has(self.konnectNamespacedRef) : true\"\n      }\n     ]\n    },\n    \"description\": {\n     \"description\": \"Description is the additional information about the vault.\",\n     \"type\": \"string\"\n    },\n    \"prefix\": {\n     \"description\": \"Prefix is the prefix of vault URI for referencing values in the vault.\\nIt is immutable after created.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"Tags are the tags associated to the vault for grouping and filtering.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"maxItems\": 20,\n     \"type\": \"array\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"tags entries must not be longer than 128 characters\",\n       \"rule\": \"self.all(tag, size(tag) \\u003e= 1 \\u0026\\u0026 size(tag) \\u003c= 128)\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"backend\",\n    \"prefix\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kong Vault\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"The spec.prefix field is immutable\",\n   \"rule\": \"self.spec.prefix == oldSelf.spec.prefix\"\n  },\n  {\n   \"message\": \"controlPlaneRef is required once set\",\n   \"rule\": \"!has(oldSelf.spec.controlPlaneRef) || has(self.spec.controlPlaneRef)\"\n  },\n  {\n   \"message\": \"spec.controlPlaneRef is immutable when an entity is already Programmed\",\n   \"rule\": \"(!has(self.status) || !self.status.conditions.exists(c, c.type == 'Programmed' \\u0026\\u0026 c.status == 'True') || !has(self.spec.controlPlaneRef)) ? true : oldSelf.spec.controlPlaneRef == self.spec.controlPlaneRef\"\n  }\n ]\n}"
+  }
+}
