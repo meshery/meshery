@@ -17,7 +17,7 @@ func TestCreateWorkspace(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// Test scenarios for workspace creation
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
 			Name:             "Create workspace without arguments",
 			Args:             []string{"create"},

@@ -17,7 +17,7 @@ func TestList(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List registered relationships empty",
 			Args:             []string{"list"},

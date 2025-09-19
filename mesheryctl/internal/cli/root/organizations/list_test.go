@@ -18,7 +18,7 @@ func TestListOrganizations(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List organizations whithout providing organization ID",
 			Args:             []string{"list"},

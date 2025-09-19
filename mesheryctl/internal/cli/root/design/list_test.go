@@ -20,7 +20,7 @@ func TestDesignListCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenrios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Fetch Design List",
 			Args:             []string{"list", "--page", "1"},
