@@ -496,6 +496,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       queryParams.Get("status"),
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -572,6 +573,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       queryParams.Get("status"),
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -646,6 +648,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      queryParams.Get("status"),
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -720,6 +723,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      queryParams.Get("status"),
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -789,6 +793,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -863,6 +868,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -934,6 +940,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -1006,6 +1013,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
