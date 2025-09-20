@@ -4,27 +4,29 @@ import LoadingScreen from './LoadingComponentServer';
 import { createPortal } from 'react-dom/cjs/react-dom.production.min';
 import { NoSsr } from '@sistent/sistent';
 
-export const DynamicFullScrrenLoader = ({ children, ...props }) => {
+export const DynamicFullscreenLoader = ({ children, ...props }) => {
   if (!props.isLoading) return children;
 
   if (document.body) {
     return (
       <NoSsr>
-        {createPortal(
-          <LoadingScreen
-            {...props}
-            message={randomLoadingMessage}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              zIndex: 9999999,
-              height: '100vh',
-              width: '100vw',
-            }}
-          />,
-          document.body,
-        )}
+        <>
+          {createPortal(
+            <LoadingScreen
+              {...props}
+              message={randomLoadingMessage}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 9999999,
+                height: '100vh',
+                width: '100vw',
+              }}
+            />,
+            document.body,
+          )}
+        </>
       </NoSsr>
     );
   }
