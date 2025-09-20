@@ -19,8 +19,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/organizations"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 
@@ -68,6 +71,11 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
+		err = verifyOrgId(orgIdFlag)
+		if err != nil {
+			return err
+		}
+
 		payload := &models.WorkspacePayload{
 			Name:           nameFlag,
 			Description:    descriptionFlag,
@@ -105,4 +113,24 @@ func init() {
 	createWorkspaceCmd.Flags().StringP("orgId", "o", "", "Organization ID")
 	createWorkspaceCmd.Flags().StringP("name", "n", "", "Name of the workspace")
 	createWorkspaceCmd.Flags().StringP("description", "d", "", "Description of the workspace")
+}
+
+func verifyOrgId(orgId string) error {
+	orgUrl, err := url.Parse(fmt.Sprintf("%s?all=true", organizations.OrganizationsApiPath))
+	if err != nil {
+		return err
+	}
+
+	orgs, err := api.Fetch[models.OrganizationsPage](orgUrl.String())
+	if err != nil {
+		return err
+	}
+
+	for _, org := range orgs.Organizations {
+		if org.ID.String() == orgId {
+			return nil
+		}
+	}
+
+	return errors.Errorf("No organization found with the provided ID")
 }

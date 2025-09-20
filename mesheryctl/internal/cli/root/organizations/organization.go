@@ -12,7 +12,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listOrgCmd}
-	organizationsApiPath = "api/identity/orgs"
+	OrganizationsApiPath = "api/identity/orgs"
 	count                bool
 )
 
@@ -41,7 +41,7 @@ mesheryctl exp organization list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
+			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", OrganizationsApiPath))
 			if err != nil {
 				return err
 			}
