@@ -91,8 +91,9 @@ Meshery chart for deploying Meshery
 ## Setup Repo Info
 
 ```console
-helm repo add meshery meshery https://meshery.io/charts/
+helm repo add meshery https://meshery.io/charts/
 helm repo update
+
 ```
 
 _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
@@ -102,29 +103,22 @@ _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation
 To install the chart with the release name `meshery`:
 
 ```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery
+helm install meshery meshery/meshery --namespace meshery --create-namespace
+
 ```
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `meshery` deployment:
+To uninstall `meshery` helm release:
 
 ```console
-helm delete meshery
+helm uninstall meshery --namespace meshery
+
 ```
 
-## Installing the Chart with a custom namespace
-
-```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery --namespace meshery
-```
-
-## Installing the Chart with a custom Meshery Adapters
+## Installing the Chart with one or more Meshery Adapters
 
 Eg: For [Meshery Adapter for Istio](https://github.com/meshery/meshery-istio)
 ```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery --set meshery-istio.enabled=true
+helm install meshery meshery/meshery --set meshery-istio.enabled=true --namespace meshery --create-namespace
 ```
