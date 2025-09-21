@@ -12,7 +12,7 @@ You may encounter the following warning when adding a cluster to the Meshery Ser
 
 <img class="center" style="width:100%; height:auto;" src="{{site.baseurl}}/assets/img/troubleshoot/out-of-cluster-connectivity-error.png" alt="Out-of-cluster connectivity warning" />
 
-> **⚠️ No reachable contexts found in the uploaded kubeconfig `"file_name"`**
+> **⚠️ No reachable contexts found in the uploaded kubeconfig `file_name`**
 
 This indicates that the **Meshery Server**, installed **out-of-cluster**, cannot access the Kubernetes cluster’s API server URL.
 
