@@ -76,12 +76,12 @@ If your config has not been autodetected, you can manually upload your kubeconfi
 
 <p>If you encounter a warning like the one below when uploading your kubeconfig file: </p>
 
-{% include alert.html type="warning" title="WARNING" content="⚠️ No reachable contexts found in the uploaded kube config 'file_name'." %}
+{% include alert.html type="warning" title="WARNING" content="⚠️ No reachable contexts found in the uploaded kubeconfig `file_name`." %}
 
-Make sure that the Kubernetes cluster API server referenced in the kubeconfig (usually in `~/.kube/config` for the context) is accessible from the <code>Out-of-Cluster Meshery Server</code>.
+Make sure that the Kubernetes cluster API server referenced in the kubeconfig (usually in `~/.kube/config` for the context) is accessible from the **Out-of-Cluster Meshery Server**.
 
-<p>If the server cannot reach the cluster API, you will see the above warning. Ensure that proper <code>network connectivity</code> exists between the Meshery Server UI (running out-of-cluster) and the cluster API server URL. <a href="{{ site.baseurl }}/guides/troubleshooting/out-of-cluster-connectivity">See the full troubleshooting guide.</a>
-</p> 
+<p>If the server cannot reach the cluster API, you will see the above warning. Ensure that proper **network connectivity** exists between the Meshery Server UI (running out-of-cluster) and the cluster API server URL. <a href="{{ site.baseurl }}/guides/troubleshooting/out-of-cluster-connectivity">See the full troubleshooting guide.</a>
+</p>
 
 </details>
 
