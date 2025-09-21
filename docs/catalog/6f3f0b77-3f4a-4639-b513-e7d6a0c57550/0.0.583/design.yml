@@ -1,8 +1,8 @@
 {
   "id": "6f3f0b77-3f4a-4639-b513-e7d6a0c57550",
-  "name": "AWS Elastic File System",
+  "name": "Untitled Design",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.583",
+  "version": "0.0.587",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -3044,85 +3044,6 @@
       }
     },
     {
-      "id": "7dda8405-9de1-4088-9052-3c3067942206",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "instance-zuy",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "41f11523-408a-e789-a2d3-5e73235d4448",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
-        "displayName": "AWS EC2",
-        "status": "enabled",
-        "registrant": {
-          "id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-          "name": "Github",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "github",
-          "status": "registered",
-          "created_at": "2025-09-19T09:43:58.987965887Z",
-          "updated_at": "2025-09-19T09:43:58.987965887Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-        "category": {
-          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-          "name": "Provisioning"
-        },
-        "subCategory": "Compute",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#ED7100",
-          "shape": "rectangle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
-        },
-        "model": {
-          "version": "v1.6.1"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "primaryColor": "#ED7100",
-        "secondaryColor": "#00D3A9",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg"
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": false,
-        "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
-      },
-      "configuration": {
-        "spec": {
-          "subnetID": "subnet-vbo"
-        }
-      },
-      "component": {
-        "version": "ec2.services.k8s.aws/v1alpha1",
-        "kind": "Instance",
-        "schema": ""
-      }
-    },
-    {
       "id": "71c8a8dd-79bf-4009-b3a3-32f596f0702a",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
@@ -6022,10 +5943,10 @@
       }
     },
     {
-      "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
+      "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
-      "displayName": "subnet-vbo",
+      "displayName": "subnet-dlu",
       "description": "",
       "format": "JSON",
       "model": {
@@ -6091,7 +6012,6 @@
       },
       "configuration": {
         "spec": {
-          "routeTableID": "route table-lir",
           "vpcID": "vpc-ed"
         }
       },
@@ -6512,6 +6432,85 @@
       "component": {
         "version": "emrcontainers.services.k8s.aws/v1alpha1",
         "kind": "VirtualCluster",
+        "schema": ""
+      }
+    },
+    {
+      "id": "546509b2-3633-458a-8af9-7dbf59f0e429",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "instance-aad",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "41f11523-408a-e789-a2d3-5e73235d4448",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "status": "enabled",
+        "registrant": {
+          "id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
+          "name": "Github",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "created_at": "2025-09-19T09:43:58.987965887Z",
+          "updated_at": "2025-09-19T09:43:58.987965887Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
+        "category": {
+          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+          "name": "Provisioning"
+        },
+        "subCategory": "Compute",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ED7100",
+          "shape": "rectangle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
+        },
+        "model": {
+          "version": "v1.6.1"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+      },
+      "configuration": {
+        "spec": {
+          "subnetID": "subnet-dlu"
+        }
+      },
+      "component": {
+        "version": "ec2.services.k8s.aws/v1alpha1",
+        "kind": "Instance",
         "schema": ""
       }
     }
@@ -16235,175 +16234,6 @@
       "version": ""
     },
     {
-      "id": "256504f1-63b6-445a-bc1a-c285a1f469d5",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A hierarchical inventory relationship where Subnet acts as parent to Instance, launching the Instance in the Subnet.",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "c8132bb8-4278-2a71-0da7-faef6c990032",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
-        "displayName": "AWS EC2",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-        "category": {
-          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-          "name": "Provisioning"
-        },
-        "subCategory": "Compute",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#ED7100",
-          "shape": "rectangle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
-        },
-        "model": {
-          "version": "v1.5.0"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
-                "kind": "Subnet",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "7dda8405-9de1-4088-9052-3c3067942206",
-                "kind": "Instance",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "subnetID"
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "approved",
-      "type": "parent",
-      "version": "v1.0.0"
-    },
-    {
       "id": "387c14d7-f1aa-4883-b89b-c2eaa84de61a",
       "evaluationQuery": "",
       "kind": "hierarchical",
@@ -16573,7 +16403,176 @@
       "version": "v1.0.0"
     },
     {
-      "id": "7cb43c0e-b557-4f91-a5df-f02461d30053",
+      "id": "3f48c98b-abe0-4231-91b2-c1c50420dd12",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship where Subnet acts as parent to Instance, launching the Instance in the Subnet.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c8132bb8-4278-2a71-0da7-faef6c990032",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
+        "category": {
+          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+          "name": "Provisioning"
+        },
+        "subCategory": "Compute",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ED7100",
+          "shape": "rectangle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
+        },
+        "model": {
+          "version": "v1.5.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
+                "kind": "Subnet",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "546509b2-3633-458a-8af9-7dbf59f0e429",
+                "kind": "Instance",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "subnetID"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "76b5a8c3-118b-4d4c-87e6-d6a576989a1f",
       "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
@@ -16633,8 +16632,8 @@
           "allow": {
             "from": [
               {
-                "id": "8c0af7b4-0d67-4bb7-b287-7ee87fc6d59e",
-                "kind": "VPC",
+                "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
+                "kind": "Subnet",
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
@@ -16683,8 +16682,8 @@
             ],
             "to": [
               {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
-                "kind": "Subnet",
+                "id": "546509b2-3633-458a-8af9-7dbf59f0e429",
+                "kind": "Instance",
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
@@ -16727,176 +16726,7 @@
                     [
                       "configuration",
                       "spec",
-                      "vpcID"
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "approved",
-      "type": "parent",
-      "version": "v1.0.0"
-    },
-    {
-      "id": "7db085da-08f9-44f2-9496-62f19df7c1b9",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A hierarchical inventory relationship where a VPC acts as the parent container for Subnets, which define IP address ranges within the VPC. Subnets inherit network settings from the VPC and are confined to a single Availability Zone.",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "c8132bb8-4278-2a71-0da7-faef6c990032",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
-        "displayName": "AWS EC2",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-        "category": {
-          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-          "name": "Provisioning"
-        },
-        "subCategory": "Compute",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#ED7100",
-          "shape": "rectangle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
-        },
-        "model": {
-          "version": "v1.5.0"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "8c0af7b4-0d67-4bb7-b287-7ee87fc6d59e",
-                "kind": "VPC",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
-                "kind": "Subnet",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcID"
+                      "subnetID"
                     ]
                   ]
                 }
@@ -17062,6 +16892,175 @@
                 "patch": {
                   "patchStrategy": "replace",
                   "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "vpcID"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "7f1892cb-91c2-4cb3-b6fd-52096d45e113",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship where a VPC acts as the parent container for Subnets, which define IP address ranges within the VPC. Subnets inherit network settings from the VPC and are confined to a single Availability Zone.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c8132bb8-4278-2a71-0da7-faef6c990032",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
+        "category": {
+          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+          "name": "Provisioning"
+        },
+        "subCategory": "Compute",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ED7100",
+          "shape": "rectangle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
+        },
+        "model": {
+          "version": "v1.5.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8c0af7b4-0d67-4bb7-b287-7ee87fc6d59e",
+                "kind": "VPC",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
+                "kind": "Subnet",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
                     [
                       "configuration",
                       "spec",
@@ -17422,7 +17421,7 @@
       "version": "v1.0.0"
     },
     {
-      "id": "cf1befaa-b21d-4cce-b183-ff2103deb41a",
+      "id": "be0c7112-c956-4959-ac15-118c4e7c1efa",
       "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
@@ -17482,7 +17481,7 @@
           "allow": {
             "from": [
               {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
+                "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
                 "kind": "Subnet",
                 "match": {},
                 "match_strategy_matrix": null,
@@ -17532,7 +17531,7 @@
             ],
             "to": [
               {
-                "id": "7dda8405-9de1-4088-9052-3c3067942206",
+                "id": "546509b2-3633-458a-8af9-7dbf59f0e429",
                 "kind": "Instance",
                 "match": {},
                 "match_strategy_matrix": null,
@@ -17577,6 +17576,175 @@
                       "configuration",
                       "spec",
                       "subnetID"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "c42360d8-8894-423c-8a14-3247bc972d51",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). ",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "41f11523-408a-e789-a2d3-5e73235d4448",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "aws-ec2-controller",
+        "displayName": "AWS EC2",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
+        "category": {
+          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+          "name": "Provisioning"
+        },
+        "subCategory": "Compute",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ED7100",
+          "shape": "rectangle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
+        },
+        "model": {
+          "version": "v1.6.1"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8c0af7b4-0d67-4bb7-b287-7ee87fc6d59e",
+                "kind": "VPC",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "9510cb1f-1a13-4e28-b6d5-4715405c6a7f",
+                "kind": "Subnet",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "aws-ec2-controller",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "vpcID"
                     ]
                   ]
                 }
@@ -17760,179 +17928,6 @@
       "version": "v1.0.0"
     },
     {
-      "id": "dfe59684-f269-4f96-813c-eb7510a0fb8d",
-      "evaluationQuery": "",
-      "kind": "edge",
-      "metadata": {
-        "description": "An edge network relationship where RouteTable associates with Subnet for routing control.",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "c8132bb8-4278-2a71-0da7-faef6c990032",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
-        "displayName": "AWS EC2",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-        "category": {
-          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-          "name": "Provisioning"
-        },
-        "subCategory": "Compute",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#ED7100",
-          "shape": "rectangle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
-        },
-        "model": {
-          "version": "v1.5.0"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "783a92e5-a8a3-40ce-861e-93e3d9eec0e4",
-                "kind": "RouteTable",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
-                "kind": "Subnet",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "routeTableID"
-                    ]
-                  ]
-                }
-              }
-            ]
-          },
-          "deny": {
-            "from": null,
-            "to": null
-          }
-        }
-      ],
-      "subType": "network",
-      "status": "approved",
-      "type": "non-binding",
-      "version": "v1.0.0"
-    },
-    {
       "id": "e28fcdd0-0c9d-40f8-9a20-7d34db9449ee",
       "evaluationQuery": "",
       "kind": "hierarchical",
@@ -18088,175 +18083,6 @@
                       "configuration",
                       "spec",
                       "vpcID"
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "inventory",
-      "status": "approved",
-      "type": "parent",
-      "version": "v1.0.0"
-    },
-    {
-      "id": "f3725bf5-6654-4047-828d-3c391d6841de",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). ",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "41f11523-408a-e789-a2d3-5e73235d4448",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
-        "displayName": "AWS EC2",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "41882836-afe0-a049-79b3-2e85a8c0fc69",
-        "category": {
-          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-          "name": "Provisioning"
-        },
-        "subCategory": "Compute",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#ED7100",
-          "shape": "rectangle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
-        },
-        "model": {
-          "version": "v1.6.1"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "e6546f9a-3ac3-4681-9d69-3eaa3ae60269",
-                "kind": "Subnet",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "7dda8405-9de1-4088-9052-3c3067942206",
-                "kind": "Instance",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "aws-ec2-controller",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "subnetID"
                     ]
                   ]
                 }
