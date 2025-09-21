@@ -72,6 +72,7 @@ dependencies:
     condition: meshery-nighthawk.enabled
   - name: meshery-operator
     version: 0.8.0
+    repository: "file://../meshery-operator"
     condition: meshery-operator.enabled
 
 maintainers:

@@ -173,4 +173,3 @@ mesherygateway:
 meshery-operator:
   enabled: false
   fullnameOverride: "meshery-operator"
-
