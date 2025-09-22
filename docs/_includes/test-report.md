@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: September 20th 2025, 11:51:32 pm
+- Testing started at: September 21st 2025, 11:53:39 pm
 
 **📦 Test Result Summary**
 
-- ✅ 90 passed
+- ✅ 86 passed
 - ❌ 0 failed
 - ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 13 seconds_
+⌛ _Duration: 8 minutes and 7 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ⚠️ |
+| 1 | chromium-local-provider | imports design via File |  | ⚠️ |
 
 </div>
 </details>
