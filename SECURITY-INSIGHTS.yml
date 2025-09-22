@@ -9,7 +9,7 @@ project-lifecycle:
   stage: active
   bug-fixes-only: false
   core-maintainers:
-  - @meshery/core-maintainers
+  - "@meshery/core-maintainers"
   - github:leecalcote
   - github:aabidsofi19
 contribution-policy:
