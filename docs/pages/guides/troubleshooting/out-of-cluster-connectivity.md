@@ -8,31 +8,39 @@ category: troubleshooting
 language: en
 ---
 
-You may encounter the following warning when adding a cluster to the Meshery Server:
+When you add a cluster to the Meshery Server, you might see this warning:
 
 <img class="center" style="width:100%; height:auto;" src="{{site.baseurl}}/assets/img/troubleshoot/out-of-cluster-connectivity-error.png" alt="Out-of-cluster connectivity warning" />
 
 > **⚠️ No reachable contexts found in the uploaded kubeconfig `file_name`**
 
-This indicates that the **Meshery Server**, installed **out-of-cluster**, cannot access the Kubernetes cluster’s API server URL.
+---
+
+## 🌐 What Does "Out-of-Cluster" Mean?
+
+An _out-of-cluster installation_ means the **Meshery Server** runs **outside your target environment** (for example, as a standalone binary, in a Docker container, or in another Kubernetes cluster).
+
+The **Meshery Operator** and workloads still run **inside your target cluster**.
+
+In this setup, the Meshery Server must **directly reach your cluster’s API server URL**.
 
 ---
 
 ## 🔍 Debugging Steps
 
-Follow these steps to resolve the connectivity issue:
+Follow these steps to fix the connectivity issue:
 
 ### 1. Open your kubeconfig file
 
-The default location is:
+By default, the file is here:
 
 ```bash
 ~/.kube/config
 ```
 
-### 2. Identify the Cluster API Server URL
+### 2. Find the Cluster API Server URL
 
-Inside the kubeconfig, look for a section like this:
+Look for the `server` field in your kubeconfig:
 
 ```yaml
 clusters:
@@ -40,14 +48,32 @@ clusters:
       server: https://<ip-address>:<port>
 ```
 
-The `server` field is the URL of your Kubernetes API server.
+This field contains the Kubernetes API server URL.
 
-### 3. Verify Meshery’s Access
+### 3. Test Connectivity from Meshery Server
 
-Ensure that the Meshery Server can reach this URL. If it cannot:
+- If Meshery runs **on your host machine**, test access with:
 
-- **Check network connectivity** from the Meshery Server container to the cluster.
-- **Update the API server URL** in the kubeconfig if necessary.
-- **Ensure proper firewall rules** allow Meshery to reach the Kubernetes API.
+  ```bash
+  curl -k https://<ip-address>:<port>
+  ```
 
-> Once Meshery can access the API server, the warning should disappear when adding the cluster.
+- If Meshery runs **inside a container or pod**, connect to it and test from inside:
+
+  ```bash
+  kubectl exec -it <meshery-server-pod> -- curl -k https://<ip-address>:<port>
+  ```
+
+If the tests fail, Meshery cannot communicate with the cluster.
+
+### 4. Configure Firewall and Network Rules
+
+Make sure you:
+
+- Allow **outbound** traffic from the Meshery Server host/container to the Kubernetes API server IP and port.
+- Allow **inbound** responses from the API server back to Meshery.
+- Verify that your load balancer or cloud provider endpoint is reachable from where Meshery runs.
+
+---
+
+Once the Meshery Server can reach the Kubernetes API server, the warning will disappear when you add the cluster.
