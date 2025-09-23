@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: September 23rd 2025, 8:01:11 am
+- Testing started at: September 23rd 2025, 9:08:09 am
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
-- ❌ 1 failed
-- ⚠️ 1 flaked
+- ✅ 85 passed
+- ❌ 0 failed
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 54 seconds_
+⌛ _Duration: 9 minutes and 37 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -21,8 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
-| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
+| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 2 | chromium-local-provider | imports design via URL |  | ⚠️ |
 
 </div>
 </details>
