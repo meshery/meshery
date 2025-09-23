@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: September 23rd 2025, 1:37:01 pm
+- Testing started at: September 23rd 2025, 2:33:35 pm
 
 **📦 Test Result Summary**
 
-- ✅ 92 passed
-- ❌ 1 failed
+- ✅ 88 passed
+- ❌ 0 failed
 - ⚠️ 3 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 49 seconds_
+⌛ _Duration: 10 minutes and 23 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -21,10 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
-| 2 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
-| 3 | chromium-meshery-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ⚠️ |
-| 4 | chromium-meshery-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-local-provider | imports design via URL |  | ⚠️ |
+| 2 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
