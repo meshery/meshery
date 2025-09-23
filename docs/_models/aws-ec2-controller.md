@@ -100,28 +100,7 @@ components:
   description: 
 components-count: 22
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between VPC and InternetGateway"
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between SecurityGroup and Instance"
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between RouteTable and Subnet"
-relationship-count: 7
+relationship-count: 0
 featureList: [
   "Optimized CPU Configurations",
   "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",
