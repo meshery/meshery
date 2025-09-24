@@ -34,6 +34,20 @@ spec:
         name: meshery
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 80
+          periodSeconds: 12
+          failureThreshold: 4
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 4
+          failureThreshold: 4
         resources: {}
       restartPolicy: Always
 status: {}
