@@ -18,15 +18,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	mErrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var createWorkspaceCmd = &cobra.Command{
@@ -45,7 +44,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
-		const errorMsg = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl  exp workspace --orgId [Organization ID] --name [name] --description [description]\nmesheryctl  exp workspace --help' to see detailed help message"
+		const errorMsg = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
 
 		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
 
@@ -56,19 +55,11 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/%s", baseUrl, workspacesApiPath)
-
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
-		payload := &models.WorkspacePayload{
+		payload := &workspace.WorkspacePayload{
 			Name:           nameFlag,
 			Description:    descriptionFlag,
 			OrganizationID: orgIdFlag,
@@ -76,27 +67,25 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Info("Failed to marshal payload")
-			return err
+			return utils.ErrUnmarshal(err)
 		}
 
-		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
+		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			utils.Log.Info("Failed to create request")
+			if meshkitErr, ok := err.(*mErrors.Error); ok {
+				if meshkitErr.Code == utils.ErrFailRequestCode {
+					errMsg := utils.WorkspaceSubError("Request failed.\nEnsure meshery server is available.", "create")
+					return utils.ErrFailRequest(errors.New(errMsg))
+				}
+				if meshkitErr.Code == utils.ErrFailReqStatusCode {
+					errMsg := utils.WorkspaceSubError(fmt.Sprintf("Failed to create \"%s\" workspace in \"%s\" organization.\nEnsure you provide a valid organization ID.\n", nameFlag, orgIdFlag), "create")
+					return utils.ErrNotFound(fmt.Errorf("%s", errMsg))
+				}
+			}
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		if resp.StatusCode == http.StatusCreated {
-			utils.Log.Info("Workspace ", nameFlag, " created")
-			return nil
-		}
-
-		utils.Log.Info("Failed to create ", nameFlag, " workspace")
+		utils.Log.Info("Workspace ", nameFlag, " created")
 		return nil
 	},
 }
