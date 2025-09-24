@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: September 23rd 2025, 2:33:35 pm
+- Testing started at: September 23rd 2025, 11:51:36 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
+- ✅ 90 passed
 - ❌ 0 failed
-- ⚠️ 3 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 10 minutes and 23 seconds_
+⌛ _Duration: 8 minutes and 14 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,9 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | imports design via URL |  | ⚠️ |
-| 2 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
-| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
