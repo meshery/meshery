@@ -47,8 +47,9 @@ import (
 )
 
 var (
-	skipUpdateFlag  bool
-	skipBrowserFlag bool
+	skipUpdateFlag           bool
+	skipBrowserFlag          bool
+	kubernetesComponentFlags []string
 )
 
 // startCmd represents the start command
@@ -72,6 +73,9 @@ mesheryctl system start --reset
 
 // Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
+
+// (optional) Start on Kubernetes, specifying components 
+mesheryctl system start -p kubernetes --components meshery,operator
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
@@ -111,6 +115,17 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		if utils.PlatformFlag != "kubernetes" && len(kubernetesComponentFlags) > 0 {
+			return fmt.Errorf("--components flag is only valid when platform is kubernetes")
+		}
+
+		if utils.PlatformFlag == "kubernetes" {
+			if err := validateKubernetesComponentsParams(kubernetesComponentFlags); err != nil {
+				return err
+			}
+		}
+
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
@@ -466,6 +481,11 @@ func init() {
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
+	startCmd.Flags().StringSliceVar(&kubernetesComponentFlags, "components", []string{},
+		"(Optional) Only valid with -p kubernetes. Accepts one or more values: meshery, operator. "+
+			"Usage: --components meshery,operator OR --components meshery --components operator. "+
+			"Defaults to both if not specified.")
+
 }
 
 // Apply Meshery helm charts
@@ -482,43 +502,105 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if act == meshkitkube.UNINSTALL {
 		action = "uninstall"
 	}
-	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartName,
-			Version:    chartVersion,
-		},
-		OverrideValues: overrideValues,
-		Action:         act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-	})
-	errOperator := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery-operator",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartOperatorName,
-			Version:    chartVersion,
-		},
-		Action: act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-	})
-	if errServer != nil && errOperator != nil {
-		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
+
+	var errServer error = nil
+	if isKubernetesComponentFlagsSet("meshery") {
+		// call ApplyHelmChart for Meshery server
+		errServer = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:       utils.MesheryNamespace,
+			ReleaseName:     "meshery",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartName,
+				Version:    chartVersion,
+			},
+			OverrideValues: overrideValues,
+			Action:         act,
+			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+		})
 	}
-	if errServer != nil {
-		return fmt.Errorf("%s success for Meshery Operator, but failed for Meshery Server: %s", action, errServer.Error())
+
+	var errOperator error = nil
+	if isKubernetesComponentFlagsSet("operator") {
+		errOperator = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:       utils.MesheryNamespace,
+			ReleaseName:     "meshery-operator",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartOperatorName,
+				Version:    chartVersion,
+			},
+			Action: act,
+			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+		})
 	}
-	if errOperator != nil {
-		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
+
+	errs := map[string]error{
+		"Meshery Server":   errServer,
+		"Meshery Operator": errOperator,
 	}
+
+	return formatComponentErrors(action, errs)
+}
+
+func validateKubernetesComponentsParams(components []string) error {
+	if len(components) == 0 {
+		return nil // nothing to validate, defaults will be used
+	}
+
+	validComponents := map[string]bool{
+		"meshery":  true,
+		"operator": true,
+	}
+
+	for _, c := range components {
+		clean := strings.ToLower(strings.TrimSpace(c))
+		if !validComponents[clean] {
+			return fmt.Errorf("invalid value %q for --components. Allowed values: meshery, operator", c)
+		}
+	}
+
 	return nil
+}
+
+func formatComponentErrors(action string, errs map[string]error) error {
+	var failed []string
+	var succeeded []string
+
+	for name, err := range errs {
+		if err != nil {
+			failed = append(failed, fmt.Sprintf("failed to %s %s: %s", action, name, err.Error()))
+		} else if isKubernetesComponentFlagsSet(strings.Split(strings.ToLower(name), " ")[1]) {
+			// Only mark as succeeded if it was requested
+			succeeded = append(succeeded, fmt.Sprintf("%s succeeded for %s", action, name))
+		}
+	}
+
+	if len(failed) > 0 {
+		if len(succeeded) > 0 {
+			return fmt.Errorf("%s\n%s", strings.Join(succeeded, "\n"), strings.Join(failed, "\n"))
+		}
+		return fmt.Errorf("%s", strings.Join(failed, "\n"))
+	}
+
+	return nil
+}
+
+func isKubernetesComponentFlagsSet(componentFlag string) bool {
+	if len(kubernetesComponentFlags) == 0 {
+		// Default: install all components if not specified
+		return true
+	}
+	for _, c := range kubernetesComponentFlags {
+		if strings.EqualFold(strings.TrimSpace(c), componentFlag) {
+			return true
+		}
+	}
+	return false
 }
