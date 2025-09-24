@@ -20,7 +20,7 @@ func TestSearchModel(t *testing.T) {
 
 	querySearch := "model-test"
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Search model without query",
 			Args:             []string{"search"},
