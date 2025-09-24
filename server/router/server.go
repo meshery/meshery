@@ -423,6 +423,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	}).
 		Methods("GET")
 
+	// Kubernetes Health Probes
+	gMux.HandleFunc("/healthz", h.K8sHealthzHandler).Methods("GET")
+
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
