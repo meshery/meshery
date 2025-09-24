@@ -522,7 +522,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		})
 	}
 
-	var errOperator error = nil
+	var errOperator error
 	if isKubernetesComponentFlagsSet("operator") {
 		errOperator = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 			Namespace:       utils.MesheryNamespace,
