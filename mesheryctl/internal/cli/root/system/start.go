@@ -116,11 +116,10 @@ mesheryctl system start --provider Meshery
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		if utils.PlatformFlag != "kubernetes" && len(kubernetesComponentFlags) > 0 {
-			return fmt.Errorf("--components flag is only valid when platform is kubernetes")
-		}
-
-		if utils.PlatformFlag == "kubernetes" {
+		if len(kubernetesComponentFlags) > 0 {
+			if utils.PlatformFlag != "kubernetes" {
+				return fmt.Errorf("--components flag is only valid when platform is kubernetes")
+			}
 			if err := validateKubernetesComponentsParams(kubernetesComponentFlags); err != nil {
 				return err
 			}
@@ -503,7 +502,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		action = "uninstall"
 	}
 
-	var errServer error = nil
+	var errServer error
 	if isKubernetesComponentFlagsSet("meshery") {
 		// call ApplyHelmChart for Meshery server
 		errServer = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
@@ -576,9 +575,17 @@ func formatComponentErrors(action string, errs map[string]error) error {
 	for name, err := range errs {
 		if err != nil {
 			failed = append(failed, fmt.Sprintf("failed to %s %s: %s", action, name, err.Error()))
-		} else if isKubernetesComponentFlagsSet(strings.Split(strings.ToLower(name), " ")[1]) {
-			// Only mark as succeeded if it was requested
-			succeeded = append(succeeded, fmt.Sprintf("%s succeeded for %s", action, name))
+		} else {
+			// Map display name to component name
+			component := "meshery" // default to Meshery server
+			if strings.Contains(strings.ToLower(name), "operator") {
+				component = "operator"
+			}
+
+			if isKubernetesComponentFlagsSet(component) {
+				// Only mark as succeeded if it was requested
+				succeeded = append(succeeded, fmt.Sprintf("%s succeeded for %s", action, name))
+			}
 		}
 	}
 
