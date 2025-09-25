@@ -29,4 +29,4 @@ assignees: ''
 - 🖥 [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui)
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 
-- 📺[Contributor training for Meshery UI](https://www.youtube.com/watch?v=9d0n37eTSkI&t=22s)
+- 📺 [Contributor training for Meshery UI](https://www.youtube.com/watch?v=9d0n37eTSkI&t=22s)\n

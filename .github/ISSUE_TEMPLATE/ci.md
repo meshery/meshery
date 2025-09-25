@@ -26,4 +26,4 @@ assignees: ''
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 - 🧪 [Meshery Test Plan Spreadsheet](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit#gid=0)
 
-- 📺[Contributor training for Meshery CI](https://www.youtube.com/watch?v=dlr_nzJV16Q&t=601s)
+- 📺 [Contributor training for Meshery CI](https://www.youtube.com/watch?v=dlr_nzJV16Q&t=601s)\n

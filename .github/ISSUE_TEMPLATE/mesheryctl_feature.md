@@ -35,4 +35,4 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 - ⌨️ [Meshkit errors guide](https://docs.meshery.io/project/contributing/contributing-error)
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 
-- 📺[Contributor training for Meshery CLI](https://www.youtube.com/watch?v=aNR_1h1Pisg&t=3s)
+- 📺 [Contributor training for Meshery CLI](https://www.youtube.com/watch?v=aNR_1h1Pisg&t=3s)\n
