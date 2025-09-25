@@ -78,4 +78,8 @@ export const EVENT_TYPE = {
     category: 'entity',
     action: 'get_summary',
   },
+  ACADEMY_QUIZ_EVALUATION: {
+    category: 'academy',
+    action: 'academy_quiz_evaluation',
+  },
 };
