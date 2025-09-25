@@ -1,5 +1,5 @@
-Hi Koushik here!
-Looking forward to contribute:)
+# Kannepally Koushik
 
-Thanks,
-https://www.linkedin.com/in/kannepallykoushik/
+Looking forward to contributing!
+
+[LinkedIn Profile](https://www.linkedin.com/in/kannepallykoushik/)
