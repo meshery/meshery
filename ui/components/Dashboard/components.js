@@ -11,6 +11,7 @@ import {
   Button,
   DeleteIcon,
   DragIcon,
+  EditIcon
 } from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';
@@ -145,12 +146,46 @@ export const LayoutActionButton = ({ Icon, label, action, description, isShown }
 };
 
 // render the widget inside the layout
-export const LayoutWidget = ({ widget, removeWidget, isEditMode }) => {
+export const LayoutWidget = ({ widget, removeWidget, isEditMode, onEnterEditMode }) => {
   const theme = useTheme();
   const iconsProps = layoutIconProps(theme);
 
   return (
-    <>
+    <Box
+      sx={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        '&:hover .widget-edit-button': {
+          opacity: 1,
+        },
+      }}
+    >
+      {!isEditMode && (
+        <CustomTooltip title="Edit widget" placement="top">
+          <IconButton
+            className="widget-edit-button"
+            onClick={onEnterEditMode}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              zIndex: 1000,
+              opacity: 0, 
+              transition: 'opacity 0.2s ease-in-out',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',//！！
+              color: theme.palette.text.primary,
+              width: 32,
+              height: 32,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',//！！
+              },
+            }}
+          >
+            <EditIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </CustomTooltip>
+      )}
       {isEditMode && (
         <Box
           justifyContent="end"
@@ -167,7 +202,14 @@ export const LayoutWidget = ({ widget, removeWidget, isEditMode }) => {
           </IconButton>
         </Box>
       )}
-      {widget.component}
-    </>
+      <Box
+        sx={{
+          height: '100%',
+          paddingTop: !isEditMode ? '40px' : 0,
+        }}
+      >
+        {widget.component}
+      </Box>
+    </Box>
   );
 };
