@@ -1,1 +1,1 @@
-Hi, my name is Fathy Ahmed senior CS student and Backend Engineer
+Hi, my name is Fathy Ahmed. I am a senior Computer Science student and a Backend Engineer.
