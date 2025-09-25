@@ -11,6 +11,7 @@ import {
   Button,
   DeleteIcon,
   DragIcon,
+  EditIcon
 } from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';
@@ -145,29 +146,129 @@ export const LayoutActionButton = ({ Icon, label, action, description, isShown }
 };
 
 // render the widget inside the layout
-export const LayoutWidget = ({ widget, removeWidget, isEditMode }) => {
+export const LayoutWidget = ({ widget, removeWidget, isEditMode, onEnterEditMode }) => {
   const theme = useTheme();
   const iconsProps = layoutIconProps(theme);
 
   return (
-    <>
-      {isEditMode && (
-        <Box
-          justifyContent="end"
-          alignItems="center"
-          gap="1"
-          display="flex"
-          backgroundColor={theme.palette.background.default}
-        >
-          <IconButton onClick={() => removeWidget(widget.key)}>
-            <DeleteIcon {...iconsProps} {...iconMedium} />
-          </IconButton>
-          <IconButton className="react-grid-dragHandleExample">
-            <DragIcon fill={iconsProps.fill} {...iconMedium} />
-          </IconButton>
+    <Box
+      sx={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        '&:hover .widget-control-bar': {
+          opacity: isEditMode ? 1 : 1,
+          transform: isEditMode ? 'translateY(0)' : 'translateY(0)',
+        },
+      }}
+    >
+      <Box
+        className="widget-control-bar"
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          zIndex: 1000,
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'center',
+          gap: 0.5,
+          backgroundColor: 'transparent',
+          borderRadius: '6px',
+          padding: '2px',
+          opacity: isEditMode ? 1 : 0,
+          transition: 'opacity 0.2s ease-in-out',
+          ...((!isEditMode) && {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(8px)',
+          }),
+        }}
+      >
+        {!isEditMode && (
+          <CustomTooltip title="Enter edit mode" placement="top">
+            <IconButton
+              onClick={onEnterEditMode}
+              size="small"
+              sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                color: theme.palette.text.primary,
+                width: 28,
+                height: 28,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  transform: 'scale(1.1)',
+                },
+                transition: 'all 0.2s ease-in-out',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              }}
+            >
+              <EditIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </CustomTooltip>
+        )}
+        {isEditMode && (
+          <>
+            <CustomTooltip title="Enter/Exit edit mode" placement="top">
+              <IconButton
+                onClick={onEnterEditMode}
+                size="small"
+                sx={{
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                }}
+              >
+              </IconButton>
+            </CustomTooltip>
+            
+            <CustomTooltip title="Delete widget" placement="top">
+              <IconButton 
+                onClick={() => removeWidget(widget.key)}
+                size="small"
+                sx={{
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 0, 0, 0.3)',
+                  },
+                }}
+              >
+                <DeleteIcon {...iconsProps} {...iconMedium} />
+              </IconButton>
+            </CustomTooltip>
+            
+            <CustomTooltip title="Drag to move" placement="top">
+              <IconButton 
+                className="react-grid-dragHandleExample"
+                size="small"
+                sx={{
+                  cursor: 'move',
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                }}
+              >
+                <DragIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </CustomTooltip>
+          </>
+        )}
         </Box>
-      )}
-      {widget.component}
-    </>
+
+        <Box
+          sx={{
+            height: '100%',
+            width: '100%',
+            paddingTop: isEditMode ? '48px' : '0px',
+            transition: 'padding-top 0.2s ease-in-out',
+          }}
+        >
+        {widget.component}
+      </Box>
+    </Box>
   );
 };
