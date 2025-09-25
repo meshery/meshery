@@ -22,9 +22,8 @@ import {
   Radio,
 } from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { useGetDesignQuery } from '@/rtk-query/design';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
@@ -42,21 +41,24 @@ const MesherySettingsPerformanceComponent = () => {
 
   const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);
   const [updateLoadTestPrefs, { isLoading: isSaving }] = useUpdateLoadTestPrefsMutation();
-  const [qps, setQps] = useState(initialQps);
-  const [c, setC] = useState(initialC);
-  const [t, setT] = useState(initialT);
-  const [tValue, setTValue] = useState(initialT);
-  const [gen, setGen] = useState(initialGen);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const [qps, setQps] = useState(initialQps ?? 0);
+  const [c, setC] = useState(initialC ?? 0);
+  const [t, setT] = useState(initialT ?? '');
+  const [tValue, setTValue] = useState(initialT ?? '');
+  const [gen, setGen] = useState(initialGen ?? 'fortio');
   const [tError, setTError] = useState('');
-  const dispatch = useGetDesignQuery();
 
   useEffect(() => {
     if (loadTestPrefs) {
-      setQps(loadTestPrefs.qps);
-      setC(loadTestPrefs.c);
-      setT(loadTestPrefs.t);
-      setGen(loadTestPrefs.gen);
-      setTValue(loadTestPrefs.t);
+      if (typeof loadTestPrefs.qps === 'number') setQps(loadTestPrefs.qps);
+      if (typeof loadTestPrefs.c === 'number') setC(loadTestPrefs.c);
+      if (typeof loadTestPrefs.t === 'string') {
+        setT(loadTestPrefs.t);
+        setTValue(loadTestPrefs.t);
+      }
+      if (typeof loadTestPrefs.gen === 'string') setGen(loadTestPrefs.gen);
     }
   }, [loadTestPrefs]);
 
@@ -73,14 +75,14 @@ const MesherySettingsPerformanceComponent = () => {
   };
 
   const handleDurationChange = (event, newValue) => {
-    setTValue(newValue);
+    setTValue(newValue ?? '');
     if (newValue !== null) {
       setTError('');
     }
   };
 
   const handleInputDurationChange = (event, newValue) => {
-    setT(newValue);
+    setT(newValue ?? '');
   };
 
   const handleSubmit = () => {
@@ -99,25 +101,35 @@ const MesherySettingsPerformanceComponent = () => {
   };
 
   const submitPerfPreference = async () => {
+    if (isSubmitting) return; // Prevent double submission
+    
+    console.log('submitPerfPreference called', { qps, c, t, gen, selectedK8sContexts });
+    setIsSubmitting(true);
     const loadTestPrefs = { qps, c, t, gen };
     updateProgress({ showProgress: true });
 
     try {
-      await updateLoadTestPrefs({
+      console.log('Calling updateLoadTestPrefs with:', { selectedK8sContexts, loadTestPrefs });
+      const result = await updateLoadTestPrefs({
         selectedK8sContexts,
         loadTestPrefs,
       }).unwrap();
 
-      updateProgress({ showProgress: false });
+      console.log('updateLoadTestPrefs success:', result);
       notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS });
       dispatch(updateLoadTestPref({ loadTestPref: { qps, c, t, gen } }));
+      return result;
     } catch (error) {
+      console.error('updateLoadTestPrefs error:', error);
       handleError('There was an error saving your preferences')(error);
+      return undefined;
+    } finally {
+      updateProgress({ showProgress: false });
+      setIsSubmitting(false);
     }
   };
 
   const handleError = (msg) => (error) => {
-    setBlockRunTest(false);
     let finalMsg = msg;
     if (typeof error === 'string') {
       finalMsg = `${msg}: ${error}`;
@@ -237,7 +249,7 @@ const MesherySettingsPerformanceComponent = () => {
               color="primary"
               size="large"
               onClick={handleSubmit}
-              disabled={isSaving}
+              disabled={isSaving || isSubmitting}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
