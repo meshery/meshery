@@ -246,7 +246,9 @@ export const SideBarListItem = styled(ListItemButton, {
   fontSize: '14px',
 }));
 
-export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const SideBarText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'drawerCollapsed',
+})(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
   fontSize: '14px',

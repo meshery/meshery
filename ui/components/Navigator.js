@@ -186,7 +186,6 @@ const getNavigatorComponents = (
             <CatalogIcon
               primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
-              tertiaryFill="transparent"
               style={{ ...drawerIconsStyle }}
             />
           </>
@@ -958,7 +957,6 @@ const Navigator_ = () => {
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
                     isCollapsed={state.openItems.includes(childId)}
-                    isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
                     hasChildren={!!children}
                   />

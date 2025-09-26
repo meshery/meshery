@@ -30,7 +30,7 @@ const WorkspaceActivityWidget = () => {
   };
   return (
     <WorkspaceActivityCard
-      selectedWorkspace={selectedWorkspace}
+      selectedWorkspace={selectedWorkspace ?? ''}
       handleWorkspaceChange={handleWorkspaceChange}
       activities={events?.data}
       workspaces={workspaces?.workspaces}
