@@ -1,40 +1,42 @@
 {
-  "id": "a69a64c4-227e-c270-e6fa-09a8c0051c39",
+  "id": <UUID>,
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "amd-gpu",
-  "displayName": "AMD GPU",
+  "name": "model-import_cli-e2e-test",
+  "displayName": "model import cli e2e test",
+  "description": "Meshery ContribFest",
   "status": "enabled",
   "registrant": {
-    "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
-    "name": "Artifact Hub",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "id": <UUID>,
+    "name": "meshery",
+    "credential_id": <UUID>,
     "type": "registry",
     "sub_type": "",
-    "kind": "artifacthub",
+    "kind": "meshery",
     "status": "registered",
-    "user_id": "00000000-0000-0000-0000-000000000000",
+    "user_id": <UUID>,
+    "schemaVersion": ""
   },
-  "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+  "connection_id": <UUID>,
   "category": {
-    "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
-    "name": "Provisioning"
+    "id": <UUID>,
+    "name": "Platform"
   },
-  "subCategory": "Automation & Configuration",
+  "subCategory": "Containers",
   "metadata": {
-    "isAnnotation": false,
-    "primaryColor": "#000",
-    "secondaryColor": "#fff",
+    "isAnnotation": true,
+    "primaryColor": "#00b39f",
+    "secondaryColor": "#FFFFFF",
     "shape": "circle",
     "styleOverrides": "",
-    "svgColor": "ui/public/static/img/meshmodels/amd-gpu/color/amd-gpu-color.svg",
+    "svgColor": "ui/public/static/img/meshmodels/model-import_cli-e2e-test/color/model-import_cli-e2e-test-color.svg",
     "svgComplete": "",
-    "svgWhite": "ui/public/static/img/meshmodels/amd-gpu/white/amd-gpu-white.svg"
+    "svgWhite": "ui/public/static/img/meshmodels/model-import_cli-e2e-test/white/model-import_cli-e2e-test-white.svg"
   },
   "model": {
-    "version": "0.19.0"
+    "version": "0.7.2"
   },
-  "components_count": 3,
+  "components_count": <NUMBER>,
   "relationships_count": 0,
   "components": null,
   "relationships": null

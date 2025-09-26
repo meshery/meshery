@@ -17,12 +17,16 @@ setup() {
 }
 
 @test "mesheryctl model view displays an existing model" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu | grep -Ev 'created_at|updated_at|deleted_at'"
+  run bash -c "printf '\n' | TERM=dumb $MESHERYCTL_BIN model view model-import_cli-e2e-test \
+      | grep -Ev '^(  )?(created_at|updated_at|deleted_at):' \
+      | col -b \
+      | sed -E \
+          -e 's/(id: )[0-9a-fA-F-]{36}[[:space:]]*$/\1<UUID>/' \
+          -e 's/(components_count: )[0-9]+[[:space:]]*$/\1<NUMBER>/' "
 
   assert_success
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_existing_model.txt")"
 }
-
 
 @test "mesheryctl model view handles non-existent models gracefully" {
   run $MESHERYCTL_BIN model view non-existent-model
@@ -32,14 +36,25 @@ setup() {
 }
 
 @test "mesheryctl model view supports JSON output" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json | grep -Ev 'created_at|updated_at|deleted_at'"
+  run bash -c "printf '\n' | TERM=dumb $MESHERYCTL_BIN model view model-import_cli-e2e-test -o json \
+      | grep -Ev '^[[:space:]]*\"(created_at|updated_at|deleted_at)\"[[:space:]]*:' \
+      | col -b \
+      | sed -E \
+          -e 's/(id\": )\"[0-9a-fA-F-]{36}\"[[:space:]]*(,?)$/\1<UUID>\2/' \
+          -e 's/(\"components_count\": )[0-9]+[[:space:]]*(,?)$/\1<NUMBER>\2/' "
 
   assert_success
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_json.txt")"
 }
 
 @test "mesheryctl model view supports YAML output" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml | grep -Ev 'created_at|updated_at|deleted_at'"
+  run bash -c "printf '\n' | TERM=dumb $MESHERYCTL_BIN model view model-import_cli-e2e-test -o yaml \
+      | grep -Ev '^(  )?(created_at|updated_at|deleted_at):' \
+      | col -b \
+      | sed -E \
+          -e 's/(id: )[0-9a-fA-F-]{36}[[:space:]]*$/\1<UUID>/' \
+          -e 's/(components_count: )[0-9]+[[:space:]]*$/\1<NUMBER>/' "
+
   assert_success
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_yaml.txt")"
 }
