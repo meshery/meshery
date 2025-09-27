@@ -18,18 +18,19 @@ export const userApi = api
     endpoints: (builder) => ({
       getLoadTestPrefs: builder.query({
         query: (selectedK8sContexts) => ({
-          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
+          url: ctxUrl('user/prefs', selectedK8sContexts),
           method: 'GET',
           credentials: 'include',
         }),
         providesTags: [Tags.LOAD_TEST_PREF],
-        // Transform response to directly get the loadTestPrefs
-        transformResponse: (response) => response?.loadTestPrefs || {},
+        // Transform response to directly get the loadTestPrefs (backend json tag)
+        // Return undefined when not present so consumers can detect absence
+        transformResponse: (response) => response?.loadTestPrefs ?? undefined,
       }),
 
       updateLoadTestPrefs: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -74,7 +75,7 @@ export const userApi = api
       }),
       updateUserPrefWithContext: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
