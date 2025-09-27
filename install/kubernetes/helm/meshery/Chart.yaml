@@ -14,6 +14,7 @@ keywords:
   - meshery-nginx-sm
   - meshery-app-mesh
   - meshery-nighthawk
+  - meshery-operator
 source:
   - https://github.com/meshery/meshery
 
@@ -69,6 +70,10 @@ dependencies:
   - name: meshery-nighthawk
     version: 0.7.0
     condition: meshery-nighthawk.enabled
+  - name: meshery-operator
+    version: 0.8.0
+    repository: "file://../meshery-operator"
+    condition: meshery-operator.enabled
 
 maintainers:
   - name: Meshery Authors
