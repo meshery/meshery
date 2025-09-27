@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Open Cluster Management
 subtitle: Collaborative and visual infrastructure as design for Open Cluster Management

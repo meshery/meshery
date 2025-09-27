@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Virtual Kubelet
 subtitle: Collaborative and visual infrastructure as design for Virtual Kubelet
