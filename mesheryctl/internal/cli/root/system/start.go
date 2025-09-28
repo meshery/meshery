@@ -449,7 +449,9 @@ func start() error {
 
 		time.Sleep(20 * time.Second) // sleeping 20 seconds to countermeasure time to apply helm charts
 
-		readinessHealthCheck()
+		if err = readinessHealthCheck(); err != nil {
+			return err
+		}
 
 		spinner.Stop()
 
