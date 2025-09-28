@@ -12,15 +12,8 @@ assignees: ''
 
 ### Pre-requisites
 <!-- Add Pre-requisites -->
-- 🛠️[Helm chart installation](https://helm.sh/docs/intro/install/)
 - 🛠️[Mesheryctl installation](https://docs.meshery.io/installation/mesheryctl)
-- 🧐Get familiarized with [Meshery catalog](https://meshery.io/catalog), explore Designs and Models.
-- 📚[Meshery Designs](https://docs.meshery.io/concepts/logical/designs)
-- 📚[Meshery Models](https://docs.meshery.io/concepts/logical/models)
-- 📚[Import/Export Designs](https://docs.meshery.io/extensions/import-export-designs)
 - 📚[Create a Meshery Design](https://docs.meshery.io/guides/configuration-management/creating-a-meshery-design)
-- 📚[Explore Kanvas](https://docs.layer5.io/kanvas/)
-- 📚[Meshery Catalog Architecture](https://docs.meshery.io/concepts/architecture/catalog)
 
 ### Implementation
 <!-- Add your design instructions -->
