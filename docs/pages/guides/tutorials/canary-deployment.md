@@ -100,7 +100,7 @@ Now You should have a design similar to this screenshot,
 Still inside the Rules 1 config modal, expand **Http** and **Paths**, Under **Path 1** config modal, set:
 - **Path**: `Prefix`
 - **Path Type**: `/`
-While still under **Paths 1**, Expand Backend > Service, enter the exact name of your primary Service (for this example it is `service-primary`).
+While still under **Paths 1**, Expand **Backend** > **Service**, enter the exact name of your primary Service (for this example it is `service-primary`) and set **Port** to `80`.
 4. We will also attach a label to our Ingress component. The same as the Service and Deployment, `app: primary`. Leave Metadata Annotations empty . The stable Ingress handles 100% of traffic by default.
 
 At this point, you have an Ingress pointing to your primary service on the given host and path. The host is the same name we will use for the canary Ingress.
@@ -108,9 +108,22 @@ At this point, you have an Ingress pointing to your primary service on the given
 #### Create the Ingress for the Canary Service
 
 1. Add another Ingress component in the canvas (click Kubernetes → Ingress again).
-2. Click the new Ingress and select Configure. Set Ingress Class Name to nginx (same as before).
-3. Under Rules, set the Host to the same domain as the primary Ingress (here, `example.com`).
-4.
+2. Click the new Ingress and select Configure. Set Ingress Class Name to `nginx` (same as before).
+3. Under Rules, set the Host to the same domain as the primary Ingress (here, `example.com`). Still inside the Rules 1 config modal, expand **Http** and **Paths**, Under **Path 1** config modal, set:
+- **Path**: `Prefix`
+- **Path Type**: `/`
+While still under **Paths 1**, Expand **Backend** > **Service**, enter the exact name of your canary Service (for this example it is `service-canary`) and set **Port** to `80`.
+4. Attach label `app:canary`. 
+5. Under Metadata Annotations, add the following entries to enable canary routing:
+
+`nginx.ingress.kubernetes.io/canary: "true"`
+
+`nginx.ingress.kubernetes.io/canary-weight: "10"` (Use the weight you want; here we use 10 for 10% of traffic.)
+The canary: "true" annotation marks this Ingress as the canary, and canary-weight sets the percentage of traffic routed to it.
+
+Click outside the modal.
+
+> **_NOTE:_** Ingress objects won’t work by themselves. You must have an Ingress Controller running in your cluster (e.g., NGINX Ingress Controller). If you don’t, install it before continuing.
 
 
 <!-- 
