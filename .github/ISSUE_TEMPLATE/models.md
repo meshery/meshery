@@ -31,6 +31,8 @@ assignees: ''
    - [Contributing Components](https://docs.meshery.io/project/contributing/contributing-components)
    - [Contributing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships)
 
+- 📺 [Contributor training for Meshery Models](https://www.youtube.com/watch?v=K2gmdIlGXNo&t=82s)
+
  <!-- ### Instructions for Policies
  - [Contributing Policies](https://docs.meshery.io/project/contributing/contributing-policies)
   -->

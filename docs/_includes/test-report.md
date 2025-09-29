@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: September 21st 2025, 11:53:39 pm
+- Testing started at: September 28th 2025, 11:52:47 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
+- ✅ 90 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 7 seconds_
+⌛ _Duration: 8 minutes and 43 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 2 | chromium-local-provider | Delete Kubernetes cluster connections |  | ⚠️ |
 
 </div>
 </details>
