@@ -107,7 +107,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 // if an empty string is provided then it will try to make a request
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
-func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
+func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
 	var resp *http.Response
 	var err error
 
@@ -123,7 +123,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
 		l.Log.Error(ErrUrlParse(err))
-		return providerProperties
+		return providerProperties, err
 	}
 
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -149,14 +149,14 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	}
 	if err != nil && resp == nil {
 		l.Log.Error(ErrUnreachableRemoteProvider(err))
-		return providerProperties
+		return providerProperties,ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
 			err = ErrStatusCode(resp.StatusCode)
 		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
-		return providerProperties
+		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
 		err := resp.Body.Close()
@@ -171,7 +171,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		err = ErrUnmarshal(err, "provider properties")
 		l.Log.Error(err)
 	}
-	return providerProperties
+	return providerProperties, err
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
@@ -222,6 +222,17 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
+
+	// If the provider properties are not loaded yet, load them
+	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
+		providerProperties,err := l.loadCapabilities("")
+		if err != nil {
+			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
+		    l.ProviderProperties = providerProperties
+		    return l.ProviderProperties
+		}
+	}
+
 	return l.ProviderProperties
 }
 
