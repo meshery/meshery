@@ -36,7 +36,16 @@ components:
   description: 
 components-count: 6
 relationships: 
-relationship-count: 0
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between role and EventBus"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between rule and Endpoint"
+relationship-count: 3
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",
   "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",
