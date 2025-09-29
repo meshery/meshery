@@ -28,6 +28,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var workspacePayload workspace.WorkspacePayload
+
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new workspace under an organization",
@@ -39,14 +41,9 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		// Check if all three flags are set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
-		nameFlag, _ := cmd.Flags().GetString("name")
-		descriptionFlag, _ := cmd.Flags().GetString("description")
-
 		const errorMsg = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
 
-		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
+		if workspacePayload.OrganizationID == "" || workspacePayload.Name == "" || workspacePayload.Description == "" {
 
 			return utils.ErrInvalidArgument(errors.New(errorMsg))
 		}
@@ -55,17 +52,8 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		nameFlag, _ := cmd.Flags().GetString("name")
-		descriptionFlag, _ := cmd.Flags().GetString("description")
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 
-		payload := &workspace.WorkspacePayload{
-			Name:           nameFlag,
-			Description:    descriptionFlag,
-			OrganizationID: orgIdFlag,
-		}
-
-		payloadBytes, err := json.Marshal(payload)
+		payloadBytes, err := json.Marshal(workspacePayload)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
 		}
@@ -78,20 +66,20 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 					return utils.ErrFailRequest(errors.New(errMsg))
 				}
 				if meshkitErr.Code == utils.ErrFailReqStatusCode {
-					errMsg := utils.WorkspaceSubError(fmt.Sprintf("Failed to create \"%s\" workspace in \"%s\" organization.\nEnsure you provide a valid organization ID.\n", nameFlag, orgIdFlag), "create")
+					errMsg := utils.WorkspaceSubError(fmt.Sprintf("Failed to create \"%s\" workspace in \"%s\" organization.\nEnsure you provide a valid organization ID.\n", workspacePayload.Name, workspacePayload.OrganizationID), "create")
 					return utils.ErrNotFound(fmt.Errorf("%s", errMsg))
 				}
 			}
 			return err
 		}
 
-		utils.Log.Info("Workspace ", nameFlag, " created")
+		utils.Log.Info("Workspace ", workspacePayload.Name, " created in organization ", workspacePayload.OrganizationID)
 		return nil
 	},
 }
 
 func init() {
-	createWorkspaceCmd.Flags().StringP("orgId", "o", "", "Organization ID")
-	createWorkspaceCmd.Flags().StringP("name", "n", "", "Name of the workspace")
-	createWorkspaceCmd.Flags().StringP("description", "d", "", "Description of the workspace")
+	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.OrganizationID, "orgId", "o", "", "Organization ID")
+	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.Name, "name", "n", "", "Name of the workspace")
+	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.Description, "description", "d", "", "Description of the workspace")
 }

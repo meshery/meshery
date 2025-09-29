@@ -24,7 +24,16 @@ components:
   description: 
 components-count: 3
 relationships: 
-relationship-count: 0
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between broker and SecurityGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between broker and subnet"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and  broker "
+relationship-count: 3
 featureList: [
   "Reliable and scalable message brokering",
   "Supports various messaging protocols",
