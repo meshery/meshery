@@ -93,12 +93,17 @@ func (l *RemoteProvider) Initialize() {
 	// Get the capabilities with no token
 	// assuming that this will help get basic info
 	// of the provider
-	providerProperties := l.loadCapabilities("")
-	l.ProviderProperties = providerProperties
+	providerProperties, err := l.loadCapabilities("")
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err))
+	} else {
+		l.ProviderProperties = providerProperties
+	}
 }
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
+	l.ProviderProperties.ProviderURL = l.GetProviderURL()
 }
 
 // loadCapabilities loads the capabilities of the remote provider
@@ -260,7 +265,14 @@ func (l *RemoteProvider) SyncPreferences() {
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
-	providerProperties := l.loadCapabilities(tokenString)
+	providerProperties,err := l.loadCapabilities(tokenString)
+
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
+		http.Error(w, fmt.Sprintf("failed to load capabilities from remote provider: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	providerProperties.ProviderURL = l.RemoteProviderURL
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
@@ -3829,6 +3841,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 }
 
 // TokenHandler - specific to remote auth
+// Refreshes the token, sets the cookie and redirects to the home page and fetches the  latest capabilities
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(TokenCookieName)
 	// gets the session cookie from remote provider
@@ -3839,8 +3852,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	l.SetProviderSessionCookie(w, sessionCookie)
 
 	// Get new capabilities
-	// Doing this here is important so that
-	providerProperties := l.loadCapabilities(tokenString)
+	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
+	providerProperties,err := l.loadCapabilities(tokenString)
+
+	// error out if capabilities could not be fetched
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[TokenHandler] error loading capabilities from remote provider: %v", err))
+		http.Error(w, "Error loading capabilities from remote provider", http.StatusInternalServerError)
+		return
+	}
+
 	l.ProviderProperties = providerProperties
 
 	// Download the package for the user only if they have extension capability
