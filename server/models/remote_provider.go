@@ -233,9 +233,10 @@ func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 		providerProperties,err := l.loadCapabilities("")
 		if err != nil {
 			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
-		    l.ProviderProperties = providerProperties
 		    return l.ProviderProperties
 		}
+		l.SetProviderProperties(providerProperties)
+		return l.ProviderProperties
 	}
 
 	return l.ProviderProperties
