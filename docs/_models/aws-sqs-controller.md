@@ -24,7 +24,10 @@ components:
   description: 
 components-count: 3
 relationships: 
-relationship-count: 0
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between adoptedresource and queue"
+relationship-count: 1
 featureList: [
   "Scalable message queuing",
   "Reliable message delivery",
