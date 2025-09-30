@@ -38,7 +38,7 @@ spec:
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /healthz/live
               port: http
             initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.probe.livenessProbe.periodSeconds }}
@@ -47,7 +47,7 @@ spec:
           {{- if .Values.probe.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /healthz/ready
               port: http
             initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.probe.readinessProbe.periodSeconds }}
