@@ -21,8 +21,8 @@ assignees: ''
 - Fork the meshery/meshery repository.
 - Run `mesheryctl system start`
 - Head to [meshmodel](https://github.com/meshery/meshery/tree/master/server/meshmodel) in your local meshery repository
-- Import model definition file (JSON file) by using `mesheryctl model import [model-name/model-veriosn]`
-- Use `meshery model build [model-name/model-veriosn]`, this build the model OCI image.
+- Import model definition file (JSON file) by using `mesheryctl model import [model-name/model-version]`
+- Use `meshery model build [model-name/model-version]`, this build the model OCI image.
 
 Now to publish your model to catalog:
 - Fork the meshery/meshery.io repository.
@@ -35,7 +35,7 @@ Now to publish your model to catalog:
 ---
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 
-### Additonal resources
+### Additional resources
 
 - 📚 [Models](https://docs.meshery.io/concepts/logical/models)
 - 📚 [Creating models](https://docs.meshery.io/guides/configuration-management/creating-models#create-models)
