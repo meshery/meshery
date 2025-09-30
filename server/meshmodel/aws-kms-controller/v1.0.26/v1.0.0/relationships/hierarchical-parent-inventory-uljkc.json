@@ -53,35 +53,7 @@
           {
             "id": null,
             "kind": "LayerVersion",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "layerARN"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "Function",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "layers",
-                      "_"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -122,9 +94,9 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "layers",
-                  "_"
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }
@@ -176,8 +148,7 @@
                 [
                   "configuration",
                   "spec",
-                  "layers",
-                  "_"
+                  "layers"
                 ]
               ]
             }

@@ -53,43 +53,7 @@
           {
             "id": null,
             "kind": "FlowLog",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatedRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "resourceIDs",
-                      "_"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "Instance",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "instanceID"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -125,42 +89,23 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "resourceIDs"
+                ]
+              ]
+            }
           }
         ],
         "to": [
           {
             "id": null,
             "kind": "Instance",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "FlowLog",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "resourceIDs",
-                      "_"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "instanceID"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -196,7 +141,14 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
           }
         ]
       }
