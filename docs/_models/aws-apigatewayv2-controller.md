@@ -56,7 +56,28 @@ components:
   description: 
 components-count: 11
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between VPCLink and Integration"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Authorizer and Api"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between ApiMapping and DomainName"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Deployment and Api"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Route and Integration"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 7
 featureList: [
   "Handles API requests and responses",
   "Supports RESTful and WebSocket APIs",
