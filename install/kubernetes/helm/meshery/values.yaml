@@ -28,7 +28,7 @@ probe:
 
   readinessProbe:
     enabled: true
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     periodSeconds: 4
     failureThreshold: 4
 
