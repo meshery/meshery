@@ -1,11 +1,209 @@
-id: a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98
-name: ELKK Stack with Kafka
+id: 977960d3-27d9-4fac-bf32-45d7ef604292
+name: ELKK Design Kafka
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.6
+version: 0.0.39
 metadata:
   resolvedAliases: {}
 components:
-  - id: 24ca2235-e347-4f15-9023-7de5278f46d1
+  - id: 1eb564af-3bef-4dad-94f1-37c91c55e083
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Logstash Deployment
+    description: ""
+    format: JSON
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-09-30T07:43:42.329335387Z"
+        updated_at: "2025-09-30T07:43:42.329335387Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-image: none
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 24
+      opacity: 1
+      padding: 6
+      position:
+        x: 854.2746463308473
+        y: 750.78078728374
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+      width: 24
+      z-index: 3
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+    configuration:
+      metadata:
+        annotations:
+          meshery.io/description: Consumes from Kafka and indexes into Elasticsearch.
+        labels:
+          app.kubernetes.io/name: logstash
+          app.kubernetes.io/part-of: elkk-stack
+          outputs_to: app-logs-*
+          pipeline: from-kafka-to-es
+          type: logstash
+          version: latest
+        name: Logstash Deployment
+        namespace: elkk-stack
+    component:
+      version: apps/v1
+      kind: Deployment
+      schema: ""
+  - id: d23e42da-3ef1-49aa-a9eb-ee839f127f23
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Kafka Producer Deployment
+    description: ""
+    format: JSON
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-09-30T07:43:42.329335387Z"
+        updated_at: "2025-09-30T07:43:42.329335387Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-image: none
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 24
+      opacity: 1
+      padding: 6
+      position:
+        x: 776.2097390305819
+        y: 663.6639461508647
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+      width: 24
+      z-index: 1
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+    configuration:
+      metadata:
+        annotations:
+          meshery.io/description: Publishes application logs to Kafka topic 'logs'.
+        labels:
+          app.kubernetes.io/name: kafka-producer
+          app.kubernetes.io/part-of: elkk-stack
+          broker: kafka:9092
+          produces_to: logs
+          type: kafka-producer
+          version: latest
+        name: Kafka Producer Deployment
+        namespace: elkk-stack
+    component:
+      version: apps/v1
+      kind: Deployment
+      schema: ""
+  - id: df27e2fd-dfe0-4a9a-b451-63b8770ac1e4
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
     displayName: My App
@@ -67,16 +265,16 @@ components:
       opacity: 1
       padding: 6
       position:
-        x: 639.4827934068032
-        y: 651.4695605614548
+        x: 706.9903853036761
+        y: 660.2917730159513
       primaryColor: '#326CE5'
       secondaryColor: '#7aa1f0'
-      shape: cut-rectangle
+      shape: round-rectangle
       svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
       svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
       svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
       width: 24
-      z-index: 1
+      z-index: 0
     capabilities: []
     status: enabled
     metadata:
@@ -89,19 +287,24 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        annotations:
+          meshery.io/description: Sample application that generates logs.
         labels:
+          app.kubernetes.io/name: my-app
+          app.kubernetes.io/part-of: elkk-stack
           emits: logs
           role: app
+          version: latest
         name: My App
-        namespace: ""
+        namespace: elkk-stack
     component:
       version: apps/v1
       kind: Deployment
       schema: ""
-  - id: c0156da7-5aec-44af-a6c6-91d5a0ee6f1d
+  - id: 72d17a4c-8f5d-4687-9a0a-1685f200b103
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: deployment-iq
+    displayName: Kibana Deployment
     description: ""
     format: JSON
     model:
@@ -160,8 +363,8 @@ components:
       opacity: 1
       padding: 6
       position:
-        x: 638.2968552781922
-        y: 879.0014135781612
+        x: 708.5116897811906
+        y: 739.1332998777705
       primaryColor: '#326CE5'
       secondaryColor: '#7aa1f0'
       shape: round-rectangle
@@ -182,190 +385,22 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
-        namespace: Kafka Producer
+        annotations:
+          meshery.io/description: Visualizes and queries logs from Elasticsearch.
+        labels:
+          app.kubernetes.io/name: kibana
+          app.kubernetes.io/part-of: elkk-stack
+          port: "5601"
+          queries: app-logs*
+          type: kibana
+          version: latest
+        name: Kibana Deployment
+        namespace: elkk-stack
     component:
       version: apps/v1
       kind: Deployment
       schema: ""
-  - id: 97bcd931-18da-4bdf-8ab2-71516cde789b
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: deployment-pb
-    description: ""
-    format: JSON
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-        name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
-        type: registry
-        sub_type: ""
-        kind: github
-        status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-09-30T07:43:42.329335387Z"
-        updated_at: "2025-09-30T07:43:42.329335387Z"
-        deleted_at: "0001-01-01T00:00:00Z"
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    styles:
-      background-image: none
-      background-opacity: 0.5
-      body-text: ""
-      body-text-color: '#808080'
-      body-text-font-family: Qanelas Soft
-      body-text-font-size: 12
-      body-text-font-weight: "400"
-      body-text-horizontal-align: center
-      body-text-text-decoration: none
-      body-text-vertical-align: center
-      border-width: 2
-      height: 24
-      opacity: 1
-      padding: 6
-      position:
-        x: 634.2722281190868
-        y: 805.5269209127201
-      primaryColor: '#326CE5'
-      secondaryColor: '#7aa1f0'
-      shape: round-rectangle
-      svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
-      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
-      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
-      width: 24
-      z-index: 5
-    capabilities: []
-    status: enabled
-    metadata:
-      configurationUISchema: ""
-      genealogy: parent
-      instanceDetails: null
-      isAnnotation: false
-      isNamespaced: true
-      published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration:
-      metadata:
-        namespace: Kibana
-    component:
-      version: apps/v1
-      kind: Deployment
-      schema: ""
-  - id: c1cc2f2b-88ab-4a10-a4d3-6be6c9e16153
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: deployment-vt
-    description: ""
-    format: JSON
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-        name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
-        type: registry
-        sub_type: ""
-        kind: github
-        status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-09-30T07:43:42.329335387Z"
-        updated_at: "2025-09-30T07:43:42.329335387Z"
-        deleted_at: "0001-01-01T00:00:00Z"
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    styles:
-      background-image: none
-      background-opacity: 0.5
-      body-text: ""
-      body-text-color: '#808080'
-      body-text-font-family: Qanelas Soft
-      body-text-font-size: 12
-      body-text-font-weight: "400"
-      body-text-horizontal-align: center
-      body-text-text-decoration: none
-      body-text-vertical-align: center
-      border-width: 2
-      height: 24
-      opacity: 1
-      padding: 6
-      position:
-        x: 643.9342656340248
-        y: 817.8109529277917
-      primaryColor: '#326CE5'
-      secondaryColor: '#7aa1f0'
-      shape: round-rectangle
-      svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
-      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
-      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
-      width: 24
-      z-index: 3
-    capabilities: []
-    status: enabled
-    metadata:
-      configurationUISchema: ""
-      genealogy: parent
-      instanceDetails: null
-      isAnnotation: false
-      isNamespaced: true
-      published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration:
-      metadata:
-        namespace: Logstash
-    component:
-      version: apps/v1
-      kind: Deployment
-      schema: ""
-  - id: c7388886-e505-437a-88a9-affbc8396460
+  - id: 6f0dfb8f-dba5-49d4-a7b4-c1c06856c630
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
     displayName: Elasticsearch
@@ -420,20 +455,20 @@ components:
       body-text-text-decoration: none
       body-text-vertical-align: center
       border-width: 0
-      height: 26
+      height: 24
       opacity: 1
       padding: 6
       position:
-        x: 735.1156939278411
-        y: 795.3098774865804
+        x: 776.2944210180997
+        y: 747.5634271749391
       primaryColor: '#4949a3'
       secondaryColor: '#00D3A9'
-      shape: round-rectangle
+      shape: circle
       svgColor: ui/public/static/img/meshmodels/kubedb-ui-server/color/elasticsearch-color.svg
       svgComplete: ""
       svgWhite: ui/public/static/img/meshmodels/kubedb-ui-server/white/elasticsearch-white.svg
-      width: 49.0166
-      z-index: 4
+      width: 24
+      z-index: 5
     capabilities: []
     status: enabled
     metadata:
@@ -446,13 +481,19 @@ components:
       source_uri: https://charts.appscode.com/stable/kubedb-ui-server/kubedb-ui-server-v2021.12.21.tgz
     configuration:
       metadata:
+        annotations:
+          meshery.io/description: Elasticsearch data store for logs (HTTP API on port 9200).
         labels:
+          app.kubernetes.io/name: elasticsearch
+          app.kubernetes.io/part-of: elkk-stack
           index: app-logs
           port: "9200"
           type: elasticsearch
+          version: latest
         name: Elasticsearch
-        namespace: ""
+        namespace: elkk-stack
       spec:
+        disableSecurity: true
         init:
           script:
             cephfs:
@@ -473,13 +514,19 @@ components:
               targetWWNs: []
               wwids: []
             iscsi:
+              iqn: ""
+              lun: 0
               portals: []
+              targetPortal: ""
             projected:
               sources: []
             rbd:
+              image: ""
               monitors: []
             scaleIO:
+              gateway: ""
               secretRef: {}
+              system: ""
             secret:
               items: []
         kernelSettings:
@@ -525,30 +572,39 @@ components:
                   command: []
                 httpGet:
                   httpHeaders: []
+                  port: 0
               preStop:
                 exec:
                   command: []
                 httpGet:
                   httpHeaders: []
+                  port: 0
             livenessProbe:
               exec:
                 command: []
               httpGet:
                 httpHeaders: []
+                port: 0
             readinessProbe:
               exec:
                 command: []
               httpGet:
                 httpHeaders: []
+                port: 0
             securityContext:
               supplementalGroups: []
               sysctls: []
             tolerations: []
+        replicas: 1
+        secureConfigSecret:
+          name: elasticsearch
         serviceTemplates: []
         storage:
           accessModes: []
           selector:
             matchExpressions: []
+        storageType: Ephemeral
+        terminationPolicy: Delete
         tls:
           certificates: []
         topology:
@@ -607,11 +663,12 @@ components:
               accessModes: []
               selector:
                 matchExpressions: []
+        version: latest
     component:
       version: kubedb.com/v1alpha2
       kind: Elasticsearch
       schema: ""
-  - id: efcf2fb4-531d-4d66-ba8e-413d188a90ef
+  - id: 00e0ecb9-540e-4eff-b509-65a9f6f610c8
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
     displayName: Kafka
@@ -666,20 +723,20 @@ components:
       body-text-text-decoration: none
       body-text-vertical-align: center
       border-width: 0
-      height: 26
+      height: 24
       opacity: 1
       padding: 6
       position:
-        x: 824.4207707185448
-        y: 716.5764878929944
+        x: 847.709563824855
+        y: 670.1165498186638
       primaryColor: '#4949a3'
       secondaryColor: '#00D3A9'
-      shape: round-rectangle
+      shape: circle
       svgColor: ui/public/static/img/meshmodels/kubedb-crds/color/kafka-color.svg
       svgComplete: ""
       svgWhite: ui/public/static/img/meshmodels/kubedb-crds/white/kafka-white.svg
-      width: 55.713863
-      z-index: 0
+      width: 24
+      z-index: 4
     capabilities: []
     status: enabled
     metadata:
@@ -692,12 +749,17 @@ components:
       source_uri: https://charts.appscode.com/stable/kubedb-crds/kubedb-crds-v2025.8.31.tgz
     configuration:
       metadata:
+        annotations:
+          meshery.io/description: Kafka broker for the log stream (port 9092, topic "logs").
         labels:
+          app.kubernetes.io/name: kafka
+          app.kubernetes.io/part-of: elkk-stack
           port: "9092"
           topic: logs
           type: kafka
+          version: latest
         name: Kafka
-        namespace: ""
+        namespace: elkk-stack
       spec:
         authSecret:
           name: ""
@@ -820,14 +882,15 @@ components:
               accessModes: []
               selector:
                 matchExpressions: []
+        version: latest
     component:
       version: gitops.kubedb.com/v1alpha1
       kind: Kafka
       schema: ""
-  - id: a6f9de51-12ce-44db-ad50-d4fa45411a16
+  - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: Logstash
+    displayName: elkk-stack
     description: ""
     format: JSON
     model:
@@ -876,98 +939,14 @@ components:
       border-style: dashed
       border-width: 2
       position:
-        x: 824.2158423844361
-        y: 795.9343700756436
+        x: 783.393168056019
+        y: 718.0362801498457
       primaryColor: '#326CE5'
       secondaryColor: '#7aa1f0'
       shape: rectangle
       svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
       svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
       svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
-      z-index: 6
-    capabilities: []
-    status: enabled
-    metadata:
-      configurationUISchema: ""
-      genealogy: parent
-      instanceDetails: null
-      isAnnotation: false
-      isNamespaced: false
-      published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration:
-      metadata:
-        labels:
-          outputs_to: app-logs-*
-          pipeline: from-kafka-to-es
-          type: logstash
-        name: Logstash
-        namespace: ""
-    component:
-      version: v1
-      kind: Namespace
-      schema: ""
-  - id: f46f9078-c320-43c9-afc5-02250cb54a99
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: Kibana
-    description: ""
-    format: JSON
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-        name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
-        type: registry
-        sub_type: ""
-        kind: github
-        status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-09-30T07:43:28.92744622Z"
-        updated_at: "2025-09-30T07:43:28.92744622Z"
-        deleted_at: "0001-01-01T00:00:00Z"
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    styles:
-      background-image: docker.elastic.co/kibana/kibana:8.15.0
-      background-image-opacity: 1
-      background-opacity: 0.5
-      border-style: dashed
-      border-width: 2
-      position:
-        x: 640.545168053511
-        y: 795.1647467753492
-      primaryColor: '#326CE5'
-      secondaryColor: '#7aa1f0'
-      shape: rectangle
-      svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
-      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
-      svgWhite: docker.elastic.co/kibana/kibana:8.15.0
       z-index: 7
     capabilities: []
     status: enabled
@@ -981,448 +960,21 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        annotations:
+          meshery.io/description: Namespace for the ELKK (Elasticsearch, Logstash, Kibana, Kafka) demo stack.
         labels:
-          port: "5601"
-          queries: app-logs*
-          type: kibana
-        name: Kibana
-        namespace: ""
-    component:
-      version: v1
-      kind: Namespace
-      schema: ""
-  - id: a2d8ea04-7b69-4643-ab96-853d698f70be
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: Kafka Producer
-    description: ""
-    format: JSON
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-        name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
-        type: registry
-        sub_type: ""
-        kind: github
-        status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-09-30T07:43:28.92744622Z"
-        updated_at: "2025-09-30T07:43:28.92744622Z"
-        deleted_at: "0001-01-01T00:00:00Z"
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    styles:
-      background-image: none
-      background-opacity: 0.5
-      border-style: dashed
-      border-width: 2
-      height: 18.9295
-      position:
-        x: 662.9510213241745
-        y: 716.9835853055081
-      primaryColor: '#326CE5'
-      secondaryColor: '#7aa1f0'
-      shape: round-rectangle
-      svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
-      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
-      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
-      width: 80.24723
-      z-index: 8
-    capabilities: []
-    status: enabled
-    metadata:
-      configurationUISchema: ""
-      genealogy: parent
-      instanceDetails: null
-      isAnnotation: false
-      isNamespaced: false
-      published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration:
-      metadata:
-        labels:
-          produces_to: logs
-          type: kafka-producer
-        name: Kafka Producer
-        namespace: ""
-    component:
-      version: v1
-      kind: Namespace
-      schema: ""
-  - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: ""
-    description: ""
-    format: JSON
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-        name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
-        type: registry
-        sub_type: ""
-        kind: github
-        status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-09-30T07:43:28.92744622Z"
-        updated_at: "2025-09-30T07:43:28.92744622Z"
-        deleted_at: "0001-01-01T00:00:00Z"
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    styles:
-      background-image: none
-      background-opacity: 0.5
-      border-style: dashed
-      border-width: 2
-      position:
-        x: 754.6600831450415
-        y: 777.3931656361638
-      primaryColor: '#326CE5'
-      secondaryColor: '#7aa1f0'
-      shape: rectangle
-      svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
-      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
-      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
-      z-index: 9
-    capabilities: []
-    status: enabled
-    metadata:
-      configurationUISchema: ""
-      genealogy: parent
-      instanceDetails: null
-      isAnnotation: false
-      isNamespaced: false
-      published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration:
-      metadata:
-        name: ""
+          app.kubernetes.io/part-of: elkk-stack
+        name: elkk-stack
     component:
       version: v1
       kind: Namespace
       schema: ""
 preferences:
   layers:
-    components:
-      c1cc2f2b-88ab-4a10-a4d3-6be6c9e16153: false
     relationships:
       hierarchical-sibling-matchlabels: false
 relationships:
-  - id: 58bea2fe-9cfc-4100-aed5-58f13d33ca4e
-    evaluationQuery: null
-    kind: edge
-    metadata:
-      description: A relationship that defines annotation edges between components
-      styles:
-        line-color: '#00B39F'
-        line-style: solid
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-        target-arrow-color: '#00B39F'
-        target-arrow-shape: triangle
-      isAnnotation: false
-    model:
-      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: meshery-shapes
-      displayName: Meshery Shapes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Application Definition & Image Build
-      metadata:
-        isAnnotation: true
-        primaryColor: '#00B39F'
-        secondaryColor: '#00D3A9'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
-      model:
-        version: 0.7.2
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: ""
-    selectors:
-      - allow:
-          from:
-            - id: a2d8ea04-7b69-4643-ab96-853d698f70be
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-          to:
-            - id: efcf2fb4-531d-4d66-ba8e-413d188a90ef
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-    subType: annotation
-    status: pending
-    type: non-binding
-    version: ""
-  - id: 6588cfdc-8b5a-4b97-a4f4-b082aff9e8c1
-    evaluationQuery: null
-    kind: edge
-    metadata:
-      description: A relationship that defines annotation edges between components
-      styles:
-        line-color: '#00B39F'
-        line-style: solid
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-        target-arrow-color: '#00B39F'
-        target-arrow-shape: triangle
-      isAnnotation: false
-    model:
-      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: meshery-shapes
-      displayName: Meshery Shapes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Application Definition & Image Build
-      metadata:
-        isAnnotation: true
-        primaryColor: '#00B39F'
-        secondaryColor: '#00D3A9'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
-      model:
-        version: 0.7.2
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: ""
-    selectors:
-      - allow:
-          from:
-            - id: a6f9de51-12ce-44db-ad50-d4fa45411a16
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-          to:
-            - id: c7388886-e505-437a-88a9-affbc8396460
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-    subType: annotation
-    status: pending
-    type: non-binding
-    version: ""
-  - id: 998c9119-6f2d-4d70-9d77-22e51281972d
+  - id: e4ee036d-8ff5-48d5-918f-ffe527c9b07d
     evaluationQuery: null
     kind: hierarchical
     metadata:
@@ -1474,7 +1026,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: c7388886-e505-437a-88a9-affbc8396460
+            - id: 6f0dfb8f-dba5-49d4-a7b4-c1c06856c630
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -1515,7 +1067,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
@@ -1630,269 +1182,7 @@ relationships:
     status: approved
     type: parent
     version: ""
-  - id: aabc8b73-8483-416e-8007-da29a2f9d51f
-    evaluationQuery: null
-    kind: edge
-    metadata:
-      description: A relationship that defines annotation edges between components
-      styles:
-        line-color: '#00B39F'
-        line-style: solid
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-        target-arrow-color: '#00B39F'
-        target-arrow-shape: triangle
-      isAnnotation: false
-    model:
-      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: meshery-shapes
-      displayName: Meshery Shapes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Application Definition & Image Build
-      metadata:
-        isAnnotation: true
-        primaryColor: '#00B39F'
-        secondaryColor: '#00D3A9'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
-      model:
-        version: 0.7.2
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: ""
-    selectors:
-      - allow:
-          from:
-            - id: c7388886-e505-437a-88a9-affbc8396460
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-          to:
-            - id: f46f9078-c320-43c9-afc5-02250cb54a99
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-    subType: annotation
-    status: pending
-    type: non-binding
-    version: ""
-  - id: fe957811-b4eb-4a38-9431-d9aeb31a051b
-    evaluationQuery: null
-    kind: edge
-    metadata:
-      description: A relationship that defines annotation edges between components
-      styles:
-        line-color: '#00B39F'
-        line-style: solid
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-        target-arrow-color: '#00B39F'
-        target-arrow-shape: triangle
-      isAnnotation: false
-    model:
-      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: meshery-shapes
-      displayName: Meshery Shapes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Application Definition & Image Build
-      metadata:
-        isAnnotation: true
-        primaryColor: '#00B39F'
-        secondaryColor: '#00D3A9'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
-      model:
-        version: 0.7.2
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: ""
-    selectors:
-      - allow:
-          from:
-            - id: efcf2fb4-531d-4d66-ba8e-413d188a90ef
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-          to:
-            - id: a6f9de51-12ce-44db-ad50-d4fa45411a16
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch: null
-    subType: annotation
-    status: pending
-    type: non-binding
-    version: ""
-  - id: 04692e71-60e4-4832-b130-1e52f2ee293f
+  - id: 47e3446b-483f-4f41-987a-45140ff6dfd9
     evaluationQuery: ""
     kind: hierarchical
     metadata:
@@ -1944,7 +1234,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: a2d8ea04-7b69-4643-ab96-853d698f70be
+            - id: 72d17a4c-8f5d-4687-9a0a-1685f200b103
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -1985,7 +1275,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
@@ -2027,7 +1317,7 @@ relationships:
     status: approved
     type: parent
     version: v1.0.0
-  - id: 1252e234-509f-413e-b5b7-968ce84748a9
+  - id: 5dd984b3-624d-4fe2-947b-8707fed4ad77
     evaluationQuery: ""
     kind: hierarchical
     metadata:
@@ -2079,7 +1369,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: efcf2fb4-531d-4d66-ba8e-413d188a90ef
+            - id: 1eb564af-3bef-4dad-94f1-37c91c55e083
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -2120,7 +1410,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
@@ -2162,7 +1452,7 @@ relationships:
     status: approved
     type: parent
     version: v1.0.0
-  - id: 147074dd-679e-4303-ab64-dd04e28a0ce7
+  - id: 6fc1abfc-4a2b-4483-afed-df2413de1898
     evaluationQuery: ""
     kind: hierarchical
     metadata:
@@ -2214,7 +1504,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: c0156da7-5aec-44af-a6c6-91d5a0ee6f1d
+            - id: 00e0ecb9-540e-4eff-b509-65a9f6f610c8
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -2255,7 +1545,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: a2d8ea04-7b69-4643-ab96-853d698f70be
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
@@ -2297,7 +1587,7 @@ relationships:
     status: approved
     type: parent
     version: v1.0.0
-  - id: 4775f036-e54a-46e7-9d13-10797be78f9d
+  - id: a34fa0f3-5e70-43ca-8981-0825b7955cec
     evaluationQuery: ""
     kind: hierarchical
     metadata:
@@ -2349,7 +1639,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: f46f9078-c320-43c9-afc5-02250cb54a99
+            - id: d23e42da-3ef1-49aa-a9eb-ee839f127f23
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -2390,7 +1680,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
@@ -2432,7 +1722,7 @@ relationships:
     status: approved
     type: parent
     version: v1.0.0
-  - id: 7f5fbbd6-2efd-482d-9d96-d18a3f4da371
+  - id: d279dda7-6de1-418c-85ed-278465e08b78
     evaluationQuery: ""
     kind: hierarchical
     metadata:
@@ -2484,7 +1774,7 @@ relationships:
     selectors:
       - allow:
           from:
-            - id: a6f9de51-12ce-44db-ad50-d4fa45411a16
+            - id: df27e2fd-dfe0-4a9a-b451-63b8770ac1e4
               kind: '*'
               match: {}
               match_strategy_matrix: null
@@ -2525,412 +1815,7 @@ relationships:
                     - metadata
                     - namespace
           to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
-              kind: Namespace
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: kubernetes
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: github
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatorRef:
-                  - - displayName
-    subType: inventory
-    status: approved
-    type: parent
-    version: v1.0.0
-  - id: 879f6cbf-08f2-43b3-85ce-c1c02985b331
-    evaluationQuery: ""
-    kind: hierarchical
-    metadata:
-      description: Namespace to namespaced components
-      styles:
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-      isAnnotation: false
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: relationships.meshery.io/v1alpha3
-    selectors:
-      - allow:
-          from:
-            - id: 97bcd931-18da-4bdf-8ab2-71516cde789b
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatedRef:
-                  - - configuration
-                    - metadata
-                    - namespace
-          to:
-            - id: f46f9078-c320-43c9-afc5-02250cb54a99
-              kind: Namespace
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: kubernetes
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: github
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatorRef:
-                  - - displayName
-    subType: inventory
-    status: approved
-    type: parent
-    version: v1.0.0
-  - id: 9f0a8c01-7eb6-4fe5-a68a-e2345501805b
-    evaluationQuery: ""
-    kind: hierarchical
-    metadata:
-      description: Namespace to namespaced components
-      styles:
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-      isAnnotation: false
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: relationships.meshery.io/v1alpha3
-    selectors:
-      - allow:
-          from:
-            - id: c1cc2f2b-88ab-4a10-a4d3-6be6c9e16153
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatedRef:
-                  - - configuration
-                    - metadata
-                    - namespace
-          to:
-            - id: a6f9de51-12ce-44db-ad50-d4fa45411a16
-              kind: Namespace
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: kubernetes
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: github
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatorRef:
-                  - - displayName
-    subType: inventory
-    status: approved
-    type: parent
-    version: v1.0.0
-  - id: c1c08ccf-2e90-465f-a36d-81bc62ac76e8
-    evaluationQuery: ""
-    kind: hierarchical
-    metadata:
-      description: Namespace to namespaced components
-      styles:
-        primaryColor: ""
-        svgColor: ""
-        svgWhite: ""
-      isAnnotation: false
-    model:
-      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
-      schemaVersion: models.meshery.io/v1beta1
-      version: v1.0.0
-      name: kubernetes
-      displayName: Kubernetes
-      status: enabled
-      registrant:
-        id: 00000000-0000-0000-0000-000000000000
-        name: ""
-        type: ""
-        sub_type: ""
-        kind: ""
-        status: ""
-        created_at: "0001-01-01T00:00:00Z"
-        updated_at: "0001-01-01T00:00:00Z"
-        deleted_at: null
-        schemaVersion: ""
-      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
-      category:
-        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
-        name: Orchestration & Management
-      subCategory: Scheduling & Orchestration
-      metadata:
-        isAnnotation: false
-        primaryColor: '#326CE5'
-        secondaryColor: '#7aa1f0'
-        shape: circle
-        styleOverrides: ""
-        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
-        svgComplete: ""
-        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
-      model:
-        version: v1.32.0-alpha.3
-      components_count: 0
-      relationships_count: 0
-      components: null
-      relationships: null
-    schemaVersion: relationships.meshery.io/v1alpha3
-    selectors:
-      - allow:
-          from:
-            - id: 24ca2235-e347-4f15-9023-7de5278f46d1
-              kind: '*'
-              match: {}
-              match_strategy_matrix: null
-              model:
-                id: 00000000-0000-0000-0000-000000000000
-                schemaVersion: ""
-                version: ""
-                name: '*'
-                displayName: ""
-                status: ""
-                registrant:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                  type: ""
-                  sub_type: ""
-                  kind: ""
-                  status: ""
-                  created_at: "0001-01-01T00:00:00Z"
-                  updated_at: "0001-01-01T00:00:00Z"
-                  deleted_at: null
-                  schemaVersion: ""
-                connection_id: 00000000-0000-0000-0000-000000000000
-                category:
-                  id: 00000000-0000-0000-0000-000000000000
-                  name: ""
-                subCategory: ""
-                metadata: null
-                model:
-                  version: ""
-                components_count: 0
-                relationships_count: 0
-                components: null
-                relationships: null
-              patch:
-                patchStrategy: replace
-                mutatedRef:
-                  - - configuration
-                    - metadata
-                    - namespace
-          to:
-            - id: 9b1681f2-6619-4c42-8737-9b9abb78aa92
+            - id: a7ed48a8-4ef0-4609-9830-453d21d12ef7
               kind: Namespace
               match: {}
               match_strategy_matrix: null
