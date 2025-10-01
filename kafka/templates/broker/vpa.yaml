@@ -1,0 +1,46 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- $replicaCount := int .Values.broker.replicaCount }}
+{{- if and (gt $replicaCount 0) (include "common.capabilities.apiVersions.has" ( dict "version" "autoscaling.k8s.io/v1/VerticalPodAutoscaler" "context" . )) .Values.broker.autoscaling.vpa.enabled }}
+apiVersion: {{ include "common.capabilities.vpa.apiVersion" . }}
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ template "kafka.broker.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: broker
+    app.kubernetes.io/part-of: kafka
+  {{- if or .Values.broker.autoscaling.vpa.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.broker.autoscaling.vpa.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  resourcePolicy:
+    containerPolicies:
+    - containerName: kafka
+      {{- with .Values.broker.autoscaling.vpa.controlledResources }}
+      controlledResources:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.broker.autoscaling.vpa.maxAllowed }}
+      maxAllowed:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.broker.autoscaling.vpa.minAllowed }}
+      minAllowed:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  targetRef:
+    apiVersion: {{ (include "common.capabilities.statefulset.apiVersion" .) }}
+    kind: StatefulSet
+    name: {{ template "kafka.broker.fullname" . }}
+  {{- if .Values.broker.autoscaling.vpa.updatePolicy }}
+  updatePolicy:
+    {{- with .Values.broker.autoscaling.vpa.updatePolicy.updateMode }}
+    updateMode: {{ . }}
+    {{- end }}
+  {{- end }}
+{{- end }}

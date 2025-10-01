@@ -1,0 +1,425 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
+kind: StatefulSet
+metadata:
+  name: {{ template "kafka.controller.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: controller-eligible
+    app.kubernetes.io/part-of: kafka
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  podManagementPolicy: {{ .Values.controller.podManagementPolicy }}
+  {{- if not .Values.controller.autoscaling.hpa.enabled }}
+  replicas: {{ .Values.controller.replicaCount }}
+  {{- end }}
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.controller.podLabels .Values.commonLabels ) "context" . ) }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: controller-eligible
+      app.kubernetes.io/part-of: kafka
+  serviceName: {{ printf "%s-headless" (include "kafka.controller.fullname" .) | trunc 63 | trimSuffix "-" }}
+  updateStrategy: {{- include "common.tplvalues.render" (dict "value" .Values.controller.updateStrategy "context" $ ) | nindent 4 }}
+  {{- if .Values.controller.minReadySeconds }}
+  minReadySeconds: {{ .Values.controller.minReadySeconds }}
+  {{- end }}
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
+        app.kubernetes.io/component: controller-eligible
+        app.kubernetes.io/part-of: kafka
+      annotations:
+        {{- if include "kafka.controller.createConfigmap" . }}
+        checksum/configuration: {{ include (print $.Template.BasePath "/controller-eligible/configmap.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if or (include "kafka.createSaslSecret" .) (not .Values.existingKraftSecret) }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- end }}
+         {{- if include "kafka.createTlsSecret" . }}
+        checksum/tls-secret: {{ include (print $.Template.BasePath "/tls-secret.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if include "kafka.metrics.jmx.createConfigmap" . }}
+        checksum/jmx-configuration: {{ include (print $.Template.BasePath "/metrics/jmx-configmap.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if .Values.controller.podAnnotations }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.controller.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- include "kafka.imagePullSecrets" . | nindent 6 }}
+      automountServiceAccountToken: {{ .Values.controller.automountServiceAccountToken }}
+      {{- if .Values.controller.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.controller.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      hostNetwork: {{ .Values.controller.hostNetwork }}
+      hostIPC: {{ .Values.controller.hostIPC }}
+      {{- if .Values.controller.schedulerName }}
+      schedulerName: {{ .Values.controller.schedulerName | quote }}
+      {{- end }}
+      {{- if .Values.controller.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.controller.affinity "context" $) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.controller.podAffinityPreset "component" "controller-eligible" "customLabels" $podLabels "topologyKey" .Values.controller.topologyKey "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.controller.podAntiAffinityPreset "component" "controller-eligible" "customLabels" $podLabels "topologyKey" .Values.controller.topologyKey "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.controller.nodeAffinityPreset.type "key" .Values.controller.nodeAffinityPreset.key "values" .Values.controller.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.controller.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.controller.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.controller.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.controller.topologySpreadConstraints "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.controller.terminationGracePeriodSeconds }}
+      {{- end }}
+      {{- if .Values.controller.priorityClassName }}
+      priorityClassName: {{ .Values.controller.priorityClassName }}
+      {{- end }}
+      {{- if .Values.controller.runtimeClassName }}
+      runtimeClassName: {{ .Values.controller.runtimeClassName }}
+      {{- end }}
+      {{- if .Values.controller.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.controller.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kafka.serviceAccountName" . }}
+      enableServiceLinks: {{ .Values.controller.enableServiceLinks }}
+      {{- if .Values.dnsPolicy  }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- end }}
+      {{- if .Values.dnsConfig }}
+      dnsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.dnsConfig "context" $) | nindent 8 }}
+      {{- end }}
+      initContainers:
+        {{- if and .Values.defaultInitContainers.volumePermissions.enabled .Values.controller.persistence.enabled }}
+        {{- include "kafka.defaultInitContainers.volumePermissions" (dict "context" . "role" "controller") | nindent 8 }}
+        {{- end }}
+        {{- if and .Values.externalAccess.enabled .Values.defaultInitContainers.autoDiscovery.enabled (or .Values.externalAccess.controller.forceExpose (not .Values.controller.controllerOnly)) }}
+        {{- include "kafka.defaultInitContainers.autoDiscovery" (dict "context" . "role" "controller") | nindent 8 }}
+        {{- end }}
+        {{- include "kafka.defaultInitContainers.prepareConfig" (dict "context" . "role" "controller") | nindent 8 }}
+        {{- if .Values.controller.initContainers }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.controller.initContainers "context" $ ) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.initContainers }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.initContainers "context" $ ) | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: kafka
+          image: {{ include "kafka.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.controller.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.controller.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
+          {{- else if .Values.controller.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.controller.command "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
+          {{- else if .Values.controller.args }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.controller.args "context" $) | nindent 12 }}
+          {{- end }}
+          env:
+            - name: KAFKA_HEAP_OPTS
+              value: {{ coalesce .Values.controller.heapOpts .Values.heapOpts | quote }}
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: {{ ternary "controller" "controller,broker" .Values.controller.controllerOnly | quote }}
+            - name: KAFKA_INITIAL_CONTROLLERS_FILE
+              value: /shared/initial-controllers.txt
+            {{- include "kafka.commonEnv" . | nindent 12 }}
+            {{- if .Values.controller.extraEnvVars }}
+            {{- include "common.tplvalues.render" ( dict "value" .Values.controller.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+            {{- if .Values.extraEnvVars }}
+            {{- include "common.tplvalues.render" ( dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          {{- if or .Values.controller.extraEnvVarsCM .Values.extraEnvVarsCM .Values.controller.extraEnvVarsSecret .Values.extraEnvVarsSecret }}
+          envFrom:
+            {{- if .Values.controller.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.controller.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.controller.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.controller.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: controller
+              containerPort: {{ .Values.listeners.controller.containerPort }}
+            {{- if not .Values.controller.controllerOnly }}
+            - name: client
+              containerPort: {{ .Values.listeners.client.containerPort }}
+            - name: interbroker
+              containerPort: {{ .Values.listeners.interbroker.containerPort }}
+            {{- if .Values.externalAccess.enabled }}
+            - name: external
+              containerPort: {{ .Values.listeners.external.containerPort }}
+            {{- end }}
+            {{- if and .Values.listeners.extraListeners (not .Values.controller.controllerOnly) }}
+            {{- include "kafka.extraListeners.containerPorts" . | nindent 12 }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.controller.extraContainerPorts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.controller.extraContainerPorts "context" $) | nindent 12 }}
+            {{- end }}
+          {{- if not .Values.diagnosticMode.enabled }}
+          {{- if .Values.controller.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.controller.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.controller.livenessProbe.enabled }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.controller.livenessProbe "enabled") "context" $) | nindent 12 }}
+            exec:
+              command:
+                - pgrep
+                - -f
+                - kafka
+          {{- end }}
+          {{- if .Values.controller.customReadinessProbe }}
+          readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.controller.customReadinessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.controller.readinessProbe.enabled }}
+          readinessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.controller.readinessProbe "enabled") "context" $) | nindent 12 }}
+            tcpSocket:
+              port: "controller"
+          {{- end }}
+          {{- if .Values.controller.customStartupProbe }}
+          startupProbe: {{- include "common.tplvalues.render" (dict "value" .Values.controller.customStartupProbe "context" $) | nindent 12 }}
+          {{- else if .Values.controller.startupProbe.enabled }}
+          startupProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.controller.startupProbe "enabled") "context" $) | nindent 12 }}
+            tcpSocket:
+              port: "controller"
+          {{- end }}
+          {{- end }}
+          {{- if .Values.controller.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.controller.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.controller.resources }}
+          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
+          {{- else if ne .Values.controller.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.controller.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.controller.persistence.mountPath }}
+            - name: logs
+              mountPath: {{ .Values.controller.logPersistence.mountPath }}
+            - name: kafka-config
+              mountPath: /opt/bitnami/kafka/config/server.properties
+              subPath: server.properties
+            - name: tmp
+              mountPath: /tmp
+            - name: init-shared
+              mountPath: /shared
+            {{- if or .Values.log4j2 .Values.existingLog4j2ConfigMap }}
+            - name: log4j2-config
+              mountPath: /opt/bitnami/kafka/config/log4j2.yaml
+              subPath: log4j2.yaml
+            {{- end }}
+            {{- if include "kafka.sslEnabled" . }}
+            - name: kafka-shared-certs
+              mountPath: /opt/bitnami/kafka/config/certs
+              readOnly: true
+            {{- end }}
+            {{- if and .Values.usePasswordFiles (include "kafka.saslEnabled" .) }}
+            - name: kafka-sasl
+              mountPath: /opt/bitnami/kafka/config/secrets
+              readOnly: true
+            {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
+            {{- if .Values.controller.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.controller.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
+        {{- if .Values.metrics.jmx.enabled }}
+        - name: jmx-exporter
+          image: {{ include "kafka.metrics.jmx.image" . }}
+          imagePullPolicy: {{ .Values.metrics.jmx.image.pullPolicy | quote }}
+          {{- if .Values.metrics.jmx.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.metrics.jmx.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
+          {{- else }}
+          command:
+            - java
+          args:
+            - -XX:MaxRAMPercentage=100
+            - -XshowSettings:vm
+            - -jar
+            - jmx_prometheus_standalone.jar
+            - {{ .Values.metrics.jmx.containerPorts.metrics | quote }}
+            - /etc/jmx-kafka/jmx-kafka-prometheus.yml
+          {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.jmx.containerPorts.metrics }}
+          {{- if .Values.metrics.jmx.resources }}
+          resources: {{- toYaml .Values.metrics.jmx.resources | nindent 12 }}
+          {{- else if ne .Values.metrics.jmx.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.metrics.jmx.resourcesPreset) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.metrics.jmx.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.metrics.jmx.livenessProbe "enabled" | toYaml | nindent 12 }}
+            tcpSocket:
+              port: metrics
+          {{- end }}
+          {{- if .Values.metrics.jmx.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.metrics.jmx.readinessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              path: /
+              port: metrics
+          {{- end }}
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /etc/jmx-kafka
+        {{- end }}
+        {{- if .Values.controller.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.controller.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: kafka-configmaps
+          configMap:
+            name: {{ include "kafka.controller.configmapName" . }}
+        - name: kafka-secret-config
+        {{- if (include "kafka.controller.secretConfigExists" .) }}
+          secret:
+            secretName: {{ include "kafka.controller.secretConfigName" . }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+        - name: kafka-config
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: init-shared
+          emptyDir: {}
+        {{- if or .Values.log4j2 .Values.existingLog4j2ConfigMap }}
+        - name: log4j2-config
+          configMap:
+            name: {{ include "kafka.log4j2.configMapName" . }}
+        {{- end }}
+        {{- if .Values.metrics.jmx.enabled }}
+        - name: jmx-config
+          configMap:
+            name: {{ include "kafka.metrics.jmx.configmapName" . }}
+        {{- end }}
+        {{- if include "kafka.sslEnabled" . }}
+        - name: kafka-shared-certs
+          emptyDir: {}
+        {{- if or .Values.tls.existingSecret .Values.tls.autoGenerated.enabled }}
+        - name: kafka-certs
+          projected:
+            defaultMode: 256
+            sources:
+              - secret:
+                  name: {{ include "kafka.tlsSecretName" . }}
+              {{- if .Values.tls.jksTruststoreSecret }}
+              - secret:
+                  name: {{ .Values.tls.jksTruststoreSecret }}
+              {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- if and .Values.usePasswordFiles (include "kafka.saslEnabled" .) }}
+        - name: kafka-sasl
+          projected:
+            sources:
+              - secret:
+                  name:  {{ include "kafka.saslSecretName" . }}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.controller.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.controller.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if not .Values.controller.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- else if .Values.controller.persistence.existingClaim }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ printf "%s" (tpl .Values.controller.persistence.existingClaim .) }}
+        {{- end }}
+        {{- if not .Values.controller.logPersistence.enabled }}
+        - name: logs
+          emptyDir: {}
+        {{- else if .Values.controller.logPersistence.existingClaim }}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ printf "%s" (tpl .Values.controller.logPersistence.existingClaim .) }}
+        {{- end }}
+  {{- if or (and .Values.controller.persistence.enabled (not .Values.controller.persistence.existingClaim)) (and .Values.controller.logPersistence.enabled (not .Values.controller.logPersistence.existingClaim)) }}
+  {{- if .Values.controller.persistentVolumeClaimRetentionPolicy.enabled }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.controller.persistentVolumeClaimRetentionPolicy.whenDeleted }}
+    whenScaled: {{ .Values.controller.persistentVolumeClaimRetentionPolicy.whenScaled }}
+  {{- end }}
+  volumeClaimTemplates:
+    {{- if and .Values.controller.persistence.enabled (not .Values.controller.persistence.existingClaim) }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+        {{- if .Values.controller.persistence.annotations }}
+        annotations: {{- include "common.tplvalues.render" (dict "value" .Values.controller.persistence.annotations "context" $) | nindent 10 }}
+        {{- end }}
+        {{- if .Values.controller.persistence.labels }}
+        labels: {{- include "common.tplvalues.render" (dict "value" .Values.controller.persistence.labels "context" $) | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.controller.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.controller.persistence.size | quote }}
+        {{- include "common.storage.class" (dict "persistence" .Values.controller.persistence "global" .Values.global) | nindent 8 }}
+        {{- if .Values.controller.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.controller.persistence.selector "context" $) | nindent 10 }}
+        {{- end -}}
+    {{- end }}
+    {{- if and .Values.controller.logPersistence.enabled (not .Values.controller.logPersistence.existingClaim) }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: logs
+        {{- if .Values.controller.logPersistence.annotations }}
+        annotations: {{- include "common.tplvalues.render" (dict "value" .Values.controller.logPersistence.annotations "context" $) | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.controller.logPersistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.controller.logPersistence.size | quote }}
+        {{- include "common.storage.class" (dict "persistence" .Values.controller.logPersistence "global" .Values.global) | nindent 8 }}
+        {{- if .Values.controller.logPersistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.controller.logPersistence.selector "context" $) | nindent 10 }}
+        {{- end -}}
+    {{- end }}
+  {{- end }}

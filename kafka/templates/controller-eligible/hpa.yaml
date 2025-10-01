@@ -1,0 +1,43 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- if .Values.controller.autoscaling.hpa.enabled }}
+apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "kafka.controller.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: controller-eligible
+    app.kubernetes.io/part-of: kafka
+  {{- if or .Values.controller.autoscaling.hpa.annotations .Values.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.controller.autoscaling.hpa.annotations .Values.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: {{ template "common.capabilities.statefulset.apiVersion" . }}
+    kind: StatefulSet
+    name: {{ template "kafka.controller.fullname" . }}
+  minReplicas: {{ .Values.controller.autoscaling.hpa.minReplicas }}
+  maxReplicas: {{ .Values.controller.autoscaling.hpa.maxReplicas }}
+  metrics:
+    {{- if .Values.controller.autoscaling.hpa.targetCPU }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.controller.autoscaling.hpa.targetCPU }}
+    {{- end }}
+    {{- if .Values.controller.autoscaling.hpa.targetMemory }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.controller.autoscaling.hpa.targetMemory }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,101 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- $replicaCount := int .Values.controller.replicaCount }}
+{{- if and .Values.networkPolicy.enabled (or (gt $replicaCount 0) .Values.controller.autoscaling.hpa.enabled) }}
+kind: NetworkPolicy
+apiVersion: {{ include "common.capabilities.networkPolicy.apiVersion" . }}
+metadata:
+  name: {{ template "kafka.controller.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: controller-eligible
+    app.kubernetes.io/part-of: kafka
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.controller.podLabels .Values.commonLabels ) "context" . ) }}
+  podSelector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
+      app.kubernetes.io/component: controller-eligible
+      app.kubernetes.io/part-of: kafka
+  policyTypes:
+    - Ingress
+    - Egress
+  {{- if .Values.networkPolicy.allowExternalEgress }}
+  egress:
+    - {}
+  {{- else }}
+  egress:
+    # Allow dns resolution
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Allow internal communications between nodes
+    - ports:
+        - port: {{ .Values.listeners.controller.containerPort }}
+        {{- if not .Values.controller.controllerOnly }}
+        - port: {{ .Values.listeners.client.containerPort }}
+        - port: {{ .Values.listeners.interbroker.containerPort }}
+        {{- range $listener := .Values.listeners.extraListeners }}
+        - port: {{ $listener.containerPort }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.externalAccess.enabled }}
+        - port: {{ .Values.listeners.external.containerPort }}
+        {{- end }}
+      to:
+        - podSelector:
+            matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 14 }}
+    {{- if .Values.networkPolicy.extraEgress }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.networkPolicy.extraEgress "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+  ingress:
+    # Allow client connections
+    - ports:
+        - port: {{ .Values.listeners.controller.containerPort }}
+        {{- if not .Values.controller.controllerOnly }}
+        - port: {{ .Values.listeners.client.containerPort }}
+        - port: {{ .Values.listeners.interbroker.containerPort }}
+        {{- range $listener := .Values.listeners.extraListeners }}
+        - port: {{ $listener.containerPort }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.externalAccess.enabled }}
+        - port: {{ .Values.listeners.external.containerPort }}
+        {{- end }}
+        {{- if .Values.metrics.jmx.enabled }}
+        - port: {{ .Values.metrics.jmx.containerPorts.metrics }}
+        {{- end }}
+      {{- if not .Values.networkPolicy.allowExternal }}
+      from:
+        - podSelector:
+            matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 14 }}
+        {{- if and .Values.networkPolicy.addExternalClientAccess (not .Values.controller.controllerOnly) }}
+        - podSelector:
+            matchLabels:
+              {{ template "common.names.fullname" . }}-client: "true"
+        {{- end }}
+        {{- if .Values.networkPolicy.ingressPodMatchLabels }}
+        - podSelector:
+            matchLabels: {{- include "common.tplvalues.render" (dict "value" .Values.networkPolicy.ingressPodMatchLabels "context" $ ) | nindent 14 }}
+        {{- end }}
+        {{- if .Values.networkPolicy.ingressNSMatchLabels }}
+        - namespaceSelector:
+            matchLabels: {{- include "common.tplvalues.render" (dict "value" .Values.networkPolicy.ingressNSMatchLabels "context" $ ) | nindent 14 }}
+          {{- if .Values.networkPolicy.ingressNSPodMatchLabels }}
+          podSelector:
+            matchLabels: {{- include "common.tplvalues.render" (dict "value" .Values.networkPolicy.ingressNSPodMatchLabel "context" $ ) | nindent 14 }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- if .Values.networkPolicy.extraIngress }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.networkPolicy.extraIngress "context" $ ) | nindent 4 }}
+    {{- end }}
+{{- end }}
