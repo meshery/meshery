@@ -3,7 +3,6 @@ package model
 import (
 	"net/http"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -116,7 +115,7 @@ func TestModelGenerate(t *testing.T) {
 				t.Fatalf("did not expect an error, but got: %v", err)
 			}
 
-			actualResponse := stripANSI(b.String())
+			actualResponse := utils.StripAnsiEscapeCodes(b.String())
 			t.Logf("[%s] stdout:\n%s", tt.Name, actualResponse)
 
 			expectedResponse := strings.TrimSpace(golden.Load())
@@ -126,7 +125,3 @@ func TestModelGenerate(t *testing.T) {
 
 	utils.StopMockery(t)
 }
-
-var ansiRE = regexp.MustCompile(`\x1b\[[0-9;]*m`)
-
-func stripANSI(s string) string { return ansiRE.ReplaceAllString(s, "") }
