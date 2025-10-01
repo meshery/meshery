@@ -287,7 +287,7 @@ func StartMockMesheryServer(t *testing.T) error {
 // handle properly in test. This function will remove undesired characters
 // and spaces to ensure excepted versus actual result match when using http.MockURL
 func CleanStringFromHandlePagination(data string) string {
-	cleaned := stripAnsiEscapeCodes(data)
+	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)
 	return cleaned
 }
@@ -301,7 +301,7 @@ func CleanStringFromHandlePagination(data string) string {
 // Returns:
 //
 //	A string with the ANSI escape codes removed.
-func stripAnsiEscapeCodes(text string) string {
+func StripAnsiEscapeCodes(text string) string {
 	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 	return ansi.ReplaceAllString(text, "")
 }
