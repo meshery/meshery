@@ -1,5 +1,5 @@
 id: 7f985604-62b6-48f9-836b-4d858593a250
-name: kibana-helm-design-fixed
+name: kibana-helm-design
 schemaVersion: designs.meshery.io/v1beta1
 version: 0.0.2
 metadata:
@@ -27,7 +27,7 @@ components:
   - id: 73839bcc-cd26-40a2-beba-a523712b1962
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: containers.0
+    displayName: kibana-container
     description: ""
     format: JSON
     model:
@@ -94,8 +94,8 @@ components:
   - id: 43e122ec-05c7-4196-840d-bf328b510e69
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: kibana-kibana
-    description: ""
+    displayName: Kibana Deployment
+    description: "Kibana Deployment for data visualization with Elasticsearch."
     format: ""
     model:
       id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
@@ -173,7 +173,7 @@ components:
             app: kibana
             release: kibana
         strategy:
-          type: Recreate
+          type: RollingUpdate
         template:
           metadata:
             annotations: {}
@@ -223,7 +223,7 @@ components:
                               set -- "$@" -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}"
                             fi
 
-                            STATUS=$(curl --output /dev/null --write-out "%{http_code}" -k "$@" "http://localhost:5601${path}")
+                            STATUS=$(curl --output /dev/null --write-out "%{http_code}" "$@" "http://localhost:5601${path}")
                             if [[ "${STATUS}" -eq 200 ]]; then
                               exit 0
                             fi
@@ -257,7 +257,7 @@ components:
                     readOnly: true
                   - mountPath: /usr/share/kibana/config/tokens
                     name: kibana-tokens
-                    readOnly: true
+                    readOnly: false
             initContainers: []
             securityContext:
               fsGroup: 1000
@@ -344,7 +344,7 @@ components:
   - id: c4814458-41c7-4968-9e35-ab83dd81a04d
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: kibana-kibana
+    displayName: Kibana Service
     description: ""
     format: ""
     model:
