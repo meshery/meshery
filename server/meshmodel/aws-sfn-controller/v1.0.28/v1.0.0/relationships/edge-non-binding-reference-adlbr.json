@@ -53,44 +53,7 @@
           {
             "id": null,
             "kind": "AdoptedResource",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "kubernetes",
-                      "metadata",
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "Activity",
-                  "mutatedRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "name"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -104,7 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -126,43 +89,24 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "aws",
+                  "nameOrID"
+                ]
+              ]
+            }
           }
         ],
         "to": [
           {
             "id": null,
             "kind": "Activity",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "AdoptedResource",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "kubernetes",
-                      "metadata",
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "name"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -176,7 +120,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -198,7 +142,14 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
           }
         ]
       }

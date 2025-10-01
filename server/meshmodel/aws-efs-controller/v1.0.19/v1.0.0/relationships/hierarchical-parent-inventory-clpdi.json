@@ -67,7 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -89,7 +89,16 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "fileSystemID"
+                ]
+              ]
+            }
           }
         ],
         "to": [
@@ -110,7 +119,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -132,7 +141,14 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
           }
         ]
       }
