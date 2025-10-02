@@ -36,6 +36,8 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
 	"github.com/spf13/cobra"
@@ -536,44 +538,10 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
-	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
-	_, err := utils.GetSessionData(hc.mctlCfg)
-	if err != nil {
-		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-	}
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Operators \n--------------")
 	}
-
-	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
-	if err != nil {
-		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-	}
-	var pages *models.MesheryK8sContextPage
-	var contexts []*models.K8sContext
-	resp, err := client.Do(req)
-	if err != nil || resp.StatusCode != 200 {
-		return errors.Errorf("\nFailed to connect to Meshery server : %v", err)
-	}
-	defer resp.Body.Close()
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Errorf("\n Invalid response: %v", err)
-	}
-
-	err = json.Unmarshal(data, &pages)
-	contexts = pages.Contexts
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	if len(contexts) == 0 {
-		return errors.New("!! Meshery is not connected to any contexts ")
-	}
-
-	var clientMesh *meshkitkube.Client
-	clientMesh, err = meshkitkube.New([]byte(""))
+	clientMesh, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return err
 	}
@@ -612,16 +580,65 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		log.Info("✓ Meshery Operator is running")
 	}
 
-	if !brokerCheck {
-		log.Info("!! Meshery Broker is not running")
-	} else {
-		log.Info("✓ Meshery Broker is running")
-	}
-
 	if !meshsyncCheck {
 		log.Info("!! Meshsync is not running")
 	} else {
 		log.Info("✓ Meshsync is running")
+	}
+
+	if !brokerCheck {
+		log.Info("!! Meshery Broker is not running")
+	} else {
+		log.Info("✓ Meshery Broker is running")
+
+		// Check if broker CR contains Status.Endpoint object with External and Internal parts
+		const (
+			brokerGroup    = "meshery.io"
+			brokerVersion  = "v1alpha1"
+			brokerResource = "brokers"
+			brokerName     = "meshery-broker"
+		)
+		brokerGVR := schema.GroupVersionResource{
+			Group:    brokerGroup,
+			Version:  brokerVersion,
+			Resource: brokerResource,
+		}
+
+		brokerCR, err := clientMesh.DynamicKubeClient.Resource(brokerGVR).Namespace(utils.MesheryNamespace).Get(context.Background(), brokerName, v1.GetOptions{})
+		if err != nil {
+			log.Info("!! Could not retrieve Meshery Broker CR")
+		} else {
+			// Check if status.endpoint exists with external and internal parts
+			status, found, err := unstructured.NestedMap(brokerCR.Object, "status")
+			if err != nil {
+				log.Infof("!! Error parsing Meshery Broker CR status: %v", err)
+			} else if !found {
+				log.Info("!! Meshery Broker CR does not contain Status section")
+			} else {
+				endpoint, endpointFound, err := unstructured.NestedMap(status, "endpoint")
+				if err != nil {
+					log.Infof("!! Error parsing Meshery Broker CR status.endpoint: %v", err)
+				} else if !endpointFound {
+					log.Info("!! Meshery Broker CR does not contain Status.Endpoint")
+				} else {
+					external, externalFound, _ := unstructured.NestedString(endpoint, "external")
+					internal, internalFound, _ := unstructured.NestedString(endpoint, "internal")
+
+					if externalFound && internalFound && external != "" && internal != "" {
+						log.Infof("✓ Meshery Broker CR contains Status.Endpoint (External: %s, Internal: %s)", external, internal)
+					} else {
+						missingParts := []string{}
+						if !externalFound || external == "" {
+							missingParts = append(missingParts, "External")
+						}
+						if !internalFound || internal == "" {
+							missingParts = append(missingParts, "Internal")
+						}
+						log.Infof("!! Meshery Broker CR Status.Endpoint missing: %s", strings.Join(missingParts, ", "))
+					}
+				}
+			}
+		}
 	}
 
 	return nil

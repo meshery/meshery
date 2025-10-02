@@ -15,12 +15,16 @@ jobs:
       - name: Get current star count
         run: |
           echo "STARS=$(curl --silent 'https://api.github.com/repos/${{ github.repository }}' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
+
       - name: Notify Slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+        uses: slackapi/slack-github-action@v2.1.1
         with:
-          args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just starred ${{ github.repository }}! (https://github.com/${{ github.repository }}/stargazers) Total ⭐️: ${{ env.STARS }}\"}'
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: CSK7N9TGX
+            type: "mrkdwn"
+            text: "<https://github.com/${{ github.actor }}|${{ github.actor }}> just starred <https://github.com/${{ github.repository }}/stargazers|${{ github.repository }}> bringing the total ⭐️ count up to: ${{ env.STARS }}"
 
   good-first-issue-notify:
     if: github.event_name == 'issues' && (github.event.label.name == 'good first issue' || github.event.label.name == 'first-timers-only')
@@ -28,9 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+        uses: slackapi/slack-github-action@v2.1.1
         with:
-          args: '{\"channel\":\"C019426UBNY\",\"type\":\"section\",\"text\":\":new: Good first issue up for grabs: ${{ github.event.issue.title }} - ${{ github.event.issue.html_url }} \"}'
-                                                                            
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: C019426UBNY
+            text: ":new: Good first issue up for grabs: <${{ github.event.issue.html_url }}|${{ github.event.issue.title }}>"

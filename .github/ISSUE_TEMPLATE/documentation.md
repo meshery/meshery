@@ -19,3 +19,5 @@ assignees: ''
 - 🛠 [Meshery Build & Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 🎨 Wireframes and [designs for Meshery UI](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9)
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+
+- 📺 [Contributor training for Meshery Documentation](https://www.youtube.com/watch?v=7wRbbOSwrtI&t=18s)\n

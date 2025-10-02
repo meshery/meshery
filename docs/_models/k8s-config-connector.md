@@ -1778,7 +1778,19 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/workflows-execution/icons/color/workflows-execution-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workflows-execution/icons/white/workflows-execution-white.svg
   description: 
-components-count: 442
+- name: bigtable-logical-view
+  colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/color/bigtable-logical-view-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/white/bigtable-logical-view-white.svg
+  description: 
+- name: service-networking-peered-dns-domain
+  colorIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/color/service-networking-peered-dns-domain-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/white/service-networking-peered-dns-domain-white.svg
+  description: 
+- name: billing-account
+  colorIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/color/billing-account-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/white/billing-account-white.svg
+  description: 
+components-count: 445
 relationships: 
 relationship-count: 0
 featureList: [

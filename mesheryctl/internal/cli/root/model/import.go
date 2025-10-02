@@ -310,7 +310,7 @@ func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName
 		}
 		if len(rows) > 0 {
 			fmt.Println("")
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 		}
 	}
 }
@@ -353,7 +353,7 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				}
 				parts := strings.Split(key, "/")
 				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, parts[0], parts[1], parts[2])
-				utils.PrintToTable(header, rows)
+				utils.PrintToTable(header, rows, nil)
 			}
 		}
 	}

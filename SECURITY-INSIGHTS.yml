@@ -1,0 +1,44 @@
+header:
+  schema-version: 1.0.0
+  expiration-date: '2026-03-31T05:05:05.000Z'
+  creation-date: '2025-04-03'
+  last-updated: '2025-08-21'
+  last-reviewed: '2025-08-21'
+  project-url: https://github.com/meshery/meshery/
+project-lifecycle:
+  stage: active
+  bug-fixes-only: false
+  core-maintainers:
+  - "@meshery/core-maintainers"
+  - github:leecalcote
+  - github:aabidsofi19
+contribution-policy:
+  accepts-pull-requests: true
+  code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
+documentation:
+- https://github.com/meshery/meshery/blob/master/README.md
+security-testing:
+- tool-type: sca
+  tool-name: Dependabot
+  tool-version: latest
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: true
+  comment: |
+    Dependabot is enabled for this repo.
+security-contacts:
+- type: email
+  value: security@meshery.dev
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
+  email-contact: security@meshery.dev
+  comment: |
+    The first and best way to report a vulnerability is by using private security issues in GitHub. See https://docs.meshery.io/project/security-vulnerabilities for a list of announced vulnerabilities.
+dependencies:
+  third-party-packages: true
+  dependencies-lists:
+  - https://github.com/meshery/meshery/blob/master/go.mod
+  - https://github.com/meshery/meshery/blob/master/ui/package.json
+  - Meshery's Software Bill of Materials (SBOM) is available as a build artifact - https://github.com/meshery/meshery/actions/workflows/bom.yaml

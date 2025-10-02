@@ -52,7 +52,40 @@ components:
   description: 
 components-count: 10
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and VPCOrigin"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and CachePolicy"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and Distribution"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and Function"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and OriginAccessControl"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and OriginRequestPolicy"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and CachePolicy"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and Function"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and OriginAccessControl"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and OriginRequestPolicy"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Distribution and ResponseHeadersPolicy"
+relationship-count: 11
 featureList: [
   "Global content delivery",
   "Improves website and application performance",

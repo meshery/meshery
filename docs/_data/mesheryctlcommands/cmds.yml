@@ -653,17 +653,27 @@ design:
 
     list:
       name: list
-      description: displays a list of available design files
+      description: Displays a list of available design files
       usage: mesheryctl design list
       flags:
         page:
           name: --page, -p
-          description: list designs by specific page number (25 designs per page)
+          description: list designs by specific page number (10 designs per page)
         verbose:
           name: --verbose, -v
           description: show all design file metadata
           usage: mesheryctl design list --verbose
           example: mesheryctl design list -v
+        pagesize:
+          name: --pagesize
+          description: number of designs to be displayed per page (default 10)
+          usage: mesheryctl design list --pagesize [number]
+          example: mesheryctl design list --pagesize 50
+        count:
+          name: --count, -c
+          description: display the total number of available designs
+          usage: mesheryctl design list --count
+          example: mesheryctl design list --count
 
     view:
       name: view
@@ -1153,55 +1163,55 @@ exp:
   model:
     name: model
     description: Manages models
-    usage: mesheryctl exp model
+    usage: mesheryctl model
     flags:
       help:
         name: --help, -h
         description: help for model command
-        usage: mesheryctl exp model --help
-        example: mesheryctl exp model --help
+        usage: mesheryctl model --help
+        example: mesheryctl model --help
     subcommands:
       init:
         name: init
         description: Scaffold a folder structure for model creation
-        usage: mesheryctl exp model init [model-name] [flags]
+        usage: mesheryctl model init [model-name] [flags]
         flags:
           output-format:
             name: --output-format, -o
             description: (optional) format to scaffold files to, supports json or yaml, planned to support csv, defaults to json.
-            usage: mesheryctl exp model init [model-name] --output-format [format]
+            usage: mesheryctl model init [model-name] --output-format [format]
             example:
-              mesheryctl exp model init aws-ec2-controller --output-format json
-              mesheryctl exp model init aws-ec2-controller --output-format yaml
+              mesheryctl model init aws-ec2-controller --output-format json
+              mesheryctl model init aws-ec2-controller --output-format yaml
           path:
             name: --path, -p
             description: (optional) generates a folder structure under specified path, defaults to current dir.
-            usage: mesheryctl exp model init [model-name] --path [path]
+            usage: mesheryctl model init [model-name] --path [path]
             example:
-              mesheryctl exp model init aws-ec2-controller --path .
-              mesheryctl exp model init aws-ec2-controller --path ./some/folder/where/to/put/files
+              mesheryctl model init aws-ec2-controller --path .
+              mesheryctl model init aws-ec2-controller --path ./some/folder/where/to/put/files
           version:
             name: --version
             description: (optional) model version, defaults to v0.1.0   
-            usage: mesheryctl exp model init [model-name] --path [path]
+            usage: mesheryctl model init [model-name] --version [version]
             example:
-              mesheryctl exp model init aws-ec2-controller --version v1.2.3
+              mesheryctl model init aws-ec2-controller --version v1.2.3
       build:
         name: build
         description: Create an OCI-compliant package from the model files
         usage: |
-          mesheryctl exp model build [model-name] [flags]
-          mesheryctl exp model build [model-name]/[model-version] [flags]
+          mesheryctl model build [model-name] [flags]
+          mesheryctl model build [model-name]/[model-version] [flags]
         flags:
           path:
             name: --path, -p
             description: (optional) looks for a model folder under specified path, defaults to current dir.
             usage: |
-              mesheryctl exp model build [model-name] --path [path]
-              mesheryctl exp model build [model-name]/[model-version] --path [path]
+              mesheryctl model build [model-name] --path [path]
+              mesheryctl model build [model-name]/[model-version] --path [path]
             example:
-              mesheryctl exp model build aws-ec2-controller --path .
-              mesheryctl exp model build aws-ec2-controller --path ./some/folder/where/to/look/for/files
-              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path .
-              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
+              mesheryctl model build aws-ec2-controller --path .
+              mesheryctl model build aws-ec2-controller --path ./some/folder/where/to/look/for/files
+              mesheryctl model build aws-ec2-controller/v1.2.3 --path .
+              mesheryctl model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
           
