@@ -11,7 +11,7 @@
     "version": "v1.0.0",
     "name": "dask-gateway",
     "displayName": "Dask Gateway",
-    "status": "ignored",
+    "status": "enabled",
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
