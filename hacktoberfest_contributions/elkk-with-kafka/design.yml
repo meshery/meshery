@@ -97,7 +97,7 @@ components:
           outputs_to: app-logs-*
           pipeline: from-kafka-to-es
           type: logstash
-          version: latest
+          version: "1.0.0"
         name: Logstash Deployment
         namespace: elkk-stack
     component:
@@ -410,8 +410,8 @@ components:
       id: 64f6236a-7a91-9d28-cbdf-7548e9708a86
       schemaVersion: models.meshery.io/v1beta1
       version: v1.0.0
-      name: kubedb-ui-server
-      displayName: Kubedb UI Server
+      name: elasticsearch
+      displayName: Elasticsearch
       status: enabled
       registrant:
         id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
@@ -493,7 +493,7 @@ components:
         name: Elasticsearch
         namespace: elkk-stack
       spec:
-        disableSecurity: true
+        disableSecurity: false
         init:
           script:
             cephfs:
@@ -603,7 +603,7 @@ components:
           accessModes: []
           selector:
             matchExpressions: []
-        storageType: Ephemeral
+        storageType: Durable
         terminationPolicy: Delete
         tls:
           certificates: []
@@ -663,7 +663,7 @@ components:
               accessModes: []
               selector:
                 matchExpressions: []
-        version: latest
+        version: "8.10.2"
     component:
       version: kubedb.com/v1alpha2
       kind: Elasticsearch
@@ -678,8 +678,8 @@ components:
       id: 65ced551-fbca-a54f-018d-a2a629c24294
       schemaVersion: models.meshery.io/v1beta1
       version: v1.0.0
-      name: kubedb-crds
-      displayName: Kubedb CRDs
+      name: kafka
+      displayName: Kafka
       status: enabled
       registrant:
         id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
@@ -828,11 +828,12 @@ components:
             volumes: []
         serviceTemplates: []
         storage:
-          accessModes: []
-          selector:
-            matchExpressions: []
-        tls:
-          certificates: []
+          storageClassName: "standard"
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
         topology:
           broker:
             podTemplate:
@@ -882,7 +883,7 @@ components:
               accessModes: []
               selector:
                 matchExpressions: []
-        version: latest
+        version: "3.5.1"
     component:
       version: gitops.kubedb.com/v1alpha1
       kind: Kafka
@@ -1022,7 +1023,7 @@ relationships:
       relationships_count: 0
       components: null
       relationships: null
-    schemaVersion: ""
+    schemaVersion: relationships.meshery.io/v1alpha3
     selectors:
       - allow:
           from:
