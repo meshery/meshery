@@ -180,7 +180,7 @@ Based on GitHub Issue #15984, all requirements met:
 
 ```bash
 # Navigate to repository
-cd "/Volumes/Backup Plus/meshery"
+cd <path-to-repository>
 
 # Stage all changes
 git add hacktoberfest_contributions/aviralgarg05/

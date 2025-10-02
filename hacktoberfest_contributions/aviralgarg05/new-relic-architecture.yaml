@@ -64,7 +64,7 @@ services:
           spec:
             containers:
             - name: app
-              image: myapp:latest
+              image: myapp:v1.0.0
               ports:
               - container-port: 8080
               securityContext:
@@ -130,13 +130,9 @@ services:
           spec:
             containers:
             - name: newrelic-infrastructure
-              image: newrelic/infrastructure:latest
+              image: newrelic/infrastructure:1.48.1
               securityContext:
-                allowPrivilegeEscalation: false
-                runAsNonRoot: true
-                capabilities:
-                  drop:
-                  - ALL
+                privileged: true
               env:
               - name: NRIA_LICENSE_KEY
                 value-from:
@@ -253,57 +249,6 @@ services:
           style:
             z-index: 6
 
-  New Relic Browser Agent:
-    annotations:
-      meshery/component-type: observability
-    type: Service
-    namespace: observability
-    settings:
-      spec:
-        type: ClusterIP
-        ports:
-        - port: 80
-          target-port: 80
-        selector:
-          app: web-application
-    traits:
-      meshmap:
-        edges:
-        - from: a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p
-          to: e5f6g7h8-9i0j-1k2l-3m4n-5o6p7q8r9s0t
-        - from: c5a7e8d4-9b2c-4f3a-8e1d-6f4b7a9c2e5d
-          to: e5f6g7h8-9i0j-1k2l-3m4n-5o6p7q8r9s0t
-        id: e5f6g7h8-9i0j-1k2l-3m4n-5o6p7q8r9s0t
-        meshmodel-metadata:
-          capabilities: |
-            - Real User Monitoring
-            - Page Load Performance
-            - JavaScript Error Tracking
-            - AJAX Request Monitoring
-          genealogy: ""
-          isAnnotation: false
-          isCustomResource: false
-          isModelAnnotation: "FALSE"
-          isNamespaced: true
-          logoURL: ""
-          model: kubernetes
-          modelDisplayName: Kubernetes
-          primaryColor: '#326CE5'
-          published: true
-          secondaryColor: '#7aa1f0'
-          shape: round-rectangle
-          styleOverrides: ""
-          subCategory: Browser Monitoring
-          svgColor: ""
-          svgComplete: ""
-          svgWhite: ""
-        position:
-          posX: 290
-          posY: 210
-        whiteboardData:
-          style:
-            z-index: 7
-
   New Relic Kubernetes Integration:
     annotations:
       meshery/component-type: observability
@@ -323,13 +268,7 @@ services:
             service-account-name: newrelic-kubernetes
             containers:
             - name: newrelic-kubernetes
-              image: newrelic/infrastructure-k8s:latest
-              securityContext:
-                allowPrivilegeEscalation: false
-                runAsNonRoot: true
-                capabilities:
-                  drop:
-                  - ALL
+              image: newrelic/infrastructure-k8s:3.8.0
               env:
               - name: NRIA_LICENSE_KEY
                 value-from:
@@ -420,6 +359,188 @@ services:
           style:
             z-index: 2
 
+  New Relic Kubernetes ServiceAccount:
+    annotations:
+      meshery/component-type: configuration
+    type: ServiceAccount
+    namespace: observability
+    settings:
+      metadata:
+        name: newrelic-kubernetes
+    traits:
+      meshmap:
+        edges: []
+        id: sa-1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: ""
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"border-style":"dashed"}'
+          subCategory: Security
+          svgColor: ""
+          svgComplete: ""
+          svgWhite: ""
+        position:
+          posX: 390
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 10
+
+  New Relic Kubernetes ClusterRole:
+    annotations:
+      meshery/component-type: configuration
+    type: ClusterRole
+    namespace: ""
+    settings:
+      metadata:
+        name: newrelic-kubernetes
+      rules:
+      - api-groups: [""]
+        resources:
+        - nodes
+        - nodes/metrics
+        - nodes/stats
+        - nodes/proxy
+        - pods
+        - services
+        - namespaces
+        - events
+        verbs: ["get", "list", "watch"]
+      - api-groups: ["apps"]
+        resources:
+        - deployments
+        - daemonsets
+        - statefulsets
+        - replicasets
+        verbs: ["get", "list", "watch"]
+    traits:
+      meshmap:
+        edges: []
+        id: cr-2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"border-style":"dashed"}'
+          subCategory: Security
+          svgColor: ""
+          svgComplete: ""
+          svgWhite: ""
+        position:
+          posX: 490
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 11
+
+  New Relic Kubernetes ClusterRoleBinding:
+    annotations:
+      meshery/component-type: configuration
+    type: ClusterRoleBinding
+    namespace: ""
+    settings:
+      metadata:
+        name: newrelic-kubernetes
+      role-ref:
+        api-group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: newrelic-kubernetes
+      subjects:
+      - kind: ServiceAccount
+        name: newrelic-kubernetes
+        namespace: observability
+    traits:
+      meshmap:
+        edges: []
+        id: crb-3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"border-style":"dashed"}'
+          subCategory: Security
+          svgColor: ""
+          svgComplete: ""
+          svgWhite: ""
+        position:
+          posX: 590
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 12
+
+  Postgres Secret:
+    annotations:
+      meshery/component-type: configuration
+    type: Secret
+    namespace: default
+    settings:
+      type: Opaque
+      metadata:
+        name: postgres-secret
+      data:
+        postgres-password: "<base64-encoded-password>"
+    traits:
+      meshmap:
+        edges: []
+        id: ps-4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: ""
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"border-style":"dashed"}'
+          subCategory: Configuration
+          svgColor: ""
+          svgComplete: ""
+          svgWhite: ""
+        position:
+          posX: 70
+          posY: 330
+        whiteboardData:
+          style:
+            z-index: 13
+
   New Relic Secret:
     annotations:
       meshery/component-type: configuration
@@ -478,7 +599,7 @@ services:
           spec:
             containers:
             - name: newrelic-logging
-              image: newrelic/newrelic-fluentbit-output:latest
+              image: newrelic/newrelic-fluentbit-output:1.15.0
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
