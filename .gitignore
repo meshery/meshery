@@ -80,3 +80,48 @@ wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
 install/docker-extension/vm/vm
+
+# Heavy files and archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.iso
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.mp3
+*.wav
+*.flac
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.mdb
+
+# Large data files
+*.csv
+*.parquet
+*.avro
+*.json.gz
+
+# Build artifacts
+*.wasm
+*.jar
+*.war
+*.ear
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
