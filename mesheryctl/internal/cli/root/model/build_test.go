@@ -1,17 +1,38 @@
 package model
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestModelBuild(t *testing.T) {
+	// Shared cleanup function for test directories and artifacts
+	cleanupTestArtifacts := func(dirs []string) {
+		for _, dir := range dirs {
+			os.RemoveAll(dir)
+			os.RemoveAll(dir + ".tar")
+		}
+	}
+
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-model-build-aws-dynamodb-controller",
+		"test-case-model-build-aws-dynamodb-controller-gbxter34",
+	}
+	// Clean up all test artifacts from previous runs
+	cleanupTestArtifacts(cleanupDirs)
+	// Register cleanup for after test completion
+	t.Cleanup(func() {
+		cleanupTestArtifacts(cleanupDirs)
+	})
+
 	utils.SetupContextEnv(t)
 
 	// get current directory
@@ -21,11 +42,50 @@ func TestModelBuild(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
+	// Helper function to create a fresh ModelCmd with all original properties
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:     ModelCmd.Use,
+			Short:   ModelCmd.Short,
+			Long:    ModelCmd.Long,
+			Example: ModelCmd.Example,
+			Args:    ModelCmd.Args,
+			RunE:    ModelCmd.RunE,
+		}
+		// Copy all flags from the original ModelCmd
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	// Helper function to create fresh commands for build tests
+	createFreshCommands := func() *cobra.Command {
+		// Create fresh build command
+		freshBuildCmd := &cobra.Command{
+			Use:     buildModelCmd.Use,
+			Short:   buildModelCmd.Short,
+			Long:    buildModelCmd.Long,
+			Example: buildModelCmd.Example,
+			PreRunE: buildModelCmd.PreRunE,
+			RunE:    buildModelCmd.RunE,
+		}
+		// Copy all flags from the original build command
+		buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			freshBuildCmd.Flags().AddFlag(flag)
+		})
+
+		// Use the shared helper for ModelCmd
+		cmd := createFreshModelCmd()
+		cmd.AddCommand(freshBuildCmd)
+		return cmd
+	}
+
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			// Use the shared helper to create a fresh ModelCmd
+			cmd := createFreshModelCmd()
+			cmd.AddCommand(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(buff)
@@ -36,16 +96,7 @@ func TestModelBuild(t *testing.T) {
 	}
 	cleanUpHookRemoveDirsAndFiles := func(dirs ...string) func() {
 		return func() {
-			errs := make([]error, 0, 1)
-			for _, dir := range dirs {
-				if err := os.RemoveAll(dir); err != nil {
-					errs = append(errs, err)
-				}
-			}
-			if len(errs) > 0 {
-				t.Fatal(errors.Join(errs...))
-			}
-
+			cleanupTestArtifacts(dirs)
 			t.Log("removed created dirs and files")
 		}
 	}
@@ -61,19 +112,55 @@ func TestModelBuild(t *testing.T) {
 	}{
 		{
 			Name:             "model build from model name and version",
-			Args:             []string{"build", "test-case-aws-lambda-controller/v0.1.0"},
+			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
 			ExpectedFiles: []string{
-				"test-case-aws-lambda-controller-v0-1-0.tar",
+				"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
 			},
 			SetupHooks: []func(){
-				setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-lambda-controller", "--version", "v0.1.0"),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
-					"test-case-aws-lambda-controller",
-					"test-case-aws-lambda-controller-v0-1-0.tar",
+					"test-case-model-build-aws-lambda-controller",
+					"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+				),
+			},
+		},
+		{
+			Name:             "model build from model name only (no version)",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller"},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				"test-case-model-build-aws-dynamodb-controller.tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller",
+					"test-case-model-build-aws-dynamodb-controller.tar",
+				),
+			},
+		},
+		{
+			Name:             "model build from model name only (no version) with slash in the end",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller/"},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				"test-case-model-build-aws-dynamodb-controller.tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller",
+					"test-case-model-build-aws-dynamodb-controller.tar",
 				),
 			},
 		},
@@ -90,10 +177,20 @@ func TestModelBuild(t *testing.T) {
 			ExpectedResponse: "model.build.error.usage.golden",
 		},
 		{
-			Name:             "model build version not specified",
-			Args:             []string{"build", "aws-ec2-controller/"},
+			Name:             "model build from model name only (no version) not supporting multiple versions",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller-gbxter34"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
+			ExpectedResponse: "model.build.error.not-supporting-multiple-versions-build.golden",
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.1"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.2"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller-gbxter34",
+				),
+			},
 		},
 		{
 			Name:             "model build folder does not exist",
@@ -104,6 +201,9 @@ func TestModelBuild(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			// Clean up any lingering test artifacts before this subtest starts
+			cleanupTestArtifacts(cleanupDirs)
+
 			if len(tc.CleanupHooks) > 0 {
 				for _, cleanupHook := range tc.CleanupHooks {
 					defer cleanupHook()
@@ -118,9 +218,8 @@ func TestModelBuild(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			// Create fresh commands using helper function
+			cmd := createFreshCommands()
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()

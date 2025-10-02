@@ -33,8 +33,10 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: "1.24"
           check-latest: "true"
+      - name: Remove current docs pages for mesheryctl
+        run: rm -rf docs/pages/reference/mesheryctl/*
       - name: Run script 📜
         run: |
           cd mesheryctl

@@ -49,6 +49,9 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useContext } from 'react';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useEffect } from 'react';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -124,6 +127,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
     open: false,
     schema: {},
   });
+  const workspaceModalContext = useContext(WorkspaceModalContext);
+
   const { organization } = useSelector((state) => state.ui);
   const [page, setPage] = useState(0);
   const pageSize = 10;
@@ -200,6 +205,14 @@ const Workspaces = ({ onSelectWorkspace }) => {
       .catch((error) => handleError(`Workspace Create Error: ${error?.data}`));
     handleWorkspaceModalClose();
   };
+
+  useEffect(() => {
+    if (workspaceModalContext.createNewWorkspaceModalOpen) {
+      const event = new Event('click');
+      handleWorkspaceModalOpen(event, WORKSPACE_ACTION_TYPES.CREATE, {});
+      workspaceModalContext.setCreateNewWorkspaceModalOpen(false);
+    }
+  }, [workspaceModalContext.createNewWorkspaceModalOpen]);
 
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({

@@ -12,6 +12,7 @@ import { RelationshipEvaluationEventFormatter } from './formatters/relationship_
 import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
+import { AcademyEventsFormatter } from './formatters/academy_events';
 
 const DesignFormatter = ({ value }) => {
   const theme = useTheme();
@@ -96,6 +97,7 @@ const EventTypeFormatters = {
   [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.UNDEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION)]: AcademyEventsFormatter,
   // [eventDetailFormatterKey(EVENT_TYPE.REGISTRANT_SUMMARY)]: RegistrantSummaryFormatter,
 };
 

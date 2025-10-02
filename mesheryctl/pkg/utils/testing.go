@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -370,15 +371,25 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 
 			var buf bytes.Buffer
 
-			rescueStdout := os.Stdout
+			// Properly save and restore stdout using defer
+			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
+			// Ensure stdout is always restored
+			defer func() {
+				os.Stdout = originalStdout
+			}()
 
 			_ = SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(rescueStdout)
+			cmd.SetOut(originalStdout)
 			err := cmd.Execute()
+
+			// Close write end before reading
+			w.Close()
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -394,15 +405,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				t.Fatal(err)
 			}
 
-			w.Close()
-
 			_, errCopy := io.Copy(&buf, r)
-
 			if errCopy != nil {
 				t.Fatal(errCopy)
 			}
-
-			os.Stdout = rescueStdout
 
 			actualResponse := buf.String()
 
@@ -420,7 +426,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	}
 
 	StopMockery(t)
-
 }
 
 type MesheryCommamdTest struct {
@@ -454,14 +459,29 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 				TokenFlag = GetToken(t)
 
-				httpmock.RegisterResponder(tt.HttpMethod, testContext.BaseURL+tt.URL,
-					httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				url := testContext.BaseURL + tt.URL
+				httpMethod := tt.HttpMethod
+
+				if tt.HttpStatusCode < 0 {
+					httpmock.RegisterResponder(httpMethod, url,
+						func(req *http.Request) (*http.Response, error) {
+							return nil, &net.OpError{Op: "dial", Net: "tcp", Addr: nil, Err: net.ErrClosed}
+						})
+				} else {
+					httpmock.RegisterResponder(httpMethod, url,
+						httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				}
+
 			}
 
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
+			originalStdout := os.Stdout
 			b := SetupMeshkitLoggerTesting(t, false)
+			defer func() {
+				os.Stdout = originalStdout
+			}()
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(b)
 			err := cmd.Execute()

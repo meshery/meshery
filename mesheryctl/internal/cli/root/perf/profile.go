@@ -97,7 +97,7 @@ mesheryctl perf profile test --view
 			}
 			utils.Log.Info(string(body))
 		} else if !viewSingleProfile { // print all profiles
-			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
+			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
 			index := 0
 			// if profiles more than one profile, ask for profile index
@@ -202,9 +202,9 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 	}
 
 	if key == "result" {
-		utils.PrintToTable([]string{"Index", "Name", "Mesh", "QPS", "Duration", "P50", "P99.9", "Start-Time"}, data)
+		utils.PrintToTable([]string{"Index", "Name", "Mesh", "QPS", "Duration", "P50", "P99.9", "Start-Time"}, data, nil)
 	} else {
-		utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
+		utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 	}
 
 	fmt.Printf("\n")

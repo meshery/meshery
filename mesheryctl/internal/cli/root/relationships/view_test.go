@@ -74,14 +74,23 @@ func TestView(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
+			// Grab console prints with proper cleanup
+			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
+			// Ensure stdout is always restored
+			defer func() {
+				os.Stdout = originalStdout
+			}()
+
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(rescueStdout)
+			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
+
+			// Close write end before reading
+			w.Close()
 
 			if err != nil {
 				// if we're supposed to get an error
@@ -98,10 +107,7 @@ func TestView(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			w.Close()
 			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			actualResponse := string(out)
 
 			if *update {

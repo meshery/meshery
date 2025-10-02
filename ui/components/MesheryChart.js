@@ -34,6 +34,28 @@ const ChartWrapper = styled('div')({
   alignItems: 'center',
 });
 
+const ShareIconButton = styled(IconButton)({
+  transform: 'scaleX(-1)',
+});
+
+const SocialPopper = styled(Popper)(({ theme }) => ({
+  maxWidth: theme.spacing(30),
+  zIndex: theme.zIndex.modal + 1,
+}));
+
+const SocialPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+}));
+
+const SocialIconWrapper = styled('span')(({ theme }) => ({
+  margin: theme.spacing(0.4),
+}));
+
+const ShareIconContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
+
 function NonRecursiveConstructDisplayCells(data) {
   return Object.keys(data).map((el) => {
     if (typeof data[el].display?.value === 'string' && !data[el].display?.hide) {
@@ -293,6 +315,44 @@ function MesheryChart(props) {
 
   return (
     <NoSsr>
+      <ShareIconContainer>
+        <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
+          <ReplyIcon />
+        </ShareIconButton>
+      </ShareIconContainer>
+      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
+        {({ TransitionProps }) => (
+          <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
+            <Fade {...TransitionProps} timeout={350}>
+              <SocialPaper>
+                <SocialIconWrapper>
+                  <TwitterShareButton
+                    url={'https://meshery.io'}
+                    title={socialMessage}
+                    hashtags={['opensource']}
+                  >
+                    <TwitterIcon size={32} />
+                  </TwitterShareButton>
+                </SocialIconWrapper>
+                <SocialIconWrapper>
+                  <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
+                    <LinkedinIcon size={32} />
+                  </LinkedinShareButton>
+                </SocialIconWrapper>
+                <SocialIconWrapper>
+                  <FacebookShareButton
+                    url={'https://meshery.io'}
+                    quote={socialMessage}
+                    hashtag={'#opensource'}
+                  >
+                    <FacebookIcon size={32} />
+                  </FacebookShareButton>
+                </SocialIconWrapper>
+              </SocialPaper>
+            </Fade>
+          </ClickAwayListener>
+        )}
+      </SocialPopper>
       <div>
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
         <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">

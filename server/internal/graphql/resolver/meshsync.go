@@ -177,23 +177,58 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 		if !ok {
 			return "", ErrResyncCluster(
-				fmt.Errorf("not able to take handler from context"),
+				fmt.Errorf("resyncCluster: resync: not able to take handler from context"),
 			)
 		}
 
 		instanceTracker := handler.ConnectionToStateMachineInstanceTracker
 		if instanceTracker == nil {
 			return "", ErrResyncCluster(
-				fmt.Errorf("instance tracker is nil in handler instance"),
+				fmt.Errorf("resyncCluster: resync: instance tracker is nil in handler instance"),
 			)
 		}
 
-		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(k8scontextID))
+		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
+		if !ok || len(k8sCtxs) == 0 {
+			return "", ErrResyncCluster(
+				fmt.Errorf("resyncCluster: resync: %w", ErrEmptyCurrentK8sContext),
+			)
+		}
+
+		var k8sCtx *models.K8sContext
+		for _, v := range k8sCtxs {
+			if v != nil && v.ID == k8scontextID {
+				k8sCtx = v
+				break
+			}
+		}
+
+		if k8sCtx == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"resyncCluster: resync: no k8s context found in golang context for k8scontextID %s",
+					k8scontextID,
+				),
+			)
+		}
+
+		if k8sCtx.ConnectionID == "" {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"resyncCluster: resync: k8sCtx.ConnectionID is empty for k8scontextID %s",
+					k8scontextID,
+				),
+			)
+		}
+		connectionID := k8sCtx.ConnectionID
+
+		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(connectionID))
 		if !ok || machine == nil {
 			return "", ErrResyncCluster(
 				fmt.Errorf(
-					"instance tracker does not contain machine for connection %s",
+					"resyncCluster: resync: instance tracker does not contain machine for k8scontextID %s and connectionID %s",
 					k8scontextID,
+					connectionID,
 				),
 			)
 		}
@@ -201,7 +236,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		if err := mhelpers.ResyncResources(ctx, machine); err != nil {
 			return "", ErrResyncCluster(
 				errors.Join(
-					fmt.Errorf("error resyncing resources for connection %s", k8scontextID),
+					fmt.Errorf(
+						"resyncCluster: resync: error resyncing resources for k8scontextID %s and connectionID %s",
+						k8scontextID,
+						connectionID,
+					),
 					err,
 				),
 			)

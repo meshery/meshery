@@ -8,9 +8,10 @@ import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@sistent/sistent';
-import { IconButtonAvatar } from './Header.styles';
+import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -35,6 +36,7 @@ const HeaderMenu = () => {
   const { notify } = useNotification();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
+  const registryModal = useRegistryModal();
 
   const {
     data: userData,
@@ -57,6 +59,14 @@ const HeaderMenu = () => {
 
   const handleSettings = () => {
     router.push('/settings');
+    handleClose();
+  };
+  const handleRegistry = () => {
+    registryModal?.openModal();
+    handleClose();
+  };
+  const handleConnections = () => {
+    router.push('/management/connections');
     handleClose();
   };
 
@@ -128,9 +138,21 @@ const HeaderMenu = () => {
     // Always add these items
     defaultItems.push(
       {
+        id: 'Connections',
+        title: 'Connections',
+        onClick: handleConnections,
+        showOnWeb: false,
+      },
+      {
         id: 'settings',
         title: 'Settings',
         onClick: handleSettings,
+      },
+      {
+        id: 'registry',
+        title: 'Registry',
+        onClick: handleRegistry,
+        permission: true,
       },
       {
         id: 'preferences',
@@ -166,9 +188,14 @@ const HeaderMenu = () => {
 
   return (
     <>
-      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
-        <MenuIcon />
-      </IconButtonAvatar>
+      <IconButtonMenu aria-describedby={id} onClick={handleClick}>
+        <MenuIcon
+          sx={{
+            height: 28,
+            width: 28,
+          }}
+        />
+      </IconButtonMenu>
 
       <Popover
         id={id}
