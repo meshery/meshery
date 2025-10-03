@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 3rd 2025, 12:06:51 pm
+- Testing started at: October 3rd 2025, 9:12:39 pm
 
 **📦 Test Result Summary**
 
 - ✅ 82 passed
-- ❌ 1 failed
-- ⚠️ 1 flaked
-- ⏩ 4 skipped
+- ❌ 2 failed
+- ⚠️ 5 flaked
+- ⏩ 3 skipped
 
-⌛ _Duration: 7 minutes and 47 seconds_
+⌛ _Duration: 9 minutes and 14 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,12 +21,16 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 6 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 1 | chromium-meshery-provider | should verify Design Configurator page elements |  | ⚠️ |
+| 2 | chromium-meshery-provider | Verify Performance Analysis Details |  | ⚠️ |
+| 3 | chromium-meshery-provider | displays published design card correctly |  | ⚠️ |
+| 4 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
+| 5 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 6 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 7 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 8 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 9 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 10 | chromium-meshery-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
