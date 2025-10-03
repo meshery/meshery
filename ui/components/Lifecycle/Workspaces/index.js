@@ -1,11 +1,4 @@
 import {
-  Breadcrumbs,
-  ErrorBoundary,
-  NoSsr,
-  WorkspaceRecentActivityModal,
-  WorkspaceTeamsTable,
-} from '@sistent/sistent';
-import {
   Box,
   CustomColumnVisibilityControl,
   TeamsIcon,
@@ -19,10 +12,15 @@ import {
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
+  Breadcrumbs,
+  ErrorBoundary,
+  NoSsr,
+  WorkspaceRecentActivityModal,
+  WorkspaceTeamsTable,
 } from '@sistent/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -49,9 +47,7 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { useContext } from 'react';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { useEffect } from 'react';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',

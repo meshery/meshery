@@ -12,9 +12,9 @@ import {
   FormControl,
   Grid2,
   MenuItem,
+  styled,
 } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
-import { styled } from '@sistent/sistent';
 import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';

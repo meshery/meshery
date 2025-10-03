@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
-import { Typography, styled, Box } from '@sistent/sistent';
+import { Typography, styled, Box, NoSsr } from '@sistent/sistent';
 import {
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
