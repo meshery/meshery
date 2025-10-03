@@ -95,6 +95,12 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/kubernetes/contexts/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteContext), models.ProviderAuth))).
 		Methods("DELETE")
 
+	// WebSocket endpoints for Kubernetes Terminal and Logs
+	gMux.Handle("/api/system/kubernetes/exec", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8sExecHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/logs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8sLogsHandler), models.ProviderAuth))).
+		Methods("GET")
+
 	gMux.Handle("/api/perf/profile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/perf/profile/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchAllResultsHandler), models.ProviderAuth))).
