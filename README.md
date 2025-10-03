@@ -325,4 +325,3 @@ This repository and site are available as open-source under the terms of the [Ap
 
 Meshery's [Software Bill of Materials](https://github.com/meshery/meshery/actions/workflows/bom.yaml) (SBOM) is available as a build artifact.
 
-#### Some New Changes ####
