@@ -26,7 +26,11 @@ components:
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-stream/icons/color/metric-stream-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-stream/icons/white/metric-stream-white.svg
   description: 
-components-count: 4
+- name: dashboard
+  colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/dashboard/icons/color/dashboard-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/dashboard/icons/white/dashboard-white.svg
+  description: 
+components-count: 5
 relationships: 
 - type: "Binding"
   kind: "Edge"
