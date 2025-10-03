@@ -1,4 +1,5 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Ingress Icon (Colored)</title>
   <rect x="8" y="20" width="48" height="24" rx="6" fill="#1976D2"/>
   <rect x="16" y="28" width="32" height="8" rx="2" fill="#90CAF9"/>
   <polygon points="32,8 40,20 24,20" fill="#1976D2"/>
