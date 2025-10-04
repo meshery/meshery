@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 3rd 2025, 11:51:09 pm
+- Testing started at: October 4th 2025, 4:30:27 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
-- ❌ 0 failed
-- ⚠️ 2 flaked
-- ⏩ 0 skipped
+- ✅ 85 passed
+- ❌ 2 failed
+- ⚠️ 3 flaked
+- ⏩ 3 skipped
 
-⌛ _Duration: 8 minutes and 21 seconds_
+⌛ _Duration: 8 minutes and 17 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,8 +21,14 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
-| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 6 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 7 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 8 | chromium-local-provider | Transition to not found state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
