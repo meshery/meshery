@@ -55,7 +55,7 @@ services:
       spec:
         replicas: 3
         selector:
-          match-labels:
+          matchLabels:
             app: web-application
         template:
           metadata:
@@ -66,7 +66,7 @@ services:
             - name: app
               image: myapp:v1.0.0
               ports:
-              - container-port: 8080
+              - containerPort: 8080
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
@@ -75,8 +75,8 @@ services:
                   - ALL
               env:
               - name: NEW_RELIC_LICENSE_KEY
-                value-from:
-                  secret-key-ref:
+                valueFrom:
+                  secretKeyRef:
                     name: newrelic-secret
                     key: license-key
               - name: NEW_RELIC_APP_NAME
@@ -121,7 +121,7 @@ services:
     settings:
       spec:
         selector:
-          match-labels:
+          matchLabels:
             app: newrelic-infrastructure
         template:
           metadata:
@@ -135,19 +135,19 @@ services:
                 privileged: true
               env:
               - name: NRIA_LICENSE_KEY
-                value-from:
-                  secret-key-ref:
+                valueFrom:
+                  secretKeyRef:
                     name: newrelic-secret
                     key: license-key
               - name: NRIA_VERBOSE
                 value: "1"
-              volume-mounts:
+              volumeMounts:
               - name: host-root
-                mount-path: /host
-                read-only: true
+                mountPath: /host
+                readOnly: true
             volumes:
             - name: host-root
-              host-path:
+              hostPath:
                 path: /
     traits:
       meshmap:
@@ -190,9 +190,9 @@ services:
       spec:
         replicas: 1
         selector:
-          match-labels:
+          matchLabels:
             app: postgres
-        service-name: postgres
+        serviceName: postgres
         template:
           metadata:
             labels:
@@ -202,7 +202,7 @@ services:
             - name: postgres
               image: postgres:14
               ports:
-              - container-port: 5432
+              - containerPort: 5432
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
@@ -213,8 +213,8 @@ services:
               - name: POSTGRES_DB
                 value: myapp
               - name: POSTGRES_PASSWORD
-                value-from:
-                  secret-key-ref:
+                valueFrom:
+                  secretKeyRef:
                     name: postgres-secret
                     key: password
     traits:
@@ -258,21 +258,21 @@ services:
       spec:
         replicas: 1
         selector:
-          match-labels:
+          matchLabels:
             app: newrelic-kubernetes
         template:
           metadata:
             labels:
               app: newrelic-kubernetes
           spec:
-            service-account-name: newrelic-kubernetes
+            serviceAccountName: newrelic-kubernetes
             containers:
             - name: newrelic-kubernetes
               image: newrelic/infrastructure-k8s:3.8.0
               env:
               - name: NRIA_LICENSE_KEY
-                value-from:
-                  secret-key-ref:
+                valueFrom:
+                  secretKeyRef:
                     name: newrelic-secret
                     key: license-key
               - name: CLUSTER_NAME
@@ -323,7 +323,7 @@ services:
         type: LoadBalancer
         ports:
         - port: 80
-          target-port: 8080
+          targetPort: 8080
           protocol: TCP
         selector:
           app: web-application
@@ -406,7 +406,7 @@ services:
       metadata:
         name: newrelic-kubernetes
       rules:
-      - api-groups: [""]
+      - apiGroups: [""]
         resources:
         - nodes
         - nodes/metrics
@@ -417,7 +417,7 @@ services:
         - namespaces
         - events
         verbs: ["get", "list", "watch"]
-      - api-groups: ["apps"]
+      - apiGroups: ["apps"]
         resources:
         - deployments
         - daemonsets
@@ -462,8 +462,8 @@ services:
     settings:
       metadata:
         name: newrelic-kubernetes
-      role-ref:
-        api-group: rbac.authorization.k8s.io
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
         name: newrelic-kubernetes
       subjects:
@@ -510,7 +510,7 @@ services:
       metadata:
         name: postgres-secret
       data:
-        postgres-password: "<base64-encoded-password>"
+        password: "<base64-encoded-password>"
     traits:
       meshmap:
         edges: []
@@ -590,7 +590,7 @@ services:
     settings:
       spec:
         selector:
-          match-labels:
+          matchLabels:
             app: newrelic-logging
         template:
           metadata:
@@ -610,16 +610,16 @@ services:
               - name: ENDPOINT
                 value: "https://log-api.newrelic.com/log/v1"
               - name: API_KEY
-                value-from:
-                  secret-key-ref:
+                valueFrom:
+                  secretKeyRef:
                     name: newrelic-secret
                     key: license-key
-              volume-mounts:
+              volumeMounts:
               - name: var-log
-                mount-path: /var/log
+                mountPath: /var/log
             volumes:
             - name: var-log
-              host-path:
+              hostPath:
                 path: /var/log
     traits:
       meshmap:
@@ -666,9 +666,9 @@ services:
       spec:
         replicas: 1
         selector:
-          match-labels:
+          matchLabels:
             app: redis
-        service-name: redis
+        serviceName: redis
         template:
           metadata:
             labels:
@@ -678,7 +678,7 @@ services:
             - name: redis
               image: redis:7-alpine
               ports:
-              - container-port: 6379
+              - containerPort: 6379
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
