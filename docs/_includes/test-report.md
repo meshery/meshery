@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 2nd 2025, 11:50:51 pm
+- Testing started at: October 3rd 2025, 11:51:09 pm
 
 **📦 Test Result Summary**
 
-- ✅ 91 passed
+- ✅ 88 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 27 seconds_
+⌛ _Duration: 8 minutes and 21 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ⚠️ |
+| 1 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
+| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
