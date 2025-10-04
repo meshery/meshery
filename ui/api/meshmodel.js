@@ -134,11 +134,7 @@ export async function getMeshModelComponent(model, component, version, apiVersio
   let apiVersionQueryString = '';
 
   if (apiVersion) {
-    if (!version) {
-      apiVersionQueryString = `?apiVersion=${apiVersion}`;
-    } else {
-      apiVersionQueryString = `&apiVersion=${apiVersion}`;
-    }
+    apiVersionQueryString = `${version ? '&' : '?'}apiVersion=${apiVersion}`;
   }
 
   return promisifiedDataFetch(
