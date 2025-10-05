@@ -1305,12 +1305,8 @@ github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 h1:P6pPBnrTSX3DEVR4fDembhR
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6FmdpVm2joNMFikkuWg0EoCKLGUMNw=
 github.com/layer5io/gowrk2 v0.6.1 h1:0eBj7VFYJ+QTMJt7i3PzxDJTEL+X+zWx4OP+lARWIoI=
 github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg6iYMljg=
-github.com/layer5io/meshery-operator v0.8.3 h1:HCXFif715iHdUpmTSInAqpsd+gaSFazn8M93Z1aDc+I=
-github.com/layer5io/meshery-operator v0.8.3/go.mod h1:Wi9ODHppoq8ODtzdfiplWYJXYpqsHOJfkJyTMQeNXk4=
-github.com/layer5io/meshkit v0.8.29 h1:9Mtl6Z7KcvFZCO6CMzqlUDaEzbMdIPu98NaY4q7/PMw=
-github.com/layer5io/meshkit v0.8.29/go.mod h1:lMeuC99MrbP5WIBNdzDOKokCfUOW/5a/hERcCl9YSFs=
-github.com/layer5io/nighthawk-go v1.0.6 h1:YMCw65FvwpbByX+M7McdNYRNDW9oOw3GQaXJ1RMDdGw=
-github.com/layer5io/nighthawk-go v1.0.6/go.mod h1:n3WTr9nTRXe+30+O4FL/bsEOhinKV6++yrgyOP3rBHU=
+github.com/layer5io/nighthawk-go v1.0.8 h1:Z/ayNibLdNq1wu8hpRDYRj1ZM48b6CqaB72p15nrxjY=
+github.com/layer5io/nighthawk-go v1.0.8/go.mod h1:L8bujUofza8v960hx071W68s1kK8QeHe21Srqr1IEx8=
 github.com/layer5io/service-mesh-performance v0.6.1 h1:Q1k6E96UEwcmNIirbMpRY7Odost1eOdrCh6R8IbTOXs=
 github.com/layer5io/service-mesh-performance v0.6.1/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
 github.com/lib/pq v0.0.0-20150723085316-0dad96c0b94f/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
@@ -1350,8 +1346,8 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v0.8.43 h1:dO0P9gRIYey/fgH/D5hWnMMUZ0YMP2BDZV96m9SghXY=
-github.com/meshery/meshkit v0.8.43/go.mod h1:QqknWr6NQBh4o2JvBccXh0a4cZzty7/QvK35yMWVgxE=
+github.com/meshery/meshkit v0.8.44 h1:AwYfFISxpPZyB8p/HcT02OiHCTFj7mCujwgT+UP6R00=
+github.com/meshery/meshkit v0.8.44/go.mod h1:8CSz33Rziuzu29kZEScI9kwooNKDZo2XtM/3gvrP0tk=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
 github.com/meshery/schemas v0.8.51 h1:u0eYt8w1tn149by+RuKQX29ELkc57EG0IsUXr+4hzbc=
