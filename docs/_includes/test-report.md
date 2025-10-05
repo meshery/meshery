@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 5th 2025, 9:58:24 am
+- Testing started at: October 5th 2025, 1:50:21 pm
 
 **📦 Test Result Summary**
 
-- ✅ 90 passed
-- ❌ 0 failed
-- ⚠️ 1 flaked
-- ⏩ 0 skipped
+- ✅ 86 passed
+- ❌ 2 failed
+- ⚠️ 5 flaked
+- ⏩ 2 skipped
 
-⌛ _Duration: 8 minutes and 44 seconds_
+⌛ _Duration: 9 minutes and 31 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,7 +21,15 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-meshery-provider | imports design via URL |  | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ❌ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 6 | chromium-meshery-provider | Add performance profile with load generator fortio |  | ⚠️ |
+| 7 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 8 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 9 | chromium-local-provider | Delete Kubernetes cluster connections |  | ⚠️ |
 
 </div>
 </details>
