@@ -53,34 +53,7 @@
           {
             "id": null,
             "kind": "PlatformEndpoint",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "platformApplicationARN"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "PlatformApplication",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "platformApplicationARN"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -116,7 +89,16 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "platformApplicationARN"
+                ]
+              ]
+            }
           }
         ],
         "to": [
@@ -159,7 +141,17 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ]
+            }
           }
         ]
       }

@@ -53,44 +53,7 @@
           {
             "id": null,
             "kind": "Domain",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcOptions",
-                      "securityGroupIds",
-                      "_"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "SecurityGroup",
-                  "mutatedRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "groupID"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -104,79 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": null
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "SecurityGroup",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "Domain",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcOptions",
-                      "securityGroupIds",
-                      "_"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "groupID"
-                    ]
-                  ]
-                }
-              ]
-            },
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "aws-ec2-controller",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -203,9 +94,59 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "annotations",
-                  "opensearch.domains.count"
+                  "spec",
+                  "vpcOptions",
+                  "securityGroupIds"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "SecurityGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "aws-ec2-controller",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": null,
+                "schemaVersion": ""
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
                 ]
               ]
             }

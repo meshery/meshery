@@ -53,43 +53,7 @@
           {
             "id": null,
             "kind": "Route",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "targetRef",
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "Integration",
-                  "mutatedRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "integrationName"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -103,7 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -125,42 +89,24 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "targetRef",
+                  "name"
+                ]
+              ]
+            }
           }
         ],
         "to": [
           {
             "id": null,
             "kind": "Integration",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "Route",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "targetRef",
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "integrationName"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -174,7 +120,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -196,7 +142,14 @@
               "components": null,
               "relationships": null
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
           }
         ]
       }
