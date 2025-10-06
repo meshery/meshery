@@ -55,6 +55,9 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
  <br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 
+<p align="center">
+<h4 align="center">Open Meshery extension, Kanvas, in your browser: https://kanvas.new</h4>
+</p>
 <br />
 <!--
 - [Functionality](#functionality)
