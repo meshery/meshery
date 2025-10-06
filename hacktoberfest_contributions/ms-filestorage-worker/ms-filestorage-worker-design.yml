@@ -1,5 +1,4 @@
-id: 00000000-0000-0000-0000-000000000000
-name: ms-filestorage-worker-design
+id: 8a5e6a60-1c72-4b8b-9a13-2f5b6e88d9a5
 schemaVersion: designs.meshery.io/v1beta1
 version: 0.0.3
 components:
@@ -17,14 +16,14 @@ components:
       displayName: Kubernetes
       status: enabled
       registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        id: 1a48c8d5-1b02-4b1b-8ac6-3e2ce4f4b9fb
         name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credential_id: 2f6e2c71-8e4a-4a74-9a60-0d1fa8746e2b
         type: registry
         sub_type: ""
         kind: github
         status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
+        user_id: 3e2b7f2d-9a6e-4e1f-bc09-1a4c6e8f4a7b
         created_at: "2025-10-06T16:44:52.528781131Z"
         updated_at: "2025-10-06T16:44:52.528781131Z"
         deleted_at: "0001-01-01T00:00:00Z"
@@ -94,14 +93,14 @@ components:
       displayName: Kubernetes
       status: enabled
       registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        id: 7b1e5d3e-bac8-4e2e-98ab-0e4c6f4b7a9d
         name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credential_id: 6e4f8b2d-9c5e-4a1b-8e3f-7d1c0b1a4e2b
         type: registry
         sub_type: ""
         kind: github
         status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
+        user_id: 8e1d9c6b-2f5a-4e9b-8f6e-1a2b3c4d5e6f
         created_at: "2025-10-06T16:44:52.528781131Z"
         updated_at: "2025-10-06T16:44:52.528781131Z"
         deleted_at: "0001-01-01T00:00:00Z"
@@ -151,7 +150,7 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       data:
-        token: ""
+        token: "<REPLACE_ME>"
       metadata:
         name: ms-filestorage-worker-vaultsecret
       type: Opaque
@@ -173,14 +172,14 @@ components:
       displayName: Kubernetes
       status: enabled
       registrant:
-        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        id: 9d2e4b1c-7e3a-4f2e-8b1c-6a5e2b3c4d5f
         name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credential_id: 4b9f8e2a-1d3c-4a7b-8c6e-7f1a2b3d4e5f
         type: registry
         sub_type: ""
         kind: github
         status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
+        user_id: 3c1a2e4b-7d5f-4a8e-9b1c-6e2a3b4d5f6e
         created_at: "2025-10-06T16:44:52.528781131Z"
         updated_at: "2025-10-06T16:44:52.528781131Z"
         deleted_at: "0001-01-01T00:00:00Z"
@@ -248,12 +247,12 @@ components:
       registrant:
         id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
         name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credential_id: 1d2e3c4b-5f6a-4e8b-9c1d-7e2a3b4d5f6e
         type: registry
         sub_type: ""
         kind: github
         status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
+        user_id: 9b8a7c6e-5d4c-3b2a-1e0f-8c7d6b5a4e3f
         created_at: "2025-10-06T16:44:52.528781131Z"
         updated_at: "2025-10-06T16:44:52.528781131Z"
         deleted_at: "0001-01-01T00:00:00Z"
@@ -342,12 +341,12 @@ components:
       registrant:
         id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
         name: Github
-        credential_id: 00000000-0000-0000-0000-000000000000
+        credential_id: 1d2e3c4b-5f6a-4e8b-9c1d-7e2a3b4d5f6e
         type: registry
         sub_type: ""
         kind: github
         status: registered
-        user_id: 00000000-0000-0000-0000-000000000000
+        user_id: 9b8a7c6e-5d4c-3b2a-1e0f-8c7d6b5a4e3f
         created_at: "2025-10-06T16:44:52.528781131Z"
         updated_at: "2025-10-06T16:44:52.528781131Z"
         deleted_at: "0001-01-01T00:00:00Z"
@@ -436,12 +435,12 @@ components:
                       configMapKeyRef:
                         key: solution
                         name: ms-filestorage-worker-vaultserver
-                image: codedesignplus/ms-filestorage-worker:latest
-                imagePullPolicy: IfNotPresent
+                image: codedesignplus/ms-filestorage-worker:v1.2.3
+                imagePullPolicy: Always
                 livenessProbe:
                   httpGet:
                     path: /health/live
-                    port: http
+                    port: rest
                 name: ms-base
                 ports:
                   - containerPort: 5000
@@ -453,7 +452,7 @@ components:
                 readinessProbe:
                   httpGet:
                     path: /health/ready
-                    port: http
+                    port: rest
                 resources:
                   limits:
                     cpu: 100m
