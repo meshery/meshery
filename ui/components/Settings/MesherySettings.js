@@ -247,7 +247,7 @@ const MesherySettings = () => {
               <Tabs
                 value={tabVal}
                 onChange={handleChange('tabVal')}
-                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                variant="fullWidth"
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
