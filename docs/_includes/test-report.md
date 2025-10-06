@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 5th 2025, 11:52:53 pm
+- Testing started at: October 6th 2025, 6:14:28 am
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
+- ✅ 85 passed
 - ❌ 1 failed
 - ⚠️ 2 flaked
-- ⏩ 0 skipped
+- ⏩ 2 skipped
 
-⌛ _Duration: 9 minutes and 31 seconds_
+⌛ _Duration: 7 minutes and 50 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,9 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
-| 2 | chromium-local-provider | Transition to not found state and then back to connected state |  | ⚠️ |
-| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ❌ |
+| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 5 | chromium-local-provider | displays published design card correctly |  | ⚠️ |
 
 </div>
 </details>
