@@ -11,7 +11,7 @@
 
 ⌛ _Duration: 7 minutes and 58 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
