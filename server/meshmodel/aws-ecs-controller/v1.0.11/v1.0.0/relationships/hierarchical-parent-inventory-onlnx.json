@@ -89,22 +89,13 @@
               "components": null,
               "relationships": null
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "serviceARN"
-                ]
-              ]
-            }
+            "patch": {}
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "Service",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -141,14 +132,7 @@
               "components": null,
               "relationships": null
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ]
-            }
+            "patch": {}
           }
         ]
       }
