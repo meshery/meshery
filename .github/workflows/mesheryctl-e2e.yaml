@@ -27,7 +27,8 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }}
     strategy:
-      fail-fast: false
+      fail-fast: true
+      max-parallel: 1
       matrix:
         go: ["1.24"]
         k8s_version: ["v1.31.4", "v1.32.0"]
