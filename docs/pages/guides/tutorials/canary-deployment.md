@@ -117,25 +117,37 @@ While still under **Paths 1**, Expand **Backend** > **Service**, enter the exact
 4. Attach label `app:canary`. 
 5. Under Metadata Annotations, add the following entries to enable canary routing:
 ```
-nginx.ingress.kubernetes.io/canary: "true"
-
-nginx.ingress.kubernetes.io/canary-weight: "10"
-
+nginx.ingress.kubernetes.io/canary: true
+nginx.ingress.kubernetes.io/canary-weight: 10
 ```
 (Use the weight you want; here we use 10 for 10% of traffic.)
+
+    ![](./canary-deployment/07.png)
+
 
 The canary: "true" annotation marks this Ingress as the canary, and canary-weight sets the percentage of traffic routed to it.
 
 Click outside the modal.
 
 > **_NOTE:_** Ingress objects won’t work by themselves. You must have an Ingress Controller running in your cluster (e.g., NGINX Ingress Controller). If you don’t, install it before continuing.
-I used kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
-#### Deploy the Configuration
+For this tutorial, we have used:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+```
+
+#### Deploy the Design
+
+Ensure there are no errors before deploying. To deploy, click the **Actions** tab in the pop-up modal and then click **Deploy** again.
+![](./canary-deployment/08.png)
+
+You should see a few alerts on the bottom right about the deployment.
 
 #### Test the Traffic Split
 
 To test traffic splitting, send multiple requests using the Ingress host and count how many go to each version. First, route ingress traffic to your local machine. For example, run:
+
 ```
 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
 ```
@@ -148,18 +160,14 @@ for i in {1..10}; do
 done
 ```
 
-Each request hits the Ingress as if it were sent to example.com. (Alternately, you could use curl --resolve example.com:80:127.0.0.1 without port-forward, or modify /etc/hosts – the key is that the Host header matches the Ingress rule)
+Each request hits the Ingress as if it were sent to example.com. 
 
-Next, determine which version handled each request. One way is to check the Pod hostnames returned in the response (if you used an echo-server image). An example:
+Next, determine which version handled each request. 
 
-```
-for i in {1..10}; do 
-  curl -s --resolve example.com:80:$INGRESS_IP example.com | grep "Hostname"
-done
-```
+One way is to watch the logs: run `kubectl logs -f deployment/app-primary` in one terminal and `kubectl logs -f deployment/app-canary` in another while issuing requests. You should see roughly nine times as many log entries on the primary pod as on the canary pod, reflecting the 90/10 split.
+    ![](./canary-deployment/primary-logs.png)
+    ![](./canary-deployment/canary-logs.png)
 
-This prints lines like Hostname: app-primary-xxxxx or Hostname: app-canary-yyyyy. (For a 10% weight, you would expect about 9 out of 10 requests to show a primary hostname and ~1 to show canary.) In practice with nginx’s default page, you may not see “Hostname:” text, so another method is to watch the logs: run `kubectl logs -f deployment/app-primary` in one terminal and `kubectl logs -f deployment/app-canary` in another while issuing requests. You should see roughly nine times as many log entries on the primary pod as on the canary pod, reflecting the 90/10 split.
+Using our 10% canary, you should see around 90% of requests served by app-primary and 10% by app-canary. This demonstrates the traffic shifting: stable handles the majority of traffic while the canary gets its configured share.
 
-For example, the Ingress-NGINX documentation’s test loop yields interleaved output of primary vs. canary hostnames. Using our 10% canary, you should see around 90% of requests served by app-primary and 10% by app-canary. This demonstrates the traffic shifting: stable handles the majority of traffic while the canary gets its configured share.
-
-Next: Once satisfied, you could adjust the canary-weight up or down (or promote the canary to 100%) by editing the annotations on the canary Ingress. Meshery Playground’s Kanvas can be used similarly to flip traffic weights or roll back changes if needed.
+Next: Once satisfied, you could adjust the canary-weight up or down (or promote the canary to 100%) by editing the annotations on the canary Ingress on Meshery Playground’s Kanvas to flip traffic weights or roll back changes if needed.
