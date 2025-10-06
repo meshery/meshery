@@ -435,7 +435,7 @@ components:
                       configMapKeyRef:
                         key: solution
                         name: ms-filestorage-worker-vaultserver
-                image: codedesignplus/ms-filestorage-worker:v1.2.3
+                image: codedesignplus/ms-filestorage-worker:0.0.11
                 imagePullPolicy: Always
                 livenessProbe:
                   httpGet:
