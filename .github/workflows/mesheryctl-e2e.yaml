@@ -63,9 +63,14 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: build Mesheryctl
+        run: |
+          make
+        shell: bash
+        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
-          ./mesheryctl system status
+          ./../../mesheryctl system status
           # bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
