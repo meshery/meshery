@@ -113,9 +113,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
 
 
-	// get complete path
-	absPath, err := filepath.Abs(filePath)
-	l.Log.Infof("Using absolute path for capabilities file: %s", absPath)
+    l.Log.Info("Loading provider capabilities from local file: ", filePath)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -151,7 +149,6 @@ func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (Provide
 func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
 
 	if viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV) != "" {
-		l.Log.Info("Loading provider capabilities from local file")
 		return l.loadCapabilitiesFromLocalFile(viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV))
 	}
 
