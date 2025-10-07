@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 7th 2025, 11:50:08 am
+- Testing started at: October 7th 2025, 11:54:31 am
 
 **📦 Test Result Summary**
 
 - ✅ 90 passed
 - ❌ 0 failed
-- ⚠️ 4 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 58 seconds_
+⌛ _Duration: 7 minutes and 57 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,10 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
-| 2 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
-| 3 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
-| 4 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-meshery-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
