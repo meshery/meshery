@@ -12,6 +12,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# Detect OS
+ifeq ($(OS),Windows_NT)
+    detected_OS := Windows
+    SHELL := powershell.exe
+    .ONESHELL:
+    SHELLFLAGS := -NoLogo -NoProfile -Command
+    RM := del /Q
+    MKDIR := mkdir
+    SEP := \\
+    NULL := nul
+else
+    detected_OS := Linux
+    RM := rm -f
+    MKDIR := mkdir -p
+    SEP := /
+    NULL := /dev/null
+endif
+
+# Helper for running the server with dynamic environment variables
+ifeq ($(detected_OS),Windows)
+define RUN_SERVER
+$(SHELL) $(SHELLFLAGS) "\
+  $$env:BUILD = '$(GIT_VERSION)'; \
+  $$env:PROVIDER_BASE_URLS = '$(1)'; \
+  $$env:PORT = '$(2)'; \
+  $$env:DEBUG = '$(3)'; \
+  $$env:ADAPTER_URLS = '$(ADAPTER_URLS)'; \
+  $$env:APP_PATH = '$(APPLICATIONCONFIGPATH)'; \
+  $$env:KEYS_PATH = '$(KEYS_PATH)'; \
+  $$env:SKIP_COMP_GEN = '$(4)'; \
+  $$env:SKIP_DOWNLOAD_CONTENT = '$(5)'; \
+  $$env:DISABLE_OPERATOR = '$(6)'; \
+  $$env:REGISTER_STATIC_K8S = '$(7)'; \
+  $$env:PROVIDER = '$(8)'; \
+  $$env:PLAYGROUND = '$(9)'; \
+  go run main.go error.go"
+endef
+else # POSIX
+define RUN_SERVER
+cd server/cmd && \ 
+BUILD="$(GIT_VERSION)" \
+PROVIDER_BASE_URLS=$(1) \
+PORT=$(2) \
+DEBUG=$(3) \
+ADAPTER_URLS=$(ADAPTER_URLS) \
+APP_PATH=$(APPLICATIONCONFIGPATH) \
+KEYS_PATH=$(KEYS_PATH) \
+SKIP_COMP_GEN=$(4) \
+SKIP_DOWNLOAD_CONTENT=$(5) \
+DISABLE_OPERATOR=$(6) \
+REGISTER_STATIC_K8S=$(7) \
+PROVIDER=$(8) \
+PLAYGROUND=$(9) \
+go run main.go error.go
+endef
+endif
+
+# Set default values for ports and flags
+PORT ?= 9081
+DEBUG ?= true
+
+
 include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
@@ -24,20 +87,17 @@ include install/Makefile.show-help.mk
 docker-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-
+	DOCKER_BUILDKIT=1 docker build -f install$(SEP)docker$(SEP)Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 ## Build Meshery Server and UI container in Playground mode.
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
-
+	DOCKER_BUILDKIT=1 docker build -f install$(SEP)docker$(SEP)Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t meshery/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
-
+	DOCKER_BUILDKIT=1 docker build -f install$(SEP)docker$(SEP)testing$(SEP)Dockerfile -t meshery/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
 docker-local-cloud:
@@ -61,21 +121,22 @@ docker-cloud:
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
 	-v meshery-config:/home/appuser/.meshery/config \
-  -v $(HOME)/.kube:/home/appuser/.kube:ro \
+	-v $(USERPROFILE)$(SEP).kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
 	meshery/meshery ./meshery
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
 docker-testing-env:
-	docker run --rm --name mesherytesting  -d \
-	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	-e DEBUG=true \
-	-e ADAPTER_URLS=$(ADAPTER_URLS) \
-	-e KEYS_PATH=$(KEYS_PATH) \
+	(docker rm -f mesherytesting) || true
+	docker run --name mesherytesting -d \
+	-e PROVIDER_BASE_URLS="$(MESHERY_CLOUD_PROD)" \
+	-e DEBUG="$(DEBUG)" \
+	-e ADAPTER_URLS="$(ADAPTER_URLS)" \
+	-e KEYS_PATH="$(KEYS_PATH)" \
 	-v meshery-config:/home/appuser/.meshery/config \
-  -v $(HOME)/.kube:/home/appuser/.kube:ro \
-	-p 9081:8080 \
+	-v $(USERPROFILE)$(SEP).kube:/home/appuser/.kube:ro \
+	-p $(PORT):8080 \
 	meshery/meshery-testing-env ./meshery
 
 #-----------------------------------------------------------------------------
@@ -85,11 +146,11 @@ docker-testing-env:
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
-	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
+	cd server && cd cmd && git clone https://github.com/layer5io/wrk2.git && cd wrk2 && make && cd ..
 
 ## Setup nighthawk for local development.
 nighthawk-setup: dep-check
-	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
+	cd server && cd cmd && git clone https://github.com/layer5io/nighthawk-go.git && cd nighthawk-go && make setup && cd ..
 
 run-local: server-local error
 
@@ -97,179 +158,100 @@ run-local: server-local error
 ## and point to (expect) a locally running Remote Provider
 ## for user authentication.
 server-local: dep-check
-	cd server; cd cmd; go clean; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go
+	cd server$(SEP)cmd; go clean; go mod tidy
+	$(call RUN_SERVER,$(REMOTE_PROVIDER_LOCAL),$(PORT),$(DEBUG))
+
 
 ## Build Meshery Server on your local machine.
 build-server: dep-check
-	cd server; cd cmd; go mod tidy; cd "../.."
+ifeq ($(detected_OS),Windows)
+	cd server$(SEP)cmd; go mod tidy
+	$$env:BUILD="$(GIT_VERSION)"; \
+	$$env:PROVIDER_BASE_URLS="$(MESHERY_CLOUD_PROD)"; \
+	$$env:PORT="$(PORT)"; \
+	$$env:DEBUG="$(DEBUG)"; \
+	$$env:ADAPTER_URLS="$(ADAPTER_URLS)"; \
+	$$env:APP_PATH="$(APPLICATIONCONFIGPATH)"; \
+	$$env:KEYS_PATH="$(KEYS_PATH)"; `
+	$$env:GOPROXY="https://proxy.golang.org,direct"; \
+	$$env:GO111MODULE="on"; \
+	go build ../../server/cmd/main.go ../../server/cmd/error.go
+else # POSIX
+	cd server$(SEP)cmd; go mod tidy
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
+	PORT=$(PORT) \
+	DEBUG=$(DEBUG) \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
-	chmod +x ./main
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ../../server/cmd/main.go ../../server/cmd/error.go
+endif
+
 
 ## Running the meshery server using binary.
 server-binary:
-	cd server/cmd; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	../../main; cd ../../
+	cd server$(SEP)cmd
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG))
 
 ## Running the meshery server using binary with local provider.
 server-binary-local:
-	cd server/cmd; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	../../main; cd ../../
+	cd server$(SEP)cmd
+	$(call RUN_SERVER,$(REMOTE_PROVIDER_LOCAL),$(PORT),$(DEBUG))
+
 
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment
 server-stg: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_STAGING),$(PORT),$(DEBUG))
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=$(PORT) \
-	DEBUG=true \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd && set CGO_ENABLED=0 && go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG))
+
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
 server-with-adapters: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,,,,,,,)
+
 
 ## Build and run Meshery Server on your local machine.
 ## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
 server-without-operator: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DISABLE_OPERATOR=true \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,,,true)
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
- 	SKIP_COMP_GEN=true \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),true)
 
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
 server-without-k8s: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	REGISTER_STATIC_K8S=false \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,,,,,false)
 
 server-remote-provider: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,,,,,,$(REMOTE_PROVIDER))
 
 server-local-provider: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER=$(LOCAL_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_DEV),$(PORT),$(DEBUG),,,,,,,$(LOCAL_PROVIDER))
 
 ## Build and run Meshery Server with no seed content.
 server-no-content:
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	SKIP_DOWNLOAD_CONTENT=true \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,true)
 
 server-playground: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	PLAYGROUND=true \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	cd server$(SEP)cmd; go mod tidy
+	$(call RUN_SERVER,$(MESHERY_CLOUD_PROD),$(PORT),$(DEBUG),,,,,,,,true)
+
 
 ## Lint check Meshery Server.
 golangci: error dep-check
@@ -277,12 +259,16 @@ golangci: error dep-check
 
 ## Build Meshery's protobufs.
 proto-build:
-	# see https://developers.google.com/protocol-buffers/docs/reference/go-generated
-	# see https://grpc.io/docs/languages/go/quickstart/
-	export PATH=$(PATH):$(GOBIN)
+ifeq ($(detected_OS),Windows)
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	protoc --proto_path=server/meshes --go_out=server/meshes --go_opt=paths=source_relative --go-grpc_out=server/meshes --go-grpc_opt=paths=source_relative meshops.proto
+else # POSIX
+	export PATH=$(PATH):$(GOBIN); \
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest; \
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest; \
+	protoc --proto_path=server$(SEP)meshes --go_out=server$(SEP)meshes --go_opt=paths=source_relative --go-grpc_out=server$(SEP)meshes --go-grpc_opt=paths=source_relative meshops.proto
+endif
 
 ## Analyze error codes
 error: dep-check
@@ -319,8 +305,8 @@ else ifeq ($(findstring v17, $(shell node --version)), v17)
 endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
-	cd ui; npm i; cd ..
-	cd provider-ui; npm i; cd ..
+	cd ui && npm i && cd ..
+	cd provider-ui && npm i && cd ..
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:
@@ -329,15 +315,15 @@ ui-setup-ci:
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
-	cd ui; npm run dev; cd ..;
+	cd ui && npm run dev && cd ..
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
 ui-provider:
-	cd provider-ui; npm run dev; cd ..
+	cd provider-ui && npm run dev && cd ..
 
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint:
-	cd ui; npm i eslint; npx eslint . --fix; cd ..
+	cd ui && npm i eslint && npx eslint . --fix && cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
@@ -345,24 +331,24 @@ ui-provider-lint:
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:
-	cd provider-ui; npm run test; cd ..
+	cd provider-ui && npm run test && cd ..
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm run lint:fix && npm run build; cd ..
+	cd ui && npm run lint:fix && npm run build && npm run export && cd ..
+	cd provider-ui && npm run lint:fix && npm run build && cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui && npm run build && npm run export && cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
-	cd provider-ui; npm run build; cd ..
+	cd provider-ui && npm run build && cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
-	cd ui; npm run ci-test-integration; cd ..
+	cd ui && npm run ci-test-integration && cd ..
 
 #-----------------------------------------------------------------------------
 # Meshery Docs
@@ -376,23 +362,28 @@ site-serve: docs-serve
 
 ## Run Meshery Docs. Listen for changes.
 docs:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
+	cd docs && bundle install && bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
 
 ## Run Meshery Docs. Do not listen for changes.
 docs-serve:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --config _config_dev.yml
+	cd docs && bundle install && bundle exec jekyll serve --drafts --config _config_dev.yml
 
 ## Build Meshery Docs on your local machine.
 docs-build:
-	cd docs; $(jekyll) build --drafts
+	cd docs && $(jekyll) build --drafts
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+ifeq ($(detected_OS),Windows)
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v ${PWD}:/srv/jekyll jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+else # POSIX
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v pwd:/srv/jekyll jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+endif
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
-	cd mesheryctl; make docs;
+	cd mesheryctl && make docs
+
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
@@ -403,22 +394,22 @@ helm-docs: helm-operator-docs helm-meshery-docs
 ## Generate Meshery Operator Helm Chart documentation in markdown format.
 helm-operator-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
-	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
+	$(GOPATH)$(SEP)bin$(SEP)helm-docs -c install$(SEP)kubernetes$(SEP)helm$(SEP)meshery-operator
 
 ## Generate Meshery Server and Adapters Helm Chart documentation in markdown format.
 helm-meshery-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
-	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
+	$(GOPATH)$(SEP)bin$(SEP)helm-docs -c install$(SEP)kubernetes$(SEP)helm$(SEP)meshery
 
 ## Lint all of Meshery's Helm Charts
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
 helm-operator-lint:
-	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+	helm lint install$(SEP)kubernetes$(SEP)helm$(SEP)meshery-operator --with-subcharts
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
-	helm lint install/kubernetes/helm/meshery --with-subcharts
+	helm lint install$(SEP)kubernetes$(SEP)helm$(SEP)meshery --with-subcharts
 
 #-----------------------------------------------------------------------------
 # Meshery APIs
@@ -426,47 +417,45 @@ helm-meshery-lint:
 .PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
-	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
+	swagger generate spec -o ./server$(SEP)helpers$(SEP)swagger.yaml --scan-models
 
 ## Generate and serve Meshery REST API specifications
 swagger: swagger-build
-	swagger serve ./server/helpers/swagger.yaml
+	swagger serve ./server$(SEP)helpers$(SEP)swagger.yaml
 
 ## Build Meshery REST API documentation
 swagger-docs-build:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+	swagger generate spec -o ./docs$(SEP)_data$(SEP)swagger.yml --scan-models; \
+	swagger flatten ./docs$(SEP)_data$(SEP)swagger.yml -o ./docs$(SEP)_data$(SEP)swagger.yml --with-expand --format=yaml
 
 
 ## Building Meshery docs with redocly
 redocly-docs-build:
-	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
+	npx @redocly/cli build-docs ./docs$(SEP)_data$(SEP)swagger.yml --config='redocly.yaml' -t custom.hbs
 
 ## Build Meshery GraphQL API documentation
 graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+	cd docs && bundle exec rake graphql:compile_docs
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
-	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
-
-
+	cd server && cd internal$(SEP)graphql && go run -mod=mod github.com/99designs/gqlgen generate
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install --with-deps; cd ..
+	cd ui && npx playwright install --with-deps && cd ..
 
 test-ui:
-	cd ui; npm run test:e2e; cd ..
+	cd ui && npm run test:e2e && cd ..
 
 test-e2e-ci:
-	cd ui; npm run test:e2e:ci; cd ..
+	cd ui && npm run test:e2e:ci && cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
 rego-eval:
-	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
+	opa eval -i policies$(SEP)test$(SEP)design_all_relationships.yaml -d relationships:policies$(SEP)test$(SEP)all_relationships.json -d server$(SEP)meshmodel$(SEP)meshery-core$(SEP)0.7.2$(SEP)v1.0.0$(SEP)policies$(SEP) \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
 #-----------------------------------------------------------------------------
