@@ -43,8 +43,8 @@ function CustomDialogTitle(props) {
           onClick={onClose}
           sx={{
             position: "absolute",
-            right: "1rem",
-            top: "1rem",
+            right: "16px",
+            top: "16px",
             color: (theme) => theme.palette.grey[500],
           }}
         >

@@ -51,6 +51,12 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   alignItems: 'center',
   textAlign: 'center',
   fill: theme.palette.text.default,
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected + '!important',
+    },
+  },
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
@@ -151,8 +157,6 @@ export function OrgMenu(props) {
 
   const organization = selectedOrganization;
   const { open, fromMobileView } = props;
-
-  console.log('selectedOrganization', organization);
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;

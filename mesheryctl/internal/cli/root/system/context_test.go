@@ -207,6 +207,7 @@ func TestAddContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			utils.SetupMeshkitLoggerTesting(t, false)
 			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)

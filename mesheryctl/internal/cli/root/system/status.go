@@ -204,7 +204,7 @@ mesheryctl system status --verbose
 				columnNames = append(columnNames, "Pod-IP")
 			}
 			// Print the data to a table for readability
-			utils.PrintToTable(columnNames, data)
+			utils.PrintToTable(columnNames, data, nil)
 
 			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}

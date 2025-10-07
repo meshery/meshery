@@ -20,6 +20,7 @@ import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -62,8 +63,21 @@ const View = (props) => {
   const { getResourceCleanData } = useResourceCleanData();
   const router = useRouter();
   const cleanData = getResourceCleanData({ resource: resource, router: router });
+
+  const { data: connections = [] } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 100,
+    search: '',
+    order: '',
+    status: '',
+    kind: JSON.stringify(['kubernetes']),
+  });
+
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
+  const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
+  const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
+
   return (
     <Container>
       <Paper>
@@ -94,7 +108,7 @@ const View = (props) => {
               title={context.name}
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connection_id)}
-              status={CONNECTION_STATES.CONNECTED}
+              status={connectionStatus}
               iconSrc={'/static/img/kubernetes.svg'}
             />
           </Header>

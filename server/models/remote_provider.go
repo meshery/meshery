@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,6 +29,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
@@ -64,6 +66,8 @@ type RemoteProvider struct {
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 	Log                logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 type userSession struct {
@@ -89,12 +93,17 @@ func (l *RemoteProvider) Initialize() {
 	// Get the capabilities with no token
 	// assuming that this will help get basic info
 	// of the provider
-	providerProperties := l.loadCapabilities("")
-	l.ProviderProperties = providerProperties
+	providerProperties, err := l.loadCapabilities("")
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err))
+	} else {
+		l.ProviderProperties = providerProperties
+	}
 }
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
+	l.ProviderProperties.ProviderURL = l.GetProviderURL()
 }
 
 // loadCapabilities loads the capabilities of the remote provider
@@ -103,7 +112,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 // if an empty string is provided then it will try to make a request
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
-func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
+func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
 	var resp *http.Response
 	var err error
 
@@ -119,7 +128,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
 		l.Log.Error(ErrUrlParse(err))
-		return providerProperties
+		return providerProperties, err
 	}
 
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -145,14 +154,14 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	}
 	if err != nil && resp == nil {
 		l.Log.Error(ErrUnreachableRemoteProvider(err))
-		return providerProperties
+		return providerProperties,ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
 			err = ErrStatusCode(resp.StatusCode)
 		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
-		return providerProperties
+		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
 		err := resp.Body.Close()
@@ -167,7 +176,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		err = ErrUnmarshal(err, "provider properties")
 		l.Log.Error(err)
 	}
-	return providerProperties
+	return providerProperties, err
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
@@ -218,6 +227,18 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
+
+	// If the provider properties are not loaded yet, load them
+	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
+		providerProperties,err := l.loadCapabilities("")
+		if err != nil {
+			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
+		    return l.ProviderProperties
+		}
+		l.SetProviderProperties(providerProperties)
+		return l.ProviderProperties
+	}
+
 	return l.ProviderProperties
 }
 
@@ -245,7 +266,14 @@ func (l *RemoteProvider) SyncPreferences() {
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
-	providerProperties := l.loadCapabilities(tokenString)
+	providerProperties,err := l.loadCapabilities(tokenString)
+
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
+		http.Error(w, fmt.Sprintf("failed to load capabilities from remote provider: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	providerProperties.ProviderURL = l.RemoteProviderURL
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
@@ -706,7 +734,16 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
+	if k8sContext.ConnectionID != "" {
+		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		if connectionID != uuid.Nil {
+			_, status, _ := l.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
+			if status >= http.StatusOK && status < http.StatusMultipleChoices {
+				return connections.Connection{}, ErrContextAlreadyPersisted
+			}
+		}
+	}
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -719,9 +756,19 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
-	metadata := make(map[string]interface{}, len(_metadata))
+	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
 		metadata[k] = v
+	}
+
+	maps.Copy(metadata, additionalMetadata)
+
+	// if undefined -> set to default
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{
@@ -883,7 +930,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes/%s", l.RemoteProviderURL, ep, connectionID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes/%s/context", l.RemoteProviderURL, ep, connectionID))
 
 	l.Log.Debug("constructed kubernetes contexts url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -3795,6 +3842,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 }
 
 // TokenHandler - specific to remote auth
+// Refreshes the token, sets the cookie and redirects to the home page and fetches the  latest capabilities
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(TokenCookieName)
 	// gets the session cookie from remote provider
@@ -3805,8 +3853,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	l.SetProviderSessionCookie(w, sessionCookie)
 
 	// Get new capabilities
-	// Doing this here is important so that
-	providerProperties := l.loadCapabilities(tokenString)
+	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
+	providerProperties,err := l.loadCapabilities(tokenString)
+
+	// error out if capabilities could not be fetched
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[TokenHandler] error loading capabilities from remote provider: %v", err))
+		http.Error(w, "Error loading capabilities from remote provider", http.StatusInternalServerError)
+		return
+	}
+
 	l.ProviderProperties = providerProperties
 
 	// Download the package for the user only if they have extension capability

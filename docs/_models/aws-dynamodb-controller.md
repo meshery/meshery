@@ -32,7 +32,25 @@ components:
   description: 
 components-count: 5
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between table and VPCEndpoint"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and GlobalTable"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and GlobalTable"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and Table"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Backup and Table"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 6
 featureList: [
   "Handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
 ",

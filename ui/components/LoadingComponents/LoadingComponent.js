@@ -52,7 +52,7 @@ function LoadingScreen(props) {
   const theme = useTheme();
 
   return (
-    <LoadingContainer className={className} {...other}>
+    <LoadingContainer data-testid="page-loader" className={className} {...other}>
       {theme.palette.mode === 'light'
         ? animatedIconList[animatedIcon]
         : animatedLightIconList[animatedIcon]}

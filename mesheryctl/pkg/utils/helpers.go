@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
-	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -46,7 +45,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Meshery Kubernetes Deployment URLs
-	baseConfigURL = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	baseConfigURL = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/"
 	OperatorURL   = baseConfigURL + "manifests/default.yaml"
 	BrokerURL     = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
@@ -173,9 +172,9 @@ const (
 	cmdRelationshipView         cmdType = "relationship view"
 	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdRelationshipList         cmdType = "relationship list"
-	cmdWorkspace                cmdType = "workspace"
-	cmdWorkspaceList            cmdType = "workspace list"
-	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdExpWorkspace             cmdType = "exp workspace"
+	cmdExpWorkspaceList         cmdType = "exp workspace list"
+	cmdExpWorkspaceCreate       cmdType = "exp workspace create"
 	cmdEnvironment              cmdType = "environment"
 	cmdEnvironmentCreate        cmdType = "environment create"
 	cmdEnvironmentDelete        cmdType = "environment delete"
@@ -227,13 +226,13 @@ var (
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
 	//MesheryOperator is the file for default Meshery operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/manifests/default.yaml
 	MesheryOperator = "default.yaml"
 	//MesheryOperatorBroker is the file for the Meshery broker
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
 	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
 	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
@@ -566,59 +565,6 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
-// PrintToTable prints the given data into a table format
-func PrintToTable(header []string, data [][]string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(false)
-
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
-
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-}
-
-// PrintToTableWithFooter prints the given data into a table format but with a footer
-func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
-
-	table.AppendBulk(data) // The data in the table
-	table.SetFooter(footer)
-	table.Render() // Render the table
-}
-
 // ClearLine clears the last line from output
 func ClearLine() {
 	clearCmd := exec.Command("clear") // for UNIX-like systems
@@ -836,28 +782,6 @@ func ParseURLGithub(URL string) (string, string, error) {
 		return resURL, "", nil
 	}
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
-}
-
-// PrintToTableInStringFormat prints the given data into a table format but return as a string
-func PrintToTableInStringFormat(header []string, data [][]string) string {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-
-	return tableString.String()
 }
 
 // Indicate an ongoing Process at a given time on CLI
@@ -1167,6 +1091,46 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		},
 	}
 
+	envOverrides := make(map[string]any)
+
+	setToEnvMap := func(key string, value any) {
+		// Ensure the environment variable value is a string.
+		// If the value is not a string (e.g., an int or bool), Helm will render it as a raw type,
+		// causing Kubernetes to fail with an error like:
+		// "Deployment in version 'v1' cannot be handled as a Deployment:
+		//  json: cannot unmarshal number into Go struct field
+		//  EnvVar.spec.template.spec.containers.env.value of type string"
+		strVal := ""
+		switch v := value.(type) {
+		case string:
+			strVal = v
+		default:
+			strVal = fmt.Sprintf("%v", v)
+		}
+
+		// Helper to detect numeric strings
+		isNumeric := func(s string) bool {
+			_, err := strconv.ParseFloat(s, 64)
+			return err == nil
+		}
+
+		// Define values that need quoting (even if already strings)
+		shouldQuote := func(s string) bool {
+			lower := strings.ToLower(s)
+			return lower == "true" || lower == "false" ||
+				lower == "yes" || lower == "no" ||
+				isNumeric(s)
+		}
+
+		// we need this because even if value is a string, but contains numeric or boolean
+		// when pass to helm error described above occurs
+		if shouldQuote(strVal) {
+			envOverrides[key] = fmt.Sprintf("\"%s\"", strVal)
+		} else {
+			envOverrides[key] = strVal
+		}
+	}
+
 	// set the "enabled" field to true only for the components listed in the context
 	for _, component := range ctx.GetComponents() {
 		if _, ok := valueOverrides[component]; ok {
@@ -1183,30 +1147,31 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	// set the provider
 	if ctx.GetProvider() != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderENV: ctx.GetProvider(),
-		}
+		setToEnvMap(constants.ProviderENV, ctx.GetProvider())
 	}
 
 	if callbackURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.CallbackURLENV: callbackURL,
-		}
+		setToEnvMap(constants.CallbackURLENV, callbackURL)
 	}
 
 	if providerURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderURLsENV: providerURL,
-		}
+		setToEnvMap(constants.ProviderURLsENV, providerURL)
 	}
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-		if _, ok := valueOverrides["env"]; !ok {
-			valueOverrides["env"] = map[string]interface{}{}
+		setToEnvMap("DISABLE_OPERATOR", "true")
+	}
+
+	if len(ctx.GetEnvs()) > 0 {
+		for k, v := range ctx.GetEnvs() {
+			// use to upper here, as meshery keeps its context yaml lowercased
+			setToEnvMap(strings.ToUpper(k), v)
 		}
-		envOverrides := valueOverrides["env"].(map[string]interface{})
-		envOverrides["DISABLE_OPERATOR"] = "'true'"
+	}
+
+	if len(envOverrides) > 0 {
+		valueOverrides["env"] = envOverrides
 	}
 
 	return valueOverrides
@@ -1246,9 +1211,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		fmt.Println()
 
 		if len(footer) > 0 {
-			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+			PrintToTable(header, data[startIndex:endIndex], footer[0])
 		} else {
-			PrintToTable(header, data[startIndex:endIndex])
+			PrintToTable(header, data[startIndex:endIndex], nil)
 		}
 
 		// No user interaction required if no more data to display

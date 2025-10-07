@@ -7,10 +7,54 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestModelInit(t *testing.T) {
+	// Shared cleanup function for test directories and artifacts
+	cleanupTestArtifacts := func(dirs []string) {
+		for _, dir := range dirs {
+			os.RemoveAll(dir)
+		}
+	}
+
+	// Helper function to create a fresh ModelCmd with all original properties
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:     ModelCmd.Use,
+			Short:   ModelCmd.Short,
+			Long:    ModelCmd.Long,
+			Example: ModelCmd.Example,
+			Args:    ModelCmd.Args,
+			RunE:    ModelCmd.RunE,
+		}
+		// Copy all flags from the original ModelCmd
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	// Helper function to create fresh commands for init tests
+	createFreshCommands := func() *cobra.Command {
+		cmd := createFreshModelCmd()
+		cmd.AddCommand(initModelCmd)
+		return cmd
+	}
+
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-aws-ec2-controller",
+		"test-case-aws-dynamodb-controller",
+		"test_case_some_other_custom_dir",
+	}
+	cleanupTestArtifacts(cleanupDirs)
+	t.Cleanup(func() {
+		cleanupTestArtifacts(cleanupDirs)
+	})
+
 	utils.SetupContextEnv(t)
 
 	// get current directory
@@ -200,12 +244,13 @@ func TestModelInit(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			// Clean up any lingering test artifacts before this subtest starts
+			cleanupTestArtifacts(cleanupDirs)
+
 			defer func() {
 				// clean up created folders on any test case outcome
 				if tc.AfterTestRemoveDir != "" {
-					if err := os.RemoveAll(tc.AfterTestRemoveDir); err != nil {
-						t.Fatal(err)
-					}
+					cleanupTestArtifacts([]string{tc.AfterTestRemoveDir})
 					t.Log("removed created folders")
 				}
 			}()
@@ -216,7 +261,8 @@ func TestModelInit(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			cmd := ModelCmd
+			// Create fresh commands using helper function
+			cmd := createFreshCommands()
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()

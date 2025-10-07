@@ -2,7 +2,7 @@
   "id": "28980b0e-fb2f-4b18-8a79-47c45b477ca3",
   "name": "Double Bubble Map",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.17",
+  "version": "0.0.21",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -33,7 +33,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -183,7 +184,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -333,7 +335,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -483,7 +486,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -633,7 +637,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -782,7 +787,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -933,7 +939,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1084,7 +1091,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1235,7 +1243,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1386,7 +1395,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1537,7 +1547,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1688,7 +1699,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1839,7 +1851,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -1990,7 +2003,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2141,7 +2155,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2292,7 +2307,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2443,7 +2459,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2594,7 +2611,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2745,7 +2763,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -2896,7 +2915,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3047,7 +3067,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3198,7 +3219,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3349,7 +3371,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3500,7 +3523,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3651,7 +3675,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3802,7 +3827,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -3953,7 +3979,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4104,7 +4131,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4255,7 +4283,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4406,7 +4435,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4557,7 +4587,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4708,7 +4739,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -4859,7 +4891,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5010,7 +5043,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5162,7 +5196,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5311,7 +5346,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5463,7 +5499,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5615,7 +5652,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5767,7 +5805,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -5919,7 +5958,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6070,7 +6110,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6221,7 +6262,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6372,7 +6414,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6523,7 +6566,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6674,7 +6718,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6825,7 +6870,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-15T20:12:21.373895682Z",
           "updated_at": "2024-10-15T20:12:21.373895682Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -6977,7 +7023,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7128,7 +7175,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7279,7 +7327,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7430,7 +7479,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7581,7 +7631,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7732,7 +7783,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -7884,7 +7936,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8033,7 +8086,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8185,7 +8239,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8337,7 +8392,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8489,7 +8545,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8641,7 +8698,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8793,7 +8851,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -8945,7 +9004,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9097,7 +9157,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9249,7 +9310,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9401,7 +9463,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9553,7 +9616,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9705,7 +9769,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "2024-10-17T15:42:24.509005987Z",
           "updated_at": "2024-10-17T15:42:24.509005987Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9831,6 +9896,347 @@
         "kind": "TextBox",
         "schema": ""
       }
+    },
+    {
+      "id": "e5470c57-cb88-4a4b-89b8-5be8700d006f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "",
+        "name": "kanvas-local",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": ""
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "child_component_ids": [
+          "310d514b-a22e-41fa-b18f-58098b76490e",
+          "54e1e740-1e1d-4e4f-b604-6eaae7c2eacd",
+          "71f7366b-efde-48d1-bc58-c6f686dd7242",
+          "cdd08257-fe63-465d-8f4d-ada7ac927be8",
+          "ebe2b3b6-9a6c-4c33-a148-74de3504f16b",
+          "09a55f5e-c631-454e-ace1-39d93d3fcf5e",
+          "23961e52-f7fd-4fcc-b380-af261d93aeec",
+          "372ebaf0-b262-4d25-ba4e-eac8a9c8c659",
+          "3b40c440-db72-470d-978f-85d07b9bf306",
+          "3e98bee0-214a-4f36-aaba-370cbc54593c",
+          "3eea9f60-e3b9-41f3-a3bd-167c64dcab06",
+          "3fe5ab9a-510f-4ec1-ae42-732897b3e009",
+          "680b9f1e-ed71-45fb-a83e-661b58cbfcab",
+          "6b918028-0d44-4754-8fce-700454cc0dfc",
+          "76001a9f-620c-4b16-b043-a250605d6d34",
+          "7a17f2b5-2c52-488f-a701-a0b408a828b4",
+          "807af1bd-e782-4c2c-a436-f75cde5868b9",
+          "855faf74-df7a-4bbf-b337-b84b7ec97338",
+          "85a47c3c-e97d-4836-b5e4-d56943a0d118",
+          "878f3dcf-eb78-4201-bf62-19d377bae7c1",
+          "8fac2abf-9849-4f2e-a6d0-61d4371167a9",
+          "9059f64f-83ba-4818-be0d-e2507def7af6",
+          "9784bfc1-8203-4334-8d0b-22043d7cf0a9",
+          "b0a2b9fd-6628-4192-a2df-ea9b215672f6",
+          "bdb8ee13-3ad9-4a7f-a5a1-0aed8fa2f4b5",
+          "c012972b-dcf9-4a31-8672-46514d7a814b",
+          "c04696d7-10c5-4ccd-86cb-174a5dc9dc87",
+          "cb272e8e-c4fa-42d6-9eb2-a6d92e8548a5",
+          "d70ac31e-05d2-42b5-bea1-1b331c59179b",
+          "d815365d-6f72-48c1-8e9c-e1708f9eeece",
+          "d95a953b-ce63-41d3-b3a5-d18b5ed22a16",
+          "ede2d4af-822f-4705-88a6-07eb28a28c91",
+          "ee4c39b9-8b78-425c-8227-446ad9e10a6a",
+          "fbc662f5-bd08-4c5f-b60e-ccf92728ea4c",
+          "e36f2a40-d9d8-45d0-9282-9bcfe8061a9d",
+          "13d4e492-312e-41ad-be22-35098860ebe9",
+          "6e822382-6331-406b-a607-d640f778991e",
+          "c4a6d726-b68c-4a87-a184-9aae8a580e4a",
+          "c6703a44-a20b-40ee-b7e6-dc1b9f48bb8e",
+          "53c64c6b-3dc0-4365-9601-07cae9aeae56",
+          "7589a9df-f5f7-405b-848c-7ac0b21b2016",
+          "842430b5-57c0-4dd9-9ee0-52ae0c3c715d",
+          "92fbba4c-d3fb-4be4-8bd3-469f5e13c276",
+          "bc907a8b-a9b5-41c9-b9f1-a5ee83168642",
+          "fdd68ae3-f4d3-481b-86ea-6571ffdf5cf2",
+          "fead6174-0e6d-4444-8d62-645675e77c7a",
+          "ff53c6e7-6253-413f-b7b0-65813c444542",
+          "48954c68-ab23-45df-b219-037b78333177",
+          "80c48c27-f94b-46ca-bc26-15d63da213bb",
+          "852e7b66-1be4-46b2-9892-c2344676d3c6",
+          "acfa0ffd-2df9-4e86-850e-443b28b79e4f",
+          "dc684bfa-ddb8-403c-92d2-211cf6c74cb7",
+          "099022c5-4f4a-420c-ba43-479ec8dc8b9c",
+          "3b336895-3a46-4592-bb35-0d24a69cde9d",
+          "54eca485-8614-4cf2-8d6d-d5f37d5e3ea7",
+          "6e8e7534-b8b0-4133-b76a-02ee1aa1f71f",
+          "953b5be7-5415-4834-9791-e9169acd9afd",
+          "969eca45-45ce-43b4-a2d9-0446777ff612",
+          "a799d5e7-680d-4d62-a7eb-a0b30bf6137a",
+          "b30a594f-7cf6-400a-b58b-3654e5ae9815",
+          "b5b96fde-5b37-451e-ba82-0c4f9b016b22",
+          "c6976970-a238-4096-b5fb-66d6f60c5b85",
+          "d12129c8-6144-4a0e-82f7-4a465926f695",
+          "e5237c73-880d-49ec-a525-ce9c3d54e8c6",
+          "ea305fed-e9b0-4633-8039-965aec23a675",
+          "1de0425b-1d30-4298-ba75-d3ce7c2fb57c",
+          "1e92a116-e757-447e-99e4-96894b46fa05",
+          "462a0376-d4c5-459f-a3a4-99fa70df5c28",
+          "4756edec-cf6a-470e-ab95-75c7157678ef",
+          "489308ff-e49d-4d82-89f3-96cf6bc78dae",
+          "4c0dbd36-f546-4065-a056-3343bda8a002",
+          "4e773da3-69cf-4459-84f2-952463c599ab",
+          "552a8ac7-1a3c-452e-8f5a-203af5a84440",
+          "5f4c4d8e-3b8f-483d-ae54-3212d54ab9a8",
+          "7286494e-929c-4aff-be38-1d3772f052d3",
+          "73da1b12-a899-42b7-8f66-918c9fa28123",
+          "77ef2450-f62c-42da-af07-155d1854677a",
+          "794c99a0-c816-44a3-bfcf-bd9f227e6295",
+          "7c77151d-e608-455e-8401-cb8cf3b9ad9d",
+          "7d6f0f66-4185-46d4-92bf-6c3741287597",
+          "8da05291-e4a9-4887-83df-940526ed4f7f",
+          "a16dd9bf-e9ec-4830-bc36-65fa7e603df5",
+          "a4fd2b62-1f38-4984-b465-7919389ab0c6",
+          "a85de50b-58ad-4d75-b525-cc0556e22251",
+          "b57ff9db-980e-4075-b266-abe3c77481eb",
+          "b79e9c39-c8e9-49eb-ad27-00f000198ed8",
+          "c52e82ad-38ce-46b0-9997-a27bf3f7a09a",
+          "e34875a6-dd54-468d-843f-21525cc11d41",
+          "e7a604a4-42e0-4801-ad76-fac9d709c6c1",
+          "eeb205eb-7068-4e9d-94a5-a94ac49548ab",
+          "f35d3e87-8374-493b-bc1d-324255beb33d"
+        ],
+        "isTemporary": false,
+        "order": 1756394281342
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Group",
+        "schema": ""
+      }
+    },
+    {
+      "id": "23786509-0e51-45b7-b720-7dc65c416174",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "schemaVersion": "",
+        "version": "",
+        "name": "kanvas-local",
+        "displayName": "",
+        "status": "",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "00000000-0000-0000-0000-000000000000",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": ""
+        },
+        "subCategory": "",
+        "metadata": null,
+        "model": {
+          "version": ""
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": null,
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "child_component_ids": [
+          "310d514b-a22e-41fa-b18f-58098b76490e",
+          "54e1e740-1e1d-4e4f-b604-6eaae7c2eacd",
+          "71f7366b-efde-48d1-bc58-c6f686dd7242",
+          "cdd08257-fe63-465d-8f4d-ada7ac927be8",
+          "ebe2b3b6-9a6c-4c33-a148-74de3504f16b",
+          "09a55f5e-c631-454e-ace1-39d93d3fcf5e",
+          "23961e52-f7fd-4fcc-b380-af261d93aeec",
+          "372ebaf0-b262-4d25-ba4e-eac8a9c8c659",
+          "3b40c440-db72-470d-978f-85d07b9bf306",
+          "3e98bee0-214a-4f36-aaba-370cbc54593c",
+          "3eea9f60-e3b9-41f3-a3bd-167c64dcab06",
+          "3fe5ab9a-510f-4ec1-ae42-732897b3e009",
+          "680b9f1e-ed71-45fb-a83e-661b58cbfcab",
+          "6b918028-0d44-4754-8fce-700454cc0dfc",
+          "76001a9f-620c-4b16-b043-a250605d6d34",
+          "7a17f2b5-2c52-488f-a701-a0b408a828b4",
+          "807af1bd-e782-4c2c-a436-f75cde5868b9",
+          "855faf74-df7a-4bbf-b337-b84b7ec97338",
+          "85a47c3c-e97d-4836-b5e4-d56943a0d118",
+          "878f3dcf-eb78-4201-bf62-19d377bae7c1",
+          "8fac2abf-9849-4f2e-a6d0-61d4371167a9",
+          "9059f64f-83ba-4818-be0d-e2507def7af6",
+          "9784bfc1-8203-4334-8d0b-22043d7cf0a9",
+          "b0a2b9fd-6628-4192-a2df-ea9b215672f6",
+          "bdb8ee13-3ad9-4a7f-a5a1-0aed8fa2f4b5",
+          "c012972b-dcf9-4a31-8672-46514d7a814b",
+          "c04696d7-10c5-4ccd-86cb-174a5dc9dc87",
+          "cb272e8e-c4fa-42d6-9eb2-a6d92e8548a5",
+          "d70ac31e-05d2-42b5-bea1-1b331c59179b",
+          "d815365d-6f72-48c1-8e9c-e1708f9eeece",
+          "d95a953b-ce63-41d3-b3a5-d18b5ed22a16",
+          "ede2d4af-822f-4705-88a6-07eb28a28c91",
+          "ee4c39b9-8b78-425c-8227-446ad9e10a6a",
+          "fbc662f5-bd08-4c5f-b60e-ccf92728ea4c",
+          "e36f2a40-d9d8-45d0-9282-9bcfe8061a9d",
+          "13d4e492-312e-41ad-be22-35098860ebe9",
+          "6e822382-6331-406b-a607-d640f778991e",
+          "c4a6d726-b68c-4a87-a184-9aae8a580e4a",
+          "c6703a44-a20b-40ee-b7e6-dc1b9f48bb8e",
+          "53c64c6b-3dc0-4365-9601-07cae9aeae56",
+          "7589a9df-f5f7-405b-848c-7ac0b21b2016",
+          "842430b5-57c0-4dd9-9ee0-52ae0c3c715d",
+          "92fbba4c-d3fb-4be4-8bd3-469f5e13c276",
+          "bc907a8b-a9b5-41c9-b9f1-a5ee83168642",
+          "fdd68ae3-f4d3-481b-86ea-6571ffdf5cf2",
+          "fead6174-0e6d-4444-8d62-645675e77c7a",
+          "ff53c6e7-6253-413f-b7b0-65813c444542",
+          "48954c68-ab23-45df-b219-037b78333177",
+          "80c48c27-f94b-46ca-bc26-15d63da213bb",
+          "852e7b66-1be4-46b2-9892-c2344676d3c6",
+          "acfa0ffd-2df9-4e86-850e-443b28b79e4f",
+          "dc684bfa-ddb8-403c-92d2-211cf6c74cb7",
+          "099022c5-4f4a-420c-ba43-479ec8dc8b9c",
+          "3b336895-3a46-4592-bb35-0d24a69cde9d",
+          "54eca485-8614-4cf2-8d6d-d5f37d5e3ea7",
+          "6e8e7534-b8b0-4133-b76a-02ee1aa1f71f",
+          "953b5be7-5415-4834-9791-e9169acd9afd",
+          "969eca45-45ce-43b4-a2d9-0446777ff612",
+          "a799d5e7-680d-4d62-a7eb-a0b30bf6137a",
+          "b30a594f-7cf6-400a-b58b-3654e5ae9815",
+          "b5b96fde-5b37-451e-ba82-0c4f9b016b22",
+          "c6976970-a238-4096-b5fb-66d6f60c5b85",
+          "d12129c8-6144-4a0e-82f7-4a465926f695",
+          "e5237c73-880d-49ec-a525-ce9c3d54e8c6",
+          "ea305fed-e9b0-4633-8039-965aec23a675",
+          "1de0425b-1d30-4298-ba75-d3ce7c2fb57c",
+          "1e92a116-e757-447e-99e4-96894b46fa05",
+          "462a0376-d4c5-459f-a3a4-99fa70df5c28",
+          "4756edec-cf6a-470e-ab95-75c7157678ef",
+          "489308ff-e49d-4d82-89f3-96cf6bc78dae",
+          "4c0dbd36-f546-4065-a056-3343bda8a002",
+          "4e773da3-69cf-4459-84f2-952463c599ab",
+          "552a8ac7-1a3c-452e-8f5a-203af5a84440",
+          "5f4c4d8e-3b8f-483d-ae54-3212d54ab9a8",
+          "7286494e-929c-4aff-be38-1d3772f052d3",
+          "73da1b12-a899-42b7-8f66-918c9fa28123",
+          "77ef2450-f62c-42da-af07-155d1854677a",
+          "794c99a0-c816-44a3-bfcf-bd9f227e6295",
+          "7c77151d-e608-455e-8401-cb8cf3b9ad9d",
+          "7d6f0f66-4185-46d4-92bf-6c3741287597",
+          "8da05291-e4a9-4887-83df-940526ed4f7f",
+          "a16dd9bf-e9ec-4830-bc36-65fa7e603df5",
+          "a4fd2b62-1f38-4984-b465-7919389ab0c6",
+          "a85de50b-58ad-4d75-b525-cc0556e22251",
+          "b57ff9db-980e-4075-b266-abe3c77481eb",
+          "b79e9c39-c8e9-49eb-ad27-00f000198ed8",
+          "c52e82ad-38ce-46b0-9997-a27bf3f7a09a",
+          "e34875a6-dd54-468d-843f-21525cc11d41",
+          "e7a604a4-42e0-4801-ad76-fac9d709c6c1",
+          "eeb205eb-7068-4e9d-94a5-a94ac49548ab",
+          "f35d3e87-8374-493b-bc1d-324255beb33d",
+          "0cfe7d06-2a73-4e8a-a726-b8bd22605612"
+        ],
+        "isTemporary": true,
+        "order": 1756394293299
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Group",
+        "schema": ""
+      }
     }
   ],
   "preferences": {
@@ -9876,7 +10282,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -9929,7 +10336,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -9973,7 +10381,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10036,7 +10445,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10089,7 +10499,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10133,7 +10544,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10196,7 +10608,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10249,7 +10662,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10293,7 +10707,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10356,7 +10771,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10409,7 +10825,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10453,7 +10870,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10516,7 +10934,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10569,7 +10988,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10613,7 +11033,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10676,7 +11097,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10729,7 +11151,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10773,7 +11196,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10836,7 +11260,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -10889,7 +11314,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10933,7 +11359,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -10996,7 +11423,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11049,7 +11477,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11093,7 +11522,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11156,7 +11586,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11209,7 +11640,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11253,7 +11685,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11316,7 +11749,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11369,7 +11803,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11413,7 +11848,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11476,7 +11912,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11529,7 +11966,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11573,7 +12011,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11636,7 +12075,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11689,7 +12129,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11733,7 +12174,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11796,7 +12238,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -11849,7 +12292,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11893,7 +12337,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -11956,7 +12401,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12009,7 +12455,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12053,7 +12500,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12116,7 +12564,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12169,7 +12618,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12213,7 +12663,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12276,7 +12727,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12329,7 +12781,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12373,7 +12826,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12436,7 +12890,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12489,7 +12944,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12533,7 +12989,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12596,7 +13053,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12649,7 +13107,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12693,7 +13152,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12756,7 +13216,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12809,7 +13270,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12853,7 +13315,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -12916,7 +13379,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -12969,7 +13433,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13013,7 +13478,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13076,7 +13542,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13129,7 +13596,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13173,7 +13641,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13236,7 +13705,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13289,7 +13759,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13333,7 +13804,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13396,7 +13868,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13449,7 +13922,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13493,7 +13967,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13556,7 +14031,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13609,7 +14085,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13653,7 +14130,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13716,7 +14194,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13769,7 +14248,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13813,7 +14293,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13876,7 +14357,8 @@
           "user_id": "00000000-0000-0000-0000-000000000000",
           "created_at": "0001-01-01T00:00:00Z",
           "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
         },
         "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
         "category": {
@@ -13929,7 +14411,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {
@@ -13973,7 +14456,8 @@
                     "user_id": "00000000-0000-0000-0000-000000000000",
                     "created_at": "0001-01-01T00:00:00Z",
                     "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
                   },
                   "connection_id": "00000000-0000-0000-0000-000000000000",
                   "category": {

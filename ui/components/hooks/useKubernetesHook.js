@@ -40,13 +40,21 @@ const handleErrorGenerator = (dispatch, notify) => (message, error) => {
   });
 };
 
-const handleSuccessGenerator = (dispatch, notify) => (message) => {
-  dispatch(updateProgressAction({ showProgress: false }));
-  notify({
-    message: message,
-    event_type: EVENT_TYPES.SUCCESS,
-  });
-};
+const handleSuccessGenerator =
+  (dispatch, notify) =>
+  (message, variant = 'success') => {
+    dispatch(updateProgressAction({ showProgress: false }));
+    const variantMap = {
+      success: EVENT_TYPES.SUCCESS,
+      info: EVENT_TYPES.INFO,
+      warning: EVENT_TYPES.WARNING,
+      error: EVENT_TYPES.ERROR,
+    };
+    notify({
+      message,
+      event_type: variantMap[variant] ?? EVENT_TYPES.SUCCESS,
+    });
+  };
 
 const handleInfoGenerator = (notify) => (message) => {
   notify({
@@ -65,7 +73,21 @@ export function useMesheryOperator() {
     dispatch(updateProgressAction({ showProgress: true }));
     pingMesheryOperator(
       connectionID,
-      () => handleSuccess(`Meshery Operator  pinged`),
+      (res) => {
+        const status = String(res?.operator?.status ?? CONTROLLER_STATES.UNKNOWN)
+          .trim()
+          .toUpperCase();
+
+        const statusToVariantMap = {
+          [CONTROLLER_STATES.DEPLOYED]: 'success',
+          [CONTROLLER_STATES.DEPLOYING]: 'info',
+          [CONTROLLER_STATES.NOTDEPLOYED]: 'error',
+          [CONTROLLER_STATES.UNKNOWN]: 'error',
+        };
+        const variant = statusToVariantMap[status] || 'warning';
+
+        handleSuccess(`Meshery Operator status: ${status}`, variant);
+      },
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
   };
@@ -78,8 +100,8 @@ export function useMeshsSyncController() {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
-  // takes connectionID as input not the contextID
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
 
@@ -96,9 +118,19 @@ export function useMeshsSyncController() {
           );
         } else if (
           res.controller.name === 'MeshSync' &&
-          !res.controller.status.includes('Unknown')
+          (res.controller.status === 'Running' || res.controller.status.includes('Running'))
         ) {
-          handleError('MeshSync is not publishing to Meshery Broker');
+          handleInfo(
+            `MeshSync is running (${res.controller.version}), but is not connected to Meshery Broker.`,
+          );
+        } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Deployed') {
+          handleInfo('MeshSync is deployed but connection status unclear');
+        } else if (
+          res.controller.name === 'MeshSync' &&
+          !res.controller.status.includes('Unknown') &&
+          !res.controller.status.includes('UNKNOWN')
+        ) {
+          handleInfo('MeshSync is not publishing to Meshery Broker');
         } else {
           handleError('MeshSync could not be reached');
         }
@@ -174,6 +206,7 @@ export const useNatsController = () => {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
@@ -188,6 +221,13 @@ export const useNatsController = () => {
           let runningEndpoint = res.controller.status.substring('Connected'.length);
           handleSuccess(
             `Broker was pinged. ${runningEndpoint != '' ? `Running at ${runningEndpoint}` : ''}`,
+          );
+        } else if (
+          res.controller.name === 'MesheryBroker' &&
+          (res.controller.status === 'Deployed' || res.controller.status === 'DEPLOYED')
+        ) {
+          handleInfo(
+            `Meshery Broker is deployed (${res.controller.version}) but not connected to Meshery Server`,
           );
         } else {
           handleError(
