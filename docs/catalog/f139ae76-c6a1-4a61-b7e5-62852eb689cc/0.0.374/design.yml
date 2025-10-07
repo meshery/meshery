@@ -2,7 +2,7 @@
   "id": "f139ae76-c6a1-4a61-b7e5-62852eb689cc",
   "name": "Kubernetes Architecture",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.374",
+  "version": "0.0.375",
   "metadata": {
     "resolvedAliases": {}
   },
