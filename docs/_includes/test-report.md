@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 7th 2025, 11:46:57 am
+- Testing started at: October 7th 2025, 11:50:08 am
 
 **📦 Test Result Summary**
 
-- ✅ 82 passed
-- ❌ 1 failed
-- ⚠️ 2 flaked
-- ⏩ 3 skipped
+- ✅ 90 passed
+- ❌ 0 failed
+- ⚠️ 4 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 7 minutes and 36 seconds_
+⌛ _Duration: 8 minutes and 58 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -22,11 +22,9 @@
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
 | 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 6 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 2 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 3 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 4 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
