@@ -16,7 +16,6 @@ func TestCreateWorkspace(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	// Test scenarios for workspace creation
 	tests := []utils.MesheryCommamdTest{
 		{
 			Name:             "Create workspace without arguments",
@@ -37,8 +36,27 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "create.workspace.success.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "Create workspace fails with invalid organization ID",
+			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   404,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "create.workspace.error.output.golden",
+			ExpectError:      true,
+		},
+		{
+			Name:             "Create workspace fails when server not reachable",
+			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   -1,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "create.workspace.server.error.output.golden",
+			ExpectError:      true,
+		},
 	}
 
-	// Run tests
 	utils.InvokeMesheryctlTestCommand(t, update, WorkSpaceCmd, tests, currDir, "workspaces")
 }

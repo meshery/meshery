@@ -653,17 +653,27 @@ design:
 
     list:
       name: list
-      description: displays a list of available design files
+      description: Displays a list of available design files
       usage: mesheryctl design list
       flags:
         page:
           name: --page, -p
-          description: list designs by specific page number (25 designs per page)
+          description: list designs by specific page number (10 designs per page)
         verbose:
           name: --verbose, -v
           description: show all design file metadata
           usage: mesheryctl design list --verbose
           example: mesheryctl design list -v
+        pagesize:
+          name: --pagesize
+          description: number of designs to be displayed per page (default 10)
+          usage: mesheryctl design list --pagesize [number]
+          example: mesheryctl design list --pagesize 50
+        count:
+          name: --count, -c
+          description: display the total number of available designs
+          usage: mesheryctl design list --count
+          example: mesheryctl design list --count
 
     view:
       name: view

@@ -502,109 +502,39 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command7 = site.data.mesheryctlcommands.cmds.design %}
+  {% assign cmdDesign = site.data.mesheryctlcommands.cmds.design %}
+  {% assign subcmdDesign_flag_count = 0 %}
+    {% for subcmdDesign_hash in cmdDesign.subcommands %}
+      {% assign subcommand = subcmdDesign_hash[1] %}
+      {% assign subcmdDesign_flag_count = subcmdDesign_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmdDesign.subcommands.size | plus: subcmdDesign_flag_count | plus: cmdDesign.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=23><a href="{{ site.baseurl }}/reference/mesheryctl/design">{{ command7.name }}</a></td>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdDesign.name }}">{{ cmdDesign.name }}</a></td>
       <td></td>
       <td></td>
-      <td>{{ command7.description }}</td>
+      <td>{{ cmdDesign.description }}</td>
     </tr>
-    {% assign subcommand1 = command7.subcommands.apply %}
+    {% for flag_hash in cmdDesign.flags %}{% assign flag = flag_hash[1] %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/apply">{{ subcommand1.name }}</a></td>
         <td></td>
-        <td>{{ subcommand1.description }}</td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
       </tr>
-      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+    {% endfor %}
+    {% for subcommand_hash in cmdDesign.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdDesign.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td>{{ flag.name }}</td>
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand2 = command7.subcommands.view %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/design/view">{{ subcommand2.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand2.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand2.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand3 = command7.subcommands.list %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/design/list">{{ subcommand3.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand3.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand4 = command7.subcommands.delete %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/delete">{{ subcommand4.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand4.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand5 = command7.subcommands.import %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/design/import">{{ subcommand5.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand5.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand5.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand6 = command7.subcommands.onboard %}
-      <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/design/onboard">{{ subcommand6.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand6.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-      {% assign subcommand6 = command7.subcommands.export %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/design/export">{{ subcommand6.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand6.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand7 = command7.subcommands.offboard %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/offboard">{{ subcommand7.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand7.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand7.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
+    {% endfor %}
 </thead>
 </table>
  

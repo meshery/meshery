@@ -7,8 +7,10 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
  * Pings meshery operator
  * @param {() => Function} fetchMesheryOperatorStatus - function with which
  * we can query using graphql
- * @param  {(res) => void} successHandler
- * @param  {(err) => void} errorHandler
+ * @param  {(res: object) => void} successHandler - called when operator is reachable,
+ *         receives the GraphQL result (e.g. { operator: { status, controller, connectionID } }).
+ * @param  {(err: any) => void} errorHandler - called when operator is unreachable or status is UNKNOWN,
+ *         receives the error object or response for context.
  */
 export const pingMesheryOperator = (id, successcb, errorcb) => {
   const subscription = fetchMesheryOperatorStatus({
@@ -20,15 +22,15 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
         data?.operator === null ||
         data?.operator?.status === CONTROLLER_STATES.UNKOWN
       ) {
-        errorcb();
+        errorcb && errorcb(data);
         subscription.unsubscribe();
         return;
       }
-      successcb();
+      successcb && successcb(data);
       subscription.unsubscribe();
     },
-    error: () => {
-      errorcb();
+    error: (err) => {
+      errorcb && errorcb(err ?? new Error('Unknown error from pingMesheryOperator'));
       subscription.unsubscribe();
     },
   });

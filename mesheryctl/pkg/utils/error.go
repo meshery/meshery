@@ -179,11 +179,11 @@ func EnvironmentSubError(msg string, cmd string) string {
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
-		return formatError(msg, cmdWorkspaceList)
+		return formatError(msg, cmdExpWorkspaceList)
 	case "create":
-		return formatError(msg, cmdWorkspaceCreate)
+		return formatError(msg, cmdExpWorkspaceCreate)
 	default:
-		return formatError(msg, cmdWorkspace)
+		return formatError(msg, cmdExpWorkspace)
 	}
 }
 
@@ -355,11 +355,11 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, environmentListURL)
 	case cmdEnvironmentView:
 		return formatUsageDetails(msg, environmentViewURL)
-	case cmdWorkspace:
+	case cmdExpWorkspace:
 		return formatUsageDetails(msg, workspaceUsageURL)
-	case cmdWorkspaceCreate:
+	case cmdExpWorkspaceCreate:
 		return formatUsageDetails(msg, workspaceCreateURL)
-	case cmdWorkspaceList:
+	case cmdExpWorkspaceList:
 		return formatUsageDetails(msg, workspaceListURL)
 	case cmdRelationshipView:
 		return formatUsageDetails(msg, relationshipViewURL)

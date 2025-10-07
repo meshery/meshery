@@ -50,9 +50,22 @@ components:
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache/icons/color/serverless-cache-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache/icons/white/serverless-cache-white.svg
   description: 
-components-count: 10
+- name: serverless-cache-snapshot
+  colorIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache-snapshot/icons/color/serverless-cache-snapshot-color.svg
+  whiteIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache-snapshot/icons/white/serverless-cache-snapshot-white.svg
+  description: 
+components-count: 11
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between ReplicationGroup and UserGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between cachecluster and CacheParameterGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between cachecluster and CacheSubnetGroup"
+relationship-count: 3
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",

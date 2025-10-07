@@ -28,7 +28,16 @@ components:
   description: 
 components-count: 4
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between StateMachine and Activity "
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between adoptedresource and Activity "
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between adoptedresource and StateMachine "
+relationship-count: 3
 featureList: [
   "Step Functions is based on state machines and tasks.",
   "Supports Catch and Retry statements",

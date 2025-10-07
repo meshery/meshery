@@ -20,6 +20,12 @@ First, understand the [Meshery Operator Deployment Scenarios](#meshery-operator-
 
 Each Meshery Operator controller offers a health status that you can use to understand their current health in your deployment. Their health statuses and meanings are described below.of MeshSync and Meshery Broker.
 
+### Meshery Operator Health Status
+
+- **DEPLOYED:** Operator deployment rollout is done, pod is in a ready state, old pod (if any) has been terminated.
+- **DEPLOYING:** Operator deployment is present, but its rollout is in progress. Pod is not yet in ready state, or old pod has not been terminated.
+- **NOTDEPLOYED:** Operator deployment is not present in the cluster.
+
 ### MeshSync Health Status
 
 - **ENABLED:** Custom Resource present. MeshSync Controller is not connected to Broker.

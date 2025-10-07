@@ -32,7 +32,13 @@ components:
   description: 
 components-count: 5
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between service and TaskDefinition"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 2
 featureList: [
   "Simplifies container deployment and management",
   "Integrates with other AWS services",

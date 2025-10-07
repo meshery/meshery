@@ -34,7 +34,11 @@ components:
   colorIcon: assets/img/integrations/volcano/components/queue/icons/color/queue-color.svg
   whiteIcon: assets/img/integrations/volcano/components/queue/icons/white/queue-white.svg
   description: 
-components-count: 6
+- name: cron-job
+  colorIcon: assets/img/integrations/volcano/components/cron-job/icons/color/cron-job-color.svg
+  whiteIcon: assets/img/integrations/volcano/components/cron-job/icons/white/cron-job-white.svg
+  description: 
+components-count: 7
 relationships: 
 relationship-count: 0
 featureList: [

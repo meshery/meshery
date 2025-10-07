@@ -38,5 +38,4 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: C019426UBNY
-            text: ":new: Good first issue up for grabs: <${{ github.event.issue.title }}|${{ github.event.issue.html_url }}>"
-
+            text: ":new: Good first issue up for grabs: <${{ github.event.issue.html_url }}|${{ github.event.issue.title }}>"

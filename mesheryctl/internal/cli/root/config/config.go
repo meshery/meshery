@@ -250,7 +250,7 @@ func (ctx *Context) ValidateVersion() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
 	defer func() {
@@ -265,10 +265,6 @@ func (ctx *Context) ValidateVersion() error {
 
 	if resp.StatusCode != http.StatusOK {
 		log.Fatal("failed to validate Meshery release version " + ctx.Version)
-	}
-
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
 	return nil

@@ -372,9 +372,7 @@ const Navigator_ = () => {
       href: 'https://slack.meshery.io',
       title: 'Community',
       icon: (
-        <SlackIcon
-          style={{ ...drawerIconsStyle, height: '24px', width: '24px', marginTop: '' }}
-        />
+        <SlackIcon style={{ ...drawerIconsStyle, height: '24px', width: '24px', marginTop: '' }} />
       ),
       external_icon: ExternalLinkIcon,
     },

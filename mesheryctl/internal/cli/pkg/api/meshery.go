@@ -24,6 +24,10 @@ func Delete(url string) (*http.Response, error) {
 	return makeRequest(url, http.MethodDelete, nil)
 }
 
+func Add(url string, body io.Reader) (*http.Response, error) {
+	return makeRequest(url, http.MethodPost, body)
+}
+
 func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 	// defers the closing of the response body after its use, ensuring that the resources are properly released.
 	defer response.Body.Close()

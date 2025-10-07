@@ -48,7 +48,16 @@ components:
   description: 
 components-count: 9
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Policy and role"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between InstanceProfile and role"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 3
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",

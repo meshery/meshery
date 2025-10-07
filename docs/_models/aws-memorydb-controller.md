@@ -48,7 +48,31 @@ components:
   description: 
 components-count: 9
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Cluster and acl"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Cluster and SecurityGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between cluster and parametergroup "
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between cluster and SecurityGroup "
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between subnetgroup and subnet"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between user and acl"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between cluster and snapshot"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 8
 featureList: [
   "Amazon MemoryDB for Redis enables machine learning (ML) and generative artificial intelligence (AI) models to work with data stored in Amazon MemoryDB in real-time and without moving your data.",
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",

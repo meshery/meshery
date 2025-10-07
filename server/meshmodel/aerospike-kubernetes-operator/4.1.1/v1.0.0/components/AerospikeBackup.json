@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Aerospike Backup",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aerospike-kubernetes-operator",
+    "displayName": "Aerospike Kubernetes Operator",
+    "description": "Aerospike Kubernetes Operator automates the configuration, provisioning, scaling, and recovery of Aerospike clusters. It reduces the complexity of manual deployment and lifecycle management, and enables the use of declarative configuration for Aerospike clusters.",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#f8f413",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://aerospike.github.io/aerospike-kubernetes-operator/aerospike-kubernetes-operator-4.1.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 91 186\" fill=\"#f8f413\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M45.6134 84.8935C48.8134 89.1869 54.7734 95.3335 65.8268 103.774C64.6134 50.2135 50.9201 11.7202 46.4934 1.01352C45.9868 -0.199818 44.2668 -0.199818 43.7601 1.01352C39.3468 11.7202 25.6401 50.2669 24.4268 103.774C35.4801 95.3335 41.4401 89.1869 44.6401 84.8935C44.8801 84.5602 45.3734 84.5602 45.6134 84.8935Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M24.4265 103.787C23.2798 104.654 22.0931 105.547 20.8398 106.48C-0.146853 121.894 -0.066853 146.334 -0.000186354 155.334C-0.000186354 156.014 0.559814 156.574 1.25315 156.574H26.2265C24.9731 148.907 24.2798 130.814 24.2798 116.387C24.2798 112.094 24.3331 107.894 24.4265 103.787Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M69.3994 106.467C68.146 105.547 66.9594 104.654 65.8127 103.787C65.906 107.894 65.9594 112.094 65.9594 116.387C65.9594 130.814 65.266 148.907 64.0127 156.574H88.986C89.6794 156.574 90.226 156.027 90.2394 155.334C90.306 146.334 90.386 121.907 69.4127 106.467H69.3994Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M46.5329 184.161C49.6796 174.681 55.6796 165.974 64.0262 156.574H26.2129C34.5596 165.974 40.5596 174.681 43.7062 184.161C43.9062 184.774 44.4662 185.188 45.1196 185.188C45.7596 185.188 46.3196 184.774 46.5329 184.161Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 91 186\" fill=\"#000000\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M45.6134 84.8935C48.8134 89.1869 54.7734 95.3335 65.8268 103.774C64.6134 50.2135 50.9201 11.7202 46.4934 1.01352C45.9868 -0.199818 44.2668 -0.199818 43.7601 1.01352C39.3468 11.7202 25.6401 50.2669 24.4268 103.774C35.4801 95.3335 41.4401 89.1869 44.6401 84.8935C44.8801 84.5602 45.3734 84.5602 45.6134 84.8935Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M24.4265 103.787C23.2798 104.654 22.0931 105.547 20.8398 106.48C-0.146853 121.894 -0.066853 146.334 -0.000186354 155.334C-0.000186354 156.014 0.559814 156.574 1.25315 156.574H26.2265C24.9731 148.907 24.2798 130.814 24.2798 116.387C24.2798 112.094 24.3331 107.894 24.4265 103.787Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M69.3994 106.467C68.146 105.547 66.9594 104.654 65.8127 103.787C65.906 107.894 65.9594 112.094 65.9594 116.387C65.9594 130.814 65.266 148.907 64.0127 156.574H88.986C89.6794 156.574 90.226 156.027 90.2394 155.334C90.306 146.334 90.386 121.907 69.4127 106.467H69.3994Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M46.5329 184.161C49.6796 174.681 55.6796 165.974 64.0262 156.574H26.2129C34.5596 165.974 40.5596 174.681 43.7062 184.161C43.9062 184.774 44.4662 185.188 45.1196 185.188C45.7596 185.188 46.3196 184.774 46.5329 184.161Z\" fill=\"#1A1A1A\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "4.1.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://aerospike.github.io/aerospike-kubernetes-operator/aerospike-kubernetes-operator-4.1.1.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "asdb.aerospike.com/v1beta1",
+    "kind": "AerospikeBackup",
+    "schema": "{\n \"description\": \"AerospikeBackup is the Schema for the aerospikebackup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AerospikeBackupSpec defines the desired state of AerospikeBackup for a given AerospikeCluster\",\n   \"properties\": {\n    \"backupService\": {\n     \"description\": \"BackupService is the backup service reference i.e. name and namespace.\\nIt is used to communicate to the backup service to trigger backups. This field is immutable\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Backup service name\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Backup service namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"config\": {\n     \"description\": \"Config is the free form configuration for the backup in YAML format.\\nThis config is used to trigger backups. It includes: aerospike-cluster, backup-routines.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"onDemandBackups\": {\n     \"description\": \"OnDemandBackups is the configuration for on-demand backups.\",\n     \"items\": {\n      \"properties\": {\n       \"delay\": {\n        \"description\": \"Delay is the interval before starting the on-demand backup.\",\n        \"type\": \"string\"\n       },\n       \"id\": {\n        \"description\": \"ID is the unique identifier for the on-demand backup.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"routineName\": {\n        \"description\": \"RoutineName is the routine name used to trigger on-demand backup.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"id\",\n       \"routineName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"maxItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"backupService\",\n    \"config\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Aerospike Backup\",\n \"type\": \"object\"\n}"
+  }
+}

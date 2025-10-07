@@ -1,5 +1,6 @@
 header:
   schema-version: 1.0.0
+  expiration-date: '2026-03-31T05:05:05.000Z'
   creation-date: '2025-04-03'
   last-updated: '2025-08-21'
   last-reviewed: '2025-08-21'
@@ -8,7 +9,7 @@ project-lifecycle:
   stage: active
   bug-fixes-only: false
   core-maintainers:
-  - @meshery/core-maintainers
+  - "@meshery/core-maintainers"
   - github:leecalcote
   - github:aabidsofi19
 contribution-policy:

@@ -86,8 +86,6 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 </div>
 </pre>
 
-
-{% include mesheryctl/system-dashboard.md %}
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

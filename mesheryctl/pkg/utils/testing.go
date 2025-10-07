@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -458,8 +459,19 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 				TokenFlag = GetToken(t)
 
-				httpmock.RegisterResponder(tt.HttpMethod, testContext.BaseURL+tt.URL,
-					httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				url := testContext.BaseURL + tt.URL
+				httpMethod := tt.HttpMethod
+
+				if tt.HttpStatusCode < 0 {
+					httpmock.RegisterResponder(httpMethod, url,
+						func(req *http.Request) (*http.Response, error) {
+							return nil, &net.OpError{Op: "dial", Net: "tcp", Addr: nil, Err: net.ErrClosed}
+						})
+				} else {
+					httpmock.RegisterResponder(httpMethod, url,
+						httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				}
+
 			}
 
 			testdataDir := filepath.Join(commandDir, "testdata")
