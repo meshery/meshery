@@ -1,0 +1,819 @@
+name: Kyverno Policy Engine
+version: 0.0.1
+services:
+  kyverno-admission-controller:
+    name: kyverno-admission-controller
+    type: Deployment
+    apiVersion: apps/v1
+    namespace: kyverno
+    version: v1.29.0
+    model: kubernetes
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          match Labels:
+            app.kubernetes.io/name: kyverno
+            app.kubernetes.io/component: admission-controller
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: kyverno
+              app.kubernetes.io/component: admission-controller
+              app.kubernetes.io/version: v1.29.0
+          spec:
+            containers:
+            - name: kyverno
+              image: ghcr.io/kyverno/kyverno:v1.29.0
+              ports:
+              - container Port: 9443
+                name: https
+                protocol: TCP
+              - container Port: 8000
+                name: metrics
+                protocol: TCP
+              env:
+              - name: INIT_CONFIG
+                value: kyverno
+              - name: METRICS_CONFIG
+                value: kyverno-metrics
+              - name: KYVERNO_NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              liveness Probe:
+                http Get:
+                  path: /health/liveness
+                  port: 9443
+                  scheme: HTTPS
+                initial Delay Seconds: 15
+                period Seconds: 30
+                timeout Seconds: 5
+                failure Threshold: 2
+                success Threshold: 1
+              readiness Probe:
+                http Get:
+                  path: /health/readiness
+                  port: 9443
+                  scheme: HTTPS
+                initial Delay Seconds: 5
+                period Seconds: 10
+                timeout Seconds: 5
+                failure Threshold: 6
+                success Threshold: 1
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              security Context:
+                allow Privilege Escalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                read Only Root Filesystem: true
+                run As Non Root: true
+                seccomp Profile:
+                  type: RuntimeDefault
+            service Account Name: kyverno-admission-controller
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-admission-controller-deployment
+        label: Kyverno Admission Controller
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 70
+          posY: 70
+        whiteboarddata:
+          style: {}
+  kyverno-background-controller:
+    name: kyverno-background-controller
+    type: Deployment
+    apiVersion: apps/v1
+    namespace: kyverno
+    version: v1.29.0
+    model: kubernetes
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          match Labels:
+            app.kubernetes.io/name: kyverno
+            app.kubernetes.io/component: background-controller
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: kyverno
+              app.kubernetes.io/component: background-controller
+              app.kubernetes.io/version: v1.29.0
+          spec:
+            containers:
+            - name: controller
+              image: ghcr.io/kyverno/background-controller:v1.29.0
+              ports:
+              - container Port: 8000
+                name: metrics
+                protocol: TCP
+              env:
+              - name: KYVERNO_NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              resources:
+                limits:
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+              security Context:
+                allow Privilege Escalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                read Only Root Filesystem: true
+                run As Non Root: true
+                seccomp Profile:
+                  type: RuntimeDefault
+            service Account Name: kyverno-background-controller
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-background-controller-deployment
+        label: Kyverno Background Controller
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 190
+          posY: 70
+        whiteboarddata:
+          style: {}
+  kyverno-cleanup-controller:
+    name: kyverno-cleanup-controller
+    type: Deployment
+    apiVersion: apps/v1
+    namespace: kyverno
+    version: v1.29.0
+    model: kubernetes
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/name: kyverno
+            app.kubernetes.io/component: cleanup-controller
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: kyverno
+              app.kubernetes.io/component: cleanup-controller
+              app.kubernetes.io/version: v1.29.0
+          spec:
+            containers:
+            - name: controller
+              image: ghcr.io/kyverno/cleanup-controller:v1.29.0
+              ports:
+              - container Port: 8000
+                name: metrics
+                protocol: TCP
+              env:
+              - name: KYVERNO_NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              resources:
+                limits:
+                  memory: 128Mi
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+              security Context:
+                allow Privilege Escalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                read Only Root Filesystem: true
+                run As Non Root: true
+                seccomp Profile:
+                  type: RuntimeDefault
+            service Account Name: kyverno-cleanup-controller
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-cleanup-controller-deployment
+        label: Kyverno Cleanup Controller
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 310
+          posY: 70
+        whiteboarddata:
+          style: {}
+  kyverno-service:
+    name: kyverno-svc
+    type: Service
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings:
+      spec:
+        ports:
+        - name: https
+          port: 443
+          protocol: TCP
+          target Port: https
+        - name: metrics
+          port: 8000
+          protocol: TCP
+          target Port: metrics
+        selector:
+          app.kubernetes.io/name: kyverno
+          app.kubernetes.io/component: admission-controller
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-service
+        label: Kyverno Service
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 70
+          posY: 190
+        whiteboarddata:
+          style: {}
+  kyverno-metrics-service:
+    name: kyverno-svc-metrics
+    type: Service
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings:
+      spec:
+        ports:
+        - name: metrics
+          port: 8000
+          protocol: TCP
+          target Port: metrics
+        selector:
+          app.kubernetes.io/name: kyverno
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-metrics-service
+        label: Kyverno Metrics Service
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 190
+          posY: 190
+        whiteboarddata:
+          style: {}
+  kyverno-configmap:
+    name: kyverno
+    type: ConfigMap
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings:
+      data:
+        enableDefaultRegistryMutation: "true"
+        excludeGroups: system:nodes
+        generateSuccessEvents: "false"
+        resourceFilters: '[*,kyverno,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][Binding,*,*][ReplicaSet,*,*][AdmissionReport,*,*][ClusterAdmissionReport,*,*][BackgroundScanReport,*,*][ClusterBackgroundScanReport,*,*]'
+        webhooks: '[{"namespaceSelector":{"matchExpressions":[{"key":"kubernetes.io/metadata.name","operator":"NotIn","values":["kyverno"]}]}}]'
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-configmap
+        label: Kyverno Config
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 310
+          posY: 190
+        whiteboarddata:
+          style: {}
+  kyverno-metrics-configmap:
+    name: kyverno-metrics
+    type: ConfigMap
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings:
+      data:
+        namespaces: '{"exclude":[],"include":[]}'
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-metrics-configmap
+        label: Kyverno Metrics Config
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 430
+          posY: 190
+        whiteboarddata:
+          style: {}
+  kyverno-admission-sa:
+    name: kyverno-admission-controller
+    type: ServiceAccount
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-admission-sa
+        label: Kyverno Admission SA
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 70
+          posY: 310
+        whiteboarddata:
+          style: {}
+  kyverno-background-sa:
+    name: kyverno-background-controller
+    type: ServiceAccount
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-background-sa
+        label: Kyverno Background SA
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 190
+          posY: 310
+        whiteboarddata:
+          style: {}
+  kyverno-cleanup-sa:
+    name: kyverno-cleanup-controller
+    type: ServiceAccount
+    apiVersion: v1
+    namespace: kyverno
+    model: kubernetes
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-cleanup-sa
+        label: Kyverno Cleanup SA
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 310
+          posY: 310
+        whiteboarddata:
+          style: {}
+  kyverno-cluster-role:
+    name: kyverno
+    type: ClusterRole
+    apiVersion: rbac.authorization.k8s.io/v1
+    model: kubernetes
+    settings:
+      rules:
+      - api Groups:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - admissionregistration.k8s.io
+        resources:
+        - validatingwebhookconfigurations
+        - mutatingwebhookconfigurations
+        verbs:
+        - create
+        - delete
+        - get
+        - list
+        - patch
+        - update
+        - watch
+      - api Groups:
+        - kyverno.io
+        resources:
+        - policies
+        - policies/status
+        - clusterpolicies
+        - clusterpolicies/status
+        - generaterequests
+        - generaterequests/status
+        verbs:
+        - create
+        - delete
+        - get
+        - list
+        - patch
+        - update
+        - watch
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-cluster-role
+        label: Kyverno ClusterRole
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: false
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 430
+          posY: 310
+        whiteboarddata:
+          style: {}
+  kyverno-cluster-role-binding:
+    name: kyverno
+    type: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    model: kubernetes
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: kyverno
+      subjects:
+      - kind: ServiceAccount
+        name: kyverno-admission-controller
+        namespace: kyverno
+      - kind: ServiceAccount
+        name: kyverno-background-controller
+        namespace: kyverno
+      - kind: ServiceAccount
+        name: kyverno-cleanup-controller
+        namespace: kyverno
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-cluster-role-binding
+        label: Kyverno ClusterRoleBinding
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: false
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 550
+          posY: 310
+        whiteboarddata:
+          style: {}
+  kyverno-namespace:
+    name: kyverno
+    type: Namespace
+    apiVersion: v1
+    model: kubernetes
+    settings:
+      spec: {}
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-namespace
+        label: Kyverno Namespace
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: false
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 310
+          posY: 430
+        whiteboarddata:
+          style: {}
+  kyverno-pdb:
+    name: kyverno-admission-controller
+    type: PodDisruptionBudget
+    apiVersion: policy/v1
+    namespace: kyverno
+    model: kubernetes
+    settings:
+      spec:
+        min Available: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/name: kyverno
+            app.kubernetes.io/component: admission-controller
+    traits:
+      meshmap:
+        edges: []
+        id: kyverno-pdb
+        label: Kyverno PDB
+        meshmodel-metadata:
+          genealogy: ""
+          is Custom Resource: false
+          is Namespaced: true
+          logo URL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          model Display Name: Kubernetes
+          published Version: 0.7.2
+        position:
+          posX: 70
+          posY: 430
+        whiteboarddata:
+          style: {}
+relationships:
+  - name: kyverno-admission-network
+    type: network
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Service
+          match:
+            refs:
+            - name: kyverno-svc
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: kyverno-metrics-network
+    type: network
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Service
+          match:
+            refs:
+            - name: kyverno-svc-metrics
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+            - name: kyverno-background-controller
+              namespace: kyverno
+            - name: kyverno-cleanup-controller
+              namespace: kyverno
+  - name: admission-configmap-mount
+    type: mount
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ConfigMap
+          match:
+            refs:
+            - name: kyverno
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: metrics-configmap-mount
+    type: mount
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ConfigMap
+          match:
+            refs:
+            - name: kyverno-metrics
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: admission-sa-binding
+    type: binding
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ServiceAccount
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: background-sa-binding
+    type: binding
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ServiceAccount
+          match:
+            refs:
+            - name: kyverno-background-controller
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-background-controller
+              namespace: kyverno
+  - name: cleanup-sa-binding
+    type: binding
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ServiceAccount
+          match:
+            refs:
+            - name: kyverno-cleanup-controller
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-cleanup-controller
+              namespace: kyverno
+  - name: clusterrole-binding-permission
+    type: permission
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ClusterRoleBinding
+          match:
+            refs:
+            - name: kyverno
+        to:
+        - kind: ClusterRole
+          match:
+            refs:
+            - name: kyverno
+  - name: admission-pdb-policy
+    type: policy
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: PodDisruptionBudget
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: namespace-hierarchy-admission
+    type: parent
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Namespace
+          match:
+            refs:
+            - name: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-admission-controller
+              namespace: kyverno
+  - name: namespace-hierarchy-background
+    type: parent
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Namespace
+          match:
+            refs:
+            - name: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-background-controller
+              namespace: kyverno
+  - name: namespace-hierarchy-cleanup
+    type: parent
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Namespace
+          match:
+            refs:
+            - name: kyverno
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: kyverno-cleanup-controller
+              namespace: kyverno
+  - name: namespace-hierarchy-services
+    type: parent
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Namespace
+          match:
+            refs:
+            - name: kyverno
+        to:
+        - kind: Service
+          match:
+            refs:
+            - name: kyverno-svc
+              namespace: kyverno
+            - name: kyverno-svc-metrics
+              namespace: kyverno
