@@ -65,7 +65,7 @@ components:
       isAnnotation: false
       isNamespaced: true
       published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      source_uri: https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec/v3
     configuration:
       automountServiceAccountToken: true
       metadata:
@@ -148,9 +148,9 @@ components:
       isAnnotation: false
       isNamespaced: true
       published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      source_uri: https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec/v3
     configuration:
-      data:
+      stringData:
         token: "<REPLACE_WITH_VAULT_TOKEN>"
       metadata:
         name: ms-payments-rest-vaultsecret
@@ -221,7 +221,7 @@ components:
       isAnnotation: false
       isNamespaced: true
       published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      source_uri: https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec/v3
     configuration:
       data:
         server: http://vault-internal.vault-operator.svc.cluster.local:8200
@@ -298,7 +298,7 @@ components:
       isAnnotation: false
       isNamespaced: true
       published: false
-      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      source_uri: https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec/v3
     configuration:
       metadata:
         labels:
@@ -415,8 +415,12 @@ components:
               - env:
                   - name: ASPNETCORE_ENVIRONMENT
                     value: Staging
+                  - name: POD_NAMESPACE
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.namespace
                   - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: service.name=ms-payments-rest,service.namespace=default,service.instance.id=ms-payments-rest,deployment.environment=Staging
+                    value: service.name=ms-payments-rest,service.namespace=$(POD_NAMESPACE),service.instance.id=ms-payments-rest,deployment.environment=Staging
                   - name: VAULT__TOKEN
                     valueFrom:
                       secretKeyRef:
@@ -433,7 +437,7 @@ components:
                         key: solution
                         name: ms-payments-rest-vaultserver
                 image: codedesignplus/ms-payments-rest:0.0.11
-                imagePullPolicy: IfNotPresent
+                imagePullPolicy: Always
                 livenessProbe:
                   httpGet:
                     path: /health/live
