@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 6th 2025, 10:36:07 am
+- Testing started at: October 6th 2025, 11:51:07 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
+- ✅ 86 passed
 - ❌ 0 failed
-- ⚠️ 2 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 10 seconds_
+⌛ _Duration: 7 minutes and 57 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -22,7 +22,6 @@
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
 | 1 | chromium-local-provider | imports design via File |  | ⚠️ |
-| 2 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
