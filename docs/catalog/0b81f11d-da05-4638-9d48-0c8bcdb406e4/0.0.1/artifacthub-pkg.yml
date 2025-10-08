@@ -1,0 +1,24 @@
+version: 0.0.1
+name: ms-emails-worker-0.0.11.tgz
+displayName: ms-emails-worker-0.0.11.tgz
+createdAt: "2025-10-07T05:05:33Z"
+description: ms-emails-worker is a Helm chart for a background worker that processes email jobs off a queue. It deploys a Kubernetes Deployment and optional Service; configuration is exposed via values.yaml (image repo/tag, replicas, resources, env, pod labels/annotations, serviceAccount/RBAC). Typical settings include queue/broker connection (e.g., Kafka/RabbitMQ), SMTP or provider API keys, retry/backoff, and liveness/readiness probes. Use it to run an always-on worker for transactional or batch email sending.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0b81f11d-da05-4638-9d48-0c8bcdb406e4/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires valid SMTP credentials or an email provider API key supplied via Kubernetes Secrets; do not store secrets in values.yaml. If autoscaling is enabled, ensure metrics-server is installed. Network egress to your mail/queue provider must be allowed; configure NetworkPolicy if your cluster enforces it. Default Service type is ClusterIP (usually no Ingress needed). Some fields are immutable across upgrades (e.g., container ports); changing them may recreate pods. Resource requests/limits are conservative—tune for workload. Kubernetes ≥1.22 recommended. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4f8d9973-3f42-4e5a-98be-4fbb69d3ed48
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0b81f11d-da05-4638-9d48-0c8bcdb406e4-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0b81f11d-da05-4638-9d48-0c8bcdb406e4-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
