@@ -52,6 +52,56 @@
         "from": [
           {
             "id": null,
+            "kind": "ENIConfig",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "aws-vpcresourcecontroller-controller",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": null,
+                "schemaVersion": ""
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
             "kind": "PolicyEndpoint",
             "match": {},
             "match_strategy_matrix": null,
@@ -59,7 +109,7 @@
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "aws-vpc-cni",
+              "name": "aws-vpclattice-controller",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -95,57 +145,7 @@
                 [
                   "configuration",
                   "spec",
-                  "eni"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "ENIConfig",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "aws-vpc-cni",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
+                  "eniConfigRef"
                 ]
               ]
             }
