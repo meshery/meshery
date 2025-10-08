@@ -1,0 +1,24 @@
+version: 0.0.2
+name: ms-payments-rest
+displayName: ms-payments-rest
+createdAt: "2025-10-07T05:15:54Z"
+description: ms-payments-rest design for hacktober fest
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3375dd93-d96f-43da-9a70-efff84b412e9/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 25304b14-6c70-42cd-b6cc-a86b829f90e9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3375dd93-d96f-43da-9a70-efff84b412e9-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3375dd93-d96f-43da-9a70-efff84b412e9-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
