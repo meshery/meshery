@@ -1,0 +1,2645 @@
+{
+  "id": "f967e5a4-9ca6-4fba-b9cd-5ee000576a91",
+  "name": "Architectural-Design-Terraform",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.24",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "ef18a487-f06f-4314-8f4c-395796c9bb87",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "A checkmark symbol, indicating completion or approval.",
+      "format": "JSON",
+      "model": {
+        "id": "e0786c6b-c24f-02c4-0282-91b21e452901",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-simple-line-icons",
+        "displayName": "Simple Line Icons",
+        "description": "Simple and minimal line icons",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-simple-line-icons/color/meshery-simple-line-icons-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-simple-line-icons/white/meshery-simple-line-icons-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 30.358646,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 617.6117507031896,
+          "y": 664.6932492756506
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-simple-line-icons/color/check-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-simple-line-icons/complete/check-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-simple-line-icons/white/check-white.svg",
+        "width": 29.558418,
+        "z-index": 47
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Check",
+        "schema": ""
+      }
+    },
+    {
+      "id": "926fb6b6-190f-46df-8902-b1286c89083d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 30,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1087.1674373581318,
+          "y": 690.0183059691645
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/cloud-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/cloud-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/cloud-white.svg",
+        "width": 30,
+        "z-index": 8
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Cloud",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f1177167-767f-4cc2-9192-5d201a3c6732",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/png;base64,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",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 37.337994,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 1141.952823566649,
+          "y": 732.7660194150557
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/png;base64,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",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 137.70087,
+        "z-index": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      }
+    },
+    {
+      "id": "36cdba13-b562-4b52-8bad-781f31391083",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "A four-sided shape with straight edges and right-angle corners. It is a versatile shape often used to represent data types like documents, processes, or simple entities.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "Cloud Providers:\n\nAws, Gcp, Azure, VMware, etc.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 8,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 40.293755,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 811.8083285445518,
+          "y": 814.8200255551923
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/rectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/rectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/rectangle-white.svg",
+        "width": 70.55065,
+        "z-index": 39
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Rectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6f7f82ca-d5a0-460f-b3ad-cda0259ced82",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "A four-sided shape with straight edges and right-angle corners. It is a versatile shape often used to represent data types like documents, processes, or simple entities.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 225.02507,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 861.4647874600562,
+          "y": 743.1033452520522
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/rectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/rectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/rectangle-white.svg",
+        "width": 188.05315,
+        "z-index": 30
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Rectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "adf7a039-0d20-42a0-803b-34f567155e77",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "A four-sided shape with straight edges and right-angle corners. It is a versatile shape often used to represent data types like documents, processes, or simple entities.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "Provisioners:\n\nRemote-exec,\nLocal-exec, etc.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 8,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 38.113625,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 903.5933810681311,
+          "y": 814.7900950842952
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/rectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/rectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/rectangle-white.svg",
+        "width": 72.56705,
+        "z-index": 40
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Rectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7f13ecac-0224-4b76-903f-91a10bd94ea1",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 76.5194,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1141.6201653993971,
+          "y": 715.5841169733735
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 139.47737,
+        "z-index": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "3bd7e0dc-6e27-44a9-9555-dbc7cabba98f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Cloud Providers",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 15.377406,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1160.6283889090003,
+          "y": 690.874644633311
+        },
+        "primaryColor": "rgb(38,38,43)",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 92.42833,
+        "z-index": 12
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7dd30bd1-dc7e-499a-91e1-9a00162fc005",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Plugins:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 10,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dotted",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 919.0715882441509,
+          "y": 800.0520765197323
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 180,
+        "z-index": 64
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7fe6a978-b77d-49d3-a585-874ab716815d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Terraform Plan\nTerraform Apply",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 8,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dotted",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 16.773376,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 622.2666806859615,
+          "y": 692.1069752019332
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 56.923157,
+        "z-index": 63
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d587ddf9-7aa5-4243-8ae4-e09d61c7ec81",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Terraform Architecture",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 15,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 19.671135,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 863.2821387743575,
+          "y": 617.2323177185181
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 151.90079,
+        "z-index": 43
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f9f4dccd-d352-43b9-b60e-8b51770f8910",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "USER",
+      "description": "Represents a user or person, often used for profile or account-related functions.",
+      "format": "JSON",
+      "model": {
+        "id": "e0786c6b-c24f-02c4-0282-91b21e452901",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-simple-line-icons",
+        "displayName": "Simple Line Icons",
+        "description": "Simple and minimal line icons",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-simple-line-icons/color/meshery-simple-line-icons-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-simple-line-icons/white/meshery-simple-line-icons-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 42.159286,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 543.4324747655033,
+          "y": 706.0793852358299
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-simple-line-icons/color/user-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-simple-line-icons/complete/user-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-simple-line-icons/white/user-white.svg",
+        "width": 44.835617,
+        "z-index": 65
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "USER"
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "User",
+        "schema": ""
+      }
+    },
+    {
+      "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "TERRAFORM CORE",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "95789edc-fe1e-ce66-2731-80ba6edb58ff",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "terraform",
+        "displayName": "Terraform",
+        "status": "enabled",
+        "registrant": {
+          "id": "cf1d6acd-4509-e589-1c1e-3f20f8aaf715",
+          "name": "Artifact Hub",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:35.037788732Z",
+          "updated_at": "2025-09-30T07:43:35.037788732Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "cf1d6acd-4509-e589-1c1e-3f20f8aaf715",
+        "category": {
+          "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+          "name": "Provisioning"
+        },
+        "subCategory": "Automation \u0026 Configuration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#5c4ee5",
+          "secondaryColor": "#4040b2",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/terraform/color/terraform-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/terraform/white/terraform-white.svg"
+        },
+        "model": {
+          "version": "1.1.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 800.0879692205835,
+          "y": 653.2911520963764
+        },
+        "primaryColor": "#5c4ee5",
+        "secondaryColor": "#4040b2",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/terraform/color/workspace-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/terraform/white/workspace-white.svg",
+        "width": 24,
+        "z-index": 37
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://helm.releases.hashicorp.com/terraform-1.1.2.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "TERRAFORM CORE",
+          "namespace": "default"
+        },
+        "spec": {
+          "notifications": [],
+          "organization": "USER",
+          "outputs": [],
+          "runTriggers": [],
+          "secretsMountPath": "USER",
+          "variables": []
+        }
+      },
+      "component": {
+        "version": "app.terraform.io/v1alpha1",
+        "kind": "Workspace",
+        "schema": ""
+      }
+    },
+    {
+      "id": "191060d9-9c7c-4b88-bb95-f58c73c2acad",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "State File (.tfstate)",
+      "description": "A collection of icons that symbolize programming languages, design tools, and development software.",
+      "format": "JSON",
+      "model": {
+        "id": "d0f28e74-353d-2d2a-9c18-79568eb9f172",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-dev-icons",
+        "displayName": "Dev Icons",
+        "description": "A collection of engineering-centric icons",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:23.537737962Z",
+          "updated_at": "2025-09-30T07:43:23.537737962Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-dev-icons/color/meshery-dev-icons-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-dev-icons/white/meshery-dev-icons-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 920.8992528636277,
+          "y": 694.748393458923
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-dev-icons/color/code-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-dev-icons/complete/code-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-dev-icons/white/code-white.svg",
+        "width": 24,
+        "z-index": 38
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "State File (.tfstate)"
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "code",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a80a5708-6fa8-42fd-a138-5a89a8ba419b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Terraform Manifest Files (.tf)",
+      "description": "A collection of icons that symbolize programming languages, design tools, and development software.",
+      "format": "JSON",
+      "model": {
+        "id": "d0f28e74-353d-2d2a-9c18-79568eb9f172",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-dev-icons",
+        "displayName": "Dev Icons",
+        "description": "A collection of engineering-centric icons",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-30T07:43:37.492267124Z",
+          "updated_at": "2025-09-30T07:43:37.492267124Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-dev-icons/color/meshery-dev-icons-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-dev-icons/white/meshery-dev-icons-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 696.2140479970496,
+          "y": 705.7256747125632
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-dev-icons/color/code_badge-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-dev-icons/complete/code_badge-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-dev-icons/white/code_badge-white.svg",
+        "width": 24,
+        "z-index": 3
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Terraform Manifest Files (.tf)"
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "code_badge",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "07c68030-0ee7-4969-bf24-30a3a666aa9c",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "191060d9-9c7c-4b88-bb95-f58c73c2acad",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "7f13ecac-0224-4b76-903f-91a10bd94ea1",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "13d4900b-a5ab-46cc-96db-e033058b3294",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "a80a5708-6fa8-42fd-a138-5a89a8ba419b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "20644b2f-ef97-4f5c-88ec-57b2f6854c39",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "f9f4dccd-d352-43b9-b60e-8b51770f8910",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "a80a5708-6fa8-42fd-a138-5a89a8ba419b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "31d0a6b7-609a-43c0-9ef2-a3ef0a3333fa",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "191060d9-9c7c-4b88-bb95-f58c73c2acad",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "4a64ca99-b941-477a-90e9-5bf2bf420b04",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "adf7a039-0d20-42a0-803b-34f567155e77",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "a5369f60-0c74-4fc7-a490-e022f0f4e20b",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "6f7f82ca-d5a0-460f-b3ad-cda0259ced82",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "a84cf917-a323-4a31-b8b2-1e01631e4d54",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "36cdba13-b562-4b52-8bad-781f31391083",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "14719f28-e257-42cf-a6e4-9240966b777b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    }
+  ]
+}
