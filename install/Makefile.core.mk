@@ -50,6 +50,7 @@ MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
+PROVIDER_CAPABILITIES_FILEPATH="../../install/development/capabilities.json"
 
 #-----------------------------------------------------------------------------
 # Server

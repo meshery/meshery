@@ -1790,7 +1790,11 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/color/billing-account-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/white/billing-account-white.svg
   description: 
-components-count: 445
+- name: iam-deny-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/color/iam-deny-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/white/iam-deny-policy-white.svg
+  description: 
+components-count: 446
 relationships: 
 relationship-count: 0
 featureList: [
