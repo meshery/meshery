@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "Namespace to namespaced components",
+    "description": "A PVC binds to a matching PV either dynamically (via a StorageClass) or statically (by explicitly matching fields like name, storage, and accessModes).\nThe PVC acts as an abstraction layer, allowing workloads to request storage without knowing the underlying volume details.\nOnce bound, the PV becomes \"claimed\" and is dedicated (or shared, depending on accessModes) for that PVC’s use.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -52,26 +52,87 @@
         "from": [
           {
             "id": null,
-            "kind": "*",
+            "kind": "PersistentVolume",
+            "match": {},
+            "match_strategy_matrix": [
+              [
+                "equal_as_strings",
+                "not_null"
+              ]
+            ],
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "schemaVersion": ""
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "PersistentVolumeClaim",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "*",
+              "name": "kubernetes",
               "displayName": "",
               "status": "",
               "registrant": {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
                 "type": "",
                 "sub_type": "",
-                "kind": "",
+                "kind": "github",
                 "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
+                "deleted_at": "0001-01-01T00:00:00Z",
                 "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
@@ -94,156 +155,18 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "namespace"
+                  "spec",
+                  "volumeName"
                 ]
               ]
             }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
-            }
-          }
-        ]
-      },
-      "deny": {
-        "from": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": null
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": null
           }
         ]
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "reference",
   "status": "enabled",
-  "type": "parent",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
