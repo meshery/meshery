@@ -130,11 +130,11 @@ FILE="docs/catalog/[UUID]/[VERSION]/design.yml"
 cp "$FILE" "$FILE.backup"
 
 # Replace images
-sed -i 's|docker\.io/bitnami/redis:[0-9.-]*|redis:7-alpine|g' "$FILE"
-sed -i 's|docker\.io/bitnami/postgresql:[0-9.-]*|postgres:16-alpine|g' "$FILE"
-sed -i 's|docker\.io/bitnami/mongodb:[0-9.-]*|mongo:8.0|g' "$FILE"
-sed -i 's|docker\.io/bitnami/etcd:[0-9.-]*|quay.io/coreos/etcd:v3.5|g' "$FILE"
-sed -i 's|docker\.io/bitnami/os-shell:[0-9.-]*|busybox:latest|g' "$FILE"
+sed -i '.bak' 's|docker\.io/bitnami/redis:[0-9.-]*|redis:7-alpine|g' "$FILE"
+sed -i '.bak' 's|docker\.io/bitnami/postgresql:[0-9.-]*|postgres:16-alpine|g' "$FILE"
+sed -i '.bak' 's|docker\.io/bitnami/mongodb:[0-9.-]*|mongo:8.0|g' "$FILE"
+sed -i '.bak' 's|docker\.io/bitnami/etcd:[0-9.-]*|quay.io/coreos/etcd:v3.5|g' "$FILE"
+sed -i '.bak' 's|docker\.io/bitnami/os-shell:[0-9.-]*|busybox:latest|g' "$FILE"
 
 # Verify changes
 diff "$FILE.backup" "$FILE"
