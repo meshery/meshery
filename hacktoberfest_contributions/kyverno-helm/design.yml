@@ -431,11 +431,11 @@ services:
         resources: [deployments, replicasets, statefulsets, daemonsets]
         verbs: [get, list, watch]
       - apiGroups: [kyverno.io]
-        resources: ['*']
-        verbs: ['*']
+        resources: [policies, clusterpolicies, policyreports, clusterpolicyreports, updaterequests, backgroundscanreports, clusterbackgroundscanreports]
+        verbs: [get, list, watch, create, update, patch, delete]
       - apiGroups: [wgpolicyk8s.io]
-        resources: ['*']
-        verbs: ['*']
+        resources: [policyreports, clusterpolicyreports]
+        verbs: [get, list, watch, create, update, patch, delete]
       - apiGroups: [admissionregistration.k8s.io]
         resources: [validatingwebhookconfigurations, mutatingwebhookconfigurations]
         verbs: [create, update, delete, get, list, watch]
@@ -545,3 +545,125 @@ services:
         position:
           posX: 70
           posY: 610
+
+relationships:
+  - selectors:
+    - from:
+        kind: Service
+        model: kubernetes
+        match:
+          name: kyverno-service
+    - to:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    type: network
+  - selectors:
+    - from:
+        kind: Service  
+        model: kubernetes
+        match:
+          name: kyverno-metrics-service
+    - to:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    type: network
+  - selectors:
+    - from:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    - to:
+        kind: ServiceAccount
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    type: binding
+  - selectors:
+    - from:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-background-controller
+    - to:
+        kind: ServiceAccount
+        model: kubernetes
+        match:
+          name: kyverno-background-controller
+    type: binding
+  - selectors:
+    - from:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-cleanup-controller
+    - to:
+        kind: ServiceAccount
+        model: kubernetes
+        match:
+          name: kyverno-cleanup-controller
+    type: binding
+  - selectors:
+    - from:
+        kind: ClusterRoleBinding
+        model: kubernetes
+        match:
+          name: kyverno
+    - to:
+        kind: ClusterRole
+        model: kubernetes
+        match:
+          name: kyverno
+    type: permission
+  - selectors:
+    - from:
+        kind: ClusterRoleBinding
+        model: kubernetes
+        match:
+          name: kyverno
+    - to:
+        kind: ServiceAccount
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    type: permission
+  - selectors:
+    - from:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    - to:
+        kind: ConfigMap
+        model: kubernetes
+        match:
+          name: kyverno
+    type: mount
+  - selectors:
+    - from:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    - to:
+        kind: ConfigMap
+        model: kubernetes
+        match:
+          name: kyverno-metrics
+    type: mount
+  - selectors:
+    - from:
+        kind: PodDisruptionBudget
+        model: kubernetes
+        match:
+          name: kyverno-admission
+    - to:
+        kind: Deployment
+        model: kubernetes
+        match:
+          name: kyverno-admission-controller
+    type: policy
