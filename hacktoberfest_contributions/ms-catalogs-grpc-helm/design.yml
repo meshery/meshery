@@ -1,33 +1,13 @@
-id: 42a8f1e3-9b7c-4d2f-8a1e-5c3d7f9e2b4a
-name: MS Catalogs gRPC Helm Chart
-schemaVersion: designs.meshery.io/v1beta1
+name: MS Catalogs gRPC Microservice
 version: 0.0.1
-metadata:
-  description: "Microservice Catalogs gRPC - A catalog management microservice with gRPC API for product/service catalog operations"
-  source: "helm"
-  chart:
-    name: "ms-catalogs-grpc"
-    version: "1.0.0"
-    repository: "custom-microservice"
-  labels:
-    helm: "true"
-    microservice: "true"
-    grpc: "true"
-    catalog: "true"
-    api: "true"
-components:
-  - id: ms-catalogs-grpc-deployment
-    name: MS Catalogs gRPC Deployment
+services:
+  ms-catalogs-grpc-deployment:
+    name: ms-catalogs-grpc
     type: Deployment
+    apiVersion: apps/v1
     namespace: catalogs
-    version: apps/v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc
-        labels:
-          app: ms-catalogs-grpc
-          version: v1
+    settings:
       spec:
         replicas: 3
         selector:
@@ -40,9 +20,10 @@ components:
               app: ms-catalogs-grpc
               version: v1
           spec:
+            serviceAccountName: ms-catalogs-grpc
             containers:
             - name: ms-catalogs-grpc
-              image: ms-catalogs-grpc:latest
+              image: ms-catalogs-grpc:1.0.0
               ports:
               - containerPort: 8080
                 name: grpc
@@ -51,10 +32,6 @@ components:
                 name: health
                 protocol: TCP
               env:
-              - name: GRPC_PORT
-                value: "8080"
-              - name: HEALTH_PORT
-                value: "8081"
               - name: DATABASE_URL
                 valueFrom:
                   secretKeyRef:
@@ -79,25 +56,47 @@ components:
                   port: 8081
                 initialDelaySeconds: 5
                 periodSeconds: 5
+              volumeMounts:
+              - name: config-volume
+                mountPath: /config
+              - name: secret-volume
+                mountPath: /secrets
+                readOnly: true
+            volumes:
+            - name: config-volume
+              configMap:
+                name: ms-catalogs-grpc-config
+            - name: secret-volume
+              secret:
+                secretName: ms-catalogs-grpc-secret
     traits:
-      position:
-        x: 300
-        y: 200
+      meshmap:
+        edges: []
+        id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/grpc/icon/color/grpc-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 100
+          posY: 100
 
-  - id: ms-catalogs-grpc-service
-    name: MS Catalogs gRPC Service
+  ms-catalogs-grpc-service:
+    name: ms-catalogs-grpc
     type: Service
+    apiVersion: v1
     namespace: catalogs
-    version: v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc
-        labels:
-          app: ms-catalogs-grpc
+    settings:
       spec:
+        type: ClusterIP
         selector:
           app: ms-catalogs-grpc
+          version: v1
         ports:
         - name: grpc
           port: 8080
@@ -107,72 +106,96 @@ components:
           port: 8081
           targetPort: 8081
           protocol: TCP
-        type: ClusterIP
     traits:
-      position:
-        x: 500
-        y: 200
+      meshmap:
+        edges: []
+        id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 300
+          posY: 100
 
-  - id: ms-catalogs-grpc-configmap
-    name: MS Catalogs gRPC ConfigMap
+  ms-catalogs-grpc-config:
+    name: ms-catalogs-grpc-config
     type: ConfigMap
+    apiVersion: v1
     namespace: catalogs
-    version: v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc-config
+    settings:
       data:
-        app.properties: |
-          grpc.server.port=8080
-          health.server.port=8081
-          catalog.cache.ttl=300
-          catalog.batch.size=100
-          logging.level=INFO
-        grpc.conf: |
-          max_receive_message_length: 4194304
-          max_send_message_length: 4194304
-          keepalive_time_ms: 30000
-          keepalive_timeout_ms: 5000
+        application.properties: |
+          grpc.port=8080
+          health.port=8081
+          service.name=ms-catalogs-grpc
+        grpc.config: |
+          maxConnectionIdle: 300s
+          maxConnectionAge: 600s
+          keepaliveTime: 120s
+          keepaliveTimeout: 20s
     traits:
-      position:
-        x: 100
-        y: 100
+      meshmap:
+        edges: []
+        id: c3d4e5f6-a7b8-9012-cdef-123456789012
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 100
+          posY: 300
 
-  - id: ms-catalogs-grpc-secret
-    name: MS Catalogs gRPC Secret
+  ms-catalogs-grpc-secret:
+    name: ms-catalogs-grpc-secret
     type: Secret
+    apiVersion: v1
     namespace: catalogs
-    version: v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc-secret
+    settings:
       type: Opaque
       data:
-        database-url: cG9zdGdyZXNxbDovL3VzZXI6cGFzc3dvcmRAcG9zdGdyZXM6NTQzMi9jYXRhbG9nZGI=
-        api-key: YWJjZGVmZ2hpams=
-        jwt-secret: bXlfc2VjcmV0X2tleV8xMjM0NTY3ODkw
+        database-url: PEJBU0U2NC1FTkNPREVELURCLVVSTD4=
+        api-key: PEJBU0U2NC1FTkNPREVELUFQSS1LRVk+
+        jwt-secret: PEJBU0U2NC1FTkNPREVELUpXVC1TRUNSRVQ+
     traits:
-      position:
-        x: 100
-        y: 300
+      meshmap:
+        edges: []
+        id: d4e5f6a7-b8c9-0123-def0-123456789abc
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 300
+          posY: 300
 
-  - id: ms-catalogs-grpc-hpa
-    name: MS Catalogs gRPC HPA
+  ms-catalogs-grpc-hpa:
+    name: ms-catalogs-grpc
     type: HorizontalPodAutoscaler
+    apiVersion: autoscaling/v2
     namespace: catalogs
-    version: autoscaling/v2
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc-hpa
+    settings:
       spec:
         scaleTargetRef:
           apiVersion: apps/v1
           kind: Deployment
           name: ms-catalogs-grpc
-        minReplicas: 2
+        minReplicas: 3
         maxReplicas: 10
         metrics:
         - type: Resource
@@ -188,118 +211,251 @@ components:
               type: Utilization
               averageUtilization: 80
     traits:
-      position:
-        x: 500
-        y: 400
+      meshmap:
+        edges: []
+        id: e5f6a7b8-c9d0-1234-ef01-23456789abcd
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 500
+          posY: 100
 
-  - id: ms-catalogs-grpc-serviceaccount
-    name: MS Catalogs gRPC Service Account
+  ms-catalogs-grpc-sa:
+    name: ms-catalogs-grpc
     type: ServiceAccount
+    apiVersion: v1
     namespace: catalogs
-    version: v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc
-        labels:
-          app: ms-catalogs-grpc
+    settings: {}
     traits:
-      position:
-        x: 100
-        y: 200
+      meshmap:
+        edges: []
+        id: f6a7b8c9-d0e1-2345-f012-3456789abcde
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 500
+          posY: 300
 
-  - id: ms-catalogs-grpc-namespace
-    name: Catalogs Namespace
+  catalogs-namespace:
+    name: catalogs
     type: Namespace
-    version: v1
+    apiVersion: v1
     model: kubernetes
-    configuration:
+    settings:
       metadata:
-        name: catalogs
         labels:
-          name: catalogs
           istio-injection: enabled
+          name: catalogs
     traits:
-      position:
-        x: 50
-        y: 50
+      meshmap:
+        edges: []
+        id: a7b8c9d0-e1f2-3456-0123-456789abcdef
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 300
+          posY: 500
 
-  - id: ms-catalogs-grpc-pdb
-    name: MS Catalogs gRPC Pod Disruption Budget
+  ms-catalogs-grpc-pdb:
+    name: ms-catalogs-grpc
     type: PodDisruptionBudget
+    apiVersion: policy/v1
     namespace: catalogs
-    version: policy/v1
     model: kubernetes
-    configuration:
-      metadata:
-        name: ms-catalogs-grpc-pdb
+    settings:
       spec:
         minAvailable: 2
         selector:
           matchLabels:
             app: ms-catalogs-grpc
+            version: v1
     traits:
-      position:
-        x: 300
-        y: 400
+      meshmap:
+        edges: []
+        id: b8c9d0e1-f2a3-4567-1234-56789abcdef0
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          publishedVersion: 0.7.2
+        position:
+          posX: 100
+          posY: 500
 
 relationships:
-  - id: deployment-service-relationship
+  - name: service-to-deployment
     type: network
-    subType: service
-    source: ms-catalogs-grpc-deployment
-    target: ms-catalogs-grpc-service
-  
-  - id: deployment-configmap-relationship
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Service
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: config-mount
     type: mount
-    subType: volume
-    source: ms-catalogs-grpc-deployment
-    target: ms-catalogs-grpc-configmap
-    
-  - id: deployment-secret-relationship
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ConfigMap
+          match:
+            refs:
+            - name: ms-catalogs-grpc-config
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: secret-mount
     type: mount
-    subType: volume
-    source: ms-catalogs-grpc-deployment
-    target: ms-catalogs-grpc-secret
-    
-  - id: deployment-serviceaccount-relationship
-    type: binding
-    subType: permission
-    source: ms-catalogs-grpc-deployment
-    target: ms-catalogs-grpc-serviceaccount
-    
-  - id: hpa-deployment-relationship
-    type: binding
-    subType: scaling
-    source: ms-catalogs-grpc-hpa
-    target: ms-catalogs-grpc-deployment
-    
-  - id: pdb-deployment-relationship
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Secret
+          match:
+            refs:
+            - name: ms-catalogs-grpc-secret
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: hpa-scales-deployment
+    type: scaling
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: HorizontalPodAutoscaler
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: sa-binding
+    type: permission
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: ServiceAccount
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: pdb-protects-deployment
     type: policy
-    subType: availability
-    source: ms-catalogs-grpc-pdb
-    target: ms-catalogs-grpc-deployment
-    
-  - id: namespace-deployment-relationship
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: PodDisruptionBudget
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+
+  - name: namespace-parent
     type: parent
-    subType: inventory
-    source: ms-catalogs-grpc-namespace
-    target: ms-catalogs-grpc-deployment
-    
-  - id: namespace-service-relationship
-    type: parent
-    subType: inventory
-    source: ms-catalogs-grpc-namespace
-    target: ms-catalogs-grpc-service
-    
-  - id: namespace-configmap-relationship
-    type: parent
-    subType: inventory
-    source: ms-catalogs-grpc-namespace
-    target: ms-catalogs-grpc-configmap
-    
-  - id: namespace-secret-relationship
-    type: parent
-    subType: inventory
-    source: ms-catalogs-grpc-namespace
-    target: ms-catalogs-grpc-secret
+    subType: ""
+    selectors:
+    - allow:
+        from:
+        - kind: Namespace
+          match:
+            refs:
+            - name: catalogs
+        to:
+        - kind: Deployment
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        - kind: Service
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        - kind: ConfigMap
+          match:
+            refs:
+            - name: ms-catalogs-grpc-config
+              namespace: catalogs
+        - kind: Secret
+          match:
+            refs:
+            - name: ms-catalogs-grpc-secret
+              namespace: catalogs
+        - kind: HorizontalPodAutoscaler
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        - kind: ServiceAccount
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
+        - kind: PodDisruptionBudget
+          match:
+            refs:
+            - name: ms-catalogs-grpc
+              namespace: catalogs
