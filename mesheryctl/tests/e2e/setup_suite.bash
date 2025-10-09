@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-MESHERYCTL_PORT_FORWARDING=9999
+MESHERYCTL_PORT_FORWARDING=9081
 
 install_mesheryctl() {
     echo "start: Install mesheryctl"
@@ -26,10 +25,10 @@ create_auth_file() {
 
 port_forwarding() {
     echo "start: Port forwarding"
+    context="$(yq '.current-context' "${HOME}/.meshery/config.yaml")"
+    MESHERYCTL_PORT_FORWARDING=$(yq ".contexts.\"${context}\".endpoint" ${HOME}/.meshery/config.yaml | cut -d':' -f3)
 
     nohup kubectl -n meshery port-forward svc/meshery ${MESHERYCTL_PORT_FORWARDING}:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
-    export MESHERY_SERVER_PORT_FORWARD_PID="$!"
-    
     echo "done: Port forwarding"
 }
 
@@ -51,8 +50,8 @@ main() {
     install_mesheryctl "$MESHERY_PLATFORM"
     create_meshery_config_folder
     create_auth_file 
-    port_forwarding
-    config_mesheryctl_port_forwarding_endpoint
+    # port_forwarding
+    # config_mesheryctl_port_forwarding_endpoint
     
     export MESHERYCTL_BIN="mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
