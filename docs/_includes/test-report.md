@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 9th 2025, 1:29:48 am
+- Testing started at: October 9th 2025, 5:49:12 am
 
 **📦 Test Result Summary**
 
-- ✅ 93 passed
-- ❌ 0 failed
-- ⚠️ 3 flaked
+- ✅ 88 passed
+- ❌ 1 failed
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 9 minutes and 20 seconds_
+⌛ _Duration: 8 minutes and 43 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,9 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ⚠️ |
-| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
-| 3 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 2 | chromium-local-provider | displays published design card correctly |  | ⚠️ |
+| 3 | chromium-local-provider | Transition to not found state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
