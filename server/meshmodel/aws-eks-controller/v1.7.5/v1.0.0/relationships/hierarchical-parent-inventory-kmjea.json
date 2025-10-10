@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). ",
+    "description": "An edge relationship between cluster and SecurityGroup ",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -52,14 +52,14 @@
         "from": [
           {
             "id": null,
-            "kind": "Cluster",
+            "kind": "SecurityGroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "aws-eks-controller",
+              "name": "aws-ec2-controller",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -102,7 +102,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Nodegroup",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -145,7 +145,8 @@
                 [
                   "configuration",
                   "spec",
-                  "clusterName"
+                  "resourcesVPCConfig",
+                  "securityGroupIDs"
                 ]
               ]
             }
@@ -154,8 +155,8 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "network",
   "status": "enabled",
-  "type": "parent",
+  "type": "binding",
   "version": "v1.0.0"
 }
