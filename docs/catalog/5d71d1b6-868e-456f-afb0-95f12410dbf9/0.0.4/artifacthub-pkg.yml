@@ -1,0 +1,27 @@
+version: 0.0.4
+name: ms-payments-worker-0.0.11.tgz
+displayName: ms-payments-worker-0.0.11.tgz
+createdAt: "2025-10-06T16:04:31Z"
+description: |-
+    Helm chart for deploying the ms-payments-worker microservice (CodeDesignPlus stack).
+    Based on the ms-base chart; renders Kubernetes resources (Deployment, Service), probes,
+    optional HPA, and integrations (Vault, Istio).
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5d71d1b6-868e-456f-afb0-95f12410dbf9/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• Provide required values (e.g., ms-base.vault.token) before deploy.\n• HPA needs metrics-server.\n• If Istio enabled in values, ensure sidecar injection is correct.\n• Pin image tag instead of :latest for reproducibility.\n• Manage secrets via Vault/external secrets; avoid plain-text in values.yaml. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5d71d1b6-868e-456f-afb0-95f12410dbf9-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5d71d1b6-868e-456f-afb0-95f12410dbf9-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

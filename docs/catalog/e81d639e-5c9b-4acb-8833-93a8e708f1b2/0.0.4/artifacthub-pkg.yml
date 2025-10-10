@@ -1,0 +1,25 @@
+version: 0.0.4
+name: cert-manager-architecture-copy
+displayName: cert-manager-architecture-copy
+createdAt: "2025-10-04T19:28:38Z"
+description: |
+    A visual design representing the architecture of Cert-manager and its interaction with various Issuers and Certificate resources in Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e81d639e-5c9b-4acb-8833-93a8e708f1b2/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a non-deployable visual design intended for informational and illustrative purposes only.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e81d639e-5c9b-4acb-8833-93a8e708f1b2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e81d639e-5c9b-4acb-8833-93a8e708f1b2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

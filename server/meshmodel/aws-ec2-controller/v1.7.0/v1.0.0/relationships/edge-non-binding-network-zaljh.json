@@ -52,7 +52,7 @@
         "from": [
           {
             "id": null,
-            "kind": "TransitGatewayVPCAttachment",
+            "kind": "VPC",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -67,7 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -91,11 +91,9 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "vpcID"
+                  "displayName"
                 ]
               ]
             }
@@ -119,7 +117,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "artifacthub",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -158,6 +156,6 @@
   ],
   "subType": "network",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }
