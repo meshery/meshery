@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between accesspoint and filesystem",
+    "description": "An edge relationship between Cluster and Role",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -52,14 +52,14 @@
         "from": [
           {
             "id": null,
-            "kind": "FileSystem",
+            "kind": "Role",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "aws-efs-controller",
+              "name": "aws-iam-controller",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -102,7 +102,7 @@
         "to": [
           {
             "id": null,
-            "kind": "AccessPoint",
+            "kind": "FileSystem",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -145,7 +145,7 @@
                 [
                   "configuration",
                   "spec",
-                  "fileSystemID"
+                  "fileSystemPolicy"
                 ]
               ]
             }
@@ -154,8 +154,8 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "permission",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }
