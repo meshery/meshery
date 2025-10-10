@@ -13,7 +13,7 @@ import {
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
-import { toLower } from 'lodash';
+import _, { toLower } from 'lodash';
 import { useRouter } from 'next/router';
 import {
   useLazyGetMeshModelsQuery,
@@ -22,7 +22,6 @@ import {
   useLazyGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
-import _ from 'lodash';
 import { Button, NoSsr } from '@sistent/sistent';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';

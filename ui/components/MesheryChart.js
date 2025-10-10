@@ -8,8 +8,8 @@ import {
   Fade,
   Popper,
   styled,
+  NoSsr,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
   makeChart,

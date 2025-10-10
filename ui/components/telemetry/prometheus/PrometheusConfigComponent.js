@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
-import { Grid2, Button, styled } from '@sistent/sistent';
+import { Grid2, Button, styled, NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
