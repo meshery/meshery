@@ -24,5 +24,5 @@ Adds a Meshery Design for "LoxiLB Clustered LB & CGNAT", prepared for the Mesher
 ## Notes for maintainers
 
 - Issue: meshery/meshery#15980
-- Contributor: <AUTHOR_NAME>
+- Contributor: arnavk23
 - This is currently a placeholder; the contributor should replace the `kanvas_export` section with the exported Kanvas YAML.
