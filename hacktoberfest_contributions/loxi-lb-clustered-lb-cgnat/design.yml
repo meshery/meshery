@@ -1,0 +1,59 @@
+---
+# LoxiLB Clustered LB & CGNAT - Kanvas design placeholder
+# Replace the placeholders below with the exported Kanvas YAML content and metadata.
+
+metadata:
+  name: "LoxiLB Clustered LB & CGNAT"
+  filename: "design.yml"
+  author: "arnavk23"
+  version: "0.1.0"
+  description: |
+    LoxiLB clustered load-balancer design with Carrier-Grade NAT (CGNAT).
+    This design demonstrates a highly-available, horizontally-scalable
+    LoxiLB deployment configured as a clustered load balancer with CGNAT
+    capabilities to provide network address translation for upstream
+    services. Use this design to evaluate LoxiLB in HA mode and test
+    connectivity patterns for multi-tenant environments.
+  tags:
+    - loxilb
+    - load-balancer
+    - cgnat
+    - networking
+    - clustered
+
+# Kanvas/Model payload
+# Paste the exported Kanvas YAML below this marker. The Kanvas export typically
+# includes `kind: Model` or similar and the component graph. Keep the original
+# structure intact.
+
+kanvas_export: |
+  # Paste the exported Kanvas (Meshmap) YAML here. The export usually starts
+  # with a top-level `kind:` field (for example `kind: Model`) and contains
+  # component and relationship definitions. Keep the YAML indentation intact
+  # when pasting. Example placeholder below — replace the entire block with
+  # your exported content.
+
+  # ---
+  # kind: Model
+  # metadata:
+  #   name: loxilb-clustered-lb-cgnat
+  # spec:
+  #   components:
+  #     - id: loxilb-cluster
+  #       type: Deployment
+  #       properties: {}
+  #   relationships: []
+  # ---
+
+# Optional: any additional resources (helm charts, k8s manifests, images)
+resources: |
+  # If your design references external resources, list them here or paste
+  # the manifests.
+
+# Instructions for maintainers / contributor notes
+notes: |
+  - Original issue: meshery/meshery#15980
+  - Contributor: arnavk23
+  - How to test: Import this design into Kanvas -> Playground -> Designs -> Import
+
+# End of placeholder file
