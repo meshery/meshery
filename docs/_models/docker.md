@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Docker
 subtitle: Collaborative and visual infrastructure as design for Docker

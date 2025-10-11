@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Citrix Service Mesh
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running

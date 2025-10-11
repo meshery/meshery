@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Thanos
 subtitle: Collaborative and visual infrastructure as design for Thanos

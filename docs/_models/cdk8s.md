@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: cdk8s For Kubernetes
 subtitle: Collaborative and visual infrastructure as design for cdk8s For Kubernetes

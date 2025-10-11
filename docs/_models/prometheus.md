@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Prometheus
 subtitle: Discover and connect to your Prometheus servers and Operators
