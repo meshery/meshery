@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "Namespace to namespaced components",
+    "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -38,7 +38,7 @@
     "subCategory": "",
     "metadata": null,
     "model": {
-      "version": "v1.34.0-rc.2"
+      "version": "v1.35.0-alpha.1"
     },
     "components_count": 0,
     "relationships_count": 0,
@@ -52,112 +52,34 @@
         "from": [
           {
             "id": null,
-            "kind": "*",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "*",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ]
+            "kind": "Pod",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "_",
+                      "networkPolicy"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "NetworkPolicy",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
               ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
-            }
-          }
-        ]
-      },
-      "deny": {
-        "from": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -199,8 +121,44 @@
         "to": [
           {
             "id": null,
-            "kind": "Namespace",
-            "match": {},
+            "kind": "Pod",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "NetworkPolicy",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "ingress"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ],
+                    [
+                      "configuration",
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                }
+              ]
+            },
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -242,8 +200,8 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "firewall",
   "status": "enabled",
-  "type": "parent",
+  "type": "binding",
   "version": "v1.0.0"
 }

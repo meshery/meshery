@@ -9,7 +9,7 @@
 - ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 49 seconds_
+⌛ _Duration: 8 minutes and 49 seconds
 
 **Overall Result**: 👎 Some tests failed.
 

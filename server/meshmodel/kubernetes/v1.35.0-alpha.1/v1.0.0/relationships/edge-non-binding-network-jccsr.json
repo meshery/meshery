@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "Namespace to namespaced components",
+    "description": "A relationship that defines network edges between components",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -38,7 +38,7 @@
     "subCategory": "",
     "metadata": null,
     "model": {
-      "version": "v1.34.0-rc.2"
+      "version": "v1.35.0-alpha.1"
     },
     "components_count": 0,
     "relationships_count": 0,
@@ -52,14 +52,14 @@
         "from": [
           {
             "id": null,
-            "kind": "*",
+            "kind": "Ingress",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "*",
+              "name": "kubernetes",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -67,7 +67,7 @@
                 "name": "",
                 "type": "",
                 "sub_type": "",
-                "kind": "",
+                "kind": "github",
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
@@ -94,8 +94,25 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "namespace"
+                  "spec",
+                  "rules",
+                  "0",
+                  "http",
+                  "paths",
+                  "0",
+                  "backend",
+                  "serviceName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "rules",
+                  "0",
+                  "http",
+                  "paths",
+                  "0",
+                  "backend",
+                  "servicePort"
                 ]
               ]
             }
@@ -104,7 +121,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Namespace",
+            "kind": "Service",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -146,104 +163,23 @@
               "mutatorRef": [
                 [
                   "displayName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "0",
+                  "port"
                 ]
               ]
             }
           }
         ]
-      },
-      "deny": {
-        "from": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": null
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Namespace",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": null
-          }
-        ]
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "network",
   "status": "enabled",
-  "type": "parent",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
