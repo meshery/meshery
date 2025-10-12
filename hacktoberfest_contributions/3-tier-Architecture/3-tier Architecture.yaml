@@ -93,6 +93,21 @@ components:
         namespace: namespace-hv
       spec:
         replicas: 2
+        selector:
+          matchLabels:
+            app: web
+            tier: presentation
+        template:
+          metadata:
+            labels:
+              app: web
+              tier: presentation
+          spec:
+            containers:
+            - name: nginx
+              image: nginx:1.14.2
+              ports:
+              - containerPort: 80
     component:
       version: apps/v1
       kind: Deployment
@@ -185,6 +200,21 @@ components:
         namespace: namespace-jcn
       spec:
         replicas: 2
+        selector:
+          matchLabels:
+            app: web
+            tier: presentation
+        template:
+          metadata:
+            labels:
+              app: web
+              tier: presentation
+          spec:
+            containers:
+            - name: nginx
+              image: nginx:1.14.2
+              ports:
+              - containerPort: 80
     component:
       version: apps/v1
       kind: Deployment
@@ -192,7 +222,7 @@ components:
   - id: 15e7656f-edd6-4ee4-b835-f346c4b0421b
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: ingress-jn
+    displayName: web-ingress
     description: ""
     format: JSON
     model:
@@ -275,8 +305,18 @@ components:
         labels: {}
         namespace: namespace-jcn
       spec:
-        ingressClassName: Ingress
-        rules: []
+        ingressClassName: nginx
+        rules:
+        - host: "3tier.example.com"
+          http:
+            paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: web-service
+                  port:
+                    number: 80
     component:
       version: networking.k8s.io/v1
       kind: Ingress
@@ -352,7 +392,9 @@ components:
       isNamespaced: false
       published: false
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration: {}
+    configuration:
+      metadata:
+        name: db
     component:
       version: v1
       kind: Namespace
@@ -440,7 +482,9 @@ components:
       isNamespaced: false
       published: false
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration: {}
+    configuration:
+      metadata:
+        name: namespace-hv
     component:
       version: v1
       kind: Namespace
@@ -516,7 +560,9 @@ components:
       isNamespaced: false
       published: false
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
-    configuration: {}
+    configuration:
+      metadata:
+        name: namespace-jcn
     component:
       version: v1
       kind: Namespace
@@ -524,7 +570,7 @@ components:
   - id: cb05acdb-e379-4440-b839-9adc3366b6f1
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: persistent-volume-claim-tf
+    displayName: db-pvc
     description: ""
     format: JSON
     model:
@@ -604,7 +650,15 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        name: db-pvc
         namespace: db
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: standard
     component:
       version: v1
       kind: PersistentVolumeClaim
@@ -612,7 +666,7 @@ components:
   - id: de2da7b3-909c-4472-81c5-c0f1561564a3
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: service-vf
+    displayName: db-service
     description: ""
     format: JSON
     model:
@@ -693,9 +747,17 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        name: db-service
         namespace: db
       spec:
-        externalName: web-service
+        selector:
+          app: db
+          tier: data
+        ports:
+          - protocol: TCP
+            port: 5432
+            targetPort: 5432
+        type: ClusterIP
     component:
       version: v1
       kind: Service
@@ -703,7 +765,7 @@ components:
   - id: f3e9b84b-2cd3-416a-9b06-e8e2f3355ed6
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: service-vf
+    displayName: web-service-hv
     description: ""
     format: JSON
     model:
@@ -784,9 +846,17 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        name: web-service
         namespace: namespace-hv
       spec:
-        externalName: web-service
+        selector:
+          app: web
+          tier: presentation
+        ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 80
+        type: ClusterIP
     component:
       version: v1
       kind: Service
@@ -794,7 +864,7 @@ components:
   - id: 9b423c5a-4249-4e03-889c-08a293f7e28f
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: service-vf
+    displayName: web-service-jcn
     description: ""
     format: JSON
     model:
@@ -875,9 +945,17 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        name: web-service
         namespace: namespace-jcn
       spec:
-        externalName: ""
+        selector:
+          app: web
+          tier: presentation
+        ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 80
+        type: ClusterIP
     component:
       version: v1
       kind: Service
@@ -885,7 +963,7 @@ components:
   - id: 596165ba-c3b3-4e85-86c6-60bc28375be7
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
-    displayName: stateful-set-ew
+    displayName: db-statefulset
     description: ""
     format: JSON
     model:
@@ -967,9 +1045,31 @@ components:
       source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
     configuration:
       metadata:
+        name: db
         namespace: db
       spec:
         serviceName: db
+        replicas: 1
+        selector:
+          matchLabels:
+            app: db
+            tier: data
+        template:
+          metadata:
+            labels:
+              app: db
+              tier: data
+          spec:
+            containers:
+            - name: postgres
+              image: postgres:13
+              ports:
+              - containerPort: 5432
+              env:
+              - name: POSTGRES_PASSWORD
+                value: "changeme"
+              - name: POSTGRES_DB
+                value: "appdb"
     component:
       version: apps/v1
       kind: StatefulSet
