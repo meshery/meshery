@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 11th 2025, 11:51:25 pm
+- Testing started at: October 12th 2025, 1:18:39 pm
 
 **📦 Test Result Summary**
 
-- ✅ 85 passed
-- ❌ 0 failed
+- ✅ 87 passed
+- ❌ 1 failed
 - ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 13 seconds_
+⌛ _Duration: 9 minutes and 3 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,8 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
-| 2 | chromium-local-provider | displays published design card correctly |  | ⚠️ |
+| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 2 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
+| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
