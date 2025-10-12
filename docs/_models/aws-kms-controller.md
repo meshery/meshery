@@ -32,7 +32,31 @@ components:
   description: 
 components-count: 5
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between function and CodeSigningConfig"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between EventSourceMapping and function"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between FunctionURLConfig and function"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Function and SecurityGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between function and subnet"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between alias and version"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 8
 featureList: [
   "Secure key management",
   "Encrypts data at rest and in transit",
