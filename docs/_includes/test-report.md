@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 12th 2025, 2:17:32 pm
+- Testing started at: October 12th 2025, 2:19:42 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
-- ❌ 0 failed
-- ⚠️ 1 flaked
+- ✅ 85 passed
+- ❌ 1 failed
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 7 minutes and 43 seconds_
+⌛ _Duration: 8 minutes and 42 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,7 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
+| 2 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
