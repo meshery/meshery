@@ -1,0 +1,290 @@
+name: Meshery Security Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to scan'
+        required: false
+        default: 'main'
+
+permissions:
+  contents: read
+  security-events: write
+  issues: write
+
+jobs:
+  #####################################################
+  # 1/5  – SBOM GENERATION                            #
+  #####################################################
+  sbom-generation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - uses: actions/setup-go@v4
+        with: {go-version: '1.21', cache: true}
+
+      - name: Generate CycloneDX SBOM
+        uses: CycloneDX/gh-gomod-generate-sbom@v2
+        with:
+          version: v1
+          args: mod -licenses -assert-licenses -json -output cyclonedx-sbom.json
+
+      - name: Quick SBOM sanity-check
+        run: |
+          test -s cyclonedx-sbom.json
+          jq -e '.components' cyclonedx-sbom.json >/dev/null
+
+      - uses: actions/upload-artifact@v4
+        with: {name: sbom, path: cyclonedx-sbom.json}
+
+  #####################################################
+  # 2/5  – SCANNING (REPO, SBOM, IMAGE)              #
+  #####################################################
+  repo-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan Repository with Grype
+        uses: anchore/scan-action@v6
+        with:
+          path: .
+          output-format: json
+          output-file: grype-repo-report.json
+          severity-cutoff: high
+          fail-build: false
+
+      - run: jq -e '.matches' grype-repo-report.json >/dev/null || echo "No repo matches"
+
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-repo-report, path: grype-repo-report.json}
+
+  sbom-scan:
+    needs: sbom-generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with: {name: sbom, path: sbom}
+
+      - name: Scan SBOM with Grype
+        uses: anchore/scan-action@v6
+        with:
+          sbom: sbom/cyclonedx-sbom.json
+          output-format: json
+          output-file: grype-sbom-report.json
+          severity-cutoff: high
+          fail-build: false
+
+      - run: jq -e '.matches' grype-sbom-report.json >/dev/null || echo "No SBOM matches"
+
+      - name: Export SARIF for SBOM
+        run: grype sbom:sbom/cyclonedx-sbom.json -o sarif > grype-sbom-report.sarif
+
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: grype-sbom-report.sarif
+
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-sbom-report, path: grype-sbom-report.json}
+
+  container-scan-trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: layer5/meshery:edge-latest
+          format: json
+          output: trivy-report.json
+          severity: CRITICAL,HIGH
+
+      - uses: actions/upload-artifact@v4
+        with: {name: trivy-report, path: trivy-report.json}
+
+  container-scan-grype:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan image with Grype
+        uses: anchore/scan-action@v6
+        with:
+          image: layer5/meshery:edge-latest
+          output-format: json
+          output-file: grype-image-report.json
+          severity-cutoff: high
+          fail-build: false
+
+      - run: jq -e '.matches' grype-image-report.json >/dev/null || echo "No image matches"
+
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-image-report, path: grype-image-report.json}
+
+  #####################################################
+  # 3/5  – VEX  (OpenVEX v0.2.0)                      #
+  #####################################################
+  vex-generation:
+    needs:
+      - sbom-generation
+      - repo-scan
+      - sbom-scan
+      - container-scan-trivy
+      - container-scan-grype
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Grype & vexctl
+        run: |
+          curl -sS https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          curl -sSL https://github.com/openvex/vexctl/releases/latest/download/vexctl-linux-amd64 -o /usr/local/bin/vexctl
+          chmod +x /usr/local/bin/vexctl
+
+      - uses: actions/download-artifact@v4
+        with: {path: artifacts}
+
+      - name: Generate VEX (OpenVEX)
+        run: |
+          trivy=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity=="CRITICAL" or .Severity=="HIGH") | .VulnerabilityID' \
+                  artifacts/trivy-report/trivy-report.json)
+          img=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-image-report/grype-image-report.json)
+          sbom=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-sbom-report/grype-sbom-report.json)
+          repo=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-repo-report/grype-repo-report.json)
+          all=$(echo "$trivy $img $sbom $repo" | tr ' ' '\n' | sort -u | grep -v '^$')
+          echo '{"@context":"https://openvex.dev/ns/v0.2.0","version":1,"author":"GitHub Actions","statements":[]}' > vex.openvex.json
+          for cve in $all; do
+            vexctl create \
+              --file vex.openvex.json \
+              --author "GitHub Actions" \
+              --product "pkg:github/mack-droid/forkv1-meshery" \
+              --vuln "$cve" \
+              --status under_investigation
+          done
+
+      - name: Apply VEX with Grype
+        run: |
+          grype sbom:artifacts/sbom/cyclonedx-sbom.json \
+            --vex vex.openvex.json \
+            -o json > grype-vex-report.json || echo "VEX application failed"
+
+      - run: jq -e '.matches' grype-vex-report.json >/dev/null || echo "No matches after VEX filtering"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vex-artifacts
+          path: |
+            vex.openvex.json
+            grype-vex-report.json
+
+  #####################################################
+  # 4/5  – HUMAN-READABLE SUMMARY                     #
+  #####################################################
+  security-summary:
+    needs:
+      - sbom-generation
+      - repo-scan
+      - sbom-scan
+      - container-scan-trivy
+      - container-scan-grype
+      - vex-generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {path: security-reports}
+
+      - name: Write GitHub Summary
+        env:
+          SBOM: security-reports/sbom/cyclonedx-sbom.json
+          TRIVY: security-reports/trivy-report/trivy-report.json
+          GREPO: security-reports/grype-repo-report/grype-repo-report.json
+          GSBOM: security-reports/grype-sbom-report/grype-sbom-report.json
+          GIMG:  security-reports/grype-image-report/grype-image-report.json
+          GVEX:  security-reports/vex-artifacts/grype-vex-report.json
+          OPENVEX: security-reports/vex-artifacts/vex.openvex.json
+        run: |
+          echo "## SBOM statistics" >> $GITHUB_STEP_SUMMARY
+          echo "- Components: $(jq '.components | length' $SBOM)" >> $GITHUB_STEP_SUMMARY
+          echo "- Licenses: $(jq '[.components[].licenses[].license.id?] | length' $SBOM)" >> $GITHUB_STEP_SUMMARY
+
+          echo "## Vulnerability counts (High + Critical)" >> $GITHUB_STEP_SUMMARY
+          echo "| Source         | Target    | Critical | High |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------------|-----------|----------|------|" >> $GITHUB_STEP_SUMMARY
+
+          table() { printf "| %-14s | %-10s | %8s | %4s |\n" "$@"; }
+
+          table "Trivy" "Image" \
+            "$(jq '[.Results[].Vulnerabilities[]? | select(.Severity==\"CRITICAL\")] | length' $TRIVY)" \
+            "$(jq '[.Results[].Vulnerabilities[]? | select(.Severity==\"HIGH\")] | length' $TRIVY)" >> $GITHUB_STEP_SUMMARY
+
+          for FILE in GREPO "Repository" GSBOM "SBOM" GIMG "Image" GVEX "VEX-filtered"; do
+            eval f=\$$FILE
+            [[ $FILE == *" " ]] && continue
+            table "Grype" "${2:-$3}" \
+              "$(jq '[.matches[] | select(.vulnerability.severity==\"Critical\")] | length' $f)" \
+              "$(jq '[.matches[] | select(.vulnerability.severity==\"High\")] | length' $f)" >> $GITHUB_STEP_SUMMARY
+          done
+
+          echo "## VEX statements" >> $GITHUB_STEP_SUMMARY
+          echo "- OpenVEX statements: $(jq '.statements | length' $OPENVEX)" >> $GITHUB_STEP_SUMMARY
+
+          echo "## Sample Vulnerabilities from SBOM" >> $GITHUB_STEP_SUMMARY
+          jq -r '
+            .matches[] | 
+            "- **" + .vulnerability.id + "**: " + (.vulnerability.description // "No description") + "\n  - Severity: " + .vulnerability.severity +
+            "\n  - CVSS: " + (.vulnerability.cvss[0]?.metrics.baseScore|tostring // "N/A") +
+            "\n  - Component: " + .artifact.name +
+            "\n  - Location: " + (.artifact.locations[0]?.path // "N/A")
+          ' $GSBOM | head -n 20 >> $GITHUB_STEP_SUMMARY
+
+
+#####################################################
+# 5/5  – Github Issue #
+#####################################################
+# Add a final job that reads the summary numbers and
+# fails if any critical CVEs remain, etc.
+
+      # - name: Create GitHub Issue
+      #   if: ${{ steps.generate_summary.outputs.vuln_count != '0' }}
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     vuln_count=$((trivy_crit + trivy_high + grype_repo_crit + grype_repo_high + grype_sbom_crit + grype_sbom_high + grype_image_crit + grype_image_high + grype_vex_crit + grype_vex_high))
+      #     echo "Found $vuln_count critical/high vulnerabilities" > issue_body.txt
+      #     echo "## Trivy (Image)" >> issue_body.txt
+      #     echo '```json' >> issue_body.txt
+      #     jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' security-reports/trivy-report/trivy-report.json >> issue_body.txt
+      #     echo '```' >> issue_body.txt
+      #     echo "## Grype (Repository)" >> issue_body.txt
+      #     echo '```json' >> issue_body.txt
+      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-repo-report/grype-repo-report.json >> issue_body.txt
+      #     echo '```' >> issue_body.txt
+      #     echo "## Grype (CycloneDX SBOM)" >> issue_body.txt
+      #     echo '```json' >> issue_body.txt
+      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-sbom-report/grype-sbom-report.json >> issue_body.txt
+      #     echo '```' >> issue_body.txt
+      #     echo "## Grype (Image)" >> issue_body.txt
+      #     echo '```json' >> issue_body.txt
+      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-image-report/grype-image-report.json >> issue_body.txt
+      #     echo '```' >> issue_body.txt
+      #     echo "## Grype (SBOM with VEX)" >> issue_body.txt
+      #     echo '```json' >> issue_body.txt
+      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/vex-artifacts/grype-vex-report.json >> issue_body.txt
+      #     echo '```' >> issue_body.txt
+      #     gh issue create \
+      #       --title "Security Scan: $vuln_count CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
+      #       --body-file issue_body.txt
+      #   id: generate_summary
