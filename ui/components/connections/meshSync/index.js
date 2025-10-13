@@ -87,6 +87,10 @@ export default function MeshSyncTable(props) {
     model: modelFilter,
     namespace: namespaceFilter,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
+    status: false,
+    annotations: false,
+    spec: false,
+    labels: false,
   });
   if (isError) {
     if (isError) {
