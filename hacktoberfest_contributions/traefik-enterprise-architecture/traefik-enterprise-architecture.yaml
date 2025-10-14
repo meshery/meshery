@@ -1,0 +1,350 @@
+id: b1f64877-2e9b-4b4d-a383-631b59748210
+name: Traefik Enterprise Architecture
+schemaVersion: designs.meshery.io/v1beta1
+version: 0.0.290
+metadata:
+  resolvedAliases: {}
+components:
+  - id: 5d7d5a0a-5d83-47a3-9947-f2f9eeccb04e
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: LOAD BALANCER
+    description: "AWS Elastic Load Balancer for distributing external traffic to ingress proxies"
+    format: JSON
+    model:
+      id: 53d42b4d-87a1-3111-2cc2-e618a3cc5048
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: aws
+      displayName: Amazon Web Services
+      status: enabled
+      registrant:
+        id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
+        name: meshery
+        type: registry
+        sub_type: ""
+        kind: meshery
+        status: registered
+        created_at: "2025-10-14T09:43:22.268276734Z"
+        updated_at: "2025-10-14T09:43:22.268276734Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
+      category:
+        id: 639aa59e-5b2d-0c11-92c5-74c5014d41df
+        name: Provisioning
+      subCategory: Automation & Configuration
+      metadata:
+        isAnnotation: true
+        primaryColor: '#FF9900'
+        secondaryColor: '#F4BC79'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+      model:
+        version: 0.7.2
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: "#808080"
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 24
+      opacity: 1
+      padding: 6
+      position:
+        x: 620.2138786502178
+        y: 364.0762381929395
+      primaryColor: rgb(255,255,255)
+      secondaryColor: "#00D3A9"
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws elastic load balancing-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws elastic load balancing-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws elastic load balancing-white.svg
+      width: 24
+      z-index: 34
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: LOAD BALANCER
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS Elastic Load Balancing
+      schema: ""
+
+  - id: 894ee41c-b53c-4b45-9a9f-dd3114617bdf
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: FROM THE INTERNET
+    description: "External traffic source representing internet users accessing the application"
+    format: JSON
+    model:
+      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: meshery-shapes
+      displayName: Meshery Shapes
+      status: enabled
+      registrant:
+        id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
+        name: meshery
+        type: registry
+        sub_type: ""
+        kind: meshery
+        status: registered
+        created_at: "2025-10-14T09:43:22.268276734Z"
+        updated_at: "2025-10-14T09:43:22.268276734Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: true
+        primaryColor: "#00B39F"
+        secondaryColor: "#00D3A9"
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
+      model:
+        version: 0.7.2
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: "#808080"
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      data:
+        label: ""
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 514.9583480586532
+        y: 363.8634581993797
+      primaryColor: rgb(177,182,184)
+      secondaryColor: "#00D3A9"
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/cloud-color.svg
+      svgComplete: ui/public/static/img/meshmodels/meshery-shapes/complete/cloud-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/cloud-white.svg
+      width: 30
+      z-index: 33
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration:
+      metadata:
+        name: FROM THE INTERNET
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Cloud
+      schema: ""
+
+  - id: 6bbb88eb-08c7-409e-a0ba-8a9775880423
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: cluster
+    description: "Kubernetes cluster namespace containing all Traefik Enterprise components and application services"
+    format: JSON
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-14T09:43:28.563486224Z"
+        updated_at: "2025-10-14T09:43:28.563486224Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: "#326CE5"
+        secondaryColor: "#7aa1f0"
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-image: none
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: "#808080"
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-style: dashed
+      border-width: 2
+      height: 161.18105
+      opacity: 1
+      padding: 6
+      position:
+        x: 861.3144920639368
+        y: 384.07330291408886
+      primaryColor: "#326CE5"
+      secondaryColor: "#7aa1f0"
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+      width: 249.52657
+      z-index: 10
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+      source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+    configuration:
+      metadata:
+        name: cluster
+      spec:
+        finalizers: []
+    component:
+      version: v1
+      kind: Namespace
+      schema: ""
+
+preferences:
+  layers:
+    relationships:
+      hierarchical-sibling-matchlabels: false
+relationships:
+  - id: 172e684c-f727-40d7-8f8d-888297f6d9b3
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: "Traffic flow from internet to load balancer"
+      styles:
+        line-color: "#00B39F"
+        line-style: solid
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+        target-arrow-color: "#00B39F"
+        target-arrow-shape: triangle
+      isAnnotation: false
+    model:
+      id: 9d2e5746-210f-0d1f-d22e-bed178cebefd
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: meshery-shapes
+      displayName: Meshery Shapes
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: ""
+        type: ""
+        sub_type: ""
+        kind: ""
+        status: ""
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 13df38ce-edc0-8c01-ed9f-0414912a43fd
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: true
+        primaryColor: "#00B39F"
+        secondaryColor: "#00D3A9"
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg
+      model:
+        version: 0.7.2
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: 894ee41c-b53c-4b45-9a9f-dd3114617bdf
+              kind: "*"
+              match: {}
+              match_strategy_matrix: null
+          to:
+            - id: 5d7d5a0a-5d83-47a3-9947-f2f9eeccb04e
+              kind: "*"
+              match: {}
+              match_strategy_matrix: null
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
