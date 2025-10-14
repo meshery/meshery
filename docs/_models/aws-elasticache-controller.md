@@ -65,7 +65,13 @@ relationships:
 - type: "Non Binding"
   kind: "Edge"
   description: "An edge relationship between cachecluster and CacheSubnetGroup"
-relationship-count: 3
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EC2 instances use ElastiCache (Redis/Memcached) for caching"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship Lambda functions cache data in ElastiCache to reduce latency"
+relationship-count: 5
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",

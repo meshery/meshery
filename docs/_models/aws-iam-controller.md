@@ -57,7 +57,28 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 3
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM roles attached to EC2 instances for AWS API permissions"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM execution roles grant Lambda function permissions"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM task roles provide permissions to ECS containers"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM roles for service accounts (IRSA) in EKS"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM policies control S3 bucket and object access"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM policies manage DynamoDB table access"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM database authentication for RDS"
+relationship-count: 10
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",
