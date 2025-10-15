@@ -23,11 +23,11 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/meshery/meshery/server/models"
-	mErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -95,29 +95,25 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentDefinition := args[0]
 
-		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, url.QueryEscape(componentDefinition))
+		viewUrlValue := url.Values{}
+		viewUrlValue.Add("search", componentDefinition)
+		viewUrlValue.Add("pagesize", "all")
+
+		urlPath := fmt.Sprintf("%s?%s", componentApiPath, viewUrlValue.Encode())
 
 		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
-			if meshkitErr, ok := err.(*mErrors.Error); ok {
-				if meshkitErr.Code == utils.ErrFailRequestCode {
-					errMsg := utils.ComponentSubError("Request failed.\nEnsure meshery server is available.", "view")
-					return utils.ErrFailRequest(errors.New(errMsg))
-				}
-				if meshkitErr.Code == utils.ErrFailReqStatusCode {
-					errMsg := utils.ComponentSubError(fmt.Sprintf("Failed to retrieve component: %q", componentDefinition), "view")
-					return utils.ErrNotFound(fmt.Errorf("%s", errMsg))
-				}
-			}
 			return err
 		}
-
-		var selectedComponent component.ComponentDefinition
 
 		if componentResponse.Count == 0 {
 			utils.Log.Info("No component(s) found for the given name: ", componentDefinition)
 			return nil
-		} else if componentResponse.Count == 1 {
+		}
+
+		var selectedComponent component.ComponentDefinition
+
+		if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
 		} else {
 			selectedComponent = selectComponentPrompt(componentResponse.Components)
@@ -158,4 +154,27 @@ func init() {
 	// Add the new components commands to the ComponentsCmd
 	viewComponentCmd.Flags().StringVarP(&cmdComponentViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+}
+
+// selectComponentPrompt lets user to select a model if models are more than one
+func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
+	componentNames := make([]string, len(components))
+
+	for i, component := range components {
+		componentNames[i] = fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
+	}
+
+	prompt := promptui.Select{
+		Label: "Select component",
+		Items: componentNames,
+	}
+
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			continue
+		}
+
+		return components[i]
+	}
 }

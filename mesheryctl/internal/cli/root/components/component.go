@@ -18,9 +18,7 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/component"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -86,33 +84,6 @@ mesheryctl component view [component-name]
 	},
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
-	componentNames := []string{}
-	componentArray := []component.ComponentDefinition{}
-
-	componentArray = append(componentArray, components...)
-
-	for _, component := range componentArray {
-		componentName := fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
-		componentNames = append(componentNames, componentName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select component",
-		Items: componentNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return componentArray[i]
-	}
-}
-
 func init() {
 	ComponentCmd.AddCommand(availableSubcommands...)
 	ComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
@@ -121,6 +92,10 @@ func init() {
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
+		componentName := component.DisplayName
+		if componentName == "" {
+			componentName = "N/A"
+		}
 		modelName := component.Model.Name
 		if modelName == "" {
 			modelName = "N/A"
@@ -133,7 +108,7 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componenttKind == "" {
 			componenttKind = "N/A"
 		}
-		rows = append(rows, []string{modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{componentName, modelName, componenttKind, componentVersion})
 	}
 
 	return rows, int64(componentsResponse.Count)
@@ -145,7 +120,7 @@ func listComponents(cmd *cobra.Command, apiPath string) error {
 	modelData := display.DisplayDataAsync{
 		UrlPath:          componentApiPath,
 		DataType:         "component",
-		Header:           []string{"Model", "Category", "Version"},
+		Header:           []string{"Name", "Model", "Category", "Version"},
 		Page:             page,
 		IsPage:           cmd.Flags().Changed("page"),
 		DisplayCountOnly: cmd.Flags().Changed("count"),
