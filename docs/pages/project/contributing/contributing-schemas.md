@@ -161,7 +161,7 @@ Schema-driven development can feel abstract until you are trying to implement so
   - If you know how to implement, update the existing code to use a proper struct generated from the `meshery/schemas` repository
     - Update the CLI logic
     - Add/Adjust tests if needed
-  - If you don't know how to implement it, open a mesheryctl issue on Github
+  - If you don't know how to implement it, open an issue on Github using either a mesheryctl issue template ([feature](https://github.com/meshery/meshery/issues/new?template=mesheryctl_feature.md), [bug](https://github.com/meshery/meshery/issues/new?template=mesheryctl_bug.md))
 
   c. Add a new schema on an existing command
 
@@ -176,7 +176,7 @@ Schema-driven development can feel abstract until you are trying to implement so
   - Update the CLI logic
   - Add/Adjust tests if needed
 
-*Why it matters:* This keeps CLI behavior consistent with API behavior, thanks to schema as the source of truth.
+> *Why it matters:* This reduces drift between backend logic and API contract, enforces consistency between Meshery's components (Server, UI, CLI) and , resulting in higher quality code.
 
 ### 2. Meshery Server Contributor Flow
 **Example:** Add a new `status` field to `component`.
@@ -191,7 +191,7 @@ make golang-generate
 - If the backend uses GORM with auto-migration enabled, these structs may be used to update the DB schema.
 - Avoid manually editing the generated models, as they will be overwritten when schemas are regenerated.
 
-> *Why it matters:* This reduces drift between backend logic and API contract and enforces consistency between Meshery's components (Server, UI, CLI).
+> *Why it matters:* This reduces drift between backend logic and API contract, enforces consistency between Meshery's components (Server, UI, CLI) and , resulting in higher quality code.
 
 ### 3. Meshery UI Contributor Flow
 **Example:** Show the new `version` field on the Model dashboard. 
