@@ -19,6 +19,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type componentListFlag struct {
+	Count    bool
+	Page     int
+	PageSize int
+}
+
+var cmdComponentListFlag componentListFlag
+
 // represents the mesheryctl component list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
@@ -29,32 +37,37 @@ Documentation for components can be found at https://docs.meshery.io/reference/m
 // View list of components
 mesheryctl component list
 
-// View list of components with specified page number (25 components per page)
+// View list of components with specified page number (10 components per page)
 mesheryctl component list --page [page-number]
+
+// View list of components with specified page number with specified number of components per page
+mesheryctl component list --page [page-number] --pagesize [page-size]
 
 // Display the number of components present in Meshery
 mesheryctl component list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		page, _ := cmd.Flags().GetInt("page")
-		pageSize, _ := cmd.Flags().GetInt("pagesize")
 		modelData := display.DisplayDataAsync{
 			UrlPath:          componentApiPath,
 			DataType:         "component",
-			Header:           []string{"Model", "Category", "Version"},
-			Page:             page,
-			PageSize:         pageSize,
+			Header:           []string{"Name", "Model", "Category", "Version"},
+			Page:             cmdComponentListFlag.Page,
+			PageSize:         cmdComponentListFlag.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-			DisplayCountOnly: cmd.Flags().Changed("count"),
+			DisplayCountOnly: cmdComponentListFlag.Count,
 		}
 
-		return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
+		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 }
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
-	listComponentCmd.Flags().IntP("page", "p", 1, "(optional) List next set of components with --page (default = 1)")
-	listComponentCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of components with --pagesize (default = 0)")
-	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
+	listComponentCmd.Flags().IntVarP(&cmdComponentListFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().IntVarP(&cmdComponentListFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	listComponentCmd.Flags().BoolVarP(&cmdComponentListFlag.Count, "count", "c", false, "(optional) Display count only")
 }
