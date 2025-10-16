@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 16th 2025, 3:11:28 pm
+- Testing started at: October 16th 2025, 3:17:01 pm
 
 **📦 Test Result Summary**
 
-- ✅ 77 passed
+- ✅ 84 passed
 - ❌ 2 failed
-- ⚠️ 5 flaked
-- ⏩ 4 skipped
+- ⚠️ 3 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 10 minutes and 16 seconds_
+⌛ _Duration: 9 minutes and 35 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,17 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Verify Performance Analysis Details |  | ⚠️ |
-| 2 | chromium-meshery-provider | should verify Design Configurator page elements |  | ❌ |
-| 3 | chromium-meshery-provider | displays published design card correctly |  | ⚠️ |
-| 4 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
-| 5 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
-| 6 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 7 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 8 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 9 | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ⚠️ |
-| 10 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ⚠️ |
-| 11 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 2 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 3 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 4 | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ⚠️ |
+| 5 | chromium-meshery-provider | Compare test of a performance profile with load generator fortio |  | ⚠️ |
 
 </div>
 </details>
