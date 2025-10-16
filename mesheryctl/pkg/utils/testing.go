@@ -148,9 +148,32 @@ func SetupContextEnv(t *testing.T) {
 	if err != nil {
 		t.Error("unable to locate meshery directory")
 	}
+
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
+
+	// Try to locate TestConfig.yaml by searching upward from the current directory.
+	// This makes tests resilient to different working directories when invoked
+	// from the repository root or from package folders.
+	found := false
+	curr := path
+	for i := 0; i < 8; i++ {
+		candidate := filepath.Join(curr, "pkg", "utils", "TestConfig.yaml")
+		if _, statErr := os.Stat(candidate); statErr == nil {
+			viper.SetConfigFile(candidate)
+			DefaultConfigPath = candidate
+			found = true
+			break
+		}
+		curr = filepath.Dir(curr)
+	}
+
+	// Fallback to the original relative path if not found
+	if !found {
+		candidate := path + "/../../../../pkg/utils/TestConfig.yaml"
+		viper.SetConfigFile(candidate)
+		DefaultConfigPath = candidate
+	}
+
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
