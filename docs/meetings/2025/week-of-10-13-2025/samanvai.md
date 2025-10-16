@@ -1,1 +1,1 @@
-hi pr for attending the newcomers meet
+Thank you for attending the Newcomers' Meeting.
