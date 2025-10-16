@@ -139,17 +139,42 @@ This ensures that schemas remain the **single source of truth**, making developm
 Schema-driven development can feel abstract until you are trying to implement something. Here are a few real world flows from different types of contributors. Whether you are building a new feature or just curious how others plug into schemas, this is the guide.
 
 ### 1. Mesheryctl Contributor Flow
-**Example:** You want to add a `mesheryctl model build` command. 
-**Steps:**
-- Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
-- Update `<construct>.json` if new properties are needed
-- Run:
-```bash 
-make generate-types
-make golang-generate 
-```
-- Implement the CLI logic
-- Add tests (Check existing unit tests for format)
+
+  a. Add a new schema on a new command
+
+  **Example:** You want to add a `mesheryctl model build` command. 
+  **Steps:**
+  - Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
+  - Update `<construct>.json` if new properties are needed
+  - Run:
+  ```bash 
+  make generate-types
+  make golang-generate 
+  ```
+  - Implement the CLI logic
+  - Add tests (Check existing unit tests for format)
+  
+  b. Add an existing schema on an existing command
+
+  **Example**: 
+  You detect a part of existing code that is not following the schema driven development principle (model is a struct created in mesheryctl command), you have two options:
+  - If you know how to implement, update the existing code to use a proper struct generated from the `meshery/schemas` repository
+    - Update the CLI logic
+    - Add/Adjust tests if needed
+  - If you don't know how to implement it, open a mesheryctl issue on Github
+
+  c. Add a new schema on an existing command
+
+  **Steps:**
+  - Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
+  - Update `<construct>.json` if new properties are needed
+  - Run:
+  ```bash 
+  make generate-types
+  make golang-generate 
+  ```
+  - Update the CLI logic
+  - Add/Adjust tests if needed
 
 *Why it matters:* This keeps CLI behavior consistent with API behavior, thanks to schema as the source of truth.
 
@@ -166,7 +191,7 @@ make golang-generate
 - If the backend uses GORM with auto-migration enabled, these structs may be used to update the DB schema.
 - Avoid manually editing the generated models, as they will be overwritten when schemas are regenerated.
 
-*Why it matters:* This reduces drift between backend logic and API contract.
+> *Why it matters:* This reduces drift between backend logic and API contract and enforces consistency between Meshery's components (Server, UI, CLI).
 
 ### 3. Meshery UI Contributor Flow
 **Example:** Show the new `version` field on the Model dashboard. 
