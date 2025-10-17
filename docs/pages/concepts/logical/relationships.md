@@ -174,19 +174,22 @@ Logical or declarative links between components where one component refers to an
 
 ### 6. Hierarchical - Parent - Wallet
 
+In a Hierarchical-parent-wallet relationship, one component (the "wallet") acts as a container for another (the "child"). The child component is dependent on the parent and operates within the scope and capabilities provided by it.
+
 **Example**
 
-- Example 1) (binary and configuration) --> IstioWASMPlugin
-- Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
+- Example 1) WASMFilter --> WASM-plugin
 
-<details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
-           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
+<details close><summary>Visual Representation of Hierarchical-Wallet Relationship</summary>
+           <figure><br><figcaption>1. Hierarchical - Wallet: WASMFilter and WASM-plugin<a target="_blank" href="https://kanvas.new/extension/meshmap?mode=design&design=e09dd1ed-571a-4d76-ab4b-020431ab0eba"> (open in playground)</a></figcaption>
            </figure>
-<div id="embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380" style="height:30rem;width:100%;"></div>
-<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
+<div id="embedded-design-e09dd1ed-571a-4d76-ab4b-020431ab0eba" style="height:100%;width:100%"></div>
+<script src="./embedded-design-hierarchical-parent-wallet.js" type="module" ></script>
 </details>
 
 ### 7. Hierarchical - Parent - Inventory
+
+In a Hierarchical-parent-inventory relationship, one component is a dependency of another in a parent-child structure. The configuration of the parent component directly influences and dictates the behavior of the child.
 
 **Example**:
 
