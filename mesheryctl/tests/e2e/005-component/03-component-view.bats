@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
-declare file_to_cleanup
+declare FILE_TO_CLEANUP
+declare COMPONENT_NAME
 
 setup() {
   load "$E2E_HELPERS_PATH/bats_libraries"
@@ -23,12 +24,15 @@ setup() {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
   assert_success
   export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata/component-view"
+
+  COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
+  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
 }
 
 teardown() {
-  if [[ -n "$file_to_cleanup" ]]; then
-    rm -f "$file_to_cleanup"
-    file_to_cleanup=""
+  if [[ -n "$FILE_TO_CLEANUP" ]]; then
+    rm -f "$FILE_TO_CLEANUP"
+    FILE_TO_CLEANUP=""
   fi
 }
 
@@ -71,11 +75,9 @@ test_component_view_format() {
     return 1
   fi
 
-  local COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
-  file_to_cleanup="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
   printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
 
-  run bash -c "${validation_tool} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${file_to_cleanup}\""
+  run bash -c "${validation_tool} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
 
   assert_success
   assert_output "true"
@@ -92,18 +94,14 @@ test_component_view_format() {
 test_view_save() {
   local format=$1
 
-  local component_name=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
-
-  local file_to_cleanup="${HOME}/.meshery/component_${component_name}.${format}"
-  local expected_success_message="Output saved as ${format} in file: ${file_to_cleanup}"
-
-  run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${component_name}\" -o ${format} --save"
+  local expected_success_message="Output saved as ${format} in file: ${FILE_TO_CLEANUP}"
+  run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
 
   assert_success
 
   local sanitized_output=$(echo "$output" | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g')
   assert_output --partial "$expected_success_message" <<< "$sanitized_output"
-  assert_file_exist "$file_to_cleanup"
+  assert_file_exist "$FILE_TO_CLEANUP"
 }
 
 @test "view command saves JSON output file" {
