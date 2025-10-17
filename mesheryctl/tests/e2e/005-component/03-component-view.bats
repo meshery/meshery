@@ -3,82 +3,82 @@
 declare file_to_cleanup
 
 setup() {
-    load "$E2E_HELPERS_PATH/bats_libraries"
-    _load_bats_libraries
+  load "$E2E_HELPERS_PATH/bats_libraries"
+  _load_bats_libraries
 
-    COMPONENT_REQUIRED_FIELDS='
-    .id != null and
-    .displayName != null and
-    .description != null and
-    .schemaVersion != null and
-    .format != null and
-    .version != null and
-    has(\"configuration\") and
-    .metadata != null and
-    .model.id != null and
-    .model != null and
-    .component != null
-    '
-    export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/component-search"
-    run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
-    assert_success
-    export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata/component-view"
+  COMPONENT_REQUIRED_FIELDS='
+  .id != null and
+  .displayName != null and
+  .description != null and
+  .schemaVersion != null and
+  .format != null and
+  .version != null and
+  has(\"configuration\") and
+  .metadata != null and
+  .model.id != null and
+  .model != null and
+  .component != null
+  '
+  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/component-search"
+  run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
+  assert_success
+  export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata/component-view"
 }
 
 teardown() {
-    if [[ -n "$file_to_cleanup" ]]; then
-        rm -f "$file_to_cleanup"
-        file_to_cleanup=""
-    fi
+  if [[ -n "$file_to_cleanup" ]]; then
+    rm -f "$file_to_cleanup"
+    file_to_cleanup=""
+  fi
 }
 
 @test "view command fails with no arguments" {
-    run $MESHERYCTL_BIN component view
-    assert_failure
-    assert_output --partial "Error: [component name] is required but not specified"
-    assert_output --partial "Usage: mesheryctl component view [component-name]"
-    assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
+  run $MESHERYCTL_BIN component view
+  assert_failure
+  assert_output --partial "Error: [component name] is required but not specified"
+  assert_output --partial "Usage: mesheryctl component view [component-name]"
+  assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
 }
 
 @test "view command fails with too many arguments" {
-    run $MESHERYCTL_BIN component view comp1 comp2
-    assert_failure
-    assert_output --partial "Error: too many arguments specified"
-    assert_output --partial "Usage: mesheryctl component view [component-name]"
-    assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
+  run $MESHERYCTL_BIN component view comp1 comp2
+  assert_failure
+  assert_output --partial "Error: too many arguments specified"
+  assert_output --partial "Usage: mesheryctl component view [component-name]"
+  assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
 }
 
 @test "view command fails with an invalid output format" {
-    local expected_error="Error: output-format \"xml\" is invalid. Available options [json|yaml]
+  local expected_error="Error: output-format \"xml\" is invalid. Available options [json|yaml]
 See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage details"
 
-    run $MESHERYCTL_BIN component view some-component -o xml
+  run $MESHERYCTL_BIN component view some-component -o xml
 
-    assert_failure
-    assert_output "$expected_error"
+  assert_failure
+  assert_output "$expected_error"
 }
 
 test_component_view_format() {
-    local format=$1
-    local validation_tool=""
+  local format=$1
+  local validation_tool=""
 
-    if [[ "$format" == "json" ]]; then
-        validation_tool="jq"
-    elif [[ "$format" == "yaml" ]]; then
-        validation_tool="yq"
-    else
-        echo "Unsupported format: $format"
-        return 1
-    fi
+  if [[ "$format" == "json" ]]; then
+    validation_tool="jq"
+  elif [[ "$format" == "yaml" ]]; then
+    validation_tool="yq"
+  else
+    echo "Unsupported format: $format"
+    return 1
+  fi
 
-    local COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
-    file_to_cleanup="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
-    printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
+  local COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
+  file_to_cleanup="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
+  printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
 
-    run bash -c "${validation_tool} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${file_to_cleanup}\""
+  run bash -c "${validation_tool} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${file_to_cleanup}\""
 
-    assert_success
-    assert_output "true"
+  assert_success
+  assert_output "true"
 }
 
 @test "view command displays JSON output for a known component" {
@@ -89,16 +89,27 @@ test_component_view_format() {
     test_component_view_format "yaml"
 }
 
+test_view_save() {
+  local format=$1
+
+  local component_name=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
+
+  local file_to_cleanup="${HOME}/.meshery/component_${component_name}.${format}"
+  local expected_success_message="Output saved as ${format} in file: ${file_to_cleanup}"
+
+  run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${component_name}\" -o ${format} --save"
+
+  assert_success
+
+  local sanitized_output=$(echo "$output" | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g')
+  assert_output --partial "$expected_success_message" <<< "$sanitized_output"
+  assert_file_exist "$file_to_cleanup"
+}
+
 @test "view command saves JSON output file" {
-    local component_name=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
-    file_to_cleanup="${HOME}/.meshery/component_${component_name}.json"
-    local expected_success_message="Output saved as json in file: ${file_to_cleanup}"
+  test_view_save "json"
+}
 
-    run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${component_name}\" -o json --save"
-
-    assert_success
-
-    local sanitized_output=$(echo "$output" | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g')
-    assert_output --partial "$expected_success_message" <<< "$sanitized_output"
-    assert_file_exist "$file_to_cleanup"
+@test "view command saves YAML output file" {
+  test_view_save "yaml"
 }
