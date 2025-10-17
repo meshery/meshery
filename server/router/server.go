@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"time"
@@ -419,7 +420,21 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			HttpOnly: true,
 			Expires:  time.Now().Add(24 * time.Hour),
 		})
-		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+
+		// Get the ref parameter to determine where to redirect the user
+		// This supports deep-linking and ensures users land on their originally requested page
+		refURL := r.URL.Query().Get("ref")
+		if refURL != "" {
+			// The ref parameter is base64 encoded, so decode it
+			decodedURL, err := base64.RawURLEncoding.DecodeString(refURL)
+			if err == nil {
+				http.Redirect(w, r, string(decodedURL), http.StatusFound)
+				return
+			}
+		}
+
+		// Fallback to root if ref is empty or decoding failed
+		http.Redirect(w, r, "/", http.StatusFound)
 	}).
 		Methods("GET")
 
