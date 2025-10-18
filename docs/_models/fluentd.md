@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentd Operator

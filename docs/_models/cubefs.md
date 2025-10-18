@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Cubefs
 subtitle: Collaborative and visual infrastructure as design for Cubefs

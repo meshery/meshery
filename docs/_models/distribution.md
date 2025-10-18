@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Jfrog Distribution
 subtitle: Managed release binary distribution with JFrog distribution

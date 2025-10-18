@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Keylime
 subtitle: Collaborative and visual infrastructure as design for Keylime

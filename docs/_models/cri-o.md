@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: CRI-O
 subtitle: Collaborative and visual infrastructure as design for CRI-O
