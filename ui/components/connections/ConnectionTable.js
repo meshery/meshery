@@ -19,6 +19,7 @@ import {
   TableCell,
   TableRow,
   Popover,
+  DeleteIcon,
 } from '@sistent/sistent';
 import {
   ContentContainer,
@@ -27,11 +28,10 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
-import { FormatId } from '../DataFormatter';
 import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
-import { getVisibilityColums } from '../../utils/utils';
+import { getVisibilityColums, getColumnValue } from '../../utils/utils';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -45,7 +45,6 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
-import { getColumnValue } from '../../utils/utils';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import MultiSelectWrapper from '../multi-select-wrapper';
@@ -64,9 +63,8 @@ import {
 } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@sistent/sistent';
 
-import { formatDate } from '../DataFormatter';
+import { formatDate, FormatId } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
