@@ -56,7 +56,7 @@ setup() {
 }
 
 @test "mesheryctl model view supports YAML output" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json \
+  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml \
     | yq -e \"$REQUIRED_FIELDS\""
 
   assert_success
