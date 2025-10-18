@@ -53,7 +53,7 @@ main() {
     # port_forwarding
     # config_mesheryctl_port_forwarding_endpoint
     
-    export MESHERYCTL_BIN="mesheryctl"
+    export MESHERYCTL_BIN="../../mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
 	export MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json"
     export E2E_HELPERS_PATH="${E2E_HELPERS_PATH}"
