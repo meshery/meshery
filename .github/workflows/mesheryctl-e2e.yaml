@@ -55,23 +55,12 @@ jobs:
           minikube version: "v1.33.0"
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
-      - name: Run minikube tunnel
-        run: |
-          echo 'Running minikube tunnel'
-          minikube tunnel &> /dev/null &
-        shell: bash
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
-      - name: build Mesheryctl
-        run: |
-          make
-        shell: bash
-        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
-          ./../../mesheryctl system status
-          # bash run_tests.bash
+          bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
