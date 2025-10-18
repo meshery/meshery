@@ -19,7 +19,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 
 	"github.com/spf13/cobra"
 )
@@ -54,15 +54,15 @@ mesheryctl exp workspace list --orgId [orgId] --count
 	RunE: func(cmd *cobra.Command, args []string) error {
 		orgID, _ := cmd.Flags().GetString("orgId")
 
-		workspaceResponse, err := api.Fetch[models.WorkspacePage](fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID))
+		workspaceResponse, err := api.Fetch[workspace.WorkspacePage](fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID))
 		if err != nil {
 			return err
 		}
 
-		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
-		rows := [][]string{}
-		for _, workspace := range workspaceResponse.Workspaces {
-			rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationID.String(), workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+		header := []string{"ID", "Name", "Description", "Created At", "Updated At"}
+		rows := make([][]string, len(workspaceResponse.Workspaces))
+		for i, workspace := range workspaceResponse.Workspaces {
+			rows[i] = []string{workspace.ID.String(), workspace.Name, workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()}
 		}
 
 		count, _ := cmd.Flags().GetBool("count")
