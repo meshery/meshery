@@ -1,0 +1,20 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- if and .Values.log4j2 (not .Values.existingLog4j2ConfigMap) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-log4j2-configuration" (include "common.names.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/part-of: kafka
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  log4j2.yaml: |-
+    {{- include "common.tplvalues.render" ( dict "value" .Values.log4j2 "context" $ ) | nindent 4 }}
+{{- end }}
