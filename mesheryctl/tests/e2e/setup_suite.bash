@@ -17,9 +17,9 @@ create_meshery_config_folder() {
 }
 
 # Generate auth file to communicate with meshery server
-create_auth_file() {
+configure_auth_file() {
     echo "start: authentication configuration" 
-    echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
+    
     echo "done: authentication configuration"
 }
 
@@ -47,11 +47,11 @@ config_mesheryctl_port_forwarding_endpoint() {
 main() {
     echo -e "### start: Test environment setup ###\n"
 
-    install_mesheryctl "$MESHERY_PLATFORM"
-    create_meshery_config_folder
-    create_auth_file 
-    port_forwarding
-    config_mesheryctl_port_forwarding_endpoint
+    # install_mesheryctl "$MESHERY_PLATFORM"
+    # create_meshery_config_folder
+    # configure_auth_file 
+    # port_forwarding
+    # config_mesheryctl_port_forwarding_endpoint
     
     export MESHERYCTL_BIN="mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"

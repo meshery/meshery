@@ -58,8 +58,22 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: build Mesheryctl
+        run: |
+          make
+        shell: bash
+        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
+          # Start Meshery Server
+          ./mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-browser &
+          sleep 30
+          # Create auth file with provider token
+          echo "{ \"meshery-provider\": \"Layer5\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\" }" > "${HOME}/.meshery/auth.json"
+          # Port Forward Meshery Service
+          kubectl -n meshery port-forward svc/meshery ${MESHERYCTL_PORT_FORWARDING}:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
+          sleep 10
+          # Run BATS tests
           bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
