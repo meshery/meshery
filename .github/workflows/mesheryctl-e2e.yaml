@@ -66,8 +66,13 @@ jobs:
       - name: Run mesheryctl end2end tests
         run: |
           # Start Meshery Server
-          ./mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-browser &
+          ../../mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-browser &
           sleep 30
+          # Create .meshery directory if not exists
+          if [ ! -d "$HOME/.meshery" ]
+          then
+            mkdir "$HOME/.meshery"
+          fi
           # Create auth file with provider token
           echo "{ \"meshery-provider\": \"Layer5\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\" }" > "${HOME}/.meshery/auth.json"
           # Port Forward Meshery Service
