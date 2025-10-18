@@ -19,7 +19,7 @@ spec:
         name: clickhouse
       spec:
         serviceName: clickhouse
-        replicas: 1
+        replicas: 3
         selector:
           matchLabels:
             app: clickhouse
@@ -30,7 +30,7 @@ spec:
           spec:
             containers:
               - name: clickhouse
-                image: bitnami/clickhouse:latest
+                image: bitnami/clickhouse:24.1.0
                 ports:
                   - containerPort: 8123
                   - containerPort: 9000
@@ -38,7 +38,10 @@ spec:
                   - name: CLICKHOUSE_ADMIN_USER
                     value: admin
                   - name: CLICKHOUSE_ADMIN_PASSWORD
-                    value: adminpassword
+                    valueFrom:
+                      secretKeyRef:
+                        name: clickhouse-secrets
+                        key: admin-password
                 resources:
                   requests:
                     cpu: "250m"
@@ -52,8 +55,11 @@ spec:
                   initialDelaySeconds: 10
                   periodSeconds: 10
                 livenessProbe:
-                  tcpSocket:
-                    port: 9000
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - "echo 'SELECT 1' | clickhouse-client -h localhost -u admin --password=$CLICKHOUSE_ADMIN_PASSWORD"
                   initialDelaySeconds: 30
                   periodSeconds: 20
                 volumeMounts:
@@ -67,7 +73,7 @@ spec:
               accessModes: [ "ReadWriteOnce" ]
               resources:
                 requests:
-                  storage: 8Gi
+                  storage: 50Gi
     # Service to expose ClickHouse
     - apiVersion: v1
       kind: Service
