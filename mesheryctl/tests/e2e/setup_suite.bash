@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-MESHERYCTL_PORT_FORWARDING=9081
 
 install_mesheryctl() {
     echo "start: Install mesheryctl"
@@ -23,13 +22,17 @@ configure_auth_file() {
     echo "done: authentication configuration"
 }
 
-port_forwarding() {
-    echo "start: Port forwarding"
+config_mesheryctl_port_forwarding_endpoint() {
+    echo "start: meshery Config file endpoint"
+    echo "retrieving current context"
     context="$(yq '.current-context' "${HOME}/.meshery/config.yaml")"
-    MESHERYCTL_PORT_FORWARDING=$(yq ".contexts.\"${context}\".endpoint" ${HOME}/.meshery/config.yaml | cut -d':' -f3)
-
-    nohup kubectl -n meshery port-forward svc/meshery ${MESHERYCTL_PORT_FORWARDING}:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
-    echo "done: Port forwarding"
+    if [[ -z "${context}" ]]; then
+        echo "Error: Failed to retrieve current context from meshery config." >&2
+        exit 1
+    fi
+    port_forwarding=$(kubectl get svc -n meshery -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}{{end}}' | head -n 1)
+    yq -i ".contexts.\"${context}\".endpoint = \"http://localhost:${port_forwarding}\"" "${HOME}/.meshery/config.yaml"
+    echo "done: meshery Config file endpoint"
 }
 
 main() {
@@ -37,9 +40,9 @@ main() {
 
     # install_mesheryctl "$MESHERY_PLATFORM"
     # create_meshery_config_folder
-    # configure_auth_file 
-    port_forwarding
-    # config_mesheryctl_port_forwarding_endpoint
+    # configure_auth_file
+    # port_forwarding
+    config_mesheryctl_port_forwarding_endpoint
     
     export MESHERYCTL_BIN="../../mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
