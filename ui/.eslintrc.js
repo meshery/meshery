@@ -48,13 +48,14 @@ module.exports = {
     'unused-imports/no-unused-imports': 'error',
     'react/jsx-key': 'warn',
     'no-dupe-keys': 'error',
+    'no-duplicate-imports': 'error',
     'react/jsx-filename-extension': [
       1,
       {
         extensions: ['.js', '.jsx'],
       },
     ],
-    'react/prop-types': 'off',
+    'react/prop-types': 'warn',
     'prettier/prettier': ['error', { endOfLine: 'lf' }],
   },
 };
