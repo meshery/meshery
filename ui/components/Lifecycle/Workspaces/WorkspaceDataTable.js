@@ -13,6 +13,7 @@ import { SortableTableCell } from '../../connections/common';
 import {
   AuthorCell,
   Box,
+  CustomTooltip,
   IconButton,
   ResponsiveDataTable,
   updateVisibleColumns,
@@ -166,20 +167,23 @@ const WorkspaceDataTable = ({
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
               icon={
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoIcon
-                    style={{
-                      cursor: 'pointer',
-                      height: 20,
-                      width: 20,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
+                <CustomTooltip
+                  title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](https://docs.meshery.io/concepts/logical/environments)`}
+                >
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoIcon
+                      style={{
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </IconButton>
+                </CustomTooltip>
               }
-              tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](https://docs.meshery.io/concepts/logical/environments)`}
             />
           );
         },

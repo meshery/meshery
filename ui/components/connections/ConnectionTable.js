@@ -712,20 +712,23 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
               icon={
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoOutlinedIcon
-                    style={{
-                      cursor: 'pointer',
-                      height: 20,
-                      width: 20,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
+                <CustomTooltip
+                  title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
+                >
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoOutlinedIcon
+                      style={{
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </IconButton>
+                </CustomTooltip>
               }
-              tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
             />
           );
         },
