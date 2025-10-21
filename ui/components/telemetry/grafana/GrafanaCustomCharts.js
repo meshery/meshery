@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
 import GrafanaCustomChart from './GrafanaCustomChart';
 import {
+  NoSsr,
   Grid2,
   AccordionDetails,
   Typography,

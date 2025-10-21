@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
 import {
+  NoSsr,
   Button,
   TextField,
   MenuItem,

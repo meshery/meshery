@@ -8,6 +8,7 @@ import {
   MenuItem,
   TextField,
   Toolbar,
+  NoSsr,
   CustomTooltip,
   styled,
 } from '@sistent/sistent';
@@ -15,7 +16,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
 import { getWebAdress } from '../../../utils/webApis';

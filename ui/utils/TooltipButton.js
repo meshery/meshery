@@ -1,5 +1,4 @@
-import { Button } from '@sistent/sistent';
-import { CustomTooltip, IconButton } from '@sistent/sistent';
+import { Button, CustomTooltip, IconButton } from '@sistent/sistent';
 
 export default function TooltipButton({ children, onClick, title, variant, ...props }) {
   return (

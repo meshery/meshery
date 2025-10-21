@@ -19,6 +19,7 @@ import {
   TableCell,
   TableRow,
   Popover,
+  DeleteIcon,
 } from '@sistent/sistent';
 import {
   ContentContainer,
@@ -64,7 +65,6 @@ import {
 } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
