@@ -72,7 +72,10 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 8
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship ECS containers use MemoryDB for durable Redis-compatible data"
+relationship-count: 9
 featureList: [
   "Amazon MemoryDB for Redis enables machine learning (ML) and generative artificial intelligence (AI) models to work with data stored in Amazon MemoryDB in real-time and without moving your data.",
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",

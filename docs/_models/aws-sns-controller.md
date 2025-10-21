@@ -45,7 +45,10 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 3
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship ECS services publish notifications to SNS topics"
+relationship-count: 4
 featureList: [
   "Message fanout: Each account can support 100,000 Standard topics and each topic supports up to 12.5M subscriptions.",
   "Amazon SNS supports VPC Endpoints (VPCE) via AWS PrivateLink.",
