@@ -427,11 +427,7 @@ const NotificationCenterDrawer = () => {
 
   useEffect(() => {
     dispatch(
-      loadEvents(
-        fetchEvents,
-        initialViewToLoad?.page || 0,
-        initialViewToLoad?.filters || { status: 'unread' },
-      ),
+      loadEvents(fetchEvents, initialViewToLoad?.page || 0, initialViewToLoad?.filters || { status: 'unread' }),
     );
   }, []);
 
