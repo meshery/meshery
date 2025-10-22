@@ -140,8 +140,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       if (modelData) {
         setFormData((prevData) => ({
           ...prevData,
-          id: '00000000-0000-0000-0000-000000000000',
-          schemaVersion: 'relationships.meshery.io/v1alpha3',
           model: {
             ...formData.model,
             id: modelData.id,
