@@ -23,11 +23,9 @@ type KeysRegistrationHelper struct {
 
 func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) (*KeysRegistrationHelper, error) {
 	krh := &KeysRegistrationHelper{
-		log:      log,
-		keysChan: make(chan Key, 1),
-		keyPersister: &KeyPersister{
-			DB: dbHandler,
-		},
+		log:          log,
+		keysChan:     make(chan Key, 1),
+		keyPersister: NewKeyPersister(dbHandler),
 	}
 	err := krh.keyPersister.DB.AutoMigrate(
 		Key{},

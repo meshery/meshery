@@ -29,27 +29,37 @@ func SanitizeOrderInput(order string, validColumns []string) string {
 
 	inputCol := parsedOrderStr[0]
 	typ := strings.ToLower(parsedOrderStr[1])
-	for _, col := range validColumns {
-		if col == inputCol {
-			if typ == "desc" {
-				return fmt.Sprintf("%s desc", col)
-			}
 
-			return fmt.Sprintf("%s asc", col)
+	// Create a map for O(1) lookup instead of O(n) loop
+	validColsMap := make(map[string]bool, len(validColumns))
+	for _, col := range validColumns {
+		validColsMap[col] = true
+	}
+
+	if validColsMap[inputCol] {
+		if typ == "desc" {
+			return fmt.Sprintf("%s desc", inputCol)
 		}
+		return fmt.Sprintf("%s asc", inputCol)
 	}
 
 	return ""
 }
 
 var (
-	dbHandler database.Handler
-	mx        sync.Mutex
+	dbHandler     database.Handler
+	mx            sync.Mutex
+	dbOnce        sync.Once
+	isInitialized bool
 )
 
-func setNewDBInstance() {
+func initDBInstance() {
 	mx.Lock()
 	defer mx.Unlock()
+
+	if isInitialized {
+		return
+	}
 
 	// Initialize Logger instance
 	logLevel := viper.GetInt("LOG_LEVEL")
@@ -71,13 +81,16 @@ func setNewDBInstance() {
 		err = ErrInitializeDBHandler(err)
 		log.Error(err)
 	}
+
+	isInitialized = true
 }
 
 func GetNewDBInstance() *database.Handler {
-	setNewDBInstance()
+	dbOnce.Do(initDBInstance)
 	return &dbHandler
 }
 
 func GetDBInstance() *database.Handler {
+	dbOnce.Do(initDBInstance)
 	return &dbHandler
 }

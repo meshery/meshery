@@ -51,15 +51,38 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
-	for _, connectionFetched := range connectionsFetched {
-		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
-			Where("connection_id = ?", connectionFetched.ID).
-			Find(&environmentsFetched)
+	// Optimize: Fetch all environments in a single query instead of N+1 queries
+	if len(connectionsFetched) > 0 {
+		connectionIDs := make([]uuid.UUID, len(connectionsFetched))
+		for i, conn := range connectionsFetched {
+			connectionIDs[i] = conn.ID
+		}
 
-		connectionFetched.Environments = environmentsFetched
+		// Single query to get all environment mappings
+		type ConnectionEnvironmentMapping struct {
+			ConnectionID uuid.UUID `gorm:"column:connection_id"`
+			environments.EnvironmentData
+		}
+
+		var mappings []ConnectionEnvironmentMapping
+		cp.DB.Table("environment_connection_mappings").
+			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
+			Select("environment_connection_mappings.connection_id, environments.*").
+			Where("environment_connection_mappings.connection_id IN (?)", connectionIDs).
+			Find(&mappings)
+
+		// Group environments by connection ID
+		envMap := make(map[uuid.UUID][]*environments.EnvironmentData)
+		for _, mapping := range mappings {
+			envMap[mapping.ConnectionID] = append(envMap[mapping.ConnectionID], &mapping.EnvironmentData)
+		}
+
+		// Assign environments to connections
+		for _, conn := range connectionsFetched {
+			conn.Environments = envMap[conn.ID]
+		}
 	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        page,

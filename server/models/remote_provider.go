@@ -112,8 +112,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
 
-
-    l.Log.Info("Loading provider capabilities from local file: ", filePath)
+	l.Log.Info("Loading provider capabilities from local file: ", filePath)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -174,7 +173,9 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 
 	// If not token is provided then make a simple GET request
 	if token == "" {
-		c := &http.Client{}
+		pool := GetHTTPClientPool()
+		c := pool.Get()
+		defer pool.Put(c)
 
 		for i := 0; i < 10; i++ {
 			resp, err = c.Do(req)
@@ -519,7 +520,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("Error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1958,7 +1959,7 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 		l.Log.Info("Deleted design from remote provider.")
 		return nil
 	}
-	err = ErrDelete(fmt.Errorf("Error while deleting design."), "design: "+resourceID, resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while deleting design"), "design: "+resourceID, resp.StatusCode)
 	l.Log.Error(err)
 	return err
 }
@@ -2050,16 +2051,16 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: design file is too large to upload, reduce the file size and try again, see https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: unauthorized access, check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: bad request, the design might be corrupt", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	default:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s, check if the design is valid or undo recent changes", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	}
 }
@@ -2284,7 +2285,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		return bdr, errors.New(string(bdr))
 	}
 
-	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
+	err = fmt.Errorf("failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
 	return bdr, err
 }
@@ -2587,10 +2588,6 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
-	if err != nil {
-		return nil, err
-	}
-
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
@@ -2646,9 +2643,6 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -3113,10 +3107,6 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
-	if err != nil {
-		return nil, err
-	}
-
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
@@ -3171,9 +3161,6 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -3511,10 +3498,6 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -3694,10 +3677,6 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
@@ -4397,7 +4376,7 @@ func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uui
 		}
 
 		if len(connectionPage.Connections) > 1 {
-			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one. using the first connection."))
+			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one, using the first connection"))
 		}
 		return connectionPage.Connections[0], resp.StatusCode, nil
 	}
@@ -4526,7 +4505,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connection.Kind))
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
 		l.Log.Error(ErrGetToken(err))
 		return nil, err
@@ -4657,7 +4636,11 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	cReq.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
-	c := &http.Client{}
+
+	pool := GetHTTPClientPool()
+	c := pool.Get()
+	defer pool.Put(c)
+
 	resp, err := c.Do(cReq)
 	if err != nil {
 		if resp == nil {
@@ -4921,7 +4904,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
 		l.Log.Error(ErrGetToken(err))
 		return nil, err

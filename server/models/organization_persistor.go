@@ -1,40 +1,37 @@
 package models
 
 import (
-	"encoding/json"
-	"strings"
-
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
 
-// MesheryApplicationPersister is the persister for persisting
-// applications on the database
+// OrganizationPersister is the persister for persisting
+// organizations on the database
 type OrganizationPersister struct {
-	DB *database.Handler
+	BasePersister
 }
 
-// GetMesheryApplications returns all of the applications
-func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-
-	if order == "" {
-		order = "updated_at desc"
+// NewOrganizationPersister creates a new organization persister
+func NewOrganizationPersister(db *database.Handler) *OrganizationPersister {
+	return &OrganizationPersister{
+		BasePersister: BasePersister{DB: db},
 	}
+}
 
-	count := int64(0)
+// GetOrganizations returns all organizations with optimized query building
+func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
 	organizations := []*Organization{}
 
-	query := op.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	qb := op.NewQueryBuilder(&Organization{}).
+		WithSearch(search, []string{"organizations.name"}).
+		WithOrder(order, []string{"created_at", "updated_at", "name"}).
+		WithUpdatedAfter(updatedAfter).
+		Paginate(page, pageSize)
 
-	if search != "" {
-		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("(lower(organizations.name) like ?)", like)
+	count := qb.Count("organizations")
+	if err := qb.Find(&organizations); err != nil {
+		return nil, ErrDBRead(err)
 	}
-
-	query.Table("organizations").Count(&count)
-
-	Paginate(uint(page), uint(pageSize))(query).Find(&organizations)
 
 	organizationsPage := &OrganizationsPage{
 		Page:          page,
@@ -43,26 +40,22 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 		Organizations: organizations,
 	}
 
-	return marshalOrganizationsPage(organizationsPage), nil
+	return MarshalJSON(organizationsPage), nil
 }
 
 func (op *OrganizationPersister) SaveOrganization(organization *Organization) ([]byte, error) {
-	if organization.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
-
-		organization.ID = &id
+	if err := op.SaveEntity(organization, organization.ID); err != nil {
+		return nil, ErrDBCreate(err)
 	}
-
-	return marshalOrganizations([]Organization{*organization}), op.DB.Save(organization).Error
+	return MarshalJSON([]Organization{*organization}), nil
 }
 
 func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
 	var organization Organization
-	err := op.DB.First(&organization, id).Error
-	return marshalOrganization(&organization), err
+	if err := op.FindByID(&organization, id); err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return MarshalJSON(&organization), nil
 }
 
 func (op *OrganizationPersister) GetOrganizationsCount() (int64, error) {
@@ -71,22 +64,4 @@ func (op *OrganizationPersister) GetOrganizationsCount() (int64, error) {
 		return 0, err
 	}
 	return count, nil
-}
-
-func marshalOrganization(org *Organization) []byte {
-	res, _ := json.Marshal(org)
-
-	return res
-}
-
-func marshalOrganizations(orgs []Organization) []byte {
-	res, _ := json.Marshal(orgs)
-
-	return res
-}
-
-func marshalOrganizationsPage(orgsPage *OrganizationsPage) []byte {
-	res, _ := json.Marshal(orgsPage)
-
-	return res
 }

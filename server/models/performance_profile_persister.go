@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -11,7 +10,14 @@ import (
 // PerformanceProfilePersister is the persister for persisting
 // performance profiles on the database
 type PerformanceProfilePersister struct {
-	DB *database.Handler
+	BasePersister
+}
+
+// NewPerformanceProfilePersister creates a new performance profile persister
+func NewPerformanceProfilePersister(db *database.Handler) *PerformanceProfilePersister {
+	return &PerformanceProfilePersister{
+		BasePersister: BasePersister{DB: db},
+	}
 }
 
 // PerformanceProfilePage represents a page of performance profiles
@@ -60,7 +66,7 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 		Profiles:   profiles,
 	}
 
-	return marshalPerformanceProfilePage(performanceProfilePage), nil
+	return MarshalJSON(performanceProfilePage), nil
 }
 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
@@ -68,7 +74,7 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id uuid.UUID) (
 	profile := PerformanceProfile{ID: &id}
 	ppp.DB.Delete(profile)
 
-	return marshalPerformanceProfile(&profile), nil
+	return MarshalJSON(&profile), nil
 }
 
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ uuid.UUID, profile *PerformanceProfile) error {
@@ -80,16 +86,4 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id uuid.UUID) (*Pe
 
 	err := ppp.DB.First(&performanceProfile, id).Error
 	return &performanceProfile, err
-}
-
-func marshalPerformanceProfilePage(ppp *PerformanceProfilePage) []byte {
-	res, _ := json.Marshal(ppp)
-
-	return res
-}
-
-func marshalPerformanceProfile(pp *PerformanceProfile) []byte {
-	res, _ := json.Marshal(pp)
-
-	return res
 }

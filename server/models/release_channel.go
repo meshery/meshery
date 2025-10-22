@@ -99,9 +99,11 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	buf, _ := encoding.Marshal(connectionPayload)
 	data := bytes.NewReader(buf)
 
-	client := &http.Client{}
-	newReq, _ := http.NewRequest("POST", providerURL.String(), data)
+	pool := GetHTTPClientPool()
+	client := pool.Get()
+	defer pool.Put(client)
 
+	newReq, _ := http.NewRequest("POST", providerURL.String(), data)
 	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 
 	resp, err := client.Do(newReq)
