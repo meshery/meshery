@@ -1,1 +1,1 @@
-This is week of 10-20-2025
+HI , Iam K S Nauman , iam a 3rd year undergrad student , i have been exploring open source for a while and i came accross meshery while looking in the trending page of github and in gsoc orgs list . then went through the overall work of meshery i came acrross that it is like involved in cloud , i have recently learned about the mern , but even i have kept cloud as upcoming learnings . 
