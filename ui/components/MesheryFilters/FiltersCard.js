@@ -18,7 +18,6 @@ import {
   Public as PublicIcon,
   GetApp as GetAppIcon,
   InfoOutlined as InfoOutlinedIcon,
-  Public,
   Lock,
 } from '@mui/icons-material';
 import Moment from 'react-moment';
@@ -120,7 +119,7 @@ function FiltersCard_({
                   onChange={() => {}}
                   enabled={false}
                   options={[
-                    [VIEW_VISIBILITY.PUBLIC, Public],
+[VIEW_VISIBILITY.PUBLIC, PublicIcon],
                     [VIEW_VISIBILITY.PRIVATE, Lock],
                   ]}
                 />
