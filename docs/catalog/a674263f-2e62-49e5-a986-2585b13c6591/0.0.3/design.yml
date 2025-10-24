@@ -1,8 +1,8 @@
 {
-  "id": "479108bc-c07d-4a25-aa02-40d63451f10b",
-  "name": "All relationships",
+  "id": "a674263f-2e62-49e5-a986-2585b13c6591",
+  "name": "Understanding Relationships",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.660",
+  "version": "0.0.8",
   "metadata": {
     "resolvedAliases": {
       "30a7af01-cb9e-440e-8a58-5939b0b08979": {
@@ -179,7 +179,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -196,11 +195,9 @@
         "background-opacity": 1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 24,
@@ -227,8 +224,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -238,166 +234,6 @@
       "component": {
         "version": "v1",
         "kind": "ConfigMap",
-        "schema": ""
-      }
-    },
-    {
-      "id": "c9706b74-b352-4c3f-aebc-07efa62684e5",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "containers.0",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-24T06:57:04.908785885Z",
-          "updated_at": "2025-10-24T06:57:04.908785885Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "position": {
-          "x": -116.01725584611704,
-          "y": 4288.3549673911575
-        },
-        "primaryColor": "#326CE5",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": null,
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Container",
-        "schema": ""
-      }
-    },
-    {
-      "id": "95da4a1c-acdf-421d-aa83-4185d55dd05e",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "containers.1",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-24T06:57:04.908785885Z",
-          "updated_at": "2025-10-24T06:57:04.908785885Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "position": {
-          "x": -116.01725584611704,
-          "y": 4391.5938889331865
-        },
-        "primaryColor": "#326CE5",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": null,
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Container",
         "schema": ""
       }
     },
@@ -438,7 +274,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -457,14 +292,14 @@
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
         "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg",
+        "z-index": 111
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -514,7 +349,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -541,7 +375,84 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c9706b74-b352-4c3f-aebc-07efa62684e5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.0",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-24T06:57:04.908785885Z",
+          "updated_at": "2025-10-24T06:57:04.908785885Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": -116.01725584611704,
+          "y": 4288.3549673911575
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -591,7 +502,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -622,7 +532,85 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    },
+    {
+      "id": "95da4a1c-acdf-421d-aa83-4185d55dd05e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.1",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-24T06:57:04.908785885Z",
+          "updated_at": "2025-10-24T06:57:04.908785885Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": -116.01725584611704,
+          "y": 4391.5938889331865
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg",
+        "z-index": 110
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -674,7 +662,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -692,11 +679,9 @@
         "background-opacity": 0.5,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 47.5524,
@@ -723,8 +708,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -802,7 +786,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -820,11 +803,9 @@
         "background-opacity": 0.5,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 80.03239,
@@ -851,8 +832,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -934,7 +914,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -952,11 +931,9 @@
         "background-opacity": 0.5,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 57.128895,
@@ -983,8 +960,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1053,7 +1029,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -1071,11 +1046,9 @@
         "background-opacity": 0.5,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 47.317257,
@@ -1102,8 +1075,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1169,7 +1141,6 @@
           "isAnnotation": false,
           "primaryColor": "#ED7100",
           "shape": "rectangle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
@@ -1186,11 +1157,9 @@
         "background-opacity": 1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 24,
@@ -1217,8 +1186,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1281,7 +1249,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -1298,11 +1265,9 @@
         "background-opacity": 1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 24,
@@ -1329,8 +1294,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1382,7 +1346,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -1399,11 +1362,9 @@
         "background-opacity": 1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 24,
@@ -1430,8 +1391,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1481,7 +1441,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -1500,17 +1459,12 @@
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-style": "solid",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 226.88216,
         "opacity": 1,
         "padding": 0,
@@ -1532,7 +1486,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -1586,7 +1539,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -1604,18 +1556,13 @@
         "background-opacity": 0.1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "rgb(177,182,184)",
         "border-style": "solid",
         "border-width": 1,
-        "data": {
-          "label": ""
-        },
         "height": 3028.8687,
         "opacity": 1,
         "padding": 6,
@@ -1637,7 +1584,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -1693,7 +1639,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -1708,15 +1653,12 @@
       },
       "styles": {
         "background-clip": "node",
-        "background-image-containment": "over",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 32,
@@ -1743,8 +1685,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1793,7 +1734,6 @@
           "isAnnotation": false,
           "primaryColor": "#ED7100",
           "shape": "rectangle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
@@ -1810,11 +1750,9 @@
         "background-opacity": 1,
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 24,
@@ -1841,8 +1779,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -1900,7 +1837,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -1918,11 +1854,9 @@
         "background-position-y": "4.5",
         "body-text": "",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-width": 0,
         "height": 20,
@@ -1949,8 +1883,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -2000,7 +1933,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2018,18 +1950,13 @@
         "background-opacity": 0,
         "body-text": "MatchLabel relationships (also referred to as TagSets) are automatically created when you input matching labels in the configuration for components. These relationships represent connections between components that share the same Labels or Annotations.\n\nFor example, if you add the same label app: frontend to both a Service and a Deployment, Kanvas will automatically establish a MatchLabel relationship between them and visualize it as a tagset around the matching components.",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 21,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 155.45644,
         "opacity": 1,
         "padding": 6,
@@ -2051,7 +1978,100 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "0b8e83aa-622a-41dc-b87f-ee5020a7f298",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-24T06:57:02.370822597Z",
+          "updated_at": "2025-10-24T06:57:02.370822597Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Similar to Parent-Child relationships, Inventory Wallet relationships represent a relationship where a component is directly attached to another component, such as a sidecar container or WASM filter. These are visualized as a badge at the bottom right corner of the parent component with the number of inventory items displayed as a label.\n\nTo create an Inventory Wallet relationship:\n\n    Drag the attachment component (like a sidecar) to the host component\n    After successful creation, a green badge will appear on the host component\n    Clicking on this badge reveals all inventory items",
+        "body-text-color": "#808080",
+        "body-text-font-size": 21,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 216.99625,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 743.4789924074852,
+          "y": 2748.5427316539153
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 1644.4039,
+        "z-index": 118
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2101,7 +2121,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2116,22 +2135,16 @@
       },
       "styles": {
         "background-image": "none",
-        "background-image-opacity": 1,
         "background-opacity": 1,
-        "body-text": "\n                                                                                 Hierarchical Relationships",
+        "body-text": "                                                                                 Hierarchical Relationships",
         "body-text-color": "rgb(255,255,255)",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 36,
         "body-text-font-weight": "700",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 108.171524,
         "opacity": 1,
         "padding": 6,
@@ -2153,7 +2166,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2203,7 +2215,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2218,22 +2229,16 @@
       },
       "styles": {
         "background-image": "none",
-        "background-image-opacity": 1,
         "background-opacity": 1,
-        "body-text": "\n                                                                                        Edge Relationships",
+        "body-text": "                                                                                        Edge Relationships",
         "body-text-color": "rgb(255,255,255)",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 36,
         "body-text-font-weight": "700",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 108.171524,
         "opacity": 1,
         "padding": 6,
@@ -2248,14 +2253,13 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 2078.1672,
-        "z-index": 102
+        "z-index": 112
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2305,7 +2309,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2323,18 +2326,13 @@
         "background-opacity": 0,
         "body-text": "click on the green badge to see the attached component",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 60,
         "opacity": 1,
         "padding": 6,
@@ -2356,7 +2354,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2406,7 +2403,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2424,18 +2420,13 @@
         "background-opacity": 0,
         "body-text": "Click on the expand icon to view alias children",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "solid",
         "border-width": 1,
-        "data": {
-          "label": ""
-        },
         "height": 32.29157,
         "opacity": 1,
         "padding": 6,
@@ -2457,7 +2448,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2507,7 +2497,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2525,18 +2514,13 @@
         "background-opacity": 0,
         "body-text": "Container component acts as an alias to container inside the deployment's spec . alias don't have an independent lifecycle but act as a shortcut or reference to a part of parents configuration",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 12,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "solid",
         "border-width": 1,
-        "data": {
-          "label": ""
-        },
         "height": 74.09852,
         "opacity": 1,
         "padding": 6,
@@ -2558,7 +2542,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2608,7 +2591,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2626,18 +2608,13 @@
         "background-opacity": 0,
         "body-text": "Alias Relationship represents a type of hierarchical relationship where a child component serves as a reference or shortcut to a part of its parent’s configuration.\n\nThe child component, known as an alias, mirrors or links to a specific field within the parent’s configuration. Aliases do not have an independent lifecycle (for example, they cannot be deployed separately) but exist to simplify configuration management and improve visualization.\n\nExamples of aliases include:\nContainers within a Deployment or a Pod.",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 21,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 188.9099,
         "opacity": 1,
         "padding": 6,
@@ -2652,14 +2629,13 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 1648.4039,
-        "z-index": 105
+        "z-index": 113
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2709,7 +2685,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2727,18 +2702,13 @@
         "background-opacity": 0,
         "body-text": "Hierarchical relationships represent parent-child connections between components. To create a hierarchical relationship:\n\n    1. Simply drag a child component and drop it inside the parent component\n    2. The parent-child relationship will be automatically established\n\nFor example, dragging a Kubernetes Pod into a Namespace creates a hierarchical relationship where the Namespace is the parent of the Pod.",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 21,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 216.99625,
         "opacity": 1,
         "padding": 6,
@@ -2753,14 +2723,13 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 1644.4039,
-        "z-index": 105
+        "z-index": 114
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2810,7 +2779,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2828,18 +2796,13 @@
         "background-opacity": 0,
         "body-text": "The Edge-Reference relationship type represents a logical or declarative link between two components, where one component refers to another by name, identifier, type, or scope. This relationship allows components to dynamically locate, associate with, or depend on other components without being tightly coupled to them. It forms the basis for indirect communication, configuration reuse, ownership tracking, and dependency resolution in distributed systems.\n\nThis type of relationship does not directly provide communication, access, or permission, but enables such interactions by declaring intent or pointing to another component.\n\nExample of an Edge-Reference Relationship\n\n    - A component that refers to a configuration object (e.g., referencing a config file or environment settings).\n    - A workload component referencing a credentials object or identity provider.\n    - A service referencing a volume or storage claim.\n    - A managed resource referencing its controller or owner entity.",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 21,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 290.16034,
         "opacity": 1,
         "padding": 6,
@@ -2854,14 +2817,13 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 1648.4039,
-        "z-index": 105
+        "z-index": 115
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2911,7 +2873,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -2929,18 +2890,13 @@
         "background-opacity": 0,
         "body-text": "Edge relationships represent connections between components that interact with each other. These include network connections, bindings, permissions, and firewall rules. To create an edge relationship:\n\n    1.  Single-tap on a component to open the edge picker\n    2. Select the desired relationship type from the edge picker\n    3. Drag the connection line to a compatible target component\n    4. Release to establish the relationship\n\nKanvas will highlight compatible target components as you drag the connection line, making it easier to identify potential relationships.",
         "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 21,
         "body-text-font-weight": "400",
         "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
         "body-text-vertical-align": "center",
         "border-color": "#808080",
         "border-style": "dashed",
         "border-width": 0,
-        "data": {
-          "label": ""
-        },
         "height": 216.99625,
         "opacity": 1,
         "padding": 6,
@@ -2955,14 +2911,13 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 1644.4039,
-        "z-index": 105
+        "z-index": 116
       },
       "capabilities": [],
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -2972,177 +2927,6 @@
       "component": {
         "version": "core.meshery.io/v1alpha1",
         "kind": "TextBox",
-        "schema": ""
-      }
-    },
-    {
-      "id": "a0a74be7-59f1-46d6-974b-a994a95ed7d6",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "schemaVersion": "",
-        "version": "",
-        "name": "kanvas-local",
-        "displayName": "",
-        "status": "",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "00000000-0000-0000-0000-000000000000",
-        "category": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": ""
-        },
-        "subCategory": "",
-        "metadata": null,
-        "model": {
-          "version": ""
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": null,
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": false,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "child_component_ids": [
-          "061e75fe-23af-4389-be47-f952f0d99b6e",
-          "6bbc090e-5da8-443d-834f-c52b0e049690",
-          "299e5fc0-1644-4dec-9288-eef676e952e3",
-          "7d4116bf-04b8-4a98-a65c-c234d10b2c8a",
-          "89f24b04-1568-47ee-b138-5ea22e6e3501",
-          "c6f383fe-be89-4fb5-a2dd-3c174029ad70",
-          "96745520-1890-4948-8610-f77be8275cc4",
-          "d1622ccf-862c-4385-a50a-1ffae921583e"
-        ],
-        "isTemporary": true,
-        "order": 1761302596070
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Group",
-        "schema": ""
-      }
-    },
-    {
-      "id": "adbdcb57-591d-451a-a3d1-353eb0a5c35b",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "schemaVersion": "",
-        "version": "",
-        "name": "kanvas-local",
-        "displayName": "",
-        "status": "",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "00000000-0000-0000-0000-000000000000",
-        "category": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": ""
-        },
-        "subCategory": "",
-        "metadata": null,
-        "model": {
-          "version": ""
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": null,
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": false,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "child_component_ids": [
-          "15c94a60-2774-4672-a1d8-12b76cb3a2bf",
-          "3b62d304-3ad5-4984-a065-fe35c6054545",
-          "620c1a79-2b40-4a03-90eb-ae04b01ae002",
-          "6b50e288-5095-4144-89f6-b340f13698ce",
-          "50d579d6-fb76-4c08-aa97-460d41ccafa5"
-        ],
-        "isTemporary": true,
-        "order": 1761302639387
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Group",
         "schema": ""
       }
     },
@@ -3185,7 +2969,6 @@
           "primaryColor": "#FF9900",
           "secondaryColor": "#F4BC79",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws/color/aws-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws/white/aws-white.svg"
@@ -3284,7 +3067,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -3336,7 +3118,6 @@
           "primaryColor": "#FF9900",
           "secondaryColor": "#F4BC79",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws/color/aws-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws/white/aws-white.svg"
@@ -3435,7 +3216,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -3487,7 +3267,6 @@
           "primaryColor": "#FF9900",
           "secondaryColor": "#F4BC79",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws/color/aws-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws/white/aws-white.svg"
@@ -3586,7 +3365,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -3638,7 +3416,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -3741,7 +3518,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -3793,7 +3569,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -3896,7 +3671,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -3948,7 +3722,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -4051,7 +3824,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4103,7 +3875,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -4206,7 +3977,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4255,8 +4025,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": false,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg"
@@ -4359,7 +4127,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4411,7 +4178,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -4450,7 +4216,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 362.0114,
-        "z-index": 7
+        "z-index": 117
       },
       "capabilities": [
         {
@@ -4514,7 +4280,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4563,8 +4328,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": false,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg"
@@ -4667,7 +4430,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4719,7 +4481,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -4822,7 +4583,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -4874,7 +4634,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -4977,7 +4736,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5029,7 +4787,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": ""
@@ -5132,7 +4889,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5184,7 +4940,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -5287,7 +5042,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5339,7 +5093,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": ""
@@ -5442,7 +5195,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5494,7 +5246,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -5597,7 +5348,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5646,8 +5396,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": false,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/harmonizer/color/harmonizer-color.svg"
@@ -5750,7 +5498,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -5974,16 +5721,11 @@
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
-        "dependsOn": [],
-        "fieldRefData": {},
         "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": false,
-        "published": false,
-        "whiteboardData": {
-          "style": {}
-        }
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -6350,16 +6092,11 @@
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
-        "dependsOn": [],
-        "fieldRefData": {},
         "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "whiteboardData": {
-          "style": {}
-        }
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -6652,16 +6389,11 @@
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
-        "dependsOn": [],
-        "fieldRefData": {},
         "genealogy": "",
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "whiteboardData": {
-          "style": {}
-        }
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -7359,7 +7091,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -7520,8 +7251,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": false,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "roleRef": {
@@ -8009,7 +7739,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
@@ -8155,7 +7884,6 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
-        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -8207,7 +7935,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -8369,8 +8096,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -8427,7 +8153,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -8580,8 +8305,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": false,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {},
       "component": {
@@ -8629,7 +8353,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -8782,8 +8505,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": false,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {},
       "component": {
@@ -9256,7 +8978,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -9417,8 +9138,7 @@
         "instanceDetails": null,
         "isAnnotation": false,
         "isNamespaced": true,
-        "published": false,
-        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+        "published": false
       },
       "configuration": {
         "metadata": {
@@ -9698,7 +9418,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg"
@@ -9911,7 +9630,6 @@
           "primaryColor": "#466BB0",
           "secondaryColor": "#93b0e7",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/istio-base/color/istio-base-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/istio-base/white/istio-base-white.svg"
@@ -10082,107 +9800,6 @@
       "component": {
         "version": "extensions.istio.io/v1alpha1",
         "kind": "WasmPlugin",
-        "schema": ""
-      }
-    },
-    {
-      "id": "0b8e83aa-622a-41dc-b87f-ee5020a7f298",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-24T06:57:02.370822597Z",
-          "updated_at": "2025-10-24T06:57:02.370822597Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "Similar to Parent-Child relationships, Inventory Wallet relationships represent a relationship where a component is directly attached to another component, such as a sidecar container or WASM filter. These are visualized as a badge at the bottom right corner of the parent component with the number of inventory items displayed as a label.\n\nTo create an Inventory Wallet relationship:\n\n    Drag the attachment component (like a sidecar) to the host component\n    After successful creation, a green badge will appear on the host component\n    Clicking on this badge reveals all inventory items",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 21,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-color": "#808080",
-        "border-style": "dashed",
-        "border-width": 0,
-        "data": {
-          "label": ""
-        },
-        "height": 216.99625,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 743.4789924074852,
-          "y": 2748.5427316539153
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#FFDE00",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
-        "width": 1644.4039,
-        "z-index": 105
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {},
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "TextBox",
         "schema": ""
       }
     }
@@ -10562,7 +10179,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -10782,7 +10398,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -11000,7 +10615,6 @@
           "primaryColor": "#466BB0",
           "secondaryColor": "#93b0e7",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/istio-base/color/istio-base-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/istio-base/white/istio-base-white.svg"
@@ -11183,7 +10797,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -11362,8 +10975,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": true,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -11528,8 +11139,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": true,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -11693,7 +11302,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -12011,7 +11619,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -12165,7 +11772,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -12346,7 +11952,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -12502,7 +12107,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -13070,7 +12674,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -13427,7 +13030,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -13589,7 +13191,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -13743,7 +13344,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -13931,7 +13531,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -14088,7 +13687,6 @@
           "isAnnotation": false,
           "primaryColor": "#ED7100",
           "shape": "rectangle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/aws-ec2-controller/color/aws-ec2-controller-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/aws-ec2-controller/white/aws-ec2-controller-white.svg"
@@ -14262,7 +13860,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -14458,7 +14055,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -14766,7 +14362,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -15338,7 +14933,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -15494,7 +15088,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -15716,7 +15309,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -16221,7 +15813,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -16844,7 +16435,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -17042,7 +16632,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -17356,7 +16945,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -17849,7 +17437,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": ""
@@ -18165,8 +17752,6 @@
         "subCategory": "App Definition and Development",
         "metadata": {
           "isAnnotation": true,
-          "published": true,
-          "subCategory": "App Definition and Development",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -18335,7 +17920,6 @@
           "primaryColor": "#00B39F",
           "secondaryColor": "#00D3A9",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
@@ -18495,7 +18079,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -18713,7 +18296,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -18883,7 +18465,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19053,7 +18634,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19223,7 +18803,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19425,7 +19004,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19597,7 +19175,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19773,7 +19350,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -19949,7 +19525,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -20125,7 +19700,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -20301,7 +19875,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -20477,7 +20050,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -20697,7 +20269,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -20917,7 +20488,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -21135,7 +20705,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -21307,7 +20876,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -21525,7 +21093,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -21697,7 +21264,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -21917,7 +21483,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -22091,7 +21656,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -22293,7 +21857,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -22465,7 +22028,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -22685,7 +22247,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -22903,7 +22464,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -23107,7 +22667,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -23313,7 +22872,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -23485,7 +23043,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -23703,7 +23260,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -23873,7 +23429,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -24077,7 +23632,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -24253,7 +23807,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -24471,7 +24024,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -24641,7 +24193,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -24811,7 +24362,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
@@ -25013,7 +24563,6 @@
           "primaryColor": "#326CE5",
           "secondaryColor": "#7aa1f0",
           "shape": "circle",
-          "styleOverrides": "",
           "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
           "svgComplete": "",
           "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
