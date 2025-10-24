@@ -1,0 +1,56 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{/*
+Return the Kafka controller configuration.
+ref: https://kafka.apache.org/documentation/#configuration
+*/}}
+{{- define "kafka.controller.config" -}}
+{{- if or .Values.config .Values.controller.config }}
+{{- include "common.tplvalues.render" (dict "value" (coalesce .Values.controller.config .Values.config) "context" .) }}
+{{- else }}
+# Listeners configuration
+listeners: {{ include "kafka.listeners" (dict "isController" true "context" .) }}
+listener.security.protocol.map: {{ include "kafka.securityProtocolMap" (dict "isController" true "context" .) }}
+{{- if not .Values.controller.controllerOnly }}
+advertised.listeners: {{ include "kafka.advertisedListeners" . }}
+inter.broker.listener.name: {{ .Values.listeners.interbroker.name }}
+{{- end }}
+# Kafka data logs directory
+log.dir: {{ printf "%s/data" .Values.controller.persistence.mountPath }}
+# Kafka application logs directory
+logs.dir: {{ .Values.controller.logPersistence.mountPath }}
+# KRaft node role
+process.roles: {{ ternary "controller" "controller,broker" .Values.controller.controllerOnly }}
+# Common Kafka Configuration
+{{ include "kafka.commonConfig" . }}
+{{- end -}}
+{{- end -}}
+
+{{- $replicaCount := int .Values.controller.replicaCount }}
+{{- if and (include "kafka.controller.createConfigmap" .) (gt $replicaCount 0) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-configuration" (include "kafka.controller.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    app.kubernetes.io/component: controller-eligible
+    app.kubernetes.io/part-of: kafka
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  {{- $configuration := include "kafka.controller.config" . | fromYaml -}}
+  {{- if or .Values.overrideConfiguration .Values.controller.overrideConfiguration }}
+  {{- $overrideConfiguration := include "common.tplvalues.render" (dict "value" .Values.overrideConfiguration "context" .) | fromYaml }}
+  {{- $controllerOverrideConfiguration := include "common.tplvalues.render" (dict "value" .Values.controller.overrideConfiguration "context" .) | fromYaml }}
+  {{- $configuration = mustMergeOverwrite $configuration $overrideConfiguration $controllerOverrideConfiguration }}
+  {{- end }}
+  server.properties: |-
+    {{- range $key, $value := $configuration }}
+    {{ $key }}={{ include "common.tplvalues.render" (dict "value" $value "context" $) }}
+    {{- end }}
+{{- end }}
