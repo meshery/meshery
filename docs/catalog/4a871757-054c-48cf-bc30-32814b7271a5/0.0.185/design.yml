@@ -2,7 +2,7 @@
   "id": "4a871757-054c-48cf-bc30-32814b7271a5",
   "name": "Hierarchiacal-Parent-Inventory Relationship",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.185",
+  "version": "0.0.191",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -175,7 +175,8 @@
         "shape": "rectangle",
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
         "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg"
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "z-index": 5
       },
       "capabilities": [],
       "status": "enabled",
@@ -188,7 +189,7 @@
         "published": false,
         "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
       },
-      "configuration": null,
+      "configuration": {},
       "component": {
         "version": "v1",
         "kind": "Namespace",
@@ -377,7 +378,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 180,
-        "z-index": 4
+        "z-index": 6
       },
       "capabilities": [],
       "status": "enabled",
@@ -453,7 +454,7 @@
         },
         "background-image": "none",
         "background-opacity": 0,
-        "body-text": "How can I replicate this design?",
+        "body-text": "How can I replicate this relationship?",
         "body-text-color": "#d0021b",
         "body-text-font-family": "Qanelas Soft",
         "body-text-font-size": 13,
@@ -467,7 +468,7 @@
         "data": {
           "label": ""
         },
-        "height": 16.138144,
+        "height": 18.138144,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -480,7 +481,7 @@
         "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
-        "width": 189.06836,
+        "width": 233.0786,
         "z-index": 2
       },
       "capabilities": [],
@@ -686,7 +687,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 382.91965,
-        "z-index": 2
+        "z-index": 7
       },
       "capabilities": [],
       "status": "enabled",
@@ -889,7 +890,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 35.44155,
-        "z-index": 3
+        "z-index": 8
       },
       "capabilities": [],
       "status": "enabled",
@@ -993,7 +994,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 242.67145,
-        "z-index": 2
+        "z-index": 9
       },
       "capabilities": [],
       "status": "enabled",
@@ -1018,6 +1019,9 @@
     "layers": {
       "expandedComponents": {
         "441b1ff4-03b1-464d-8e05-54b77a3f1475": true
+      },
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
       }
     }
   },
