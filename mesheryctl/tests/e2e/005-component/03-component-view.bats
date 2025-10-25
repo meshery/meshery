@@ -26,7 +26,6 @@ setup() {
   export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata/component-view"
 
   COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
-  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
 }
 
 teardown() {
@@ -34,6 +33,29 @@ teardown() {
     rm -f "$FILE_TO_CLEANUP"
     FILE_TO_CLEANUP=""
   fi
+}
+
+test_component_view_format() {
+    local format=$1
+    local -A validation_tool
+    validation_tool["json"]="jq"
+    validation_tool["yaml"]="yq"
+
+    if [[ -z "${validation_tool[$format]+_}" ]]; then
+        echo "Unsupported format: $format"
+        return 1
+    fi
+
+    local COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
+    FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
+
+    printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
+
+    assert_file_exist "${FILE_TO_CLEANUP}"
+    run bash -c "${validation_tool[$format]} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
+
+    assert_success
+    assert_output "true"
 }
 
 @test "view command fails with no arguments" {
@@ -62,25 +84,6 @@ See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage d
   assert_output "$expected_error"
 }
 
-test_component_view_format() {
-  local format=$1
-  local -A validation_tool
-
-  validation_tool["json"]="jq"
-  validation_tool["yaml"]="yq"
-  if [[ -n "${validation_tool[$format]+_}" ]]; the
-    echo "Unsupported format: $format"
-    return 1
-  fi
-
-  printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
-
-  run bash -c "${validation_tool[$format]} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
-
-  assert_success
-  assert_output "true"
-}
-
 @test "view command displays JSON output for a known component" {
     test_component_view_format "json"
 }
@@ -91,6 +94,7 @@ test_component_view_format() {
 
 test_view_save() {
   local format=$1
+  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
 
   local expected_success_message="Output saved as ${format} in file: ${FILE_TO_CLEANUP}"
   run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
