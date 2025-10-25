@@ -42,13 +42,13 @@ jobs:
       - name: Install dependencies
         run: |
           make ui-build
-      - name: Upload meshery-ui artifact
+      - name: upload meshery-ui artifact
         uses: actions/upload-artifact@v4
         with:
-          name: meshery-ui
+          name: meshery-ui-build
           path: ui/out/
-      - name: Upload provider-ui artifact
+      - name: upload Meshery-provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: provider-ui
+          name: meshery-provider-ui build
           path: provider-ui/out/
