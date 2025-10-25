@@ -46,7 +46,6 @@ test_component_view_format() {
         return 1
     fi
 
-    local COMPONENT_NAME=$($MESHERYCTL_BIN component list --page 1 --pagesize 1 | tail -n 1 | awk '{print $1}')
     FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
 
     printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
@@ -56,6 +55,19 @@ test_component_view_format() {
 
     assert_success
     assert_output "true"
+}
+
+test_view_save() {
+  local format=$1
+  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
+
+  local expected_success_message="Output saved as ${format} in file: ${FILE_TO_CLEANUP}"
+  run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
+
+  assert_success
+
+  assert_output "$expected_success_message" <<< "$sanitized_output"
+  assert_file_exist "$FILE_TO_CLEANUP"
 }
 
 @test "view command fails with no arguments" {
@@ -90,20 +102,6 @@ See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage d
 
 @test "view command displays YAML output for a known component" {
     test_component_view_format "yaml"
-}
-
-test_view_save() {
-  local format=$1
-  FILE_TO_CLEANUP="${HOME}/.meshery/component_${COMPONENT_NAME}.${format}"
-
-  local expected_success_message="Output saved as ${format} in file: ${FILE_TO_CLEANUP}"
-  run bash -c "printf '\n' | $MESHERYCTL_BIN component view \"${COMPONENT_NAME}\" -o ${format} --save"
-
-  assert_success
-
-  local sanitized_output=$(echo "$output" | sed 's/\x1B\[[0-9;]*[a-zA-Z]//g')
-  assert_output --partial "$expected_success_message" <<< "$sanitized_output"
-  assert_file_exist "$FILE_TO_CLEANUP"
 }
 
 @test "view command saves JSON output file" {
