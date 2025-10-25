@@ -64,20 +64,18 @@ See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage d
 
 test_component_view_format() {
   local format=$1
-  local validation_tool=""
+  local -A validation_tool
 
-  if [[ "$format" == "json" ]]; then
-    validation_tool="jq"
-  elif [[ "$format" == "yaml" ]]; then
-    validation_tool="yq"
-  else
+  validation_tool["json"]="jq"
+  validation_tool["yaml"]="yq"
+  if [[ -n "${validation_tool[$format]+_}" ]]; the
     echo "Unsupported format: $format"
     return 1
   fi
 
   printf '\n' | $MESHERYCTL_BIN component view "${COMPONENT_NAME}" -o "${format}" --save
 
-  run bash -c "${validation_tool} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
+  run bash -c "${validation_tool[$format]} -e \"$COMPONENT_REQUIRED_FIELDS\" \"${FILE_TO_CLEANUP}\""
 
   assert_success
   assert_output "true"
