@@ -30,7 +30,7 @@ setup() {
 }
 
 teardown() {
-  if [[ -n "$FILE_TO_CLEANUP" ]]; then
+  if [[ -f "$FILE_TO_CLEANUP" ]]; then
     rm -f "$FILE_TO_CLEANUP"
     FILE_TO_CLEANUP=""
   fi
