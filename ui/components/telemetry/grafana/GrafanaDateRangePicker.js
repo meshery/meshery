@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
 import {
   Button,
   TextField,
@@ -9,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  NoSsr,
   Divider,
   FormControlLabel,
   Switch,

@@ -7,9 +7,9 @@ import {
   ClickAwayListener,
   Fade,
   Popper,
+  NoSsr,
   styled,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
   makeChart,

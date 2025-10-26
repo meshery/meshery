@@ -5,14 +5,13 @@ import {
   dataValidatorMachine,
   selectIsValidating,
   selectValidationResults,
+  fromWorkerfiedActor,
 } from '@sistent/sistent';
 import { useSelector } from '@xstate/react';
 import { encodeDesignFile, processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
-
 import { componentKey } from './schemaValidator';
-import { fromWorkerfiedActor } from '@sistent/sistent';
 
 const DESIGN_VALIDATOR_COMMANDS = {
   VALIDATE_DESIGN_SCHEMA: 'VALIDATE_DESIGN_SCHEMA',
@@ -247,7 +246,7 @@ export const designValidationMachine = createMachine({
             validationPayload: {
               ...input.event.data,
               componentDef: def,
-              validationType:"schema",
+              validationType: 'schema',
               component: component,
             },
             returnAddress: input.event.returnAddress,
@@ -278,7 +277,7 @@ export const designValidationMachine = createMachine({
           return {
             validationPayload: {
               ...event.data,
-              validationType:"schema",
+              validationType: 'schema',
               componentDefs: def,
             },
             returnAddress: event.returnAddress,

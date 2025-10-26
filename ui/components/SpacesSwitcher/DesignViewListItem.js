@@ -9,6 +9,7 @@ import {
   AvatarGroup,
   FormControlLabel,
   Checkbox,
+  Grid2,
   FormGroup,
   Typography,
 } from '@sistent/sistent';
@@ -30,7 +31,6 @@ import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { Grid2 } from '@sistent/sistent';
 import { useGetIconBasedOnMode } from './hooks';
 
 const DesignViewListItem = ({

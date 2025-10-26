@@ -119,7 +119,7 @@ function FiltersCard_({
                   onChange={() => {}}
                   enabled={false}
                   options={[
-[VIEW_VISIBILITY.PUBLIC, PublicIcon],
+                    [VIEW_VISIBILITY.PUBLIC, PublicIcon],
                     [VIEW_VISIBILITY.PRIVATE, Lock],
                   ]}
                 />

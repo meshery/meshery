@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { NoSsr } from '@sistent/sistent';
 import {
   CustomTooltip,
   AppBar,
@@ -13,6 +12,7 @@ import {
   Grid2,
   LeftArrowIcon,
   PollIcon,
+  NoSsr,
   DatabaseIcon,
   MendeleyIcon,
   FileIcon,

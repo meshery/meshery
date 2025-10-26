@@ -5,6 +5,7 @@ import {
   TableCell,
   TableSortLabel,
   styled,
+  CustomColumnVisibilityControl,
   ResponsiveDataTable,
 } from '@sistent/sistent';
 import React, { useState } from 'react';
@@ -17,7 +18,6 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import { CustomColumnVisibilityControl } from '@sistent/sistent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,

@@ -5,7 +5,6 @@ import { Pagination, PaginationItem } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
-import { NoSsr } from '@sistent/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -26,6 +25,7 @@ import {
   createAndEditEnvironmentUiSchema,
   ErrorBoundary,
   Button,
+  NoSsr,
   Grid2,
   Typography,
   SearchBar,

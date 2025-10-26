@@ -4,8 +4,6 @@ import {
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
-} from '@sistent/sistent';
-import {
   Box,
   CustomColumnVisibilityControl,
   TeamsIcon,
@@ -49,10 +47,8 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { useEffect } from 'react';
-
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',

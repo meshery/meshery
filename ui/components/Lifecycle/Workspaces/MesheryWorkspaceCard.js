@@ -25,13 +25,10 @@ import {
   ViewIcon,
   WorkspaceCard,
 } from '@sistent/sistent';
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React , { useEffect, useState } from 'react';
 import { WORKSPACE_ACTION_TYPES } from '.';
 import { keys } from '@/utils/permission_constants';
-import { useTeamAssignment } from '@sistent/sistent';
-import { AssignmentModal } from '@sistent/sistent';
-
+import { useTeamAssignment, AssignmentModal } from '@sistent/sistent';
 const MesheryWorkspaceCard = ({
   workspaceDetails,
   handleWorkspaceModalOpen,

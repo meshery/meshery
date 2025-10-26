@@ -23,7 +23,7 @@ function getPath() {
  * @param {string} type
  * @param {Function} cb
  */
-export function getCapabilities(type, cb) {
+export function useCapabilities(type, cb) {
   const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
   getExtensionsByType(type)
     .unwrap()
@@ -44,7 +44,7 @@ export function getCapabilities(type, cb) {
  * capabilities and returns all the extensions names and URIs having full_page type as true
  * @param {Function} cb
  */
-export function getFullPageExtensions(cb) {
+export function useFullPageExtensions(cb) {
   const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
 
   getFullPageExtensions
