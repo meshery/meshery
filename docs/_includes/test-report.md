@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 22nd 2025, 5:29:29 pm
+- Testing started at: October 26th 2025, 11:50:12 pm
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
+- ✅ 86 passed
 - ❌ 1 failed
-- ⚠️ 1 flaked
+- ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 9 minutes and 7 seconds_
+⌛ _Duration: 8 minutes and 51 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,8 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
-| 2 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
+| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
 
 </div>
 </details>
