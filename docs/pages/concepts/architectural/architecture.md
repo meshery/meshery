@@ -95,8 +95,8 @@ See the [**Operator**]({{ site.baseurl }}/concepts/architecture/operator) sectio
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
