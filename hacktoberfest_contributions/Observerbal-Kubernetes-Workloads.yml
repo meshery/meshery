@@ -522,7 +522,7 @@ components:
               name: ""
             username:
               name: ""
-          host: <YOUR_API_SERVER_HOST_HERE>
+          host: https://payments.monitoring.svc:43
           tlsConfig:
             ca:
               configMap:
