@@ -27,8 +27,6 @@ components:
         kind: github
         status: registered
         user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-10-23T07:25:41.797794171Z"
-        updated_at: "2025-10-23T07:25:41.797794171Z"
         deleted_at: "0001-01-01T00:00:00Z"
         schemaVersion: ""
       connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
@@ -120,8 +118,6 @@ components:
         sub_type: ""
         kind: artifacthub
         status: registered
-        created_at: "2025-10-18T07:12:18.402858583Z"
-        updated_at: "2025-10-18T07:12:18.402858583Z"
         deleted_at: null
         schemaVersion: ""
       connection_id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
@@ -273,8 +269,6 @@ components:
         kind: github
         status: registered
         user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-10-23T07:25:41.797794171Z"
-        updated_at: "2025-10-23T07:25:41.797794171Z"
         deleted_at: "0001-01-01T00:00:00Z"
         schemaVersion: ""
       connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
@@ -349,8 +343,6 @@ components:
         kind: github
         status: registered
         user_id: 00000000-0000-0000-0000-000000000000
-        created_at: "2025-10-23T07:25:41.797794171Z"
-        updated_at: "2025-10-23T07:25:41.797794171Z"
         deleted_at: "0001-01-01T00:00:00Z"
         schemaVersion: ""
       connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
