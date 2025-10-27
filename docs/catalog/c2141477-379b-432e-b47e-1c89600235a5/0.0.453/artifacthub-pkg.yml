@@ -1,0 +1,24 @@
+version: 0.0.453
+name: meshery-certification-tracks
+displayName: Meshery Certification Tracks
+createdAt: "2025-10-03T16:17:09Z"
+description: This design outlines the tracks and tiers of Meshery's certification program.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c2141477-379b-432e-b47e-1c89600235a5/0.0.453/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "More information on the certification program can be found at https://meshery.io/community/recognition. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c2141477-379b-432e-b47e-1c89600235a5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c2141477-379b-432e-b47e-1c89600235a5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -18,12 +18,19 @@ env:
   PROVIDER: ""
   KEYS_PATH: "../../server/permissions/keys.csv"
   MESHERY_SERVER_CALLBACK_URL: ""
+
 probe:
-  #TODO: Need to confirm the health check path of meshery.
   livenessProbe:
-    enabled: false
+    enabled: true
+    initialDelaySeconds: 80
+    periodSeconds: 12
+    failureThreshold: 4
+
   readinessProbe:
-    enabled: false
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 4
+    failureThreshold: 4
 
 imagePullSecrets: []
 nameOverride: ""
