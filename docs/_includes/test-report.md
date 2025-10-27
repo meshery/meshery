@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 25th 2025, 11:51:45 pm
+- Testing started at: October 26th 2025, 11:50:12 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 13 seconds_
+⌛ _Duration: 8 minutes and 51 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,7 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
 
 </div>
 </details>
