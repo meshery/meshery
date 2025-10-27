@@ -427,8 +427,8 @@ components:
         sub_type: ""
         kind: artifacthub
         status: registered
-        created_at: "2025-10-18T07:12:18.402858583Z"
-        updated_at: "2025-10-18T07:12:18.402858583Z"
+        created_at: null
+        updated_at: null
         deleted_at: null
         schemaVersion: ""
       connection_id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
@@ -522,7 +522,7 @@ components:
               name: ""
             username:
               name: ""
-          host: https://payments.monitoring.svc:43
+          host: <YOUR_API_SERVER_HOST_HERE>
           tlsConfig:
             ca:
               configMap:
