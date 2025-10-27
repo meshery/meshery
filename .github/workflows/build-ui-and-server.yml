@@ -23,7 +23,8 @@ permissions: read-all
 jobs:
   ui-build:
     name: UI build
-    # if: github.repository == 'meshery/meshery'
+    ##if: github.repository == 'meshery/meshery'
+    if: always()
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -39,23 +40,30 @@ jobs:
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build
+      - name: Confirm UI build output exists
+        run: |
+          echo "Checking UI build output directory..."
+          ls -R /home/runner/work/meshery/meshery/ui || echo "UI folder missing!"
       - name: Upload meshery-ui artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: meshery-ui
           retention-days: 30
-          path: /home/runner/work/meshery/meshery/ui/out
+          path: ui/out
       - name: Upload provider-ui artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: provider-ui
           retention-days: 30
-          path: /home/runner/work/meshery/meshery/provider-ui/out
+          path: provider-ui/out
   tests-ui-e2e:
     needs: [ui-build]
     name: UI end-to-end tests
     environment: staging-playground
-    # if: github.repository == 'meshery/meshery'
+    ##if: github.repository == 'meshery/meshery'
+    if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -104,12 +112,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: meshery-ui
-          path: /home/runner/work/meshery/meshery/ui/out
+          path: ui/out
       - name: Download provider-ui artifacts
         uses: actions/download-artifact@v4
         with:
           name: provider-ui
-          path: /home/runner/work/meshery/meshery/provider-ui/out
+          path: provider-ui/out
       - name: Run Meshery UI and Server
         run: |
           make server &
@@ -151,7 +159,7 @@ jobs:
           retention-days: 14
   docker-build-test:
     name: Docker build
-    # if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -186,7 +194,7 @@ jobs:
           repository: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
-    # if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery'
     name: swagger-docs
     runs-on: ubuntu-24.04
     steps:
@@ -213,7 +221,7 @@ jobs:
   # validate graphQL schema
   graphql_validate:
     name: Validate GraphQL schema
-    # if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
