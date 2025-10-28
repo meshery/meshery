@@ -31,9 +31,15 @@ func InitMeshSyncRegistrationQueue() {
 }
 
 func GetMeshSyncRegistrationQueue() *MeshSyncRegistrationQueue {
+	if registrationQueue == nil {
+		InitMeshSyncRegistrationQueue()
+	}
 	return registrationQueue
 }
 
 func (mrq *MeshSyncRegistrationQueue) Send(data MeshSyncRegistrationData) {
+	if mrq == nil || mrq.RegChan == nil {
+		return
+	}
 	mrq.RegChan <- data
 }
