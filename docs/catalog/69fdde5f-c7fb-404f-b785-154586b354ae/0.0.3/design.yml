@@ -1,0 +1,2278 @@
+{
+  "id": "69fdde5f-c7fb-404f-b785-154586b354ae",
+  "name": "Design Annotation Patterns",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.5",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "3c8ca0d3-37cc-4f6d-a533-46e7ab7a8afa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 1022.519785205061,
+          "y": 610.7529650553049
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 486
+      },
+      "capabilities": [],
+      "status": "open",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "lastUpdated": "2025-09-03T11:19:32.142Z",
+        "userMessages": [
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "There are three different information box templates. You can choose the one that's right for you and copy it directly into your design.",
+            "timestamp": "2025-09-03T11:19:32.142Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          }
+        ]
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5ebad9bb-e874-40a8-9e98-bba58813c1b5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 1018.8200507245606,
+          "y": 205.32056567671987
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 485
+      },
+      "capabilities": [],
+      "status": "open",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "lastUpdated": "2025-09-03T11:22:39.519Z",
+        "userMessages": [
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "You can directly copy this component to use as your title section.",
+            "timestamp": "2025-09-03T11:12:38.550Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          },
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "The component is made up of three separate parts. To copy the entire component, click and drag with your mouse to select all three parts, then copy them together.👍",
+            "timestamp": "2025-09-03T11:22:39.519Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          }
+        ]
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9e9d99bf-2ec7-464b-bcd0-f3d282033b9a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "f8c7aac1-fb0e-2123-4b78-58dda082f562",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-arrows",
+        "displayName": "Meshery Arrows",
+        "description": "Icons that used for pointing out",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#2196F3",
+          "secondaryColor": "#00D3A9",
+          "shape": "polygon",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-arrows/color/meshery-arrows-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-arrows/white/meshery-arrows-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 30,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 977.9151102084486,
+          "y": 209.25542841233982
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-arrows/color/jumpinarrow-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-arrows/complete/jumpinarrow-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-arrows/white/jumpinarrow-white.svg",
+        "width": 30,
+        "z-index": 488
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "JumpInArrow",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a80400fe-856f-43ab-9df8-2c7511d347bf",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Double-click icon for usage notes.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 32.576538,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 943.5187742243486,
+          "y": 251.20791672517498
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 127.044075,
+        "z-index": 489
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5f991d9d-501f-4f00-ad4f-39a93ae50a8a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 159.92302,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1251.4497637240743,
+          "y": 313.9330602658767
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 411.4422,
+        "z-index": 477
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e834a449-2d40-46a3-b910-bd4dae5a6068",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 147.41501,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1253.147222151443,
+          "y": 643.258816292595
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 393.01,
+        "z-index": 475
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f2adb901-9c69-44ce-92cf-03aac1e98d15",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(0,180,216)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 136.13062,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1248.6755302293084,
+          "y": 898.2179817530882
+        },
+        "primaryColor": "rgb(0,180,216)",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 390.01,
+        "z-index": 476
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f94bab19-c4fb-4fa9-9728-21801ec8cc14",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(235,192,23)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 132.0495,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1243.578399176154,
+          "y": 1129.3018550901875
+        },
+        "primaryColor": "rgb(235,192,23)",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 387.83975,
+        "z-index": 0
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "03ea87c1-0afb-47fc-8d32-3d2059b240eb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provides neutral, objective facts or contextual information. It is unemotional and simply states \"what this is\" or \"what the situation is.\"\n\n\"This represents...\", \"The purpose is...\", \"You can...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1250.9785924760831,
+          "y": 687.5964044310176
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 2
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "23fecf48-7b2e-40f0-8173-3ed190fb2d5c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Alerts the user to a potential risk, an irreversible action, or a serious issue that could lead to errors. Its primary purpose is to prevent user mistakes.\n\n\"Be aware...\", \"This is permanent...\", \"Cannot be undone...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 108.40011,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1252.674711771504,
+          "y": 1173.1131947779913
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 390.71207,
+        "z-index": 478
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "2588a310-07cc-401f-b144-fdfa8dfaebfa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Title",
+        "body-text-color": "rgb(225,225,225)",
+        "body-text-font-size": 24,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1160.274166681006,
+          "y": 270.4239146909425
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 480
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "29323cdf-cbe9-479a-85ec-85061df59968",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "⚠️Warning:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 48.913437,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1162.2441229088163,
+          "y": 1095.8135283495112
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 213.50899,
+        "z-index": 483
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "3dc95f5e-cc18-4e30-abab-892761bf12c2",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "ℹ️ Info:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1168.6018219614089,
+          "y": 601.5056896131111
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 479
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5e28ea2d-7368-4e40-9b3d-7a6ca0a41378",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provides a helpful suggestion, shortcut, or best practice. Its purpose is to help users complete their work more efficiently and intelligently.\n\n\"You can quickly...\", \"A faster way is...\", \"Consider doing...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1255.7343993139052,
+          "y": 941.2163649818331
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 482
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9aebb599-619f-4e92-b4a0-16c6b559a7bf",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "💡 Tip:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1165.03285544532,
+          "y": 861.7405733717435
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 490
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a0eebe22-ab90-4398-b791-cc5ebde51592",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provide a brief description of the content.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1245.871330022809,
+          "y": 357.97427609403303
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 481
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": []
+}

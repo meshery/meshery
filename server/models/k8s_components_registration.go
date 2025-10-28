@@ -45,7 +45,7 @@ func (rs RegistrationStatus) String() string {
 	case NotRegistered:
 		return "not_registered"
 	case Registering:
-		return "registering"
+		return "register"
 	default:
 		return ""
 	}

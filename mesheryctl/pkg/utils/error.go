@@ -54,6 +54,7 @@ var (
 	ErrInvalidOrgIDCode           = "mesheryctl-1152"
 	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
 	ErrTableRenderCode            = "mesheryctl-1154"
+	ErrFlagsInvalidCode           = "mesheryctl-1155"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -161,6 +162,19 @@ func SystemModelSubError(msg string, cmd string) string {
 	}
 }
 
+func ComponentSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdComponentList)
+	case "view":
+		return formatError(msg, cmdComponentView)
+	case "search":
+		return formatError(msg, cmdComponentSearch)
+	default:
+		return formatError(msg, cmdComponent)
+	}
+}
+
 func EnvironmentSubError(msg string, cmd string) string {
 	switch cmd {
 	case "create":
@@ -179,11 +193,11 @@ func EnvironmentSubError(msg string, cmd string) string {
 func WorkspaceSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
-		return formatError(msg, cmdWorkspaceList)
+		return formatError(msg, cmdExpWorkspaceList)
 	case "create":
-		return formatError(msg, cmdWorkspaceCreate)
+		return formatError(msg, cmdExpWorkspaceCreate)
 	default:
-		return formatError(msg, cmdWorkspace)
+		return formatError(msg, cmdExpWorkspace)
 	}
 }
 
@@ -355,11 +369,11 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, environmentListURL)
 	case cmdEnvironmentView:
 		return formatUsageDetails(msg, environmentViewURL)
-	case cmdWorkspace:
+	case cmdExpWorkspace:
 		return formatUsageDetails(msg, workspaceUsageURL)
-	case cmdWorkspaceCreate:
+	case cmdExpWorkspaceCreate:
 		return formatUsageDetails(msg, workspaceCreateURL)
-	case cmdWorkspaceList:
+	case cmdExpWorkspaceList:
 		return formatUsageDetails(msg, workspaceListURL)
 	case cmdRelationshipView:
 		return formatUsageDetails(msg, relationshipViewURL)
@@ -711,4 +725,12 @@ func ErrTableRender(err error) error {
 		[]string{err.Error()},
 		[]string{"Table rendering issue"},
 		[]string{"Ensure the data being rendered is valid and properly structured."})
+}
+
+func ErrFlagsInvalid(msg string) error {
+	return errors.New(ErrFlagsInvalidCode, errors.Alert,
+		[]string{"Invalid flag provided"},
+		[]string{msg},
+		[]string{"The flag provided is invalid."},
+		[]string{"Provide a valid flag"})
 }

@@ -72,11 +72,14 @@ func main() {
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
 	}
-	// Initialize Logger instance
-	log, err := logger.New("meshery", logger.Options{
+	logOption := logger.Options{
 		Format:   logger.SyslogLogFormat,
 		LogLevel: logLevel,
-	})
+		// if debug, output caller
+		EnableCallerInfo: logLevel == int(logrus.DebugLevel),
+	}
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logOption)
 	if err != nil {
 		logrus.Error(err)
 		os.Exit(1)
@@ -350,7 +353,15 @@ func main() {
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
-	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	// this mctrlHelper is not used it is being recreated per connection entity
+	mctrlHelper := models.NewMesheryControllersHelper(
+		log,
+		operatorDeploymentConfig,
+		dbHandler,
+		hc.EventBroadcaster,
+		nil,
+		&instanceID,
+	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}

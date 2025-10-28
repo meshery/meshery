@@ -69,7 +69,7 @@ const RelationshipTree = ({
           </StyledTreeItem>
         );
       })}
-      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
+      <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );

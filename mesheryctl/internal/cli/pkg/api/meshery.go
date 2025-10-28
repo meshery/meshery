@@ -8,6 +8,8 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	mErrors "github.com/meshery/meshkit/errors"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -22,6 +24,10 @@ func Fetch[T any](url string) (*T, error) {
 
 func Delete(url string) (*http.Response, error) {
 	return makeRequest(url, http.MethodDelete, nil)
+}
+
+func Add(url string, body io.Reader) (*http.Response, error) {
+	return makeRequest(url, http.MethodPost, body)
 }
 
 func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
@@ -58,6 +64,11 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader) (*http.Respo
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
+		if meshkitErr, ok := err.(*mErrors.Error); ok {
+			if meshkitErr.Code == utils.ErrFailRequestCode {
+				return nil, utils.ErrFailRequest(errors.New("Request failed.\nEnsure meshery server is available."))
+			}
+		}
 		return nil, err
 	}
 

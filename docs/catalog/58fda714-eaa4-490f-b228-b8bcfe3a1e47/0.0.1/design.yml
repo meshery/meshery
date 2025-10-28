@@ -2,7 +2,7 @@
   "id": "58fda714-eaa4-490f-b228-b8bcfe3a1e47",
   "name": "Example Edge-Firewall Relationship",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.165",
+  "version": "0.0.166",
   "metadata": {
     "resolvedAliases": {}
   },

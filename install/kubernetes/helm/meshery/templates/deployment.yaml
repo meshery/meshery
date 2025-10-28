@@ -38,14 +38,20 @@ spec:
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz/live
               port: http
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.livenessProbe.failureThreshold }}
           {{- end }}
           {{- if .Values.probe.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz/ready
               port: http
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.readinessProbe.failureThreshold }}
           {{- end }}
           env:
           {{- if .Values.env }}
@@ -68,3 +74,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+

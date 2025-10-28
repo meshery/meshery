@@ -1,0 +1,1716 @@
+id: 1c593907-e468-4c04-9e68-30d41b8eb0b4
+name: keycloak-25.2.0
+schemaVersion: designs.meshery.io/v1beta1
+version: 0.0.2
+components:
+  - id: 92bf9792-3b1b-4c87-a5fc-46c72dcdc789
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 1035.99609375
+        y: 359.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+      spec:
+        egress:
+          - {}
+        ingress:
+          - ports:
+              - port: 5432
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/component: primary
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: postgresql
+        policyTypes:
+          - Ingress
+          - Egress
+    component:
+      version: networking.k8s.io/v1
+      kind: NetworkPolicy
+      schema: ""
+  - id: d52037cb-0d4c-474b-a900-cf614db51ec2
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 1035.99609375
+        y: 467.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+      spec:
+        egress:
+          - {}
+        ingress:
+          - ports:
+              - port: 8080
+              - port: 7800
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/component: keycloak
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: keycloak
+            app.kubernetes.io/part-of: keycloak
+        policyTypes:
+          - Ingress
+          - Egress
+    component:
+      version: networking.k8s.io/v1
+      kind: NetworkPolicy
+      schema: ""
+  - id: 16b80fa7-7f0d-4d1b-a160-27a9816fd4ae
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 819.99609375
+        y: 575.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: concave-hexagon
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+      spec:
+        maxUnavailable: 1
+        selector:
+          matchLabels:
+            app.kubernetes.io/component: primary
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: postgresql
+    component:
+      version: policy/v1
+      kind: PodDisruptionBudget
+      schema: ""
+  - id: c29a0cdf-29a1-4fec-9277-ca6a10b9beba
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 911.99609375
+        y: 575.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: concave-hexagon
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+      spec:
+        maxUnavailable: 1
+        selector:
+          matchLabels:
+            app.kubernetes.io/component: keycloak
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: keycloak
+            app.kubernetes.io/part-of: keycloak
+    component:
+      version: policy/v1
+      kind: PodDisruptionBudget
+      schema: ""
+  - id: 51ab7105-7aaa-4549-aec6-5358c234b0c2
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 1003.99609375
+        y: 575.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: bottom-round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      automountServiceAccountToken: false
+      metadata:
+        labels:
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+    component:
+      version: v1
+      kind: ServiceAccount
+      schema: ""
+  - id: ae0defe6-e02c-4947-a87f-d33e122589ce
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 1095.99609375
+        y: 575.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: bottom-round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      automountServiceAccountToken: true
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+    component:
+      version: v1
+      kind: ServiceAccount
+      schema: ""
+  - id: cea862cd-ec46-48ce-9074-7e6cbb51d5ce
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-clip: node
+      background-opacity: 0
+      height: 32
+      padding: 1
+      position:
+        x: 909.99609375
+        y: 665.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: shield
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg
+      width: 32
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      data:
+        password: eTMza083V0NWcQ==
+        postgres-password: SFpIN2lIWnRTaQ==
+      metadata:
+        labels:
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+      type: Opaque
+    component:
+      version: v1
+      kind: Secret
+      schema: ""
+  - id: e5624091-1860-4aed-bc60-faca69f6dc34
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-clip: node
+      background-opacity: 0
+      height: 32
+      padding: 1
+      position:
+        x: 997.99609375
+        y: 665.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: shield
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg
+      width: 32
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      data:
+        admin-password: cnVmZk03Uzl2Yg==
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+      type: Opaque
+    component:
+      version: v1
+      kind: Secret
+      schema: ""
+  - id: 8a2ff379-e027-45df-bfd0-13235e43c259
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-env-vars
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      position:
+        x: 819.99609375
+        y: 667.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: bottom-round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      data:
+        BITNAMI_DEBUG: "false"
+        JAVA_OPTS_APPEND: -Djgroups.dns.query=keycloak-headless.default.svc.cluster.local
+        KC_BOOTSTRAP_ADMIN_PASSWORD_FILE: /opt/bitnami/keycloak/secrets/admin-password
+        KC_BOOTSTRAP_ADMIN_USERNAME: user
+        KC_CACHE: ispn
+        KC_CACHE_CONFIG_FILE: cache-ispn.xml
+        KC_CACHE_STACK: jdbc-ping
+        KC_DB_PASSWORD_FILE: /opt/bitnami/keycloak/secrets/db-password
+        KC_DB_SCHEMA: public
+        KC_DB_URL: jdbc:postgresql://keycloak-postgresql:5432/bitnami_keycloak?currentSchema=public
+        KC_DB_USERNAME: bn_keycloak
+        KC_HTTP_ENABLED: "true"
+        KC_HTTP_MANAGEMENT_PORT: "9000"
+        KC_HTTP_PORT: "8080"
+        KC_HTTP_RELATIVE_PATH: /
+        KC_LOG_CONSOLE_OUTPUT: default
+        KC_LOG_LEVEL: INFO
+        KC_METRICS_ENABLED: "false"
+        KC_SPI_ADMIN_REALM: master
+        KEYCLOAK_PRODUCTION: "false"
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak-env-vars
+        namespace: default
+    component:
+      version: v1
+      kind: ConfigMap
+      schema: ""
+  - id: 6ce41a3d-5a5c-4c72-bcf7-251eab9fbf30
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql-hl
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-position-y: "4.5"
+      height: 20
+      padding: 12
+      position:
+        x: 827.99609375
+        y: 367.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-triangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+      width: 20
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        annotations: null
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql-hl
+        namespace: default
+      spec:
+        clusterIP: None
+        ports:
+          - name: tcp-postgresql
+            port: 5432
+            targetPort: tcp-postgresql
+        publishNotReadyAddresses: true
+        selector:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/name: postgresql
+        type: ClusterIP
+    component:
+      version: v1
+      kind: Service
+      schema: ""
+  - id: 19d962f3-a69a-45bb-826f-6de5f4dc286a
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-position-y: "4.5"
+      height: 20
+      padding: 12
+      position:
+        x: 935.99609375
+        y: 367.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-triangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+      width: 20
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+      spec:
+        ports:
+          - name: tcp-postgresql
+            nodePort: null
+            port: 5432
+            targetPort: tcp-postgresql
+        selector:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/name: postgresql
+        sessionAffinity: None
+        type: ClusterIP
+    component:
+      version: v1
+      kind: Service
+      schema: ""
+  - id: bb961f86-d119-41b7-93cf-e79ad3e34586
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-headless
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-position-y: "4.5"
+      height: 20
+      padding: 12
+      position:
+        x: 827.99609375
+        y: 475.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-triangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+      width: 20
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak-headless
+        namespace: default
+      spec:
+        clusterIP: None
+        ports:
+          - name: http
+            port: 8080
+            protocol: TCP
+            targetPort: http
+        publishNotReadyAddresses: true
+        selector:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+        type: ClusterIP
+    component:
+      version: v1
+      kind: Service
+      schema: ""
+  - id: cfa40389-9102-4d7c-adea-18a4356ec5ef
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-position-y: "4.5"
+      height: 20
+      padding: 12
+      position:
+        x: 935.99609375
+        y: 475.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-triangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+      width: 20
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+      spec:
+        ports:
+          - name: http
+            nodePort: null
+            port: 80
+            protocol: TCP
+            targetPort: http
+        selector:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+        sessionAffinity: None
+        type: ClusterIP
+    component:
+      version: v1
+      kind: Service
+      schema: ""
+  - id: 4fe845d4-9c92-472a-8ab9-59ea1175ffa0
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak-postgresql
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.2
+      height: 15
+      position:
+        x: 1080.99609375
+        y: 660.7548828125
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg
+      width: 15
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 17.6.0
+          helm.sh/chart: postgresql-16.7.26
+        name: keycloak-postgresql
+        namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app.kubernetes.io/component: primary
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: postgresql
+        serviceName: keycloak-postgresql-hl
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/component: primary
+              app.kubernetes.io/instance: keycloak
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: postgresql
+              app.kubernetes.io/version: 17.6.0
+              helm.sh/chart: postgresql-16.7.26
+            name: keycloak-postgresql
+          spec:
+            affinity:
+              nodeAffinity: null
+              podAffinity: null
+              podAntiAffinity:
+                preferredDuringSchedulingIgnoredDuringExecution:
+                  - podAffinityTerm:
+                      labelSelector:
+                        matchLabels:
+                          app.kubernetes.io/component: primary
+                          app.kubernetes.io/instance: keycloak
+                          app.kubernetes.io/name: postgresql
+                      topologyKey: kubernetes.io/hostname
+                    weight: 1
+            automountServiceAccountToken: false
+            containers:
+              - env:
+                  - name: BITNAMI_DEBUG
+                    value: "false"
+                  - name: POSTGRESQL_PORT_NUMBER
+                    value: "5432"
+                  - name: POSTGRESQL_VOLUME_DIR
+                    value: /bitnami/postgresql
+                  - name: PGDATA
+                    value: /bitnami/postgresql/data
+                  - name: POSTGRES_USER
+                    value: bn_keycloak
+                  - name: POSTGRES_PASSWORD_FILE
+                    value: /opt/bitnami/postgresql/secrets/password
+                  - name: POSTGRES_POSTGRES_PASSWORD_FILE
+                    value: /opt/bitnami/postgresql/secrets/postgres-password
+                  - name: POSTGRES_DATABASE
+                    value: bitnami_keycloak
+                  - name: POSTGRESQL_ENABLE_LDAP
+                    value: no
+                  - name: POSTGRESQL_ENABLE_TLS
+                    value: no
+                  - name: POSTGRESQL_LOG_HOSTNAME
+                    value: "false"
+                  - name: POSTGRESQL_LOG_CONNECTIONS
+                    value: "false"
+                  - name: POSTGRESQL_LOG_DISCONNECTIONS
+                    value: "false"
+                  - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+                    value: off
+                  - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+                    value: error
+                  - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+                    value: pgaudit
+                image: docker.io/bitnami/postgresql:17.6.0-debian-12-r0
+                imagePullPolicy: IfNotPresent
+                livenessProbe:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - exec pg_isready -U "bn_keycloak" -d "dbname=bitnami_keycloak" -h 127.0.0.1 -p 5432
+                  failureThreshold: 6
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 5
+                name: postgresql
+                ports:
+                  - containerPort: 5432
+                    name: tcp-postgresql
+                readinessProbe:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - -e
+                      - |
+                        exec pg_isready -U "bn_keycloak" -d "dbname=bitnami_keycloak" -h 127.0.0.1 -p 5432
+                        [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+                  failureThreshold: 6
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 5
+                resources:
+                  limits:
+                    cpu: 150m
+                    ephemeral-storage: 2Gi
+                    memory: 192Mi
+                  requests:
+                    cpu: 100m
+                    ephemeral-storage: 50Mi
+                    memory: 128Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsGroup: 1001
+                  runAsNonRoot: true
+                  runAsUser: 1001
+                  seLinuxOptions: {}
+                  seccompProfile:
+                    type: RuntimeDefault
+                volumeMounts:
+                  - mountPath: /tmp
+                    name: empty-dir
+                    subPath: tmp-dir
+                  - mountPath: /opt/bitnami/postgresql/conf
+                    name: empty-dir
+                    subPath: app-conf-dir
+                  - mountPath: /opt/bitnami/postgresql/tmp
+                    name: empty-dir
+                    subPath: app-tmp-dir
+                  - mountPath: /opt/bitnami/postgresql/secrets/
+                    name: postgresql-password
+                  - mountPath: /dev/shm
+                    name: dshm
+                  - mountPath: /bitnami/postgresql
+                    name: data
+            hostIPC: false
+            hostNetwork: false
+            securityContext:
+              fsGroup: 1001
+              fsGroupChangePolicy: Always
+              supplementalGroups: []
+              sysctls: []
+            serviceAccountName: keycloak-postgresql
+            volumes:
+              - emptyDir: {}
+                name: empty-dir
+              - name: postgresql-password
+                secret:
+                  secretName: keycloak-postgresql
+              - emptyDir:
+                  medium: Memory
+                name: dshm
+        updateStrategy:
+          rollingUpdate: {}
+          type: RollingUpdate
+        volumeClaimTemplates:
+          - apiVersion: v1
+            kind: PersistentVolumeClaim
+            metadata:
+              name: data
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 8Gi
+    component:
+      version: apps/v1
+      kind: StatefulSet
+      schema: ""
+  - id: 44b805ae-4847-477f-9fd2-8f7792a45024
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: keycloak
+    description: ""
+    format: ""
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-10-06T15:44:40.407150041Z"
+        updated_at: "2025-10-06T15:44:40.407150041Z"
+        deleted_at: "0001-01-01T00:00:00Z"
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: circle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0-alpha.3
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.2
+      height: 15
+      position:
+        x: 1120.99609375
+        y: 352.7548828125001
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg
+      svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg
+      width: 15
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      metadata:
+        labels:
+          app.kubernetes.io/component: keycloak
+          app.kubernetes.io/instance: keycloak
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: keycloak
+          app.kubernetes.io/part-of: keycloak
+          app.kubernetes.io/version: 26.3.3
+          helm.sh/chart: keycloak-25.2.0
+        name: keycloak
+        namespace: default
+      spec:
+        podManagementPolicy: Parallel
+        replicas: 1
+        revisionHistoryLimit: 10
+        selector:
+          matchLabels:
+            app.kubernetes.io/component: keycloak
+            app.kubernetes.io/instance: keycloak
+            app.kubernetes.io/name: keycloak
+            app.kubernetes.io/part-of: keycloak
+        serviceName: keycloak-headless
+        template:
+          metadata:
+            annotations:
+              checksum/configmap-env-vars: dea16a65b8381ece83f1a7620c1d06223640d9569a0415388b73053aaf60b684
+              checksum/secrets: c8dcdf94c41e23c239c827709365e69a2d46b0c4c07ea4863009f794825b76a5
+            labels:
+              app.kubernetes.io/component: keycloak
+              app.kubernetes.io/instance: keycloak
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: keycloak
+              app.kubernetes.io/part-of: keycloak
+              app.kubernetes.io/version: 26.3.3
+              helm.sh/chart: keycloak-25.2.0
+          spec:
+            affinity:
+              nodeAffinity: null
+              podAffinity: null
+              podAntiAffinity:
+                preferredDuringSchedulingIgnoredDuringExecution:
+                  - podAffinityTerm:
+                      labelSelector:
+                        matchLabels:
+                          app.kubernetes.io/component: keycloak
+                          app.kubernetes.io/instance: keycloak
+                          app.kubernetes.io/name: keycloak
+                      topologyKey: kubernetes.io/hostname
+                    weight: 1
+            automountServiceAccountToken: true
+            containers:
+              - env:
+                  - name: KUBERNETES_NAMESPACE
+                    valueFrom:
+                      fieldRef:
+                        apiVersion: v1
+                        fieldPath: metadata.namespace
+                envFrom:
+                  - configMapRef:
+                      name: keycloak-env-vars
+                image: docker.io/bitnami/keycloak:26.3.3-debian-12-r0
+                imagePullPolicy: IfNotPresent
+                livenessProbe:
+                  failureThreshold: 3
+                  initialDelaySeconds: 120
+                  periodSeconds: 1
+                  successThreshold: 1
+                  tcpSocket:
+                    port: http
+                  timeoutSeconds: 5
+                name: keycloak
+                ports:
+                  - containerPort: 8080
+                    name: http
+                    protocol: TCP
+                  - containerPort: 7800
+                    name: discovery
+                readinessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /realms/master
+                    port: http
+                    scheme: HTTP
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                resources:
+                  limits:
+                    cpu: 750m
+                    ephemeral-storage: 2Gi
+                    memory: 768Mi
+                  requests:
+                    cpu: 500m
+                    ephemeral-storage: 50Mi
+                    memory: 512Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsGroup: 1001
+                  runAsNonRoot: true
+                  runAsUser: 1001
+                  seLinuxOptions: {}
+                  seccompProfile:
+                    type: RuntimeDefault
+                volumeMounts:
+                  - mountPath: /tmp
+                    name: empty-dir
+                    subPath: tmp-dir
+                  - mountPath: /bitnami/keycloak
+                    name: empty-dir
+                    subPath: app-volume-dir
+                  - mountPath: /opt/bitnami/keycloak/conf
+                    name: empty-dir
+                    subPath: app-conf-dir
+                  - mountPath: /opt/bitnami/keycloak/lib/quarkus
+                    name: empty-dir
+                    subPath: app-quarkus-dir
+                  - mountPath: /opt/bitnami/keycloak/data
+                    name: empty-dir
+                    subPath: app-data-dir
+                  - mountPath: /opt/bitnami/keycloak/providers
+                    name: empty-dir
+                    subPath: app-providers-dir
+                  - mountPath: /opt/bitnami/keycloak/themes
+                    name: empty-dir
+                    subPath: app-themes-dir
+                  - mountPath: /opt/bitnami/keycloak/secrets
+                    name: keycloak-secrets
+            enableServiceLinks: true
+            initContainers:
+              - args:
+                  - -ec
+                  - |
+                    . /opt/bitnami/scripts/liblog.sh
+
+                    info "Copying writable dirs to empty dir"
+                    # In order to not break the application functionality we need to make some
+                    # directories writable, so we need to copy it to an empty dir volume
+                    cp -r --preserve=mode,timestamps /opt/bitnami/keycloak/lib/quarkus /emptydir/app-quarkus-dir
+                    cp -r --preserve=mode,timestamps /opt/bitnami/keycloak/data /emptydir/app-data-dir
+                    cp -r --preserve=mode,timestamps /opt/bitnami/keycloak/providers /emptydir/app-providers-dir
+                    cp -r --preserve=mode,timestamps /opt/bitnami/keycloak/themes /emptydir/app-themes-dir
+                    info "Copy operation completed"
+                command:
+                  - /bin/bash
+                image: docker.io/bitnami/keycloak:26.3.3-debian-12-r0
+                imagePullPolicy: IfNotPresent
+                name: prepare-write-dirs
+                resources:
+                  limits:
+                    cpu: 150m
+                    ephemeral-storage: 2Gi
+                    memory: 192Mi
+                  requests:
+                    cpu: 100m
+                    ephemeral-storage: 50Mi
+                    memory: 128Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsGroup: 1001
+                  runAsNonRoot: true
+                  runAsUser: 1001
+                  seLinuxOptions: {}
+                  seccompProfile:
+                    type: RuntimeDefault
+                volumeMounts:
+                  - mountPath: /emptydir
+                    name: empty-dir
+            securityContext:
+              fsGroup: 1001
+              fsGroupChangePolicy: Always
+              supplementalGroups: []
+              sysctls: []
+            serviceAccountName: keycloak
+            volumes:
+              - emptyDir: {}
+                name: empty-dir
+              - name: keycloak-secrets
+                projected:
+                  sources:
+                    - secret:
+                        name: keycloak
+                    - secret:
+                        items:
+                          - key: password
+                            path: db-password
+                        name: keycloak-postgresql
+        updateStrategy:
+          type: RollingUpdate
+    component:
+      version: apps/v1
+      kind: StatefulSet
+      schema: ""
+preferences:
+  layers:
+    relationships:
+      hierarchical-sibling-matchlabels: false
+relationships: []

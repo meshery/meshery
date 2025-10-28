@@ -18,10 +18,10 @@ BINNAME_DARWIN ?= mesheryctl-darwin-$(ARCH)
 BINNAME_LINUX ?= mesheryctl-linux-$(ARCH)
 BINNAME_WINDOWS ?= mesheryctl-windows-$(ARCH).exe
 
-BATS_LIB_PATH ?= "helpers/bats-libs"
+BATS_LIB_PATH ?= helpers/bats-libs
 BATS_FORMATTER ?= "pretty"
-BATS_FOLDER_PATTERN ?= "*-*"
-BATS_FILE_PATTERN ?= "*-*"
+BATS_FOLDER_PATTERN ?= *-*
+BATS_FILE_PATTERN ?= *-*
 BATS_TEMP_DATA_DIR ?= $(shell mktemp -d --suffix="-bats")
 
 # CLI
@@ -108,7 +108,7 @@ e2e: make e2e-libs
 
 .PHONY: e2e-no-build
 e2e-no-build: e2e-libs
-	@ echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
+	@echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
 	cd tests/e2e; \
 	BATS_LIB_PATH="$(shell pwd)/tests/e2e/$(BATS_LIB_PATH)" \
 	E2E_HELPERS_PATH=$(shell pwd)/tests/e2e/helpers \
