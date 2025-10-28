@@ -23,21 +23,21 @@ type MeshSyncRegistrationData struct {
 }
 
 func InitMeshSyncRegistrationQueue() {
-	once.Do(func() {
-		registrationQueue = &MeshSyncRegistrationQueue{
-			RegChan: make(chan MeshSyncRegistrationData, 10),
-		}
-	})
+	initQueue()
 }
 
 func GetMeshSyncRegistrationQueue() *MeshSyncRegistrationQueue {
-	// Ensure initialization using sync.Once for thread-safety
+	initQueue()
+	return registrationQueue
+}
+
+// initQueue initializes the registration queue exactly once using sync.Once
+func initQueue() {
 	once.Do(func() {
 		registrationQueue = &MeshSyncRegistrationQueue{
 			RegChan: make(chan MeshSyncRegistrationData, 10),
 		}
 	})
-	return registrationQueue
 }
 
 func (mrq *MeshSyncRegistrationQueue) Send(data MeshSyncRegistrationData) {
