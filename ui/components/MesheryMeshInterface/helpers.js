@@ -103,6 +103,22 @@ function jsonSchemaBuilder(schema, uiSchema) {
     for (let key in schema.properties) {
       uiSchema[key] = {};
 
+    // ID field readonly 
+    if (key === 'id') {
+    uiSchema[key]['ui:readonly'] = true;
+  }
+  
+    // SchemaVersion field readonly
+    if (key === 'schemaVersion') {
+    uiSchema[key]['ui:readonly'] = true;
+  }
+  
+    // Kind field dropdown to prevent hanging
+    if (key === 'kind') {
+    uiSchema[key]['ui:widget'] = 'select';
+    uiSchema[key]['ui:placeholder'] = 'Select kind';
+  }  
+
       // handle percentage for range widget
       if (
         (schema.properties?.[key]['type'] === 'number' ||
