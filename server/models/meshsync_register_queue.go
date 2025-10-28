@@ -31,9 +31,12 @@ func InitMeshSyncRegistrationQueue() {
 }
 
 func GetMeshSyncRegistrationQueue() *MeshSyncRegistrationQueue {
-	if registrationQueue == nil {
-		InitMeshSyncRegistrationQueue()
-	}
+	// Ensure initialization using sync.Once for thread-safety
+	once.Do(func() {
+		registrationQueue = &MeshSyncRegistrationQueue{
+			RegChan: make(chan MeshSyncRegistrationData, 10),
+		}
+	})
 	return registrationQueue
 }
 
