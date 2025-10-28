@@ -2,7 +2,7 @@
   "id": "71a28a89-6bf6-45c1-b6ad-d0dfb271d52f",
   "name": "Design Reviews",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.427",
+  "version": "0.0.451",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -175,8 +175,8 @@
         "opacity": 1,
         "padding": 2,
         "position": {
-          "x": 1016.6603524814091,
-          "y": 2221.4628416061287
+          "x": 1025.6777883571165,
+          "y": 2238.7462603679005
         },
         "primaryColor": "#FFDE00",
         "secondaryColor": "#FFDE00",
@@ -410,8 +410,8 @@
         "opacity": 1,
         "padding": 0,
         "position": {
-          "x": 845.3780745501188,
-          "y": 3891.4474065390536
+          "x": 1133.832314789439,
+          "y": 3909.829294397442
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -713,8 +713,8 @@
         "opacity": 1,
         "padding": 0,
         "position": {
-          "x": 908.967877218596,
-          "y": 3449.1716187759544
+          "x": 1197.422117457916,
+          "y": 3467.5535066343427
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -1117,8 +1117,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1243.3554703440325,
-          "y": 3872.27637045911
+          "x": 1531.8097105833526,
+          "y": 3890.658258317498
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1218,8 +1218,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 855.9513466713789,
-          "y": 3599.316548935108
+          "x": 1144.4055869106992,
+          "y": 3617.6984367934965
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1319,8 +1319,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1206.39536971985,
-          "y": 4041.8509272669257
+          "x": 1494.84960995917,
+          "y": 4060.232815125314
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1420,8 +1420,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1249.763227134985,
-          "y": 3705.674693894354
+          "x": 1538.2174673743052,
+          "y": 3724.056581752742
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1521,8 +1521,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 900.5404820280928,
-          "y": 4155.819608458742
+          "x": 788.8351635040415,
+          "y": 4073.8081087828564
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1549,6 +1549,168 @@
         "version": "core.meshery.io/v1alpha1",
         "kind": "TextBox",
         "schema": ""
+      }
+    },
+    {
+      "id": "03de0599-01b1-4cd8-bb56-31a12d98097b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-27T07:10:15.94220301Z",
+          "updated_at": "2025-10-27T07:10:15.94220301Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-image-opacity": 1,
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 0.3840319,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1119.9072693151552,
+          "y": 2001.0053635903016
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
+        "width": 1.3040736,
+        "z-index": 137
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": ""
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Circle",
+        "schema": "{}"
       }
     },
     {
@@ -1622,8 +1784,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 857.0702284972816,
-          "y": 3470.6802294845875
+          "x": 1145.5244687366016,
+          "y": 3489.062117342976
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -1784,8 +1946,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 984.5426408396654,
-          "y": 3914.9219418340194
+          "x": 1272.9968810789856,
+          "y": 3933.303829692408
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -1795,6 +1957,168 @@
         "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
         "width": 1.3040736,
         "z-index": 134
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": ""
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Circle",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "4b18f161-a3f3-4ed1-bf26-91c51e0b9773",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-27T07:10:15.94220301Z",
+          "updated_at": "2025-10-27T07:10:15.94220301Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-image-opacity": 1,
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 0.3840319,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1305.622204465493,
+          "y": 2030.647243351616
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
+        "width": 1.3040736,
+        "z-index": 138
       },
       "capabilities": [
         {
@@ -1946,8 +2270,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 900.4408329584182,
-          "y": 4053.4896824383595
+          "x": 1037.5979962094673,
+          "y": 4071.871570296748
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -2108,8 +2432,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 947.6980392916921,
-          "y": 3703.4659677325985
+          "x": 1236.1522795310123,
+          "y": 3721.847855590987
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -2119,6 +2443,168 @@
         "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
         "width": 1.3040736,
         "z-index": 135
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": ""
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Circle",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "cc13df8e-5a26-4e95-8756-dcf674c4a4c5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
+      "format": "JSON",
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-27T07:10:15.94220301Z",
+          "updated_at": "2025-10-27T07:10:15.94220301Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-image-opacity": 1,
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 0.3840319,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 839.1229470422394,
+          "y": 2014.0989330227173
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
+        "width": 1.3040736,
+        "z-index": 139
       },
       "capabilities": [
         {
@@ -2270,8 +2756,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 942.0912520996085,
-          "y": 3754.7280220602156
+          "x": 1230.5454923389286,
+          "y": 3773.109909918604
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -2353,492 +2839,6 @@
       "configuration": {
         "metadata": {
           "name": ""
-        }
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Circle",
-        "schema": "{}"
-      }
-    },
-    {
-      "id": "03de0599-01b1-4cd8-bb56-31a12d98097b",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "dot",
-      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
-      "format": "JSON",
-      "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-27T07:10:15.94220301Z",
-          "updated_at": "2025-10-27T07:10:15.94220301Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-image-opacity": 1,
-        "background-opacity": 1,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "solid",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 0.3840319,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 1119.9072693151552,
-          "y": 2001.0053635903016
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
-        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
-        "width": 1.3040736,
-        "z-index": 137
-      },
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Change the shape of the component",
-          "displayName": "Change Shape",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "shape",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Drag and Drop a component into a parent component in graph view",
-          "displayName": "Compound Drag And Drop",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "interaction",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "compoundDnd",
-          "type": "graph",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Add text to nodes body",
-          "displayName": "Body Text",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "body-text",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "metadata": {
-          "name": "dot"
-        }
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Circle",
-        "schema": "{}"
-      }
-    },
-    {
-      "id": "4b18f161-a3f3-4ed1-bf26-91c51e0b9773",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "dot",
-      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
-      "format": "JSON",
-      "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-27T07:10:15.94220301Z",
-          "updated_at": "2025-10-27T07:10:15.94220301Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-image-opacity": 1,
-        "background-opacity": 1,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "solid",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 0.3840319,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 1305.622204465493,
-          "y": 2030.647243351616
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
-        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
-        "width": 1.3040736,
-        "z-index": 138
-      },
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Change the shape of the component",
-          "displayName": "Change Shape",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "shape",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Drag and Drop a component into a parent component in graph view",
-          "displayName": "Compound Drag And Drop",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "interaction",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "compoundDnd",
-          "type": "graph",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Add text to nodes body",
-          "displayName": "Body Text",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "body-text",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "metadata": {
-          "name": "dot"
-        }
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Circle",
-        "schema": "{}"
-      }
-    },
-    {
-      "id": "cc13df8e-5a26-4e95-8756-dcf674c4a4c5",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "dot",
-      "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
-      "format": "JSON",
-      "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-27T07:10:15.94220301Z",
-          "updated_at": "2025-10-27T07:10:15.94220301Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-image-opacity": 1,
-        "background-opacity": 1,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "solid",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 0.3840319,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 839.1229470422394,
-          "y": 2014.0989330227173
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/circle-color.svg",
-        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/circle-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/circle-white.svg",
-        "width": 1.3040736,
-        "z-index": 139
-      },
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Change the shape of the component",
-          "displayName": "Change Shape",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "shape",
-          "type": "style",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Drag and Drop a component into a parent component in graph view",
-          "displayName": "Compound Drag And Drop",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "interaction",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "compoundDnd",
-          "type": "graph",
-          "version": "0.7.0"
-        },
-        {
-          "description": "Add text to nodes body",
-          "displayName": "Body Text",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "body-text",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "metadata": {
-          "name": "dot"
         }
       },
       "component": {
@@ -3386,8 +3386,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1368.9081009812394,
-          "y": 2216.882986440571
+          "x": 1371.162459950166,
+          "y": 2234.917858191986
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -3615,6 +3615,164 @@
       "metadata": {
         "configurationUISchema": "",
         "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": "{}"
+      }
+    },
+    {
+      "id": "421dc8bd-4b97-41fc-8141-5e8f3e022c2d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-27T07:10:15.94220301Z",
+          "updated_at": "2025-10-27T07:10:15.94220301Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "tap the comment to open the styling menu",
+        "body-text-color": "rgb(177,182,184)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 14,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(255,243,197)",
+        "border-style": "solid",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 21.834948,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1023.453802745246,
+          "y": 2104.93591771617
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 295.64578,
+        "z-index": 147
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
         "instanceDetails": null,
         "isAnnotation": true,
         "isNamespaced": false,
@@ -6934,6 +7092,164 @@
       "version": ""
     },
     {
+      "id": "65e69eca-573b-41bf-986d-c2371f85f41b",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "7eccf49a-0099-417b-a626-752500699079",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "421dc8bd-4b97-41fc-8141-5e8f3e022c2d",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
       "id": "67a9200c-c925-4b91-8de0-3f0266a63882",
       "evaluationQuery": null,
       "kind": "edge",
@@ -7043,6 +7359,164 @@
             "to": [
               {
                 "id": "7eccf49a-0099-417b-a626-752500699079",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "708768c0-d5c2-459d-a276-329fef157f5c",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "421dc8bd-4b97-41fc-8141-5e8f3e022c2d",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "ea89ee0a-9204-4124-b7d1-d43056b78cca",
                 "kind": "*",
                 "match": {},
                 "match_strategy_matrix": null,
@@ -8469,165 +8943,6 @@
             "to": [
               {
                 "id": "bf2c285c-079f-4e97-9c60-9c500cb55fd2",
-                "kind": "*",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": null
-              }
-            ]
-          }
-        }
-      ],
-      "subType": "annotation",
-      "status": "pending",
-      "type": "non-binding",
-      "version": ""
-    },
-    {
-      "id": "fca34868-bfd4-4a25-8d2b-5d89eb1ce8af",
-      "evaluationQuery": null,
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "styles": {
-          "label": "tap to open the styling menu",
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "7eccf49a-0099-417b-a626-752500699079",
-                "kind": "*",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "status": "",
-                  "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
-                  "model": {
-                    "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": null
-              }
-            ],
-            "to": [
-              {
-                "id": "ea89ee0a-9204-4124-b7d1-d43056b78cca",
                 "kind": "*",
                 "match": {},
                 "match_strategy_matrix": null,
