@@ -23,7 +23,7 @@ permissions: read-all
 jobs:
   ui-build:
     name: UI build
-    if: github.repository == 'meshery/meshery'
+   ## if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -60,7 +60,7 @@ jobs:
     needs: [ui-build]
     name: UI end-to-end tests
     environment: staging-playground
-    if: github.repository == 'meshery/meshery'
+   ## if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
