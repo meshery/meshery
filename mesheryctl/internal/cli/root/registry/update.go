@@ -113,7 +113,7 @@ func InvokeCompUpdate() error {
 		utils.Log.UpdateLogOutput(os.Stdout)
 
 		// Additionally log the summary to the terminal
-		utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+		utils.Log.Infof("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents)
 		utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
 
 		totalAggregateModel = 0
@@ -236,7 +236,7 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 	values := modelToCompUpdateTracker.GetAllPairs()
 	for key, val := range values {
 		for _, value := range val {
-			utils.Log.Info(fmt.Sprintf("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps))
+			utils.Log.Infof("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps)
 			totalAggregateComponents += value.totalCompsUpdated
 		}
 	}
