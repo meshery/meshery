@@ -360,7 +360,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		.Info()
+		log.Info("Provider reset to Meshery")
 		return nil
 	},
 }

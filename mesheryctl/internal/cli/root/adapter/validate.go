@@ -56,7 +56,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		.Info()
+		log.Info("Starting cloud and cloud native infrastructure validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
