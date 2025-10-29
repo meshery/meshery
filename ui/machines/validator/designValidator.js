@@ -247,6 +247,7 @@ export const designValidationMachine = createMachine({
             validationPayload: {
               ...input.event.data,
               componentDef: def,
+              validationType: 'schema',
               component: component,
             },
             returnAddress: input.event.returnAddress,
@@ -277,6 +278,7 @@ export const designValidationMachine = createMachine({
           return {
             validationPayload: {
               ...event.data,
+              validationType: 'schema',
               componentDefs: def,
             },
             returnAddress: event.returnAddress,
