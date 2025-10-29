@@ -132,7 +132,6 @@ jobs:
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.MESHERY_CI }}
         run: make test-e2e-ci
-
       - name: Save PR metadata
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
         run: |
