@@ -84,7 +84,6 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		.Info()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -101,7 +100,6 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		s.Stop()
 
 		if watch {
-			.Info()
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
 				utils.Log.Error(ErrWaitValidateResponse(err))

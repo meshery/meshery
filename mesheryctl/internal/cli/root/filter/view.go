@@ -16,7 +16,6 @@ package filter
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/url"
 	"strings"

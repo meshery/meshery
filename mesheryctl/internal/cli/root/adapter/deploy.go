@@ -81,7 +81,7 @@ mesheryctl adapter deploy linkerd --watch
 			s.Stop()
 
 			if watch {
-				.Info()
+				log.Info("Verifying prerequisites...")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
 					utils.Log.Error(err)
