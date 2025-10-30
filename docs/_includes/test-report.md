@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 27th 2025, 11:50:50 pm
+- Testing started at: October 29th 2025, 11:53:16 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
+- ✅ 89 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 2 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 13 seconds_
+⌛ _Duration: 9 minutes and 31 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -22,6 +22,7 @@
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
 | 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 2 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
