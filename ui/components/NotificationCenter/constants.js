@@ -70,6 +70,10 @@ export const EVENT_TYPE = {
     category: 'pattern',
     action: 'undeploy',
   },
+  VALIDATE_DESIGN: {
+    category: 'pattern',
+    action: 'validate',
+  },
   EVALUATE_DESIGN: {
     category: 'relationship',
     action: 'evaluation',
