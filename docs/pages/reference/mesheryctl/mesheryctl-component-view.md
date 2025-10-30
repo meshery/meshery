@@ -35,6 +35,22 @@ mesheryctl component view [component-name]
 </div>
 </pre> 
 
+View details of a specific component in specifed format 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component view [component-name] -o [json|yaml]
+
+</div>
+</pre> 
+
+View details of a specific component in specified format and save it as a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component view [component-name] -o [json|yaml] --save
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

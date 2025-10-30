@@ -52,14 +52,14 @@
         "from": [
           {
             "id": null,
-            "kind": "ENIConfig",
+            "kind": "SecurityGroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "aws-vpcresourcecontroller-controller",
+              "name": "aws-ec2-controller",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -102,14 +102,14 @@
         "to": [
           {
             "id": null,
-            "kind": "PolicyEndpoint",
+            "kind": "ENIConfig",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "aws-vpclattice-controller",
+              "name": "aws-vpc-cni",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -145,7 +145,7 @@
                 [
                   "configuration",
                   "spec",
-                  "eniConfigRef"
+                  "securityGroups"
                 ]
               ]
             }

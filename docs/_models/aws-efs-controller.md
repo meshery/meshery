@@ -38,7 +38,19 @@ relationships:
 - type: "Non Binding"
   kind: "Edge"
   description: "An edge relationship between accesspoint and filesystem"
-relationship-count: 2
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EC2 instances mount EFS file systems for shared storage across instances"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship Lambda can mount EFS for persistent storage and shared data"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship ECS tasks mount EFS volumes for persistent container storage"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EKS pods use EFS as PersistentVolumes via CSI driver"
+relationship-count: 6
 featureList: [
   "Scalable and elastic file storage",
   "Supports NFS and SMB protocols",
