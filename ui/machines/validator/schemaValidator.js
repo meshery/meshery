@@ -10,7 +10,7 @@ const ajv = new Ajv({
 });
 
 // dynamically add schemas to ajv to avoid recompiling the same schema and cache it
-const validateSchema  = (schema, data, id) => {
+const validateSchema = (schema, data, id) => {
   let validate = ajv.getSchema(id);
   if (!validate) {
     ajv.addSchema(schema, id);

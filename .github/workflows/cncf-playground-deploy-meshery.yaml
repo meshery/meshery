@@ -24,4 +24,7 @@ jobs:
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 kubectl -n meshery rollout restart deployment/playground
+                kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
 
+# Verify
+# kubectl get deployment playground -n meshery-o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image --no-headers
