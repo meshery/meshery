@@ -136,7 +136,9 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// hydrate pattern before processing to fill in any missing details
-	_ = patternHelpers.HydratePattern(&patternFile, h.registryManager)
+	if err := patternHelpers.HydratePattern(&patternFile, h.registryManager); err != nil {
+		h.log.Warn(errors.Wrap(err, "failed to hydrate pattern"))
+	}
 
 
 	if patternID == uuid.Nil {
