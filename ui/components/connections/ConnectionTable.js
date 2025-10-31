@@ -70,6 +70,7 @@ import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { ConnectionStateTransitionDialog } from './ConnectionStateTransitionDialog';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -128,6 +129,16 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef(null);
+
+  const [stateTransitionDialog, setStateTransitionDialog] = useState({
+    open: false,
+    connectionId: null,
+    connectionName: '',
+    connectionKind: '',
+    currentState: '',
+    newState: '',
+    isLoading: false,
+  });
 
   useEffect(() => {
     if (router.query.searchText) {
@@ -505,31 +516,29 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const kubernetesConnectionTransitions = {
     connected: {
       disconnected:
-        'Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered.',
+        'This will stop Meshery from actively managing the connection by removing the Operator, but your cluster will remain registered.',
       ignored:
-        'Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration.',
+        'This will stop Meshery from managing this connection. The connection will remain registered, but it will no longer be rediscovered or used.',
       deleted:
-        'Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely.',
+        'This will permanently remove the connection from Meshery along with any collected data. The connection will no longer be visible or accessible in the Meshery',
       'not found':
-        'Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering.',
+        'Meshery could not reach this connection. This usually happens if the resource was deleted, moved, or its credentials changed. You may need to re-register or delete the connection.',
     },
     disconnected: {
-      connected:
-        'Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance.',
+      connected: 'This will reconnect the cluster and redeploy the operator after maintenance.',
       deleted:
-        'Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering.',
+        'This will remove the cluster completely by undeploying the operator and unregistering.',
     },
     ignored: {
       deleted:
-        'Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering.',
+        'This will completely remove the ignored cluster by undeploying the operator and unregistering.',
       registered:
-        'Are you sure you want to transition from IGNORED to REGISTER? This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
+        'This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
     },
     'not found': {
       discovered:
-        'Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
-      deleted:
-        'Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it.',
+        'You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
+      deleted: 'This will remove the unreachable connection completely by unregistering it.',
     },
   };
 
@@ -550,21 +559,53 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
 
   const handleStatusChange = async (e, connectionId, connectionKind, connectionStatus) => {
     e.stopPropagation();
-    const status = e.target.value;
-    let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
-    let response = await modalRef.current.show({
-      title: `Transition connection to ${status.toUpperCase()}?`,
+    const newState = e.target.value;
+    let subtitle = getStatusTransition(connectionKind, connectionStatus, newState.toLowerCase());
+    setStateTransitionDialog({
+      open: true,
+      connectionId,
+      connectionKind,
+      currentState: connectionStatus,
+      newState,
       subtitle,
-      primaryOption: 'Confirm',
-      showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.WARNING,
+      isLoading: false,
     });
-    if (response === 'Confirm') {
+  };
+
+  const handleStateTransitionConfirm = () => {
+    setStateTransitionDialog((prev) => ({ ...prev, isLoading: true }));
+
       const requestBody = JSON.stringify({
-        [connectionId]: e.target.value,
+        [stateTransitionDialog.connectionId]: stateTransitionDialog.newState,
       });
-      UpdateConnectionStatus(connectionKind, requestBody);
-    }
+
+       UpdateConnectionStatus(stateTransitionDialog.connectionKind, requestBody);
+
+    setTimeout(() => {
+      setStateTransitionDialog({
+        open: false,
+        connectionId: null,
+        connectionName: '',
+        connectionKind: '',
+        currentState: '',
+        newState: '',
+        subtitle:'',
+        isLoading: false,
+      });
+    }, 1000);
+  };
+
+  const handleStateTransitionCancel = () => {
+    setStateTransitionDialog({
+      open: false,
+      connectionId: null,
+      connectionName: '',
+      connectionKind: '',
+      currentState: '',
+      newState: '',
+      subtitle:'',
+      isLoading: false,
+    });
   };
 
   const handleActionMenuOpen = (event, tableMeta) => {
@@ -1292,6 +1333,17 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           </Button>
         </ActionListItem>
       </Popover>
+
+      <ConnectionStateTransitionDialog
+        open={stateTransitionDialog.open}
+        onClose={handleStateTransitionCancel}
+        onConfirm={handleStateTransitionConfirm}
+        connectionKind={stateTransitionDialog.connectionKind}
+        currentState={stateTransitionDialog.currentState}
+        newState={stateTransitionDialog.newState}
+        subtitle={stateTransitionDialog.subtitle}
+        isLoading={stateTransitionDialog.isLoading}
+      />
     </>
   );
 };
