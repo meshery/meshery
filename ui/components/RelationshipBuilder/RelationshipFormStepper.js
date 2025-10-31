@@ -46,6 +46,8 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const filteredSchema = omit(RelationshipDefinitionV1Alpha3Schema, [
     'properties.capabilities',
     'properties.selectors',
+    'properties.id',
+    'properties.schemaVersion',
   ]);
   const selectorsSchema = pick(RelationshipDefinitionV1Alpha3Schema.properties, ['selectors']);
 
@@ -80,6 +82,13 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
     useMeshModelComponents();
 
   const handleFormChange = (formData) => {
+    // Always set the hardcoded ID and schemaVersion
+    formData = {
+      ...formData,
+      id: '00000000-0000-0000-0000-000000000000',
+      schemaVersion: 'relationships.meshery.io/v1alpha3',
+    };
+
     if (selectedModel && selectedCategory) {
       const modelData = models[selectedCategory]?.find((model) => model.name === selectedModel);
 

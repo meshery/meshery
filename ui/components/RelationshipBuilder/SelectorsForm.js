@@ -14,6 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@sistent/sistent';
+import { GlobalStyles } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
@@ -21,6 +22,26 @@ import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import omit from 'lodash/omit';
 
 const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
+  // -> added zIndex so dropdown appears above the modal (mui default zIndex:1300)
+  const globalStyles = (
+    <GlobalStyles
+      styles={{
+        '.react-select__menu': {
+          zIndex: 1500,
+        },
+        '.MuiAutocomplete-popper': {
+          zIndex: 1500,
+        },
+        '.MuiPopover-root': {
+          zIndex: 1500,
+        },
+        '.MuiMenu-paper': {
+          zIndex: 1500,
+        },
+      }}
+    />
+  );
+
   const [tabValue, setTabValue] = React.useState(0);
   const [selectorsData, setSelectorsData] = React.useState(
     formData?.selectors || {
@@ -225,6 +246,23 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                       <FormControl fullWidth>
                         <TextField
                           select={true}
+                          SelectProps={{
+                            MenuProps: {
+                              anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                              },
+                              style: { zIndex: 1500 },
+                              getContentAnchorEl: null,
+                            },
+                            renderValue: (selected) => {
+                              if (!selected || selected.length === 0) {
+                                return <em>Select Category</em>;
+                              }
+                              return selected;
+                            },
+                            displayEmpty: true,
+                          }}
                           label="Model Category"
                           value={currentCategory || ''}
                           onChange={(e) => handleCategoryChange(type, direction, index, e)}
@@ -249,6 +287,23 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                         <TextField
                           select={true}
                           disabled={!currentCategory}
+                          SelectProps={{
+                            MenuProps: {
+                              anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                              },
+                              style: { zIndex: 1500 },
+                              getContentAnchorEl: null,
+                            },
+                            renderValue: (selected) => {
+                              if (!selected || selected.length === 0) {
+                                return <em>Select Model</em>;
+                              }
+                              return selected;
+                            },
+                            displayEmpty: true,
+                          }}
                           label="Model Name"
                           value={currentModel || ''}
                           onChange={(e) => handleModelChange(type, direction, index, e)}
@@ -299,10 +354,12 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
   };
 
   return (
-    <div>
-      <Box display="flex" alignItems="center" mb={2}>
-        <Typography>Define allowed and denied relationships using selectors.</Typography>
-      </Box>
+    <>
+      {globalStyles}
+      <div>
+        <Box display="flex" alignItems="center" mb={2}>
+          <Typography>Define allowed and denied relationships using selectors.</Typography>
+        </Box>
 
       <Tabs
         value={tabValue}
@@ -328,7 +385,8 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
           {renderSelectorForm('deny', 'to')}
         </Box>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
