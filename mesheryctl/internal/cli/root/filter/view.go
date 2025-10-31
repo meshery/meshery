@@ -16,7 +16,6 @@ package filter
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/url"
 	"strings"
@@ -138,7 +137,7 @@ mesheryctl filter view "filter name"
 			// use the first match from the result when searching by filter name
 			arr := dat["filters"].([]interface{})
 			if len(arr) == 0 {
-				utils.Log.Info(fmt.Sprintf("filter with name: %s not found", filter))
+				utils.Log.Infof("filter with name: %s not found", filter)
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
