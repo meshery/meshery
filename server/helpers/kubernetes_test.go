@@ -33,7 +33,7 @@ func TestFetchKubernetesVersion(t *testing.T) {
 	var testContext = "nil"
 
 	_, err = FetchKubernetesVersion(testByte, testContext, log)
-	if err != nil {
-		t.Error("FetchKubernetesVersion() failed")
+	if err == nil {
+		t.Error("FetchKubernetesVersion() should have failed with invalid kubeconfig")
 	}
 }
