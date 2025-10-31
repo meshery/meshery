@@ -548,6 +548,26 @@ perf:
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
+    delete:
+      name: delete
+      description: Delete Performance profiles
+      usage: |
+        # Delete Performance profiles by name or delete all profiles
+        mesheryctl perf delete [profile-name] [flags]
+      example: |
+        # Delete a specific performance profile
+        mesheryctl perf delete any-profile
+        # Delete multiple profiles matching a pattern
+        mesheryctl perf delete some-profile-XXXXX
+        # Delete all performance profiles
+        mesheryctl perf delete --all
+      flags:
+        all:
+          name: --all
+          description: "(optional) Delete all performance profiles"
+          usage: mesheryctl perf delete --all
+          example: mesheryctl perf delete --all
+
 adapter:
   name: adapter
   description: Lifecycle management of cloud native infrastructure
