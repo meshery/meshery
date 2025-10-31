@@ -99,7 +99,7 @@ const MesherySettingsEnvButtons = () => {
       ignoredContexts.length == 0
     ) {
       notify({
-        message: `No reachable contexts found in the uploaded kube config "${inputFileName}". `,
+        message: `No reachable contexts found in the uploaded kube config "${inputFileName}". [[Troubleshooting Guide]](https://docs.meshery.io/guides/troubleshooting/out-of-cluster-connectivity).`,
         event_type: EVENT_TYPES.WARNING,
         showInNotificationCenter: true,
       });
