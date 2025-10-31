@@ -39,6 +39,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -541,28 +542,28 @@ type environmentsResponseWrapper struct {
 // swagger:response workspacesResponseWrapper
 type workspacesResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacePage
+	Body *workspace.WorkspacePage
 }
 
 // Returns workspace
 // swagger:response workspaceResponseWrapper
 type workspaceResponseWrapper struct {
 	// in: body
-	Body *models.Workspace
+	Body *workspace.Workspace
 }
 
 // Returns workspace designs mapping
 // swagger:response workspaceDesignsMappingResponseWrapper
 type workspaceDesignsMappingResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacesDesignsMapping
+	Body *workspace.WorkspacesDesignsMapping
 }
 
 // Returns workspace environments mapping
 // swagger:response workspaceEnvironmentsMappingResponseWrapper
 type workspaceEnvironmentsMappingResponseWrapper struct {
 	// in: body
-	Body *models.WorkspacesEnvironmentsMapping
+	Body *workspace.WorkspacesEnvironmentsMapping
 }
 
 // Returns event
