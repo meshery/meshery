@@ -1193,8 +1193,8 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
 			if comp.Model != nil {
-			comp.ModelReference = comp.Model.ToReference()
-		    }
+				comp.ModelReference = comp.Model.ToReference()
+			}
 
 			comps = append(comps, *comp)
 		}
