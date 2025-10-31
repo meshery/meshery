@@ -159,8 +159,10 @@ func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 ) (pattern.EvaluationResponse, error) {
 
-	// hydrade the design file components from the registry if needed
-	patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager)
+	// hydrate the design file components from the registry if needed
+	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
+		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	}
 	
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
