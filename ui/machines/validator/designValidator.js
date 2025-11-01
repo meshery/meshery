@@ -157,7 +157,7 @@ const getAllComponentsDefsInDesign = async (design) => {
   const componentDefs = (
     await Promise.allSettled(
       components.map(async (component) =>
-        getComponentDefinition(component.component.kind, component.model.name, {
+        getComponentDefinition(component.component.kind, component.modelReference.name, {
           apiVersion: component.component.version,
           annotations: 'include',
         }),
@@ -238,7 +238,7 @@ export const designValidationMachine = createMachine({
         src: fromPromise(async ({ input }) => {
           const { component } = input.event.data;
 
-          const def = await getComponentDefinition(component.component.kind, component.model.name, {
+          const def = await getComponentDefinition(component.component.kind, component.modelReference.name, {
             apiVersion: component.component.version,
             annotations: 'include',
           });

@@ -646,7 +646,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 					Kind:    filterCompDef.Component.Kind,
 					Version: filterCompDef.Component.Version,
 				},
-				Model: model.ModelDefinition{
+				Model: &model.ModelDefinition{
 					Name: filterCompDef.Model.Name,
 					Model: model.Model{
 						Version: filterCompDef.Model.Model.Version,

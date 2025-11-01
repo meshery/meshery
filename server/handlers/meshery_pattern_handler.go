@@ -31,6 +31,7 @@ import (
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/meshkit/models/events"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/models/oci"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/catalog"
@@ -201,6 +202,9 @@ func (h *Handler) handlePatternPOST(
 	if requestPayload.ID != nil {
 		eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
 	}
+
+	// Dehydrate the pattern before saving to the database to reduce size
+	meshkitPatternHelpers.DehydratePattern(&requestPayload.DesignFile)
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 

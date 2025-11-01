@@ -31,6 +31,8 @@ import (
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
@@ -132,6 +134,12 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// hydrate pattern before processing to fill in any missing details
+	if err := patternHelpers.HydratePattern(&patternFile, h.registryManager); err != nil {
+		h.log.Warn(errors.Wrap(err, "failed to hydrate pattern"))
+	}
+
 
 	if patternID == uuid.Nil {
 		patternID = patternFile.Id
