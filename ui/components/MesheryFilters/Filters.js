@@ -46,6 +46,7 @@ import {
   Divider,
   Typography,
   Button,
+  Modal as SistentModal,
   Box,
   styled,
   PROMPT_VARIANTS,

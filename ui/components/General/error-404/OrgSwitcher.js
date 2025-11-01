@@ -1,11 +1,10 @@
 //@ts-check
 import React, { useEffect } from 'react';
-import { NoSsr } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { ErrorBoundary, FormControl, FormGroup, MenuItem } from '@sistent/sistent';
+import {  FormControl, FormGroup, MenuItem, NoSsr, useTheme } from '@sistent/sistent';
 import {
   OrgName,
   StyledSelect,
@@ -15,7 +14,8 @@ import {
 } from './styles';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
-import { useTheme } from '@sistent/sistent';
+// @ts-ignore
+import { ErrorBoundary } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
@@ -26,6 +26,7 @@ const OrgSwitcher = () => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+  // @ts-ignore
   const { organization } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
@@ -45,6 +46,7 @@ const OrgSwitcher = () => {
   useEffect(() => {
     if (isOrgsError) {
       notify({
+        // @ts-ignore
         message: `There was an error fetching available data ${orgsError?.data}`,
         event_type: EVENT_TYPES.ERROR,
       });
@@ -71,6 +73,7 @@ const OrgSwitcher = () => {
           <FormGroup>
             <StyledFormControlLabel
               key="OrgSwitcher"
+              label=""
               control={
                 <StyledSelect
                   fullWidth

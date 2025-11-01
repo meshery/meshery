@@ -9,13 +9,13 @@ import {
   TextField,
   Toolbar,
   CustomTooltip,
+  NoSsr,
   styled,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
 import { getWebAdress } from '../../../utils/webApis';
@@ -23,9 +23,8 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, SaveAs as SaveAsIcon } from '@mui/icons-material';
 import TooltipButton from '../../../utils/TooltipButton';
-import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 

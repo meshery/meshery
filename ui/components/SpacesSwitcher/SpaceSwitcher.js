@@ -15,9 +15,9 @@ import {
   WorkspaceIcon,
   CircularProgress,
   CustomTooltip,
+  NoSsr,
   useMediaQuery,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';

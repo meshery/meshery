@@ -11,10 +11,10 @@ import {
   useMediaQuery,
   useTheme,
   Divider,
+  NoSsr,
   Button,
   Box,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';

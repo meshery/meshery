@@ -16,6 +16,7 @@ import {
   Button,
   FormControl,
   useTheme,
+  DeleteIcon,
   TableCell,
   TableRow,
   Popover,
@@ -27,7 +28,7 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
-import { FormatId } from '../DataFormatter';
+import { FormatId, formatDate } from '../DataFormatter';
 import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
@@ -45,7 +46,7 @@ import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
-import { getColumnValue } from '../../utils/utils';
+import { getColumnValue } from '../../utils';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import MultiSelectWrapper from '../multi-select-wrapper';
@@ -64,9 +65,6 @@ import {
 } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@sistent/sistent';
-
-import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -376,7 +374,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     setDeploymentModeAnchorEl(null);
   };
 
-  const handleDeploymentModeChange = async (newMode) => {
+  const usehandleDeploymentModeChange = async (newMode) => {
     const connection = filteredConnections[rowData.rowIndex];
 
     try {

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -8,6 +7,12 @@ import {
   SearchBar,
   UniversalFilter,
   TableCell,
+  Tooltip, 
+  Grid2, 
+  FormControl, 
+  MenuItem, 
+  Table, 
+  FormattedTime,
   TableRow,
 } from '@sistent/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
