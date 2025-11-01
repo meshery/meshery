@@ -122,3 +122,19 @@ export const UserInfoContainer = styled('div')(({ theme }) => ({
     gap: '0.3rem',
   },
 }));
+
+export const HoverIconWrapper = styled('div')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  padding: '0.3rem',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease-in-out',
+
+  '&:hover': {
+    backgroundColor:
+      theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+    transform: 'scale(1.05)',
+  },
+}));

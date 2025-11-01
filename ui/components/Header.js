@@ -17,6 +17,7 @@ import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
+import { HoverIconWrapper } from './Header.styles';
 
 import {
   Checkbox,
@@ -526,18 +527,18 @@ const Header = ({
                     />
                   </UserSpan>
                   <CustomTooltip title="Notifications">
-                    <div data-testid="notification-button">
+                    <HoverIconWrapper data-testid="notification-button">
                       <NotificationDrawerButton />
-                    </div>
+                    </HoverIconWrapper>
                   </CustomTooltip>
                   <CustomTooltip title={'User Profile'}>
-                    <UserSpan>
+                    <HoverIconWrapper>
                       <User />
-                    </UserSpan>
+                    </HoverIconWrapper>
                   </CustomTooltip>
-                  <UserSpan data-testid="header-menu">
+                  <HoverIconWrapper data-testid="header-menu">
                     <HeaderMenu />
-                  </UserSpan>
+                  </HoverIconWrapper>
                 </UserInfoContainer>
               </Box>
             </Grid2>
