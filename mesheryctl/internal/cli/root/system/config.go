@@ -53,7 +53,7 @@ func getContexts(configFile string) ([]string, error) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, utils.ErrRequestResponse(err)
+		return nil, utils.ErrMesheryServerConnect(err)
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -381,7 +381,7 @@ func setToken() {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		utils.Log.Error(err)
+		log.Fatalf(err.Error())
 	}
 	if len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))

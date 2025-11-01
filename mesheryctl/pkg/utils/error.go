@@ -55,6 +55,7 @@ var (
 	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
 	ErrTableRenderCode            = "mesheryctl-1154"
 	ErrFlagsInvalidCode           = "mesheryctl-1155"
+	ErrMesheryServerConnectCode   = "mesheryctl-1156"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -733,4 +734,12 @@ func ErrFlagsInvalid(msg string) error {
 		[]string{msg},
 		[]string{"The flag provided is invalid."},
 		[]string{"Provide a valid flag"})
+}
+
+func ErrMesheryServerConnect(err error) error {
+	return errors.New(ErrMesheryServerConnectCode, errors.Alert,
+		[]string{"Failed to connect to Meshery Server"},
+		[]string{"Unable to establish a connection to Meshery Server: " + err.Error()},
+		[]string{"The Meshery Server may be stopped or unreachable at the configured address."},
+		[]string{"Run `mesheryctl system status` to check the status of Meshery Server. If it is stopped, run `mesheryctl system start`."})
 }
