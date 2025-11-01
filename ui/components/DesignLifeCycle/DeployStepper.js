@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { ValidateDesign } from './ValidateDesign';
 import { DryRunDesign, getTotalCountOfDeploymentErrors } from './DryRun';
 import {
@@ -10,6 +10,9 @@ import {
   ModalButtonSecondary,
   Box,
   Typography,
+  styled,
+  useTheme,
+  EnvironmentIcon,
 } from '@sistent/sistent';
 import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
@@ -23,12 +26,7 @@ import {
   useIsValidatingDryRun,
 } from 'machines/validator/designValidator';
 import { useSelector } from 'react-redux';
-import { styled } from '@sistent/sistent';
-import { useTheme } from '@sistent/sistent';
-import { EnvironmentIcon } from '@sistent/sistent';
-import { useContext } from 'react';
 import { NotificationCenterContext } from '../NotificationCenter';
-import { useEffect } from 'react';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';

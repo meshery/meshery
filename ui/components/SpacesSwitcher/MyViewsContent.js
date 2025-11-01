@@ -1,10 +1,9 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { Box, Grid2, PromptComponent, useTheme } from '@sistent/sistent';
+import { Box, Grid2, PromptComponent, useTheme, StyledSearchBar } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
-import { StyledSearchBar } from '@sistent/sistent';
 import {
   MultiContentSelectToolbar,
   SortBySelect,

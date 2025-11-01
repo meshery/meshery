@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { NoSsr } from '@sistent/sistent';
 import {
   CustomTooltip,
   AppBar,
@@ -17,6 +16,7 @@ import {
   MendeleyIcon,
   FileIcon,
   useTheme,
+  NoSsr,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';

@@ -10,8 +10,7 @@ import {
   styled,
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
-import React from 'react';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';

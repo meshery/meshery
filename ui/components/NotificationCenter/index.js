@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -11,6 +10,9 @@ import {
   Checkbox,
   Collapse,
   IconButton,
+  CustomTooltip,
+  NoSsr,
+  ErrorBoundary,
 } from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
@@ -62,7 +64,6 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
 

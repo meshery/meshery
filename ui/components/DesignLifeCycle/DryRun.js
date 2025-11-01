@@ -1,7 +1,14 @@
-import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
+import React, { useRef, useEffect, useState } from 'react';
+import {
+  List,
+  ListItemText,
+  ListItemIcon,
+  Typography,
+  Collapse,
+  useTheme,
+  ErrorIcon,
+} from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
 import {
   designValidatorCommands,
@@ -9,7 +16,6 @@ import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from '../../machines/validator/designValidator';
-import { ErrorIcon } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { FormatStructuredData } from '../DataFormatter';
 import {
