@@ -86,6 +86,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       if (modelData) {
         formData = {
           ...formData,
+          id: "00000000-0000-0000-0000-000000000000",
           model: {
             ...formData.model,
             id: modelData.id,
