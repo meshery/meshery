@@ -66,7 +66,7 @@ test_view_save() {
 
   assert_success
 
-  assert_output --partial "$expected_success_message" <<< "$sanitized_output"
+  assert_output --partial "$expected_success_message"
   assert_file_exist "$FILE_TO_CLEANUP"
 }
 
