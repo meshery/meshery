@@ -251,9 +251,16 @@ export const selectAreAllEventsChecked = (state) => {
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
   const currentFilters = state.events.current_view?.filters || {};
-  const shouldBeInCurrentFilteredView = currentFilters.status
-    ? currentFilters.status == event.status
-    : true;
+  // When filtering by status, treat missing/undefined event.status as 'unread'
+  const shouldBeInCurrentFilteredView = (() => {
+    if (!currentFilters.status) return true;
+    // if filter is unread, match events that are explicitly unread or have no status set
+    if (currentFilters.status === STATUS.UNREAD) {
+      return event.status === STATUS.UNREAD || !event.status;
+    }
+    // otherwise require exact match
+    return currentFilters.status == event.status;
+  })();
   const isDeleted = event.is_deleted || false;
   return !isDeleted && shouldBeInCurrentFilteredView;
 };
