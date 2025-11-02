@@ -381,7 +381,7 @@ func setToken() {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatalf("%v", err.Error())
 	}
 	if len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
