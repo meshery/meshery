@@ -1,9 +1,5 @@
 import React, { useRef } from 'react';
-import {
-  Grid2,
-  Typography,
-  styled,
-} from '@sistent/sistent';
+import { Grid2, Typography, styled } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
