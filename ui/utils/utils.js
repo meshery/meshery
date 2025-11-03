@@ -1,12 +1,11 @@
 import { trueRandom } from '../lib/trueRandom';
-import jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@sistent/sistent';
-import {jsyaml, yaml} from 'js-yaml';
+import jsYaml, { yaml } from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
 import { useSelector } from 'react-redux';
@@ -375,7 +374,7 @@ export const ResizableCell = ({ value }) => (
 
 export const parseDesignFile = (designFile) => {
   try {
-    return jsyaml.load(designFile);
+    return jsYaml.load(designFile);
   } catch (e) {
     console.error('Error parsing design file', e);
     return null;
@@ -384,7 +383,7 @@ export const parseDesignFile = (designFile) => {
 
 export const encodeDesignFile = (designJson) => {
   try {
-    return jsyaml.dump(designJson);
+    return jsYaml.dump(designJson);
   } catch (e) {
     console.error('Error encoding design file', e);
     return null;
