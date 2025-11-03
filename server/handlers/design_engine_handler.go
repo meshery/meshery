@@ -136,8 +136,8 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// hydrate pattern before processing to fill in any missing details
-	if err := patternHelpers.HydratePattern(&patternFile, h.registryManager); err != nil {
-		h.log.Warn(errors.Wrap(err, "failed to hydrate pattern"))
+	if errs := patternHelpers.HydratePattern(&patternFile, h.registryManager); errs != nil {
+		h.log.Warnf("failed to hydrate pattern: %v", errs)
 	}
 
 
