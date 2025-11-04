@@ -52,3 +52,7 @@ The following points of extension are currently incorporated into Meshery.
             {% endif %}
     {% endfor %}
 </ul>
+
+## List of Extensions
+
+See [https://meshery.io/extensions](https://meshery.io/extensions) for a browsable collection of extensions of various types of Meshery extensions.
