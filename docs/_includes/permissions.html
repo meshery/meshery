@@ -58,6 +58,14 @@
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+        const colHeaders = jsonData[1];  
+        
+        const categoryIdx = colHeaders.indexOf("Category");
+        const functionIdx = colHeaders.indexOf("Function");
+        const featureIdx = colHeaders.indexOf("Feature");
+        const keyIdIdx = colHeaders.indexOf("Key ID");
+
+
         // Remove the first two rows
         jsonData.shift();
         jsonData.shift();
@@ -66,7 +74,7 @@
 
         const processedData = [];
         jsonData.forEach(row => {
-          const trimmedRow = [row[0], row[1], row[2], row[12]];
+          const trimmedRow = [row[categoryIdx], row[functionIdx], row[featureIdx], row[keyIdIdx]];
           processedData.push(trimmedRow);
         });
 
