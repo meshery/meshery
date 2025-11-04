@@ -22,6 +22,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -35,7 +37,6 @@ import (
 )
 
 func getContexts(configFile string) ([]string, error) {
-	client := &http.Client{}
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -51,9 +52,9 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, ErrUploadFileParams(err)
 	}
 
-	res, err := client.Do(req)
+	res, err := api.Add("api/system/kubernetes/contexts", req.Body)
 	if err != nil {
-		return nil, utils.ErrMesheryServerConnect(err)
+		return nil, err
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
