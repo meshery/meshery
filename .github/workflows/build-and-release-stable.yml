@@ -155,6 +155,7 @@ jobs:
           RELEASE_CHANNEL: "stable"
         with:
           version: 2
+          draft: true
           args: release --clean --skip=validate -f .github/.goreleaser.yml
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
