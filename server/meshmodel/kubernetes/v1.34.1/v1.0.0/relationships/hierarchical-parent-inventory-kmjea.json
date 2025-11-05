@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "edge",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "A PVC binds to a matching PV either dynamically (via a StorageClass) or statically (by explicitly matching fields like name, storage, and accessModes).\nThe PVC acts as an abstraction layer, allowing workloads to request storage without knowing the underlying volume details.\nOnce bound, the PV becomes \"claimed\" and is dedicated (or shared, depending on accessModes) for that PVC’s use.",
+    "description": "Namespace to namespaced components",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -12,38 +12,16 @@
     "isAnnotation": false
   },
   "model": {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "",
     "version": "",
     "name": "kubernetes",
     "displayName": "",
-    "status": "",
+    "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": "",
-      "type": "",
-      "sub_type": "",
-      "kind": "",
-      "status": "",
-      "created_at": "0001-01-01T00:00:00Z",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": null,
-      "schemaVersion": ""
+      "kind": ""
     },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "category": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": ""
-    },
-    "subCategory": "",
-    "metadata": null,
     "model": {
       "version": "v1.34.1"
-    },
-    "components_count": 0,
-    "relationships_count": 0,
-    "components": null,
-    "relationships": null
+    }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -52,57 +30,28 @@
         "from": [
           {
             "id": null,
-            "kind": "PersistentVolume",
+            "kind": "*",
             "match": {},
-            "match_strategy_matrix": [
-              [
-                "equal_as_strings",
-                "not_null"
-              ]
-            ],
+            "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
-              "name": "kubernetes",
+              "name": "*",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z",
-                "schemaVersion": ""
+                "kind": ""
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "metadata",
-                  "name"
+                  "namespace"
                 ]
               ]
             }
@@ -111,62 +60,80 @@
         "to": [
           {
             "id": null,
-            "kind": "PersistentVolumeClaim",
+            "kind": "Namespace",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z",
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "volumeName"
+                  "displayName"
                 ]
               ]
             }
           }
         ]
+      },
+      "deny": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Namespace",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Namespace",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ]
       }
     }
   ],
-  "subType": "reference",
+  "subType": "inventory",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "parent",
   "version": "v1.0.0"
 }

@@ -22,6 +22,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/meshery/meshkit/utils"
 )
@@ -158,6 +159,12 @@ func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 ) (pattern.EvaluationResponse, error) {
 
+	// hydrate the design file components from the registry if needed
+	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
+		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	}
+	
+
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
 
 	var lastEvaluationResponse pattern.EvaluationResponse
@@ -205,6 +212,10 @@ func (h *Handler) EvaluateDesign(
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+	
+	// dehydrate the design file components to remove unnecessary details
+	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+
 	return lastEvaluationResponse, nil
 }
 

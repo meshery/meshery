@@ -106,7 +106,22 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 14
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBinstance and subnet"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EC2 instances connect to RDS databases via VPC networking"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship Lambda functions query RDS databases for data operations"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship ECS containers connect to RDS for application databases"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EKS pods connect to RDS instances for stateful applications"
+relationship-count: 19
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",

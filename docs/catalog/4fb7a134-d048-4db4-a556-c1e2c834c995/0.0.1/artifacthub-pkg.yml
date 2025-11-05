@@ -1,0 +1,24 @@
+version: 0.0.1
+name: loxilb-0.1.0.tgz
+displayName: loxilb-0.1.0.tgz
+createdAt: "2025-10-08T17:10:53Z"
+description: LoxiLB is a high-performance, cloud-native load balancer designed for Kubernetes and container-based environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4fb7a134-d048-4db4-a556-c1e2c834c995/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires proper Kubernetes permissions (ClusterRole/ServiceAccount) for configuration.\n\nKernel bypass and DPDK optimizations may require specific hardware and kernel modules. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 184fb12c-97e1-40cf-a6ff-9bfaf2f3a0a9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4fb7a134-d048-4db4-a556-c1e2c834c995-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4fb7a134-d048-4db4-a556-c1e2c834c995-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
