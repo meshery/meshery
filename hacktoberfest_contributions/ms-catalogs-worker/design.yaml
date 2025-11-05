@@ -1,0 +1,12 @@
+name: ms-catalogs-worker-design
+services:
+  ms-catalogs-worker:
+    type: Helm Chart
+    apiVersion: v1
+    namespace: default
+    metadata:
+      name: ms-catalogs-worker-chart
+    spec:
+      chart: ms-catalogs-worker
+      repo: https://codedesignplus.github.io/helm-charts
+      version: 0.0.4

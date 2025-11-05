@@ -35,10 +35,18 @@ mesheryctl component list
 </div>
 </pre> 
 
-View list of components with specified page number (25 components per page)
+View list of components with specified page number (10 components per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component list --page [page-number]
+
+</div>
+</pre> 
+
+View list of components with specified page number with specified number of components per page
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component list --page [page-number] --pagesize [page-size]
 
 </div>
 </pre> 
@@ -58,7 +66,7 @@ mesheryctl component list --count
   -c, --count          (optional) Display count only
   -h, --help           help for list
   -p, --page int       (optional) List next set of components with --page (default = 1) (default 1)
-  -s, --pagesize int   (optional) List next set of components with --pagesize (default = 0)
+  -s, --pagesize int   (optional) List next set of components with --pagesize (default = 10) (default 10)
 
 </div>
 </pre>
