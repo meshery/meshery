@@ -238,10 +238,14 @@ export const designValidationMachine = createMachine({
         src: fromPromise(async ({ input }) => {
           const { component } = input.event.data;
 
-          const def = await getComponentDefinition(component.component.kind, component.modelReference.name, {
-            apiVersion: component.component.version,
-            annotations: 'include',
-          });
+          const def = await getComponentDefinition(
+            component.component.kind,
+            component.modelReference.name,
+            {
+              apiVersion: component.component.version,
+              annotations: 'include',
+            },
+          );
 
           return {
             validationPayload: {
