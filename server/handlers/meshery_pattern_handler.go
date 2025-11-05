@@ -31,8 +31,8 @@ import (
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/meshkit/models/events"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
-	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/models/oci"
+	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/catalog"
 
@@ -741,6 +741,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		return
 	}
+
+	// publish a download event
+	downloadEvent := events.DesignDownloadEvent(*pattern.ID, pattern.Name, userID, *h.SystemID)
+	_ = provider.PersistEvent(*downloadEvent, nil)
+	go h.config.EventBroadcaster.Publish(userID, downloadEvent)
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
