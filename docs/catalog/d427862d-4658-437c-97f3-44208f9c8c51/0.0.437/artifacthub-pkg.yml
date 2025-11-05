@@ -1,0 +1,24 @@
+version: 0.0.437
+name: mattermost-server-scaling-for-azure-design
+displayName: Mattermost Server Scaling for Azure design
+createdAt: "2025-10-29T09:23:27Z"
+description: This design shows a scalable Mattermost server deployment on Microsoft Azure, where client requests are routed through an Azure Load Balancer to multiple application servers running on Azure Kubernetes Service. The system uses Azure Database for PostgreSQL for data storage and Azure Blob Storage for file management, ensuring performance, scalability, and secure communication via VPN and virtual network gateways.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d427862d-4658-437c-97f3-44208f9c8c51/0.0.437/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design requires careful management of Azure Load Balancer and AKS scaling to maintain performance during high traffic. Network latency and VPN configuration must be optimized for secure and reliable connectivity. Monitoring database performance, managing Blob storage costs, and ensuring proper role-based access control are key for maintaining security, efficiency, and scalability. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d427862d-4658-437c-97f3-44208f9c8c51-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d427862d-4658-437c-97f3-44208f9c8c51-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
