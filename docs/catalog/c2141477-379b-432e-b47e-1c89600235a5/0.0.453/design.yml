@@ -2,7 +2,7 @@
   "id": "c2141477-379b-432e-b47e-1c89600235a5",
   "name": "Meshery Certification Tracks",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.477",
+  "version": "0.0.478",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -14,48 +14,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -90,7 +59,7 @@
         "width": 52,
         "z-index": 46
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -115,48 +84,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -191,7 +129,7 @@
         "width": 52,
         "z-index": 45
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -216,48 +154,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-13T20:05:43.083776833Z",
-          "updated_at": "2025-10-13T20:05:43.083776833Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -292,7 +199,7 @@
         "width": 56.258537,
         "z-index": 55
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -317,48 +224,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-13T20:05:43.083776833Z",
-          "updated_at": "2025-10-13T20:05:43.083776833Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -393,7 +269,7 @@
         "width": 52,
         "z-index": 56
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -418,48 +294,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-13T20:05:43.083776833Z",
-          "updated_at": "2025-10-13T20:05:43.083776833Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -494,7 +339,7 @@
         "width": 52,
         "z-index": 49
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -519,48 +364,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-13T20:05:43.083776833Z",
-          "updated_at": "2025-10-13T20:05:43.083776833Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -595,7 +409,7 @@
         "width": 52,
         "z-index": 48
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -620,48 +434,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-10-13T20:05:43.083776833Z",
-          "updated_at": "2025-10-13T20:05:43.083776833Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-fit": "cover",
@@ -696,7 +479,7 @@
         "width": 52,
         "z-index": 54
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -721,48 +504,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -798,7 +550,7 @@
         "width": 116.44651,
         "z-index": 1
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -823,48 +575,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -899,7 +620,7 @@
         "width": 162.83257,
         "z-index": 3
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -924,48 +645,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1001,7 +691,7 @@
         "width": 116.44651,
         "z-index": 6
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1026,48 +716,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1102,7 +761,7 @@
         "width": 179.0886,
         "z-index": 4
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1127,48 +786,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1205,7 +833,7 @@
         "width": 183,
         "z-index": 5
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1230,48 +858,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1306,7 +903,7 @@
         "width": 185.33336,
         "z-index": 7
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1331,48 +928,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1407,7 +973,7 @@
         "width": 179.0886,
         "z-index": 8
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1432,48 +998,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1509,7 +1044,7 @@
         "width": 116.44651,
         "z-index": 10
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1534,48 +1069,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1611,7 +1115,7 @@
         "width": 116.44651,
         "z-index": 11
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1636,48 +1140,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1712,7 +1185,7 @@
         "width": 162.83257,
         "z-index": 12
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1737,48 +1210,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1813,7 +1255,7 @@
         "width": 162.83257,
         "z-index": 13
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1838,48 +1280,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -1914,7 +1325,7 @@
         "width": 179.0886,
         "z-index": 14
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -1939,48 +1350,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2015,7 +1395,7 @@
         "width": 186.91832,
         "z-index": 15
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2040,48 +1420,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2116,7 +1465,7 @@
         "width": 195.33336,
         "z-index": 16
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2141,48 +1490,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2218,7 +1536,7 @@
         "width": 116.44651,
         "z-index": 17
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2243,48 +1561,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2320,7 +1607,7 @@
         "width": 116.44651,
         "z-index": 18
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2345,48 +1632,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2423,7 +1679,7 @@
         "width": 192.29445,
         "z-index": 19
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2448,48 +1704,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2525,7 +1750,7 @@
         "width": 116.44651,
         "z-index": 20
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2550,48 +1775,17 @@
       "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-09-30T07:34:34.011768408Z",
-          "updated_at": "2025-09-30T07:34:34.011768408Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-image": "none",
@@ -2626,7 +1820,7 @@
         "width": 185.33336,
         "z-index": 57
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -2671,47 +1865,16 @@
         "isAnnotation": false
       },
       "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "meshery-shapes",
         "displayName": "Meshery Shapes",
-        "status": "enabled",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
         "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+          "kind": ""
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "schemaVersion": "",
       "selectors": [
@@ -2724,38 +1887,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -2767,38 +1908,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -2829,47 +1948,16 @@
         "isAnnotation": false
       },
       "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "meshery-shapes",
         "displayName": "Meshery Shapes",
-        "status": "enabled",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
         "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+          "kind": ""
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "schemaVersion": "",
       "selectors": [
@@ -2882,38 +1970,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -2925,38 +1991,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -2987,47 +2031,16 @@
         "isAnnotation": false
       },
       "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "meshery-shapes",
         "displayName": "Meshery Shapes",
-        "status": "enabled",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
         "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+          "kind": ""
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "schemaVersion": "",
       "selectors": [
@@ -3040,38 +2053,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -3083,38 +2074,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -3146,47 +2115,16 @@
         "isAnnotation": false
       },
       "model": {
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "meshery-shapes",
         "displayName": "Meshery Shapes",
-        "status": "enabled",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
         "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": true,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+          "kind": ""
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "schemaVersion": "",
       "selectors": [
@@ -3199,38 +2137,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
@@ -3242,38 +2158,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "*",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "",
-                    "status": "",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": null,
-                    "schemaVersion": ""
+                    "kind": ""
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": null
               }
