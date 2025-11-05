@@ -16,6 +16,7 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
 import RegistryModal from './Registry/RegistryModal';
 
 import {
@@ -380,9 +381,9 @@ function K8sContextMenu({
                           </>
                           <span style={{ fontWeight: 'bolder' }}>select all</span>
                         </div>
-                                                  <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
-                              <SettingsIcon style={{ ...iconSmall }} />
-                            </IconButton>
+                        <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                          <SettingsIcon style={{ ...iconSmall }} />
+                        </IconButton>
                       </div>
                     )}
                     {contexts?.contexts?.map((ctx) => {
@@ -431,7 +432,7 @@ const Header = ({
   // eslint-disable-next-line no-unused-vars
   abilityUpdated,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -462,11 +463,10 @@ const Header = ({
             <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
                 <Grid2 style={{ display: 'none' }}>
-
-<MenuIconButton aria-label="Open drawer" onClick={onDrawerTrigger}>
-  <HeaderIcons style={iconMedium} />
-  <MenuIcon />
-</MenuIconButton>
+                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                    <HeaderIcons style={iconMedium} />
+                    <MenuIcon />
+                  </MenuIconButton>
                 </Grid2>
               </Hidden>
               <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
@@ -525,44 +525,44 @@ const Header = ({
                   </UserSpan>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
-                     <NotificationDrawerButton
-   sx={{
-    transition: 'all 0.2s ease-in-out',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      transform: 'scale(1.05)',
-    }
-  }}
-/>
+                      <NotificationDrawerButton
+                        sx={{
+                          transition: 'all 0.2s ease-in-out',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            transform: 'scale(1.05)',
+                          },
+                        }}
+                      />
                     </div>
                   </CustomTooltip>
                   <CustomTooltip title={'User Profile'}>
                     <UserSpan
-    sx={{
-    display: 'inline-flex',
-    borderRadius: '4px',
-    transition: 'all 0.2s ease-in-out',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      transform: 'scale(1.05)',
-    }
-  }}
->
+                      sx={{
+                        display: 'inline-flex',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          transform: 'scale(1.05)',
+                        },
+                      }}
+                    >
                       <User />
                     </UserSpan>
                   </CustomTooltip>
                   <UserSpan data-testid="header-menu">
                     <HeaderMenu
-  sx={{
-    display: 'inline-flex',
-    borderRadius: '4px',
-    transition: 'all 0.2s ease-in-out',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      transform: 'scale(1.05)',
-    }
-  }}
-/>
+                      sx={{
+                        display: 'inline-flex',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          transform: 'scale(1.05)',
+                        },
+                      }}
+                    />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
