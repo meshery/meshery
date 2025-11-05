@@ -6,7 +6,7 @@
 | [Aadhitya Amarendiran](https://meshery.io/community/members/aadhitya-amarendiran)    | @alphaX86          | Citi        |
 | [Jerod Culpepper](https://meshery.io/community/members/jerod-culpepper)         | @cpepper96         | SAIC        |
 | [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)      | @acald-creator     | Acquia      |
-| [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Moneris     |
+| [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Individual     |
 
 ### UI Maintainers
 
