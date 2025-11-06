@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "PodDisruptionBudget",
+            "kind": "Deployment",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -47,12 +47,10 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
+                  "metadata",
+                  "labels"
                 ]
               ]
             }
