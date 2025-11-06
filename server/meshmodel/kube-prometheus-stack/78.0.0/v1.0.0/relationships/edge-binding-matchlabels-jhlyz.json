@@ -24,8 +24,8 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "subType": "matchlabels",
+  "subType": "reference",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

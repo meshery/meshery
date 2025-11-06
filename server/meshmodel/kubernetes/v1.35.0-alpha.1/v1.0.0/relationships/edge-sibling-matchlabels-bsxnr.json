@@ -90,8 +90,8 @@
       }
     }
   ],
-  "subType": "matchlabels",
+  "subType": "reference",
   "status": "enabled",
-  "type": "sibling",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
