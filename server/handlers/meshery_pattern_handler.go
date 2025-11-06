@@ -742,6 +742,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
+	// publish a download event
+	downloadEvent := events.DesignDownloadEvent(*pattern.ID, pattern.Name, userID, *h.SystemID)
+	_ = provider.PersistEvent(*downloadEvent, nil)
+	go h.config.EventBroadcaster.Publish(userID, downloadEvent)
+
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
 		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()

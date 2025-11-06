@@ -1,0 +1,716 @@
+id: 5a9e3c7d-4b2f-4a8c-9d1e-7f6a8b3c4d5e
+name: KubeVela Architecture
+schemaVersion: designs.meshery.io/v1beta1
+version: 0.0.1
+metadata:
+  resolvedAliases: {}
+components:
+  - id: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: KubeVela Application
+    description: The main Application resource that defines the entire application deployment
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/application-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/application-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 400
+        y: 200
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: round-rectangle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/application-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/application-white.svg
+      width: 30
+      z-index: 10
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: Application
+      metadata:
+        name: vela-app
+        namespace: default
+    component:
+      version: core.oam.dev/v1beta1
+      kind: Application
+      schema: ""
+  - id: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Component Definition
+    description: Defines reusable workload types and their schemas
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/componentdefinition-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/componentdefinition-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 300
+        y: 300
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/componentdefinition-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/componentdefinition-white.svg
+      width: 30
+      z-index: 8
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: ComponentDefinition
+      metadata:
+        name: webservice
+        namespace: vela-system
+    component:
+      version: core.oam.dev/v1beta1
+      kind: ComponentDefinition
+      schema: ""
+  - id: 3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Trait Definition
+    description: Defines operational characteristics that can be attached to workloads
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/traitdefinition-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/traitdefinition-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 500
+        y: 300
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/traitdefinition-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/traitdefinition-white.svg
+      width: 30
+      z-index: 9
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: TraitDefinition
+      metadata:
+        name: scaler
+        namespace: vela-system
+    component:
+      version: core.oam.dev/v1beta1
+      kind: TraitDefinition
+      schema: ""
+  - id: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Workload Definition
+    description: Defines the workload type and its capabilities
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/workloaddefinition-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/workloaddefinition-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 200
+        y: 300
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/workloaddefinition-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/workloaddefinition-white.svg
+      width: 30
+      z-index: 7
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: WorkloadDefinition
+      metadata:
+        name: containerized-workload
+        namespace: vela-system
+    component:
+      version: core.oam.dev/v1beta1
+      kind: WorkloadDefinition
+      schema: ""
+  - id: 5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Policy
+    description: Defines application-level policies for cross-cluster deployment and security
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/policy-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/policy-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 300
+        y: 100
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: diamond
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/policy-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/policy-white.svg
+      width: 30
+      z-index: 11
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: true
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: Policy
+      metadata:
+        name: topology-policy
+        namespace: default
+    component:
+      version: core.oam.dev/v1beta1
+      kind: Policy
+      schema: ""
+  - id: 7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Policy Definition
+    description: Defines reusable policy templates for applications
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/policydefinition-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/policydefinition-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 600
+        y: 300
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/policydefinition-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/policydefinition-white.svg
+      width: 30
+      z-index: 6
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: PolicyDefinition
+      metadata:
+        name: override-policy
+        namespace: vela-system
+    component:
+      version: core.oam.dev/v1beta1
+      kind: PolicyDefinition
+      schema: ""
+  - id: 8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Workflow Step Definition
+    description: Defines reusable workflow step templates
+    format: JSON
+    model:
+      id: 00000000-0000-0000-0000-000000000000
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubevela
+      displayName: Kubevela
+      status: enabled
+      registrant:
+        id: 00000000-0000-0000-0000-000000000000
+        name: Github
+        type: registry
+        sub_type: ""
+        kind: github
+        status: discovered
+        created_at: "0001-01-01T00:00:00Z"
+        updated_at: "0001-01-01T00:00:00Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 00000000-0000-0000-0000-000000000000
+      category:
+        id: 00000000-0000-0000-0000-000000000000
+        name: App Definition and Development
+      subCategory: Application Definition & Image Build
+      metadata:
+        isAnnotation: false
+        primaryColor: '#006fff'
+        secondaryColor: '#45B4FF'
+        shape: circle
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubevela/color/workflowstepdefinition-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubevela/white/workflowstepdefinition-white.svg
+      model:
+        version: v1.10.4
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 30
+      opacity: 1
+      padding: 6
+      position:
+        x: 400
+        y: 400
+      primaryColor: '#006fff'
+      secondaryColor: '#45B4FF'
+      shape: circle
+      svgColor: ui/public/static/img/meshmodels/kubevela/color/workflowstepdefinition-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubevela/white/workflowstepdefinition-white.svg
+      width: 30
+      z-index: 5
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration:
+      apiVersion: core.oam.dev/v1beta1
+      kind: WorkflowStepDefinition
+      metadata:
+        name: apply-component
+        namespace: vela-system
+    component:
+      version: core.oam.dev/v1beta1
+      kind: WorkflowStepDefinition
+      schema: ""
+  - id: 9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Kubernetes Cluster
+    description: Target Kubernetes cluster for application deployment
+    format: JSON
+    model:
+      id: b3f5bc0d-30f7-607d-6c73-784ddde6cad8
+      schemaVersion: models.meshery.io/v1beta1
+      version: v1.0.0
+      name: kubernetes
+      displayName: Kubernetes
+      status: enabled
+      registrant:
+        id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+        name: Github
+        credential_id: 00000000-0000-0000-0000-000000000000
+        type: registry
+        sub_type: ""
+        kind: github
+        status: registered
+        user_id: 00000000-0000-0000-0000-000000000000
+        created_at: "2025-09-30T07:43:42.329335387Z"
+        updated_at: "2025-09-30T07:43:42.329335387Z"
+        deleted_at: null
+        schemaVersion: ""
+      connection_id: 5bc80e3c-5d43-9eb4-d16c-78a2769247a6
+      category:
+        id: 9ca27d0d-66ce-42a9-8c85-6236563f2ddb
+        name: Orchestration & Management
+      subCategory: Scheduling & Orchestration
+      metadata:
+        isAnnotation: false
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: round-pentagon
+        styleOverrides: ""
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+        svgComplete: ""
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      model:
+        version: v1.32.0
+      components_count: 0
+      relationships_count: 0
+      components: null
+      relationships: null
+    styles:
+      background-opacity: 0.5
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 2
+      height: 40
+      opacity: 1
+      padding: 6
+      position:
+        x: 400
+        y: 500
+      primaryColor: '#326CE5'
+      secondaryColor: '#7aa1f0'
+      shape: round-pentagon
+      svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+      width: 40
+      z-index: 4
+    capabilities: []
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: false
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: v1
+      kind: Cluster
+      schema: ""
