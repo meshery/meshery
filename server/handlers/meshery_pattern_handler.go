@@ -31,8 +31,8 @@ import (
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/meshkit/models/events"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
-	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/models/oci"
+	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/catalog"
 
@@ -756,9 +756,32 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
+		event := events.NewEvent().
+			ActedUpon(*pattern.ID).
+			FromSystem(*h.SystemID).
+			FromUser(userID).
+			WithCategory("pattern").
+			WithAction("download").
+			WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).
+			WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).
+			Build()
+
+		// Persist the event for the current provider
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
+
+		// --- NEW CODE: propagate this event to all configured providers ---
+		for name, pr := range h.config.Providers {
+			go func(providerName string, p models.Provider, ev *events.Event) {
+				if err := p.PersistEvent(*ev, nil); err != nil {
+					h.log.Warnf("Failed to propagate download event to provider '%s': %v", providerName, err)
+				} else {
+					h.log.Infof("Propagated download event to provider '%s'", providerName)
+				}
+			}(name, pr, event)
+		}
+		// -------------------------------------------------------------------
+
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
