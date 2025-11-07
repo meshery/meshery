@@ -236,6 +236,9 @@ type HandlerInterface interface {
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
+	HealthHandler(w http.ResponseWriter, r *http.Request)
+	HealthLiveHandler(w http.ResponseWriter, r *http.Request)
+	HealthReadyHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }

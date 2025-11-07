@@ -427,6 +427,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/healthz/live", h.K8sHealthzHandler).Methods("GET")
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")
 
+	// Health Check Endpoints
+	gMux.HandleFunc("/health", h.HealthHandler).Methods("GET")
+	gMux.HandleFunc("/health/live", h.HealthLiveHandler).Methods("GET")
+	gMux.HandleFunc("/health/ready", h.HealthReadyHandler).Methods("GET")
+
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
