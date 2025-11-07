@@ -4,6 +4,14 @@
 
 The Meshery REST API now supports exclusion filtering based on regular expressions for component queries. This allows clients to exclude components that match specific patterns, enabling more flexible and precise filtering scenarios.
 
+## Dependencies
+
+This feature requires changes in both:
+- **meshkit** (v0.8.47+): Adds `ExcludeName` and `ExcludeDisplayName` fields to `ComponentFilter`
+- **meshery**: Updates handlers to pass exclusion parameters from query strings
+
+> **Note for Developers**: During local development, ensure the meshkit replace directive in go.mod points to your local meshkit repository with the required changes. For production builds, this should reference the published meshkit version.
+
 ## New Query Parameters
 
 The following endpoints now support two new query parameters:
