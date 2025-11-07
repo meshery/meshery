@@ -2,11 +2,62 @@
   "id": "a10ca98d-d978-4cfd-accb-d9834a26904f",
   "name": "Kanvas Docker Extension Architecture",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.292",
+  "version": "0.0.293",
   "metadata": {
     "resolvedAliases": {}
   },
   "components": [
+    {
+      "id": "15c4c8db-2fd3-4c07-aad6-ee379d8d90bc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kanvas-local",
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "Local"
+        },
+        "model": {
+          "version": "v1beta1"
+        }
+      },
+      "styles": {
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 139
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "child_component_ids": [
+          "05733005-c98f-4806-a09f-05f8d9d1351c",
+          "51f3c5bd-ef6b-4897-8fac-a931da8b70c5",
+          "11b4c08e-8ce1-4765-a9ad-a2da3736905e"
+        ],
+        "isTemporary": false,
+        "order": 1762374610496
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Group",
+        "schema": ""
+      }
+    },
     {
       "id": "c0e3f098-126a-4f6f-94ff-8207c30586da",
       "schemaVersion": "components.meshery.io/v1beta1",
@@ -45,51 +96,6 @@
         ],
         "isTemporary": false,
         "order": 1762373802748
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Group",
-        "schema": ""
-      }
-    },
-    {
-      "id": "15c4c8db-2fd3-4c07-aad6-ee379d8d90bc",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "modelReference": {
-        "version": "v1.0.0",
-        "name": "kanvas-local",
-        "displayName": "",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "Local"
-        },
-        "model": {
-          "version": "v1beta1"
-        }
-      },
-      "styles": null,
-      "capabilities": null,
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": false,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "child_component_ids": [
-          "05733005-c98f-4806-a09f-05f8d9d1351c",
-          "51f3c5bd-ef6b-4897-8fac-a931da8b70c5",
-          "11b4c08e-8ce1-4765-a9ad-a2da3736905e"
-        ],
-        "isTemporary": false,
-        "order": 1762374610496
       },
       "component": {
         "version": "core.meshery.io/v1alpha1",
@@ -642,7 +648,7 @@
         "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
         "width": 725.19196,
-        "z-index": 124
+        "z-index": 140
       },
       "capabilities": null,
       "status": "enabled",
@@ -1557,7 +1563,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 522.9264,
-        "z-index": 129
+        "z-index": 141
       },
       "capabilities": null,
       "status": "enabled",
@@ -1697,7 +1703,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 157.1473,
-        "z-index": 136
+        "z-index": 142
       },
       "capabilities": null,
       "status": "enabled",
