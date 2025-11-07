@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 6th 2025, 4:37:18 am
+- Testing started at: November 7th 2025, 12:02:34 am
 
 **📦 Test Result Summary**
 
-- ✅ 77 passed
-- ❌ 2 failed
+- ✅ 76 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 9 minutes and 9 seconds_
+⌛ _Duration: 8 minutes and 13 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -26,11 +26,12 @@
 | 3 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
 | 4 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 5 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 6 | chromium-local-provider | Create a Model |  | ❌ |
-| 7 | chromium-local-provider | Search a Model and Export it |  | ➖ |
-| 8 | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 9 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
-| 10 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 6 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 7 | chromium-local-provider | Create a Model |  | ❌ |
+| 8 | chromium-local-provider | Search a Model and Export it |  | ➖ |
+| 9 | chromium-local-provider | Import a Model via File Import |  | ➖ |
+| 10 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 11 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
 
 </div>
 </details>
