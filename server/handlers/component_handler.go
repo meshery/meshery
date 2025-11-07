@@ -459,6 +459,10 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -484,17 +488,19 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:         name,
-		CategoryName: cat,
-		ModelName:    typ,
-		APIVersion:   queryParams.Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Greedy:       greedy,
-		Limit:        limit,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+		Name:               name,
+		CategoryName:       cat,
+		ModelName:          typ,
+		APIVersion:         queryParams.Get("apiVersion"),
+		Version:            v,
+		Offset:             offset,
+		Greedy:             greedy,
+		Limit:              limit,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	})
 
 	comps := processComponentDefinitions(entities)
@@ -535,6 +541,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -560,17 +570,19 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:         name,
-		ModelName:    queryParams.Get("model"),
-		CategoryName: cat,
-		APIVersion:   queryParams.Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Limit:        limit,
-		Greedy:       greedy,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+		Name:               name,
+		ModelName:          queryParams.Get("model"),
+		CategoryName:       cat,
+		APIVersion:         queryParams.Get("apiVersion"),
+		Version:            v,
+		Offset:             offset,
+		Limit:              limit,
+		Greedy:             greedy,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	})
 	comps := processComponentDefinitions(entities)
 
@@ -610,6 +622,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
@@ -635,16 +651,18 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:        name,
-		ModelName:   typ,
-		APIVersion:  queryParams.Get("apiVersion"),
-		Version:     v,
-		Offset:      offset,
-		Greedy:      greedy,
-		Limit:       limit,
-		OrderOn:     order,
-		Sort:        sort,
-		Annotations: returnAnnotationComp,
+		Name:               name,
+		ModelName:          typ,
+		APIVersion:         queryParams.Get("apiVersion"),
+		Version:            v,
+		Offset:             offset,
+		Greedy:             greedy,
+		Limit:              limit,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	})
 	comps := processComponentDefinitions(entities)
 
@@ -688,6 +706,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
@@ -708,17 +730,19 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:        name,
-		Trim:        queryParams.Get("trim") == "true",
-		APIVersion:  queryParams.Get("apiVersion"),
-		Version:     v,
-		ModelName:   queryParams.Get("model"),
-		Offset:      offset,
-		Limit:       limit,
-		Greedy:      greedy,
-		OrderOn:     order,
-		Sort:        sort,
-		Annotations: returnAnnotationComp,
+		Name:               name,
+		Trim:               queryParams.Get("trim") == "true",
+		APIVersion:         queryParams.Get("apiVersion"),
+		Version:            v,
+		ModelName:          queryParams.Get("model"),
+		Offset:             offset,
+		Limit:              limit,
+		Greedy:             greedy,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	})
 
 	comps := processComponentDefinitions(entities)
