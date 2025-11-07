@@ -757,6 +757,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern (e.g., ".*List$" to exclude components ending with "List")
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -778,16 +782,18 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
-		Id:          queryParams.Get("id"),
-		ModelName:   typ,
-		Version:     v,
-		Trim:        queryParams.Get("trim") == "true",
-		APIVersion:  queryParams.Get("apiVersion"),
-		Limit:       limit,
-		Offset:      offset,
-		OrderOn:     order,
-		Sort:        sort,
-		Annotations: returnAnnotationComp,
+		Id:                 queryParams.Get("id"),
+		ModelName:          typ,
+		Version:            v,
+		Trim:               queryParams.Get("trim") == "true",
+		APIVersion:         queryParams.Get("apiVersion"),
+		Limit:              limit,
+		Offset:             offset,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -833,6 +839,10 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern (e.g., ".*List$" to exclude components ending with "List")
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -852,16 +862,18 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
-		CategoryName: cat,
-		ModelName:    typ,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+		CategoryName:       cat,
+		ModelName:          typ,
+		Version:            v,
+		Trim:               queryParams.Get("trim") == "true",
+		APIVersion:         queryParams.Get("apiVersion"),
+		Limit:              limit,
+		Offset:             offset,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -905,6 +917,10 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern (e.g., ".*List$" to exclude components ending with "List")
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -924,15 +940,17 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
-		CategoryName: cat,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+		CategoryName:       cat,
+		Version:            v,
+		Trim:               queryParams.Get("trim") == "true",
+		APIVersion:         queryParams.Get("apiVersion"),
+		Limit:              limit,
+		Offset:             offset,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -974,6 +992,10 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?excludeName={regex}``` Exclude components whose kind matches the regex pattern (e.g., ".*List$" to exclude components ending with "List")
+//
+// ```?excludeDisplayName={regex}``` Exclude components whose display name matches the regex pattern
+//
 // ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -996,15 +1018,17 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
-		Id:          queryParams.Get("id"),
-		Version:     v,
-		Trim:        queryParams.Get("trim") == "true",
-		APIVersion:  queryParams.Get("apiVersion"),
-		Limit:       limit,
-		Offset:      offset,
-		OrderOn:     order,
-		Sort:        sort,
-		Annotations: returnAnnotationComp,
+		Id:                 queryParams.Get("id"),
+		Version:            v,
+		Trim:               queryParams.Get("trim") == "true",
+		APIVersion:         queryParams.Get("apiVersion"),
+		Limit:              limit,
+		Offset:             offset,
+		OrderOn:            order,
+		Sort:               sort,
+		Annotations:        returnAnnotationComp,
+		ExcludeName:        queryParams.Get("excludeName"),
+		ExcludeDisplayName: queryParams.Get("excludeDisplayName"),
 	}
 	if search != "" {
 		filter.Greedy = true
