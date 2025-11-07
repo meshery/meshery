@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 // HealthResponse represents the response structure for health endpoints
@@ -18,7 +20,10 @@ func respondHealthOK(w http.ResponseWriter) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		// Log error but don't change response status since headers are already written
+		logrus.Error("Failed to encode health check response: ", err)
+	}
 }
 
 // HealthHandler handles the general health check endpoint
