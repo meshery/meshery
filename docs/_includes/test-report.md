@@ -1,12 +1,12 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 7th 2025, 12:02:34 am
+- Testing started at: November 7th 2025, 8:30:19 am
 
 **📦 Test Result Summary**
 
 - ✅ 76 passed
-- ❌ 3 failed
-- ⚠️ 0 flaked
+- ❌ 2 failed
+- ⚠️ 1 flaked
 - ⏩ 8 skipped
 
 ⌛ _Duration: 8 minutes and 13 seconds_
@@ -26,7 +26,7 @@
 | 3 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
 | 4 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
 | 5 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 6 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 6 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 | 7 | chromium-local-provider | Create a Model |  | ❌ |
 | 8 | chromium-local-provider | Search a Model and Export it |  | ➖ |
 | 9 | chromium-local-provider | Import a Model via File Import |  | ➖ |
