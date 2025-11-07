@@ -10,8 +10,8 @@ type HealthResponse struct {
 	Status string `json:"status"`
 }
 
-// HealthHandler handles the general health check endpoint
-func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
+// respondHealthOK is a helper function to send a standardized health check response
+func respondHealthOK(w http.ResponseWriter) {
 	response := HealthResponse{
 		Status: "ok",
 	}
@@ -19,26 +19,19 @@ func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
+}
+
+// HealthHandler handles the general health check endpoint
+func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
+	respondHealthOK(w)
 }
 
 // HealthLiveHandler handles the liveness probe endpoint
 func (h *Handler) HealthLiveHandler(w http.ResponseWriter, r *http.Request) {
-	response := HealthResponse{
-		Status: "ok",
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	respondHealthOK(w)
 }
 
 // HealthReadyHandler handles the readiness probe endpoint
 func (h *Handler) HealthReadyHandler(w http.ResponseWriter, r *http.Request) {
-	response := HealthResponse{
-		Status: "ok",
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	respondHealthOK(w)
 }
