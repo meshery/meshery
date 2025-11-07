@@ -92,7 +92,7 @@ The exclusion filters use PostgreSQL's regex pattern syntax (POSIX regular expre
 
 2. **Case-sensitive matching**: The regex pattern matching is case-sensitive by default.
 
-3. **Multiple conditions**: When both `excludeName` and `excludeDisplayName` are provided, BOTH conditions must be satisfied (AND logic). A component is excluded if it matches either pattern.
+3. **Multiple exclusion conditions**: When both `excludeName` and `excludeDisplayName` are provided, a component is excluded if it matches ANY of the patterns (OR logic). The exclusion filters work independently - if a component's kind matches `excludeName` OR its display name matches `excludeDisplayName`, it will be excluded from results.
 
 4. **Backward compatibility**: Existing queries without exclusion parameters continue to work as before.
 
