@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 7th 2025, 4:35:59 pm
+- Testing started at: November 7th 2025, 11:55:13 pm
 
 **📦 Test Result Summary**
 
-- ✅ 77 passed
+- ✅ 76 passed
 - ❌ 2 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 42 seconds_
+⌛ _Duration: 8 minutes and 1 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -31,6 +31,7 @@
 | 8 | chromium-local-provider | Import a Model via File Import |  | ➖ |
 | 9 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 10 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 11 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
