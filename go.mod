@@ -10,7 +10,8 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.84 => ../schemas
 
-//replace github.com/meshery/meshkit v0.8.45 => ../meshkit
+// Uncomment the following line for local development of meshkit changes
+replace github.com/meshery/meshkit v0.8.46 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
