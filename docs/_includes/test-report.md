@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 8th 2025, 6:03:16 pm
+- Testing started at: November 8th 2025, 11:13:32 pm
 
 **📦 Test Result Summary**
 
-- ✅ 77 passed
+- ✅ 78 passed
 - ❌ 2 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 9 minutes and 13 seconds_
+⌛ _Duration: 8 minutes and 8 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,16 +21,17 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Create a Model |  | ❌ |
-| 2 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
-| 3 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 4 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
-| 5 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 6 | chromium-local-provider | Create a Model |  | ❌ |
-| 7 | chromium-local-provider | Search a Model and Export it |  | ➖ |
-| 8 | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 9 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
-| 10 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
+| 2 | chromium-meshery-provider | Create a Model |  | ❌ |
+| 3 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
+| 4 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
+| 5 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 6 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 7 | chromium-local-provider | Create a Model |  | ❌ |
+| 8 | chromium-local-provider | Search a Model and Export it |  | ➖ |
+| 9 | chromium-local-provider | Import a Model via File Import |  | ➖ |
+| 10 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 11 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
 
 </div>
 </details>
