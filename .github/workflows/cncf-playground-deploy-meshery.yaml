@@ -20,7 +20,7 @@ jobs:
           uses: appleboy/ssh-action@master
           with:
               host: ${{ secrets.OCI_BASTION_HOST }}
-              username: ${{ secrets.OCI_BASTION_USERNAME }}
+              username: ubuntu
               key: ${{ secrets.OCI_BASTION_KEY }}
               script: |
                 kubectl config use-context prod
