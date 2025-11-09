@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -83,6 +84,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		Annotations: returnAnnotationComp,
 	}
 	if search != "" {
+		// exclude := queryParams.Get("exclude")
+		// excludeRegex := queryParams.Get("exclude_regex")
+		// filter.Exclude = exclude
+		// filter.ExcludeRegex = excludeRegex
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
@@ -757,6 +762,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?exclude={pattern}``` Exclude components whose names or display names contain the specified string (case-insensitive substring match). This filter is applied after other filters.
+//
+// ```?exclude_regex={regex}``` Exclude components whose names or display names match the specified regular expression pattern. This filter is applied after other filters. If both exclude and exclude_regex are provided, components matching either pattern are excluded.
+//
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -776,6 +785,9 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 
+	exclude := queryParams.Get("exclude")
+	excludeRegex := queryParams.Get("exclude_regex")
+
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
@@ -793,12 +805,16 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, _, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
+	// Apply exclusion filtering
+	comps = filterComponentsByExclusion(comps, exclude, excludeRegex)
+	// Update count after filtering
+	filteredCount := int64(len(comps))
 
 	var pgSize int64
 	if limit == 0 {
-		pgSize = count
+		pgSize = filteredCount
 	} else {
 		pgSize = int64(limit)
 	}
@@ -806,7 +822,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		Count:      filteredCount,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -833,6 +849,10 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?exclude={pattern}``` Exclude components whose names or display names contain the specified string (case-insensitive substring match). This filter is applied after other filters.
+//
+// ```?exclude_regex={regex}``` Exclude components whose names or display names match the specified regular expression pattern. This filter is applied after other filters. If both exclude and exclude_regex are provided, components matching either pattern are excluded.
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -850,6 +870,8 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
+	exclude := queryParams.Get("exclude")
+	excludeRegex := queryParams.Get("exclude_regex")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -867,12 +889,16 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, _, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
+	// Apply exclusion filtering
+	comps = filterComponentsByExclusion(comps, exclude, excludeRegex)
+	// Update count after filtering
+	filteredCount := int64(len(comps))
 
 	var pgSize int64
 	if limit == 0 {
-		pgSize = count
+		pgSize = filteredCount
 	} else {
 		pgSize = int64(limit)
 	}
@@ -880,7 +906,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		Count:      filteredCount,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -905,6 +931,10 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?exclude={pattern}``` Exclude components whose names or display names contain the specified string (case-insensitive substring match). This filter is applied after other filters.
+//
+// ```?exclude_regex={regex}``` Exclude components whose names or display names match the specified regular expression pattern. This filter is applied after other filters. If both exclude and exclude_regex are provided, components matching either pattern are excluded.
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -922,6 +952,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	cat := mux.Vars(r)["category"]
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
+	exclude := queryParams.Get("exclude")
+	excludeRegex := queryParams.Get("exclude_regex")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
@@ -938,12 +970,16 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, _, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
+	// Apply exclusion filtering
+	comps = filterComponentsByExclusion(comps, exclude, excludeRegex)
+	// Update count after filtering
+	filteredCount := int64(len(comps))
 
 	var pgSize int64
 	if limit == 0 {
-		pgSize = count
+		pgSize = filteredCount
 	} else {
 		pgSize = int64(limit)
 	}
@@ -951,7 +987,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		Count:      filteredCount,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -974,6 +1010,10 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
 //
+// ```?exclude={pattern}``` Exclude components whose names or display names contain the specified string (case-insensitive substring match). This filter is applied after other filters.
+//
+// ```?exclude_regex={regex}``` Exclude components whose names or display names match the specified regular expression pattern. This filter is applied after other filters. If both exclude and exclude_regex are provided, components matching either pattern are excluded.
+//
 // ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -994,6 +1034,8 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
+	exclude := queryParams.Get("exclude")
+	excludeRegex := queryParams.Get("exclude_regex")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
@@ -1010,13 +1052,17 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, _, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
+	// Apply exclusion filtering
+	comps = filterComponentsByExclusion(comps, exclude, excludeRegex)
+	// Update count after filtering
+	filteredCount := int64(len(comps))
 
 	var pgSize int64
 
 	if limit == 0 {
-		pgSize = count
+		pgSize = filteredCount
 	} else {
 		pgSize = int64(limit)
 	}
@@ -1024,7 +1070,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		Count:      filteredCount,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -1201,6 +1247,74 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 
 	}
 	return comps
+}
+
+// filterComponentsByExclusion filters components based on exclude and excludeRegex patterns.
+// If exclude is provided, it performs string matching (case-insensitive substring search).
+// If excludeRegex is provided, it performs regex matching.
+// Exclusions take precedence - components matching either pattern are excluded.
+// The filtering is applied to both Component.Kind and DisplayName fields.
+func filterComponentsByExclusion(comps []component.ComponentDefinition, exclude, excludeRegex string) []component.ComponentDefinition {
+	if exclude == "" && excludeRegex == "" {
+		return comps
+	}
+
+	var filtered []component.ComponentDefinition
+	var regex *regexp.Regexp
+	var err error
+
+	// Compile regex if provided
+	if excludeRegex != "" {
+		regex, err = regexp.Compile(excludeRegex)
+		if err != nil {
+			// If regex is invalid, log error but don't filter (fail gracefully)
+			// In production, you might want to return an error or log it
+			return comps
+		}
+	}
+
+	excludeLower := strings.ToLower(exclude)
+
+	for _, comp := range comps {
+		shouldExclude := false
+
+		// Check Component.Kind
+		kind := comp.Component.Kind
+		kindLower := strings.ToLower(kind)
+
+		// Apply string exclusion if provided
+		if exclude != "" && strings.Contains(kindLower, excludeLower) {
+			shouldExclude = true
+		}
+
+		// Apply regex exclusion if provided
+		if !shouldExclude && regex != nil && regex.MatchString(kind) {
+			shouldExclude = true
+		}
+
+		// Check DisplayName if not already excluded
+		if !shouldExclude {
+			displayName := comp.DisplayName
+			displayNameLower := strings.ToLower(displayName)
+
+			// Apply string exclusion if provided
+			if exclude != "" && strings.Contains(displayNameLower, excludeLower) {
+				shouldExclude = true
+			}
+
+			// Apply regex exclusion if provided
+			if !shouldExclude && regex != nil && regex.MatchString(displayName) {
+				shouldExclude = true
+			}
+		}
+
+		// Include component if it doesn't match exclusion patterns
+		if !shouldExclude {
+			filtered = append(filtered, comp)
+		}
+	}
+
+	return filtered
 }
 
 // swagger:route POST /api/meshmodels/register RegisterMeshmodels idRegisterMeshmodels
@@ -1730,8 +1844,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
-
-
 
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
