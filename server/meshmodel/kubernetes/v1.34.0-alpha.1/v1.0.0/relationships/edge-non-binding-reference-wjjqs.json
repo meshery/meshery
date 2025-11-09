@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ReplicationController selects the ServiceAccount used by the Pods in its template",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
