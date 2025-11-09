@@ -25,7 +25,9 @@ jobs:
               script: |
                 kubectl config use-context prod
                 cat .oci/config
-                kubectl get nodes
+                pwd
+                echo $PATH
+                oci --version
                 # kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
 
 # Verify
