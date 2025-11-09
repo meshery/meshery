@@ -24,7 +24,9 @@ jobs:
               key: ${{ secrets.OCI_BASTION_KEY }}
               script: |
                 kubectl config use-context prod
-                kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
+                cat .oci/config
+                kubectl get nodes
+                # kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
 
 # Verify
 # kubectl get deployment playground -n meshery-o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image --no-headers
