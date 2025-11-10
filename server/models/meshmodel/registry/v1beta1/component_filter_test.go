@@ -2,6 +2,7 @@ package v1beta1_test
 
 import (
 	"regexp"
+	"strings"
 	"testing"
 
 	v1beta1 "github.com/meshery/meshery/server/models/meshmodel/registry/v1beta1"
@@ -64,7 +65,7 @@ func TestComponentFilter_ExcludeAndRegex(t *testing.T) {
 
 			for _, comp := range tt.components {
 				// Apply exclude logic manually (simulating your actual logic)
-				if tt.filter.Exclude != "" && comp.Name == tt.filter.Exclude {
+				if tt.filter.Exclude != "" && strings.Contains(comp.Name, tt.filter.Exclude) {
 					continue
 				}
 				if tt.filter.ExcludeRegex != "" {
