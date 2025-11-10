@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -84,6 +85,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	providerURL, _ := url.Parse(k.Provider.GetProviderURL())
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
+
 	if !exists {
 		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
 		k.log.Error(err)
@@ -140,6 +142,21 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
+
+	k.log.Infof("Redirecting after intercept %s , %s , raw %s", redirectURL, req.URL.Path, req.URL.RawQuery)
+
+	// Respect the referrer , and the query params
+	// the ref is base64 encoded and is set when the initiateLogin flow is initiated and when redirecting to provider which
+	// and should be carried over to the next redirect till we login
+	refBase64 := req.URL.Query().Get("ref")
+	if refBase64 != "" {
+		ref, err := base64.StdEncoding.DecodeString(refBase64)
+		if err == nil && len(ref) > 0 {
+			k.log.Infof("Redirecting to referrer %s", string(ref))
+			redirectURL = string(ref)
+		}
+	}
+
 	if redirectURL == "/" {
 		k.log.Info("No navigator extension found, redirecting to /error")
 		redirectURL = errorUI
