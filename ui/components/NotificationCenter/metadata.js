@@ -6,12 +6,13 @@ import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary
 import { EVENT_TYPE, eventDetailFormatterKey } from './constants';
 import { TitleLink, DataToFileLink, EmptyState } from './formatters/common';
 import { ErrorMetadataFormatter } from './formatters/error';
-import { DryRunResponse } from './formatters/pattern_dryrun';
+import { DryRunResponse, SchemaValidationFormatter } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
 import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
+import { AcademyEventsFormatter } from './formatters/academy_events';
 
 const DesignFormatter = ({ value }) => {
   const theme = useTheme();
@@ -96,6 +97,8 @@ const EventTypeFormatters = {
   [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.UNDEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION)]: AcademyEventsFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.VALIDATE_DESIGN)]: SchemaValidationFormatter,
   // [eventDetailFormatterKey(EVENT_TYPE.REGISTRANT_SUMMARY)]: RegistrantSummaryFormatter,
 };
 

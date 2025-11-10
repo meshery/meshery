@@ -1,0 +1,24 @@
+version: 0.0.5
+name: kiali-architecture-design
+displayName: kiali-architecture-design
+createdAt: "2025-10-24T10:23:03Z"
+description: 'comprehensive Kiali observability architecture design '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/496ac5d6-cf5c-4943-b0ca-2e3e346ad202/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "comprehensive Kiali observability architecture design  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9d69f393-35ba-45e3-b66c-0ff4e0cb0ee7
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/496ac5d6-cf5c-4943-b0ca-2e3e346ad202-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/496ac5d6-cf5c-4943-b0ca-2e3e346ad202-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

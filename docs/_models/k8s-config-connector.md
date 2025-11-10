@@ -1786,7 +1786,15 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/color/service-networking-peered-dns-domain-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/white/service-networking-peered-dns-domain-white.svg
   description: 
-components-count: 444
+- name: billing-account
+  colorIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/color/billing-account-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/white/billing-account-white.svg
+  description: 
+- name: iam-deny-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/color/iam-deny-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/white/iam-deny-policy-white.svg
+  description: 
+components-count: 446
 relationships: 
 relationship-count: 0
 featureList: [

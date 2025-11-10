@@ -19,9 +19,12 @@ jobs:
         - name: Pull latest images and restart containers
           uses: appleboy/ssh-action@master
           with:
-              host: ${{ secrets.METAL_SERVER4 }}
-              username: root
-              key: ${{ secrets.METAL_SSH_KEY }}
+              host: ${{ secrets.OCI_BASTION_HOST }}
+              username: ${{ secrets.OCI_BASTION_USERNAME }}
+              key: ${{ secrets.OCI_BASTION_KEY }}
               script: |
-                kubectl -n meshery rollout restart deployment/playground
+                kubectl config use-context prod
+                kubectl -n meshery set image deployment/playground meshery=${{ inputs.image }}
 
+# Verify
+# kubectl get deployment playground -n meshery-o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image --no-headers

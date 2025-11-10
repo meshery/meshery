@@ -70,6 +70,10 @@ export const EVENT_TYPE = {
     category: 'pattern',
     action: 'undeploy',
   },
+  VALIDATE_DESIGN: {
+    category: 'pattern',
+    action: 'validate',
+  },
   EVALUATE_DESIGN: {
     category: 'relationship',
     action: 'evaluation',
@@ -77,5 +81,9 @@ export const EVENT_TYPE = {
   REGISTRANT_SUMMARY: {
     category: 'entity',
     action: 'get_summary',
+  },
+  ACADEMY_QUIZ_EVALUATION: {
+    category: 'academy',
+    action: 'academy_quiz_evaluation',
   },
 };

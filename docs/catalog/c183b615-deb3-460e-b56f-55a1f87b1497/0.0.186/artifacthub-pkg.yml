@@ -1,0 +1,24 @@
+version: 0.0.186
+name: vald-architecture
+displayName: Vald architecture
+createdAt: "2025-10-17T14:41:39Z"
+description: Reference design of Vald — a distributed vector search engine running on Kubernetes. This design represents the Vald Ingress, Load Balancer Gateway, Discoverer, Index Manager, multiple Agents, and their backing storage indices. It visualises Vald’s high-level architecture and inter-component relationships including async connections for index management and discovery.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c183b615-deb3-460e-b56f-55a1f87b1497/0.0.186/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is a reference model and does not represent a deployment-ready setup. Relationships are conceptual and meant to illustrate component communication flow. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c183b615-deb3-460e-b56f-55a1f87b1497-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c183b615-deb3-460e-b56f-55a1f87b1497-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
