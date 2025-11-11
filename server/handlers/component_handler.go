@@ -786,17 +786,19 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilter{
-		Id:           queryParams.Get("id"),
-		ModelName:    typ,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+	filter := &regv1beta1.ComponentFilterWrapper{
+		ComponentFilter: &regv1beta1.ComponentFilter{
+			Id:          queryParams.Get("id"),
+			ModelName:   typ,
+			Version:     v,
+			Trim:        queryParams.Get("trim") == "true",
+			APIVersion:  queryParams.Get("apiVersion"),
+			Limit:       limit,
+			Offset:      offset,
+			OrderOn:     order,
+			Sort:        sort,
+			Annotations: returnAnnotationComp,
+		},
 		Exclude:      queryParams.Get("exclude"),
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
@@ -866,17 +868,19 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilter{
-		CategoryName: cat,
-		ModelName:    typ,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+	filter := &regv1beta1.ComponentFilterWrapper{
+		ComponentFilter: &regv1beta1.ComponentFilter{
+			CategoryName: cat,
+			ModelName:    typ,
+			Version:      v,
+			Trim:         queryParams.Get("trim") == "true",
+			APIVersion:   queryParams.Get("apiVersion"),
+			Limit:        limit,
+			Offset:       offset,
+			OrderOn:      order,
+			Sort:         sort,
+			Annotations:  returnAnnotationComp,
+		},
 		Exclude:      queryParams.Get("exclude"),
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
@@ -944,16 +948,18 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilter{
-		CategoryName: cat,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+	filter := &regv1beta1.ComponentFilterWrapper{
+		ComponentFilter: &regv1beta1.ComponentFilter{
+			CategoryName: cat,
+			Version:      v,
+			Trim:         queryParams.Get("trim") == "true",
+			APIVersion:   queryParams.Get("apiVersion"),
+			Limit:        limit,
+			Offset:       offset,
+			OrderOn:      order,
+			Sort:         sort,
+			Annotations:  returnAnnotationComp,
+		},
 		Exclude:      queryParams.Get("exclude"),
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
@@ -1022,16 +1028,18 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilter{
-		Id:           queryParams.Get("id"),
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      order,
-		Sort:         sort,
-		Annotations:  returnAnnotationComp,
+	filter := &regv1beta1.ComponentFilterWrapper{
+		ComponentFilter: &regv1beta1.ComponentFilter{
+			Id:          queryParams.Get("id"),
+			Version:     v,
+			Trim:        queryParams.Get("trim") == "true",
+			APIVersion:  queryParams.Get("apiVersion"),
+			Limit:       limit,
+			Offset:      offset,
+			OrderOn:     order,
+			Sort:        sort,
+			Annotations: returnAnnotationComp,
+		},
 		Exclude:      queryParams.Get("exclude"),
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
@@ -1231,6 +1239,8 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 	}
 	return comps
 }
+
+
 
 
 
