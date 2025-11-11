@@ -7,13 +7,25 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/schemas/models/v1beta1/component"
+
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 // ComponentFilterWrapper is a wrapper around ComponentFilter that adds exclusion filtering.
 type ComponentFilterWrapper struct {
-	*ComponentFilter
+	ComponentFilter *regv1beta1.ComponentFilter
 	Exclude      string `json:"exclude,omitempty"`
 	ExcludeRegex string `json:"exclude_regex,omitempty"`
+}
+
+// Create implements entity.Filter
+func (f *ComponentFilterWrapper) Create(data map[string]interface{}) {
+	f.ComponentFilter.Create(data)
+}
+
+// GetById implements entity.Filter
+func (f *ComponentFilterWrapper) GetById(db *database.Handler) (entity.Entity, error) {
+	return f.ComponentFilter.GetById(db)
 }
 
 // Get returns a list of components after applying exclusion filtering.

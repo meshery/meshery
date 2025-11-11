@@ -20,19 +20,16 @@ type ComponentFilter struct {
 	Greedy       bool   `json:"greedy,omitempty"`
 	Annotations  string `json:"annotations,omitempty"`
 	Trim         bool   `json:"trim,omitempty"`
+
+	// 🆕 Added for exclusion filtering
+	Exclude      string `json:"exclude,omitempty"`
+	ExcludeRegex string `json:"exclude_regex,omitempty"`
 }
 
-func (f *ComponentFilter) Create(_ map[string]interface{}) {
-	// This method intentionally left empty.
-	// It's only needed to satisfy the entity.Filter interface.
-}
-
+func (f *ComponentFilter) Create(_ map[string]interface{}) {}
 func (f *ComponentFilter) Get(db *database.Handler) ([]entity.Entity, int64, int, error) {
-	// For now, just return an empty list. We'll hook the actual filtering logic later.
 	return []entity.Entity{}, 0, 0, nil
 }
-
 func (f *ComponentFilter) GetById(db *database.Handler) (entity.Entity, error) {
-	// For now, just return nil until we implement the actual lookup logic.
 	return nil, nil
 }

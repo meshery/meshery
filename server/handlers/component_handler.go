@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -40,6 +39,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 
+	localregv1beta1 "github.com/meshery/meshery/server/models/meshmodel/registry/v1beta1"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
@@ -786,7 +786,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilterWrapper{
+	filter := &localregv1beta1.ComponentFilterWrapper{
 		ComponentFilter: &regv1beta1.ComponentFilter{
 			Id:          queryParams.Get("id"),
 			ModelName:   typ,
@@ -803,8 +803,8 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
 	if search != "" {
-		filter.Greedy = true
-		filter.DisplayName = search
+		filter.ComponentFilter.Greedy = true
+		filter.ComponentFilter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
@@ -868,29 +868,28 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilterWrapper{
-		ComponentFilter: &regv1beta1.ComponentFilter{
-			CategoryName: cat,
-			ModelName:    typ,
-			Version:      v,
-			Trim:         queryParams.Get("trim") == "true",
-			APIVersion:   queryParams.Get("apiVersion"),
-			Limit:        limit,
-			Offset:       offset,
-			OrderOn:      order,
-			Sort:         sort,
-			Annotations:  returnAnnotationComp,
-		},
-		Exclude:      queryParams.Get("exclude"),
-		ExcludeRegex: queryParams.Get("exclude_regex"),
-	}
-	if search != "" {
-		filter.Greedy = true
-		filter.DisplayName = search
-	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := processComponentDefinitions(entities)
-
+	    filter := &localregv1beta1.ComponentFilterWrapper{
+			ComponentFilter: &regv1beta1.ComponentFilter{
+				CategoryName: cat,
+				ModelName:    typ,
+				Version:      v,
+				Trim:         queryParams.Get("trim") == "true",
+				APIVersion:   queryParams.Get("apiVersion"),
+				Limit:        limit,
+				Offset:       offset,
+				OrderOn:      order,
+				Sort:         sort,
+				Annotations:  returnAnnotationComp,
+			},
+			Exclude:      queryParams.Get("exclude"),
+			ExcludeRegex: queryParams.Get("exclude_regex"),
+		}
+		if search != "" {
+			filter.ComponentFilter.Greedy = true
+			filter.ComponentFilter.DisplayName = search
+		}
+		entities, count, _, _ := h.registryManager.GetEntities(filter)
+		comps := processComponentDefinitions(entities)
 	var pgSize int64
 	if limit == 0 {
 		pgSize = count
@@ -948,7 +947,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilterWrapper{
+	filter := &localregv1beta1.ComponentFilterWrapper{
 		ComponentFilter: &regv1beta1.ComponentFilter{
 			CategoryName: cat,
 			Version:      v,
@@ -964,8 +963,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
 	if search != "" {
-		filter.Greedy = true
-		filter.DisplayName = search
+		filter.ComponentFilter.Greedy = true
+		filter.ComponentFilter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
@@ -1028,7 +1027,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	filter := &regv1beta1.ComponentFilterWrapper{
+	filter := &localregv1beta1.ComponentFilterWrapper{
 		ComponentFilter: &regv1beta1.ComponentFilter{
 			Id:          queryParams.Get("id"),
 			Version:     v,
@@ -1044,8 +1043,8 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		ExcludeRegex: queryParams.Get("exclude_regex"),
 	}
 	if search != "" {
-		filter.Greedy = true
-		filter.DisplayName = search
+		filter.ComponentFilter.Greedy = true
+		filter.ComponentFilter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := processComponentDefinitions(entities)
