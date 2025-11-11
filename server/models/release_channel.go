@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
@@ -148,10 +149,11 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	// Respect the referrer , and the query params
 	// the ref is base64 encoded and is set when the initiateLogin flow is initiated and when redirecting to provider which
 	// and should be carried over to the next redirect till we login
+	// if the ref points to some page other than under /extension then skip ref
 	refBase64 := req.URL.Query().Get("ref")
 	if refBase64 != "" {
 		ref, err := base64.StdEncoding.DecodeString(refBase64)
-		if err == nil && len(ref) > 0 {
+		if err == nil && len(ref) > 0 && strings.HasPrefix(string(ref), "/extension") {
 			k.log.Infof("Redirecting to referrer %s", string(ref))
 			redirectURL = string(ref)
 		}
