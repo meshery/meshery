@@ -2,9 +2,11 @@ package models
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
@@ -84,6 +86,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	providerURL, _ := url.Parse(k.Provider.GetProviderURL())
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
+
 	if !exists {
 		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
 		k.log.Error(err)
@@ -140,6 +143,22 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
+
+	k.log.Infof("Redirecting after intercept %s , %s , raw %s", redirectURL, req.URL.Path, req.URL.RawQuery)
+
+	// Respect the referrer , and the query params
+// The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
+// It is used to redirect the user back to that page after a successful login.
+	// if the ref points to some page other than under /extension then skip ref
+	refBase64 := req.URL.Query().Get("ref")
+	if refBase64 != "" {
+		ref, err := base64.StdEncoding.DecodeString(refBase64)
+		if err == nil && len(ref) > 0 && strings.HasPrefix(string(ref), "/extension") {
+			k.log.Infof("Redirecting to referrer %s", string(ref))
+			redirectURL = string(ref)
+		}
+	}
+
 	if redirectURL == "/" {
 		k.log.Info("No navigator extension found, redirecting to /error")
 		redirectURL = errorUI
