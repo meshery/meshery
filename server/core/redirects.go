@@ -7,10 +7,10 @@ import (
 )
 
 func EncodeRefUrl(url url.URL) string {
-	refURL := url.Path + "?" + url.RawQuery
+	refURL := url.String()
 	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
 	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.
-	if refURL == "?" || refURL == "/?" {
+	if refURL == "" || refURL == "/" {
 		return ""
 	}
 	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
