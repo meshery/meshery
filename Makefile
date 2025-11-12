@@ -99,6 +99,7 @@ run-local: server-local error
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
+	COMMITSHA="$(GIT_COMMITSHA)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
@@ -151,6 +152,7 @@ server-binary:
 server-binary-local:
 	cd server/cmd; \
 	BUILD="$(GIT_VERSION)" \
+	COMMITSHA="$(GIT_COMMITSHA)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
@@ -164,6 +166,7 @@ server-binary-local:
 server-stg: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
+	COMMITSHA="$(GIT_COMMITSHA)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
 	PORT=9081 \
 	DEBUG=true \
@@ -176,6 +179,7 @@ server-stg: dep-check
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
+	COMMITSHA="$(GIT_COMMITSHA)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
