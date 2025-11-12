@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 12th 2025, 7:54:30 am
+- Testing started at: November 12th 2025, 10:20:24 am
 
 **📦 Test Result Summary**
 
-- ✅ 73 passed
+- ✅ 76 passed
 - ❌ 3 failed
 - ⚠️ 0 flaked
-- ⏩ 12 skipped
+- ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 28 seconds_
+⌛ _Duration: 7 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,21 +21,17 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 6 | chromium-meshery-provider | Create a Model |  | ❌ |
-| 7 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
-| 8 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 9 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
-| 10 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 11 | chromium-local-provider | Create a Model |  | ❌ |
-| 12 | chromium-local-provider | Search a Model and Export it |  | ➖ |
-| 13 | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 14 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
-| 15 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 1 | chromium-meshery-provider | Create a Model |  | ❌ |
+| 2 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
+| 3 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
+| 4 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 5 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 6 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 7 | chromium-local-provider | Create a Model |  | ❌ |
+| 8 | chromium-local-provider | Search a Model and Export it |  | ➖ |
+| 9 | chromium-local-provider | Import a Model via File Import |  | ➖ |
+| 10 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
+| 11 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
 
 </div>
 </details>
