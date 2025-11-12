@@ -147,8 +147,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	k.log.Infof("Redirecting after intercept %s , %s , raw %s", redirectURL, req.URL.Path, req.URL.RawQuery)
 
 	// Respect the referrer , and the query params
-	// the ref is base64 encoded and is set when the initiateLogin flow is initiated and when redirecting to provider which
-	// and should be carried over to the next redirect till we login
+// The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
+// It is used to redirect the user back to that page after a successful login.
 	// if the ref points to some page other than under /extension then skip ref
 	refBase64 := req.URL.Query().Get("ref")
 	if refBase64 != "" {
