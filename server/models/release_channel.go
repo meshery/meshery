@@ -2,13 +2,13 @@ package models
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
@@ -144,24 +144,32 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	}
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
 
-	k.log.Infof("Redirecting after intercept %s , %s , raw %s", redirectURL, req.URL.Path, req.URL.RawQuery)
+	k.log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
 
+	// if request was directly intercepted from the kanvas page ( /extension ) , then the ref might not be present
+	// so we can directly redirect back to intercepted page
+	if strings.HasPrefix(req.URL.Path, "/extension") {
+		// redirect to the intercepted page with all original query params
+		k.log.Infof("Redirecting to intercepted page with query params %s", req.URL.RawQuery)
+		http.Redirect(res, req, req.URL.String(), http.StatusFound)
+		return
+	}
 	// Respect the referrer , and the query params
 // The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
 // It is used to redirect the user back to that page after a successful login.
 	// if the ref points to some page other than under /extension then skip ref
-	refBase64 := req.URL.Query().Get("ref")
-	if refBase64 != "" {
-		ref, err := base64.StdEncoding.DecodeString(refBase64)
-		if err == nil && len(ref) > 0 && strings.HasPrefix(string(ref), "/extension") {
-			k.log.Infof("Redirecting to referrer %s", string(ref))
-			redirectURL = string(ref)
-		}
+	refUrl, err := core.GetRefURLFromRequest(req)
+	k.log.Infof("Referrer URL: %s , %v", refUrl, err)
+	if strings.HasPrefix(refUrl, "/extension") {
+		k.log.Infof("Redirecting to referrer %s", refUrl)
+		http.Redirect(res, req, refUrl, http.StatusFound)
+		return
 	}
 
 	if redirectURL == "/" {
 		k.log.Info("No navigator extension found, redirecting to /error")
 		redirectURL = errorUI
 	}
+	k.log.Infof("No source refs resolved , Redirecting to base kanvas page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
