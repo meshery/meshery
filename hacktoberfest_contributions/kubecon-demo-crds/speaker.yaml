@@ -1,0 +1,41 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: speakers.demo.meshery.io
+spec:
+  group: demo.meshery.io
+  names:
+    kind: Speaker
+    plural: speakers
+    singular: speaker
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required: ["name", "affiliation"]
+              properties:
+                name:
+                  type: string
+                affiliation:
+                  type: string
+                twitter:
+                  type: string
+                bio:
+                  type: string
+                sessions:
+                  type: array
+                  items:
+                    type: string
+                    description: Reference to Kubecon sessions by name
+            status:
+              type: object
+              properties:
+                isConfirmed:
+                  type: boolean
