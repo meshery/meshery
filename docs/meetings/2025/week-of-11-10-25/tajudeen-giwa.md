@@ -1,1 +1,1 @@
-Hi, Tajudeen here and I'm new to the meshery community
+Hi, I'm Tajudeen, and I'm new to the Meshery community.
