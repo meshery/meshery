@@ -38,6 +38,7 @@ import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
+import { CONNECTION_KINDS } from '../utils/Enum';
 
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
@@ -126,6 +127,8 @@ export const OctagonText = styled('div')({
 });
 
 function ConfirmationMsg(props) {
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+
   const {
     open,
     handleClose,
@@ -394,7 +397,11 @@ function ConfirmationMsg(props) {
                           <TooltipWrappedConnectionChip
                             title={ctx.name}
                             handlePing={() => handleKubernetesClick(ctx.connection_id)}
-                            iconSrc={'/static/img/kubernetes.svg'}
+                            iconSrc={
+                              connectionMetadataState
+                                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                                : '/static/img/kubernetes.svg' // default icon
+                            }
                           />
                         </div>
                       ))}
