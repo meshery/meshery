@@ -47,8 +47,11 @@ import (
 )
 
 var (
-	skipUpdateFlag  bool
-	skipBrowserFlag bool
+	skipUpdateFlag          bool
+	skipBrowserFlag         bool
+	kubernetesResourceFlags []string
+	isMesheryPodDeployed    bool
+	isOperatorPodDeployed   bool
 )
 
 // startCmd represents the start command
@@ -72,6 +75,9 @@ mesheryctl system start --reset
 
 // Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
+
+// (optional) Start on Kubernetes, specifying resources 
+mesheryctl system start -p kubernetes --deploy meshery,operator
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
@@ -111,6 +117,13 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		if isKubernetesResourcesFlagPassed() {
+			if err := validateResourceFlags("--deploy", false); err != nil {
+				return err
+			}
+		}
+
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
@@ -421,9 +434,7 @@ func start() error {
 			return err
 		}
 
-		// log.Info("Starting Meshery...")
-
-		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery resources on Kubernetes", "\nMeshery resources deployed on Kubernetes.")
 		spinner.Start()
 
 		if err := utils.CreateManifestsFolder(); err != nil {
@@ -436,28 +447,59 @@ func start() error {
 			return err
 		}
 
-		// checking if Meshery is ready
-		time.Sleep(20 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
-		ready, err := mesheryReadinessHealthCheck()
-		if err != nil {
-			log.Info(err)
+		time.Sleep(20 * time.Second) // sleeping 20 seconds to countermeasure time to apply helm charts
+
+		if err = readinessHealthCheck(); err != nil {
+			return err
 		}
 
 		spinner.Stop()
-
-		if !ready {
-			log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
-			return nil
-		}
-		log.Info("Meshery is starting...")
 
 		// switch to default case if the platform specified is not supported
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
-	// execute dashboard command to fetch and navigate to Meshery UI
-	return dashboardCmd.RunE(nil, nil)
+	if isMesheryPodDeployed {
+		log.Info("Meshery is starting...")
+		// execute dashboard command to fetch and navigate to Meshery UI
+		return dashboardCmd.RunE(nil, nil)
+	}
+
+	return nil
+}
+
+func readinessHealthCheck() error {
+	allReady := true
+
+	if isMesheryPodDeployed {
+		if ready, err := mesheryReadinessHealthCheck(); err != nil || !ready {
+			if err != nil {
+				log.Info(err)
+			}
+			log.Info("\nTimeout. Meshery pod(s) are not running, yet.\nCheck with `mesheryctl system status` or expose UI with `mesheryctl system dashboard`.")
+			allReady = false
+		} else {
+			log.Info("\n✔ Deployed Meshery Successfully")
+		}
+	}
+
+	if isOperatorPodDeployed {
+		if ready, err := operatorReadinessHealthCheck(); err != nil || !ready {
+			if err != nil {
+				log.Info(err)
+			}
+			log.Info("\nTimeout. Operator pod(s) are not running, yet.\nCheck with `mesheryctl system status`.")
+			allReady = false
+		} else {
+			log.Info("\n✔ Deployed Meshery Operator Successfully")
+		}
+	}
+
+	if !allReady {
+		return fmt.Errorf("\n✘ one or more resources failed readiness check")
+	}
+	return nil
 }
 
 func init() {
@@ -466,6 +508,11 @@ func init() {
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
+	startCmd.Flags().StringSliceVar(&kubernetesResourceFlags, "deploy", []string{},
+		"(Optional) Only valid with -p kubernetes. Accepts one or more values: meshery,operator. "+
+			"Usage: --deploy meshery,operator OR --deploy meshery --deploy operator. "+
+			"Defaults to both if not specified.")
+
 }
 
 // Apply Meshery helm charts
@@ -482,43 +529,101 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if act == meshkitkube.UNINSTALL {
 		action = "uninstall"
 	}
-	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartName,
-			Version:    chartVersion,
-		},
-		OverrideValues: overrideValues,
-		Action:         act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-	})
-	errOperator := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery-operator",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartOperatorName,
-			Version:    chartVersion,
-		},
-		Action: act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-	})
-	if errServer != nil && errOperator != nil {
-		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
+
+	var errServer error
+	if isKubernetesResourceFlagsSet("meshery") {
+		// call ApplyHelmChart for Meshery server
+		errServer = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:       utils.MesheryNamespace,
+			ReleaseName:     "meshery",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartName,
+				Version:    chartVersion,
+			},
+			OverrideValues: overrideValues,
+			Action:         act,
+			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+		})
+
+		if act == meshkitkube.INSTALL {
+			isMesheryPodDeployed = true
+		}
 	}
-	if errServer != nil {
-		return fmt.Errorf("%s success for Meshery Operator, but failed for Meshery Server: %s", action, errServer.Error())
+
+	var errOperator error
+	if isKubernetesResourceFlagsSet("operator") {
+		errOperator = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:       utils.MesheryNamespace,
+			ReleaseName:     "meshery-operator",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartOperatorName,
+				Version:    chartVersion,
+			},
+			Action: act,
+			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+		})
+
+		if act == meshkitkube.INSTALL {
+			isOperatorPodDeployed = true
+		}
 	}
-	if errOperator != nil {
-		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
+
+	errs := map[string]error{
+		"Meshery Server":   errServer,
+		"Meshery Operator": errOperator,
 	}
+
+	return formatResourceErrors(action, errs)
+}
+
+func formatResourceErrors(action string, errs map[string]error) error {
+	var failed []string
+	var succeeded []string
+
+	for name, err := range errs {
+		if err != nil {
+			failed = append(failed, fmt.Sprintf("failed to %s %s: %s", action, name, err.Error()))
+		} else {
+			// Map display name to component name
+			component := "meshery" // default to Meshery server
+			if strings.Contains(strings.ToLower(name), "operator") {
+				component = "operator"
+			}
+
+			if isKubernetesResourceFlagsSet(component) {
+				// Only mark as succeeded if it was requested
+				succeeded = append(succeeded, fmt.Sprintf("%s succeeded for %s", action, name))
+			}
+		}
+	}
+
+	if len(failed) > 0 {
+		if len(succeeded) > 0 {
+			return fmt.Errorf("%s\n%s", strings.Join(succeeded, "\n"), strings.Join(failed, "\n"))
+		}
+		return fmt.Errorf("%s", strings.Join(failed, "\n"))
+	}
+
 	return nil
+}
+
+func isKubernetesResourceFlagsSet(componentFlag string) bool {
+	if len(kubernetesResourceFlags) == 0 {
+		// Default: install all resources if not specified
+		return true
+	}
+	for _, c := range kubernetesResourceFlags {
+		if strings.EqualFold(strings.TrimSpace(c), componentFlag) {
+			return true
+		}
+	}
+	return false
 }
