@@ -267,7 +267,9 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	componentDef := component.ComponentDefinition{} // Retrieve the entire component
 	defer func() {
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
-		model = componentDef.Model.Name
+		if componentDef.Model != nil {
+			model = componentDef.Model.Name
+		}
 	}()
 
 	// Query the database for the complete component definition

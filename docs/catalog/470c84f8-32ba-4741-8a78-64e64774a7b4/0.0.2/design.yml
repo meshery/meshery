@@ -1,0 +1,1739 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "kafka-32.3.10.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "30d5ab1d-589e-4419-9494-235499ce8028",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-broker",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "broker",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-broker",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 9092
+                },
+                {
+                  "port": 9094
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "broker",
+              "app.kubernetes.io/instance": "kafka",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b190f802-3dad-4c1f-841b-57adac41e5a3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-controller",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-controller",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 9093
+                },
+                {
+                  "port": 9092
+                },
+                {
+                  "port": 9094
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "controller-eligible",
+              "app.kubernetes.io/instance": "kafka",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "65a58cb7-c6e2-4654-8a78-9d7fdb890ffd",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-broker",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "broker",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-broker",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "broker",
+              "app.kubernetes.io/instance": "kafka",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e72fcc46-b179-46c0-878d-c95e5d1343c8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-controller",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-controller",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "controller-eligible",
+              "app.kubernetes.io/instance": "kafka",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "eb3601c0-ad7b-4903-be56-64107fa421a4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-provisioning",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-provisioning",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "25391cc3-7c9e-41a4-9d62-975bc1437b5e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "kafka",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7a9b4065-8dcb-4659-bc9c-ae0e6b961964",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-user-passwords",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "client-passwords": "dU1KM2ZtOGZVSg==",
+          "controller-password": "bExiUlFXV28wcQ==",
+          "inter-broker-password": "a0s0YXQ3NktLaQ==",
+          "system-user-password": "dU1KM2ZtOGZVSg=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-user-passwords",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "03752c5f-90bf-4735-9345-632063e174df",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-kraft",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "cluster-id": "c25qbGQwNERodzJqNldMdU1yVXROVA==",
+          "controller-0-id": "OTVINWVzR1VQc1JmYWhEWXFpU2Z0RA==",
+          "controller-1-id": "SnYweXc2QVhwcU01WThENUhPTW1lZA==",
+          "controller-2-id": "RE1zb1RKczB4TW5SVUh6ZEl2NEhRRw=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-kraft",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "06c7b64e-840b-4527-b957-76c76b7fd51f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-controller-configuration",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "server.properties": "advertised.listeners=CLIENT://advertised-address-placeholder:9092,INTERNAL://advertised-address-placeholder:9094\ncontroller.listener.names=CONTROLLER\ncontroller.quorum.bootstrap.servers=kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9093,kafka-controller-1.kafka-controller-headless.default.svc.cluster.local:9093,kafka-controller-2.kafka-controller-headless.default.svc.cluster.local:9093\ninter.broker.listener.name=INTERNAL\nlistener.name.client.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required user_user1=\"password-placeholder-0\";\nlistener.name.client.scram-sha-256.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required;\nlistener.name.client.scram-sha-512.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required;\nlistener.name.controller.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"controller_user\" password=\"controller-password-placeholder\" user_controller_user=\"controller-password-placeholder\" user_user1=\"password-placeholder-0\";\nlistener.name.controller.scram-sha-256.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=\"controller_user\" password=\"controller-password-placeholder\";\nlistener.name.controller.scram-sha-512.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=\"controller_user\" password=\"controller-password-placeholder\";\nlistener.name.internal.plain.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"inter_broker_user\" password=\"interbroker-password-placeholder\" user_inter_broker_user=\"interbroker-password-placeholder\" user_user1=\"password-placeholder-0\";\nlistener.name.internal.scram-sha-256.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=\"inter_broker_user\" password=\"interbroker-password-placeholder\";\nlistener.name.internal.scram-sha-512.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=\"inter_broker_user\" password=\"interbroker-password-placeholder\";\nlistener.security.protocol.map=CONTROLLER:SASL_PLAINTEXT,CLIENT:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT\nlisteners=CLIENT://:9092,INTERNAL://:9094,CONTROLLER://:9093\nlog.dir=/bitnami/kafka/data\nlogs.dir=/opt/bitnami/kafka/logs\nprocess.roles=controller,broker\nsasl.enabled.mechanisms=PLAIN,SCRAM-SHA-256,SCRAM-SHA-512\nsasl.mechanism.controller.protocol=PLAIN\nsasl.mechanism.inter.broker.protocol=PLAIN"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-controller-configuration",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b5b34c46-c08a-4e49-a194-6ad826a51856",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-controller-headless",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-controller-headless",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "tcp-interbroker",
+              "port": 9094,
+              "protocol": "TCP",
+              "targetPort": "interbroker"
+            },
+            {
+              "name": "tcp-client",
+              "port": 9092,
+              "protocol": "TCP",
+              "targetPort": "client"
+            },
+            {
+              "name": "tcp-controller",
+              "port": 9093,
+              "protocol": "TCP",
+              "targetPort": "controller"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9a49bb3b-717c-488d-ae62-e043707dbd60",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "kafka",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "tcp-client",
+              "nodePort": null,
+              "port": 9092,
+              "protocol": "TCP",
+              "targetPort": "client"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "59f3d23d-9cd0-4c69-9db8-da5ce9fb34d0",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "kafka-controller",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-30T14:23:00.251057386Z",
+          "updated_at": "2025-10-30T14:23:00.251057386Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "controller-eligible",
+            "app.kubernetes.io/instance": "kafka",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "kafka",
+            "app.kubernetes.io/part-of": "kafka",
+            "app.kubernetes.io/version": "4.0.0",
+            "helm.sh/chart": "kafka-32.3.10"
+          },
+          "name": "kafka-controller",
+          "namespace": "default"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "controller-eligible",
+              "app.kubernetes.io/instance": "kafka",
+              "app.kubernetes.io/name": "kafka",
+              "app.kubernetes.io/part-of": "kafka"
+            }
+          },
+          "serviceName": "kafka-controller-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configuration": "0a68e1b133270e976b9d5eb53e3eae87001e3e44746df0af79b7a710813d6169",
+                "checksum/secret": "4568025b0392b0cdb0d0efba8e7875a5eb4568e17810f12c9448ee239a5d9874"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "controller-eligible",
+                "app.kubernetes.io/instance": "kafka",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "kafka",
+                "app.kubernetes.io/part-of": "kafka",
+                "app.kubernetes.io/version": "4.0.0",
+                "helm.sh/chart": "kafka-32.3.10"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "controller-eligible",
+                            "app.kubernetes.io/instance": "kafka",
+                            "app.kubernetes.io/name": "kafka"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "KAFKA_HEAP_OPTS",
+                      "value": "-XX:InitialRAMPercentage=75 -XX:MaxRAMPercentage=75"
+                    },
+                    {
+                      "name": "KAFKA_CFG_PROCESS_ROLES",
+                      "value": "controller,broker"
+                    },
+                    {
+                      "name": "KAFKA_INITIAL_CONTROLLERS_FILE",
+                      "value": "/shared/initial-controllers.txt"
+                    },
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "KAFKA_KRAFT_CLUSTER_ID",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "cluster-id",
+                          "name": "kafka-kraft"
+                        }
+                      }
+                    },
+                    {
+                      "name": "KAFKA_KRAFT_BOOTSTRAP_SCRAM_USERS",
+                      "value": "true"
+                    },
+                    {
+                      "name": "KAFKA_CLIENT_USERS",
+                      "value": "user1"
+                    },
+                    {
+                      "name": "KAFKA_CLIENT_PASSWORDS_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/client-passwords"
+                    },
+                    {
+                      "name": "KAFKA_INTER_BROKER_USER",
+                      "value": "inter_broker_user"
+                    },
+                    {
+                      "name": "KAFKA_INTER_BROKER_PASSWORD_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/inter-broker-password"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_USER",
+                      "value": "controller_user"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_PASSWORD_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/controller-password"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/kafka:4.0.0-debian-12-r8",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "pgrep",
+                        "-f",
+                        "kafka"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "kafka",
+                  "ports": [
+                    {
+                      "containerPort": 9093,
+                      "name": "controller"
+                    },
+                    {
+                      "containerPort": 9092,
+                      "name": "client"
+                    },
+                    {
+                      "containerPort": 9094,
+                      "name": "interbroker"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "controller"
+                    },
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "750m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "768Mi"
+                    },
+                    "requests": {
+                      "cpu": "500m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {}
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/kafka",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/kafka/logs",
+                      "name": "logs"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/kafka/config/server.properties",
+                      "name": "kafka-config",
+                      "subPath": "server.properties"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "tmp"
+                    },
+                    {
+                      "mountPath": "/shared",
+                      "name": "init-shared"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/kafka/config/secrets",
+                      "name": "kafka-sasl",
+                      "readOnly": true
+                    }
+                  ]
+                }
+              ],
+              "enableServiceLinks": true,
+              "hostIPC": false,
+              "hostNetwork": false,
+              "initContainers": [
+                {
+                  "args": [
+                    "-ec",
+                    ". /opt/bitnami/scripts/libkafka.sh\nconfigure_kafka_sasl() {\n    # Replace placeholders with passwords\n    replace_in_file \"$KAFKA_CONF_FILE\" \"interbroker-password-placeholder\" \"$KAFKA_INTER_BROKER_PASSWORD\"\n    replace_in_file \"$KAFKA_CONF_FILE\" \"controller-password-placeholder\" \"$KAFKA_CONTROLLER_PASSWORD\"\n    read -r -a passwords \u003c\u003c\u003c \"$(tr ',;' ' ' \u003c\u003c\u003c\"${KAFKA_CLIENT_PASSWORDS:-}\")\"\n    for ((i = 0; i \u003c ${#passwords[@]}; i++)); do\n        replace_in_file \"$KAFKA_CONF_FILE\" \"password-placeholder-${i}\\\"\" \"${passwords[i]}\\\"\"\n    done\n}\n\ncp /configmaps/server.properties $KAFKA_CONF_FILE\n\n# Get pod ID and role, last and second last fields in the pod name respectively\nPOD_ID=\"${MY_POD_NAME##*-}\"\nPOD_ROLE=\"${MY_POD_NAME%-*}\"; POD_ROLE=\"${POD_ROLE##*-}\"\n\n# Configure node.id\nID=$((POD_ID + KAFKA_MIN_ID))\n[[ -f \"/bitnami/kafka/data/meta.properties\" ]] \u0026\u0026 ID=\"$(grep \"node.id\" /bitnami/kafka/data/meta.properties | awk -F '=' '{print $2}')\"\nkafka_server_conf_set \"node.id\" \"$ID\"\n# Configure initial controllers\nif [[ \"controller\" =~ \"$POD_ROLE\" ]]; then\n    INITIAL_CONTROLLERS=()\n    for ((i = 0; i \u003c 3; i++)); do\n        var=\"KAFKA_CONTROLLER_${i}_DIR_ID\"; DIR_ID=\"${!var}\"\n        [[ $i -eq $POD_ID ]] \u0026\u0026 [[ -f \"/bitnami/kafka/data/meta.properties\" ]] \u0026\u0026 DIR_ID=\"$(grep \"directory.id\" /bitnami/kafka/data/meta.properties | awk -F '=' '{print $2}')\"\n        INITIAL_CONTROLLERS+=(\"${i}@${KAFKA_FULLNAME}-${POD_ROLE}-${i}.${KAFKA_CONTROLLER_SVC_NAME}.${MY_POD_NAMESPACE}.svc.${CLUSTER_DOMAIN}:${KAFKA_CONTROLLER_PORT}:${DIR_ID}\")\n    done\n    echo \"${INITIAL_CONTROLLERS[*]}\" | awk -v OFS=',' '{$1=$1}1' \u003e /shared/initial-controllers.txt\nfi\nreplace_in_file \"$KAFKA_CONF_FILE\" \"advertised-address-placeholder\" \"${MY_POD_NAME}.${KAFKA_FULLNAME}-${POD_ROLE}-headless.${MY_POD_NAMESPACE}.svc.${CLUSTER_DOMAIN}\"\nsasl_env_vars=(\n  KAFKA_CLIENT_PASSWORDS\n  KAFKA_INTER_BROKER_PASSWORD\n  KAFKA_INTER_BROKER_CLIENT_SECRET\n  KAFKA_CONTROLLER_PASSWORD\n  KAFKA_CONTROLLER_CLIENT_SECRET\n)\nfor env_var in \"${sasl_env_vars[@]}\"; do\n    file_env_var=\"${env_var}_FILE\"\n    if [[ -n \"${!file_env_var:-}\" ]]; then\n        if [[ -r \"${!file_env_var:-}\" ]]; then\n            export \"${env_var}=$(\u003c \"${!file_env_var}\")\"\n            unset \"${file_env_var}\"\n        else\n            warn \"Skipping export of '${env_var}'. '${!file_env_var:-}' is not readable.\"\n        fi\n    fi\ndone\nconfigure_kafka_sasl\nif [[ -f /secret-config/server-secret.properties ]]; then\n    cat /secret-config/server-secret.properties \u003e\u003e $KAFKA_CONF_FILE\nfi\n"
+                  ],
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "MY_POD_NAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "MY_POD_NAMESPACE",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.namespace"
+                        }
+                      }
+                    },
+                    {
+                      "name": "KAFKA_FULLNAME",
+                      "value": "kafka"
+                    },
+                    {
+                      "name": "CLUSTER_DOMAIN",
+                      "value": "cluster.local"
+                    },
+                    {
+                      "name": "KAFKA_VOLUME_DIR",
+                      "value": "/bitnami/kafka"
+                    },
+                    {
+                      "name": "KAFKA_CONF_FILE",
+                      "value": "/config/server.properties"
+                    },
+                    {
+                      "name": "KAFKA_MIN_ID",
+                      "value": "0"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_SVC_NAME",
+                      "value": "kafka-controller-headless"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_PORT",
+                      "value": "9093"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_0_DIR_ID",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "controller-0-id",
+                          "name": "kafka-kraft"
+                        }
+                      }
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_1_DIR_ID",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "controller-1-id",
+                          "name": "kafka-kraft"
+                        }
+                      }
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_2_DIR_ID",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "controller-2-id",
+                          "name": "kafka-kraft"
+                        }
+                      }
+                    },
+                    {
+                      "name": "KAFKA_CLIENT_USERS",
+                      "value": "user1"
+                    },
+                    {
+                      "name": "KAFKA_CLIENT_PASSWORDS_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/client-passwords"
+                    },
+                    {
+                      "name": "KAFKA_INTER_BROKER_USER",
+                      "value": "inter_broker_user"
+                    },
+                    {
+                      "name": "KAFKA_INTER_BROKER_PASSWORD_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/inter-broker-password"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_USER",
+                      "value": "controller_user"
+                    },
+                    {
+                      "name": "KAFKA_CONTROLLER_PASSWORD_FILE",
+                      "value": "/opt/bitnami/kafka/config/secrets/controller-password"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/kafka:4.0.0-debian-12-r8",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "prepare-config",
+                  "resources": {
+                    "limits": {
+                      "cpu": "150m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "192Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "128Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "add": [],
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/kafka",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/config",
+                      "name": "kafka-config"
+                    },
+                    {
+                      "mountPath": "/configmaps",
+                      "name": "kafka-configmaps"
+                    },
+                    {
+                      "mountPath": "/secret-config",
+                      "name": "kafka-secret-config"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "tmp"
+                    },
+                    {
+                      "mountPath": "/shared",
+                      "name": "init-shared"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/kafka/config/secrets",
+                      "name": "kafka-sasl",
+                      "readOnly": true
+                    }
+                  ]
+                }
+              ],
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "seccompProfile": {
+                  "type": "RuntimeDefault"
+                },
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "kafka",
+              "volumes": [
+                {
+                  "configMap": {
+                    "name": "kafka-controller-configuration"
+                  },
+                  "name": "kafka-configmaps"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "kafka-secret-config"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "kafka-config"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "tmp"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "init-shared"
+                },
+                {
+                  "name": "kafka-sasl",
+                  "projected": {
+                    "sources": [
+                      {
+                        "secret": {
+                          "name": "kafka-user-passwords"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "emptyDir": {},
+                  "name": "logs"
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}
