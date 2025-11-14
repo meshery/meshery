@@ -112,8 +112,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
 
-
-    l.Log.Info("Loading provider capabilities from local file: ", filePath)
+	l.Log.Info("Loading provider capabilities from local file: ", filePath)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -1427,7 +1426,7 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
 		return ErrMarshal(err, "meshery event")
 	}
 
-	l.Log.Info("attempting to publish event to remote provider, size: %d", len(data))
+	l.Log.Info(fmt.Sprintf("attempting to publish event to remote provider, size: %d", len(data)))
 	bf := bytes.NewBuffer(data)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 
@@ -1723,7 +1722,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		return ErrMarshal(err, "meshery metrics for shipping")
 	}
 
-	l.Log.Debug("Result: %s, size: %d", data, len(data))
+	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	l.Log.Info("attempting to publish metrics to remote provider")
 	bf := bytes.NewBuffer(data)
 
