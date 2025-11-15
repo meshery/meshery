@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { OVERVIEW, MODELS, GRAFANA, PROMETHEUS, REGISTRY } from '../../../constants/navigator';
 import { useRouter } from 'next/router';
-import { useRef } from 'react';
 
 export const useMeshModelComponentRouter = () => {
   const router = useRouter();

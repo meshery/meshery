@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
+import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled, NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from './ReactSelectWrapper';
 
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';

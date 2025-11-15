@@ -7,6 +7,7 @@ import {
   TextField,
   InputLabel,
   useTheme,
+  Checkbox,
 } from '@sistent/sistent';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -19,7 +20,6 @@ import {
   enumOptionsValueForIndex,
   labelValue,
 } from '@rjsf/utils';
-import { Checkbox } from '@sistent/sistent';
 
 export default function CustomSelectWidget({
   schema,
