@@ -231,8 +231,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 		err = setCmd.RunE(cmd, args)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		err = restartCmd.RunE(cmd, args)
 		if err != nil {
