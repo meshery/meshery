@@ -93,7 +93,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 
 		if resp.StatusCode == http.StatusOK {
 			// TODO update OrgId in schema to OrgID
-			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgId))
+			utils.Log.Infof("Environment named %s created in organization id %s", payload.Name, payload.OrgId)
 			return nil
 		}
 		utils.Log.Info("Error creating environment")

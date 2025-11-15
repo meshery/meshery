@@ -58,7 +58,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		p.HandleUnAuthenticated(w, req)
 		return
 	}
-	h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
+	h.log.Infof("logged out from %v provider", p.Name())
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
