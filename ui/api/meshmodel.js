@@ -33,11 +33,11 @@ export async function fetchRelationships() {
   return await promisifiedDataFetch(`${MESHMODEL_RELATIONSHIPS_ENDPOINT}`);
 }
 
-export async function getAllComponents(page = 1, pageSize = 'all') {
+export async function getAllComponents(pageSize = 'all', page = 1) {
   return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}?page=${page}&pagesize=${pageSize}`);
 }
 
-export async function getMeshModels(page = 1, pageSize = 'all', options = defaultOptions) {
+export async function getMeshModels(pageSize = 'all', options = defaultOptions, page = 1) {
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&${optionToQueryConvertor({
       ...defaultOptions,
@@ -52,7 +52,7 @@ export async function getComponentFromModelApi(model, pageSize = 'all', trim = t
   );
 }
 
-export async function getMeshModelsByRegistrants(page = 1, pageSize = 'all', registrant) {
+export async function getMeshModelsByRegistrants(registrant, pageSize = 'all', page = 1) {
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&registrant=${registrant}`,
   );
@@ -131,11 +131,11 @@ export async function getRelationshipsDetail(page) {
 
 export async function getMeshModelComponent(model, component, version, apiVersion) {
   const versionQueryString = !version ? '' : `?version=${version}`;
-  const apiVersionQueryString = !apiVersion
-    ? ''
-    : !version
-      ? `?apiVersion=${apiVersion}`
-      : `&apiVersion=${apiVersion}`;
+  let apiVersionQueryString = '';
+
+  if (apiVersion) {
+    apiVersionQueryString = `${version ? '&' : '?'}apiVersion=${apiVersion}`;
+  }
 
   return promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}/${model}/components/${component}${versionQueryString}${apiVersionQueryString}`,
