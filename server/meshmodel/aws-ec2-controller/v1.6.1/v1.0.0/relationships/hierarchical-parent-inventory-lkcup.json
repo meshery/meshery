@@ -31,42 +31,7 @@
           {
             "id": null,
             "kind": "RouteTable",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatedRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcID"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "VPC",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcID"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -80,41 +45,23 @@
                 "version": ""
               }
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vpcID"
+                ]
+              ]
+            }
           }
         ],
         "to": [
           {
             "id": null,
             "kind": "VPC",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "RouteTable",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcID"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "vpcID"
-                    ]
-                  ]
-                }
-              ]
-            },
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -128,7 +75,14 @@
                 "version": ""
               }
             },
-            "patch": null
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
           }
         ]
       }

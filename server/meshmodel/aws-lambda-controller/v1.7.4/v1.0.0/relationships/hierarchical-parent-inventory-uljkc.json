@@ -1,7 +1,7 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). ",
     "styles": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "LayerVersion",
+            "kind": "Function",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -50,9 +50,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "spec",
+                  "layers"
                 ]
               ]
             }
@@ -61,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Function",
+            "kind": "LayerVersion",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -80,9 +79,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "layers"
+                  "displayName"
                 ]
               ]
             }
@@ -91,8 +88,8 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "reference",
   "status": "enabled",
-  "type": "parent",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

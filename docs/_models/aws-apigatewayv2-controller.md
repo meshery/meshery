@@ -54,7 +54,11 @@ components:
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
   description: 
-components-count: 11
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 12
 relationships: 
 - type: "Binding"
   kind: "Edge"
@@ -74,9 +78,9 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between API and Route"
 relationship-count: 7
 featureList: [
   "Handles API requests and responses",
