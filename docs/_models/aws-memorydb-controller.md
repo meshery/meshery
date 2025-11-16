@@ -46,7 +46,11 @@ components:
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/color/multi-region-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/white/multi-region-cluster-white.svg
   description: 
-components-count: 9
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
 - type: "Binding"
   kind: "Edge"

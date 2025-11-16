@@ -26,7 +26,11 @@ components:
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/color/trail-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/white/trail-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
 - type: "Binding"
   kind: "Edge"

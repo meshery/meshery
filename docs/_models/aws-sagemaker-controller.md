@@ -118,7 +118,11 @@ components:
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/space/icons/color/space-color.svg
   whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/space/icons/white/space-white.svg
   description: 
-components-count: 27
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sagemaker-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 28
 relationships: 
 - type: "Binding"
   kind: "Edge"

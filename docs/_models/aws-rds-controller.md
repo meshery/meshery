@@ -62,7 +62,11 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/color/db-cluster-endpoint-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/white/db-cluster-endpoint-white.svg
   description: 
-components-count: 13
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 14
 relationships: 
 - type: "Binding"
   kind: "Edge"

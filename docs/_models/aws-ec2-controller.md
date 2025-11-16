@@ -98,7 +98,11 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
   description: 
-components-count: 22
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 23
 relationships: 
 - type: "Non Binding"
   kind: "Edge"
