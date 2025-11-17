@@ -90,7 +90,7 @@
     }
   ],
   "subType": "permission",
-  "status": "ignored",
+  "status": "enabled",
   "type": "binding",
   "version": "v1.0.0"
 }
