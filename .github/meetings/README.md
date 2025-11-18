@@ -42,6 +42,6 @@ bash .github/scripts/fetch_meeting_minutes.sh
 ## Source
 
 Meeting minutes are sourced from:
-- Forum: https://discuss.layer5.io
+- Forum: https://discuss.meshery.io
 - Category: Community
 - Filter: Topics with "meeting" in the title
