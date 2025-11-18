@@ -8,7 +8,7 @@ language: en
 list: include
 ---
 
-Meshery UI has a number of extension points that allow you to greatly customize both the functional behavior and visual appearance of Meshery UI. Meshery UI extension points come in different shapes and sizes - there are different types of UI extension points. This document provides a description of each type, example use, best practices to consider, and caveats of which to be aware. 
+Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.
 
 ### Extensibility: Customizing Text-based Forms using RJSF Custom Component
 
