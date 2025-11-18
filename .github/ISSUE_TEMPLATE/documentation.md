@@ -12,7 +12,7 @@ assignees: ''
 
 
 
-_NOTE: If this issue involves add a new page or moving the location of an existing page, please make sure the sidebar and homepage navigation are updated accordingly. As appropriate, update `_data/toc.yml` and `pages/index.md`._
+_NOTE: If this issue involves adding a new page or moving the location of an existing page, please make sure the sidebar and homepage navigation are updated accordingly. As appropriate, update `_data/toc.yml` and `pages/index.md`._
 
 ---
 
