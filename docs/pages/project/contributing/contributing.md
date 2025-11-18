@@ -10,6 +10,7 @@ language: en
 type: project
 category: contributing
 list: exclude
+display-suggested-reading: false
 abstract: How to contribute to the Meshery project and any of its components.
 ---
 

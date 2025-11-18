@@ -12,7 +12,8 @@
 
 <ul>
   {% for item in sorted_reading %}
-    {% if item.type==include.type and item.category==include.category and item.list!="exclude" and include.url!=item.url and item.language == include.language %}
+    {% if item.type==include.type and item.category==include.category and item.list!="exclude" and include.url!=item.url 
+      and item.language == include.language and item.display-suggested-reading==true %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract %}
       - {{ item.abstract }}
