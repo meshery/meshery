@@ -185,8 +185,14 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 	// }(mch)
 
 	// Emit success event for successful MeshSync data handler attachment
+	var description string
+	if mch.meshsyncDeploymentMode != "" {
+		description = fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode))
+	} else {
+		description = "MeshSync connected"
+	}
 	mch.emitEvent(
-		fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode)),
+		description,
 		events.Informational,
 		map[string]any{
 			"k8sContextID":           k8scontext.ID,
