@@ -1,0 +1,1745 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "227"
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    generation: 227
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: layer5-cloud
+      app.kubernetes.io/version: 0.8.495
+      meshery-cloud.sh/chart: layer5-cloud-0.2.0
+    name: cloud
+    namespace: prod
+    resourceVersion: "16611317"
+    uid: 87c70534-0a5a-4892-adf1-af0db03c8b0f
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: cloud
+        app.kubernetes.io/name: layer5-cloud
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: cloud
+          app.kubernetes.io/name: layer5-cloud
+        name: cloud
+      spec:
+        containers:
+        - envFrom:
+          - configMapRef:
+              name: cloud-cm
+          - secretRef:
+              name: cloud-secret
+          image: layer5/meshery-cloud:production-v0.8.552
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: layer5-cloud
+          ports:
+          - containerPort: 9876
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext: {}
+          startupProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /readyz
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: meshery-cloud
+        serviceAccountName: meshery-cloud
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: github-app-key
+          secret:
+            defaultMode: 420
+            secretName: cloud
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-10-29T06:05:32Z"
+      lastUpdateTime: "2025-10-29T06:05:32Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-08-04T01:01:28Z"
+      lastUpdateTime: "2025-11-04T10:11:29Z"
+      message: ReplicaSet "cloud-6fc9bc5f68" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 227
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "6"
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    generation: 6
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: hydra
+      app.kubernetes.io/version: v1.11.8
+      helm.sh/chart: hydra-0.24.2
+    name: cloud-hydra
+    namespace: prod
+    resourceVersion: "15201740"
+    uid: 2640f066-25c8-4b64-97ec-5716716d4d2c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: cloud
+        app.kubernetes.io/name: hydra
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/hydra-config: 47a0a9b59b1248b37ed6da85ed90b5be465df5e1fc16cbd675069406d58da903
+          checksum/hydra-secrets: 10616cb6c7b3cdb26818004d2e7abe39bd3516299bc2e1b29b18c64027b6ec8c
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: cloud
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: hydra
+          app.kubernetes.io/version: v1.11.8
+          helm.sh/chart: hydra-0.24.2
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - serve
+          - all
+          - --dangerous-force-http
+          - --config
+          - /etc/config/hydra.yaml
+          command:
+          - hydra
+          env:
+          - name: URLS_SELF_ISSUER
+            value: https://cloud.layer5.io/hydra
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                key: dsn
+                name: cloud-hydra
+          - name: SECRETS_SYSTEM
+            valueFrom:
+              secretKeyRef:
+                key: secretsSystem
+                name: cloud-hydra
+          - name: SECRETS_COOKIE
+            valueFrom:
+              secretKeyRef:
+                key: secretsCookie
+                name: cloud-hydra
+          image: oryd/hydra:v1.11.8
+          imagePullPolicy: IfNotPresent
+          lifecycle: {}
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health/alive
+              port: http-admin
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: hydra
+          ports:
+          - containerPort: 4444
+            name: http-public
+            protocol: TCP
+          - containerPort: 4445
+            name: http-admin
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health/ready
+              port: http-admin
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 100
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/config
+            name: hydra-config-volume
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: cloud-hydra
+        serviceAccountName: cloud-hydra
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: cloud-hydra
+          name: hydra-config-volume
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-10-04T16:41:01Z"
+      lastUpdateTime: "2025-10-14T15:29:40Z"
+      message: ReplicaSet "cloud-hydra-67745fc4f8" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2025-10-28T06:38:01Z"
+      lastUpdateTime: "2025-10-28T06:38:01Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 6
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: hydra-maester
+      app.kubernetes.io/version: v0.0.23
+      helm.sh/chart: hydra-maester-0.24.2
+    name: cloud-hydra-maester
+    namespace: prod
+    resourceVersion: "14210703"
+    uid: 94704454-572c-4f3e-a988-0eb979455f7f
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: cloud
+        app.kubernetes.io/name: cloud-hydra-maester
+        control-plane: controller-manager
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: cloud
+          app.kubernetes.io/name: cloud-hydra-maester
+          control-plane: controller-manager
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --metrics-addr=127.0.0.1:8080
+          - --hydra-url=http://cloud-hydra-admin
+          - --hydra-port=4445
+          command:
+          - /manager
+          image: oryd/hydra-maester:v0.0.25
+          imagePullPolicy: IfNotPresent
+          name: hydra-maester
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: cloud-hydra-maester-account
+        serviceAccountName: cloud-hydra-maester-account
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-21T11:12:12Z"
+      lastUpdateTime: "2025-07-21T11:12:13Z"
+      message: ReplicaSet "cloud-hydra-maester-84dc5b5bd" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2025-10-23T01:01:26Z"
+      lastUpdateTime: "2025-10-23T01:01:26Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "249"
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    generation: 249
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kratos
+      app.kubernetes.io/version: v1.1.0
+      helm.sh/chart: kratos-0.45.0
+    name: cloud-kratos
+    namespace: prod
+    resourceVersion: "16611210"
+    uid: 40c2212d-8b2b-4fcf-877c-76579074fd4b
+  spec:
+    progressDeadlineSeconds: 3600
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: cloud
+        app.kubernetes.io/name: kratos
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/kratos-config: ed7525e5141a8bc31a1623ab00eae4c587456dc661a7a9ba7539e5420b62dc03
+          checksum/kratos-secrets: 57ae4d6b8c557bedaa745b01accd6c21aae0230e2f1aa5235457c72b88550c22
+          checksum/kratos-templates: 9fe3f458af985f2c693f714dd34d85b2948a197cb92077c4dcc90ea678fe504b
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/instance: cloud
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: kratos
+          app.kubernetes.io/version: v1.1.0
+          helm.sh/chart: kratos-0.45.0
+      spec:
+        automountServiceAccountToken: false
+        containers:
+        - args:
+          - serve
+          - all
+          - --config
+          - /etc/config/kratos.yaml
+          command:
+          - kratos
+          env:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                key: dsn
+                name: cloud-kratos
+          - name: SECRETS_DEFAULT
+            valueFrom:
+              secretKeyRef:
+                key: secretsDefault
+                name: cloud-kratos
+                optional: true
+          - name: SECRETS_COOKIE
+            valueFrom:
+              secretKeyRef:
+                key: secretsCookie
+                name: cloud-kratos
+                optional: true
+          - name: SECRETS_CIPHER
+            valueFrom:
+              secretKeyRef:
+                key: secretsCipher
+                name: cloud-kratos
+                optional: true
+          - name: COURIER_SMTP_CONNECTION_URI
+            valueFrom:
+              secretKeyRef:
+                key: smtpConnectionURI
+                name: cloud-kratos
+          image: oryd/kratos:v1.1.0
+          imagePullPolicy: IfNotPresent
+          lifecycle: {}
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: 127.0.0.1
+              path: /admin/health/alive
+              port: 4434
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: kratos
+          ports:
+          - containerPort: 4434
+            name: http-admin
+            protocol: TCP
+          - containerPort: 4433
+            name: http-public
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: 127.0.0.1
+              path: /admin/health/ready
+              port: 4434
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+            seLinuxOptions:
+              level: s0:c123,c456
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: 127.0.0.1
+              path: /admin/health/ready
+              port: 4434
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/config
+            name: kratos-config-volume
+            readOnly: true
+          - mountPath: /conf/courier-templates/recovery/valid
+            name: kratos-template-recovery-valid-volume
+            readOnly: true
+          - mountPath: /conf/courier-templates/verification/valid
+            name: kratos-template-verification-valid-volume
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          fsGroupChangePolicy: OnRootMismatch
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: cloud-kratos
+        serviceAccountName: cloud-kratos
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-config
+          name: kratos-config-volume
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-template-recovery-valid
+          name: kratos-template-recovery-valid-volume
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-template-verification-valid
+          name: kratos-template-verification-valid-volume
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-10-29T06:05:05Z"
+      lastUpdateTime: "2025-10-29T06:05:05Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-07-21T11:12:12Z"
+      lastUpdateTime: "2025-11-04T10:11:02Z"
+      message: ReplicaSet "cloud-kratos-5d674b795c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 249
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: layer5-cloud
+      app.kubernetes.io/version: 0.8.495
+      meshery-cloud.sh/chart: layer5-cloud-0.2.0
+    name: cloud
+    namespace: prod
+    resourceVersion: "12635040"
+    uid: 66d9d8b1-1fb2-436f-bd69-804d699f01d8
+  spec:
+    clusterIP: 10.110.13.106
+    clusterIPs:
+    - 10.110.13.106
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 9876
+      protocol: TCP
+      targetPort: http
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: layer5-cloud
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-primary
+    namespace: prod
+    resourceVersion: "12629538"
+    uid: 265dadfb-832c-4421-ab3e-8b2cecfa3dd6
+  spec:
+    clusterIP: 10.102.31.135
+    clusterIPs:
+    - 10.102.31.135
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-primary-hl
+    namespace: prod
+    resourceVersion: "12629531"
+    uid: 777388f4-c3f6-4b3f-af3e-79134bce6cf1
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    publishNotReadyAddresses: true
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    labels:
+      app.kubernetes.io/component: read
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-read
+    namespace: prod
+    resourceVersion: "12629542"
+    uid: b0dcaed6-4853-413b-ae52-80880fa97d07
+  spec:
+    clusterIP: 10.103.110.94
+    clusterIPs:
+    - 10.103.110.94
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    selector:
+      app.kubernetes.io/component: read
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    labels:
+      app.kubernetes.io/component: read
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-read-hl
+    namespace: prod
+    resourceVersion: "12629532"
+    uid: ba80dd5d-56d3-417a-89c4-3b0261b485be
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    publishNotReadyAddresses: true
+    selector:
+      app.kubernetes.io/component: read
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/component: admin
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: hydra
+      app.kubernetes.io/version: v1.11.8
+      helm.sh/chart: hydra-0.24.2
+    name: cloud-hydra-admin
+    namespace: prod
+    resourceVersion: "23435"
+    uid: 3a3d19f9-00db-4a70-abd5-7b29d2ff87dc
+  spec:
+    clusterIP: 10.108.91.152
+    clusterIPs:
+    - 10.108.91.152
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 9001
+      protocol: TCP
+      targetPort: http-admin
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: hydra
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: hydra
+      app.kubernetes.io/version: v1.11.8
+      helm.sh/chart: hydra-0.24.2
+    name: cloud-hydra-public
+    namespace: prod
+    resourceVersion: "23439"
+    uid: 9f9833d7-2a65-4829-bbe9-55fe4c60e36c
+  spec:
+    clusterIP: 10.97.236.7
+    clusterIPs:
+    - 10.97.236.7
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 9000
+      protocol: TCP
+      targetPort: http-public
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: hydra
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/component: admin
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kratos
+      app.kubernetes.io/version: v1.1.0
+      helm.sh/chart: kratos-0.45.0
+    name: cloud-kratos-admin
+    namespace: prod
+    resourceVersion: "5538648"
+    uid: bd0de169-ae6d-4838-885f-b00f0110320b
+  spec:
+    clusterIP: 10.110.189.78
+    clusterIPs:
+    - 10.110.189.78
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 9011
+      protocol: TCP
+      targetPort: http-admin
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: kratos
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/component: courier
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kratos
+      app.kubernetes.io/version: v1.1.0
+      helm.sh/chart: kratos-0.45.0
+    name: cloud-kratos-courier
+    namespace: prod
+    resourceVersion: "5538654"
+    uid: 41e537c1-6fb9-4623-adff-c9cc2e47b0eb
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http-metrics
+      port: 80
+      protocol: TCP
+      targetPort: http-metrics
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: cloud-kratos-courier
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    labels:
+      app.kubernetes.io/component: public
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kratos
+      app.kubernetes.io/version: v1.1.0
+      helm.sh/chart: kratos-0.45.0
+    name: cloud-kratos-public
+    namespace: prod
+    resourceVersion: "5538649"
+    uid: c24fcb22-1d8a-4305-b245-14ae4284cd80
+  spec:
+    clusterIP: 10.97.189.178
+    clusterIPs:
+    - 10.97.189.178
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 9010
+      protocol: TCP
+      targetPort: http-public
+    selector:
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/name: kratos
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cnpg.io/operatorVersion: 1.27.0
+    creationTimestamp: "2025-10-11T11:47:10Z"
+    labels:
+      cnpg.io/cluster: cloud-pg
+    name: cloud-pg-r
+    namespace: prod
+    ownerReferences:
+    - apiVersion: postgresql.cnpg.io/v1
+      controller: true
+      kind: Cluster
+      name: cloud-pg
+      uid: fac54c0a-e370-4183-aeeb-68ea704698a7
+    resourceVersion: "12030086"
+    uid: a5d03156-bb96-4fb5-87b0-28c193124547
+  spec:
+    clusterIP: 10.109.142.156
+    clusterIPs:
+    - 10.109.142.156
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      cnpg.io/cluster: cloud-pg
+      cnpg.io/podRole: instance
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cnpg.io/operatorVersion: 1.27.0
+    creationTimestamp: "2025-10-11T11:47:10Z"
+    labels:
+      cnpg.io/cluster: cloud-pg
+    name: cloud-pg-ro
+    namespace: prod
+    ownerReferences:
+    - apiVersion: postgresql.cnpg.io/v1
+      controller: true
+      kind: Cluster
+      name: cloud-pg
+      uid: fac54c0a-e370-4183-aeeb-68ea704698a7
+    resourceVersion: "12030089"
+    uid: 8685a181-dda0-4161-8b9d-c34a2cc5a501
+  spec:
+    clusterIP: 10.102.253.57
+    clusterIPs:
+    - 10.102.253.57
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      cnpg.io/cluster: cloud-pg
+      cnpg.io/instanceRole: replica
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      cnpg.io/operatorVersion: 1.27.0
+    creationTimestamp: "2025-10-11T11:47:10Z"
+    labels:
+      cnpg.io/cluster: cloud-pg
+    name: cloud-pg-rw
+    namespace: prod
+    ownerReferences:
+    - apiVersion: postgresql.cnpg.io/v1
+      controller: true
+      kind: Cluster
+      name: cloud-pg
+      uid: fac54c0a-e370-4183-aeeb-68ea704698a7
+    resourceVersion: "12030094"
+    uid: 28edead3-6696-4c70-afc5-b201c602a6cf
+  spec:
+    clusterIP: 10.104.182.187
+    clusterIPs:
+    - 10.104.182.187
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      cnpg.io/cluster: cloud-pg
+      cnpg.io/instanceRole: primary
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      auth.istio.io/8089: NONE
+    creationTimestamp: "2025-11-02T22:35:35Z"
+    generateName: cm-acme-http-solver-
+    labels:
+      acme.cert-manager.io/http-domain: "980158088"
+      acme.cert-manager.io/http-token: "1401622350"
+      acme.cert-manager.io/http01-solver: "true"
+    name: cm-acme-http-solver-g8thf
+    namespace: prod
+    ownerReferences:
+    - apiVersion: acme.cert-manager.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Challenge
+      name: hub-ws-meshery-cert-1-3217042675-1830111358
+      uid: 76d0ca67-bdba-4140-98d4-1280481b076a
+    resourceVersion: "16285720"
+    uid: a36b350b-cf71-4774-9037-5aae40c66c76
+  spec:
+    clusterIP: 10.96.125.163
+    clusterIPs:
+    - 10.96.125.163
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      nodePort: 30516
+      port: 8089
+      protocol: TCP
+      targetPort: 8089
+    selector:
+      acme.cert-manager.io/http-domain: "980158088"
+      acme.cert-manager.io/http-token: "1401622350"
+      acme.cert-manager.io/http01-solver: "true"
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-primary
+    namespace: prod
+    resourceVersion: "14850394"
+    uid: 789f253c-3861-4c86-a3fd-ba7984bcebe9
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: cloud-db
+        app.kubernetes.io/name: postgresql
+    serviceName: cloud-db-primary-hl
+    template:
+      metadata:
+        annotations:
+          checksum/extended-configuration: 34199d0d7cc8de5820d3d988558376cd7170e73b7afaacdb0cb2e6249be37bf2
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: primary
+          app.kubernetes.io/instance: cloud-db
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 16.1.0
+          helm.sh/chart: postgresql-14.0.1
+        name: cloud-db-primary
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: primary
+                    app.kubernetes.io/instance: cloud-db
+                    app.kubernetes.io/name: postgresql
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        automountServiceAccountToken: false
+        containers:
+        - env:
+          - name: BITNAMI_DEBUG
+            value: "true"
+          - name: POSTGRESQL_PORT_NUMBER
+            value: "5432"
+          - name: POSTGRESQL_VOLUME_DIR
+            value: /bitnami/postgresql
+          - name: PGDATA
+            value: /bitnami/postgresql/data
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: postgres-password
+                name: cloud-db
+          - name: POSTGRES_DATABASE
+            value: postgres
+          - name: POSTGRES_REPLICATION_MODE
+            value: master
+          - name: POSTGRES_REPLICATION_USER
+            value: repl_user
+          - name: POSTGRES_REPLICATION_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: replication-password
+                name: cloud-db
+          - name: POSTGRES_CLUSTER_APP_NAME
+            value: my_application
+          - name: POSTGRES_INITSCRIPTS_USERNAME
+            value: postgres
+          - name: POSTGRES_INITSCRIPTS_PASSWORD
+            value: postgres
+          - name: POSTGRESQL_ENABLE_LDAP
+            value: "no"
+          - name: POSTGRESQL_ENABLE_TLS
+            value: "no"
+          - name: POSTGRESQL_LOG_HOSTNAME
+            value: "false"
+          - name: POSTGRESQL_LOG_CONNECTIONS
+            value: "false"
+          - name: POSTGRESQL_LOG_DISCONNECTIONS
+            value: "false"
+          - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+            value: "off"
+          - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+            value: error
+          - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+            value: pgaudit, pg_cron
+          image: docker.io/layer5/postgres-ext:12.19-bitnami
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - exec pg_isready -U "postgres" -d "dbname=postgres" -h 127.0.0.1 -p
+                5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: postgresql
+          ports:
+          - containerPort: 5432
+            name: tcp-postgresql
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - -e
+              - |
+                exec pg_isready -U "postgres" -d "dbname=postgres" -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /docker-entrypoint-initdb.d/
+            name: custom-init-scripts
+          - mountPath: /bitnami/postgresql/conf/conf.d/
+            name: postgresql-extended-config
+          - mountPath: /dev/shm
+            name: dshm
+          - mountPath: /bitnami/postgresql
+            name: data
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/sh
+          - -ec
+          - |
+            chown 1001:1001 /bitnami/postgresql
+            mkdir -p /bitnami/postgresql/data
+            chmod 700 /bitnami/postgresql/data
+            find /bitnami/postgresql -mindepth 1 -maxdepth 1 -not -name "conf" -not -name ".snapshot" -not -name "lost+found" | \
+              xargs -r chown -R 1001:1001
+            chmod -R 777 /dev/shm
+          image: docker.io/bitnami/os-shell:11-debian-11-r96
+          imagePullPolicy: IfNotPresent
+          name: init-chmod-data
+          resources: {}
+          securityContext:
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bitnami/postgresql
+            name: data
+          - mountPath: /dev/shm
+            name: dshm
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+          fsGroupChangePolicy: Always
+        serviceAccount: cloud-db
+        serviceAccountName: cloud-db
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: cloud-db-primary-extended-configuration
+          name: postgresql-extended-config
+        - configMap:
+            defaultMode: 420
+            name: cloud-db-primary-init-scripts
+          name: custom-init-scripts
+        - emptyDir:
+            medium: Memory
+          name: dshm
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: cloud-local-path
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: cloud-db-primary-dfcbb64c8
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: cloud-db-primary-dfcbb64c8
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud-db
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-10-14T14:48:54Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: read
+      app.kubernetes.io/instance: cloud-db
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.1.0
+      helm.sh/chart: postgresql-14.0.1
+    name: cloud-db-read
+    namespace: prod
+    resourceVersion: "15201642"
+    uid: a3f91e3d-c93d-4f4e-b0c2-fa39d8693d29
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: read
+        app.kubernetes.io/instance: cloud-db
+        app.kubernetes.io/name: postgresql
+    serviceName: cloud-db-read-hl
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: read
+          app.kubernetes.io/instance: cloud-db
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: postgresql
+          app.kubernetes.io/version: 16.1.0
+          helm.sh/chart: postgresql-14.0.1
+        name: cloud-db-read
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: read
+                    app.kubernetes.io/instance: cloud-db
+                    app.kubernetes.io/name: postgresql
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        automountServiceAccountToken: false
+        containers:
+        - env:
+          - name: BITNAMI_DEBUG
+            value: "true"
+          - name: POSTGRESQL_PORT_NUMBER
+            value: "5432"
+          - name: POSTGRESQL_VOLUME_DIR
+            value: /bitnami/postgresql
+          - name: PGDATA
+            value: /bitnami/postgresql/data
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: postgres-password
+                name: cloud-db
+          - name: POSTGRES_REPLICATION_MODE
+            value: slave
+          - name: POSTGRES_REPLICATION_USER
+            value: repl_user
+          - name: POSTGRES_REPLICATION_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: replication-password
+                name: cloud-db
+          - name: POSTGRES_CLUSTER_APP_NAME
+            value: my_application
+          - name: POSTGRES_MASTER_HOST
+            value: cloud-db-primary
+          - name: POSTGRES_MASTER_PORT_NUMBER
+            value: "5432"
+          - name: POSTGRESQL_ENABLE_TLS
+            value: "no"
+          - name: POSTGRESQL_LOG_HOSTNAME
+            value: "false"
+          - name: POSTGRESQL_LOG_CONNECTIONS
+            value: "false"
+          - name: POSTGRESQL_LOG_DISCONNECTIONS
+            value: "false"
+          - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+            value: "off"
+          - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+            value: error
+          - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+            value: pgaudit, pg_cron
+          image: docker.io/layer5/postgres-ext:12.19-bitnami
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - exec pg_isready -U "postgres" -d "dbname=postgres" -h 127.0.0.1 -p
+                5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: postgresql
+          ports:
+          - containerPort: 5432
+            name: tcp-postgresql
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - -e
+              - |
+                exec pg_isready -U "postgres" -d "dbname=postgres" -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+          - mountPath: /bitnami/postgresql
+            name: data
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/sh
+          - -ec
+          - |
+            chown 1001:1001 /bitnami/postgresql
+            mkdir -p /bitnami/postgresql/data
+            chmod 700 /bitnami/postgresql/data
+            find /bitnami/postgresql -mindepth 1 -maxdepth 1 -not -name "conf" -not -name ".snapshot" -not -name "lost+found" | \
+              xargs -r chown -R 1001:1001
+            chmod -R 777 /dev/shm
+          image: docker.io/bitnami/os-shell:11-debian-11-r96
+          imagePullPolicy: IfNotPresent
+          name: init-chmod-data
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bitnami/postgresql
+            name: data
+          - mountPath: /dev/shm
+            name: dshm
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+          fsGroupChangePolicy: Always
+        serviceAccount: cloud-db
+        serviceAccountName: cloud-db
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir:
+            medium: Memory
+          name: dshm
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        creationTimestamp: null
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: cloud-local-path
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: cloud-db-read-66dc85f58b
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: cloud-db-read-66dc85f58b
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: cloud
+      meta.helm.sh/release-namespace: prod
+    creationTimestamp: "2025-07-21T11:12:12Z"
+    generation: 249
+    labels:
+      app.kubernetes.io/component: courier
+      app.kubernetes.io/instance: cloud
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kratos
+      app.kubernetes.io/version: v1.1.0
+      helm.sh/chart: kratos-0.45.0
+    name: cloud-kratos-courier
+    namespace: prod
+    resourceVersion: "16611163"
+    uid: 228fb5d4-33d2-4be0-9c89-4ffb98e6651f
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 5
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: cloud
+        app.kubernetes.io/name: cloud-kratos-courier
+    serviceName: cloud-kratos-courier
+    template:
+      metadata:
+        annotations:
+          checksum/kratos-config: ed7525e5141a8bc31a1623ab00eae4c587456dc661a7a9ba7539e5420b62dc03
+          checksum/kratos-secrets: c3ebb207df5cdfa7276c531c5033183ff7076b0f8f75238a087c6aec234b28f0
+          checksum/kratos-templates: 9fe3f458af985f2c693f714dd34d85b2948a197cb92077c4dcc90ea678fe504b
+        creationTimestamp: null
+        labels:
+          app.kubernetes.io/component: courier
+          app.kubernetes.io/instance: cloud
+          app.kubernetes.io/name: cloud-kratos-courier
+      spec:
+        containers:
+        - args:
+          - courier
+          - watch
+          - --config
+          - /etc/config/kratos.yaml
+          - --expose-metrics-port
+          - "4434"
+          env:
+          - name: LOG_FORMAT
+            value: json
+          - name: LOG_LEVEL
+            value: trace
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                key: dsn
+                name: cloud-kratos
+          - name: SECRETS_DEFAULT
+            valueFrom:
+              secretKeyRef:
+                key: secretsDefault
+                name: cloud-kratos
+                optional: true
+          - name: SECRETS_COOKIE
+            valueFrom:
+              secretKeyRef:
+                key: secretsCookie
+                name: cloud-kratos
+                optional: true
+          - name: SECRETS_CIPHER
+            valueFrom:
+              secretKeyRef:
+                key: secretsCipher
+                name: cloud-kratos
+                optional: true
+          - name: COURIER_SMTP_CONNECTION_URI
+            valueFrom:
+              secretKeyRef:
+                key: smtpConnectionURI
+                name: cloud-kratos
+          image: oryd/kratos:v1.1.0
+          imagePullPolicy: IfNotPresent
+          name: cloud-kratos-courier
+          ports:
+          - containerPort: 4434
+            name: http-metrics
+            protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+            seLinuxOptions:
+              level: s0:c123,c456
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/config
+            name: cloud-kratos-config-volume
+            readOnly: true
+          - mountPath: /conf/courier-templates/recovery/valid
+            name: kratos-template-recovery-valid-volume
+            readOnly: true
+          - mountPath: /conf/courier-templates/verification/valid
+            name: kratos-template-verification-valid-volume
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          fsGroupChangePolicy: OnRootMismatch
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: cloud-kratos
+        serviceAccountName: cloud-kratos
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-config
+          name: cloud-kratos-config-volume
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-template-recovery-valid
+          name: kratos-template-recovery-valid-volume
+        - configMap:
+            defaultMode: 420
+            name: cloud-kratos-template-verification-valid
+          name: kratos-template-verification-valid-volume
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: cloud-kratos-courier-7fbcb58788
+    observedGeneration: 249
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: cloud-kratos-courier-7fbcb58788
+    updatedReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""
