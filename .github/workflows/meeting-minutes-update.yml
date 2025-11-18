@@ -3,7 +3,7 @@ name: Meeting Minutes Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # Runs every day at midnight UTC
+    - cron: '15 0 * * *' # Runs every day at midnight UTC
 
 permissions:
   contents: write
