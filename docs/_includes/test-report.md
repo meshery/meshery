@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 18th 2025, 2:54:46 am
+- Testing started at: November 18th 2025, 4:30:37 am
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
-- ❌ 3 failed
-- ⚠️ 3 flaked
+- ✅ 88 passed
+- ❌ 2 failed
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 10 minutes and 8 seconds_
+⌛ _Duration: 9 minutes and 26 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,12 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Test if Profile button is displayed |  | ❌ |
-| 2 | chromium-meshery-provider | Logout from current user session |  | ❌ |
-| 3 | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ⚠️ |
-| 4 | chromium-meshery-provider | imports design via File |  | ❌ |
-| 5 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
-| 6 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
+| 1 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 2 | chromium-local-provider | Transition to not found state and then back to connected state |  | ⚠️ |
+| 3 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
 
 </div>
 </details>
