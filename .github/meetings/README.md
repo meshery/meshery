@@ -35,7 +35,7 @@ The workflow requires the following GitHub secrets to be configured:
 To manually fetch the latest meeting minutes:
 
 ```bash
-export DISCOURSE_URL="https://discuss.layer5.io"
+export DISCOURSE_URL="https://<discussion-forum-URL>"
 bash .github/scripts/fetch_meeting_minutes.sh
 ```
 
