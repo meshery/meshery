@@ -4,7 +4,7 @@ This directory contains archived meeting minutes from the Meshery community.
 
 ## Overview
 
-Meeting minutes are automatically fetched from the [Layer5 Discourse forum](https://discuss.layer5.io) community category and committed to this repository daily via GitHub Actions.
+Meeting minutes are automatically fetched from the communuty discussion forum's "community" category and committed to this repository daily via GitHub Actions.
 
 ## Structure
 
@@ -27,7 +27,7 @@ The meeting minutes are updated automatically through the GitHub Actions workflo
 ### Required Secrets
 
 The workflow requires the following GitHub secrets to be configured:
-- `DISCOURSE_URL`: The base URL of the Discourse forum (e.g., `https://discuss.layer5.io`)
+- `DISCOURSE_URL`: The base URL of the Discourse forum (e.g., `https://discuss.meshery.io`)
 - `MESHERY_CI`: GitHub token for committing changes
 
 ## Manual Updates
