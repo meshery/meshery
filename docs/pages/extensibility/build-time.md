@@ -147,10 +147,3 @@ Choose the build-time extension point when you need to:
 **Build fails with "no such file or directory"**
 - This should not happen as the `.meshery` directory is optional
 - If you see this error, check your Docker version and build logs
-
-## Related Documentation
-
-- [Extensibility Overview](/extensibility)
-- [UI Extensibility](/extensibility/ui)
-- [Providers](/extensibility/providers)
-- [Adapters](/extensibility/adapters)
