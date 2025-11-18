@@ -155,7 +155,7 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // Helper method to make design evaluation based on the relationship policies.
-// evalIterations is num of passes the evaluator needs to go throug to do complete evaluation
+// evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 	evalIterations int,
