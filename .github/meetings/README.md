@@ -4,7 +4,7 @@ This directory contains archived meeting minutes from the Meshery community.
 
 ## Overview
 
-Meeting minutes are automatically fetched from the communuty discussion forum's "community" category and committed to this repository daily via GitHub Actions.
+Meeting minutes are automatically fetched from the community discussion forum's "meetings" tag and committed to this repository daily via GitHub Actions.
 
 ## Structure
 
@@ -43,5 +43,5 @@ bash .github/scripts/fetch_meeting_minutes.sh
 
 Meeting minutes are sourced from:
 - Forum: https://discuss.meshery.io
-- Category: Community
-- Filter: Topics with "meeting" in the title
+- Tag: meetings
+- URL: https://discuss.meshery.io/tag/meetings

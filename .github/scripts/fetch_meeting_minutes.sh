@@ -1,51 +1,44 @@
 #!/bin/bash
 
-# Script to fetch the latest meeting minutes from Discourse community category
+# Script to fetch the latest meeting minutes from Discourse meetings tag
 # and save them to .github/meetings/archive
 
 set -e
 
 # DISCOURSE_URL should be provided as an environment variable
 DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io}"
-CATEGORY="community"
+TAG="meetings"
 ARCHIVE_DIR=".github/meetings/archive"
 
 # Ensure archive directory exists
 mkdir -p "$ARCHIVE_DIR"
 
-echo "Fetching latest posts from $DISCOURSE_URL category: $CATEGORY"
+echo "Fetching latest posts from $DISCOURSE_URL tag: $TAG"
 
-# Fetch the community category JSON
-# Discourse API: /c/{category}/{id}.json or /c/{category}.json
-CATEGORY_JSON=$(curl -sL -f "${DISCOURSE_URL}/c/${CATEGORY}.json" 2>/dev/null || echo "")
+# Fetch the meetings tag JSON
+# Discourse API: /tag/{tag}.json
+TAG_JSON=$(curl -sL -f "${DISCOURSE_URL}/tag/${TAG}.json" 2>/dev/null || echo "")
 
-if [ -z "$CATEGORY_JSON" ]; then
-    echo "Warning: Could not fetch category JSON, trying alternate URL format"
-    CATEGORY_JSON=$(curl -sL -f "${DISCOURSE_URL}/c/${CATEGORY}/5.json" 2>/dev/null || echo "")
-fi
-
-# Try with meshery.io domain if layer5.io fails
-if [ -z "$CATEGORY_JSON" ]; then
-    echo "Warning: Trying with discuss.meshery.io domain"
-    DISCOURSE_URL="http://discuss.meshery.io"
-    CATEGORY_JSON=$(curl -sL -f "${DISCOURSE_URL}/c/${CATEGORY}.json" 2>/dev/null || echo "")
+if [ -z "$TAG_JSON" ]; then
+    echo "Warning: Could not fetch tag JSON, trying alternate URL format"
+    TAG_JSON=$(curl -sL -f "${DISCOURSE_URL}/tags/${TAG}.json" 2>/dev/null || echo "")
 fi
 
 # Check if we have valid JSON
-if [ -z "$CATEGORY_JSON" ]; then
-    echo "Warning: Could not fetch category data from Discourse. This may be expected in restricted environments."
+if [ -z "$TAG_JSON" ]; then
+    echo "Warning: Could not fetch tag data from Discourse. This may be expected in restricted environments."
     echo "The workflow will succeed in production with proper network access."
     exit 0
 fi
 
-echo "Category data fetched successfully"
+echo "Tag data fetched successfully"
 
-# Extract the latest topic that contains "meeting" in the title (case insensitive)
-# Using jq to parse JSON and find meeting-related topics
-LATEST_TOPIC=$(echo "$CATEGORY_JSON" | jq -r '.topic_list.topics[]? | select(.title | test("meeting"; "i")) | @json' 2>/dev/null | head -1 || echo "")
+# Extract the latest topic from the meetings tag
+# Using jq to parse JSON and get the first topic
+LATEST_TOPIC=$(echo "$TAG_JSON" | jq -r '.topic_list.topics[]? | @json' 2>/dev/null | head -1 || echo "")
 
 if [ -z "$LATEST_TOPIC" ] || [ "$LATEST_TOPIC" = "null" ]; then
-    echo "No meeting topics found in the community category"
+    echo "No topics found with the meetings tag"
     exit 0
 fi
 
