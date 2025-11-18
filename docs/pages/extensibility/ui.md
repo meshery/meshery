@@ -79,6 +79,32 @@ To customize the Meshery UI:
 1. Modify the configuration options according to your requirements.
 1. Rebuild the Meshery application to apply your changes.
 
+### Loading Screen Message Persistence
+
+Meshery UI displays a randomly selected loading message while the application and extensions load. To ensure a consistent user experience, the same loading message is displayed across all loading screens (main UI and extensions) during a single session.
+
+#### How It Works
+
+The loading message is selected once and stored in the browser's `window` object (`window.__mesheryLoadingMessage`). All subsequent loading screens retrieve this persisted message, preventing jarring re-renders with different messages.
+
+#### Using the Persisted Loading Message in UI Plugins
+
+**No changes needed** for plugins that:
+- Use `DynamicFullScrrenLoader` (already imports `randomLoadingMessage`)
+- Are loaded through the main Meshery UI framework
+
+**For standalone loaders**, import the persisted message:
+
+```javascript
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+// or
+import { getPersistedLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+
+// Then use in your loading component:
+<LoadingScreen message={randomLoadingMessage} />
+```
+
+The `randomLoadingMessage` export automatically retrieves the persisted value from `window.__mesheryLoadingMessage`, ensuring consistency across all loaders in your plugin.
 
 #### Passing new custom prop to forms:
 
