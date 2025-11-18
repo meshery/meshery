@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-Meshery supports build-time extensibility, allowing system integrators to customize the Meshery container image during the Docker build process. This extension point enables organizations to inject custom configurations, data, packages, plugins, and other resources directly into the Meshery container image at build-time.
+Meshery supports build-time extensibility, allowing system integrators to customize the Meshery container image during the Docker build process. This extension point enables organizations to inject custom configurations, data, provider extensions, and other resources directly into the Meshery container image at build-time.
 
 ## Build-time Extension Point
 
@@ -28,8 +28,8 @@ The build-time extension point allows you to supply custom content by placing a 
 meshery/                     # Repository root
 ├── .meshery/               # Build-time extension directory (optional)
 │   ├── config/            # Custom configuration files
-│   ├── plugins/           # Custom plugins or extensions
-│   ├── data/              # Custom data files
+│   ├── provider/          # Provider-specific extensions
+│   ├── content/           # Custom patterns, filters, applications
 │   └── ...                # Any other custom content
 ├── install/
 │   └── docker/
@@ -48,31 +48,31 @@ mkdir -p .meshery/config
 echo "custom_setting=value" > .meshery/config/custom.conf
 ```
 
-#### Pre-loaded Extensions or Plugins
+#### Provider-specific Extensions
 
-Include proprietary or organization-specific extensions:
+Include proprietary or organization-specific provider extensions:
 
 ```bash
-mkdir -p .meshery/plugins
-cp /path/to/your/plugin.wasm .meshery/plugins/
+mkdir -p .meshery/provider/MyProvider/v1.0.0
+cp /path/to/provider-extension.tar.gz .meshery/provider/MyProvider/v1.0.0/
 ```
 
-#### Custom Data or Seed Content
+#### Custom Content
 
-Add organization-specific patterns, filters, or other seed data:
+Add organization-specific patterns, filters, or applications:
 
 ```bash
-mkdir -p .meshery/data
-cp /path/to/custom-patterns/* .meshery/data/
+mkdir -p .meshery/content/patterns
+cp /path/to/custom-patterns/* .meshery/content/patterns/
 ```
 
-#### Pre-installed Packages
+#### Pre-installed Models
 
-Include pre-downloaded packages or dependencies that might not be available at runtime:
+Include pre-downloaded models or manifests that might not be available at runtime:
 
 ```bash
-mkdir -p .meshery/packages
-cp /path/to/offline-package.tar.gz .meshery/packages/
+mkdir -p .meshery/models
+cp -r /path/to/custom-models/* .meshery/models/
 ```
 
 ### Building with Build-time Extensions
