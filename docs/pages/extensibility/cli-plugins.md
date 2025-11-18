@@ -49,9 +49,9 @@ Typical usage:
 helm helm-kanvas-snapshot -f <chart-URI> [--name <snapshot-name>] [-e <email>]
 ````
 
-* `-f`, `--file` path or URL to the Helm chart.
-* `--name` optional display name for the snapshot. If omitted, the name is derived from the chart.
-* `-e`, `--email` optional email address that receives the snapshot when it is ready.
+* `-f`, `--file` path: or URL to the Helm chart.
+* `--name` optional: display name for the snapshot. If omitted, the name is derived from the chart.
+* `-e`, `--email` optional: email address that receives the snapshot when it is ready.
 
 The plugin sends the chart definition to the Kanvas Snapshot service. The service turns the chart into a Meshery design and renders a static image of the resulting topology. Snapshots can be delivered by email, added to your Meshery design catalog, or attached to pull requests through the Kanvas Snapshot GitHub Action.
 
