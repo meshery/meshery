@@ -24,11 +24,18 @@ The meeting minutes are updated automatically through the GitHub Actions workflo
 - **Schedule**: Daily at midnight UTC
 - **Trigger**: Can also be manually triggered via workflow_dispatch
 
+### Required Secrets
+
+The workflow requires the following GitHub secrets to be configured:
+- `DISCOURSE_URL`: The base URL of the Discourse forum (e.g., `https://discuss.layer5.io`)
+- `MESHERY_CI`: GitHub token for committing changes
+
 ## Manual Updates
 
 To manually fetch the latest meeting minutes:
 
 ```bash
+export DISCOURSE_URL="https://discuss.layer5.io"
 bash .github/scripts/fetch_meeting_minutes.sh
 ```
 

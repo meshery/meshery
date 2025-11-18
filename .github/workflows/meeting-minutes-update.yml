@@ -19,6 +19,8 @@ jobs:
           token: ${{ secrets.MESHERY_CI }}
       
       - name: Fetch latest meeting minutes
+        env:
+          DISCOURSE_URL: ${{ secrets.DISCOURSE_URL }}
         run: |
           bash .github/scripts/fetch_meeting_minutes.sh
       

@@ -5,7 +5,8 @@
 
 set -e
 
-DISCOURSE_URL="https://discuss.layer5.io"
+# DISCOURSE_URL should be provided as an environment variable
+DISCOURSE_URL="${DISCOURSE_URL:-https://discuss.layer5.io}"
 CATEGORY="community"
 ARCHIVE_DIR=".github/meetings/archive"
 
