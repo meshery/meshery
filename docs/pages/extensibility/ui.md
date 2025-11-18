@@ -12,7 +12,7 @@ Meshery UI has a number of extension points that allow you to greatly customize 
 
 ### Extensibility: Customizing Text-based Forms using RJSF Custom Component
 
-RJSFWrapperComponent are the customizations done on RJSF forms overriding the default behaviour of meshery-ui rjsf forms. The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) under these component to receive the custom-props from Meshery-extension.
+RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) in this component to receive custom props from a Meshery extension.
 {% capture code_content %}<RJSFWrapperComponent {...props}>
   <RJSFForm
     isLoading={isLoading}
