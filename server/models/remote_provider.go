@@ -38,6 +38,7 @@ import (
 
 const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
+	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
 // RemoteProvider - represents a local provider
@@ -221,6 +222,12 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
+	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
+	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
+		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
+		return
+	}
+
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
