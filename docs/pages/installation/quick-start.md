@@ -12,7 +12,7 @@ abstract: Getting Meshery up and running locally on a Docker-enabled system or i
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
 
-{% include alert.html type="warning" title="Quick Start Assumptions" content="This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='/installation'>supported platforms</a> for more specific (and less presumptious) instructions." %}
+{% include alert.html type="warning" title="Quick Start Assumptions" content="This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='{{ site.baseurl }}/installation'>supported platforms</a> for more specific (and less presumptious) instructions." %}
 
 ## 1. Download, install, and run Meshery
 
@@ -37,13 +37,13 @@ If you are on macOS or Linux system, you can download, install, and run both `me
   </div>
 </pre>
 
-{% include alert.html type="info" title="Meshery CLI" content="Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='/installation/mesheryctl'>various ways</a>. In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
+{% include alert.html type="info" title="Meshery CLI" content="Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='{{ site.baseurl }}/installation/mesheryctl'>various ways</a>. In addition to <a href='{{ site.baseurl }}/installation/linux-mac/bash'>Bash</a>, you can also use <a href='{{ site.baseurl }}/installation/linux-mac/brew'>Brew</a> or <a href='{{ site.baseurl }}/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
 ## 2. Access Meshery
 
 Your default browser will be opened and directed to Meshery's web-based user interface typically found at `http://localhost:9081`.
 
-{% include alert.html type="light" title="Accessing Meshery Server with Meshery UI" content="Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See <a href='/installation/accessing-meshery-ui'>accessing Meshery UI</a> for deployment-specific details." %}
+{% include alert.html type="light" title="Accessing Meshery Server with Meshery UI" content="Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See <a href='{{ site.baseurl }}/installation/accessing-meshery-ui'>accessing Meshery UI</a> for deployment-specific details." %}
 
 {% include alert.html type="light" title="Accessing Meshery Server with Meshery CLI" content="Meshery's command line interface is a client of Meshery Server's REST API (just as Meshery UI is). Choose to use <code>mesheryctl</code> as an alternative client as it suits your needs." %}
 
@@ -51,7 +51,7 @@ Your default browser will be opened and directed to Meshery's web-based user int
 
 Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
-<a href="/assets/img/meshery-server-page.png">
+<a href="{{ site.baseurl }}/assets/img/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />
 </a>
 
@@ -65,7 +65,7 @@ If you have deployed Meshery in-cluster, Meshery Server will automatically conne
 
 Visit <i class="fas fa-cog"></i> Settings:
 
-<a href="/assets/img/platforms/meshery-settings.png">
+<a href="{{ site.baseurl }}/assets/img/platforms/meshery-settings.png">
   <img class="center" style="width:min(100%,650px);" src="/assets/img/platforms/meshery-settings.png" />
 </a>
 
