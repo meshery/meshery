@@ -6,28 +6,27 @@ import (
 	"os"
 	"path"
 
-	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/viper"
 )
 
 // HealthStatus represents the health status response
 type HealthStatus struct {
-	Status              string `json:"status"`
-	CapabilitiesLoaded  bool   `json:"capabilities_loaded,omitempty"`
-	ExtensionExists     bool   `json:"extension_exists,omitempty"`
-	ReleaseChannel      string `json:"release_channel,omitempty"`
-	Message             string `json:"message,omitempty"`
+	Status             string `json:"status"`
+	CapabilitiesLoaded bool   `json:"capabilities_loaded,omitempty"`
+	ExtensionExists    bool   `json:"extension_exists,omitempty"`
+	ReleaseChannel     string `json:"release_channel,omitempty"`
+	Message            string `json:"message,omitempty"`
 }
 
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 	healthStatus := HealthStatus{
 		Status: "healthy",
 	}
-	
+
 	// Get the release channel
 	releaseChannel := viper.GetString("RELEASE_CHANNEL")
 	healthStatus.ReleaseChannel = releaseChannel
-	
+
 	// Check 1: Verify capabilities are loaded by checking provider properties
 	capabilitiesLoaded := false
 	for _, provider := range h.config.Providers {
@@ -39,15 +38,15 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	healthStatus.CapabilitiesLoaded = capabilitiesLoaded
-	
+
 	// Check 2: If running in Kanvas mode, verify extension exists in filesystem
 	if releaseChannel == "kanvas" {
 		extensionExists := false
-		
+
 		// Check all providers for navigator extensions in Kanvas mode
 		for _, provider := range h.config.Providers {
 			providerProps := provider.GetProviderProperties()
-			
+
 			// Check if navigator extensions are configured
 			if len(providerProps.Extensions.Navigator) > 0 {
 				// Check if the extension package exists on filesystem
@@ -65,9 +64,9 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		
+
 		healthStatus.ExtensionExists = extensionExists
-		
+
 		// If in Kanvas mode, we must have extensions
 		if !extensionExists {
 			healthStatus.Status = "unhealthy"
@@ -78,7 +77,7 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// If capabilities are not loaded, return unhealthy status
 	if !capabilitiesLoaded {
 		healthStatus.Status = "unhealthy"
@@ -88,7 +87,7 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(healthStatus)
 		return
 	}
-	
+
 	// All checks passed
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

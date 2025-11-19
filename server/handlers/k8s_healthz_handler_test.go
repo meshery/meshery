@@ -9,10 +9,36 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 )
+
+// mockProvider embeds DefaultLocalProvider and overrides specific methods for testing
+type mockProvider struct {
+	*models.DefaultLocalProvider
+	props models.ProviderProperties
+}
+
+func newMockProvider(props models.ProviderProperties) *mockProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &mockProvider{
+		DefaultLocalProvider: base,
+		props:                props,
+	}
+}
+
+func (m *mockProvider) GetProviderProperties() models.ProviderProperties {
+	return m.props
+}
+
+func (m *mockProvider) PackageLocation() string {
+	return m.props.PackageLocation()
+}
+
+func (m *mockProvider) SetProviderProperties(props models.ProviderProperties) {
+	m.props = props
+}
 
 func TestK8sHealthzHandler(t *testing.T) {
 	// Setup test logger
@@ -22,14 +48,14 @@ func TestK8sHealthzHandler(t *testing.T) {
 	}
 
 	tests := []struct {
-		name               string
-		releaseChannel     string
-		setupProviders     func() map[string]models.Provider
-		setupExtensions    func() string // returns temp dir path
-		expectedStatus     int
-		expectedHealthy    bool
-		expectedCapLoaded  bool
-		expectedExtExists  *bool // nil means not checked
+		name              string
+		releaseChannel    string
+		setupProviders    func() map[string]models.Provider
+		setupExtensions   func() string // returns temp dir path
+		expectedStatus    int
+		expectedHealthy   bool
+		expectedCapLoaded bool
+		expectedExtExists *bool // nil means not checked
 	}{
 		{
 			name:           "Healthy - capabilities loaded, not kanvas mode",
@@ -52,18 +78,8 @@ func TestK8sHealthzHandler(t *testing.T) {
 			releaseChannel: "stable",
 			setupProviders: func() map[string]models.Provider {
 				// Create a mock provider with no capabilities
-				dbHandler := &database.Handler{}
-				provider := models.NewRemoteProvider(
-					nil,
-					dbHandler,
-					"test-provider",
-					"",
-					"",
-					log,
-					nil,
-				)
-				// Set empty capabilities
-				provider.SetProviderProperties(models.ProviderProperties{
+				provider := newMockProvider(models.ProviderProperties{
+					ProviderName: "test-provider",
 					Capabilities: models.Capabilities{},
 				})
 				return map[string]models.Provider{
@@ -173,19 +189,7 @@ func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
 	viper.Set("RELEASE_CHANNEL", "kanvas")
 
 	// Create a mock provider with capabilities and extensions
-	dbHandler := &database.Handler{}
-	provider := models.NewRemoteProvider(
-		nil,
-		dbHandler,
-		"test-provider",
-		"",
-		"",
-		log,
-		nil,
-	)
-
-	// Set provider properties with extensions
-	providerProps := models.ProviderProperties{
+	provider := newMockProvider(models.ProviderProperties{
 		ProviderName:   "test-provider",
 		PackageVersion: "1.0.0",
 		Capabilities: models.Capabilities{
@@ -211,8 +215,7 @@ func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
 				},
 			},
 		},
-	}
-	provider.SetProviderProperties(providerProps)
+	})
 
 	// Mock PackageLocation to return our temp dir
 	// Note: In real implementation, we'd need to properly set this
