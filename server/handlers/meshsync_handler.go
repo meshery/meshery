@@ -345,9 +345,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if asDesign {
 		rawDesign := ConvertToPatternFile(resources, true) // strip schema
 
-		rawDesign.Preferences = &struct {
-			Layers map[string]interface{} `json:"layers" yaml:"layers"`
-		}{
+		rawDesign.Preferences = &pattern.DesignPreferences{
 			Layers: map[string]interface{}{
 				"relationships": map[string]interface{}{
 					"hierarchical-sibling-matchlabels": false,
