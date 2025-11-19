@@ -91,12 +91,6 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 <!-- Contributing & Community -->
   <div class="section">
       <!-- CONTRIBUTING -->
-    <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{ site.baseurl }}/project/contributing" class="text-black">Contributing</a>
-        </p>
-      </summary>
       <ul class="section-title">
        {% assign contributing = site.pages | where: "category","contributing" %}
           {% for item in contributing %}
@@ -109,5 +103,4 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
             {% endif %}
           {% endfor %}
       </ul>
-    </details>
   </div>
