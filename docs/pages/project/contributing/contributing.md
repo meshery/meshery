@@ -86,7 +86,7 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 </ul>
 </details>
 
-## Contributing Guides
+## Specific Contribution Guides
 
 Here is a complete list of all of Meshery's contributing guides from Server to UI to CLI to Extensions and so on.
 
