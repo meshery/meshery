@@ -9,13 +9,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-// HealthStatus represents the health status response
+// HealthStatus represents the health status response for the healthz endpoints.
+// It includes information about the system's health including whether capabilities
+// are loaded and if running in Kanvas mode, whether extensions are present.
 type HealthStatus struct {
-	Status             string `json:"status"`
-	CapabilitiesLoaded bool   `json:"capabilities_loaded,omitempty"`
-	ExtensionExists    bool   `json:"extension_exists,omitempty"`
-	ReleaseChannel     string `json:"release_channel,omitempty"`
-	Message            string `json:"message,omitempty"`
+	Status             string `json:"status"`                         // "healthy" or "unhealthy"
+	CapabilitiesLoaded bool   `json:"capabilities_loaded,omitempty"`  // Whether provider capabilities are loaded
+	ExtensionExists    bool   `json:"extension_exists,omitempty"`     // Whether extension package exists (Kanvas mode only)
+	ReleaseChannel     string `json:"release_channel,omitempty"`      // Current release channel (e.g., "stable", "kanvas")
+	Message            string `json:"message,omitempty"`              // Error message if unhealthy
 }
 
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
