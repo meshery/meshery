@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/planner"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/orchestration"
+	"github.com/meshery/meshery/server/models/pattern/planner"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/orchestration"
 
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"

@@ -1,18 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
-import { Provider, connect } from 'react-redux';
-import { store } from '../store';
-import { bindActionCreators } from 'redux';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
-import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar, Popover } from '@layer5/sistent';
-import { IconButtonAvatar } from './Header.styles';
+import { NavigationNavbar, Popover } from '@sistent/sistent';
+import { IconButtonMenu } from './Header.styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -28,13 +27,16 @@ function exportToJsonFile(jsonData, filename) {
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
-const HeaderMenu = (props) => {
+const HeaderMenu = () => {
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
+  const registryModal = useRegistryModal();
 
   const {
     data: userData,
@@ -45,8 +47,6 @@ const HeaderMenu = (props) => {
 
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
-  const { capabilitiesRegistry } = props;
-
   const handleLogout = () => {
     window.location = '/user/logout';
     handleClose();
@@ -54,6 +54,19 @@ const HeaderMenu = (props) => {
 
   const handlePreference = () => {
     router.push('/user/preferences');
+    handleClose();
+  };
+
+  const handleSettings = () => {
+    router.push('/settings');
+    handleClose();
+  };
+  const handleRegistry = () => {
+    registryModal?.openModal();
+    handleClose();
+  };
+  const handleConnections = () => {
+    router.push('/management/connections');
     handleClose();
   };
 
@@ -68,7 +81,7 @@ const HeaderMenu = (props) => {
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
-      props.updateUser({ user: userData });
+      dispatch(updateUser({ user: userData }));
       setUserLoaded(true);
     } else if (isGetUserError) {
       notify({
@@ -102,7 +115,7 @@ const HeaderMenu = (props) => {
       title: item.title,
       onClick: () => {
         if (item.href) {
-          props.updateExtensionType?.(item.title);
+          dispatch(updateExtensionType({ extensionType: item.title }));
           router.push(item.href);
           handleClose();
         }
@@ -124,6 +137,23 @@ const HeaderMenu = (props) => {
 
     // Always add these items
     defaultItems.push(
+      {
+        id: 'Connections',
+        title: 'Connections',
+        onClick: handleConnections,
+        showOnWeb: false,
+      },
+      {
+        id: 'settings',
+        title: 'Settings',
+        onClick: handleSettings,
+      },
+      {
+        id: 'registry',
+        title: 'Registry',
+        onClick: handleRegistry,
+        permission: true,
+      },
       {
         id: 'preferences',
         title: 'Preferences',
@@ -158,9 +188,14 @@ const HeaderMenu = (props) => {
 
   return (
     <>
-      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
-        <MenuIcon />
-      </IconButtonAvatar>
+      <IconButtonMenu aria-describedby={id} onClick={handleClick}>
+        <MenuIcon
+          sx={{
+            height: 28,
+            width: 28,
+          }}
+        />
+      </IconButtonMenu>
 
       <Popover
         id={id}
@@ -192,18 +227,6 @@ const HeaderMenu = (props) => {
   );
 };
 
-const MenuProvider = (props) => (
-  <Provider store={store}>
-    <HeaderMenu {...props} />
-  </Provider>
-);
+const MenuProvider = (props) => <HeaderMenu {...props} />;
 
-const mapDispatchToProps = (dispatch) => ({
-  updateUser: bindActionCreators(updateUser, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MenuProvider);
+export default MenuProvider;

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
 )
 
 func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {

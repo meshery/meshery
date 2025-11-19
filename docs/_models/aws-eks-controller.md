@@ -50,9 +50,22 @@ components:
   colorIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
   whiteIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
   description: 
-components-count: 10
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-eks-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-eks-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 11
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Cluster and Role"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Addon and cluster"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 3
 featureList: [
   "Simplifies Kubernetes cluster creation and management",
   "Integrates with other AWS services",

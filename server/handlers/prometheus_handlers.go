@@ -13,10 +13,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func init() {
@@ -234,7 +235,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -253,13 +254,13 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
@@ -297,7 +298,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -376,8 +377,8 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 
 }
@@ -409,8 +410,8 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 }
 

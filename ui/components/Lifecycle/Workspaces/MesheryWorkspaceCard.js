@@ -24,13 +24,13 @@ import {
   useViewAssignment,
   ViewIcon,
   WorkspaceCard,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { WORKSPACE_ACTION_TYPES } from '.';
 import { keys } from '@/utils/permission_constants';
-import { useTeamAssignment } from '@layer5/sistent';
-import { AssignmentModal } from '@layer5/sistent';
+import { useTeamAssignment } from '@sistent/sistent';
+import { AssignmentModal } from '@sistent/sistent';
 
 const MesheryWorkspaceCard = ({
   workspaceDetails,
@@ -209,8 +209,8 @@ const MesheryWorkspaceCard = ({
           CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject) ||
           CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject)
         }
-        isViewsVisible={isViewsVisible}
-        isDesignsVisible={isDesignsVisible}
+        isViewsVisible={false}
+        isDesignsVisible={false}
         isTeamsVisible={isTeamsVisible}
         isEnvironmentsVisible={isEnvironmentsVisible}
       />

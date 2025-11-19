@@ -16,31 +16,30 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
 
-	// "github.com/layer5io/meshkit/errors"
-	// "github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/events"
+	// "github.com/meshery/meshkit/errors"
+	// "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -498,7 +497,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Annotations:  returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -573,7 +572,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -647,7 +646,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -722,7 +721,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Annotations: returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -795,7 +794,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -869,7 +868,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -940,7 +939,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -983,6 +982,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
+// ```?id={id}``` If id is non empty then only the component with the given id is returned
+//
 // ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //  200: meshmodelComponentsDuplicateResponseWrapper
@@ -1010,7 +1011,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 
@@ -1168,7 +1169,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(_event)
+		_ = provider.PersistEvent(*_event, nil)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1177,25 +1178,27 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+// processComponentDefinitions processes a list of entities and extracts component definitions,
+// it also sets the ModelReference field for each component definition.
+func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Component.Schema = string(b)
+			if comp.Model != nil {
+				comp.ModelReference = comp.Model.ToReference()
+			}
+
 			comps = append(comps, *comp)
 		}
+
 	}
 	return comps
 }
@@ -1412,7 +1415,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Component generation starts here
-		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef, model.Group)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
 			h.sendErrorEvent(userID, provider, "Error generating components", err)
@@ -1650,7 +1653,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	for _, comp := range components {
 		_ = comp.ReplaceSVGData("../../")
-		comp.Model = *model
+		comp.Model = model
 		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
@@ -1658,7 +1661,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	}
 	for _, rel := range relationships {
-		rel.Model = *model
+		rel.Model = model.ToReference()
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
@@ -1727,6 +1730,8 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+
 
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {

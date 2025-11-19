@@ -1,43 +1,44 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
-  AssignmentModal,
   Box,
-  DesignIcon,
-  EnvironmentIcon,
   FormControl,
+  Grid2,
   InputLabel,
   MenuItem,
+  PromptComponent,
   Select,
-  useDesignAssignment,
   useTheme,
-  useViewAssignment,
-} from '@layer5/sistent';
-import React, { useCallback, useState } from 'react';
-import { StyledSearchBar } from '@layer5/sistent';
+  WorkspaceContentMoveModal,
+} from '@sistent/sistent';
+import React, { useCallback, useRef, useState } from 'react';
+import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
-  AssignDesignViewButton,
+  ImportButton,
+  MultiContentSelectToolbar,
   SortBySelect,
   TableListHeader,
   VisibilitySelect,
 } from './components';
 import {
-  useAssignDesignToWorkspaceMutation,
-  useAssignViewToWorkspaceMutation,
   useGetDesignsOfWorkspaceQuery,
   useGetViewsOfWorkspaceQuery,
-  useUnassignDesignFromWorkspaceMutation,
-  useUnassignViewFromWorkspaceMutation,
+  useGetWorkspacesQuery,
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import { getDefaultFilterType } from './hooks';
+import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
+import ExportModal from '../ExportModal';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { useNotification } from '@/utils/hooks/useNotification';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
-  const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
-
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -104,6 +105,7 @@ const WorkspaceContent = ({ workspace }) => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetDesignsOfWorkspaceQuery(
     {
       infiniteScroll: true,
@@ -123,6 +125,7 @@ const WorkspaceContent = ({ workspace }) => {
     data: viewsData,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
+    refetch: refetchViews,
   } = useGetViewsOfWorkspaceQuery(
     {
       infiniteScroll: true,
@@ -139,70 +142,72 @@ const WorkspaceContent = ({ workspace }) => {
   );
 
   const theme = useTheme();
-  const viewAssignment = useViewAssignment({
-    workspaceId: workspace?.id,
-    useGetViewsOfWorkspaceQuery,
-    useUnassignViewFromWorkspaceMutation,
-    useAssignViewToWorkspaceMutation,
-    isViewsVisible: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
-  });
 
-  const designAssignment = useDesignAssignment({
-    workspaceId: workspace?.id,
-    useAssignDesignToWorkspaceMutation,
-    useUnassignDesignFromWorkspaceMutation,
-    useGetDesignsOfWorkspaceQuery: useGetDesignsOfWorkspaceQuery,
-    isDesignsVisible: CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
+  const [workspaceContentMoveModal, setWorkspaceContentMoveModal] = useState(false);
+  const modalRef = useRef(null);
+  const { handleDelete } = useContentDelete(modalRef);
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
   });
+  const handleDownloadModalOpen = (content) => {
+    setDownloadModal({
+      open: true,
+      content: content,
+    });
+  };
+  const handleDownloadModalClose = () => {
+    setDownloadModal({
+      open: false,
+      content: null,
+    });
+  };
+  const { handleDesignDownload, handleViewDownload } = useContentDownload();
+
+  const refetch = useCallback(() => {
+    if (filters.type === RESOURCE_TYPE.DESIGN) {
+      if (filters.designsPage > 0) setDesignsPage(0);
+      else refetchDesigns();
+    } else {
+      if (filters.viewsPage > 0) setViewsPage(0);
+      else refetchViews();
+    }
+  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const router = useRouter();
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { notify } = useNotification();
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Box display={'flex'} alignItems="center" gap={'1rem'}>
-          <StyledSearchBar
-            sx={{
-              backgroundColor: 'transparent',
-            }}
-            width="auto"
-            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
-            value={filters.searchQuery}
-            onChange={onSearchChange}
-            endAdornment={
-              filters.type === RESOURCE_TYPE.VIEW ? (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Designs: {designsData?.total_count ?? 0}
-                </p>
-              ) : (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Views: {viewsData?.total_count ?? 0}
-                </p>
-              )
-            }
-          />{' '}
-          <AssignDesignViewButton
-            type={filters.type}
-            handleAssign={(e) => {
-              e.stopPropagation();
-              if (filters.type === RESOURCE_TYPE.DESIGN) {
-                designAssignment.handleAssignModal();
-              } else {
-                viewAssignment.handleAssignModal();
+        <Grid2 container spacing={2} alignItems="center" size="grow">
+          {/* Search Bar */}
+          <Grid2 size={{ xs: 12, md: 4.5 }}>
+            <StyledSearchBar
+              sx={{ backgroundColor: 'transparent' }}
+              width="auto"
+              placeholder={
+                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
               }
-            }}
-            disabled={
-              filters.type === RESOURCE_TYPE.DESIGN
-                ? !CAN(
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-                  )
-                : !CAN(
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-                  )
-            }
-          />
-        </Box>
-        <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
-          <Box sx={{ minWidth: 120 }}>
+              value={filters.searchQuery}
+              onChange={onSearchChange}
+              endAdornment={
+                filters.type === RESOURCE_TYPE.DESIGN ? (
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {designsData?.total_count ?? 0}
+                  </p>
+                ) : (
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {viewsData?.total_count ?? 0}
+                  </p>
+                )
+              }
+            />
+          </Grid2>
+
+          {/* Type Select */}
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -215,28 +220,91 @@ const WorkspaceContent = ({ workspace }) => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Box>
+          </Grid2>
 
-          <Box sx={{ minWidth: 120 }}>
+          {/* Sort By */}
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Box>
-          <Box sx={{ minWidth: 120 }}>
+          </Grid2>
+
+          {/* Visibility Select */}
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Box>
-        </Box>
-        <Box minWidth={'50rem'}>
-          <TableListHeader />
+          </Grid2>
+
+          <Grid2 size={{ xs: 3, md: 1 }}>
+            {filters.type == RESOURCE_TYPE.DESIGN && (
+              <ImportButton
+                refetch={refetch}
+                workspaceId={workspace?.id}
+                disabled={
+                  !CAN(
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                  )
+                }
+              />
+            )}
+          </Grid2>
+        </Grid2>
+
+        <>
+          <MultiContentSelectToolbar
+            type={filters.type}
+            handleDelete={handleDelete}
+            handleDownload={handleDownloadModalOpen}
+            handleViewDownload={handleViewDownload}
+            handleContentMove={setWorkspaceContentMoveModal}
+            refetch={refetch}
+          />
+          <WorkspaceContentMoveModal
+            workspaceContentMoveModal={workspaceContentMoveModal}
+            setWorkspaceContentMoveModal={setWorkspaceContentMoveModal}
+            currentWorkspace={workspace}
+            type={filters.type}
+            refetch={refetch}
+            useGetWorkspacesQuery={useGetWorkspacesQuery}
+            WorkspaceModalContext={WorkspaceModalContext}
+            assignDesignToWorkspace={assignDesignToWorkspace}
+            assignViewToWorkspace={assignViewToWorkspace}
+            isCreateWorkspaceAllowed={CAN(
+              keys.CREATE_WORKSPACE.action,
+              keys.CREATE_WORKSPACE.subject,
+            )}
+            isMoveDesignAllowed={CAN(
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+            )}
+            isMoveViewAllowed={CAN(
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+            )}
+            currentOrgId={currentOrganization?.id}
+            notify={notify}
+            router={router}
+          />
+
+          <TableListHeader
+            content={
+              RESOURCE_TYPE.DESIGN === filters.type ? designsData?.designs : viewsData?.views
+            }
+            isMultiSelectMode={true}
+            showOrganizationName={false}
+            showWorkspaceName={false}
+          />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
@@ -244,12 +312,15 @@ const WorkspaceContent = ({ workspace }) => {
               designs={designsData?.designs}
               hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
               total_count={designsData?.total_count}
-              workspaceId={workspace?.id}
-              refetch={() => setDesignsPage(0)}
+              workspace={workspace}
+              refetch={refetch}
+              isMultiSelectMode={true}
             />
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}
@@ -257,64 +328,18 @@ const WorkspaceContent = ({ workspace }) => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
-              workspaceId={workspace?.id}
-              refetch={() => setViewsPage(0)}
+              workspace={workspace}
+              refetch={refetch}
+              isMultiSelectMode={true}
             />
           )}
-        </Box>
+        </>
       </Box>
-      <AssignmentModal
-        open={viewAssignment.assignModal}
-        onClose={viewAssignment.handleAssignModalClose}
-        title={`Assign Views to ${workspace?.name}`}
-        headerIcon={<EnvironmentIcon height="40" width="40" fill={'white'} />}
-        name="Views"
-        assignableData={viewAssignment.data}
-        handleAssignedData={viewAssignment.handleAssignData}
-        originalAssignedData={viewAssignment.workspaceData}
-        emptyStateIcon={<EnvironmentIcon height="5rem" width="5rem" fill={'#808080'} />}
-        handleAssignablePage={viewAssignment.handleAssignablePage}
-        handleAssignedPage={viewAssignment.handleAssignedPage}
-        originalLeftCount={viewAssignment.data?.length || 0}
-        originalRightCount={viewsData?.total_count || 0}
-        onAssign={viewAssignment.handleAssign}
-        disableTransfer={viewAssignment.disableTransferButton}
-        helpText={`Assign Views to ${workspace?.name}`}
-        isAssignAllowed={CAN(
-          keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-          keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-        )}
-        isRemoveAllowed={CAN(
-          keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
-          keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
-        )}
-      />
-      <AssignmentModal
-        open={designAssignment.assignModal}
-        onClose={designAssignment.handleAssignModalClose}
-        title={`Assign Designs to ${workspace?.name}`}
-        headerIcon={<DesignIcon height="40" width="40" />}
-        name="Designs"
-        assignableData={designAssignment.data}
-        handleAssignedData={designAssignment.handleAssignData}
-        originalAssignedData={designAssignment.workspaceData}
-        emptyStateIcon={<DesignIcon height="5rem" width="5rem" secondaryFill={'#808080'} />}
-        handleAssignablePage={designAssignment.handleAssignablePage}
-        handleAssignedPage={designAssignment.handleAssignedPage}
-        originalLeftCount={designAssignment.data?.length || 0}
-        originalRightCount={designAssignment.assignedItems?.length || 0}
-        onAssign={designAssignment.handleAssign}
-        disableTransfer={designAssignment.disableTransferButton}
-        helpText={`Assign Designs to ${workspace?.name}`}
-        isAssignAllowed={CAN(
-          keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-          keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-        )}
-        isRemoveAllowed={CAN(
-          keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-          keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-        )}
-        showViews={false}
+      <PromptComponent ref={modalRef} />
+      <ExportModal
+        downloadModal={downloadModal}
+        handleDownloadDialogClose={handleDownloadModalClose}
+        handleDesignDownload={handleDesignDownload}
       />
     </>
   );

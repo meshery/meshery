@@ -1,8 +1,8 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
+import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@sistent/sistent';
 import React, { useCallback, useState } from 'react';
-import { StyledSearchBar } from '@layer5/sistent';
+import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
@@ -19,7 +19,6 @@ import { getDefaultFilterType } from './hooks';
 
 const RecentContent = () => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
-  const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -96,6 +95,7 @@ const RecentContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -116,6 +116,7 @@ const RecentContent = () => {
     data: viewsData,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
+    refetch: refetchViews,
   } = useFetchViewsQuery(
     {
       page: filters.viewsPage,
@@ -131,35 +132,46 @@ const RecentContent = () => {
   );
 
   const theme = useTheme();
+  const refetch = useCallback(() => {
+    if (filters.type === RESOURCE_TYPE.DESIGN) {
+      if (filters.designsPage > 0) setDesignsPage(0);
+      else refetchDesigns();
+    } else {
+      if (filters.viewsPage > 0) setViewsPage(0);
+      else refetchViews();
+    }
+  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
 
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Box display={'flex'} alignItems="center" gap={'1rem'}>
-          <StyledSearchBar
-            sx={{
-              backgroundColor: 'transparent',
-            }}
-            width="auto"
-            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
-            value={filters.searchQuery}
-            onChange={onSearchChange}
-            endAdornment={
-              filters.type === RESOURCE_TYPE.DESIGN ? (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Designs: {designsData?.total_count ?? 0}
-                </p>
-              ) : (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Views: {viewsData?.total_count ?? 0}
-                </p>
-              )
-            }
-          />{' '}
-          {filters.type == RESOURCE_TYPE.DESIGN && <ImportButton />}
-        </Box>
-        <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
-          <Box sx={{ minWidth: 120 }}>
+        <Grid2 container spacing={2} alignItems="center" size="grow">
+          {/* Search Bar */}
+          <Grid2 size={{ xs: 12, sm: 12, md: 6, lg: 3.5 }}>
+            <StyledSearchBar
+              sx={{ backgroundColor: 'transparent' }}
+              width="auto"
+              placeholder={
+                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
+              }
+              value={filters.searchQuery}
+              onChange={onSearchChange}
+              endAdornment={
+                filters.type === RESOURCE_TYPE.DESIGN ? (
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {designsData?.total_count ?? 0}
+                  </p>
+                ) : (
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {viewsData?.total_count ?? 0}
+                  </p>
+                )
+              }
+            />
+          </Grid2>
+
+          {/* Type Select */}
+          <Grid2 size={{ xs: 6, sm: 6, md: 3, lg: 1.5 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -172,29 +184,42 @@ const RecentContent = () => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Box>
+          </Grid2>
 
-          <Box sx={{ minWidth: 120 }}>
+          {/* Sort By */}
+          <Grid2 size={{ xs: 6, sm: 6, md: 3, lg: 1.5 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Box>
-          <Box sx={{ minWidth: 300 }}>
+          </Grid2>
+
+          {/* Author Search */}
+          <Grid2 size={{ xs: 12, sm: 6, md: 6, lg: 2.5 }}>
             <FormControl fullWidth>
               <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
             </FormControl>
-          </Box>
-          <Box sx={{ minWidth: 120 }}>
+          </Grid2>
+
+          {/* Visibility */}
+          <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1.5 }}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Box>
-        </Box>
-        <Box minWidth={'50rem'}>
+          </Grid2>
+
+          {/* Import Button */}
+          {filters.type === RESOURCE_TYPE.DESIGN && (
+            <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1 }}>
+              <ImportButton refetch={refetch} />
+            </Grid2>
+          )}
+        </Grid2>
+
+        <>
           <TableListHeader />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
@@ -209,7 +234,7 @@ const RecentContent = () => {
                 designsData?.total_count > (filters.designsPage + 1) * designsData?.page_size
               }
               total_count={designsData?.total_count}
-              refetch={() => setDesignsPage(0)}
+              refetch={refetch}
             />
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
@@ -222,10 +247,10 @@ const RecentContent = () => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
-              refetch={() => setViewsPage(0)}
+              refetch={refetch}
             />
           )}
-        </Box>
+        </>
       </Box>
     </>
   );

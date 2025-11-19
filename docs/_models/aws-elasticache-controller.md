@@ -46,9 +46,36 @@ components:
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
   description: 
-components-count: 9
+- name: serverless-cache
+  colorIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache/icons/color/serverless-cache-color.svg
+  whiteIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache/icons/white/serverless-cache-white.svg
+  description: 
+- name: serverless-cache-snapshot
+  colorIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache-snapshot/icons/color/serverless-cache-snapshot-color.svg
+  whiteIcon: assets/img/integrations/aws-elasticache-controller/components/serverless-cache-snapshot/icons/white/serverless-cache-snapshot-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-elasticache-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-elasticache-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 12
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between ReplicationGroup and UserGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between cachecluster and CacheParameterGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between cachecluster and CacheSubnetGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EC2 instances use ElastiCache (Redis/Memcached) for caching"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship Lambda functions cache data in ElastiCache to reduce latency"
+relationship-count: 5
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",

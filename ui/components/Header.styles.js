@@ -1,4 +1,4 @@
-import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@layer5/sistent';
+import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@sistent/sistent';
 
 export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.tabs,
@@ -10,8 +10,8 @@ export const StyledToolbar = styled(Toolbar, {
 })(({ theme, isDrawerCollapsed }) => ({
   minHeight: 59,
   padding: 16,
-  paddingLeft: isDrawerCollapsed ? 0 : 34,
-  paddingRight: 34,
+  paddingLeft: isDrawerCollapsed ? 0 : 14,
+  paddingRight: 14,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
   [theme.breakpoints.down('sm')]: {
@@ -39,9 +39,12 @@ export const UserContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     justifyContent: 'flex-end',
-    marginRight: '1rem',
     marginBlock: '0.5rem',
   },
+}));
+
+export const SettingsWrapper = styled('div')(({ isDesktop }) => ({
+  display: isDesktop ? 'block' : 'none',
 }));
 
 export const PageTitleWrapper = styled('div')({
@@ -61,8 +64,8 @@ export const UserSpan = styled('span')(({ theme }) => ({
 
 export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
-  height: '1.5rem',
-  width: '1.5rem',
+  height: '24px',
+  width: '24px',
   fill: theme.palette.background.constant.white,
   '&:hover': {
     fill: theme.palette.background.brand.default,
@@ -103,7 +106,12 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
 }));
 
 export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
-  padding: 4,
+  padding: 2,
+  color: theme.palette.common.white,
+}));
+
+export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
+  padding: 6,
   color: theme.palette.common.white,
 }));
 

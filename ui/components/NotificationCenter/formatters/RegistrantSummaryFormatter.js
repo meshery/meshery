@@ -1,6 +1,6 @@
 import React from 'react';
 import { TitleLink } from './common';
-import { Box, Typography } from '@layer5/sistent';
+import { Box, Typography } from '@sistent/sistent';
 
 export const RegistrantSummaryFormatter = ({ event }) => {
   const docLink = 'https://docs.meshery.io/concepts/logical#logical-concepts';

@@ -49,17 +49,16 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
 
 Name: **"Meshery"** (default)
 
 - Enforces user authentication.
-- Long-term term persistence of test results.
+- Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Retrieve conformance test results.
 - Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
@@ -73,9 +72,40 @@ Name: **“None”**
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- No conformance test result history.
 - Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
+
+### Runtime Configuration Options
+
+Meshery provides runtime configuration options to control provider behavior:
+
+#### PROVIDER_CAPABILITIES_FILEPATH
+
+This environment variable allows you to specify a local file path to load provider capabilities from a static JSON file instead of fetching them from the remote provider's `/capabilities` endpoint. This is useful for:
+- Offline development and testing
+- Environments with restricted network access
+- Ensuring consistent provider capabilities across deployments
+
+Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
+
+#### SKIP_DOWNLOAD_EXTENSIONS
+
+This boolean environment variable controls whether Meshery downloads and refreshes provider extension packages. When set to `true`, Meshery will skip downloading extension packages even when new versions are available. This is particularly useful for:
+- Development environments where you want to use locally modified extensions
+- Deployments where extensions are pre-packaged or managed separately
+- Reducing startup time and network bandwidth usage
+- Preventing automatic updates to extension packages
+
+Default: `false` (extensions are downloaded/refreshed)
+
+Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
+
+**Note:** Extension downloads occur during:
+- User login (via the TokenHandler)
+- Provider capability refresh operations
+- Release channel updates
+
+When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
 
 ### Design Principles: Meshery Remote Provider Framework
 

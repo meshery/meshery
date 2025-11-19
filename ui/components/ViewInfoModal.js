@@ -8,24 +8,25 @@ import {
   getFullFormattedTime,
   styled,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { Box, Modal, ModalBody, ModalFooter } from '@layer5/sistent';
+import { Box, Modal, ModalBody, ModalFooter } from '@sistent/sistent';
 import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import { iconLarge } from 'css/icons.styles';
-import { VisibilityChipMenu } from '@layer5/sistent';
+import { VisibilityChipMenu } from '@sistent/sistent';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { MDEditor } from './Markdown';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { ModalButtonSecondary } from '@layer5/sistent';
+import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';
-import { ModalButtonPrimary } from '@layer5/sistent';
+import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const Row = styled('div')(({ justifyContent = 'space-between' }) => ({
   display: 'flex',
@@ -80,9 +81,8 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata }) => {
+export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
   const [formState, setFormState] = useState(metadata);
-
   const viewRes = useGetViewQuery(
     { viewId: view_id },
     {
@@ -95,8 +95,6 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
 
   const isLoading =
     viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
-  const canRenderInfo = viewRes.isSuccess && userRes.isSuccess;
-
   const formRef = React.useRef(null);
   const [saving, setSaving] = useState(false);
   const [updateView] = useUpdateViewVisibilityMutation();
@@ -112,6 +110,7 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
       .unwrap()
       .then(() => {
         setSaving(false);
+        refetch && refetch();
         closeModal();
       });
   };
@@ -136,7 +135,7 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
           </div>
         )}
 
-        {!isLoading && canRenderInfo && (
+        {!isLoading && (
           <div>
             <Row style={{ paddingInline: '0rem' }}>
               <Row justifyContent="start">
@@ -184,49 +183,34 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
   );
 };
 
-export const useViewsInfoModal = () => {
-  const [data, setData] = React.useState({
-    open: false,
-    view_id: null,
-  });
-
-  const [formState, setFormState] = useState({});
-
-  const closeModal = () => {
-    setData({ open: false });
-    setFormState({});
-  };
-
-  const openViewInfo = (view) => {
-    setData({ open: true, view_id: view.id, view_name: view.name });
-    setFormState(view?.metadata);
-  };
-
-  return {
-    open: data.open,
-    view_id: data.view_id,
-    view_name: data.view_name,
-    closeModal,
-    openViewInfo,
-    formState,
-    setFormState,
-  };
+export const ViewInfoModal = (props) => {
+  return (
+    <ProviderStoreWrapper>
+      <ViewInfoModal_ {...props} />
+    </ProviderStoreWrapper>
+  );
 };
-
 const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
 export const UserChip = ({ user_id }) => {
-  const userProfileRes = useGetUserProfileSummaryByIdQuery({ id: user_id });
+  const userProfileRes = useGetUserProfileSummaryByIdQuery(
+    { id: user_id },
+    {
+      skip: !user_id,
+    },
+  );
 
   if (userProfileRes.isError || userProfileRes.isLoading) {
     return null;
   }
-  const { avatar_url } = userProfileRes.data || {};
-  const userName = formatUsername(userProfileRes.data);
+  const { avatar_url } = userProfileRes?.data || {};
+  const userName = formatUsername(userProfileRes?.data || {});
 
-  return <StyledChip avatar={<Avatar src={avatar_url} />} label={userName} variant="outlined" />;
+  return (
+    <StyledChip avatar={<Avatar src={avatar_url} />} label={userName || ''} variant="outlined" />
+  );
 };
 
 const formatUsername = ({ first_name, last_name }) => {
@@ -238,7 +222,7 @@ const ViewVisibilityMenu = ({ view }) => {
   const [updateView] = useUpdateViewVisibilityMutation();
   return (
     <VisibilityChipMenu
-      value={view.visibility}
+      value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
       onChange={(value) =>
         handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
       }
@@ -255,6 +239,13 @@ const MarkdownInput = (props) => {
   const preview = props.readonly ? 'preview' : 'edit';
   const hideToolbar = props.readonly ? true : false;
   const theme = useTheme();
+
+  const handleChange = (value) => {
+    if (props.onChange && value !== props.value) {
+      props.onChange(value);
+    }
+  };
+
   return (
     <div
       data-color-mode={theme.palette.mode}
@@ -268,8 +259,8 @@ const MarkdownInput = (props) => {
     >
       <FormLabel>{props.label}</FormLabel>
       <MDEditor
-        value={props.value}
-        onChange={props.onChange}
+        value={props.value || ''}
+        onChange={handleChange}
         preview={preview}
         hideToolbar={hideToolbar}
         previewOptions={{

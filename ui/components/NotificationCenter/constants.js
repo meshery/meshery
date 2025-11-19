@@ -3,7 +3,7 @@ import AlertIcon from '../../assets/icons/AlertIcon';
 import ErrorIcon from '../../assets/icons/ErrorIcon.js';
 import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
-import { InfoIcon } from '@layer5/sistent';
+import { InfoIcon } from '@sistent/sistent';
 
 export const SEVERITY = {
   INFO: 'informational',
@@ -70,6 +70,10 @@ export const EVENT_TYPE = {
     category: 'pattern',
     action: 'undeploy',
   },
+  VALIDATE_DESIGN: {
+    category: 'pattern',
+    action: 'validate',
+  },
   EVALUATE_DESIGN: {
     category: 'relationship',
     action: 'evaluation',
@@ -77,5 +81,9 @@ export const EVENT_TYPE = {
   REGISTRANT_SUMMARY: {
     category: 'entity',
     action: 'get_summary',
+  },
+  ACADEMY_QUIZ_EVALUATION: {
+    category: 'academy',
+    action: 'academy_quiz_evaluation',
   },
 };

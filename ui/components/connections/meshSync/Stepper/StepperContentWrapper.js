@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Divider, Button, styled } from '@layer5/sistent';
+import { Box, Typography, Divider, Button, styled } from '@sistent/sistent';
 
 const ContentHeader = ({ title }) => (
   <>

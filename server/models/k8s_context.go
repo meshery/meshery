@@ -13,12 +13,12 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/internal/sql"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils/kubernetes"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils/kubernetes"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -175,7 +175,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 
 			// 	// Preventing the publishing of event as the event details would be present in the reciept.
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
-			// 	// _ = provider.PersistEvent(event)
+			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
 			log.Warn(ErrGenerateK8sHandler(err, kc.Name))
 			continue
@@ -194,7 +194,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 
 		// 	// Preventing the publishing of event as the event details would be present in the reciept.
 		// 	// Publishing again would lead to duplicate events and confusion to the user.
-		// 	// _ = provider.PersistEvent(event)
+		// 	// _ = provider.PersistEvent(token,*event)
 		// 	// eventChan.Publish(userUUID, event)
 
 		// 	logrus.Warn(msg)
@@ -213,7 +213,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 
 			// 	// Preventing the publishing of event as the event details would be present in the reciept.
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
-			// 	// _ = provider.PersistEvent(event)
+			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
 			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
 			continue
@@ -227,7 +227,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 
 			// Preventing the publishing of event as the event details would be present in the reciept.
 			// Publishing again would lead to duplicate events and confusion to the user.
-			// _ = provider.PersistEvent(event)
+			// _ = provider.PersistEvent(token,*event)
 			// eventChan.Publish(userUUID, event)
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
@@ -433,10 +433,10 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
-	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
-		err := provider.PersistEvent(event)
+		err := provider.PersistEvent(*event, nil)
 		if err != nil {
 			err = ErrPersistEvent(err)
 			log.Error(err)
@@ -449,6 +449,9 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	var refCount int
 	// Gets the serverID for the passed contextID
 	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
 		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
 			sid = k8ctx.KubernetesServerID.String()
 			break
@@ -457,6 +460,9 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	// Counts the reference of the serverID
 	// As multiple context can have same serverID
 	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
 		if k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
@@ -469,7 +475,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(errors.New("meshery Database handler is not accessible to perform operations"), ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -484,7 +490,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -500,7 +506,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -517,7 +523,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -533,7 +539,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -549,7 +555,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(event)
+			err := provider.PersistEvent(*event, nil)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -561,7 +567,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromUser(userUUID).Build()
 		// Also add context name, as id is not helpful
-		err = provider.PersistEvent(event)
+		err = provider.PersistEvent(*event, nil)
 		if err != nil {
 			err = ErrPersistEvent(err)
 			log.Error(err)

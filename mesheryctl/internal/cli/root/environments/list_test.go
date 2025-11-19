@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestListEnvironment(t *testing.T) {
@@ -41,7 +41,7 @@ func TestListEnvironment(t *testing.T) {
 			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.response.golden",
 			ExpectedResponse: "list.environment.success.golden",
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 	}
 

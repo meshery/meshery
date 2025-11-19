@@ -17,12 +17,12 @@ package model
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -32,7 +32,7 @@ import (
 var (
 	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommads
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
@@ -62,6 +62,13 @@ mesheryctl model search [model-name]
 
 // View a specific model
 mesheryctl model view [model-name]
+
+// Scaffold a folder structure for model creation
+mesheryctl model init [model-name]
+
+// Create an OCI-compliant package from the model files
+mesheryctl model build [model-name]
+mesheryctl model build [model-name]/[model-version]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
@@ -76,14 +83,7 @@ mesheryctl model view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				log.Fatalln(err, "error processing config")
-			}
-
-			baseUrl := mctlCfg.GetBaseMesheryURL()
-			url := fmt.Sprintf("%s/api/meshmodels/models?page=1", baseUrl)
-			models, err := api.Fetch[models.MeshmodelsAPIResponse](url)
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
 
 			if err != nil {
 				return err
@@ -142,4 +142,18 @@ func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Comm
 	}
 
 	return nil
+}
+
+func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
+	rows := [][]string{}
+
+	for _, model := range modelsResponse.Models {
+		modelName := model.Name
+		if modelName == "" {
+			modelName = "N/A"
+		}
+		rows = append(rows, []string{modelName, string(model.Category.Name), model.Version})
+	}
+
+	return rows, int64(modelsResponse.Count)
 }

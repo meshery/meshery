@@ -1,0 +1,76 @@
+name: Meshery Server Integration Tests
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
+
+jobs:
+  server-integration-test-with-meshsync:
+    name: Integration test with meshsync
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+        # inspired by .github/workflows/build-ui-and-server.yml
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+
+      - name: file system info 00
+        run: df -h
+
+        # TODO  think about if we could reuse image build from ui-and-server build workflow?
+      - name: Build meshery image
+        run: make docker-build
+
+      - name: file system info 01
+        run: df -h
+
+      - name: Remove dangling images, stopped containers
+        run: docker system prune -f
+
+      - name: file system info 02
+        run: df -h
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Integration tests set up (cluster)
+        run: make server-integration-tests-meshsync-setup-cluster
+
+      - name: file system info 03
+        run: df -h
+
+      - name: Integration tests set up (connection)
+        run: make server-integration-tests-meshsync-setup-connection
+
+      - name: Integration tests run
+        run: make server-integration-tests-meshsync-run
+
+      - name: Upload sqlite file
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: meshery-integration-test-meshsync-mesherydb-file
+          path: meshery-integration-test-meshsync-mesherydb.sql
+          if-no-files-found: warn
+
+      - name: Integration tests clean up
+        run: make server-integration-tests-meshsync-cleanup

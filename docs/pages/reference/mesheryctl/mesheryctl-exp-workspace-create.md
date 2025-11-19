@@ -12,11 +12,12 @@ subcommand: workspace
 
 # mesheryctl exp workspace create
 
-Create a new workspace
+Create a new workspace under an organization
 
 ## Synopsis
 
-Create a new workspace by providing the name, description, and organization ID.
+Create a new workspace by providing the name, description, and organization ID
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/create
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create [flags]
@@ -26,18 +27,10 @@ mesheryctl exp workspace create [flags]
 
 ## Examples
 
-Create a new workspace
+Create a new workspace in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
-
-</div>
-</pre> 
-
-Documentation for workspace can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/workspaces/
 
 </div>
 </pre> 

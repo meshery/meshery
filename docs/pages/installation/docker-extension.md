@@ -17,8 +17,10 @@ abstract: Install Docker Extension for Meshery
 
 The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
 
-{% include alert.html type="info" title="Prerequisites" content="You need Docker Desktop version of 4.10 or higher for this." %}
+## Prerequisites
 
+- You need Docker Desktop version of 4.10 or higher for this.
+- This document applies only when Docker Desktop uses kubeadm with Kubernetes enabled. If you are using kind, please refer to the [Kind]({{site.baseurl}}/installation/kubernetes/kind) section.
 
 ## Install the Docker Meshery Extension
 
@@ -82,6 +84,8 @@ Finally, you can also install the Meshery Docker Extension using the Docker CLI.
 
 It runs as a set of one or more containers inside your Docker Desktop virtual machine.
 
+Finally, you can now fully utilize Meshery to manage and monitor your cloud-native infrastructure.
+
 ## Remove Meshery as a Docker Extension
 
 You can remove the Docker Extension from Docker Desktop interface or from the CLI. 
@@ -107,7 +111,7 @@ There could be redisual Images and Networks to remove after removing/uninstallin
 
 Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
 
-{% capture code_content %}$ docker rmi layer5/meshery:stable-latest{% endcapture %}
+{% capture code_content %}$ docker rmi meshery/meshery:stable-latest{% endcapture %}
 {% include code.html code=code_content %}
 
 

@@ -15,7 +15,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/layer5io/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/internal/graphql/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -9785,7 +9785,7 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 		if data, ok := tmp.(model.Status); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/layer5io/meshery/server/internal/graphql/model.Status`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/meshery/meshery/server/internal/graphql/model.Status`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9860,7 +9860,7 @@ func (ec *executionContext) _Mutation_changeAdapterStatus(ctx context.Context, f
 		if data, ok := tmp.(model.Status); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/layer5io/meshery/server/internal/graphql/model.Status`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/meshery/meshery/server/internal/graphql/model.Status`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12361,7 +12361,7 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 		if data, ok := tmp.(*model.MesheryControllersStatusListItem); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.MesheryControllersStatusListItem`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/meshery/meshery/server/internal/graphql/model.MesheryControllersStatusListItem`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12443,7 +12443,7 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 		if data, ok := tmp.(model.Status); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/layer5io/meshery/server/internal/graphql/model.Status`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/meshery/meshery/server/internal/graphql/model.Status`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13761,7 +13761,7 @@ func (ec *executionContext) _Subscription_subscribeMesheryControllersStatus(ctx 
 		if data, ok := tmp.(<-chan []*model.MesheryControllersStatusListItem); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan []*github.com/layer5io/meshery/server/internal/graphql/model.MesheryControllersStatusListItem`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan []*github.com/meshery/meshery/server/internal/graphql/model.MesheryControllersStatusListItem`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

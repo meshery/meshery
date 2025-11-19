@@ -1,11 +1,11 @@
-import { FormControlLabel, IconButton, useTheme } from '@layer5/sistent';
+import { FormControlLabel, IconButton, useTheme } from '@sistent/sistent';
 import { labelValue, schemaRequiresTrueValue } from '@rjsf/utils';
 import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
 
-import { Checkbox } from '@layer5/sistent';
+import { Checkbox } from '@sistent/sistent';
 
 export const CustomCheckboxWidget = (props) => {
   const {

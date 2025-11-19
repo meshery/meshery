@@ -12,7 +12,7 @@ import {
   alpha,
   FormattedTime,
   CustomTooltip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   OptionList,
   OptionListItem,
@@ -41,7 +41,7 @@ import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectEventById,
   selectIsEventVisible,
@@ -54,6 +54,7 @@ import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { useDispatch } from 'react-redux';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -293,6 +294,8 @@ export const Notification = ({ event_id }) => {
     setExpanded(!expanded);
   };
 
+  const uiConfig = useSelector((state) => state.events.ui);
+
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
@@ -322,6 +325,11 @@ export const Notification = ({ event_id }) => {
         ]
       : []),
   ];
+
+  const title =
+    uiConfig?.history_mode && event.metadata?.history_title
+      ? event.metadata.history_title
+      : event.description;
 
   const Detail = () => (
     <Expanded
@@ -400,7 +408,7 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs={8} sm>
             <Message variant="body1">
-              {truncate(event.description, {
+              {truncate(title, {
                 length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
               })}
             </Message>

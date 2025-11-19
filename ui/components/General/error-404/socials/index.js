@@ -1,4 +1,4 @@
-import { Tooltip, Fade } from '@layer5/sistent';
+import { Tooltip, Fade } from '@sistent/sistent';
 import {
   DockerIcon,
   GithubIcon,
@@ -17,9 +17,9 @@ export default function Socials() {
         <Tooltip
           TransitionComponent={Fade}
           TransitionProps={{ timeout: 600 }}
-          title="Get connected with the Layer5 community"
+          title="Get connected with the Meshery community"
         >
-          <a href="mailto:community@layer5.io">
+          <a href="mailto:maintainers@meshery.io">
             <MessageIcon height={45} width={45} />
           </a>
         </Tooltip>
@@ -29,7 +29,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Join the community Slack"
         >
-          <a href="https://slack.layer5.io">
+          <a href="https://slack.meshery.io">
             <SlackIcon height={45} width={45} />
           </a>
         </Tooltip>
@@ -37,9 +37,9 @@ export default function Socials() {
         <Tooltip
           TransitionComponent={Fade}
           TransitionProps={{ timeout: 600 }}
-          title="Follow Layer5 on Twitter"
+          title="Follow Meshery on Twitter"
         >
-          <a href="https://twitter.com/layer5">
+          <a href="https://twitter.com/mesheryio">
             <TwitterIcon height={40} width={40} />
           </a>
         </Tooltip>
@@ -47,9 +47,9 @@ export default function Socials() {
         <Tooltip
           TransitionComponent={Fade}
           TransitionProps={{ timeout: 600 }}
-          title="Contribute to Layer5 projects"
+          title="Contribute to Meshery projects"
         >
-          <a href="https://github.com/layer5io">
+          <a href="https://github.com/meshery">
             <GithubIcon height={45} width={45} />
           </a>
         </Tooltip>
@@ -69,7 +69,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Access Docker images"
         >
-          <a href="https://hub.docker.com/u/layer5/">
+          <a href="https://hub.docker.com/u/meshery/">
             <DockerIcon height={45} width={45} />
           </a>
         </Tooltip>

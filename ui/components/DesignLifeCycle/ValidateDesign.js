@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@layer5/sistent';
+import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
@@ -149,7 +149,7 @@ const ValidationResults_ = (props) => {
   );
 };
 
-const ValidationResults = ValidationResults_;
+export const ValidationResults = ValidationResults_;
 
 /**
  *
@@ -158,6 +158,7 @@ const ValidationResults = ValidationResults_;
  */
 export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
+  console.log('Validation Results', validationResults);
   const isValidating = useIsValidatingDesignSchema(validationMachine);
 
   const designName = design.name;

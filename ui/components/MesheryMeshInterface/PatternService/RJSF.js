@@ -4,7 +4,7 @@ import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
-import { useTheme, ThemeProvider } from '@layer5/sistent';
+import { useTheme, ThemeProvider } from '@sistent/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
@@ -19,8 +19,9 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -33,7 +34,7 @@ const MuiRJSFForm = withTheme(MaterialUITheme);
  * @param {*} props
  * @returns
  */
-function RJSFForm({
+function RJSFForm_({
   schema,
   jsonSchema,
   data,
@@ -127,4 +128,7 @@ function RJSFForm({
   );
 }
 
+const RJSFForm = (props) => {
+  return <ProviderStoreWrapper>{<RJSFForm_ {...props} />}</ProviderStoreWrapper>;
+};
 export default RJSFForm;

@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra

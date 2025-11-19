@@ -27,10 +27,10 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
-	pkgconstants "github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
+	pkgconstants "github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	dockerCmd "github.com/docker/cli/cli/command"
 	cliconfig "github.com/docker/cli/cli/config"
@@ -39,8 +39,8 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitutils "github.com/meshery/meshkit/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -225,13 +225,6 @@ func start() error {
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			utils.Services[v] = temp
 			AllowedServices[v] = utils.Services[v]
-			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), utils.Services[v])
-			err = utils.ViperCompose.WriteConfig()
-			if err != nil {
-				// failure while adding a service to docker compose file is not a fatal error
-				// mesheryctl will continue deploying with required services (meshery, watchtower)
-				log.Infof("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", v)
-			}
 		}
 
 		for _, v := range RequiredService {
@@ -271,9 +264,27 @@ func start() error {
 				}
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
+
+				for k, v := range currCtx.GetEnvs() {
+					temp.Environment = append(
+						temp.Environment,
+						// use to upper here, as meshery keeps its context yaml lowercased
+						fmt.Sprintf("%s=%v", strings.ToUpper(k), v),
+					)
+				}
+
 			}
 			utils.Services[v] = temp
 			AllowedServices[v] = utils.Services[v]
+		}
+
+		for k, v := range AllowedServices {
+			utils.ViperCompose.Set(fmt.Sprintf("services.%s", k), v)
+			if err := utils.ViperCompose.WriteConfig(); err != nil {
+				// failure while adding a service to docker compose file is not a fatal error
+				// mesheryctl will continue deploying with required services (meshery, watchtower)
+				log.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)
+			}
 		}
 
 		//////// FLAGS

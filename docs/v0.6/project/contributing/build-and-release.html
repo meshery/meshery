@@ -867,7 +867,7 @@ meshery-custom-end -->
     <tr>
       <td>GitHub</td>
       <td>mesheryctl</td>
-      <td><a href="/v0.6/v0.6https://github.com/layer5io/meshery/releases">https://github.com/layer5io/meshery/releases</a></td>
+      <td><a href="/v0.6/v0.6https://github.com/meshery/meshery/releases">https://github.com/meshery/meshery/releases</a></td>
     </tr>
     <tr>
       <td>Docker Hub</td>
@@ -902,7 +902,7 @@ meshery-custom-end -->
   <li><code class="language-plaintext highlighter-rouge">GO_VERSION</code>: As of July 21st 2021 it is 1.16</li>
   <li><code class="language-plaintext highlighter-rouge">IMAGE_NAME</code>: appropriate image name for each of the Docker container images. All are under the <code class="language-plaintext highlighter-rouge">layer5io</code> org.</li>
   <li><code class="language-plaintext highlighter-rouge">SLACK_BOT_TOKEN</code>: Used for notification of new GitHub stars given to the Meshery repo.</li>
-  <li><code class="language-plaintext highlighter-rouge">CYPRESS_RECORD_KEY</code>: Used for integration with the Layer5 account on Cypress.</li>
+  <li><code class="language-plaintext highlighter-rouge">CYPRESS_RECORD_KEY</code>: Used for integration with the Meshery account on Cypress.</li>
   <li><code class="language-plaintext highlighter-rouge">GLOBAL_TOKEN</code>: Used for securely transmitting performance test results for the None Provider.</li>
 </ul>
 
@@ -1065,7 +1065,7 @@ secrets:
 
 <h3 id="releasing-mesheryctl-to-github">Releasing <code class="language-plaintext highlighter-rouge">mesheryctl</code> to GitHub</h3>
 
-<p>Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to <a href="/v0.6/v0.6https://github.com/layer5io/meshery/releases">Meshery’s GitHub releases</a> automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:</p>
+<p>Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to <a href="/v0.6/v0.6https://github.com/meshery/meshery/releases">Meshery’s GitHub releases</a> automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:</p>
 
 <ul>
   <li>Darwin - i386, x86_64</li>
@@ -1078,11 +1078,11 @@ secrets:
 
 <h4 id="homebrew">Homebrew</h4>
 
-<p>GoReleaser facilitates the creation of a brew formula for mesheryctl. The <a href="/v0.6/v0.6https://github.com/layer5io/homebrew-tap">homebrew-tap</a> repository is the location for Layer5’s brew formulas.</p>
+<p>GoReleaser facilitates the creation of a brew formula for mesheryctl. The <a href="/v0.6/v0.6https://github.com/layer5io/homebrew-tap">homebrew-tap</a> repository is the location for Meshery’s brew formulas.</p>
 
 <h4 id="scoop">Scoop</h4>
 
-<p>GoReleaser facilitates the creation of a Scoop app for mesheryctl. The <a href="/v0.6/v0.6https://github.com/layer5io/scoop-bucket">scoop-bucket</a> repository is the location of Layer5’s Scoop bucket.</p>
+<p>GoReleaser facilitates the creation of a Scoop app for mesheryctl. The <a href="/v0.6/v0.6https://github.com/layer5io/scoop-bucket">scoop-bucket</a> repository is the location of Meshery’s Scoop bucket.</p>
 
 <h2 id="helm-charts-lint-check-build-and-release">Helm Charts Lint Check, Build, and Release</h2>
 
@@ -1216,7 +1216,7 @@ secrets:
 
 <h3 id="release-support">Release Support</h3>
 
-<p>General community support and commercial support from Layer5 is available. Separately, third parties and partners may offer longer-term support solutions.</p>
+<p>General community support and commercial support from Meshery is available. Separately, third parties and partners may offer longer-term support solutions.</p>
 
 <h4 id="pre-v10">Pre v1.0</h4>
 
@@ -1432,7 +1432,7 @@ meshery-custom-end -->
           src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
           alt="mail"
         />
-        <span class="footer-icons-text small-hide">Get connected with the Layer5 community</span>
+        <span class="footer-icons-text small-hide">Get connected with the Meshery community</span>
       </a>
     </div>
 
@@ -1494,7 +1494,7 @@ meshery-custom-end -->
     <div class="footer-icons">
       <a
         class="social__link"
-        href="/v0.6/v0.6https://www.youtube.com/Layer5io?sub_confirmation=1"
+        href="/v0.6/v0.6https://www.youtube.com/mesheryio?sub_confirmation=1"
         target="_blank"
         rel="noreferrer"
       >
@@ -1508,7 +1508,7 @@ meshery-custom-end -->
     </div>
 
     <div class="footer-icons">
-      <a class="social__link" href="/v0.6/v0.6https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+      <a class="social__link" href="/v0.6/v0.6https://hub.docker.com/u/meshery/" target="_blank" rel="noreferrer">
         <img
           class="docker"
           src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="

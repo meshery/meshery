@@ -1,4 +1,4 @@
-import { createTheme } from '@layer5/sistent';
+import { createTheme } from '@sistent/sistent';
 import createCache from '@emotion/cache';
 
 // Create a custom theme

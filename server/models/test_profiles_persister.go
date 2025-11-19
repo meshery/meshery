@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 

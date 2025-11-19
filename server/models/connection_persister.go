@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
 )
 
@@ -51,7 +51,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []environments.EnvironmentData{}
+	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {

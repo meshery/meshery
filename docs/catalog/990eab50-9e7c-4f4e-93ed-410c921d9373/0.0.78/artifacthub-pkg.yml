@@ -1,0 +1,24 @@
+version: 0.0.78
+name: wordpress-ha-stack
+displayName: wordpress-ha-stack
+createdAt: "2025-10-10T16:26:01Z"
+description: A production-ready WordPress deployment designed for high traffic using load balancing, caching, and persistent storage. This design ensures data persistence and reliability by separating the database and file storage from the application pods. The Redis cache improves performance by reducing database queries, while persistent volumes protect against data loss during pod restarts or failures.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/990eab50-9e7c-4f4e-93ed-410c921d9373/0.0.78/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Primary Category: Web Applications \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9d69f393-35ba-45e3-b66c-0ff4e0cb0ee7
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/990eab50-9e7c-4f4e-93ed-410c921d9373-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/990eab50-9e7c-4f4e-93ed-410c921d9373-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,6 +1,8 @@
 import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
 import { initiateQuery } from './utils';
+import { useGetOrgsQuery } from './organization';
+import { useGetWorkspacesQuery } from './workspace';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -239,6 +241,14 @@ export const userApi = api
         invalidatesTags: ['teams'],
         providesTags: ['teams'],
       }),
+      getAccessToken: builder.query({
+        query: () => ({
+          url: `/token`,
+        }),
+        transformResponse: (response) => {
+          return response?.token;
+        },
+      }),
     }),
   });
 
@@ -273,6 +283,16 @@ export const getProviderCapabilities = async () => {
   return res;
 };
 
+export const getUserAccessToken = async () => {
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  return accessToken;
+};
+
+export const getUserProfile = async () => {
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser, {}, {});
+  return userProfile;
+};
+
 export const getSystemVersion = async () => {
   const res = await initiateQuery(userApi.endpoints.getSystemVersion);
   return res;
@@ -285,4 +305,123 @@ export const getAllUsers = async ({ page, pagesize, search }) => {
     { skip: !search },
   );
   return users;
+};
+
+export const useGetSelectedOrganization = () => {
+  const {
+    data: userPrefs,
+    isLoading: isLoadingUserPrefs,
+    error: errorLoadingUserPrefs,
+  } = useGetUserPrefQuery();
+  const {
+    data: allOrgs,
+    isLoading: isLoadingAllOrgs,
+    error: errorLoadingAllOrgs,
+  } = useGetOrgsQuery();
+
+  const existingSelectedOrganization = allOrgs?.organizations?.find(
+    (org) => org.id === userPrefs?.selectedOrganizationID,
+  );
+
+  const selectedOrganization = existingSelectedOrganization ?? allOrgs?.organizations?.[0];
+
+  return {
+    selectedOrganization,
+    didFallback: !existingSelectedOrganization,
+    isLoading: isLoadingUserPrefs || isLoadingAllOrgs,
+    isError: errorLoadingUserPrefs || errorLoadingAllOrgs,
+    error: errorLoadingUserPrefs || errorLoadingAllOrgs,
+  };
+};
+
+export const useGetSelectedWorkspace = () => {
+  const {
+    selectedOrganization,
+    isLoading: isLoadingOrganizations,
+    error: errorGetSelectedOrg,
+  } = useGetSelectedOrganization();
+  const {
+    data: workspacesData,
+    isError: isWorkspacesError,
+    isLoading: isLoadingingWorkspaces,
+    error: errorGetWorkspaces,
+  } = useGetWorkspacesQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      order: 'updated_at desc',
+      orgID: selectedOrganization?.id,
+    },
+    {
+      skip: !selectedOrganization?.id,
+    },
+  );
+  // const [updateSelectedWorkspace] = useUpdateSelectedWorkspaceMutation();
+  const { data: userPrefs, isLoading: isLoadingPrefs } = useGetUserPrefQuery();
+  const selectedWorkspaceID =
+    userPrefs?.selectedWorkspaceForOrganizations?.[selectedOrganization?.id];
+
+  const existingSelectedWorkspace = (workspacesData?.workspaces ?? []).find(
+    (workspace) => workspace.id === selectedWorkspaceID,
+  );
+
+  const selectedWorkspace = existingSelectedWorkspace ?? workspacesData?.workspaces?.[0];
+
+  const didFallback = !existingSelectedWorkspace;
+
+  // Update the selected workspace in user preferences if it was not set before
+  // useEffect(() => {
+  //   if (!isLoadingPrefs && didFallback && selectedWorkspaceID) {
+  //     console.log(
+  //       '[getCurrentWorkspace] setting default workspace',
+  //       selectedWorkspaceID,
+  //       selectedOrganization?.id,
+  //     );
+  //     updateSelectedWorkspace({
+  //       orgId: selectedOrganization?.id,
+  //       workspaceId: selectedWorkspaceID,
+  //     });
+  //   }
+  // }, [
+  //   isLoadingPrefs,
+  //   didFallback,
+  //   selectedOrganization?.id,
+  //   selectedWorkspaceID,
+  //   updateSelectedWorkspace,
+  // ]);
+
+  return {
+    selectedWorkspace,
+    didFallback,
+    allWorkspaces: workspacesData?.workspaces,
+    isLoading: isLoadingOrganizations || isLoadingingWorkspaces || isLoadingPrefs,
+    isError: isWorkspacesError || errorGetSelectedOrg,
+    error: errorGetWorkspaces || errorGetSelectedOrg,
+  };
+};
+
+export const useUpdateSelectedOrganizationMutation = () => {
+  const [updateUserPref, response] = useUpdateUserPrefMutation();
+
+  const updateSelectedOrganization = async (orgId) => {
+    await updateUserPref({ selectedOrganizationID: orgId });
+  };
+
+  return [updateSelectedOrganization, response];
+};
+
+export const useUpdateSelectedWorkspaceMutation = () => {
+  const { data: userPrefs } = useGetUserPrefQuery();
+  const [updateUserPref, response] = useUpdateUserPrefMutation();
+
+  const updateSelectedWorkspace = async (orgId, workspaceId) => {
+    await updateUserPref({
+      selectedWorkspaceForOrganizations: {
+        ...(userPrefs.selectedWorkspaceForOrganizations || {}),
+        [orgId]: workspaceId,
+      },
+    });
+  };
+
+  return [updateSelectedWorkspace, response];
 };

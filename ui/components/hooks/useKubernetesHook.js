@@ -1,5 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
 import { pingKubernetes } from '../../utils/helpers/kubernetesHelpers';
@@ -11,18 +9,20 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 
 export default function useKubernetesHook() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     pingKubernetes(
       successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`, () =>
-        dispatch(updateProgress({ showProgress: false })),
+        dispatch(updateProgressAction({ showProgress: false })),
       ),
       errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`, () =>
-        dispatch(updateProgress({ showProgress: false })),
+        dispatch(updateProgressAction({ showProgress: false })),
       ),
       connectionID,
     );
@@ -31,7 +31,7 @@ export default function useKubernetesHook() {
   return ping;
 }
 const handleErrorGenerator = (dispatch, notify) => (message, error) => {
-  dispatch(updateProgress({ showProgress: false }));
+  dispatch(updateProgressAction({ showProgress: false }));
   console.error(message, error);
   notify({
     message: message,
@@ -40,13 +40,21 @@ const handleErrorGenerator = (dispatch, notify) => (message, error) => {
   });
 };
 
-const handleSuccessGenerator = (dispatch, notify) => (message) => {
-  dispatch(updateProgress({ showProgress: false }));
-  notify({
-    message: message,
-    event_type: EVENT_TYPES.SUCCESS,
-  });
-};
+const handleSuccessGenerator =
+  (dispatch, notify) =>
+  (message, variant = 'success') => {
+    dispatch(updateProgressAction({ showProgress: false }));
+    const variantMap = {
+      success: EVENT_TYPES.SUCCESS,
+      info: EVENT_TYPES.INFO,
+      warning: EVENT_TYPES.WARNING,
+      error: EVENT_TYPES.ERROR,
+    };
+    notify({
+      message,
+      event_type: variantMap[variant] ?? EVENT_TYPES.SUCCESS,
+    });
+  };
 
 const handleInfoGenerator = (notify) => (message) => {
   notify({
@@ -62,10 +70,24 @@ export function useMesheryOperator() {
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
   const ping = ({ connectionID }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     pingMesheryOperator(
       connectionID,
-      () => handleSuccess(`Meshery Operator  pinged`),
+      (res) => {
+        const status = String(res?.operator?.status ?? CONTROLLER_STATES.UNKNOWN)
+          .trim()
+          .toUpperCase();
+
+        const statusToVariantMap = {
+          [CONTROLLER_STATES.DEPLOYED]: 'success',
+          [CONTROLLER_STATES.DEPLOYING]: 'info',
+          [CONTROLLER_STATES.NOTDEPLOYED]: 'error',
+          [CONTROLLER_STATES.UNKNOWN]: 'error',
+        };
+        const variant = statusToVariantMap[status] || 'warning';
+
+        handleSuccess(`Meshery Operator status: ${status}`, variant);
+      },
       (err) => handleError(`Meshery Operator not reachable`, err),
     );
   };
@@ -78,14 +100,14 @@ export function useMeshsSyncController() {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
-  // takes connectionID as input not the contextID
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
 
     const subscription = MeshsyncStatusQuery({ connectionID: connectionID }).subscribe({
       next: (res) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
 
         if (res.controller.name === 'MeshSync' && res.controller.status.includes('Connected')) {
           let publishEndpoint = res.controller.status.substring('Connected'.length);
@@ -96,9 +118,19 @@ export function useMeshsSyncController() {
           );
         } else if (
           res.controller.name === 'MeshSync' &&
-          !res.controller.status.includes('Unknown')
+          (res.controller.status === 'Running' || res.controller.status.includes('Running'))
         ) {
-          handleError('MeshSync is not publishing to Meshery Broker');
+          handleInfo(
+            `MeshSync is running (${res.controller.version}), but is not connected to Meshery Broker.`,
+          );
+        } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Deployed') {
+          handleInfo('MeshSync is deployed but connection status unclear');
+        } else if (
+          res.controller.name === 'MeshSync' &&
+          !res.controller.status.includes('Unknown') &&
+          !res.controller.status.includes('UNKNOWN')
+        ) {
+          handleInfo('MeshSync is not publishing to Meshery Broker');
         } else {
           handleError('MeshSync could not be reached');
         }
@@ -107,7 +139,7 @@ export function useMeshsSyncController() {
         !subscribe && subscription && subscription?.unsubscribe();
       },
       error: (err) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
         handleError('MeshSync status could not be retrieved', err);
         onError && onError(err);
         !subscribe && subscription && subscription?.unsubscribe();
@@ -131,7 +163,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
     // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
     // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
@@ -140,7 +172,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
       next: () => {
         setIsLoading(false);
 
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
         // const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
         // setOperatorInfo({
         //   isReachable,
@@ -158,7 +190,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
     });
     return () => {
       setIsLoading(false);
-      dispatch(updateProgress({ showProgress: false }));
+      dispatch(updateProgressAction({ showProgress: false }));
       tempSubscription?.unsubscribe();
     };
   }, []);
@@ -174,12 +206,13 @@ export const useNatsController = () => {
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  const handleInfo = handleInfoGenerator(notify);
 
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     const subscription = NatsStatusQuery({ connectionID }).subscribe({
       next: (res) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
 
         if (
           res.controller.name === 'MesheryBroker' &&
@@ -188,6 +221,13 @@ export const useNatsController = () => {
           let runningEndpoint = res.controller.status.substring('Connected'.length);
           handleSuccess(
             `Broker was pinged. ${runningEndpoint != '' ? `Running at ${runningEndpoint}` : ''}`,
+          );
+        } else if (
+          res.controller.name === 'MesheryBroker' &&
+          (res.controller.status === 'Deployed' || res.controller.status === 'DEPLOYED')
+        ) {
+          handleInfo(
+            `Meshery Broker is deployed (${res.controller.version}) but not connected to Meshery Server`,
           );
         } else {
           handleError(
@@ -291,7 +331,7 @@ export const useControllerStatus = (controllerState) => {
 };
 
 export const useFilterK8sContexts = (k8sContexts, predicate) => {
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {

@@ -2,7 +2,7 @@ import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import _ from 'lodash';
 
-import { dataValidatorMachine } from '@layer5/sistent';
+import { dataValidatorMachine } from '@sistent/sistent';
 
 const ajv = new Ajv({
   allErrors: true,
@@ -44,7 +44,7 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
 };
 
 export const componentKey = (component) =>
-  `${component.component.kind}-${component.model.name}-${component.component.version}`;
+  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
   const configurableComponents = design.components;

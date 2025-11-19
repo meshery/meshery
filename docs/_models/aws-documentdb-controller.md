@@ -30,9 +30,40 @@ components:
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/field-export/icons/white/field-export-white.svg
   description: 
-components-count: 5
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-documentdb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-documentdb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBInstance and SecurityGroup"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBCluster and SecurityGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBCluster and DBSubnetGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBInstance and DBSubnetGroup"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between DBSubnetGroup and Subnet"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and DBCluster"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between AdoptedResource and DBInstance"
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship Lambda functions query MongoDB-compatible DocumentDB"
+relationship-count: 9
 featureList: [
   "Scalable NoSQL database",
   "Supports MongoDB workloads",

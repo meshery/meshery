@@ -13,14 +13,14 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/files"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/server/models"
+	pCore "github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/files"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
 	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
@@ -180,7 +180,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
@@ -196,7 +196,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 }
@@ -258,7 +258,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -269,7 +269,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -285,7 +285,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -312,7 +312,7 @@ func (h *Handler) DesignFileImportHandler(
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 }

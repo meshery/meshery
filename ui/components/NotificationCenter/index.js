@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { CustomTooltip, NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -12,7 +11,7 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
 import { iconMedium } from '../../css/icons.styles';
@@ -24,7 +23,6 @@ import {
   STATUS_STYLE,
 } from './constants';
 import Notification from './notification';
-import { store } from '../../store';
 import {
   Container,
   DarkBackdrop,
@@ -63,8 +61,8 @@ import DeleteIcon from '../../assets/icons/DeleteIcon';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
-import { useSelectorRtk } from '@/store/hooks';
-import { ErrorBoundary } from '@layer5/sistent';
+import { useDispatch, useSelector } from 'react-redux';
+import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
 
@@ -194,20 +192,15 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
 };
 
 const Header = ({ handleFilter, handleClose }) => {
+  const uiConfig = useSelector((state) => state.events.ui);
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-  const { count_by_severity_level } = data || {
+  const { count_by_severity_level, read_count } = data || {
     count_by_severity_level: [],
     total_count: 0,
+    read_count: 0,
   };
-  const {
-    data: { total_count: read_count } = {
-      total_count: 0,
-    },
-  } = useGetEventsSummaryQuery({
-    status: STATUS.READ,
-  });
 
   const onClickSeverity = (severity) => {
     handleFilter({
@@ -222,13 +215,14 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
+  const Icon = uiConfig.icon || BellIcon;
   return (
     <NotificationContainer>
       <Title>
         <TitleBellIcon onClick={handleClose}>
-          <BellIcon height="30" width="30" fill="#fff" />
+          <Icon height="30" width="30" fill="#fff" />
         </TitleBellIcon>
-        <Typography variant="h6"> Notifications</Typography>
+        <Typography variant="h6">{uiConfig.title || 'Notifications'}</Typography>
       </Title>
       <SeverityChips>
         {Object.values(SEVERITY).map((severity) => (
@@ -427,14 +421,13 @@ const NotificationCenterDrawer = () => {
   const isNotificationCenterOpen = useSelector((state) => state.events.isNotificationCenterOpen);
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
+  const initialViewToLoad = useSelector((state) => state.events.view_to_fetch_on_open);
 
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
 
   useEffect(() => {
     dispatch(
-      loadEvents(fetchEvents, 0, {
-        status: STATUS.UNREAD,
-      }),
+      loadEvents(fetchEvents, initialViewToLoad?.page || 0, initialViewToLoad?.filters || {}),
     );
   }, []);
 
@@ -541,15 +534,11 @@ const NotificationDrawerButton_ = () => {
 };
 
 export const NotificationDrawerButton = () => {
-  return (
-    <Provider store={store}>
-      <NotificationDrawerButton_ />
-    </Provider>
-  );
+  return <NotificationDrawerButton_ />;
 };
 
 const NotificationCenter = (props) => {
-  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+  const isOpen = useSelector((state) => state.events.isNotificationCenterOpen);
 
   if (!isOpen) {
     return null;
@@ -558,9 +547,7 @@ const NotificationCenter = (props) => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <NotificationCenterDrawer {...props} />
-        </Provider>
+        <NotificationCenterDrawer {...props} />
       </ErrorBoundary>
     </NoSsr>
   );

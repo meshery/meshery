@@ -9,7 +9,7 @@ import {
   Divider,
   LeftArrowIcon,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 export const ErrorMain = styled('main')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,

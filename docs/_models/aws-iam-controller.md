@@ -42,9 +42,44 @@ components:
   colorIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/color/open-id-connect-provider-color.svg
   whiteIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/white/open-id-connect-provider-white.svg
   description: 
-components-count: 8
+- name: service-linked-role
+  colorIcon: assets/img/integrations/aws-iam-controller/components/service-linked-role/icons/color/service-linked-role-color.svg
+  whiteIcon: assets/img/integrations/aws-iam-controller/components/service-linked-role/icons/white/service-linked-role-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-iam-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-iam-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between Policy and role"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship between InstanceProfile and role"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM roles attached to EC2 instances for AWS API permissions"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM execution roles grant Lambda function permissions"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM task roles provide permissions to ECS containers"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM roles for service accounts (IRSA) in EKS"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM policies control S3 bucket and object access"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM policies manage DynamoDB table access"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship IAM database authentication for RDS"
+relationship-count: 9
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",

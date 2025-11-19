@@ -137,6 +137,8 @@ background-color: #8dbdd8;
 
 Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.
 
+See also https://docs.meshery.io/project/contributing/test-status, which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).
+
 {%include compatibility/compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
 
 ## Integration Tests

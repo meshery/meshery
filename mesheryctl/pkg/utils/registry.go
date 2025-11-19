@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	"github.com/layer5io/meshkit/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	"github.com/meshery/meshkit/utils"
 )
 
 type SystemType int

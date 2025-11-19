@@ -9,32 +9,29 @@ category: contributing
 list: include
 ---
 
-### Overview
+## Overview
 Meshery follows schema-driven development. As a project, Meshery has different types of schemas. Some schemas are external facing, and some internal to Meshery itself. This repository serves as a central location for storing schemas from which all Meshery components can take reference.
 
 The schemas follow a versioned approach to maintain backward compatibility while allowing for the evolution of the definitions.
 
 {% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>." %}
 
-### Prerequisites
+## Prerequisites
 - **oapi-codegen**: This tool is essential for generating Go code from OpenAPI specifications. Install it using:
-
 ```bash
 go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 ```
-
 - **make**: The repository uses Makefiles to automate various tasks. Ensure you have make installed on your system.
 
-### Development Workflow
+## Development Workflow
 
-
-#### **Schema Definition in Meshery**
+### Schema Definition in Meshery
 Meshery uses **OpenAPI v3** specification to define schemas. Given the complexity of the project, where multiple constructs and APIs exist, we adopt a structured approach to schema management:
 - **Schemas are versioned** to maintain backward compatibility.
 - **Schemas are modular** to support different components of Meshery independently.
 - **Schemas are used for validation, API definition, and automatic code generation.**
 
-### **Schema Directory Structure**
+### Schema Directory Structure
 All schemas are stored in the **`schemas`** directory at the root of the project. The structure follows:
 
 ```
@@ -49,7 +46,7 @@ schemas/
         openapi.yml                 # OpenAPI schema defining API operations (verbs like create, update, delete)
 ```
 
-### **Explanation**
+### Explanation
 - **`constructs/`** – Contains schemas for different versions.
 - **`<schema-version>/`** – Each schema version (e.g., `v1beta1`, `v1alpha2`) is a separate directory.
 - **`<construct>/`** – Each construct (e.g., `capability`, `category`) has its own folder.
@@ -63,8 +60,7 @@ This approach ensures that **schemas are well-organized, reusable, and scalable*
 
 ---
 
-## **Adding a New Schema**
-
+## Adding a New Schema
 To add a new schema, follow these steps:
 1. **Create a new directory** under `schemas/constructs/` for the new schema version.
 2. **Create a new directory** for the construct under the version directory.
@@ -74,34 +70,30 @@ To add a new schema, follow these steps:
 6. **Update the `generate.sh` script** to include the new schema for code generation.
 7. **Run the code generation script** to generate the necessary code files.
 
-
-
-## **Code Generation**
+## Code Generation
 Meshery supports **automatic code generation** for:
 - **Golang** (structs and types)
 - **TypeScript** (interfaces and types)
 - **JSON template** (json document with default values)
 - **YAML template** (yaml document with default values)
 
-### **Generating Code from Schemas**
+### Generating Code from Schemas
 The schema-to-code mapping is defined in **`generate.sh`**, which automates the generation process.
 
-#### **Generating Golang Models**
+### Generating Golang Models
 To generate Go structs from schemas, use:
 ```bash
 make golang-generate
 ```
-
 This also generates a merged_openapi.yml file which can be used to generate the redoc documentation and for rtk-api
 
-#### **Generating TypeScript Models, JSON and YAML templates**
+### Generating TypeScript Models, JSON and YAML templates
 To generate
-
 - TypeScript types
 - json templates
-- yaml templates 
+- yaml templates
 
-from schemas, use:  
+from schemas, use:
 ```bash
 make generate-types
 ```
@@ -109,8 +101,7 @@ make generate-types
 This will generate the typescript types, javascript objects for the schemas, json templates, yaml templates.
 The javascript objects can be used to do run time validation of data or for getting information from the schema.
 
-
-### **Schema-to-Code Mapping**
+### Schema-to-Code Mapping
 Example mapping in **`generate.sh`**:
 ```bash
 generate_schema_models <construct> <schema-version>
@@ -127,7 +118,7 @@ generate_schema_models "catalog" "v1alpha2"
   models/v1alpha1/capability/capability.go
   ```
 
-### **Example Output**
+### Example Output
 ```bash
 ./generate-golang.sh
 🔹 Processing: capability (v1alpha1)...
@@ -144,14 +135,96 @@ generate_schema_models "catalog" "v1alpha2"
 
 This ensures that schemas remain the **single source of truth**, making development **efficient, consistent, and scalable**.
 
+## Real Contributor Scenarios: Schema in Action!
+Schema-driven development can feel abstract until you are trying to implement something. Here are a few real world flows from different types of contributors. Whether you are building a new feature or just curious how others plug into schemas, this is the guide.
 
+### 1. Mesheryctl Contributor Flow
 
+  a. Add a new schema on a new command
 
-### Getting Help
+  **Example:** You want to add a `mesheryctl model build` command. 
+  **Steps:**
+  - Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
+  - Update `<construct>.json` if new properties are needed
+  - Run:
+  ```bash 
+  make generate-types
+  make golang-generate 
+  ```
+  - Implement the CLI logic
+  - Add tests (Check existing unit tests for format)
+  
+  b. Add an existing schema on an existing command
 
+  **Example**: 
+  You detect a part of existing code that is not following the schema driven development principle (model is a struct created in mesheryctl command), you have two options:
+  - If you know how to implement, update the existing code to use a proper struct generated from the `meshery/schemas` repository
+    - Update the CLI logic
+    - Add/Adjust tests if needed
+  - If you don't know how to implement it, open an issue on Github using either a mesheryctl issue template ([feature](https://github.com/meshery/meshery/issues/new?template=mesheryctl_feature.md), [bug](https://github.com/meshery/meshery/issues/new?template=mesheryctl_bug.md))
+
+  c. Add a new schema on an existing command
+
+  **Steps:**
+  - Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
+  - Update `<construct>.json` if new properties are needed
+  - Run:
+  ```bash 
+  make generate-types
+  make golang-generate 
+  ```
+  - Update the CLI logic
+  - Add/Adjust tests if needed
+
+> *Why it matters:* This reduces drift between backend logic and API contract, enforces consistency between Meshery's components (Server, UI, CLI) and , resulting in higher quality code.
+
+### 2. Meshery Server Contributor Flow
+**Example:** Add a new `status` field to `component`.
+**Steps:**
+- Add the new property in `component.json`
+- Run:
+```bash
+make validate-schemas
+make golang-generate
+```
+- The generated Go structs (from `oapi-codegen`) are used in the backend.
+- If the backend uses GORM with auto-migration enabled, these structs may be used to update the DB schema.
+- Avoid manually editing the generated models, as they will be overwritten when schemas are regenerated.
+
+> *Why it matters:* This reduces drift between backend logic and API contract, enforces consistency between Meshery's components (Server, UI, CLI) and , resulting in higher quality code.
+
+### 3. Meshery UI Contributor Flow
+**Example:** Show the new `version` field on the Model dashboard. 
+**Steps:**
+- Check `openapi.yaml` to verify the new field exists
+- Wait for the backend to regenerate and expose the property
+- Use RTK + TypeScript types to access and render data
+
+> **Note**: `make generate-types` now generates only TypeScript types and schema-related objects. `_template.json` / `_template.yaml` files are no longer auto-generated.
+
+*Why it matters:* UI stays in sync with the backend - fewer bugs, fewer mismatches, easier onboarding.
+
+### 4. Meshery Docs Contributor Flow
+**Example:** You are writing a guide!
+**Steps:**
+- Read the schema structure and workflows
+- Walk through the scenarios above
+- Write a guide that's accurate, actionable, and friendly
+
+*Why it matters:* Docs are often the first impression contributors get. Schema-driven clarity starts here.
+
+{% include alert.html type="warning" title="Best Practices" content="
+  <ul>
+    <li>Do not commit the entire output of <code>make build</code> unless you're intentionally updating all the generated schemas.</li>
+    <li><strong>Verify that you're using the correct version</strong> of <code>@openapi-contrib/openapi-schema-to-json-schema</code>.</li>
+    <li>Run <code>make generate-types</code> to validate your changes and check that only the intended files have been updated.</li>
+  </ul>
+  <p>Adhering to these practices keeps the repository clean, reduces noise in code reviews, and helps us maintain the schemas as the single source of truth.</p>" %}
+
+## Getting Help
 - [GitHub Issues](https://github.com/meshery/schemas/issues) - Report bugs or request features
-- [Community Slack](https://slack.layer5.io) - Real-time discussions with maintainers
-- [Weekly Meetings](https://layer5.io/community/calendar) - Join our community calls
+- [Community Slack](https://slack.meshery.io) - Real-time discussions with maintainers
+- [Weekly Meetings](https://meshery.io/calendar) - Join our community calls
 
 ---
 > **Community Resources**

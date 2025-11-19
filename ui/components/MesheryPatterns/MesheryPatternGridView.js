@@ -1,4 +1,4 @@
-import { Grid, Pagination } from '@layer5/sistent';
+import { Grid2, Pagination } from '@sistent/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
@@ -10,14 +10,11 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { Modal as SistentModal } from '@layer5/sistent';
+import { Modal as SistentModal } from '@sistent/sistent';
 
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
@@ -43,8 +40,9 @@ function PatternCardGridItem({
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Grid item {...gridProps}>
+    <Grid2 size={gridProps}>
       <MesheryPatternCard
+        data-testid="meshery-pattern-card-item"
         id={pattern.id}
         user={user}
         name={pattern.name}
@@ -88,7 +86,7 @@ function PatternCardGridItem({
         hideVisibility={hideVisibility}
         isReadOnly={isReadOnly}
       />
-    </Grid>
+    </Grid2>
   );
 }
 
@@ -146,6 +144,7 @@ function MesheryPatternGrid({
   openDryRunModal,
   hideVisibility = false,
   arePatternsReadOnly = false,
+  'data-testid': testId = 'meshery-patterns-grid',
 }) {
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
@@ -207,7 +206,7 @@ function MesheryPatternGrid({
         />
       )}
       {!selectedPattern.show && (
-        <Grid container spacing={3}>
+        <Grid2 container spacing={3} size="grow" data-testid={testId}>
           {patterns.map((pattern) => (
             <PatternCardGridItem
               key={pattern.id}
@@ -236,7 +235,7 @@ function MesheryPatternGrid({
               isReadOnly={arePatternsReadOnly}
             />
           ))}
-        </Grid>
+        </Grid2>
       )}
 
       {!selectedPattern.show && patterns.length === 0 && (
@@ -292,9 +291,4 @@ function MesheryPatternGrid({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-// @ts-ignore
-export default connect(mapDispatchToProps)(MesheryPatternGrid);
+export default MesheryPatternGrid;

@@ -4,6 +4,7 @@ title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 component: App Mesh
 earliest_version: v1.4.1
+adapter_version: v0.6.4
 port: 10005/gRPC
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
@@ -52,8 +53,6 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps#bookinfo)
-
-  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 
 - [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps#httpbin)
 

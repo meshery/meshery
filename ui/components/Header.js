@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Search } from '@mui/icons-material';
@@ -8,18 +7,17 @@ import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
-import { bindActionCreators } from 'redux';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
-import ExtensionSandbox from './ExtensionSandbox';
+import { createPathForRemoteComponent } from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -30,19 +28,18 @@ import {
   TextField,
   ClickAwayListener,
   IconButton,
-  Grid,
   Slide,
+  Grid2,
   Hidden,
   NoSsr,
   useTheme,
-} from '@layer5/sistent';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+  useMediaQuery,
+} from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
+import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -57,8 +54,17 @@ import {
   StyledToolbar,
   UserInfoContainer,
 } from './Header.styles';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import {
+  getUserAccessToken,
+  getUserProfile,
+  useGetProviderCapabilitiesQuery,
+} from '@/rtk-query/user';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateK8SConfig } from '@/store/slices/mesheryUi';
+import { ErrorBoundary } from '@sistent/sistent';
+import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 async function loadActiveK8sContexts() {
   try {
@@ -81,6 +87,7 @@ const K8sContextConnectionChip_ = ({
   meshsyncControllerState,
   selected,
   onDelete,
+  connections = [],
 }) => {
   const ping = useKubernetesHook();
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
@@ -89,13 +96,21 @@ const K8sContextConnectionChip_ = ({
     ctx.connection_id,
   );
 
+  const connectionStatus = useMemo(() => {
+    if (!connections || !ctx.connection_id) return null;
+    const connection = connections.find((conn) => conn.id === ctx.connection_id);
+    return connection?.status || null;
+  }, [connections, ctx.connection_id]);
+
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
-      <CustomTextTooltip
+      <CustomTooltip
         placement="left-end"
         leaveDelay={200}
         interactive={true}
-        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx.server}, Connection: ${formatToTitleCase(
+          connectionStatus || 'Unknown',
+        )}, Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -120,10 +135,10 @@ const K8sContextConnectionChip_ = ({
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
             }
-            status={operatorState}
+            status={connectionStatus}
           />
         </div>
-      </CustomTextTooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -133,7 +148,6 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  updateK8SConfig,
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
@@ -142,8 +156,21 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+
+  // ->using same data source as we use in conn.table
+  const { data: connectionData } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 100,
+    search: '',
+    order: '',
+    status: '',
+    kind: JSON.stringify(['kubernetes']), // -> Kubernetes connections
+  });
+
+  const connections = connectionData?.connections || [];
 
   const styleSlider = {
     position: 'absolute',
@@ -201,7 +228,7 @@ function K8sContextMenu({
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts();
         if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig: updatedConfig });
+          dispatch(updateK8SConfig({ k8sConfig: updatedConfig }));
         }
       };
       deleteKubernetesConfig(
@@ -269,7 +296,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -322,6 +364,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -357,6 +400,7 @@ function K8sContextMenu({
                           onSelectChange={() => setActiveContexts(ctx.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
+                          connections={connections}
                         />
                       );
                     })}
@@ -382,40 +426,25 @@ function K8sContextMenu({
 }
 
 const Header = ({
-  title,
   onDrawerToggle,
-  isBeta,
   onDrawerCollapse,
-  abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
-  operatorState,
-  meshSyncState,
-  updateK8SConfig,
-  updateProgress,
-  updateCapabilities,
-  updateExtensionType,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const { openModal } = useContext(WorkspaceModalContext) || {};
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
-    isSuccess: isProviderCapabilitiesSuccess,
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
-
-  const collaboratorExt = () => {
-    if (isProviderCapabilitiesSuccess) {
-      updateCapabilities({ capabilitiesRegistry: providerCapabilities });
-      return ExtensionPointSchemaValidator('collaborator')(
-        providerCapabilities?.extensions?.collaborator,
-      );
-    }
-    return null;
-  };
 
   if (isProviderCapabilitiesError) {
     notify({
@@ -425,22 +454,24 @@ const Header = ({
     });
   }
 
+  const remoteProviderUrl = providerCapabilities?.provider_url;
+  const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
+
   const loaderType = 'circular';
-  const theme = useTheme();
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-          <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
-            <Grid container alignItems="center">
+          <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
+            <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
-                <Grid item style={{ display: 'none' }}>
+                <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
                     <HeaderIcons style={iconMedium} />
                   </MenuIconButton>
-                </Grid>
+                </Grid2>
               </Hidden>
-              <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"
@@ -448,67 +479,71 @@ const Header = ({
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    minWidth: '34px',
+                    width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
-                <SpaceSwitcher title={title} isBeta={isBeta} />
-              </Grid>
+                <OrganizationAndWorkSpaceSwitcher />
+              </Grid2>
               <Box
                 component={UserContainer}
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
-                {collaboratorExt && (
-                  <ExtensionSandbox
-                    type="collaborator"
-                    Extension={(url) => RemoteComponent({ url, loaderType })}
-                  />
-                )}
+                <ErrorBoundary customFallback={() => null}>
+                  {collaboratorExtensionUri && isSmallScreen && (
+                    <RemoteComponent
+                      url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
+                      loaderType={loaderType}
+                      providerUrl={remoteProviderUrl}
+                      getUserAccessToken={getUserAccessToken}
+                      getUserProfile={getUserProfile}
+                      onOpenWorkspace={openModal}
+                    />
+                  )}
+                </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
+                  >
                     <K8sContextMenu
                       contexts={contexts}
                       activeContexts={activeContexts}
                       setActiveContexts={setActiveContexts}
                       searchContexts={searchContexts}
-                      runningStatus={{
-                        operatorStatus: operatorState,
-                        meshSyncStatus: meshSyncState,
-                      }}
-                      updateK8SConfig={updateK8SConfig}
-                      updateProgress={updateProgress}
                     />
                   </UserSpan>
-
-                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
-                    </CanShow>
-                  </div>
-
-                  <div data-testid="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
-
-                  <UserSpan>
-                    <User updateExtensionType={updateExtensionType} />
-                  </UserSpan>
+                  <CustomTooltip title="Notifications">
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
+                  </CustomTooltip>
+                  <CustomTooltip title={'User Profile'}>
+                    <UserSpan>
+                      <User />
+                    </UserSpan>
+                  </CustomTooltip>
                   <UserSpan data-testid="header-menu">
-                    <HeaderMenu updateExtensionType={updateExtensionType} />
+                    <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
-            </Grid>
+            </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );
@@ -518,22 +553,4 @@ Header.propTypes = {
   onDrawerToggle: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    title: state.get('page').get('title'),
-    isBeta: state.get('page').get('isBeta'),
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    k8sconfig: state.get('k8sConfig'),
-    operatorState: state.get('operatorState'),
-    meshSyncState: state.get('meshSyncState'),
-    capabilitiesRegistry: state.get('capabilitiesRegistry'),
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));
+export default Header;

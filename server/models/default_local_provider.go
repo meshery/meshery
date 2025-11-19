@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,14 +19,15 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/walker"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -60,6 +62,8 @@ type DefaultLocalProvider struct {
 	GenericPersister *database.Handler
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 // Initialize will initialize the local provider
@@ -181,8 +185,8 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -196,8 +200,8 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
@@ -240,7 +244,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -259,9 +263,18 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
-	metadata := make(map[string]interface{}, len(_metadata))
+	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
 		metadata[k] = v
+	}
+
+	maps.Copy(metadata, additionalMetadata)
+
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{
@@ -1086,7 +1099,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: uuid.Nil,
+		CredentialID: &uuid.Nil, // compatibilitiy
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
@@ -1158,7 +1171,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		Status:       conn.Status,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
+		CredentialID: conn.CredentialID,
 	}
 	return l.UpdateConnection(req, &connection)
 }
@@ -1207,7 +1220,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					return
 				}
 
-				log.Info("seeding sample ", comp, "s")
 				var wg sync.WaitGroup
 
 				for i, file := range files {
@@ -1237,7 +1249,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 									"branch": "",
 								},
 							}
-							log.Debug("seeding "+comp+": ", pattern.Name)
 							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
 								log.Error(ErrGettingSeededComponents(err, comp+"s"))
 							}
@@ -1254,7 +1265,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				if err != nil {
 					log.Error(ErrGettingSeededComponents(err, comp))
 				} else {
-					log.Info("seeding sample ", comp, "s")
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
@@ -1270,7 +1280,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								"branch": "",
 							},
 						}
-						log.Debug("seeding "+comp+": ", name)
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -1506,15 +1515,9 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.DeleteDesignFromWorkspace(workspaceId, designId)
-}
-
-func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter)
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
 }
 
 // GetOrganization returns the organization for the given organizationID
@@ -1820,6 +1823,134 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 				outFile.Close()
 			}
 		}
+	}
+	return nil
+}
+
+// Events
+
+func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
+	err := e.DB.Save(event).Error
+	if err != nil {
+		return ErrPersistEvent(err)
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+	e := l.EventsPersister
+	eventsDB := []*events.Event{}
+	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+
+	if len(eventsFilter.Category) != 0 {
+		finder = finder.Where("category IN ?", eventsFilter.Category)
+	}
+
+	if len(eventsFilter.Action) != 0 {
+		finder = finder.Where("action IN ?", eventsFilter.Action)
+	}
+
+	if len(eventsFilter.Severity) != 0 {
+		finder = finder.Where("severity IN ?", eventsFilter.Severity)
+	}
+
+	if eventsFilter.Search != "" {
+		finder = finder.Where("description LIKE ?", "%"+eventsFilter.Search+"%")
+	}
+
+	if eventsFilter.Status != "" {
+		finder = finder.Where("status = ?", eventsFilter.Status)
+	}
+
+	if len(eventsFilter.ActedUpon) != 0 {
+		finder = finder.Where("acted_upon in ?", eventsFilter.ActedUpon)
+	}
+
+	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})
+	finder = finder.Order(sortOn)
+
+	var count int64
+	finder.Count(&count)
+	if eventsFilter.Offset != 0 {
+		finder = finder.Offset(eventsFilter.Offset)
+	}
+
+	if eventsFilter.Limit != 0 {
+		finder = finder.Limit(eventsFilter.Limit)
+	}
+
+	err := finder.Scan(&eventsDB).Error
+	if err != nil {
+		return nil, err
+	}
+
+	countBySeverity, err := e.getCountBySeverity(userID, eventsFilter.Status)
+	if err != nil {
+		return nil, err
+	}
+
+	return &EventsResponse{
+		Events:               eventsDB,
+		PageSize:             eventsFilter.Limit,
+		TotalCount:           count,
+		CountBySeverityLevel: countBySeverity,
+	}, nil
+}
+
+func (l *DefaultLocalProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+	e := l.EventsPersister
+
+	eventTypes := EventTypesResponse{}
+
+	var categories, actions []string
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	if err != nil {
+		return eventTypes, err
+	}
+
+	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	if err != nil {
+		return eventTypes, err
+	}
+
+	eventTypes.Action = actions
+	eventTypes.Category = categories
+	return eventTypes, err
+}
+
+func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+	e := l.EventsPersister
+	err := e.DB.Model(&events.Event{ID: eventID, Status: events.EventStatus(status)}).Update("status", status).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+
+	err := l.EventsPersister.DB.Model(&events.Event{Status: events.EventStatus(status)}).Where("id IN ?", eventIDs).Update("status", status).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (l *DefaultLocalProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+	err := l.EventsPersister.DB.Delete(&events.Event{ID: eventID}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+	err := l.EventsPersister.DB.Where("id IN ?", eventIDs).Delete(&events.Event{}).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }

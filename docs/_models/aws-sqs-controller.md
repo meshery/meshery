@@ -22,9 +22,28 @@ components:
   colorIcon: assets/img/integrations/aws-sqs-controller/components/queue/icons/color/queue-color.svg
   whiteIcon: assets/img/integrations/aws-sqs-controller/components/queue/icons/white/queue-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sqs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sqs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
-relationship-count: 0
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between adoptedresource and queue"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship EC2 applications send/receive messages from SQS queues"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship S3 sends object event notifications to SQS"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship SNS topics fan out messages to SQS queues"
+- type: "Binding"
+  kind: "Edge"
+  description: "An edge relationship EventBridge sends events to SQS for queuing"
+relationship-count: 5
 featureList: [
   "Scalable message queuing",
   "Reliable message delivery",

@@ -10,7 +10,7 @@ const requires = createRequires(getDependencies);
 
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-const RemoteComponent = ({ url, loaderType }) => {
+const RemoteComponent = ({ url, loaderType, ...props }) => {
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
     if (loaderType === 'circular') {
@@ -29,7 +29,7 @@ const RemoteComponent = ({ url, loaderType }) => {
 
   return (
     <div>
-      <RemoteComponent />
+      <RemoteComponent {...props} />
     </div>
   );
 };

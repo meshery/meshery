@@ -4,14 +4,14 @@ setup() {
    load "$E2E_HELPERS_PATH/bats_libraries"
 	_load_bats_libraries
 
-  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import" 
+  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import"
 }
 
 @test "mesheryctl model import displays usage instructions" {
   run $MESHERYCTL_BIN model import
   assert_failure
 
-  assert_output --partial "Error: [ file | filepath | URL ] isn't specified" 
+  assert_output --partial "Error: [ file | filepath | URL ] isn't specified"
   assert_output --partial "Usage: mesheryctl model import [ file | filePath | URL ]"
 }
 
@@ -63,8 +63,9 @@ setup() {
 }
 
 @test "mesheryctl model import succeeds for URL of valid model as OCI artifact" {
-  skip
-  run $MESHERYCTL_BIN model import -f https://github.com/meshery/meshery/blob/master/mesheryctl/tests/e2e/002-model/fixtures/model-import/valid-oci-model-archive.tar
+
+  run $MESHERYCTL_BIN model import -f https://github.com/meshery/meshery/raw/master/mesheryctl/tests/e2e/002-model/fixtures/model-import/valid-oci-model-archive.tar
+
   assert_success
 
   assert_output --partial "Imported model model-import_cli-e2e-test (1 component)"

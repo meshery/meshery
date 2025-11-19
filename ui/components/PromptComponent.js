@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { PromptComponent } from '@layer5/sistent';
+import { PromptComponent } from '@sistent/sistent';
 
 const _PromptComponent = forwardRef((props, ref) => {
   return <PromptComponent {...props} ref={ref} />;

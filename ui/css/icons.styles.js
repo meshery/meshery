@@ -1,6 +1,10 @@
 // icon styles, setting general height and width properties to solves scaling and consistency problems
 
-import { Typography, styled } from '@layer5/sistent';
+import { Typography, styled } from '@sistent/sistent';
+export const iconXSmall = {
+  height: 16,
+  width: 16,
+};
 
 export const iconSmall = {
   height: 20,

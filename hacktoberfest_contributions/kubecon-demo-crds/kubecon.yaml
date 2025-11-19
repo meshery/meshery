@@ -1,0 +1,129 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: kubecons.demo.meshery.io
+spec:
+  group: demo.meshery.io
+  names:
+    kind: Kubecon
+    listKind: KubeconList
+    plural: kubecons
+    singular: kubecon
+    shortNames:
+      - kc
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: |
+            Kubecon is a demo CRD used to showcase Meshery CRD visualization, form generation, and schema handling.
+          properties:
+            apiVersion:
+              type: string
+              description: API version of the Kubecon resource
+            kind:
+              type: string
+              description: Kind of the resource
+            metadata:
+              type: object
+            spec:
+              type: object
+              required:
+                - title
+                - speakers
+              properties:
+                title:
+                  type: string
+                  description: Title of the Kubecon session
+                location:
+                  type: string
+                  description: Venue or virtual location
+                date:
+                  type: string
+                  format: date
+                  description: Date of the Kubecon session
+                track:
+                  type: string
+                  description: Track name (e.g., Service Mesh, Cloud Native)
+                  enum:
+                    - Service Mesh
+                    - Cloud Native
+                    - Developer Experience
+                    - Keynotes
+                durationMinutes:
+                  type: integer
+                  description: Duration of the session in minutes
+                  minimum: 15
+                isRecorded:
+                  type: boolean
+                  description: Indicates if session was recorded
+                speakers:
+                  type: array
+                  description: List of speakers for this session
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - affiliation
+                    properties:
+                      name:
+                        type: string
+                        description: Full name of the speaker
+                      affiliation:
+                        type: string
+                        description: Speaker’s organization or project
+                      twitter:
+                        type: string
+                        description: Optional Twitter handle
+                feedback:
+                  type: object
+                  description: Audience feedback summary
+                  properties:
+                    rating:
+                      type: number
+                      description: Average rating (1–5)
+                      minimum: 1
+                      maximum: 5
+                    comments:
+                      type: array
+                      items:
+                        type: string
+                        description: Audience comment
+            status:
+              type: object
+              description: Current status of the Kubecon session
+              properties:
+                state:
+                  type: string
+                  enum:
+                    - Scheduled
+                    - InProgress
+                    - Completed
+                    - Cancelled
+                  description: Current session state
+                lastUpdated:
+                  type: string
+                  format: date-time
+                  description: Last update time
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Title
+          type: string
+          jsonPath: .spec.title
+        - name: Track
+          type: string
+          jsonPath: .spec.track
+        - name: Speakers
+          type: integer
+          jsonPath: .spec.speakers | length(@)
+        - name: State
+          type: string
+          jsonPath: .status.state
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp

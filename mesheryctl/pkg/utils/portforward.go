@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

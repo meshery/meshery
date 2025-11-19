@@ -6,21 +6,18 @@ import {
   TableSortLabel,
   styled,
   ResponsiveDataTable,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useState } from 'react';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import { CustomColumnVisibilityControl } from '@layer5/sistent';
+import { CustomColumnVisibilityControl } from '@sistent/sistent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -28,6 +25,8 @@ import {
   useGetCredentialsQuery,
   useUpdateCredentialMutation,
 } from '@/rtk-query/credentials';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -47,11 +46,13 @@ const CustomTableCell = styled(TableCell)({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState }) => {
+const MesheryCredentialComponent = () => {
   const { data: credentialsData, isLoading } = useGetCredentialsQuery();
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+
   const [formData, setFormData] = useState({});
   const [credModal, setCredModal] = useState({
     open: false,
@@ -416,14 +417,4 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  return {
-    connectionMetadataState: state.get('connectionMetadataState'),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent);
+export default MesheryCredentialComponent;

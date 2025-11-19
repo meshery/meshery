@@ -22,9 +22,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -256,22 +256,24 @@ var linkDocContextView = map[string]string{
 
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
-	Use:   "view [context-name | --context context-name| --all] --flags",
-	Short: "view current context",
-	Long:  `Display active Meshery context`,
+	Use:   "view [context-name | --context context-name | --all] --flags",
+	Short: "Display the current Meshery CLI configuration context",
+	Long: `Display the current Meshery CLI context configuration.
+This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
+Use this to verify or debug your current CLI settings.`,
 	Example: `
-// View default context
+// View the default context
 mesheryctl system context view
 
-// View specified context
+// View a specified context
 mesheryctl system context view context-name
 
-// View specified context with context flag
+// View a specified context using the --context flag
 mesheryctl system context view --context context-name
 
-// View config of all contexts
+// View configuration of all contexts
 mesheryctl system context view --all
-	`,
+    `,
 	Annotations:  linkDocContextView,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -398,22 +400,14 @@ mesheryctl system context create `
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
-			if err := stop(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
-			} else if !userResponse && err == nil {
-				return nil
-			}
+			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
 
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
 		log.Printf("switched to context '%s'", args[0])
 		err = viper.WriteConfig()
-		if isRunning {
-			if Starterr := start(); Starterr != nil {
-				return errors.Wrap(Starterr, utils.SystemError("Failed to start Meshery while switching context"))
-			}
-		}
+
 		return err
 	},
 }
