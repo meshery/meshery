@@ -3,7 +3,6 @@ layout: default
 title: "Extensibility: Build-time"
 permalink: extensibility/build-time
 type: Extensibility
-extensibility: 1
 abstract: "System integrators can supply build-time configuration, data, packages, and other extensions to Meshery's container image."
 language: en
 list: include
