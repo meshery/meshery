@@ -39,7 +39,7 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Meshery and it's various architectural components are written in different languages, including Golang, Javascript (React.js and Next.js) To make building, testing, and the experience of contributing consistent across all Meshery components, a `Makefile` is included in the every repository. These `make` targets are what you will use to build, run, test, and document.
 
-To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
+To contribute to Meshery, please follow this basic fork-and-pull request [gitflow]({{site.baseurl}}/project/contributing/contributing-gitflow).
 
 <details>
 <summary>Adding your sign-off on commits (Developer Certificate of Origin)</summary>
@@ -86,7 +86,9 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 </ul>
 </details>
 
-# Contributing Guides
+## Contributing Guides
+
+Here is a complete list of all of Meshery's contributing guides from Server to UI to CLI to Extensions and so on.
 
 <!-- Contributing & Community -->
   <div class="section">
