@@ -75,6 +75,38 @@ Name: **“None”**
 - Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
+### Runtime Configuration Options
+
+Meshery provides runtime configuration options to control provider behavior:
+
+#### PROVIDER_CAPABILITIES_FILEPATH
+
+This environment variable allows you to specify a local file path to load provider capabilities from a static JSON file instead of fetching them from the remote provider's `/capabilities` endpoint. This is useful for:
+- Offline development and testing
+- Environments with restricted network access
+- Ensuring consistent provider capabilities across deployments
+
+Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
+
+#### SKIP_DOWNLOAD_EXTENSIONS
+
+This boolean environment variable controls whether Meshery downloads and refreshes provider extension packages. When set to `true`, Meshery will skip downloading extension packages even when new versions are available. This is particularly useful for:
+- Development environments where you want to use locally modified extensions
+- Deployments where extensions are pre-packaged or managed separately
+- Reducing startup time and network bandwidth usage
+- Preventing automatic updates to extension packages
+
+Default: `false` (extensions are downloaded/refreshed)
+
+Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
+
+**Note:** Extension downloads occur during:
+- User login (via the TokenHandler)
+- Provider capability refresh operations
+- Release channel updates
+
+When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
 ### Design Principles: Meshery Remote Provider Framework
 
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
