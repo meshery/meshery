@@ -22,7 +22,11 @@ components:
   colorIcon: assets/img/integrations/aws-opensearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-opensearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-opensearchservice-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-opensearchservice-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
 - type: "Binding"
   kind: "Edge"

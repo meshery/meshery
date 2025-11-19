@@ -50,7 +50,11 @@ components:
   colorIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
   whiteIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
   description: 
-components-count: 10
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-eks-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-eks-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 11
 relationships: 
 - type: "Binding"
   kind: "Edge"

@@ -22,7 +22,11 @@ components:
   colorIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-mq-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-mq-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
 - type: "Non Binding"
   kind: "Edge"

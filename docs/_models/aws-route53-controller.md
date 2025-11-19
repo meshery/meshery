@@ -30,7 +30,11 @@ components:
   colorIcon: assets/img/integrations/aws-route53-controller/components/health-check/icons/color/health-check-color.svg
   whiteIcon: assets/img/integrations/aws-route53-controller/components/health-check/icons/white/health-check-white.svg
   description: 
-components-count: 5
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-route53-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-route53-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
 - type: "Binding"
   kind: "Edge"
