@@ -1,33 +1,29 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/spf13/viper"
 )
 
-// HealthStatus represents the health status response for the healthz endpoints.
-// It includes information about the system's health including whether capabilities
-// are loaded and if running in Kanvas mode, whether extensions are present.
-type HealthStatus struct {
-	Status             string `json:"status"`                         // "healthy" or "unhealthy"
-	CapabilitiesLoaded bool   `json:"capabilities_loaded,omitempty"`  // Whether provider capabilities are loaded
-	ExtensionExists    bool   `json:"extension_exists,omitempty"`     // Whether extension package exists (Kanvas mode only)
-	ReleaseChannel     string `json:"release_channel,omitempty"`      // Current release channel (e.g., "stable", "kanvas")
-	Message            string `json:"message,omitempty"`              // Error message if unhealthy
-}
-
+// K8sHealthzHandler implements Kubernetes-style health check endpoints (/healthz/live and /healthz/ready).
+// Following Kubernetes best practices, it returns:
+// - HTTP 200 with plain text "ok" when healthy
+// - HTTP 503 with plain text error details when unhealthy
+// - Supports ?verbose=1 query parameter for detailed check results
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
-	healthStatus := HealthStatus{
-		Status: "healthy",
-	}
+	// Parse verbose flag from query parameters
+	verbose := r.URL.Query().Get("verbose") == "1"
 
 	// Get the release channel
 	releaseChannel := viper.GetString("RELEASE_CHANNEL")
-	healthStatus.ReleaseChannel = releaseChannel
+
+	// Collect check results
+	checks := []healthCheck{}
 
 	// Check 1: Verify capabilities are loaded by checking provider properties
 	capabilitiesLoaded := false
@@ -39,7 +35,12 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	healthStatus.CapabilitiesLoaded = capabilitiesLoaded
+
+	if capabilitiesLoaded {
+		checks = append(checks, healthCheck{name: "capabilities", status: checkOK, reason: "provider capabilities loaded"})
+	} else {
+		checks = append(checks, healthCheck{name: "capabilities", status: checkFailed, reason: "provider capabilities not loaded"})
+	}
 
 	// Check 2: If running in Kanvas mode, verify extension exists in filesystem
 	if releaseChannel == "kanvas" {
@@ -67,31 +68,73 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		healthStatus.ExtensionExists = extensionExists
-
-		// If in Kanvas mode, we must have extensions
-		if !extensionExists {
-			healthStatus.Status = "unhealthy"
-			healthStatus.Message = "Extension package not found in filesystem"
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(healthStatus)
-			return
+		if extensionExists {
+			checks = append(checks, healthCheck{name: "extension", status: checkOK, reason: "extension package found"})
+		} else {
+			checks = append(checks, healthCheck{name: "extension", status: checkFailed, reason: "extension package not found in filesystem"})
 		}
 	}
 
-	// If capabilities are not loaded, return unhealthy status
-	if !capabilitiesLoaded {
-		healthStatus.Status = "unhealthy"
-		healthStatus.Message = "Provider capabilities not loaded"
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusServiceUnavailable)
-		json.NewEncoder(w).Encode(healthStatus)
-		return
+	// Determine overall health status
+	allHealthy := true
+	for _, check := range checks {
+		if check.status != checkOK {
+			allHealthy = false
+			break
+		}
 	}
 
-	// All checks passed
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(healthStatus)
+	// Format response following Kubernetes conventions
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+
+	if allHealthy {
+		w.WriteHeader(http.StatusOK)
+		if verbose {
+			// Return detailed check results
+			for _, check := range checks {
+				fmt.Fprintf(w, "[+]%s ok\n", check.name)
+			}
+			fmt.Fprint(w, "healthz check passed\n")
+		} else {
+			// Simple "ok" response
+			fmt.Fprint(w, "ok")
+		}
+	} else {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		if verbose {
+			// Return detailed check results with failures
+			for _, check := range checks {
+				if check.status == checkOK {
+					fmt.Fprintf(w, "[+]%s ok\n", check.name)
+				} else {
+					fmt.Fprintf(w, "[-]%s failed: %s\n", check.name, check.reason)
+				}
+			}
+		} else {
+			// Return simple error message
+			var failedChecks []string
+			for _, check := range checks {
+				if check.status != checkOK {
+					failedChecks = append(failedChecks, fmt.Sprintf("%s: %s", check.name, check.reason))
+				}
+			}
+			fmt.Fprintf(w, "healthz check failed: %s", strings.Join(failedChecks, "; "))
+		}
+	}
 }
+
+// healthCheck represents the result of a health check
+type healthCheck struct {
+	name   string
+	status checkStatus
+	reason string
+}
+
+// checkStatus represents the status of a health check
+type checkStatus int
+
+const (
+	checkOK checkStatus = iota
+	checkFailed
+)
