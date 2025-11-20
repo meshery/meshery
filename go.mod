@@ -10,7 +10,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.92 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.46 => ../meshkit
+// replace github.com/meshery/meshkit v0.8.50 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
@@ -47,7 +47,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.50
+	github.com/meshery/meshkit v0.8.51
 	github.com/meshery/meshsync v0.8.26
 	github.com/meshery/schemas v0.8.93
 	github.com/nsf/termbox-go v1.1.1
