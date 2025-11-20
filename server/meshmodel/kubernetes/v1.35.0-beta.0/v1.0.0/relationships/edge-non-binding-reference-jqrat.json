@@ -24,72 +24,7 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "KubernetesConnection",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "auth",
-                  "clusterUserName"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "KubernetesCredential",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "auth",
-                  "clusterServerID"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ],
+  "selectors": null,
   "subType": "reference",
   "status": "enabled",
   "type": "non-binding",

@@ -24,70 +24,7 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "ACL",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "aws-memorydb-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "userNames"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "User",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "aws-memorydb-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ],
+  "selectors": null,
   "subType": "permission",
   "status": "enabled",
   "type": "binding",

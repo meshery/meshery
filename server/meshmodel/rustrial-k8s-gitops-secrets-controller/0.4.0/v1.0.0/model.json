@@ -20,9 +20,9 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Uncategorized"
+    "name": "Security \u0026 Compliance"
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Key Management",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
