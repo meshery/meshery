@@ -1,0 +1,39 @@
+name: Meeting Minutes Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 0 * * *' # Runs every day at midnight UTC
+
+permissions:
+  contents: write
+
+jobs:
+  update-meeting-minutes:
+    runs-on: ubuntu-24.04
+    if: github.repository == 'meshery/meshery'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MESHERY_CI }}
+      
+      - name: Fetch latest meeting minutes
+        env:
+          DISCOURSE_URL: ${{ secrets.DISCOURSE_URL }}
+        run: |
+          bash .github/scripts/fetch_meeting_minutes.sh
+      
+      - name: Pull changes from remote
+        run: git pull origin master
+      
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: .github/meetings/archive/*.md
+          commit_user_name: Meeting Minutes Bot
+          commit_user_email: meetings@meshery.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "Updated meeting minutes from Discourse"
+          branch: master

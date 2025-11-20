@@ -31,8 +31,37 @@
           {
             "id": null,
             "kind": "Domain",
-            "match": {},
-            "match_strategy_matrix": null,
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "UserProfile",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "domainID"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
             "model": {
               "version": "",
               "name": "aws-sagemaker-controller",
@@ -59,8 +88,37 @@
           {
             "id": null,
             "kind": "UserProfile",
-            "match": {},
-            "match_strategy_matrix": null,
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "domainID"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "Domain",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
             "model": {
               "version": "",
               "name": "aws-sagemaker-controller",

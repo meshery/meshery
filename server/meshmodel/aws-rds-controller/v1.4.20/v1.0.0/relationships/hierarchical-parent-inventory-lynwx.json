@@ -31,8 +31,37 @@
           {
             "id": null,
             "kind": "DBCluster",
-            "match": {},
-            "match_strategy_matrix": null,
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "DBCluster",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "globalClusterIdentifier"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "GlobalCluster",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
             "model": {
               "version": "",
               "name": "aws-rds-controller",
@@ -61,8 +90,37 @@
           {
             "id": null,
             "kind": "GlobalCluster",
-            "match": {},
-            "match_strategy_matrix": null,
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "DBCluster",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "globalClusterIdentifier"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
             "model": {
               "version": "",
               "name": "aws-rds-controller",
