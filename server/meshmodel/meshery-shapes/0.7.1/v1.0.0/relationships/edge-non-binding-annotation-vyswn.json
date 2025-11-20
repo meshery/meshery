@@ -28,54 +28,7 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "*",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "*",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": ""
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": null
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "*",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "*",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": ""
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": null
-          }
-        ]
-      }
-    }
-  ],
+  "selectors": null,
   "subType": "annotation",
   "status": "enabled",
   "type": "non-binding",
