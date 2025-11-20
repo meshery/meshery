@@ -42,11 +42,11 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		checks = append(checks, healthCheck{name: "capabilities", status: checkFailed, reason: "provider capabilities not loaded"})
 	}
 
-	// Check 2: If running in Kanvas mode, verify extension exists in filesystem
-	if releaseChannel == "kanvas" {
+	// Check 2: Check release channel, verify extension exists in filesystem
+	if releaseChannel != "stable" {
 		extensionExists := false
 
-		// Check all providers for navigator extensions in Kanvas mode
+		// Check all providers for navigator extensions 
 		for _, provider := range h.config.Providers {
 			providerProps := provider.GetProviderProperties()
 
