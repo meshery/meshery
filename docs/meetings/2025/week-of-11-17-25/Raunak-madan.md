@@ -4,4 +4,4 @@ In 2025, I was selected for `Google Summer of Code` as a contributor to work on 
 
 In my free time, I enjoy playing badminton and reading books.
 
-Looking forward to contribute to `Layer 5` and `Meshery`
+Looking forward to contributing to `Layer 5` and `Meshery`
