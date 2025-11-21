@@ -10,7 +10,6 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
-	"github.com/spf13/viper"
 )
 
 // mockProvider embeds DefaultLocalProvider and overrides specific methods for testing
@@ -48,18 +47,16 @@ func TestK8sHealthzHandler(t *testing.T) {
 	}
 
 	tests := []struct {
-		name              string
-		releaseChannel    string
-		verbose           bool
-		setupProviders    func() map[string]models.Provider
-		expectedStatus    int
-		expectedBody      string
-		expectedContains  []string // strings that should be in the response
+		name             string
+		verbose          bool
+		setupProviders   func() map[string]models.Provider
+		expectedStatus   int
+		expectedBody     string
+		expectedContains []string // strings that should be in the response
 	}{
 		{
-			name:           "Healthy - capabilities loaded, not kanvas mode",
-			releaseChannel: "stable",
-			verbose:        false,
+			name:    "Healthy - capabilities loaded",
+			verbose: false,
 			setupProviders: func() map[string]models.Provider {
 				provider := &models.DefaultLocalProvider{}
 				provider.Initialize()
@@ -71,9 +68,8 @@ func TestK8sHealthzHandler(t *testing.T) {
 			expectedBody:   "ok",
 		},
 		{
-			name:           "Healthy - capabilities loaded, verbose mode",
-			releaseChannel: "stable",
-			verbose:        true,
+			name:    "Healthy - capabilities loaded, verbose mode shows extension info",
+			verbose: true,
 			setupProviders: func() map[string]models.Provider {
 				provider := &models.DefaultLocalProvider{}
 				provider.Initialize()
@@ -82,12 +78,11 @@ func TestK8sHealthzHandler(t *testing.T) {
 				}
 			},
 			expectedStatus:   http.StatusOK,
-			expectedContains: []string{"[+]capabilities ok", "healthz check passed"},
+			expectedContains: []string{"[+]capabilities ok", "[i]extension", "healthz check passed"},
 		},
 		{
-			name:           "Unhealthy - no capabilities loaded",
-			releaseChannel: "stable",
-			verbose:        false,
+			name:    "Unhealthy - no capabilities loaded (extension status doesn't affect health)",
+			verbose: false,
 			setupProviders: func() map[string]models.Provider {
 				// Create a mock provider with no capabilities
 				provider := newMockProvider(models.ProviderProperties{
@@ -102,9 +97,8 @@ func TestK8sHealthzHandler(t *testing.T) {
 			expectedContains: []string{"healthz check failed", "capabilities", "not loaded"},
 		},
 		{
-			name:           "Unhealthy - no capabilities loaded, verbose mode",
-			releaseChannel: "stable",
-			verbose:        true,
+			name:    "Unhealthy - no capabilities loaded, verbose mode shows extension info",
+			verbose: true,
 			setupProviders: func() map[string]models.Provider {
 				provider := newMockProvider(models.ProviderProperties{
 					ProviderName: "test-provider",
@@ -115,14 +109,12 @@ func TestK8sHealthzHandler(t *testing.T) {
 				}
 			},
 			expectedStatus:   http.StatusServiceUnavailable,
-			expectedContains: []string{"[-]capabilities failed", "not loaded"},
+			expectedContains: []string{"[-]capabilities failed", "not loaded", "[i]extension"},
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Setup viper
-			viper.Set("RELEASE_CHANNEL", tt.releaseChannel)
+		t.Run(tt.name, func(t *testing.T)
 
 			// Create handler with test config
 			providers := tt.setupProviders()
@@ -174,7 +166,7 @@ func TestK8sHealthzHandler(t *testing.T) {
 	}
 }
 
-func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
+func TestK8sHealthzHandler_ExtensionInfo(t *testing.T) {
 	// Setup test logger
 	log, err := logger.New("test", logger.Options{})
 	if err != nil {
@@ -201,9 +193,6 @@ func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create extension file: %v", err)
 	}
-
-	// Setup viper for kanvas mode
-	viper.Set("RELEASE_CHANNEL", "kanvas")
 
 	// Create a mock provider with capabilities and extensions
 	provider := newMockProvider(models.ProviderProperties{
@@ -244,23 +233,25 @@ func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
 		log:    log,
 	}
 
-	// Test 1: Without verbose - should fail because extension not at expected location
+	// Test 1: Without verbose - should be healthy even if extension not found (informational only)
 	req := httptest.NewRequest(http.MethodGet, "/healthz/ready", nil)
 	w := httptest.NewRecorder()
 	handler.K8sHealthzHandler(w, req)
 
-	if w.Code != http.StatusServiceUnavailable {
-		t.Errorf("Expected status %d, got %d", http.StatusServiceUnavailable, w.Code)
+	// Should be healthy because extension status doesn't affect health
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status %d, got %d (extension status should not affect health)", http.StatusOK, w.Code)
 	}
 
 	body := w.Body.String()
-	if !strings.Contains(body, "extension") {
-		t.Errorf("Expected body to mention extension check, got: %s", body)
+	// Non-verbose mode shouldn't mention extensions in error messages
+	if body != "ok" {
+		t.Errorf("Expected 'ok', got: %s", body)
 	}
 
-	t.Logf("Kanvas mode response (non-verbose): %s", body)
+	t.Logf("Extension check response (non-verbose): %s", body)
 
-	// Test 2: With verbose mode
+	// Test 2: With verbose mode - should show extension info
 	req = httptest.NewRequest(http.MethodGet, "/healthz/ready?verbose=1", nil)
 	w = httptest.NewRecorder()
 	handler.K8sHealthzHandler(w, req)
@@ -269,9 +260,10 @@ func TestK8sHealthzHandler_KanvasMode(t *testing.T) {
 	if !strings.Contains(body, "[+]capabilities ok") {
 		t.Errorf("Expected verbose output to show capabilities check, got: %s", body)
 	}
-	if !strings.Contains(body, "[-]extension failed") {
-		t.Errorf("Expected verbose output to show extension check failure, got: %s", body)
+	// Should show informational extension status with [i] prefix
+	if !strings.Contains(body, "[i]extension") {
+		t.Errorf("Expected verbose output to show extension info with [i] prefix, got: %s", body)
 	}
 
-	t.Logf("Kanvas mode response (verbose): %s", body)
+	t.Logf("Extension check response (verbose): %s", body)
 }

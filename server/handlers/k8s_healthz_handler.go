@@ -6,8 +6,6 @@ import (
 	"os"
 	"path"
 	"strings"
-
-	"github.com/spf13/viper"
 )
 
 // K8sHealthzHandler implements Kubernetes-style health check endpoints (/healthz/live and /healthz/ready).
@@ -18,9 +16,6 @@ import (
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse verbose flag from query parameters
 	verbose := r.URL.Query().Get("verbose") == "1"
-
-	// Get the release channel
-	releaseChannel := viper.GetString("RELEASE_CHANNEL")
 
 	// Collect check results
 	checks := []healthCheck{}
@@ -42,43 +37,42 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		checks = append(checks, healthCheck{name: "capabilities", status: checkFailed, reason: "provider capabilities not loaded"})
 	}
 
-	// Check 2: Check release channel, verify extension exists in filesystem
-	if releaseChannel != "stable" {
-		extensionExists := false
+	// Check 2: Check for extensions (informational only, does not affect health status)
+	extensionExists := false
+	
+	// Check all providers for navigator extensions
+	for _, provider := range h.config.Providers {
+		providerProps := provider.GetProviderProperties()
 
-		// Check all providers for navigator extensions 
-		for _, provider := range h.config.Providers {
-			providerProps := provider.GetProviderProperties()
-
-			// Check if navigator extensions are configured
-			if len(providerProps.Extensions.Navigator) > 0 {
-				// Check if the extension package exists on filesystem
-				packageLocation := provider.PackageLocation()
-				if packageLocation != "" {
-					// Check if GraphQL extension path exists
-					if len(providerProps.Extensions.GraphQL) > 0 {
-						packagePath := providerProps.Extensions.GraphQL[0].Path
-						fullPath := path.Join(packageLocation, packagePath)
-						if _, err := os.Stat(fullPath); err == nil {
-							extensionExists = true
-							break
-						}
+		// Check if navigator extensions are configured
+		if len(providerProps.Extensions.Navigator) > 0 {
+			// Check if the extension package exists on filesystem
+			packageLocation := provider.PackageLocation()
+			if packageLocation != "" {
+				// Check if GraphQL extension path exists
+				if len(providerProps.Extensions.GraphQL) > 0 {
+					packagePath := providerProps.Extensions.GraphQL[0].Path
+					fullPath := path.Join(packageLocation, packagePath)
+					if _, err := os.Stat(fullPath); err == nil {
+						extensionExists = true
+						break
 					}
 				}
 			}
 		}
-
-		if extensionExists {
-			checks = append(checks, healthCheck{name: "extension", status: checkOK, reason: "extension package found"})
-		} else {
-			checks = append(checks, healthCheck{name: "extension", status: checkFailed, reason: "extension package not found in filesystem"})
-		}
 	}
 
-	// Determine overall health status
+	// Add extension check as informational (uses checkInfo status)
+	if extensionExists {
+		checks = append(checks, healthCheck{name: "extension", status: checkInfo, reason: "extension package found"})
+	} else {
+		checks = append(checks, healthCheck{name: "extension", status: checkInfo, reason: "extension package not found"})
+	}
+
+	// Determine overall health status (only checkFailed affects health, checkInfo is informational)
 	allHealthy := true
 	for _, check := range checks {
-		if check.status != checkOK {
+		if check.status == checkFailed {
 			allHealthy = false
 			break
 		}
@@ -93,7 +87,12 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		if verbose {
 			// Return detailed check results
 			for _, check := range checks {
-				fmt.Fprintf(w, "[+]%s ok\n", check.name)
+				if check.status == checkOK {
+					fmt.Fprintf(w, "[+]%s ok\n", check.name)
+				} else if check.status == checkInfo {
+					// Informational checks show status without +/- prefix
+					fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
+				}
 			}
 			fmt.Fprint(w, "healthz check passed\n")
 		} else {
@@ -107,15 +106,18 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 			for _, check := range checks {
 				if check.status == checkOK {
 					fmt.Fprintf(w, "[+]%s ok\n", check.name)
-				} else {
+				} else if check.status == checkFailed {
 					fmt.Fprintf(w, "[-]%s failed: %s\n", check.name, check.reason)
+				} else if check.status == checkInfo {
+					// Show informational checks even in failure state
+					fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
 				}
 			}
 		} else {
-			// Return simple error message
+			// Return simple error message (only failed checks, not informational)
 			var failedChecks []string
 			for _, check := range checks {
-				if check.status != checkOK {
+				if check.status == checkFailed {
 					failedChecks = append(failedChecks, fmt.Sprintf("%s: %s", check.name, check.reason))
 				}
 			}
@@ -137,4 +139,5 @@ type checkStatus int
 const (
 	checkOK checkStatus = iota
 	checkFailed
+	checkInfo // Informational check that doesn't affect health status
 )
