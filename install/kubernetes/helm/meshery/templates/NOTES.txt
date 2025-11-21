@@ -1,6 +1,6 @@
 Meshery has been installed successfully!
 
-1. Get the application URL by running these commands:
+1. Open Meshery UI by running commands from one of these options:
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
