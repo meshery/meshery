@@ -33,7 +33,14 @@ mesheryctl system dashboard --port-forward
   echo "Visit http://127.0.0.1:9081/provider to use Meshery UI"
 {{- end }}
 
-2. Monitor deployment status:
+2. Monitor deployment status.
+
+- - - mesheryctl - - -
+
+ mesheryctl system check
+
+- - - OR kubectl - - - 
+
   kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "meshery.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -w
 
 3. Check health status (with detailed information):
