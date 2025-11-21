@@ -20,17 +20,35 @@ env:
   MESHERY_SERVER_CALLBACK_URL: ""
 
 probe:
+  # Liveness probe checks if the Meshery server is alive and responsive
+  # Uses /healthz/live endpoint which verifies provider capabilities are loaded
+  # See HEALTHCHECKS.md for detailed configuration guidance
   livenessProbe:
     enabled: true
-    initialDelaySeconds: 80
-    periodSeconds: 12
-    failureThreshold: 4
+    initialDelaySeconds: 80  # Time to allow for server startup and provider initialization
+    periodSeconds: 12        # How often to perform the probe
+    failureThreshold: 4      # Number of failures before pod is restarted
+    timeoutSeconds: 5        # Timeout for the probe request
 
+  # Readiness probe checks if Meshery is ready to accept traffic
+  # Uses /healthz/ready endpoint which checks capabilities and reports extension status
+  # Pod won't receive traffic until this probe succeeds
   readinessProbe:
     enabled: true
-    initialDelaySeconds: 10
-    periodSeconds: 4
-    failureThreshold: 4
+    initialDelaySeconds: 10  # Shorter delay as probe retries automatically
+    periodSeconds: 4         # Frequent checks for faster readiness detection
+    failureThreshold: 4      # Number of failures before marking pod as not ready
+    timeoutSeconds: 3        # Timeout for the probe request
+
+  # Startup probe protects slow-starting containers (Kubernetes 1.18+)
+  # Disables liveness/readiness checks until this probe succeeds
+  # Useful for initial installation when provider setup may take longer
+  startupProbe:
+    enabled: false           # Enable for slow-starting containers or initial installations
+    initialDelaySeconds: 0
+    periodSeconds: 10        # Check every 10 seconds
+    failureThreshold: 30     # Allow up to 5 minutes for startup (30 * 10s)
+    timeoutSeconds: 5
 
 imagePullSecrets: []
 nameOverride: ""
