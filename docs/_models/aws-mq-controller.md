@@ -28,14 +28,14 @@ components:
   description: 
 components-count: 4
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between broker and SecurityGroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between broker and subnet"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between broker and SecurityGroup"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and  broker "
 relationship-count: 3
 featureList: [
