@@ -1,6 +1,6 @@
 Meshery has been successfully deployed.
 
-Open Meshery UI using `mesheryctl` or `kubectl`:
+1. Open Meshery UI using `mesheryctl` or `kubectl`:
 
 - - - mesheryctl - - -
 
