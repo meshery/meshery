@@ -1,6 +1,17 @@
-Meshery has been installed successfully!
+Meshery has been successfully deployed.
 
-1. Open Meshery UI by running commands from one of these options:
+Open Meshery UI using `mesheryctl` or `kubectl`:
+
+- - - mesheryctl - - -
+
+// Open Meshery UI in browser
+mesheryctl system dashboard
+
+// Open Meshery UI in browser and use port-forwarding (if default port is taken already)
+mesheryctl system dashboard --port-forward
+
+- - - OR kubectl - - - 
+
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
