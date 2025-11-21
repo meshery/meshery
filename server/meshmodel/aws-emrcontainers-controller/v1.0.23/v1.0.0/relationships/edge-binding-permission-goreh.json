@@ -24,7 +24,77 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": null,
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "JobRun",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-emrcontainers-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "executionRoleARN"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-iam-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
   "subType": "permission",
   "status": "enabled",
   "type": "binding",

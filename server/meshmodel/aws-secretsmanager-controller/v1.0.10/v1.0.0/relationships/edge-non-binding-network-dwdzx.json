@@ -24,7 +24,83 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": null,
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "TaskDefinition",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ecs-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containerDefinitions",
+                  "0",
+                  "secrets"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Secret",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-secretsmanager-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "arn"
+                ],
+                [
+                  "name"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
   "subType": "network",
   "status": "enabled",
   "type": "non-binding",

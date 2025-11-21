@@ -24,7 +24,75 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": null,
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "DnsZonesMXRecord",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "azure-network",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "owner",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "DnsZone",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "azure-network",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
   "subType": "inventory",
   "status": "enabled",
   "type": "parent",

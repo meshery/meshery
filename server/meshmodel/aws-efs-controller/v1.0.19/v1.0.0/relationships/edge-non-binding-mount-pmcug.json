@@ -24,9 +24,89 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": null,
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "TaskDefinition",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "ecs-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "volumes"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containerDefinitions"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "FileSystem",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "efs-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "status",
+                  "fileSystemID"
+                ],
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
   "subType": "mount",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }
