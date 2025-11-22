@@ -136,7 +136,7 @@ mesheryctl system check --pre
 // Run checks for all Meshery adapters
 mesheryctl system check --adapters
 
-// Run checks on Meshery adapter
+// Run checks on a specific Meshery adapter
 mesheryctl system check --adapter meshery-istio:10000
 mesheryctl system check --adapter meshery-istio
 
