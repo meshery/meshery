@@ -44,7 +44,7 @@ import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '.
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
-import { DefaultTableCell, SortableTableCell } from './common';
+import { SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
@@ -702,27 +702,33 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       name: 'environments',
       label: 'Environments',
       options: {
-        sort: false,
+        sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ ...column }) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <DefaultTableCell
+            <SortableTableCell
+              index={index}
               columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
               icon={
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoOutlinedIcon
-                    style={{
-                      cursor: 'pointer',
-                      height: 20,
-                      width: 20,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
+                <CustomTooltip
+                  title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
+                >
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoOutlinedIcon
+                      style={{
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </IconButton>
+                </CustomTooltip>
               }
-              tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
             />
           );
         },
