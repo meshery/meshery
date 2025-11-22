@@ -1,0 +1,61 @@
+name: Mesheryctl BATS Test
+on:
+  workflow_call:
+    secrets:
+      PROVIDER_TOKEN:
+        required: true
+    inputs:
+      go-version:
+        required: true
+        type: string
+      k8s-version:
+        required: true
+        type: string
+      platform:
+        required: true
+        type: string
+
+jobs:
+  bats-test:
+    name: BATS Test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.2.2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3.9.0
+      - name: Setup BATS and BATS libs
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.0
+      - uses: actions/setup-go@v5.3.0
+        with:
+          go-version: ${{ inputs.go-version }}
+      - run: |
+          mkdir -p $HOME/.kube
+          mkdir -p $HOME/.minikube
+          sudo chown -R $USER $HOME/.kube
+          sudo chown -R $USER $HOME/.minikube
+      - name: Setup Kubernetes
+        uses: manusa/actions-setup-minikube@v2.13.0
+        with:
+          minikube version: 'v1.36.0'
+          kubernetes version: ${{ inputs.k8s-version }}
+          driver: docker
+      - name: Run minikube tunnel
+        run: |
+          echo 'Running minikube tunnel'
+          minikube tunnel &> /dev/null &
+        shell: bash
+      - name: Get Date
+        id: date
+        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: Run mesheryctl end2end tests
+        run: |
+          echo "Running run_tests.bash"
+        shell: bash
+        working-directory: ./mesheryctl/tests/e2e
+        env:
+          MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          MESHERY_PLATFORM: ${{ inputs.platform }}
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
