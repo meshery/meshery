@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Devstream
 subtitle: Collaborative and visual infrastructure as design for Devstream
