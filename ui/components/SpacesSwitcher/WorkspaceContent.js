@@ -10,9 +10,9 @@ import {
   Select,
   useTheme,
   WorkspaceContentMoveModal,
+  StyledSearchBar,
 } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
-import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
