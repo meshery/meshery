@@ -118,8 +118,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-  const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
-  const [useUpdateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
+  const [updateConnectionMutate] = useUpdateConnectionMutation();
+  const [updateConnectionByIdMutate] = useUpdateConnectionByIdMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
@@ -380,7 +380,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     const connection = filteredConnections[rowData.rowIndex];
 
     try {
-      await useUpdateConnectionByIdMutator({
+      await updateConnectionByIdMutate({
         connectionId: connection.id,
         body: {
           ...connection,
@@ -482,7 +482,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   };
 
   const UpdateConnectionStatus = (connectionKind, requestBody) => {
-    useUpdateConnectionMutator({
+    updateConnectionMutate({
       connectionKind: connectionKind,
       connectionPayload: requestBody,
     })
