@@ -1,8 +1,9 @@
 name: Meshery Build and Releaser (edge)
+
 on:
   workflow_dispatch:
     inputs:
-     branch:
+      branch:
         description: "Branch to deploy in the staging environment. If not provided, master branch of the repository will be used."
         default: "master"
         type: string
@@ -13,6 +14,10 @@ on:
       - "docs/**"
       - ".github/**"
       - "install/**"
+
+permissions:
+  id-token: write # needed for Cosign keyless signing
+  contents: read # needed for actions/checkout
 
 jobs:
   update-rest-api-docs:
@@ -35,16 +40,12 @@ jobs:
           version: v0.30.5
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-build
+        run: make swagger-build
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-docs-build
-
+        run: make swagger-docs-build
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -60,8 +61,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch }}
@@ -83,10 +83,8 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -98,18 +96,16 @@ jobs:
           commit_message: "[Docs] Updated GraphQL API Documentation"
 
   docker-build-push:
-    name: Docker build and push
+    name: Docker build, push & sign
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
+      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
     steps:
       - name: Free up disk space
         run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
@@ -120,7 +116,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          ref: ${{ inputs.branch }} 
+          ref: ${{ inputs.branch }}
       - name: Docker login
         uses: azure/docker-login@v1
         with:
@@ -128,14 +124,34 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker edge build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
+            -t ${{ env.IMAGE_NAME }}:edge-latest \
+            --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
+            --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
+            --build-arg GIT_VERSION=${{ env.LATEST_TAG }} \
+            --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag ${{ env.IMAGE_NAME }}:edge-latest ${{ env.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker tag ${{ env.IMAGE_NAME }}:edge-latest ${{ env.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Docker edge push
         run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+          docker push ${{ env.IMAGE_NAME }}:edge-latest
+          docker push ${{ env.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker push ${{ env.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.9.2
+      - name: Sign Docker images (keyless)
+        run: |
+          for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
+            echo "Signing ${{ env.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --yes
+          done
+      - name: Verify Docker image signatures
+        run: |
+          for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
+            echo "Verifying ${{ env.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ env.IMAGE_NAME }}:$tag \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
   update-staging-playground:
     needs:

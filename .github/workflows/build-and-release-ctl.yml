@@ -7,13 +7,16 @@ on:
         required: true
         default: v0.x.x
 
-jobs:
+permissions:
+  id-token: write # needed for Cosign keyless signing
+  contents: read # needed for actions/checkout
 
+jobs:
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -28,16 +31,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
-          Tag: ${{inputs.release-tag}}
+          TAG: ${{inputs.release-tag}}
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
+
+        # ---------------- Cosign signing step----------------
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.9.2
+
+      - name: Sign mesheryctl artifacts (keyless)
+        run: |
+          for artifact in dist/*; do
+            cosign sign-blob \
+              --yes \
+              --bundle "${artifact}.sigstore" \
+              "$artifact"
+          done
+
+      - name: Verify mesheryctl artifacts
+        run: |
+          for artifact in dist/*; do
+            cosign verify-blob \
+              --bundle "${artifact}.sigstore" \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              "$artifact"
+          done
+
+        # ------------------------------------------------------------
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
-          tag-name: ${{inputs.release-tag}}
+          tag-name: ${{ inputs.release-tag }}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}
- 
