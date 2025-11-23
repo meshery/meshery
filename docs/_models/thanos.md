@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/thanos
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 components-count: 0
 relationships: 

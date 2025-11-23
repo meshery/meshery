@@ -20,14 +20,14 @@ components:
   description: 
 components-count: 2
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between PrometheusRuleGroup and Account(azure-monitor)"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between SmartDetectorAlertRule and ActionGroup(azure-insights)"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between SmartDetectorAlertRule and Components(azure-insights)"
 relationship-count: 3
 featureList: [

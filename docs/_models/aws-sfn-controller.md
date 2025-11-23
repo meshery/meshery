@@ -32,14 +32,14 @@ components:
   description: 
 components-count: 5
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between StateMachine and Activity "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and Activity "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and StateMachine "
 relationship-count: 3
 featureList: [
