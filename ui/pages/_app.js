@@ -1,4 +1,5 @@
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import { LoadingMessages } from '@/components/LoadingComponents/loadingMessages';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -54,7 +55,6 @@ import {
 } from '@sistent/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
@@ -614,9 +614,14 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
+  const [loadingText, setLoadingText] = useState('Loading Meshery...');
+  useEffect(() => {
+    const randomMsg = LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
+    setLoadingText(randomMsg);
+  }, []);
 
   return (
-    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
+    <LoadingScreen message={loadingText} isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
           <MesheryThemeProvider>
