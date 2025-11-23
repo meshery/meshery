@@ -1,5 +1,4 @@
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
-import { LoadingMessages } from '@/components/LoadingComponents/loadingMessages';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -14,6 +13,7 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { LoadingMessages } from '@/components/LoadingComponents/loadingMessages';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -616,10 +616,11 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const { extensionType } = useSelector((state) => state.ui);
   const [loadingText, setLoadingText] = useState('Loading Meshery...');
   useEffect(() => {
-    const randomMsg = LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
-    setLoadingText(randomMsg);
+    if (LoadingMessages && LoadingMessages.length > 0) {
+      const randomMsg = LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
+      setLoadingText(randomMsg);
+    }
   }, []);
-
   return (
     <LoadingScreen message={loadingText} isLoading={state.isLoading}>
       <DynamicComponentProvider>
