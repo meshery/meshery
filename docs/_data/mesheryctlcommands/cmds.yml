@@ -928,7 +928,7 @@ model:
     import:
       name: import
       description: Import models using a file or filepath directly to the meshery registry
-      usage: mesheryctl model import [ file | filepath ]
+      usage: mesheryctl model import --file [ file | path | URL ]
       examples:
         - mesheryctl model import /path/to/[file.yaml|file.json]
         - mesheryctl model import /path/to/models
@@ -936,7 +936,7 @@ model:
         file:
           name: --file, -f
           description: (optional) path to a single model file to import from local filesystem or URL to import from web location
-          usage: mesheryctl model import --file [file-path or URL]
+          usage: mesheryctl model import --file [ file | path | URL ]
           examples: 
             - mesheryctl model import --file /path/to/model.tar
             - mesheryctl model import --file /path/to/model.tar.gz
