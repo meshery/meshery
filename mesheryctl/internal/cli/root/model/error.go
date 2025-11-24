@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"strings"
 
 	goerrors "errors"
 
@@ -15,6 +16,7 @@ const (
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
+	ErrServerResponseCode               = "mesheryctl-1152"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -35,6 +37,15 @@ func ErrModelUnsupportedVersion(message string) error {
 
 func ErrModelInitFromString(message string) error {
 	return errors.New(ErrModelInitCode, errors.Fatal, []string{"Error model init"}, []string{message}, []string{"Error during run of model init command"}, []string{"Ensure passing all params according to the command description"})
+}
+
+func ErrServerResponse(err error) error {
+	// Extract useful error message if response is server error
+	if strings.Contains(err.Error(), "Server emitted an error: ") {
+		cleanMsg := strings.Split(err.Error(), "Server emitted an error: ")[1]
+		return errors.New(ErrServerResponseCode, errors.Fatal, []string{"Server error"}, []string{cleanMsg}, []string{"The server returned an error response"}, []string{"Check the request parameters and ensure the resource exists"})
+	}
+	return err
 }
 
 func ErrModelInit(err error) error {
