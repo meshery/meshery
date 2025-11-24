@@ -262,10 +262,11 @@ func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, err
 	err = mpp.DB.Table("workspaces_designs_mappings AS wdm").
 		Select("wdm.workspace_id, w.organization_id").
 		Joins("LEFT JOIN workspaces AS w ON wdm.workspace_id = w.id").
-		Where("wdm.design_id = ? AND wdm.deleted_at IS NULL", id).
+		Where("wdm.design_id = ? AND wdm.deleted_at IS NULL AND (w.id IS NULL OR w.deleted_at IS NULL)", id).
 		Scan(&workspaceInfo).Error
 
 	// If workspace mapping is found, populate the fields
+	// Note: OrganizationID may be nil even if WorkspaceID exists if the workspace has no organization
 	if err == nil && workspaceInfo.WorkspaceID != nil {
 		mesheryPattern.WorkspaceID = workspaceInfo.WorkspaceID
 		mesheryPattern.OrganizationID = workspaceInfo.OrganizationID
