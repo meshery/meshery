@@ -25,7 +25,7 @@ relationship_side_effects(relationship,design,policy_identifier) := actions if {
    actions := {}
 }
 
-identify_relationship(relationship,design_file,policy) := rels if { 
+identify_relationship(relationship,design_file,policy) := rels if {
 	not true
 	rels := {}
 }
@@ -42,7 +42,7 @@ relationship_is_invalid(rel,design_file,policy_identifier) if {
 identify_relationships_in_design(design_file, relationships_in_scope, policy_identifier) := eval_results if {
 
 	implicable_rels := implicable_relationships(relationships_in_scope,policy_identifier)
-    
+
 	eval_results := union({ new_relationships |
 	   some relationship in implicable_rels
 	   identified_relationships := identify_relationship(relationship, design_file,policy_identifier)
@@ -59,7 +59,7 @@ identify_relationships_in_design(design_file, relationships_in_scope, policy_ide
        }
 	})
 
-	print("identified for ",policy_identifier,count(policy_identifier))
+	print("identified for ",policy_identifier,count(eval_results))
 }
 
 ## Validate
@@ -87,10 +87,10 @@ validate_relationships_in_design(design_file, policy_identifier) := result if {
 ### Action Phase
 generate_actions_to_apply_on_design(design_file, policy_identifier) := result if {
 	implicable_rels := implicable_relationships(design_file.relationships,policy_identifier)
-    
+
 	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_rels, 100)
 	rels_to_delete := eval_rules.cleanup_deleted_relationships_actions(implicable_rels)
-	
+
     policy_specific_actions :=  union({ actions |
 	  some rel in implicable_rels
 	  actions := relationship_side_effects(rel,design_file,policy_identifier)

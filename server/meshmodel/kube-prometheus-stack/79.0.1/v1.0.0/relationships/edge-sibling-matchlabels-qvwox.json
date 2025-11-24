@@ -24,6 +24,7 @@
     }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": null,
   "subType": "reference",
   "status": "enabled",
   "type": "non-binding",

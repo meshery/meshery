@@ -7,7 +7,7 @@ permalink: extensibility/integrations/redis-operator
 docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
 description: 
 integrations-category: Database
-integrations-subcategory: App Definition and Development
+integrations-subcategory: Database
 registrant: Github
 components: 
 - name: redis-failover

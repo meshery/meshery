@@ -108,10 +108,14 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
   ],
-  "subType": "reference",
+  "subType": "inventory",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
