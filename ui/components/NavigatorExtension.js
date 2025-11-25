@@ -46,7 +46,7 @@ function NavigatorExtension({ url }) {
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const { openModalWithDefault } = useContext(WorkspaceModalContext);
+  const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
   if (err != null) {
     return (
@@ -127,6 +127,7 @@ function NavigatorExtension({ url }) {
           currentOrganization,
           openWorkspaceModal: openModalWithDefault,
           openRegistryModal: registryModal,
+          SetCurrentLoadedResourceInOrgWorkspaceSession: onLoadResource,
         }}
       />
     </DynamicFullScrrenLoader>

@@ -17,6 +17,7 @@ const workspacesApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
+        keepUnusedDataFor: 0,
         queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
@@ -327,6 +328,7 @@ const workspacesApi = api
 
 export const {
   useGetWorkspacesQuery,
+  useLazyGetWorkspacesQuery,
   useCreateWorkspaceMutation,
   useUpdateWorkspaceMutation,
   useDeleteWorkspaceMutation,

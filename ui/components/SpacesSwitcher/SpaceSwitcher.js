@@ -145,7 +145,12 @@ export function OrgMenu(props) {
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery('(max-width:400px)');
-  const { selectedOrganization } = useGetSelectedOrganization();
+  const { selectedOrganization: selectedOrgFromPref } = useGetSelectedOrganization();
+  const { currentLoadedResource } = useContext(WorkspaceModalContext);
+
+  const selectedOrganization = currentLoadedResource?.org?.id
+    ? currentLoadedResource.org
+    : selectedOrgFromPref;
 
   const [updateSelectedOrg, { isLoading: isUpdatingOrg }] = useUpdateSelectedOrganizationMutation();
 
@@ -200,6 +205,9 @@ export function OrgMenu(props) {
                               : theme.palette.background.constant.white,
                           },
                         }}
+                        renderValue={() => {
+                          return <span>{selectedOrganization?.name || 'Private Org'}</span>;
+                        }}
                         MenuProps={{
                           anchorOrigin: {
                             vertical: 'bottom',
@@ -223,7 +231,7 @@ export function OrgMenu(props) {
                               className="OrgClass"
                               style={{ marginRight: '1rem', color: theme.palette.icon.default }}
                             />
-                            <span>{org.name}</span>
+                            <span>{org.name || 'Private Org'}</span>
                           </StyledMenuItem>
                         ))}
                       </StyledSelect>
