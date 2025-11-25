@@ -1,5 +1,10 @@
 @import './font.css';
 
+/* Set Qanelas Soft as the default font family for the entire application */
+body {
+  font-family: 'Qanelas Soft', 'Qanelas Soft Regular', sans-serif;
+}
+
 .error-autocomplete-value .MuiOutlinedInput-notchedOutline {
   border: 1px solid red;
 }
