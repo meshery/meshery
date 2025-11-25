@@ -19,7 +19,7 @@
     "test:e2e:fast": "npx playwright test --project=chromium --grep-invert @slow",
     "test:coverage": "npm run test -- --coverage",
     "relay": "relay-compiler",
-    "prepare": "cd .. && husky install ui/.husky",
+    "prepare": "cd .. && husky ui/.husky",
     "postinstall": "patch-package",
     "clean": "rm -rf .next,out"
   },
