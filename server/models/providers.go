@@ -42,15 +42,16 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType     `json:"provider_type,omitempty"`
-	PackageVersion      string           `json:"package_version,omitempty"`
-	PackageURL          string           `json:"package_url,omitempty"`
-	ProviderName        string           `json:"provider_name,omitempty"`
-	ProviderDescription []string         `json:"provider_description,omitempty"`
-	ProviderURL         string           `json:"provider_url,omitempty"`
-	Extensions          Extensions       `json:"extensions,omitempty"`
-	Capabilities        Capabilities     `json:"capabilities,omitempty"`
-	RestrictedAccess    RestrictedAccess `json:"restrictedAccess,omitempty"`
+	ProviderType        ProviderType      `json:"provider_type,omitempty"`
+	PackageVersion      string            `json:"package_version,omitempty"`
+	PackageURL          string            `json:"package_url,omitempty"`
+	ProviderName        string            `json:"provider_name,omitempty"`
+	ProviderDescription []string          `json:"provider_description,omitempty"`
+	ProviderURL         string            `json:"provider_url,omitempty"`
+	Extensions          Extensions        `json:"extensions,omitempty"`
+	Capabilities        Capabilities      `json:"capabilities,omitempty"`
+	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
+	Redirects           map[string]string `json:"redirects,omitempty"`
 }
 
 type Adapters struct {
