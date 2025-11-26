@@ -26,7 +26,7 @@ export const WorkspaceModalContext = React.createContext({
       name: '',
     },
   },
-  onLoadResource: ({ id, workspace, org }) => {},
+  onLoadResource: ({ id, workspaceId, orgId }) => {},
 });
 
 const WorkspaceModalContextProvider = ({ children }) => {
