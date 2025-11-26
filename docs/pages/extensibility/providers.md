@@ -161,6 +161,36 @@ The UserPrefs extension point expects and loads a component to be displayed into
 
 The Navigator extension point loads a set of menu items to be displayed in the menu bar on the left hand side of the Meshery UI.
 
+## Provider-Defined Redirects
+
+Remote Providers can define custom URL redirects through the `redirects` field in the capabilities response. This allows providers to dynamically control how certain URL paths are handled by the Meshery server, enabling seamless navigation experiences for users.
+
+### How Redirects Work
+
+When Meshery server receives a request for a specific URL path, it checks if the connected Remote Provider has defined a redirect for that path in its capabilities. If a matching redirect is found, the server issues an HTTP permanent redirect (308) to the target URL.
+
+### Configuring Redirects
+
+Redirects are defined as a key-value map in the provider's capabilities response, where:
+- **Key**: The source URL path to intercept (e.g., `/`)
+- **Value**: The destination URL to redirect to (e.g., `/extension/meshmap`)
+
+Example configuration in the capabilities response:
+
+{% capture code_content %}"redirects": {
+  "/": "/extension/meshmap",
+  "/dashboard": "/extension/meshmap/dashboard"
+}{% endcapture %}
+{% include code.html code=code_content %}
+
+### Use Cases
+
+1. **Default Landing Page**: Redirect users from the root path (`/`) to a custom extension page.
+2. **Custom Navigation**: Guide users to specific extension pages based on their workflow.
+3. **URL Aliasing**: Create shorter or more memorable URLs that redirect to extension endpoints.
+
+{% include alert.html type="info" title="Note" content="Redirects are evaluated before serving UI content. Only exact path matches are redirected." %}
+
 ## Capabilities Endpoint Example
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the _**capabilities**_ section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
@@ -252,6 +282,9 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
         "component": "/provider/collaborator/avatar.js"
       }
     ]
+  },
+  "redirects": {
+    "/": "/extension/meshmap"
   },
   "capabilities": [
     {
