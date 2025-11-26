@@ -77,10 +77,10 @@ type RemoteProvider struct {
 	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 type AnonymousFlowResponse struct {
-	AccessToken  string             `json:"access_token"`
-	Capabilities ProviderProperties `json:"capability,omitempty"`
-	UserID       uuid.UUID          `json:"user_id,omitempty"`
+	AccessToken string    `json:"access_token"`
+	UserID      uuid.UUID `json:"user_id,omitempty"`
 }
+
 type userSession struct {
 	token   string
 	session *Preference
@@ -397,13 +397,13 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	credential := make(map[string]interface{}, 0)
 	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
 
-	providerURL = providerURL.JoinPath(ep)
+	anonnymouseUserEp := providerURL.JoinPath(ep)
 
 	buf, _ := encoding.Marshal(connectionPayload)
 	data := bytes.NewReader(buf)
 
 	client := &http.Client{}
-	newReq, _ := http.NewRequest("POST", providerURL.String(), data)
+	newReq, _ := http.NewRequest("POST", anonnymouseUserEp.String(), data)
 
 	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 
@@ -426,22 +426,16 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 
 	l.SetJWTCookie(res, flowResponse.AccessToken)
-	flowResponse.Capabilities.ProviderURL = l.GetProviderURL()
 
-	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &flowResponse.Capabilities)
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
 		return
 	}
-	l.SetProviderProperties(flowResponse.Capabilities)
-	// Download the package for the user only if they have extension capability
-	// The download is skipped if package already exists.
-	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
-		flowResponse.Capabilities.DownloadProviderExtensionPackage(l.Log)
-	}
+
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 
 	l.Log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
