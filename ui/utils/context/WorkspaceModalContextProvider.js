@@ -69,7 +69,7 @@ const WorkspaceModalContextProvider = ({ children }) => {
         const workspaces = await getWorkspaces({
           page: 0,
           pagesize: 'all',
-          orgID: selectedOrganization?.id,
+          orgID: orgId,
         }).unwrap();
         const workspace = (workspaces?.workspaces ?? []).find((w) => w.id == workspaceId);
         if (workspace) {
