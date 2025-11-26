@@ -64,7 +64,7 @@ components:
   description: 
 components-count: 13
 relationships: 
-- type: "non-binding"
+- type: "binding"
   kind: "edge"
   description: "An edge relationship where ThanosRuler runs with the exact identity of a ServiceAccount"
 - type: "non-binding"

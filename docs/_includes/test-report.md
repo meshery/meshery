@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: November 21st 2025, 1:56:31 pm
+- Testing started at: November 24th 2025, 5:40:27 pm
 
 **📦 Test Result Summary**
 
-- ✅ 83 passed
+- ✅ 82 passed
 - ❌ 2 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 6 skipped
 
-⌛ _Duration: 7 minutes and 39 seconds_
+⌛ _Duration: 7 minutes and 53 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -25,10 +25,11 @@
 | 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
 | 3 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
 | 4 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 5 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 6 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 7 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 8 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 5 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 7 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 8 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 9 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 
 </div>
 </details>

@@ -78,7 +78,11 @@ components:
   colorIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/color/sync-set-color.svg
   whiteIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/white/sync-set-white.svg
   description: 
-components-count: 17
+- name: sync-set
+  colorIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/color/sync-set-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/white/sync-set-white.svg
+  description: 
+components-count: 18
 relationships: 
 relationship-count: 0
 featureList: [
