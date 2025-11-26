@@ -81,60 +81,6 @@
                 ]
               ]
             }
-          },
-          {
-            "id": null,
-            "kind": "Service",
-            "match": {},
-            "match_strategy_matrix": [
-              [
-                "to_contains_from",
-                "not_null"
-              ],
-              [
-                "equal_as_strings",
-                "not_null"
-              ],
-              [
-                "equal"
-              ]
-            ],
-            "model": {
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "0",
-                  "targetPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "0",
-                  "protocol"
-                ]
-              ]
-            }
           }
         ],
         "to": [
@@ -174,57 +120,6 @@
                   "ports",
                   "0",
                   "containerPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "0",
-                  "protocol"
-                ]
-              ]
-            }
-          },
-          {
-            "id": null,
-            "kind": "Deployment",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "0",
-                  "name"
                 ],
                 [
                   "configuration",

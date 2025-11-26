@@ -245,8 +245,35 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
+	// First, get the pattern
 	err := mpp.DB.First(&mesheryPattern, id).Error
-	return marshalMesheryPattern(&mesheryPattern), err
+	if err != nil {
+		return marshalMesheryPattern(&mesheryPattern), err
+	}
+
+	// Then, try to get the workspace_id and organization_id from the workspace mapping
+	type WorkspaceInfo struct {
+		WorkspaceID    *uuid.UUID
+		OrganizationID *uuid.UUID
+	}
+	var workspaceInfo WorkspaceInfo
+
+	// Join workspaces_designs_mappings with workspaces to get both workspace_id and organization_id
+	err = mpp.DB.Table("workspaces_designs_mappings AS wdm").
+		Select("wdm.workspace_id, w.organization_id").
+		Joins("LEFT JOIN workspaces AS w ON wdm.workspace_id = w.id").
+		Where("wdm.design_id = ? AND wdm.deleted_at IS NULL AND (w.id IS NULL OR w.deleted_at IS NULL)", id).
+		Scan(&workspaceInfo).Error
+
+	// If workspace mapping is found, populate the fields
+	// Note: OrganizationID may be nil even if WorkspaceID exists if the workspace has no organization
+	if err == nil && workspaceInfo.WorkspaceID != nil {
+		mesheryPattern.WorkspaceID = workspaceInfo.WorkspaceID
+		mesheryPattern.OrganizationID = workspaceInfo.OrganizationID
+	}
+	// If no workspace mapping is found, that's okay - the pattern might not be assigned to a workspace
+
+	return marshalMesheryPattern(&mesheryPattern), nil
 }
 
 func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id uuid.UUID) ([]byte, error) {
