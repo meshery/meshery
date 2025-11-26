@@ -1,11 +1,10 @@
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
 import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
-import { ErrorIcon, Typography, useTheme } from '@sistent/sistent';
+import { ErrorIcon, Typography, useTheme, NoSsr } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 
 const ErrorDisplay = ({ theme }) => (
