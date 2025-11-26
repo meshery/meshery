@@ -92,6 +92,11 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
+	// WorkspaceID is the ID of the workspace this pattern belongs to
+	WorkspaceID *uuid.UUID `json:"workspace_id,omitempty" gorm:"-"`
+	// OrganizationID is the ID of the organization this pattern belongs to
+	OrganizationID *uuid.UUID `json:"organization_id,omitempty" gorm:"-"`
+
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
 	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
