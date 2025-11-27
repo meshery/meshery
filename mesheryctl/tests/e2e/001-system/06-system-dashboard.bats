@@ -8,5 +8,5 @@ setup() {
 @test "mesheryctl system dashboard fails when kubeconfig is missing" {
   run $MESHERYCTL_BIN system dashboard
   assert_failure
-  assert_output --regexp "kubeconfig|no such file|no.*directory|cluster|unreachable"
+  assert_output --regexp "kubeconfig|no such file|no.*directory"
 }
