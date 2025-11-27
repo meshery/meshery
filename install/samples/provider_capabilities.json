@@ -204,6 +204,10 @@
       "endpoint": "/api/identity/users/anonymous"
     }
   ],
+  "redirects": {
+    "/": "/extension/meshmap",
+    "": "/extension/meshmap"
+  },
   "restrictedAccess": {
     "isMesheryUiRestricted": true,
     "allowedComponents": {
