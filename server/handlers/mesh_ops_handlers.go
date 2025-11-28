@@ -96,15 +96,15 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
+	aClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
-		_ = mClient.Close()
+		_ = aClient.Close()
 	}()
-	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	_, err = aClient.AClient.AdapterName(req.Context(), &meshes.AdapterNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
@@ -196,7 +196,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Debug("Adapter already configured...")
 		return meshAdapters, nil
 	}
-	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
+	aClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
@@ -204,16 +204,16 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)
 	defer func() {
-		_ = mClient.Close()
+		_ = aClient.Close()
 	}()
-	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
+	respOps, err := aClient.AClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
-	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
+	meshInfo, err := aClient.AClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
@@ -332,13 +332,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		}
 		configs = append(configs, string(kc))
 	}
-	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
+	aClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
-		_ = mClient.Close()
+		_ = aClient.Close()
 	}()
 	operationID, err := uuid.NewV4()
 
@@ -346,7 +346,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
+	_, err = aClient.AClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
 		Username:    user.UserID,
