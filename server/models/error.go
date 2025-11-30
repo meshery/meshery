@@ -138,6 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrInvalidUUIDCode					  = "meshery-server-1371"
 )
 
 var (
@@ -180,6 +181,9 @@ func ErrCloseIoReader(err error) error {
 }
 func ErrGetPackage(err error) error {
 	return errors.New(ErrGetPackageCode, errors.Alert, []string{"Could not get the package"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
+}
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"Invalid UUID format"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrUrlParse(err error) error {
 	return errors.New(ErrUrlParseCode, errors.Alert, []string{"Error parsing the URL"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the URL is correct"})
