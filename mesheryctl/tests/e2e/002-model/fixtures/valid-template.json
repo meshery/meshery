@@ -1,0 +1,8 @@
+{
+  "name": "test-model",
+  "version": "1.0.0",
+  "displayName": "Test Model",
+  "description": "Test model for e2e testing",
+  "category": "test",
+  "subCategory": "test"
+}

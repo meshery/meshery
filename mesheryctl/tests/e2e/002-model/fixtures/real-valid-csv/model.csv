@@ -1,0 +1,2 @@
+registrant,modelDisplayName,model,category,subCategory,description,sourceURL,website,docs,shape,primaryColor,secondaryColor,styleOverrides,styles,shapePolygonPoints,defaultData,capabilities,logoURL,svgColor,svgWhite,svgComplete,isAnnotation,publishToRegistry,hasComponents
+meshery,Test Model,test-model,test,test,A test model for e2e testing,,,,,,,,,,,,,,,TRUE,TRUE,TRUE,TRUE
