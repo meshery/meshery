@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Kured
 subtitle: Collaborative and visual infrastructure as design for Kured
