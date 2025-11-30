@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-MESHERYCTL_PORT_FORWARDING=9999
-
 install_mesheryctl() {
     echo "start: Install mesheryctl"
     curl -L https://meshery.io/install -s | PLATFORM=$1 bash -
@@ -18,19 +16,10 @@ create_meshery_config_folder() {
 }
 
 # Generate auth file to communicate with meshery server
-create_auth_file() {
+configure_auth_file() {
     echo "start: authentication configuration" 
-    echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
-    echo "done: authentication configuration"
-}
-
-port_forwarding() {
-    echo "start: Port forwarding"
-
-    nohup kubectl -n meshery port-forward svc/meshery ${MESHERYCTL_PORT_FORWARDING}:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
-    export MESHERY_SERVER_PORT_FORWARD_PID="$!"
     
-    echo "done: Port forwarding"
+    echo "done: authentication configuration"
 }
 
 config_mesheryctl_port_forwarding_endpoint() {
@@ -41,20 +30,21 @@ config_mesheryctl_port_forwarding_endpoint() {
         echo "Error: Failed to retrieve current context from meshery config." >&2
         exit 1
     fi
-    yq -i ".contexts.\"${context}\".endpoint = \"http://localhost:${MESHERYCTL_PORT_FORWARDING}\"" "${HOME}/.meshery/config.yaml"
+    port_forwarding=$(kubectl get svc -n meshery -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}{{end}}' | head -n 1)
+    yq -i ".contexts.\"${context}\".endpoint = \"http://localhost:${port_forwarding}\"" "${HOME}/.meshery/config.yaml"
     echo "done: meshery Config file endpoint"
 }
 
 main() {
     echo -e "### start: Test environment setup ###\n"
 
-    install_mesheryctl "$MESHERY_PLATFORM"
-    create_meshery_config_folder
-    create_auth_file 
-    port_forwarding
+    # install_mesheryctl "$MESHERY_PLATFORM"
+    # create_meshery_config_folder
+    # configure_auth_file
+    # port_forwarding
     config_mesheryctl_port_forwarding_endpoint
     
-    export MESHERYCTL_BIN="mesheryctl"
+    export MESHERYCTL_BIN="../../mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
 	export MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json"
     export E2E_HELPERS_PATH="${E2E_HELPERS_PATH}"
