@@ -11,7 +11,7 @@ setup() {
   assert_output --regexp "Meshery Server is not running"
 }
 
-@test "mesheryctl system dashboard fails when mesehry server is unreachable" {
+@test "mesheryctl system dashboard fails when meshery server is unreachable" {
   run $MESHERYCTL_BIN system dashboard
   assert_failure
   assert_output --regexp "Meshery Server is not running|connection refused|unreachable|timed out"
