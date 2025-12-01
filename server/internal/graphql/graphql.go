@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 	"time"
-
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
@@ -54,6 +54,11 @@ func New(opts Options) http.Handler {
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(config))
+
+	
+    srv.Use(extension.Introspection{})
+    
+   
 
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
