@@ -172,20 +172,60 @@ const KubernetesSubscription = ({ setAppState }) => {
 
     return subscribeK8sContext(
       (result) => {
-        // Initialize activeContexts with all context IDs plus "all"
-        const allContexts = [];
-        if (result.k8sContext?.contexts?.length > 0) {
-          result.k8sContext.contexts.forEach((ctx) => allContexts.push(ctx.id));
-          allContexts.push('all');
-        }
+        promisifiedDataFetch('/api/user/prefs', {
+          method: 'GET',
+          credentials: 'include',
+        })
+          .then((userPrefs) => {
+            let activeContexts = [];
 
-        // TODO: Remove local state and only use redux store
-        setAppState({
-          k8sContexts: result.k8sContext,
-          activeK8sContexts: allContexts,
-        });
+            const savedContexts = userPrefs?.usersExtensionPreferences?.selectedK8sContexts;
 
-        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
+            if (savedContexts && Array.isArray(savedContexts) && savedContexts.length > 0) {
+              // ->user has saved preferences in the api
+              const existingContextIds = result.k8sContext?.contexts?.map((ctx) => ctx.id) || [];
+              activeContexts = savedContexts.filter(
+                (contextId) => contextId === 'all' || existingContextIds.includes(contextId),
+              );
+
+              if (activeContexts.length === 0) {
+                activeContexts = [];
+              }
+            } else {
+              // ->user has no saved preferences
+              if (result.k8sContext?.contexts?.length > 0) {
+                // but user has available clusters  -> DEFAULT to selecting ALL
+                activeContexts = [];
+                result.k8sContext.contexts.forEach((ctx) => activeContexts.push(ctx.id));
+                activeContexts.push('all');
+              } else {
+                //->no context available
+                activeContexts = [];
+              }
+            }
+
+            // TODO: Remove local state and only use redux store
+            setAppState({
+              k8sContexts: result.k8sContext,
+              activeK8sContexts: activeContexts,
+            });
+
+            dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
+
+            dispatch(setK8sContexts({ selectedK8sContexts: activeContexts }));
+          })
+          .catch((error) => {
+            console.error('Error loading user preferences:', error);
+
+            setAppState({
+              k8sContexts: result.k8sContext,
+              activeK8sContexts: [],
+            });
+
+            dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
+            // -> empty selection in Redux store
+            dispatch(setK8sContexts({ selectedK8sContexts: [] }));
+          });
       },
       {
         selector: {
@@ -358,12 +398,28 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  const activeContextChangeCallback = useCallback((activeK8sContexts) => {
-    if (activeK8sContexts.includes('all')) {
-      activeK8sContexts = ['all'];
-    }
-    dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
-  }, []);
+  const activeContextChangeCallback = useCallback(
+    (activeK8sContexts) => {
+      if (activeK8sContexts.includes('all')) {
+        activeK8sContexts = ['all'];
+      }
+      dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
+
+      promisifiedDataFetch('/api/user/prefs', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        body: JSON.stringify({
+          usersExtensionPreferences: {
+            selectedK8sContexts: activeK8sContexts,
+          },
+        }),
+      }).catch((error) => {
+        console.error('Error saving k8s context preferences:', error);
+      });
+    },
+    [dispatch],
+  );
 
   const setActiveContexts = useCallback(
     (id) => {
@@ -408,21 +464,13 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
     [state.k8sContexts, state.activeK8sContexts, activeContextChangeCallback],
   );
 
-  const searchContexts = useCallback(
-    (search = '') => {
-      fetchContexts(10, search)
-        .then((ctx) => {
-          setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
-          const active = ctx?.contexts?.find((c) => c.is_current_context === true);
-          if (active) {
-            setState((prevState) => ({ ...prevState, activeK8sContexts: [active?.id] }));
-            activeContextChangeCallback([active?.id]);
-          }
-        })
-        .catch((err) => console.error(err));
-    },
-    [activeContextChangeCallback],
-  );
+  const searchContexts = useCallback((search = '') => {
+    fetchContexts(10, search)
+      .then((ctx) => {
+        setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   const updateCurrentExtensionType = useCallback(
     (type) => {
