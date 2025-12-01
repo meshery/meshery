@@ -54,12 +54,7 @@ func New(opts Options) http.Handler {
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(config))
-
-	
     srv.Use(extension.Introspection{})
-    
-   
-
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
