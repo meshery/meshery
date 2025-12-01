@@ -20,14 +20,14 @@ components:
   description: 
 components-count: 2
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between policyendpoint and securitygroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ENIConfig and Subnet"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between VPCLink and Integration"
 relationship-count: 3
 featureList: [

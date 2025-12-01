@@ -28,14 +28,14 @@ components:
   description: 
 components-count: 4
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between domain and secuirtygroup "
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between domain and subnet "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and domain "
 relationship-count: 3
 featureList: [

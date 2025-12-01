@@ -51,22 +51,25 @@ const WorkspaceIconWrapper = styled('div')(({ theme }) => ({
 function WorkspaceSwitcher({ open, fromMobileView }) {
   const { selectedOrganization } = useGetSelectedOrganization();
   const {
-    selectedWorkspace,
+    selectedWorkspace: selectedWorkspacePref,
     allWorkspaces,
     error: workspaceError,
     isLoading: isLoadingWorkspaces,
   } = useGetSelectedWorkspace();
-  const isSmallScreen = useMediaQuery('(max-width:400px)');
-  const theme = useTheme();
-
-  const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
-    useUpdateSelectedWorkspaceMutation();
-
   const {
     setSelectedWorkspace,
     openModal: openWorkspaceModal,
     setCreateNewWorkspaceModalOpen,
+    currentLoadedResource,
   } = useContext(WorkspaceModalContext);
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
+  const theme = useTheme();
+  const selectedWorkspace = currentLoadedResource?.workspace?.id
+    ? currentLoadedResource.workspace
+    : selectedWorkspacePref;
+
+  const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
+    useUpdateSelectedWorkspaceMutation();
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -135,7 +138,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                                 color: fromMobileView ? theme.palette.text.default : undefined,
                               }}
                             >
-                              {selectedWorkspace?.name || ''}
+                              {selectedWorkspace?.name || 'Private Workspace'}
                             </span>
                           );
                         }}

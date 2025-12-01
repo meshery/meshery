@@ -86,11 +86,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
   ],
   "subType": "inventory",
-  "status": "enabled",
+  "status": "disabled",
   "type": "parent",
   "version": "v1.0.0"
 }

@@ -16,6 +16,14 @@ class MesheryDocument extends Document {
            */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
+          {/* Preload Qanelas Soft font for loading screen */}
+          <link
+            rel="preload"
+            href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
+            as="font"
+            type="font/otf"
+            crossOrigin="anonymous"
+          />
 
           {/* Google Tag Manager */}
           {/* eslint-disable-next-line @next/next/next-script-for-ga */}

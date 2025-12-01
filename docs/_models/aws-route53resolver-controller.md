@@ -32,20 +32,20 @@ components:
   description: 
 components-count: 5
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverEndpoint and SecurityGroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverEndpoint and Subnet"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverRule and ResolverEndpoint"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and ResolverEndpoint"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and ResolverRule"
 relationship-count: 5
 featureList: [

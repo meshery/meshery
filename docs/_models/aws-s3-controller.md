@@ -28,24 +28,24 @@ components:
   description: 
 components-count: 4
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between adoptedresource and Bucket"
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship EC2 instances read/write objects to S3 buckets via SDK/CLI"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship Lambda functions are triggered by S3 events "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship EC2 instances read/write objects to S3 buckets via SDK/CLI"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship ECS containers access S3 for application data and artifacts"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship EKS workloads store/retrieve data from S3 buckets"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship EMR containers read input and write output data to S3"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and Bucket"
 relationship-count: 6
 featureList: [
   "Stores and retrieves any amount of data",

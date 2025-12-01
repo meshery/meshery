@@ -28,21 +28,21 @@ components:
   description: 
 components-count: 4
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between adoptedresourcex and Secret "
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship Lambda retrieves secrets from Secrets Manager"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship RDS stores master credentials in Secrets Manager"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship Lambda retrieves secrets from Secrets Manager"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship ECS tasks fetch secrets at runtime"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship EKS uses Secrets Store CSI driver to mount secrets"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresourcex and Secret "
 relationship-count: 5
 featureList: [
   "Centrally store and manage credentials, API keys, and other secrets.",
