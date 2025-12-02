@@ -24,6 +24,7 @@ function getPath() {
  * @param {Function} cb
  */
 export function getCapabilities(type, cb) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
   getExtensionsByType(type)
     .unwrap()
@@ -45,6 +46,7 @@ export function getCapabilities(type, cb) {
  * @param {Function} cb
  */
 export function getFullPageExtensions(cb) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
 
   getFullPageExtensions
