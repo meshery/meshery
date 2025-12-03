@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 2nd 2025, 10:51:29 am
+- Testing started at: December 3rd 2025, 12:55:39 pm
 
 **📦 Test Result Summary**
 
-- ✅ 82 passed
+- ✅ 80 passed
 - ❌ 2 failed
-- ⚠️ 1 flaked
+- ⚠️ 2 flaked
 - ⏩ 6 skipped
 
-⌛ _Duration: 7 minutes and 29 seconds_
+⌛ _Duration: 8 minutes and 59 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,6 +30,7 @@
 | 7 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
 | 8 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
 | 9 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 10 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
