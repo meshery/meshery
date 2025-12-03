@@ -264,19 +264,17 @@ type crdResponse struct {
 	schema     string
 }
 
-func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdResponse {
+func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdResponse, error) {
 	var err error
 	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
-		fmt.Printf("%v", err)
-		return nil
+		return nil, err
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	if err != nil {
-		fmt.Printf("%v", err)
-		return nil
+		return nil, err
 	}
 
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
@@ -340,7 +338,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 			}
 		}
 	}
-	return res
+	return res, nil
 }
 
 // TODO: To be moved in meshkit
