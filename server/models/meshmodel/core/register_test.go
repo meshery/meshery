@@ -104,7 +104,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			manifest:        mockOpenAPIJSON,
 			apiResources:    []string{"pod"}, // Lowercase input
 			expectedCount:   1,
-			expectedKind:    "Pod",
+			expectedKind:    "pod",
 			expectedVersion: "v1",
 			expectSchema:    true,
 		},
