@@ -44,6 +44,8 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+	// Delete provider cookie by setting MaxAge to -1
+	// Empty value ensures cookie is cleared properly
 	http.SetCookie(w, &http.Cookie{
 		Name:     h.config.ProviderCookieName,
 		Value:    "",

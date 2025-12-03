@@ -455,7 +455,8 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	refUrl, err := core.GetRefURLFromRequest(req)
 	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
 	// Validate refUrl before using it to prevent open redirect vulnerabilities
-	if refUrl != "" && core.IsValidRedirectURL(refUrl) && strings.HasPrefix(refUrl, "/extension") {
+	isValidExtensionRedirect := refUrl != "" && core.IsValidRedirectURL(refUrl) && strings.HasPrefix(refUrl, "/extension")
+	if isValidExtensionRedirect {
 		l.Log.Infof("Redirecting to referrer %s", refUrl)
 		http.Redirect(res, req, refUrl, http.StatusFound)
 		return
