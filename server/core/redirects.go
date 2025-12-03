@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 func EncodeRefUrl(url url.URL) string {
@@ -23,6 +24,32 @@ func DecodeRefURL(refURLB64 string) (string, error) {
 		return "", err
 	}
 	return string(refURLBytes), nil
+}
+
+// IsValidRedirectURL validates that a redirect URL is safe.
+// It only allows relative URLs that don't start with // to prevent open redirects.
+func IsValidRedirectURL(redirectURL string) bool {
+	if redirectURL == "" || redirectURL == "/" {
+		return true
+	}
+	
+	// Must be a relative URL (starts with /)
+	if !strings.HasPrefix(redirectURL, "/") {
+		return false
+	}
+	
+	// Must not be a protocol-relative URL (starts with //)
+	if strings.HasPrefix(redirectURL, "//") {
+		return false
+	}
+	
+	// Additional validation: check for suspicious patterns
+	// Prevent URLs like /%0d%0aLocation:%20http://evil.com (CRLF injection)
+	if strings.Contains(redirectURL, "\r") || strings.Contains(redirectURL, "\n") {
+		return false
+	}
+	
+	return true
 }
 
 // GetRefURLFromRequest retrieves the ref URL from the request query parameters.

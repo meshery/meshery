@@ -46,10 +46,12 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     h.config.ProviderCookieName,
-		Value:    p.Name(),
-		Expires:  time.Now().Add(-time.Hour),
+		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		MaxAge:   -1,
 	})
 	_ = p.DeleteCapabilitiesForUser(user.ID)
 	err := p.Logout(w, req)

@@ -454,7 +454,8 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	// if the ref points to some page other than under /extension then skip ref
 	refUrl, err := core.GetRefURLFromRequest(req)
 	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
-	if strings.HasPrefix(refUrl, "/extension") {
+	// Validate refUrl before using it to prevent open redirect vulnerabilities
+	if refUrl != "" && core.IsValidRedirectURL(refUrl) && strings.HasPrefix(refUrl, "/extension") {
 		l.Log.Infof("Redirecting to referrer %s", refUrl)
 		http.Redirect(res, req, refUrl, http.StatusFound)
 		return
@@ -742,8 +743,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	}
 	jwtClaims, err := l.VerifyToken(ts)
 	if err != nil {
-		err = ErrTokenClaims
-		l.Log.Error(err)
+		l.Log.Error(ErrTokenClaims)
 		return err
 	}
 	if jwtClaims == nil {
@@ -761,20 +761,6 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		}
 	}
 
-	if err != nil {
-		l.Log.Info("Token validation error : ", err.Error())
-		newts, err := l.refreshToken(ts)
-		if err != nil {
-			err = ErrTokenRefresh(err)
-			l.Log.Error(err)
-			return err
-		}
-		_, err = l.VerifyToken(newts)
-		if err != nil {
-			err = ErrTokenVerify(err)
-			return err
-		}
-	}
 	return nil
 }
 
@@ -791,73 +777,76 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 //
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {
-	// construct remote provider logout url
+	// Always perform local cleanup regardless of remote provider response
+	// This ensures users can logout even if remote provider is unreachable
+	
+	tokenString, tokenErr := l.GetToken(req)
+	
+	// Attempt to revoke token locally first
+	if tokenErr == nil && tokenString != "" {
+		if err := l.revokeToken(tokenString); err != nil {
+			l.Log.Warn(fmt.Errorf("token revocation warning: %v", err))
+		}
+	}
+	
+	// Clear local cookies immediately
+	l.UnSetJWTCookie(w)
+	l.UnSetProviderSessionCookie(w)
+	
+	// If we couldn't get the token, we've done what we can locally
+	if tokenErr != nil {
+		l.Log.Warn(fmt.Errorf("logout: token not found, local cleanup completed: %v", tokenErr))
+		return nil
+	}
+
+	// Attempt remote logout as best-effort
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
 	l.Log.Debug("constructed url: ", remoteProviderURL.String())
 
-	// make http.Request type variable with the constructed URL
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		err = ErrLogout(err)
-		l.Log.Error(err)
-		return err
-	}
 
-	// gets session cookie from the request headers
+	// gets session cookie from the request headers (optional - may not exist)
 	sessionCookie, err := req.Cookie("session_cookie")
-	if err != nil {
-		err = ErrGetSessionCookie(err)
-		l.Log.Error(err)
-		return err
+	if err == nil {
+		// adds session cookie to the new request headers if available
+		cReq.AddCookie(&http.Cookie{
+			Name:  "session_cookie",
+			Value: sessionCookie.Value,
+		})
+	} else {
+		l.Log.Warn("session_cookie not found, proceeding with remote logout anyway")
 	}
-
-	// adds session cookie to the new request headers
-	// necessary to run logout flow on the remote provider
-	cReq.AddCookie(&http.Cookie{
-		Name:  "session_cookie",
-		Value: sessionCookie.Value,
-	})
 
 	// adds return_to cookie to the new request headers
 	// necessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
 
-	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
+	// make request to remote provider with constructed URL and updated headers
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = ErrUnreachableRemoteProvider(err)
-		l.Log.Error(err)
-		return err
+		l.Log.Warn(fmt.Errorf("remote provider logout warning: %v (local cleanup already completed)", err))
+		// Return success since local cleanup is done
+		return nil
 	}
 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
+	
 	bd, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrLogout(err))
-		return err
-	}
-	l.Log.Info("response retrieved from remote provider")
-	// if request succeeds then redirect to Provider UI
-	// And empties the token and session cookies
-	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
-		// gets the token from the request headers
-		ck, err := req.Cookie(TokenCookieName)
-		if err == nil {
-			err = l.revokeToken(ck.Value)
-		}
-		if err != nil {
-			l.Log.Error(ErrLogout(fmt.Errorf("token cannot be revoked:%v", err)))
-		}
-		l.UnSetJWTCookie(w)
-
-		l.UnSetProviderSessionCookie(w)
+		l.Log.Warn(fmt.Errorf("reading remote logout response warning: %v (local cleanup already completed)", err))
 		return nil
 	}
-	l.Log.Error(ErrLogout(fmt.Errorf("error performing logout: %s", bd)))
-	return errors.New(string(bd))
+	
+	l.Log.Info("response retrieved from remote provider")
+	
+	// Log result but always return success since local cleanup succeeded
+	if resp.StatusCode != http.StatusFound && resp.StatusCode != http.StatusOK {
+		l.Log.Warn(fmt.Sprintf("remote provider logout returned status %d: %s (local cleanup already completed)", resp.StatusCode, bd))
+	}
+	
+	return nil
 }
 
 // HandleUnAuthenticated
@@ -4020,7 +4009,12 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	refQueryParam := r.URL.Query().Get("ref")
 	if refQueryParam != "" {
-		redirectURL = refQueryParam
+		// Validate redirect URL to prevent open redirect vulnerabilities
+		if core.IsValidRedirectURL(refQueryParam) {
+			redirectURL = refQueryParam
+		} else {
+			l.Log.Warn(fmt.Sprintf("Invalid redirect URL ignored: %s", refQueryParam))
+		}
 	}
 
 	go func() {

@@ -412,13 +412,18 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.HandleFunc("/auth/redirect", func(w http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
-		http.SetCookie(w, &http.Cookie{
-			Name:     models.TokenCookieName,
-			Value:    token,
-			Path:     "/",
-			HttpOnly: true,
-			Expires:  time.Now().Add(24 * time.Hour),
-		})
+		// Only set cookie if token is present and non-empty
+		if token != "" {
+			http.SetCookie(w, &http.Cookie{
+				Name:     models.TokenCookieName,
+				Value:    token,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteStrictMode,
+				Expires:  time.Now().Add(24 * time.Hour),
+			})
+		}
 		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
 	}).
 		Methods("GET")
