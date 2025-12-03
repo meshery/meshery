@@ -242,11 +242,11 @@ const namespacedKey = "isNamespaced"
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	resol := manifests.ResolveOpenApiRefs{}
 	cache := make(map[string][]byte)
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
@@ -274,11 +274,14 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 	}
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
+		fmt.Printf("%v", err)
 		return nil
 	}
+
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
+
 	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
@@ -356,57 +359,3 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	}
 	return apiRes, nil
 }
-
-// TODO: To be moved in meshkit
-// func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
-// 	hgv = make(map[kind][]groupversion)
-// 	var gl v1.APIGroupList
-// 	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	err = json.Unmarshal(gs, &gl)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for _, g := range gl.Groups {
-// 		groupName := g.Name
-// 		var apig v1.APIGroup
-// 		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		err = json.Unmarshal(apigbytes, &apig)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		for _, v := range apig.Versions {
-// 			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			for _, res := range apiRes.APIResources {
-// 				if v.GroupVersion != "" {
-// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.GroupVersion))
-// 				} else {
-// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.Version))
-// 				}
-// 			}
-// 		}
-// 		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		for _, res := range apiRes.APIResources {
-// 			hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion("v1"))
-// 		}
-// 	}
-// 	return
-// }
