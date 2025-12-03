@@ -12,7 +12,7 @@ setup() {
   assert_output --regexp "no such file|kubeconfig|no.*directory"
 }
 
-@test "mesheryctl system dashboard fails when server is unreachable" {
+@test "mesheryctl system dashboard fails when meshery server is unreachable" {
   mkdir -p "$HOME/.kube"
   cat <<EOF > "$HOME/.kube/config"
 apiVersion: v1
