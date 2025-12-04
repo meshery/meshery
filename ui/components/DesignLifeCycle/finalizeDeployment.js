@@ -2,7 +2,6 @@ import { useSelector } from 'react-redux';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@sistent/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
-import { isOperatorEnabled } from '@/utils/utils';
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -18,14 +17,11 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   color: theme.palette.text.neutral.default,
 }));
 
-export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
+export const FinalizeDeployment = ({ design }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelector(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
 
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-
-  const visualizerEnabled = isOperatorEnabled(capabilitiesRegistry);
   const theme = useTheme();
   const palette = theme.palette;
   return (
