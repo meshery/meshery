@@ -736,7 +736,7 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// check whether docker started successfully or not, throw an error message otherwise
-		if err := utils.DockerComposeCmd("docker", "ps").Run(); err != nil {
+		if err := DockerComposeCmd("docker", "ps").Run(); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	}
