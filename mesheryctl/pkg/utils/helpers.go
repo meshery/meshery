@@ -1305,15 +1305,21 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	return config.CurrentContext, nil
 }
 
+var (
+	useDockerComposeV2 bool
+	dockerComposeCheck sync.Once
+)
+
 func DockerComposeCmd(args ...string) *exec.Cmd {
-    // Try v2 first
-    cmd := exec.Command("docker", append([]string{"compose"}, args...)...)
-    
-    // Check if v2 exists
-    if err := exec.Command("docker", "compose", "version").Run(); err != nil {
-        // v2 not available, use v1
-        cmd = exec.Command("docker-compose", args...)
-    }
-    
-    return cmd
+	// Try v2 first
+	dockerComposeCheck.Do(func() {
+		cmd := exec.Command("docker", "compose", "version")
+		useDockerComposeV2 = cmd.Run() == nil
+	})
+
+	if useDockerComposeV2 {
+		return exec.Command("docker", append([]string{"compose"}, args...)...)
+	}
+	//else v1
+    return exec.Command("docker-compose", args...)
 }

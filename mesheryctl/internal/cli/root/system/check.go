@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"os/exec"
 
 	"github.com/pkg/errors"
 
@@ -262,7 +263,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	}
 	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
 	//Check whether docker daemon is running or not
-	err := utils.DockerComposeCmd("docker", "ps").Run()
+	err := exec.Command("docker", "ps").Run()
 	if err != nil {
 		if endpointParts[1] != "//localhost" {
 			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
