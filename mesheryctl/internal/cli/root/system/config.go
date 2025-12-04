@@ -36,6 +36,14 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
+var (
+	// OKE command flags
+	okeClusterID    string
+	okeRegion       string
+	okeProfile      string
+	okeCompartmentID string
+)
+
 func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -329,14 +337,178 @@ mesheryctl system config minikube
 	},
 }
 
+var okeConfigCmd = &cobra.Command{
+	Use:   "oke",
+	Short: "Configure Meshery to use OKE cluster",
+	Long: `Configure Meshery to connect to Oracle Kubernetes Engine (OKE) cluster.
+
+This command automates the process of configuring Meshery to work with your OKE clusters.
+It uses the OCI CLI to discover clusters, generate kubeconfig, and register the context with Meshery.
+
+Prerequisites:
+  - OCI CLI must be installed (https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm)
+  - OCI CLI must be configured with valid credentials (run 'oci setup config')
+  - User must have IAM permissions to access OKE clusters
+
+The command supports both interactive and non-interactive modes:
+  - Interactive: Prompts for region and cluster selection
+  - Non-interactive: Specify all parameters via flags for automation
+
+Required IAM Policies:
+  - Allow group <your-group> to manage cluster-family in compartment <compartment>
+  - Allow group <your-group> to use virtual-network-family in compartment <compartment>`,
+	Example: `
+// Basic usage - interactive prompts for all parameters
+mesheryctl system config oke
+
+// Configure with authentication token (for CI/CD or automation)
+mesheryctl system config oke --token auth.json
+
+// Specify cluster ID and region (non-interactive)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
+
+// Use a specific OCI profile (useful for multi-tenancy)
+mesheryctl system config oke --profile production --region us-ashburn-1
+
+// Specify compartment ID to search for clusters
+mesheryctl system config oke --compartment-id ocid1.compartment.oc1..xxx --region us-phoenix-1
+
+// Combine all options for fully automated configuration
+mesheryctl system config oke \
+  --cluster-id ocid1.cluster.oc1.iad.xxx \
+  --region us-ashburn-1 \
+  --compartment-id ocid1.compartment.oc1..xxx \
+  --profile myprofile \
+  --token auth.json
+
+// Use with default profile and auto-discovered region
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx
+
+Troubleshooting:
+  - If OCI CLI is not found, install it from the link above
+  - If authentication fails, run 'oci setup config' to configure credentials
+  - If no clusters are found, verify your IAM permissions and region
+  - For network issues, check OCI service endpoint accessibility`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		log.Info("Configuring Meshery to access OKE...")
+		
+		// Set default profile if not provided
+		if okeProfile == "" {
+			okeProfile = "DEFAULT"
+			log.Debugf("Using default OCI profile: %s", okeProfile)
+		}
+		
+		// Validate prerequisites
+		if err := validatePrerequisites(okeProfile); err != nil {
+			log.Fatal(err)
+			return err
+		}
+		
+		log.Info("Prerequisites validated successfully")
+		
+		// Collect OKE parameters (cluster ID, region, profile, compartment ID)
+		clusterID, region, profile, compartmentID, err := collectOKEParameters(okeClusterID, okeRegion, okeProfile, okeCompartmentID)
+		if err != nil {
+			log.Fatalf("Error collecting OKE parameters: %v", err)
+			return err
+		}
+		
+		log.Debugf("Using compartment ID: %s", compartmentID)
+		
+		log.Infof("Configuration parameters collected - Profile: %s, Region: %s, Cluster: %s", profile, region, clusterID)
+		
+		// Generate kubeconfig using OCI CLI
+		log.Info("Generating kubeconfig for OKE cluster...")
+		err = generateOKEKubeconfig(clusterID, region, profile, utils.ConfigPath)
+		if err != nil {
+			log.Fatalf("Error generating kubeconfig: %v", err)
+			return err
+		}
+		
+		log.Infof("OKE configuration is written to: %s", utils.ConfigPath)
+		
+		// Set the token in the chosen context
+		setToken()
+		
+		// Confirm successful configuration
+		log.Info("✓ Successfully configured Meshery to use OKE cluster")
+		log.Infof("✓ Cluster: %s", clusterID)
+		log.Infof("✓ Region: %s", region)
+		log.Info("You can now use Meshery with your OKE cluster")
+		
+		return nil
+	},
+}
+
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
-	Long:  `Configure the Kubernetes cluster used by Meshery.`,
+	Long: `Configure the Kubernetes cluster used by Meshery.
+
+This command provides subcommands for configuring Meshery to work with various
+Kubernetes cluster types. Each subcommand automates the process of generating
+kubeconfig and registering the cluster context with Meshery.
+
+Supported Kubernetes Platforms:
+  - aks:      Azure Kubernetes Service (Microsoft Azure)
+  - eks:      Elastic Kubernetes Service (Amazon Web Services)  
+  - gke:      Google Kubernetes Engine (Google Cloud Platform)
+  - minikube: Minikube (Local Kubernetes)
+  - oke:      Oracle Kubernetes Engine (Oracle Cloud Infrastructure)
+
+Each platform has specific prerequisites and configuration requirements:
+
+Azure Kubernetes Service (AKS):
+  Prerequisites: Azure CLI installed and configured
+  Authentication: Uses Azure CLI credentials
+  
+Amazon Elastic Kubernetes Service (EKS):
+  Prerequisites: AWS CLI installed and configured
+  Authentication: Uses AWS CLI credentials and IAM roles
+  
+Google Kubernetes Engine (GKE):
+  Prerequisites: Google Cloud SDK installed and configured
+  Authentication: Uses gcloud credentials and service accounts
+  
+Minikube:
+  Prerequisites: Minikube installed and running
+  Authentication: Uses local kubeconfig from minikube
+  
+Oracle Kubernetes Engine (OKE):
+  Prerequisites: OCI CLI installed and configured
+  Authentication: Uses OCI CLI credentials and IAM policies
+  Required IAM policies:
+    - Allow group <group> to manage cluster-family in compartment <compartment>
+    - Allow group <group> to use virtual-network-family in compartment <compartment>
+
+Use 'mesheryctl system config <platform> --help' for platform-specific details and examples.`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
-Example: mesheryctl system config eks
-Description: Configure the Kubernetes cluster used by Meshery.`
+		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube|oke]
+Example: mesheryctl system config oke
+Description: Configure the Kubernetes cluster used by Meshery.
+
+Supported platforms:
+  aks      - Azure Kubernetes Service (Microsoft Azure)
+  eks      - Amazon Elastic Kubernetes Service (AWS)
+  gke      - Google Kubernetes Engine (Google Cloud)
+  minikube - Minikube (local Kubernetes development)
+  oke      - Oracle Kubernetes Engine (Oracle Cloud Infrastructure)
+
+Prerequisites by platform:
+  aks      - Azure CLI (az) installed and authenticated
+  eks      - AWS CLI (aws) installed and configured
+  gke      - Google Cloud SDK (gcloud) installed and authenticated
+  minikube - Minikube installed and cluster running
+  oke      - OCI CLI (oci) installed and configured with proper IAM policies
+
+For platform-specific help and examples:
+  mesheryctl system config <platform> --help`
 
 		if len(args) == 0 {
 			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
@@ -346,12 +518,36 @@ Description: Configure the Kubernetes cluster used by Meshery.`
 		return nil
 	},
 	Example: `
-// Set configuration according to k8s cluster
-mesheryctl system config [aks|eks|gke|minikube]
+// Configure Meshery for Azure Kubernetes Service
+mesheryctl system config aks
 
-// Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
-mesheryctl system config --token "~/Downloads/auth.json"
-	`,
+// Configure Meshery for Amazon EKS  
+mesheryctl system config eks
+
+// Configure Meshery for Google Kubernetes Engine
+mesheryctl system config gke
+
+// Configure Meshery for Minikube
+mesheryctl system config minikube
+
+// Configure Meshery for Oracle Kubernetes Engine (interactive)
+mesheryctl system config oke
+
+// Configure OKE with authentication token (for CI/CD or automation)
+mesheryctl system config oke --token "~/Downloads/auth.json"
+
+// Configure OKE with specific cluster and region (non-interactive)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
+
+// Configure OKE with custom OCI profile
+mesheryctl system config oke --profile production --region us-ashburn-1
+
+// Full OKE automation example
+mesheryctl system config oke \
+  --cluster-id ocid1.cluster.oc1.iad.xxx \
+  --region us-ashburn-1 \
+  --profile myprofile \
+  --token auth.json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
@@ -367,12 +563,18 @@ func init() {
 		eksConfigCmd,
 		gkeConfigCmd,
 		minikubeConfigCmd,
+		okeConfigCmd,
 	}
 
 	aksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	eksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	gkeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	minikubeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	okeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	okeConfigCmd.Flags().StringVar(&okeClusterID, "cluster-id", "", "OKE cluster OCID")
+	okeConfigCmd.Flags().StringVar(&okeRegion, "region", "", "OCI region")
+	okeConfigCmd.Flags().StringVar(&okeProfile, "profile", "", "OCI config profile (defaults to DEFAULT)")
+	okeConfigCmd.Flags().StringVar(&okeCompartmentID, "compartment-id", "", "OCI compartment OCID (defaults to tenancy root compartment)")
 
 	configCmd.AddCommand(availableSubcommands...)
 }
