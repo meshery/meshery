@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -9,7 +9,6 @@ import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { useState } from 'react';
 import {
   Tab,
   Tabs,
