@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'Pull Request number to process (optional)'
-        required: false
+        description: 'Pull Request number to process (required)'
+        required: true
         type: string
       debug_mode:
         description: 'Enable debug logging'
@@ -27,7 +27,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/meetings/**'
+      - 'docs/_meetings/**'
 
 permissions:
   contents: write
@@ -70,7 +70,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Use the PAT to checkout so we can merge
           token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
@@ -80,7 +80,7 @@ jobs:
       # This validates that ALL files in the PR are strictly within docs/meetings/
       - name: 🔒 Validate PR Contains ONLY Meeting Minutes Changes
         id: validate
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
