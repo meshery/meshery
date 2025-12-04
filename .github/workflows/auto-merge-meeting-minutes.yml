@@ -1,0 +1,311 @@
+# Workflow: Auto-Merge Meeting Minutes PRs
+# Purpose: Automatically merges pull requests that ONLY modify files in docs/meetings/ directory
+# This helps expedite the routine process of updating weekly meeting minutes and attendance records.
+#
+# Security: Uses COMMUNITY_MANAGER_TOKEN PAT to bypass branch protection for this specific use case.
+# Validation: Strictly validates that ALL changed files are within docs/meetings/ before merging.
+
+name: Auto-Merge Meeting Minutes
+
+on:
+  # Manual trigger for testing and operations
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request number to process (optional)'
+        required: false
+        type: string
+      debug_mode:
+        description: 'Enable debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+
+  # Trigger on PR events targeting master branch
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
+    paths:
+      - 'docs/meetings/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge-meeting-minutes:
+    name: Validate and Auto-Merge Meeting Minutes
+    runs-on: ubuntu-24.04
+    # Only run in the main repository, not forks
+    if: github.repository == 'meshery/meshery'
+    
+    steps:
+      # Debug step: Print all inputs and context for introspection
+      # Note: Untrusted inputs are passed via env variables to prevent script injection
+      - name: 🔍 Introspect Inputs and Context
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode }}"
+          echo "Manual PR Number: ${{ inputs.pr_number }}"
+          echo "::endgroup::"
+          
+          echo "::group::GitHub Context"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "::endgroup::"
+          
+          echo "::group::Pull Request Context"
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Title: $PR_TITLE"
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Base Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "Head Branch: $PR_HEAD_REF"
+          echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
+          echo "::endgroup::"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use the PAT to checkout so we can merge
+          token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          fetch-depth: 0
+
+      # Core validation step using GitHub Script
+      # This validates that ALL files in the PR are strictly within docs/meetings/
+      - name: 🔒 Validate PR Contains ONLY Meeting Minutes Changes
+        id: validate
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            
+            // Determine PR number from event or manual input
+            let prNumber = context.payload.pull_request?.number;
+            if (!prNumber && '${{ inputs.pr_number }}') {
+              prNumber = parseInt('${{ inputs.pr_number }}', 10);
+            }
+            
+            if (!prNumber) {
+              core.setFailed('No PR number found. This workflow must be triggered by a pull_request event or with a pr_number input.');
+              return;
+            }
+            
+            core.info(`Validating PR #${prNumber} for ${owner}/${repo}`);
+            core.setOutput('pr_number', prNumber);
+            
+            try {
+              // Fetch all files changed in this PR
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner,
+                repo,
+                pull_number: prNumber,
+                per_page: 100
+              });
+              
+              core.info(`Found ${files.length} changed file(s) in PR #${prNumber}`);
+              
+              // Define the allowed directory pattern
+              // Files MUST start with 'docs/meetings/' to be auto-merged
+              const allowedPathPrefix = 'docs/meetings/';
+              
+              // Track validation results
+              let allFilesValid = true;
+              const invalidFiles = [];
+              const validFiles = [];
+              
+              // Validate each file
+              for (const file of files) {
+                const filePath = file.filename;
+                const isValid = filePath.startsWith(allowedPathPrefix);
+                
+                if (isValid) {
+                  validFiles.push(filePath);
+                  core.info(`✅ Valid: ${filePath}`);
+                } else {
+                  invalidFiles.push(filePath);
+                  core.warning(`❌ Invalid: ${filePath} - not in ${allowedPathPrefix}`);
+                  allFilesValid = false;
+                }
+              }
+              
+              // Set outputs for subsequent steps
+              core.setOutput('files_count', files.length);
+              core.setOutput('valid_files', JSON.stringify(validFiles));
+              core.setOutput('invalid_files', JSON.stringify(invalidFiles));
+              core.setOutput('is_valid', allFilesValid.toString());
+              
+              if (!allFilesValid) {
+                core.setFailed(`PR #${prNumber} contains files outside of ${allowedPathPrefix}. Found ${invalidFiles.length} invalid file(s): ${invalidFiles.join(', ')}`);
+                return;
+              }
+              
+              if (files.length === 0) {
+                core.setFailed('PR contains no files. Nothing to merge.');
+                return;
+              }
+              
+              core.info(`✅ All ${files.length} file(s) are within ${allowedPathPrefix}. PR is eligible for auto-merge.`);
+              
+            } catch (error) {
+              core.setFailed(`Failed to validate PR files: ${error.message}`);
+            }
+
+      # Approve the PR using the community manager token
+      - name: ✅ Auto-Approve PR
+        if: steps.validate.outputs.is_valid == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = ${{ steps.validate.outputs.pr_number }};
+            
+            core.info(`Approving PR #${prNumber}`);
+            
+            try {
+              await github.rest.pulls.createReview({
+                owner,
+                repo,
+                pull_number: prNumber,
+                event: 'APPROVE',
+                body: '✅ Auto-approved: This PR contains only meeting minutes updates in `docs/meetings/`.'
+              });
+              
+              core.info(`Successfully approved PR #${prNumber}`);
+            } catch (error) {
+              core.warning(`Failed to approve PR: ${error.message}`);
+              // Don't fail the workflow if approval fails, still try to merge
+            }
+
+      # Merge the PR using squash merge
+      - name: 🚀 Auto-Merge PR
+        if: steps.validate.outputs.is_valid == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = ${{ steps.validate.outputs.pr_number }};
+            
+            core.info(`Attempting to merge PR #${prNumber}`);
+            
+            try {
+              // First, check if the PR is mergeable
+              const { data: pr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: prNumber
+              });
+              
+              if (pr.merged) {
+                core.info(`PR #${prNumber} is already merged.`);
+                return;
+              }
+              
+              if (pr.state !== 'open') {
+                core.setFailed(`PR #${prNumber} is not open (state: ${pr.state}).`);
+                return;
+              }
+              
+              // Merge the PR using squash merge
+              const result = await github.rest.pulls.merge({
+                owner,
+                repo,
+                pull_number: prNumber,
+                merge_method: 'squash',
+                commit_title: `[Docs] Auto-merge meeting minutes (#${prNumber})`,
+                commit_message: `Auto-merged meeting minutes update.\n\nThis PR contained only changes to \`docs/meetings/\` and was auto-merged by the community manager workflow.`
+              });
+              
+              core.info(`Successfully merged PR #${prNumber}`);
+              core.info(`Merge SHA: ${result.data.sha}`);
+              
+            } catch (error) {
+              core.setFailed(`Failed to merge PR: ${error.message}`);
+            }
+
+      # Post status comment on successful merge
+      - name: 📢 Post Success Comment
+        if: steps.validate.outputs.is_valid == 'true' && success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = ${{ steps.validate.outputs.pr_number }};
+            const filesCount = ${{ steps.validate.outputs.files_count }};
+            
+            const body = `### ✅ Meeting Minutes Auto-Merged 🗓️
+            
+            This pull request has been automatically merged because it contains **only** changes to meeting minutes in \`docs/meetings/\`.
+            
+            **Summary:**
+            - Files modified: ${filesCount}
+            - Merged by: @meshery-ci (Community Manager Bot)
+            
+            Thank you for keeping our meeting records up to date! 📝`;
+            
+            try {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body
+              });
+            } catch (error) {
+              core.warning(`Failed to post success comment: ${error.message}`);
+            }
+
+      # Post rejection comment if validation failed
+      - name: 📢 Post Rejection Comment
+        if: steps.validate.outputs.is_valid != 'true' && failure()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = '${{ steps.validate.outputs.pr_number }}' || context.payload.pull_request?.number;
+            
+            if (!prNumber) {
+              core.warning('No PR number available to post rejection comment');
+              return;
+            }
+            
+            const invalidFiles = '${{ steps.validate.outputs.invalid_files }}' || '[]';
+            let parsedInvalidFiles = [];
+            try {
+              parsedInvalidFiles = JSON.parse(invalidFiles);
+            } catch (e) {
+              parsedInvalidFiles = [];
+            }
+            
+            const body = `### ⚠️ Auto-Merge Not Possible
+            
+            This pull request **cannot** be auto-merged because it contains files outside of the \`docs/meetings/\` directory.
+            
+            **Files outside allowed directory:**
+            ${parsedInvalidFiles.map(f => `- \`${f}\``).join('\n') || '- Unable to determine invalid files'}
+            
+            **What to do:**
+            - If this PR should only update meeting minutes, please remove the files that are not in \`docs/meetings/\`
+            - If this PR intentionally includes other changes, it will need manual review and approval
+            
+            The auto-merge workflow is designed **strictly** for meeting minutes updates only.`;
+            
+            try {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: parseInt(prNumber, 10),
+                body
+              });
+            } catch (error) {
+              core.warning(`Failed to post rejection comment: ${error.message}`);
+            }
