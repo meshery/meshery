@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - '!**'
+      - '!docs/_meetings/**'
       - 'docs/**'
 jobs:
   trigger-site-preview:
