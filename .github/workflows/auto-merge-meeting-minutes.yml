@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'Pull Request number to process (optional)'
-        required: false
+        description: 'Pull Request number to process (required)'
+        required: true
         type: string
       debug_mode:
         description: 'Enable debug logging'
@@ -27,7 +27,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/meetings/**'
+      - 'docs/meetings/**/*'
 
 permissions:
   contents: write
