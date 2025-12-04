@@ -1,1 +1,1 @@
-Hello myself Aneesh Hegde. Currently I am learning Devops and trying out the CNCF tools
+Hello, I am Aneesh Hegde. I am currently learning DevOps and trying out the CNCF tools.
