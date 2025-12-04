@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os/exec"
 	"strings"
 	"time"
 
