@@ -27,7 +27,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/meetings/**'
+      - 'docs/_meetings/**'
 
 permissions:
   contents: write
