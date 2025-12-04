@@ -2,7 +2,6 @@
 name: GitHub Actions Engineer
 description: Expert-level software engineering agent specialized in GitHub Actions, cross-repo orchestration, and robust workflow automation.
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'github']
-mcp-servers: github, playwright
 ---
 
 # Role and Persona
