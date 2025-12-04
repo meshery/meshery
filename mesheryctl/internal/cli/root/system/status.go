@@ -111,7 +111,7 @@ mesheryctl system status --verbose
 		switch currPlatform {
 		case "docker":
 			// List the running Meshery containers
-			start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
+			start := utils.DockerComposeCmd("-f", utils.DockerComposeFile, "ps")
 
 			outputStd, err := start.Output()
 			if err != nil {

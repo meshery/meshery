@@ -263,7 +263,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	}
 	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
 	//Check whether docker daemon is running or not
-	err := exec.Command("docker", "ps").Run()
+	err := utils.DockerComposeCmd("docker", "ps").Run()
 	if err != nil {
 		if endpointParts[1] != "//localhost" {
 			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
@@ -295,7 +295,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	}
 
 	//Check for installed docker-compose on client system
-	err = exec.Command("docker-compose", "-v").Run()
+	err = utils.DockerComposeCmd("-v").Run()
 	if err != nil {
 		if hc.Options.IsPreRunE { // if PreRunExec we trigger self installation
 			log.Warn("!! docker-compose is not available")

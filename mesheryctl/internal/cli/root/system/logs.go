@@ -141,7 +141,7 @@ mesheryctl system logs meshery-istio
 				return nil
 			}
 
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+			cmdlog := utils.DockerComposeCmd("-f", utils.DockerComposeFile, "logs", "-f")
 
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
