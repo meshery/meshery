@@ -294,23 +294,15 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		}
 	}
 
-	//Check for installed docker-compose on client system
-	err = utils.DockerComposeCmd("-v").Run()
+	//Check for installed docker-compose (v1) or docker compose (v2) on client system
+	err = utils.DockerComposeCmd("version").Run()
 	if err != nil {
-		if hc.Options.IsPreRunE { // if PreRunExec we trigger self installation
-			log.Warn("!! docker-compose is not available")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
-			}
-			err = utils.InstallprereqDocker()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
-			}
-		} else if hc.Options.PrintLogs { // warn incase of printing logs
-			log.Warn("!! docker-compose is not available")
-		} else { // else we're supposed to grab the error
-			return err
+		if hc.Options.IsPreRunE || hc.Options.PrintLogs {
+			log.Warn("!! Docker Compose is not available")
+			log.Info("Please install Docker Compose. See https://docs.docker.com/compose/install/")
+		}
+		if !hc.Options.PrintLogs {
+			return errors.Wrapf(err, "Docker Compose (v1 or v2) is required. Run `mesheryctl system %s` after Docker Compose is installed", hc.Options.Subcommand)
 		}
 
 		if hc.context.Platform == "docker" {
@@ -319,7 +311,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	} else { // if not error we check if we are supposed to print logs
 		// logging if we're supposed to
 		if hc.Options.PrintLogs {
-			log.Info("✓ docker-compose is available")
+			log.Info("✓ Docker Compose is available")
 		}
 	}
 
