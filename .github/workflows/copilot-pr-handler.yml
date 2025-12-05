@@ -22,7 +22,8 @@ name: Copilot PR Handler
 
 on:
   # Run every 5 minutes to proactively find and process Copilot PRs
-  # This avoids the chicken-and-egg problem with pull_request_target
+  # This frequency ensures timely handling of new Copilot PRs while the workflow
+  # runs from the default branch without requiring approval (unlike pull_request_target)
   schedule:
     - cron: '*/5 * * * *'
 
@@ -110,6 +111,7 @@ jobs:
               core.info('Scheduled mode: Finding all open PRs from copilot[bot]...');
 
               try {
+                // List open PRs (100 per page is sufficient for Copilot PRs which are typically few)
                 const { data: prs } = await github.rest.pulls.list({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -226,7 +228,7 @@ jobs:
 
             try {
               // List workflow runs that are pending approval
-              // These are runs with status 'action_required' (waiting for approval)
+              // (100 per page is sufficient as Copilot typically has few concurrent PRs)
               const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -299,6 +301,7 @@ jobs:
             for (const pr of prs) {
               try {
                 // Check if we've already commented on this PR
+                // (100 comments is sufficient; Copilot PRs are typically new with few comments)
                 const { data: comments } = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
