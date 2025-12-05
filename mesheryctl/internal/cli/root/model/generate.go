@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -93,8 +96,13 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 			defer os.RemoveAll(tempDir) // Clean up temp directory
 
 			// Determine filename from URL
-			filename := filepath.Base(path)
-			if filename == "." || filename == "/" {
+			u, err := url.Parse(path)
+			if err != nil {
+				return fmt.Errorf("failed to parse URL %q: %w", path, err)
+			}
+
+			filename := pathpkg.Base(u.Path)
+			if filename == "." || filename == "/" || filename == "" {
 				filename = "model.csv"
 			}
 			tempFilePath := filepath.Join(tempDir, filename)
@@ -205,27 +213,30 @@ func (c *CsvModelGenerator) Generate() error {
 }
 
 // downloadFileSimple downloads a file from a URL using standard HTTP GET
-func downloadFileSimple(filepath string, url string) error {
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
+func downloadFileSimple(filepath string, urlStr string) error {
+	client := http.Client{
+		Timeout: 30 * time.Second,
 	}
-	defer out.Close()
 
-	// Get the data
-	resp, err := http.Get(url)
+	resp, err := client.Get(urlStr)
 	if err != nil {
-		return err
+		return fmt.Errorf("http GET request to %s failed: %w", urlStr, err)
 	}
 	defer resp.Body.Close()
 
-	// Check server response
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", resp.Status)
+		return fmt.Errorf("bad http status for %s: %s", urlStr, resp.Status)
 	}
 
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	return err
+	out, err := os.Create(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", filepath, err)
+	}
+	defer out.Close()
+
+	if _, err = io.Copy(out, resp.Body); err != nil {
+		return fmt.Errorf("failed to write to file %s: %w", filepath, err)
+	}
+
+	return nil
 }
