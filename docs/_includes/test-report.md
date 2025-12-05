@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 4th 2025, 11:51:35 pm
+- Testing started at: December 5th 2025, 3:33:21 am
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
+- ✅ 0 passed
 - ❌ 2 failed
-- ⚠️ 1 flaked
-- ⏩ 6 skipped
+- ⚠️ 0 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 49 seconds_
+⌛ _Duration: 0 minutes and 3 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,15 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 5 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 6 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 7 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 8 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 9 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | setup | authenticate as Meshery provider |  | ❌ |
+| 2 | setup | authenticate as None provider |  | ❌ |
 
 </div>
 </details>
