@@ -1,0 +1,245 @@
+# =====================================================================================
+# Copilot SWE Agent PR Handler
+# =====================================================================================
+# This workflow automatically handles pull requests created by the GitHub Copilot
+# SWE Agent (https://github.com/apps/copilot-swe-agent).
+#
+# It performs two key actions:
+# 1. Marks draft PRs as "ready for review"
+# 2. Approves pending workflow runs for the PR branch
+#
+# This is necessary because:
+# - PRs from first-time contributors (including bots) require manual approval
+#   to run workflows for security reasons
+# - The Copilot agent creates draft PRs that need to be marked as ready
+# =====================================================================================
+
+name: Copilot PR Handler
+
+on:
+  # Use pull_request_target to get write permissions for PRs from forks/bots
+  # This is safe here because we're only performing administrative actions,
+  # not checking out or running code from the PR
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
+
+  # Allow manual triggering for testing and debugging
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to process (for manual testing)'
+        required: false
+        type: string
+      debug_mode:
+        description: 'Enable verbose debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+
+# Minimal permissions required for this workflow
+# - actions: write - Required to approve workflow runs
+# - pull-requests: write - Required to mark PRs as ready for review
+# - contents: read - Required to access repository content
+permissions:
+  actions: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  handle-copilot-pr:
+    name: Handle Copilot PR
+    runs-on: ubuntu-24.04
+    # Only run for the meshery/meshery repository
+    # Only run for PRs from the Copilot SWE agent (copilot[bot])
+    if: |
+      github.repository == 'meshery/meshery' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        github.event.pull_request.user.login == 'copilot[bot]'
+      )
+
+    steps:
+      # -------------------------------------------------------------------------
+      # Step 1: Introspect and log all relevant context for debugging
+      # -------------------------------------------------------------------------
+      - name: 🔍 Introspect Inputs and Context
+        run: |
+          echo "::group::Workflow Context"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "::endgroup::"
+
+          echo "::group::Pull Request Information"
+          echo "PR Number: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}"
+          echo "PR Author: ${{ github.event.pull_request.user.login || 'N/A' }}"
+          echo "PR Draft Status: ${{ github.event.pull_request.draft || 'N/A' }}"
+          echo "PR Head SHA: ${{ github.event.pull_request.head.sha || 'N/A' }}"
+          echo "PR Head Ref: ${{ github.event.pull_request.head.ref || 'N/A' }}"
+          echo "::endgroup::"
+
+          echo "::group::Debug Settings"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "::endgroup::"
+
+      # -------------------------------------------------------------------------
+      # Step 2: Mark PR as ready for review if it's in draft state
+      # -------------------------------------------------------------------------
+      - name: 📝 Mark PR as Ready for Review
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+
+            if (!prNumber) {
+              core.info('No PR number available, skipping ready for review step');
+              return;
+            }
+
+            core.info(`Processing PR #${prNumber}`);
+
+            try {
+              // Get PR details to check if it's a draft
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber
+              });
+
+              core.info(`PR #${prNumber} draft status: ${pr.draft}`);
+
+              if (pr.draft) {
+                core.info(`Marking PR #${prNumber} as ready for review...`);
+
+                // Use GraphQL API to mark as ready for review
+                // The REST API doesn't support this operation
+                await github.graphql(`
+                  mutation($pullRequestId: ID!) {
+                    markPullRequestReadyForReview(input: {pullRequestId: $pullRequestId}) {
+                      pullRequest {
+                        isDraft
+                      }
+                    }
+                  }
+                `, {
+                  pullRequestId: pr.node_id
+                });
+
+                core.info(`✅ PR #${prNumber} has been marked as ready for review`);
+              } else {
+                core.info(`PR #${prNumber} is already marked as ready for review`);
+              }
+            } catch (error) {
+              core.warning(`Failed to mark PR as ready for review: ${error.message}`);
+              // Don't fail the workflow, continue to next step
+            }
+
+      # -------------------------------------------------------------------------
+      # Step 3: Approve pending workflow runs for this PR
+      # -------------------------------------------------------------------------
+      - name: ✅ Approve Pending Workflow Runs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const headSha = context.payload.pull_request?.head?.sha || null;
+            const headRef = context.payload.pull_request?.head?.ref || null;
+
+            if (!headRef && !headSha) {
+              core.info('No head ref or SHA available, skipping workflow approval step');
+              return;
+            }
+
+            core.info(`Looking for pending workflow runs for PR #${prNumber || 'N/A'}`);
+            core.info(`Head SHA: ${headSha || 'N/A'}, Head Ref: ${headRef || 'N/A'}`);
+
+            try {
+              // List workflow runs that are pending approval
+              // These are runs with status 'action_required' (waiting for approval)
+              const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                status: 'action_required',
+                per_page: 100
+              });
+
+              core.info(`Found ${runs.total_count} workflow run(s) awaiting approval`);
+
+              // Filter runs for this PR's branch/SHA
+              const pendingRuns = runs.workflow_runs.filter(run => {
+                const matchesSha = headSha && run.head_sha === headSha;
+                const matchesRef = headRef && run.head_branch === headRef;
+                return matchesSha || matchesRef;
+              });
+
+              core.info(`Found ${pendingRuns.length} pending run(s) for this PR`);
+
+              // Approve each pending run
+              for (const run of pendingRuns) {
+                core.info(`Approving workflow run: ${run.name} (ID: ${run.id})`);
+
+                try {
+                  await github.rest.actions.approveWorkflowRun({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    run_id: run.id
+                  });
+                  core.info(`✅ Approved workflow run: ${run.name} (ID: ${run.id})`);
+                } catch (approvalError) {
+                  core.warning(`Failed to approve run ${run.id}: ${approvalError.message}`);
+                }
+              }
+
+              if (pendingRuns.length === 0) {
+                core.info('No pending workflow runs found for this PR');
+              }
+            } catch (error) {
+              core.warning(`Failed to approve workflow runs: ${error.message}`);
+              // Don't fail the workflow
+            }
+
+      # -------------------------------------------------------------------------
+      # Step 4: Post status comment on the PR
+      # -------------------------------------------------------------------------
+      - name: 📢 Post Status Comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+
+            if (!prNumber) {
+              core.info('No PR number available, skipping status comment');
+              return;
+            }
+
+            const jobStatus = '${{ job.status }}';
+            const statusEmoji = jobStatus === 'success' ? '✅' : jobStatus === 'failure' ? '❌' : '⚠️';
+
+            // Only comment on success to avoid noise
+            if (jobStatus === 'success') {
+              const body = `### ${statusEmoji} Copilot PR Handler
+
+            This pull request from GitHub Copilot has been automatically processed:
+            - ✅ Marked as ready for review (if it was a draft)
+            - ✅ Approved pending workflow runs
+
+            The CI checks should now run automatically.`;
+
+              try {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: body
+                });
+                core.info(`Posted status comment on PR #${prNumber}`);
+              } catch (error) {
+                core.warning(`Failed to post status comment: ${error.message}`);
+              }
+            }
