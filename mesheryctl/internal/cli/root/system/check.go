@@ -302,7 +302,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			log.Info("Please install Docker Compose. See https://docs.docker.com/compose/install/")
 		}
 		if !hc.Options.PrintLogs {
-			return errors.Wrapf(err, "Docker Compose (v1 or v2) is required. Run `mesheryctl system %s` after Docker Compose is installed", hc.Options.Subcommand)
+			return errors.Wrapf(err, "Docker Compose (v2) is required. Run `mesheryctl system %s` after Docker Compose is installed", hc.Options.Subcommand)
 		}
 
 		if hc.context.Platform == "docker" {

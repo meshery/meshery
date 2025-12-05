@@ -25,13 +25,14 @@ func DockerComposeCmd(args ...string) *exec.Cmd {
 			log.Fatal("Docker Compose v1 detected. Meshery requires Docker Compose v2. Please upgrade: https://docs.docker.com/compose/install/")
 		}
 
-		// Neither v1 nor v2 available - will fail when command is run
+		// Neither v1 nor v2 available
+		log.Fatal("Docker Compose not found. Meshery requires Docker Compose v2. Please install: https://docs.docker.com/compose/install/")
 	})
 
 	if useDockerComposeV2 {
 		return exec.Command("docker", append([]string{"compose"}, args...)...)
 	}
 
-	// Fallback (should not reach here if neither is available)
-	return exec.Command("docker-compose", args...)
+	// Should never reach here due to log.Fatal above
+	return exec.Command("docker", append([]string{"compose"}, args...)...)
 }
