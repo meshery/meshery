@@ -14,9 +14,9 @@ jobs:
     if: github.repository == 'meshery/meshery'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          token: ${{ secrets.MESHERY_CI }}
+          token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
       
       - name: Fetch latest meeting minutes
         env:
