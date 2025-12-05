@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 3rd 2025, 11:50:36 pm
+- Testing started at: December 5th 2025, 9:53:29 am
 
 **📦 Test Result Summary**
 
-- ✅ 81 passed
+- ✅ 0 passed
 - ❌ 2 failed
-- ⚠️ 2 flaked
-- ⏩ 6 skipped
+- ⚠️ 0 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 9 minutes and 23 seconds_
+⌛ _Duration: 0 minutes and 3 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,16 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 5 | chromium-meshery-provider | deletes a published design from the list |  | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 10 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | setup | authenticate as Meshery provider |  | ❌ |
+| 2 | setup | authenticate as None provider |  | ❌ |
 
 </div>
 </details>
