@@ -12,30 +12,31 @@
 # - PRs from first-time contributors (including bots) require manual approval
 #   to run workflows for security reasons
 # - The Copilot agent creates draft PRs that need to be marked as ready
+#
+# This workflow uses a scheduled trigger instead of pull_request_target to avoid
+# the chicken-and-egg problem where the workflow itself would need approval
+# before it could approve other workflows.
 # =====================================================================================
 
 name: Copilot PR Handler
 
 on:
-  # Use pull_request_target to get write permissions for PRs from forks/bots
-  # This is safe here because we're only performing administrative actions,
-  # not checking out or running code from the PR
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    branches:
-      - master
+  # Run every 5 minutes to proactively find and process Copilot PRs
+  # This avoids the chicken-and-egg problem with pull_request_target
+  schedule:
+    - cron: '*/5 * * * *'
 
   # Allow manual triggering for testing and debugging
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to process (for manual testing)'
+        description: 'PR number to process (for manual testing, leave empty to process all)'
         required: false
         type: string
       debug_mode:
         description: 'Enable verbose debug logging'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 # Minimal permissions required for this workflow
@@ -48,17 +49,11 @@ permissions:
   contents: read
 
 jobs:
-  handle-copilot-pr:
-    name: Handle Copilot PR
+  handle-copilot-prs:
+    name: Handle Copilot PRs
     runs-on: ubuntu-24.04
     # Only run for the meshery/meshery repository
-    # Only run for PRs from the Copilot SWE agent (copilot[bot])
-    if: |
-      github.repository == 'meshery/meshery' &&
-      (
-        github.event_name == 'workflow_dispatch' ||
-        github.event.pull_request.user.login == 'copilot[bot]'
-      )
+    if: github.repository == 'meshery/meshery'
 
     steps:
       # -------------------------------------------------------------------------
@@ -72,90 +67,162 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "::endgroup::"
 
-          echo "::group::Pull Request Information"
-          echo "PR Number: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}"
-          echo "PR Author: ${{ github.event.pull_request.user.login || 'N/A' }}"
-          echo "PR Draft Status: ${{ github.event.pull_request.draft || 'N/A' }}"
-          echo "PR Head SHA: ${{ github.event.pull_request.head.sha || 'N/A' }}"
-          echo "PR Head Ref: ${{ github.event.pull_request.head.ref || 'N/A' }}"
-          echo "::endgroup::"
-
-          echo "::group::Debug Settings"
+          echo "::group::Workflow Inputs"
+          echo "PR Number (manual): ${{ inputs.pr_number || 'N/A (will process all Copilot PRs)' }}"
           echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
           echo "::endgroup::"
 
       # -------------------------------------------------------------------------
-      # Step 2: Mark PR as ready for review if it's in draft state
+      # Step 2: Find and process all Copilot PRs
       # -------------------------------------------------------------------------
-      - name: 📝 Mark PR as Ready for Review
+      - name: 🔎 Find and Process Copilot PRs
+        uses: actions/github-script@v7
+        id: find-prs
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            const debugMode = '${{ inputs.debug_mode }}' === 'true';
+            const manualPrNumber = '${{ inputs.pr_number }}' ? parseInt('${{ inputs.pr_number }}') : null;
+
+            // Helper function for debug logging
+            const debug = (msg) => {
+              if (debugMode) core.info(`[DEBUG] ${msg}`);
+            };
+
+            let prsToProcess = [];
+
+            if (manualPrNumber) {
+              // Manual mode: process specific PR
+              core.info(`Manual mode: Processing PR #${manualPrNumber}`);
+              try {
+                const { data: pr } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: manualPrNumber
+                });
+                prsToProcess = [pr];
+              } catch (error) {
+                core.warning(`Failed to fetch PR #${manualPrNumber}: ${error.message}`);
+                return { processedPrs: [] };
+              }
+            } else {
+              // Scheduled mode: find all open PRs from copilot[bot]
+              core.info('Scheduled mode: Finding all open PRs from copilot[bot]...');
+
+              try {
+                const { data: prs } = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  state: 'open',
+                  per_page: 100
+                });
+
+                debug(`Found ${prs.length} open PR(s) total`);
+
+                // Filter for PRs from copilot[bot]
+                prsToProcess = prs.filter(pr => pr.user.login === 'copilot[bot]');
+                core.info(`Found ${prsToProcess.length} open PR(s) from copilot[bot]`);
+
+                if (prsToProcess.length > 0) {
+                  core.info('PRs to process:');
+                  prsToProcess.forEach(pr => {
+                    core.info(`  - PR #${pr.number}: ${pr.title} (draft: ${pr.draft})`);
+                  });
+                }
+              } catch (error) {
+                core.warning(`Failed to list PRs: ${error.message}`);
+                return { processedPrs: [] };
+              }
+            }
+
+            if (prsToProcess.length === 0) {
+              core.info('No Copilot PRs found to process');
+              return { processedPrs: [] };
+            }
+
+            // Store PR info for subsequent steps
+            const processedPrs = prsToProcess.map(pr => ({
+              number: pr.number,
+              title: pr.title,
+              draft: pr.draft,
+              nodeId: pr.node_id,
+              headSha: pr.head.sha,
+              headRef: pr.head.ref
+            }));
+
+            core.setOutput('prs', JSON.stringify(processedPrs));
+            return { processedPrs };
+
+      # -------------------------------------------------------------------------
+      # Step 3: Mark draft PRs as ready for review
+      # -------------------------------------------------------------------------
+      - name: 📝 Mark Draft PRs as Ready for Review
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const prsJson = '${{ steps.find-prs.outputs.prs }}';
 
-            if (!prNumber) {
-              core.info('No PR number available, skipping ready for review step');
+            if (!prsJson || prsJson === '') {
+              core.info('No PRs to process');
               return;
             }
 
-            core.info(`Processing PR #${prNumber}`);
+            const prs = JSON.parse(prsJson);
+            core.info(`Processing ${prs.length} PR(s) for draft status...`);
 
-            try {
-              // Get PR details to check if it's a draft
-              const { data: pr } = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber
-              });
-
-              core.info(`PR #${prNumber} draft status: ${pr.draft}`);
-
+            for (const pr of prs) {
               if (pr.draft) {
-                core.info(`Marking PR #${prNumber} as ready for review...`);
+                core.info(`Marking PR #${pr.number} as ready for review...`);
 
-                // Use GraphQL API to mark as ready for review
-                // The REST API doesn't support this operation
-                await github.graphql(`
-                  mutation($pullRequestId: ID!) {
-                    markPullRequestReadyForReview(input: {pullRequestId: $pullRequestId}) {
-                      pullRequest {
-                        isDraft
+                try {
+                  // Use GraphQL API to mark as ready for review
+                  // The REST API doesn't support this operation
+                  await github.graphql(`
+                    mutation($pullRequestId: ID!) {
+                      markPullRequestReadyForReview(input: {pullRequestId: $pullRequestId}) {
+                        pullRequest {
+                          isDraft
+                        }
                       }
                     }
-                  }
-                `, {
-                  pullRequestId: pr.node_id
-                });
+                  `, {
+                    pullRequestId: pr.nodeId
+                  });
 
-                core.info(`✅ PR #${prNumber} has been marked as ready for review`);
+                  core.info(`✅ PR #${pr.number} has been marked as ready for review`);
+                } catch (error) {
+                  core.warning(`Failed to mark PR #${pr.number} as ready for review: ${error.message}`);
+                }
               } else {
-                core.info(`PR #${prNumber} is already marked as ready for review`);
+                core.info(`PR #${pr.number} is already marked as ready for review`);
               }
-            } catch (error) {
-              core.warning(`Failed to mark PR as ready for review: ${error.message}`);
-              // Don't fail the workflow, continue to next step
             }
 
       # -------------------------------------------------------------------------
-      # Step 3: Approve pending workflow runs for this PR
+      # Step 4: Approve pending workflow runs for Copilot PRs
       # -------------------------------------------------------------------------
       - name: ✅ Approve Pending Workflow Runs
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
-            const headSha = context.payload.pull_request?.head?.sha || null;
-            const headRef = context.payload.pull_request?.head?.ref || null;
+            const prsJson = '${{ steps.find-prs.outputs.prs }}';
 
-            if (!headRef && !headSha) {
-              core.info('No head ref or SHA available, skipping workflow approval step');
+            if (!prsJson || prsJson === '') {
+              core.info('No PRs to process');
               return;
             }
 
-            core.info(`Looking for pending workflow runs for PR #${prNumber || 'N/A'}`);
-            core.info(`Head SHA: ${headSha || 'N/A'}, Head Ref: ${headRef || 'N/A'}`);
+            const prs = JSON.parse(prsJson);
+
+            // Collect all head SHAs and refs for filtering
+            const headShas = new Set(prs.map(pr => pr.headSha));
+            const headRefs = new Set(prs.map(pr => pr.headRef));
+
+            core.info(`Looking for pending workflow runs for ${prs.length} Copilot PR(s)...`);
+            core.info(`Head SHAs: ${[...headShas].join(', ')}`);
+            core.info(`Head Refs: ${[...headRefs].join(', ')}`);
 
             try {
               // List workflow runs that are pending approval
@@ -167,20 +234,23 @@ jobs:
                 per_page: 100
               });
 
-              core.info(`Found ${runs.total_count} workflow run(s) awaiting approval`);
+              core.info(`Found ${runs.total_count} workflow run(s) awaiting approval in total`);
 
-              // Filter runs for this PR's branch/SHA
+              // Filter runs for Copilot PR branches/SHAs
               const pendingRuns = runs.workflow_runs.filter(run => {
-                const matchesSha = headSha && run.head_sha === headSha;
-                const matchesRef = headRef && run.head_branch === headRef;
+                const matchesSha = headShas.has(run.head_sha);
+                const matchesRef = headRefs.has(run.head_branch);
                 return matchesSha || matchesRef;
               });
 
-              core.info(`Found ${pendingRuns.length} pending run(s) for this PR`);
+              core.info(`Found ${pendingRuns.length} pending run(s) for Copilot PRs`);
 
               // Approve each pending run
+              let approvedCount = 0;
+              let failedCount = 0;
+
               for (const run of pendingRuns) {
-                core.info(`Approving workflow run: ${run.name} (ID: ${run.id})`);
+                core.info(`Approving workflow run: ${run.name} (ID: ${run.id}, Branch: ${run.head_branch})`);
 
                 try {
                   await github.rest.actions.approveWorkflowRun({
@@ -189,41 +259,64 @@ jobs:
                     run_id: run.id
                   });
                   core.info(`✅ Approved workflow run: ${run.name} (ID: ${run.id})`);
+                  approvedCount++;
                 } catch (approvalError) {
                   core.warning(`Failed to approve run ${run.id}: ${approvalError.message}`);
+                  failedCount++;
                 }
               }
 
+              core.info(`Summary: Approved ${approvedCount} workflow run(s), ${failedCount} failed`);
+
               if (pendingRuns.length === 0) {
-                core.info('No pending workflow runs found for this PR');
+                core.info('No pending workflow runs found for Copilot PRs');
               }
             } catch (error) {
-              core.warning(`Failed to approve workflow runs: ${error.message}`);
-              // Don't fail the workflow
+              core.warning(`Failed to process workflow runs: ${error.message}`);
             }
 
       # -------------------------------------------------------------------------
-      # Step 4: Post status comment on the PR
+      # Step 5: Post status comment on processed PRs (only on success)
       # -------------------------------------------------------------------------
       - name: 📢 Post Status Comment
-        if: always()
+        if: success()
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const prsJson = '${{ steps.find-prs.outputs.prs }}';
 
-            if (!prNumber) {
-              core.info('No PR number available, skipping status comment');
+            if (!prsJson || prsJson === '') {
+              core.info('No PRs to process');
               return;
             }
 
-            const jobStatus = '${{ job.status }}';
-            const statusEmoji = jobStatus === 'success' ? '✅' : jobStatus === 'failure' ? '❌' : '⚠️';
+            const prs = JSON.parse(prsJson);
 
-            // Only comment on success to avoid noise
-            if (jobStatus === 'success') {
-              const body = `### ${statusEmoji} Copilot PR Handler
+            // Comment marker to identify our comments (prevent duplicate comments)
+            const commentMarker = '<!-- copilot-pr-handler-comment -->';
+
+            for (const pr of prs) {
+              try {
+                // Check if we've already commented on this PR
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  per_page: 100
+                });
+
+                const alreadyCommented = comments.some(comment =>
+                  comment.body.includes(commentMarker)
+                );
+
+                if (alreadyCommented) {
+                  core.info(`PR #${pr.number} already has a status comment, skipping`);
+                  continue;
+                }
+
+                const body = `${commentMarker}
+            ### ✅ Copilot PR Handler
 
             This pull request from GitHub Copilot has been automatically processed:
             - ✅ Marked as ready for review (if it was a draft)
@@ -231,15 +324,14 @@ jobs:
 
             The CI checks should now run automatically.`;
 
-              try {
                 await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: prNumber,
+                  issue_number: pr.number,
                   body: body
                 });
-                core.info(`Posted status comment on PR #${prNumber}`);
+                core.info(`Posted status comment on PR #${pr.number}`);
               } catch (error) {
-                core.warning(`Failed to post status comment: ${error.message}`);
+                core.warning(`Failed to post status comment on PR #${pr.number}: ${error.message}`);
               }
             }
