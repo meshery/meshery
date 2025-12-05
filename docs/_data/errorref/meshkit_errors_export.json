@@ -1587,15 +1587,6 @@
         "probable_cause": "The provided file is not present or has an invalid path.",
         "suggested_remediation": "To proceed, provide a valid file path with a valid file."
       },
-      "11305": {
-        "name": "ErrGeneratesModelCode",
-        "code": "11305",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
-        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
-      },
       "11306": {
         "name": "ErrReadCSVRowCode",
         "code": "11306",
