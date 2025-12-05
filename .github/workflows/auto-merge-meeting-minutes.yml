@@ -219,7 +219,7 @@ jobs:
                 owner,
                 repo,
                 pull_number: prNumber,
-                merge_method: `merge commit`,
+                merge_method: 'merge',
                 commit_title: `[Docs] Auto-merge meeting minutes (#${prNumber})`,
                 commit_message: `Auto-merged meeting minutes update.\n\nThis PR contained only changes to \`docs/meetings/\` and was auto-merged by the community manager workflow.`
               });
