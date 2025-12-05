@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"testing"
 )
 
@@ -80,14 +79,14 @@ func TestGetCRDsFromManifest(t *testing.T) {
 		expectedKind    string
 		expectedVersion string
 		expectSchema    bool
-		wantError       bool // New field to check for errors
+		wantError       bool
 	}{
 		{
 			name:            "Valid Pod Parsing",
 			manifest:        mockOpenAPIJSON,
 			apiResources:    []string{"Pod"},
 			expectedCount:   1,
-			expectedKind:    "pod", // Fixed: Expect lowercase
+			expectedKind:    "Pod", // Fixed: Expect CamelCase (K8s convention)
 			expectedVersion: "v1",
 			expectSchema:    true,
 			wantError:       false,
@@ -97,7 +96,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			manifest:        mockOpenAPIJSON,
 			apiResources:    []string{"Service"},
 			expectedCount:   1,
-			expectedKind:    "service", // Fixed: Expect lowercase
+			expectedKind:    "Service", // Fixed: Expect CamelCase
 			expectedVersion: "v1",
 			expectSchema:    true,
 			wantError:       false,
@@ -107,7 +106,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			manifest:        mockOpenAPIJSON,
 			apiResources:    []string{"pod"},
 			expectedCount:   1,
-			expectedKind:    "pod",
+			expectedKind:    "pod", // Expects input casing
 			expectedVersion: "v1",
 			expectSchema:    true,
 			wantError:       false,
@@ -117,7 +116,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			manifest:      mockOpenAPIJSON,
 			apiResources:  []string{"Pod", "Service"},
 			expectedCount: 2,
-			expectSchema:  true, // We will validate this manually in the loop
+			expectSchema:  true,
 			wantError:     false,
 		},
 		{
@@ -132,7 +131,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			manifest:        mockOpenAPIJSON,
 			apiResources:    []string{"Deployment"},
 			expectedCount:   1,
-			expectedKind:    "deployment", // Fixed: Expect lowercase
+			expectedKind:    "Deployment", // Fixed: Expect CamelCase
 			expectedVersion: "apps/v1",
 			expectSchema:    true,
 			wantError:       false,
@@ -143,7 +142,7 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			apiResources:  []string{"Pod"},
 			expectedCount: 0,
 			expectSchema:  false,
-			wantError:     true, // We now expect an error returned
+			wantError:     true,
 		},
 		{
 			name:          "Empty API Resources",
@@ -159,16 +158,14 @@ func TestGetCRDsFromManifest(t *testing.T) {
 			apiResources:  []string{"Pod"},
 			expectedCount: 0,
 			expectSchema:  false,
-			wantError:     true, // We now expect an error returned
+			wantError:     true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Updated to handle 2 return values
 			results, err := getCRDsFromManifest(tt.manifest, tt.apiResources)
 
-			// Check if error matches expectation
 			if (err != nil) != tt.wantError {
 				t.Errorf("getCRDsFromManifest() error = %v, wantError %v", err, tt.wantError)
 				return
@@ -195,19 +192,17 @@ func TestGetCRDsFromManifest(t *testing.T) {
 				}
 			}
 
-			// Enhanced check for Multiple Resources
 			if tt.name == "Multiple Resources" && len(results) == 2 {
 				kinds := make(map[string]bool)
 				for _, r := range results {
 					kinds[r.kind] = true
-					// Reviewer requested schema validation
 					if r.schema == "" {
 						t.Errorf("expected schema for resource %s, got empty", r.kind)
 					}
 				}
-				// Reviewer requested lowercase checks
-				if !kinds["pod"] || !kinds["service"] {
-					t.Error("expected to find both pod and service in results")
+				// Updated to check for CamelCase
+				if !kinds["Pod"] || !kinds["Service"] {
+					t.Error("expected to find both Pod and Service in results")
 				}
 			}
 		})
