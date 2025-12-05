@@ -3,6 +3,7 @@ package utils
 import (
 	"os/exec"
 	"sync"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -20,6 +21,12 @@ func DockerComposeCmd(args ...string) *exec.Cmd {
 	if useDockerComposeV2 {
 		return exec.Command("docker", append([]string{"compose"}, args...)...)
 	}
-	//else v1
-    return exec.Command("docker-compose", args...)
+
+	// Check if v1 is available
+	if exec.Command("docker-compose", "version").Run() == nil {
+		log.Fatal("Docker Compose v1 detected. Meshery requires Docker Compose v2. Please upgrade: https://docs.docker.com/compose/install/")
+	}
+
+	// Neither v1 nor v2 available
+	return exec.Command("docker-compose", args...)
 }
