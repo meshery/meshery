@@ -248,14 +248,17 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 		return nil, ErrPraseUnverified(err)
 	}
 
-	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
-	// we should rather configure hydra auth server to remove nbf field in the token
-	_, ok := jtk["exp"]
-	if ok {
-		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix()  > exp {
+	// Validate token expiration
+	// For security, we should enforce token expiration even if exp claim is missing
+	expValue, hasExp := jtk["exp"]
+	if hasExp {
+		exp := int64(expValue.(float64))
+		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
+	} else {
+		// Log warning if token has no expiration (security best practice)
+		l.Log.Warn("Token has no expiration claim - infinite lifetime tokens should be avoided")
 	}
 
 	keyJSON, err := l.GetJWK(kid)
@@ -268,7 +271,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	}
 
 	// Verifies the signature
-tokenParser := jwt.NewParser()
+	tokenParser := jwt.NewParser()
 	token, err := tokenParser.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
@@ -362,6 +365,8 @@ func setCookie(w http.ResponseWriter, name, value string, duration time.Duration
 		Value:    value,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,                      // Prevent transmission over HTTP
+		SameSite: http.SameSiteStrictMode,   // Prevent CSRF attacks
 		Expires:  time.Now().Add(duration),
 	})
 }
@@ -369,8 +374,11 @@ func setCookie(w http.ResponseWriter, name, value string, duration time.Duration
 func unsetCookie(w http.ResponseWriter, name string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     name,
+		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,                      // Prevent transmission over HTTP
+		SameSite: http.SameSiteStrictMode,   // Prevent CSRF attacks
 		MaxAge:   -1,
 	})
 }
