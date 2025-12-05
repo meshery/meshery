@@ -329,12 +329,80 @@ mesheryctl system config minikube
 	},
 }
 
+var okeConfigCmd = &cobra.Command{
+	Use:   "oke",
+	Short: "Configure Meshery to use OKE cluster",
+	Long:  `Configure Meshery to connect to OKE cluster`,
+	Example: `
+// Configure Meshery to connect to OKE cluster using auth token
+mesheryctl system config oke --token auth.json
+
+// Configure Meshery to connect to OKE cluster (if session is logged in using login subcommand)
+mesheryctl system config oke
+	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		okeCheck := exec.Command("oci", "--version")
+		okeCheck.Stdout = os.Stdout
+		okeCheck.Stderr = os.Stderr
+		err := okeCheck.Run()
+		if err != nil {
+			log.Fatalf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm ")
+		}
+		log.Info("Configuring Meshery to access OKE...")
+		var clusterId, region string
+
+		// Prompt user for OKE cluster id
+		log.Info("Please enter the cluster id:")
+		_, err = fmt.Scanf("%s", &clusterId)
+		if err != nil {
+			log.Warnf("Error reading cluster id: %s", err.Error())
+			log.Info("Let's try again. Please enter the cluster id:")
+			_, err = fmt.Scanf("%s", &clusterId)
+			if err != nil {
+				log.Fatalf("Error reading cluster id: %s", err.Error())
+			}
+		}
+
+		// Prompt user for OKE cluster region
+		log.Info("Please enter the cluster region (press Enter to skip):")
+		_, err = fmt.Scanf("%s", &region)
+		if err != nil {
+			log.Info("No region provided. Proceeding without region...")
+		}
+
+		// Build the oci CLI syntax to fetch cluster config in kubeconfig.yaml file
+		okeCmd := exec.Command("oci", "ce", "cluster", "create-kubeconfig", "--cluster-id", clusterId, "--overwrite", "--file", utils.ConfigPath)
+		if region != "" {
+			okeCmd.Args = append(okeCmd.Args, "--region", region)
+		}
+		okeCmd.Stdout = os.Stdout
+		okeCmd.Stderr = os.Stderr
+		// Write OKE compatible config to the filesystem
+		err = okeCmd.Run()
+		if err != nil {
+			log.Fatalf("Error generating kubeconfig: %s", err.Error())
+			return err
+		}
+		log.Debugf("OKE configuration is written to: %s", utils.ConfigPath)
+
+		// set the token in the chosen context
+		setToken()
+		return nil
+	},
+}
+
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
+		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube|oke]
 Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
@@ -347,7 +415,7 @@ Description: Configure the Kubernetes cluster used by Meshery.`
 	},
 	Example: `
 // Set configuration according to k8s cluster
-mesheryctl system config [aks|eks|gke|minikube]
+mesheryctl system config [aks|eks|gke|minikube|oke]
 
 // Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
 mesheryctl system config --token "~/Downloads/auth.json"
@@ -367,12 +435,14 @@ func init() {
 		eksConfigCmd,
 		gkeConfigCmd,
 		minikubeConfigCmd,
+		okeConfigCmd,
 	}
 
 	aksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	eksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	gkeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	minikubeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	okeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 
 	configCmd.AddCommand(availableSubcommands...)
 }
