@@ -184,7 +184,7 @@ jobs:
               // Don't fail the workflow if approval fails, still try to merge
             }
 
-      # Merge the PR using squash merge
+      # Merge the PR using merge commit
       - name: 🚀 Auto-Merge PR
         if: steps.validate.outputs.is_valid == 'true'
         uses: actions/github-script@v8
