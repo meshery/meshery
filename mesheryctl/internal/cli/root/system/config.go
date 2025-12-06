@@ -341,7 +341,6 @@ mesheryctl system config oke
 
 // Optionally, use a specific Meshery API token other than the token specified in your current context.
 mesheryctl system config oke --token auth.json
-mesheryctl system config oke
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) >= 1 {
