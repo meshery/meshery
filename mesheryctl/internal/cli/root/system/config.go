@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"bufio"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 
