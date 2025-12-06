@@ -120,25 +120,25 @@ var linkDocCheck = map[string]string{
 
 var checkCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Meshery environment check",
+	Short: "Pre-deployment and post-deployment healthchecks for Meshery",
 	Long:  `Verify environment pre/post-deployment of Meshery.`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
-// Run system checks for both pre and post mesh deployment scenarios on Meshery
+// Run all system checks for both pre and post-deployment scenarios
 mesheryctl system check
 
-// Run Pre-mesh deployment checks (Docker and Kubernetes)
+// Run pre-deployment checks (Docker and Kubernetes)
 mesheryctl system check --preflight
 
-// Run Pre-mesh deployment checks (Docker and Kubernetes)
+// Run pre-deployment checks (Docker and Kubernetes)
 mesheryctl system check --pre
 
-// Run checks on specific mesh adapter
+// Run checks for all Meshery adapters
+mesheryctl system check --adapters
+
+// Run checks on a specific Meshery adapter
 mesheryctl system check --adapter meshery-istio:10000
 mesheryctl system check --adapter meshery-istio
-
-// Run checks for all the mesh adapters
-mesheryctl system check --adapters
 
 // Verify the health of Meshery Operator's deployment with MeshSync and Broker
 mesheryctl system check --operator
