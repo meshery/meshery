@@ -57,7 +57,8 @@ jobs:
       github.repository == 'meshery/meshery' &&
       (
         github.event_name == 'workflow_dispatch' ||
-        github.event.pull_request.user.login == 'copilot[bot]'
+        github.event.pull_request.user.login == 'copilot[bot]' ||
+        github.event.pull_request.user.login == 'copilot-swe-agent[bot]'
       )
 
     steps:
