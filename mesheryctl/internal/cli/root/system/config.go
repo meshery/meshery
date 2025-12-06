@@ -145,11 +145,11 @@ mesheryctl system config aks
 		var resourceGroup, aksName string
 
 		// Prompt user for Azure resource name
-		log.Info("Please enter the Azure resource group name:")
+		fmt.Print("Please enter the Azure resource group name:")
 		_, err = fmt.Scanf("%s", &resourceGroup)
 		if err != nil {
 			log.Warnf("Error reading Azure resource group name: %s", err.Error())
-			log.Info("Let's try again. Please enter the Azure resource group name:")
+			fmt.Print("Please enter the Azure resource group name:")
 			_, err = fmt.Scanf("%s", &resourceGroup)
 			if err != nil {
 				log.Fatalf("Error reading Azure resource group name: %s", err.Error())
@@ -157,11 +157,11 @@ mesheryctl system config aks
 		}
 
 		// Prompt user for AKS cluster name
-		log.Info("Please enter the AKS cluster name:")
+		fmt.Print("Please enter the AKS cluster name:")
 		_, err = fmt.Scanf("%s", &aksName)
 		if err != nil {
 			log.Warnf("Error reading AKS cluster name: %s", err.Error())
-			log.Info("Let's try again. Please enter the AKS cluster name:")
+			fmt.Print("Please enter the AKS cluster name:")
 			_, err = fmt.Scanf("%s", &aksName)
 			if err != nil {
 				log.Fatalf("Error reading AKS cluster name: %s", err.Error())
@@ -215,11 +215,11 @@ mesheryctl system config eks
 		var regionName, clusterName string
 
 		// Prompt user for AWS region name
-		log.Info("Please enter the AWS region name:")
+		fmt.Print("Please enter the AWS region name:")
 		_, err = fmt.Scanf("%s", &regionName)
 		if err != nil {
 			log.Warnf("Error reading AWS region name: %s", err.Error())
-			log.Info("Let's try again. Please enter the AWS region name:")
+			fmt.Print("Please enter the AWS region name:")
 			_, err = fmt.Scanf("%s", &regionName)
 			if err != nil {
 				log.Fatalf("Error reading AWS region name: %s", err.Error())
@@ -227,11 +227,11 @@ mesheryctl system config eks
 		}
 
 		// Prompt user for AWS cluster name
-		log.Info("Please enter the AWS cluster name:")
+		fmt.Print("Please enter the AWS cluster name:")
 		_, err = fmt.Scanf("%s", &clusterName)
 		if err != nil {
 			log.Warnf("Error reading AWS cluster name: %s", err.Error())
-			log.Info("Let's try again. Please enter the AWS cluster name:")
+			fmt.Print("Please enter the AWS cluster name:")
 			_, err = fmt.Scanf("%s", &clusterName)
 			if err != nil {
 				log.Fatalf("Error reading AWS cluster name: %s", err.Error())
@@ -358,11 +358,11 @@ mesheryctl system config oke
 		var clusterId, region string
 
 		// Prompt user for OKE cluster id
-		fmt.Print("Please enter the cluster id: ")
+		fmt.Print("Please enter the cluster id:")
 		_, err = fmt.Scanf("%s", &clusterId)
 		if err != nil {
 			log.Warnf("Error reading cluster id: %s", err.Error())
-			fmt.Print("Please enter the cluster id: ")
+			fmt.Print("Please enter the cluster id:")
 			_, err = fmt.Scanf("%s", &clusterId)
 			if err != nil {
 				log.Fatalf("Error reading cluster id: %s", err.Error())
@@ -370,7 +370,7 @@ mesheryctl system config oke
 		}
 
 		// Prompt user for OKE cluster region
-		fmt.Print("Please enter the cluster region (press Enter to skip): ")
+		fmt.Print("Please enter the cluster region (press Enter to skip):")
 		_, err = fmt.Scanf("%s", &region)
 		if err != nil {
 			log.Info("No region provided. Proceeding without region...")
