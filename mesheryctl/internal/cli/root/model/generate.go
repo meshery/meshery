@@ -2,11 +2,18 @@ package model
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
+	pathpkg "path"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -64,23 +71,59 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 		isUrl := utils.IsValidUrl(path)
 
 		register, _ := cmd.Flags().GetBool("register")
+		template, _ := cmd.Flags().GetString("template")
 
 		// Path is a url
 		if isUrl {
-			template, _ := cmd.Flags().GetString("template")
-			if template == "" {
-				return ErrTemplateFileNotPresent()
+			// If template is provided, use URL model generator (existing behavior)
+			if template != "" {
+				urlModelGenerator := &UrlModelGenerator{
+					TemplateFile: template,
+					Url:          path,
+					SkipRegister: register,
+				}
+				return urlModelGenerator.Generate()
 			}
 
-			urlModelGenerator := &UrlModelGenerator{
-				TemplateFile: template,
-				Url:          path,
-				SkipRegister: register,
+			// Otherwise, download URL content and treat as CSV
+			utils.Log.Info("Downloading file from URL: ", path)
+
+			// Create temporary directory
+			tempDir, err := os.MkdirTemp("", "mesheryctl-model-")
+			if err != nil {
+				return fmt.Errorf("failed to create temporary directory: %w", err)
 			}
-			return urlModelGenerator.Generate()
+			defer os.RemoveAll(tempDir) // Clean up temp directory
+
+			// Determine filename from URL
+			u, err := url.Parse(path)
+			if err != nil {
+				return fmt.Errorf("failed to parse URL %q: %w", path, err)
+			}
+
+			filename := pathpkg.Base(u.Path)
+			if filename == "." || filename == "/" || filename == "" {
+				filename = "model.csv"
+			}
+			tempFilePath := filepath.Join(tempDir, filename)
+
+			// Download the file using simple HTTP GET
+			err = downloadFileSimple(tempFilePath, path)
+			if err != nil {
+				// Try meshkit utils as fallback
+				err = meshkitutils.DownloadFile(tempFilePath, path)
+				if err != nil {
+					return fmt.Errorf("failed to download file from URL: %w", err)
+				}
+			}
+
+			utils.Log.Info("Downloaded file to: ", tempFilePath)
+
+			// Use the downloaded file path for CSV processing
+			path = tempFilePath
 		}
 
-		// Path is a file or directory
+		// Path is a file or directory (including downloaded URL content)
 		err := meshkitRegistryUtils.SetLogger(true)
 		if err != nil {
 			utils.Log.Info("Error setting logger: ", err)
@@ -165,6 +208,35 @@ func (c *CsvModelGenerator) Generate() error {
 
 	locationForLogs := utils.MesheryFolder + "/logs/registry"
 	utils.Log.Info("Logs for the csv generation can be accessed ", locationForLogs)
+
+	return nil
+}
+
+// downloadFileSimple downloads a file from a URL using standard HTTP GET
+func downloadFileSimple(filepath string, urlStr string) error {
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	resp, err := client.Get(urlStr)
+	if err != nil {
+		return fmt.Errorf("http GET request to %s failed: %w", urlStr, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("bad http status for %s: %s", urlStr, resp.Status)
+	}
+
+	out, err := os.Create(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", filepath, err)
+	}
+	defer out.Close()
+
+	if _, err = io.Copy(out, resp.Body); err != nil {
+		return fmt.Errorf("failed to write to file %s: %w", filepath, err)
+	}
 
 	return nil
 }
