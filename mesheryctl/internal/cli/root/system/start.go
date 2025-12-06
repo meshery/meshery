@@ -19,7 +19,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"strconv"
 	"strings"
@@ -344,7 +343,7 @@ func start() error {
 		// }
 
 		log.Info("Starting Meshery...")
-		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
+		start := utils.DockerComposeCommand("-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
 		start.Stderr = os.Stderr
 
@@ -381,9 +380,11 @@ func start() error {
 			return errors.New("the endpoint is not accessible")
 		}
 
-		//check for container meshery_meshery_1 running status
+		//check for container meshery_meshery_1 (v1) or meshery-meshery-1 (v2) running status
 		for _, container := range containers {
-			if container.Names[0] == "/meshery_meshery_1" {
+			// Docker Compose v1 uses underscores: meshery_meshery_1
+			// Docker Compose v2 uses hyphens: meshery-meshery-1
+			if container.Names[0] == "/meshery-meshery-1" {
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
@@ -396,7 +397,7 @@ func start() error {
 		//code for logs
 		if checkFlag == 1 {
 			log.Info("Starting Meshery logging . . .")
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+			cmdlog := utils.DockerComposeCommand("-f", utils.DockerComposeFile, "logs", "-f")
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
