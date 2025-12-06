@@ -127,7 +127,7 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 			}
 		}
 
-		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelNames, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)
@@ -155,7 +155,7 @@ func init() {
 
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
-	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
+generateCmd.PersistentFlags().StringSliceVarP(&modelNames, "model", "m", []string{}, "comma-separated list of models to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
