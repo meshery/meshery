@@ -371,8 +371,14 @@ mesheryctl system config oke
 
 		// Prompt user for OKE cluster region
 		fmt.Print("Please enter the cluster region (press Enter to skip):")
-		_, err = fmt.Scanf("%s", &region)
-		if err != nil {
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			region = strings.TrimSpace(scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			log.Warnf("could not read region: %v", err)
+		}
+		if region == "" {
 			log.Info("No region provided. Proceeding without region...")
 		}
 
