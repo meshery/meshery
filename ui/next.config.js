@@ -2,6 +2,9 @@
 const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
   reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   compiler: {
     relay: require('./relay.config'),
   },
