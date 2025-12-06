@@ -358,11 +358,11 @@ mesheryctl system config oke
 		var clusterId, region string
 
 		// Prompt user for OKE cluster id
-		log.Info("Please enter the cluster id:")
+		fmt.Print("Please enter the cluster id: ")
 		_, err = fmt.Scanf("%s", &clusterId)
 		if err != nil {
 			log.Warnf("Error reading cluster id: %s", err.Error())
-			log.Info("Let's try again. Please enter the cluster id:")
+			fmt.Print("Please enter the cluster id: ")
 			_, err = fmt.Scanf("%s", &clusterId)
 			if err != nil {
 				log.Fatalf("Error reading cluster id: %s", err.Error())
@@ -370,7 +370,7 @@ mesheryctl system config oke
 		}
 
 		// Prompt user for OKE cluster region
-		log.Info("Please enter the cluster region (press Enter to skip):")
+		fmt.Print("Please enter the cluster region (press Enter to skip): ")
 		_, err = fmt.Scanf("%s", &region)
 		if err != nil {
 			log.Info("No region provided. Proceeding without region...")
