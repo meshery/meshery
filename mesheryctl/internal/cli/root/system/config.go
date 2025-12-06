@@ -334,7 +334,7 @@ mesheryctl system config minikube
 var okeConfigCmd = &cobra.Command{
 	Use:   "oke",
 	Short: "Prepare a kubeconfig for Meshery to connect to an OKE cluster",
-	Long:  `Configure Meshery to connect to OKE cluster`,
+	Long:  `Using the Oracle Cloud Infrastructure CLI, prepare a kubeconfig for Meshery to connect to an Oracle Kubernetes Engine cluster`,
 	Example: `
 // Configure Meshery to connect to OKE cluster using auth token
 mesheryctl system config oke --token auth.json
