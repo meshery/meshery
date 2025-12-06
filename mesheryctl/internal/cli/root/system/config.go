@@ -336,10 +336,11 @@ var okeConfigCmd = &cobra.Command{
 	Short: "Prepare a kubeconfig for Meshery to connect to an OKE cluster",
 	Long:  `Using the Oracle Cloud Infrastructure CLI, prepare a kubeconfig for Meshery to connect to an Oracle Kubernetes Engine cluster`,
 	Example: `
-// Configure Meshery to connect to OKE cluster using auth token
-mesheryctl system config oke --token auth.json
+// Prepare a kubeconfig for Meshery to create a connection to an Oracle Kubernetes Engine (OKE) cluster.
+mesheryctl system config oke
 
-// Configure Meshery to connect to OKE cluster (if session is logged in using login subcommand)
+// Optionally, use a specific Meshery API token other than the token specified in your current context.
+mesheryctl system config oke --token auth.json
 mesheryctl system config oke
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
