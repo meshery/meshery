@@ -46,7 +46,11 @@ components:
   colorIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/color/service-bgp-status-color.svg
   whiteIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/white/service-bgp-status-white.svg
   description: 
-components-count: 9
+- name: configuration-state
+  colorIcon: assets/img/integrations/metallb/components/configuration-state/icons/color/configuration-state-color.svg
+  whiteIcon: assets/img/integrations/metallb/components/configuration-state/icons/white/configuration-state-white.svg
+  description: 
+components-count: 10
 relationships: 
 relationship-count: 0
 featureList: [
