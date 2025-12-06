@@ -295,7 +295,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	}
 
 	//Check for installed docker-compose (v1) or docker compose (v2) on client system
-	err = utils.DockerComposeCmd("version").Run()
+	err = utils.DockerComposeCommand("version").Run()
 	if err != nil {
 		if hc.Options.IsPreRunE || hc.Options.PrintLogs {
 			log.Warn("!! Docker Compose is not available")

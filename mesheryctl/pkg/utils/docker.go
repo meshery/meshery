@@ -11,7 +11,7 @@ var (
 	useDockerComposeV2 bool
 )
 
-func DockerComposeCmd(args ...string) *exec.Cmd {
+func DockerComposeCommand(args ...string) *exec.Cmd {
 	dockerComposeCheck.Do(func() {
 		// Try v2 first
 		cmd := exec.Command("docker", "compose", "version")
@@ -34,5 +34,6 @@ func DockerComposeCmd(args ...string) *exec.Cmd {
 	}
 
 	// Should never reach here due to log.Fatal above
-	return exec.Command("docker", append([]string{"compose"}, args...)...)
+	log.Fatal("Docker Compose not found.")
+	return nil
 }

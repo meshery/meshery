@@ -125,7 +125,7 @@ func stop() error {
 		log.Info("Stopping Meshery resources...")
 
 		// Stop all Docker containers
-		stop := utils.DockerComposeCmd( "-f", utils.DockerComposeFile, "stop")
+		stop := utils.DockerComposeCommand( "-f", utils.DockerComposeFile, "stop")
 		stop.Stdout = os.Stdout
 		stop.Stderr = os.Stderr
 
@@ -134,7 +134,7 @@ func stop() error {
 		}
 
 		// Remove all Docker containers
-		stop = utils.DockerComposeCmd( "-f", utils.DockerComposeFile, "rm", "-f")
+		stop = utils.DockerComposeCommand( "-f", utils.DockerComposeFile, "rm", "-f")
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
