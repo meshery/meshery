@@ -93,6 +93,12 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
     setSelectedFilters(defaultFilters);
   }, [defaultFilters.length]);
 
+  useEffect(() => {
+    if (defaultFilters && defaultFilters.length > 0) {
+      handleFilter(transformData(defaultFilters));
+    }
+  }, []);
+
   const getOptions = () => {
     if (inputValue.includes(':')) {
       const [filterTypeInput, searchValue = ''] = inputValue.split(':');
@@ -313,3 +319,5 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
 };
 
 export default TypingFilter;
+
+
