@@ -382,8 +382,6 @@ func start() error {
 
 		//check for container meshery_meshery_1 (v1) or meshery-meshery-1 (v2) running status
 		for _, container := range containers {
-			// Docker Compose v1 uses underscores: meshery_meshery_1
-			// Docker Compose v2 uses hyphens: meshery-meshery-1
 			if container.Names[0] == "/meshery-meshery-1" {
 				//check flag to check successful deployment
 				checkFlag = 0
