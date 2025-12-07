@@ -50,7 +50,11 @@ components:
   colorIcon: assets/img/integrations/metallb/components/configuration-state/icons/color/configuration-state-color.svg
   whiteIcon: assets/img/integrations/metallb/components/configuration-state/icons/white/configuration-state-white.svg
   description: 
-components-count: 10
+- name: configuration-state
+  colorIcon: assets/img/integrations/metallb/components/configuration-state/icons/color/configuration-state-color.svg
+  whiteIcon: assets/img/integrations/metallb/components/configuration-state/icons/white/configuration-state-white.svg
+  description: 
+components-count: 11
 relationships: 
 relationship-count: 0
 featureList: [
