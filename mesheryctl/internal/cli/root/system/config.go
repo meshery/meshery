@@ -350,8 +350,6 @@ mesheryctl system config oke --token auth.json
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		okeCheck := exec.Command("oci", "--version")
-		okeCheck.Stdout = os.Stdout
-		okeCheck.Stderr = os.Stderr
 		err := okeCheck.Run()
 		if err != nil {
 			log.Fatalf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm ")
