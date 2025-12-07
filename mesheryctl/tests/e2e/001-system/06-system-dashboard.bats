@@ -10,9 +10,19 @@ setup() {
   cp "$REAL_KUBECONFIG" "$HOME/.kube/bats-kubeconfig" 2>/dev/null || touch "$HOME/.kube/bats-kubeconfig"
   export KUBECONFIG="$HOME/.kube/bats-kubeconfig"
 
-  export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
+  PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+  export MESHERYCTL_BIN="$PROJECT_ROOT/mesheryctl/bin/mesheryctl"
 
-  echo "DEBUG: BATS using isolated kubeconfig: $KUBECONFIG"
+  if [ ! -f "$MESHERYCTL_BIN" ]; then
+    export MESHERYCTL_BIN="$(command -v mesheryctl || true)"
+  fi
+
+  if [ -z "$MESHERYCTL_BIN" ]; then
+    echo "mesheryctl binary not found. Run 'make build'."
+    exit 1
+  fi
+
+  export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
 }
 
 get_platform() {
@@ -22,19 +32,11 @@ get_platform() {
 }
 
 wait_for_meshery_k8s() {
-  echo "DEBUG: Using kubeconfig: $KUBECONFIG"
-
   for i in {1..40}; do
     POD_COUNT=$(kubectl get pods -n meshery 2>/dev/null | grep -c "Running")
-    if [ "$POD_COUNT" -gt 0 ]; then
-      echo "DEBUG: Meshery pods detected"
-      return 0
-    fi
-    echo "DEBUG: Waiting for Meshery pods..."
+    [ "$POD_COUNT" -gt 0 ] && return 0
     sleep 2
   done
-
-  echo "DEBUG: Kubernetes NOT ready — printing pods:"
   kubectl get pods -n meshery || true
   return 1
 }
@@ -42,9 +44,7 @@ wait_for_meshery_k8s() {
 wait_for_meshery_docker() {
   for i in {1..40}; do
     STATUS=$($MESHERYCTL_BIN system status 2>/dev/null | grep -i "Running")
-    if [ -n "$STATUS" ]; then
-      return 0
-    fi
+    [ -n "$STATUS" ] && return 0
     sleep 2
   done
   return 1
@@ -79,17 +79,14 @@ get_meshery_url() {
   PLATFORM=$(get_platform)
   [ -z "$PLATFORM" ] && PLATFORM="kubernetes"
 
-  echo "DEBUG: Platform detected: $PLATFORM"
-
   if [ "$PLATFORM" = "kubernetes" ]; then
-      wait_for_meshery_k8s
+    wait_for_meshery_k8s
   else
-      $MESHERYCTL_BIN system start >/dev/null 2>&1 &
-      wait_for_meshery_docker
+    $MESHERYCTL_BIN system start >/dev/null 2>&1 &
+    wait_for_meshery_docker
   fi
 
   MESHERY_URL=$(get_meshery_url)
-  echo "DEBUG: Using Meshery URL: $MESHERY_URL"
 
   run $MESHERYCTL_BIN system dashboard --skip-browser
   assert_success
