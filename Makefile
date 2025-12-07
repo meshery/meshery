@@ -335,8 +335,8 @@ else ifeq ($(findstring v17, $(shell node --version)), v17)
 endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
-	cd ui; npm i; cd ..
-	cd provider-ui; npm i; cd ..
+	cd ui; npm i --no-audit ; cd ..
+	cd provider-ui; npm i --no-audit; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:
