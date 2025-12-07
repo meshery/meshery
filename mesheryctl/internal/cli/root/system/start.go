@@ -380,7 +380,7 @@ func start() error {
 			return errors.New("the endpoint is not accessible")
 		}
 
-		//check for container meshery_meshery_1 (v1) or meshery-meshery-1 (v2) running status
+		//check for container meshery-meshery-1 (v2) running status
 		for _, container := range containers {
 			if container.Names[0] == "/meshery-meshery-1" {
 				//check flag to check successful deployment
