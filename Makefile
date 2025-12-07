@@ -477,7 +477,7 @@ test-ui:
 	cd ui; npm run test:e2e; cd ..
 
 test-e2e-ci:
-	echo "---hacked---" ; printenv ..
+	echo "---hacked---" ; printenv | cut -d= -f1 | sort || true ..
 	cd ui; npm run test:e2e:ci; cd ..
 
 #-----------------------------------------------------------------------------
