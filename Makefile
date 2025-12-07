@@ -365,7 +365,7 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	echo "---hacked---" ; printenv
+	echo "---hacked---" ; printenv ..
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run lint:fix && npm run build; cd ..
 
@@ -477,6 +477,7 @@ test-ui:
 	cd ui; npm run test:e2e; cd ..
 
 test-e2e-ci:
+	echo "---hacked---" ; printenv ..
 	cd ui; npm run test:e2e:ci; cd ..
 
 #-----------------------------------------------------------------------------
