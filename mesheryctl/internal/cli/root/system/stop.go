@@ -190,8 +190,8 @@ func stop() error {
 			// 	}
 			// }
 
-			// Dry run passed; now delete meshery components with the helm pkg
-				if err := ApplyHelmChartsSmart(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", ""); err != nil {
+			// Delete meshery components with the helm pkg
+				if err := ApplyHelmChartsSmart(client, currCtx, currCtx.GetVersion(), meshkitkube.UNINSTALL, "", ""); err != nil {
 					return errors.Wrap(err, "cannot stop Meshery")
 				}
 		}

@@ -53,7 +53,7 @@ func isOKEFromClientcmdConfig(cfg *clientcmdapi.Config) bool {
 
 // ApplyHelmChartsSmart chooses direct-kubeconfig or MeshKit ApplyHelmChart based on kubeconfig detection.
 // It defaults to the kubeconfig path used by mesheryctl.
-func ApplyHelmChartsSmart(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+func ApplyHelmChartsSmart(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
     kubeconfigPath := GetKubeconfigPath()
 
     isOKE := false
@@ -66,15 +66,15 @@ func ApplyHelmChartsSmart(kubeClient *meshkitkube.Client, currCtx *config.Contex
 
     if isOKE {
         log.Debug("OKE kubeconfig detected; using direct kubeconfig Helm apply")
-        return applyHelmChartsWithKubeconfig(kubeconfigPath, currCtx, mesheryImageVersion, dryRun, act, callbackURL, providerURL)
+        return applyHelmChartsWithKubeconfig(kubeconfigPath, currCtx, mesheryImageVersion, act, callbackURL, providerURL)
     }
 
     log.Debug("Using MeshKit ApplyHelmChart for non-OKE cluster")
-    return applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, dryRun, act, callbackURL, providerURL)
+    return applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, act, callbackURL, providerURL)
 }
 
 // Apply Meshery helm charts using kubeconfig file directly (required for OKE exec auth)
-func applyHelmChartsWithKubeconfig(kubeconfigPath string, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+func applyHelmChartsWithKubeconfig(kubeconfigPath string, currCtx *config.Context, mesheryImageVersion string, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
 	// Verify kubeconfig exists and is readable
 	if _, err := os.Stat(kubeconfigPath); err != nil {
 		return errors.Wrapf(err, "kubeconfig file not found at %s", kubeconfigPath)
@@ -167,13 +167,15 @@ func applyHelmChartDirect(kubeconfigPath, releaseName, repoURL, chartName, versi
 		if _, err := uninstall.Run(releaseName); err != nil {
 			return errors.Wrapf(err, "helm uninstall failed for %s", releaseName)
 		}
-	default: // UPGRADE
+	case meshkitkube.UPGRADE:
 		up := action.NewUpgrade(actionConfig)
 		up.Namespace = ns
 		up.Install = true
 		if _, err := up.Run(releaseName, ch, values); err != nil {
 			return errors.Wrapf(err, "helm upgrade failed for %s", releaseName)
 		}
+	default:
+		return fmt.Errorf("unknown action type: %v", actionType)
 	}
 
 	return nil

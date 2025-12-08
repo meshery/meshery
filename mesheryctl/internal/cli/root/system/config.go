@@ -36,10 +36,28 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
-	var (
-		okeRegionFlag string
-		okeClusterIDFlag string
-	)
+var (
+	okeRegionFlag    string
+	okeClusterIDFlag string
+)
+
+// promptUserInput prompts the user for input with retry logic
+func promptUserInput(prompt string) (string, error) {
+	var input string
+	for {
+		fmt.Print(prompt)
+		_, err := fmt.Scanf("%s", &input)
+		if err == nil && input != "" {
+			return input, nil
+		}
+		if err != nil {
+			log.Warnf("Error reading input: %s", err.Error())
+		} else {
+			log.Warn("Input cannot be empty")
+		}
+		fmt.Print("Let's try again. ")
+	}
+}
 
 func getContexts(configFile string) ([]string, error) {
 
@@ -185,8 +203,10 @@ mesheryctl system config aks
 		}
 		log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -255,8 +275,10 @@ mesheryctl system config eks
 		}
 		log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -288,8 +310,10 @@ mesheryctl system config gke
 		}
 		log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -328,8 +352,10 @@ mesheryctl system config minikube
 
 		log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -358,13 +384,21 @@ mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoeni
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Check if OCI CLI is installed
 		okeCheck := exec.Command("oci", "--version")
-		okeCheck.Stdout = os.Stdout
-		okeCheck.Stderr = os.Stderr
 		err := okeCheck.Run()
 		if err != nil {
-			log.Fatalf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm ")
+			return fmt.Errorf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm")
 		}
+
+		// Check if OCI CLI is configured
+		configCheck := exec.Command("oci", "iam", "region", "list", "--output", "table")
+		if err := configCheck.Run(); err != nil {
+			log.Warn("OCI CLI may not be configured properly.")
+			log.Info("Please run 'oci setup config' to configure OCI CLI before proceeding.")
+			log.Info("See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm")
+		}
+
 		log.Info("Configuring Meshery to access OKE...")
 		var regionName, clusterID string
 
@@ -374,29 +408,17 @@ mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoeni
 
 		// Prompt user for OCI region name if not provided via flag
 		if regionName == "" {
-			fmt.Print("Please enter the OCI region name: ")
-			_, err = fmt.Scanf("%s", &regionName)
+			regionName, err = promptUserInput("Please enter the OCI region name: ")
 			if err != nil {
-				log.Warnf("Error reading OCI region name: %s", err.Error())
-				fmt.Print("Let's try again. Please enter the OCI region name: ")
-				_, err = fmt.Scanf("%s", &regionName)
-				if err != nil {
-					log.Fatalf("Error reading OCI region name: %s", err.Error())
-				}
+				return fmt.Errorf("error reading OCI region name: %w", err)
 			}
 		}
 
 		// Prompt user for OKE cluster ID if not provided via flag
 		if clusterID == "" {
-			fmt.Print("Please enter the OKE cluster ID: ")
-			_, err = fmt.Scanf("%s", &clusterID)
+			clusterID, err = promptUserInput("Please enter the OKE cluster ID: ")
 			if err != nil {
-				log.Warnf("Error reading OKE cluster ID: %s", err.Error())
-				fmt.Print("Let's try again. Please enter the OKE cluster ID: ")
-				_, err = fmt.Scanf("%s", &clusterID)
-				if err != nil {
-					log.Fatalf("Error reading OKE cluster ID: %s", err.Error())
-				}
+				return fmt.Errorf("error reading OKE cluster ID: %w", err)
 			}
 		}
 
@@ -407,13 +429,22 @@ mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoeni
 		// Write OKE compatible config to the filesystem
 		err = okeCmd.Run()
 		if err != nil {
-			log.Fatalf("Error generating kubeconfig: %s", err.Error())
-			return err
+			return fmt.Errorf(`error generating kubeconfig: %w
+
+Possible causes:
+1. OCI CLI is not configured. Run 'oci setup config' to configure it.
+2. Invalid cluster ID or region provided.
+3. Insufficient permissions to access the cluster.
+
+For OCI CLI setup, see: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm
+For OCI CLI configuration, see: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm`, err)
 		}
 		log.Debugf("OKE configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -509,11 +540,7 @@ mesheryctl system config oke
 mesheryctl system config oke --token auth.json
 
 // Configure OKE with specific cluster and region (non-interactive)
-mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
-
-
-// Configure OKE with specific cluster and region (non-interactive)
-mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1`,
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1`,
 
 }
 
@@ -538,16 +565,17 @@ func init() {
 	configCmd.AddCommand(availableSubcommands...)
 }
 
-// Given the token path, get the context and set the token in the chosen context
-func setToken() {
+// setContextForMeshery gets available contexts and allows user to select one to set in Meshery
+func setContextForMeshery() error {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		log.Fatalf("%v", err.Error())
+		return err
 	}
 	if len(contexts) < 1 {
-		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
+		return fmt.Errorf("no contexts found")
 	}
+	
 	choosenCtx := contexts[0]
 	if len(contexts) > 1 {
 		fmt.Println("List of available contexts: ")
@@ -558,14 +586,14 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			log.Fatalf("Error reading input:  %s", err.Error())
+			return fmt.Errorf("error reading input: %s", err.Error())
+		}
+		if choice < 1 || choice > len(contexts) {
+			return fmt.Errorf("invalid choice: %d", choice)
 		}
 		choosenCtx = contexts[choice-1]
 	}
 
-	log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
-	err = setContext(utils.ConfigPath, choosenCtx)
-	if err != nil {
-		log.Fatalf("Error setting context: %s", err.Error())
-	}
+	log.Debugf("Chosen context: %s out of %d available contexts", choosenCtx, len(contexts))
+	return setContext(utils.ConfigPath, choosenCtx)
 }
