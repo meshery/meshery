@@ -505,28 +505,16 @@ mesheryctl system config minikube
 // Configure Meshery for Oracle Kubernetes Engine (interactive)
 mesheryctl system config oke
 
-// Configure OKE with authentication token (for CI/CD or automation)
-mesheryctl system config oke --token "~/Downloads/auth.json"
+// Configure OKE with authentication token
+mesheryctl system config oke --token auth.json
 
 // Configure OKE with specific cluster and region (non-interactive)
 mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
 
-// Configure OKE with custom OCI profile
-mesheryctl system config oke --profile production --region us-ashburn-1
 
-// Full OKE automation example
-mesheryctl system config oke \
-  --cluster-id ocid1.cluster.oc1.iad.xxx \
-  --region us-ashburn-1 \
-  --profile myprofile \
-  --token auth.json`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+// Configure OKE with specific cluster and region (non-interactive)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1`,
 
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\".", args[0])))
-		}
-		return nil
-	},
 }
 
 func init() {
