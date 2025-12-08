@@ -185,12 +185,23 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 	// }(mch)
 
 	// Emit success event for successful MeshSync data handler attachment
-	mch.emitEvent("MeshSync data handler successfully connected", events.Informational, map[string]any{
-		"k8sContextID":           k8scontext.ID,
-		"k8sContextName":         k8scontext.Name,
-		"connectionID":           k8scontext.ConnectionID,
-		"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
-	}, userID)
+	var description string
+	if mch.meshsyncDeploymentMode != "" {
+		description = fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode))
+	} else {
+		description = "MeshSync connected"
+	}
+	mch.emitEvent(
+		description,
+		events.Informational,
+		map[string]any{
+			"k8sContextID":           k8scontext.ID,
+			"k8sContextName":         k8scontext.Name,
+			"connectionID":           k8scontext.ConnectionID,
+			"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
+		},
+		userID,
+	)
 
 	return mch
 }
@@ -627,7 +638,6 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 // General helper method to emit events for system-level operations
 func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, userID uuid.UUID) {
 	if mch.eventBroadcaster != nil && mch.systemID != nil {
-		prefixedDescription := fmt.Sprintf("MesheryControllersHelper: %s", description)
 		event := events.NewEvent().
 			FromSystem(*mch.systemID).
 			FromUser(userID).
@@ -635,7 +645,7 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 			WithAction("update").
 			ActedUpon(userID).
 			WithSeverity(severity).
-			WithDescription(prefixedDescription).
+			WithDescription(description).
 			WithMetadata(metadata).
 			Build()
 

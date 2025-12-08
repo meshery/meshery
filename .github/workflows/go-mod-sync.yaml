@@ -20,16 +20,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: check out code for meshery
-      uses: actions/checkout@master
+      uses: actions/checkout@v6
       with:
         repository: meshery/meshery
-        token: ${{ secrets.RELEASE_NOTES_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery
     - name: Check out code for meshery-extensions
-      uses: actions/checkout@master
+      uses: actions/checkout@v6
       with:
         repository: layer5labs/meshery-extensions
-        token: ${{ secrets.RELEASE_NOTES_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery-extensions
     - name: Setup Go
       uses: actions/setup-go@master
@@ -59,7 +59,7 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Send email notification on failure
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v6
         with:
           server_address: smtp.gmail.com
           server_port: 465

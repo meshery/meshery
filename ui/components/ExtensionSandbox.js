@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import {
-  useLazyGetExtensionsByTypeQuery,
-  useLazyGetFullPageExtensionsQuery,
-} from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDrawer } from '@/store/slices/mesheryUi';
 /**
@@ -14,49 +10,6 @@ import { toggleDrawer } from '@/store/slices/mesheryUi';
  */
 function getPath() {
   return window.location.pathname;
-}
-
-/**
- * getCapabilities queries the meshery server for the current providers
- * capabilities and returns the decoded capability that mathes the
- * given type
- * @param {string} type
- * @param {Function} cb
- */
-export function getCapabilities(type, cb) {
-  const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
-  getExtensionsByType(type)
-    .unwrap()
-    .then((data) => {
-      if (typeof data !== 'undefined') {
-        cb(data);
-      }
-    })
-    .catch((err) => {
-      console.group('extension error');
-      console.error(err);
-      console.groupEnd();
-    });
-}
-
-/**
- * getFullPageExtensions queries the meshery server for the current providers
- * capabilities and returns all the extensions names and URIs having full_page type as true
- * @param {Function} cb
- */
-export function getFullPageExtensions(cb) {
-  const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
-
-  getFullPageExtensions
-    .unwrap()
-    .then((data) => {
-      cb(data);
-    })
-    .catch((err) => {
-      console.group('extension error');
-      console.error(err);
-      console.groupEnd();
-    });
 }
 
 /**

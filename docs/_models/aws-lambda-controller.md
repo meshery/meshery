@@ -46,9 +46,49 @@ components:
   colorIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/color/version-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/white/version-white.svg
   description: 
-components-count: 9
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-lambda-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-lambda-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Function and SecurityGroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship Lambda polls SQS queues as event source for message processing"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship SNS topics trigger Lambda functions for pub/sub patterns"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship EventBridge rules invoke Lambda for event-driven architectures"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between EventSourceMapping and function"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between FunctionURLConfig and function"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between function and subnet"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship Lambda processes messages from Amazon MQ brokers"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between function and CodeSigningConfig"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Version and Function. Versions reference Functions through functionName"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between LayerVersion and Function."
+- type: "non-binding"
+  kind: "edge"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 12
 featureList: [
   "Run code for virtually any type of application or backend service. ",
   "Write Lambda functions in your favorite language ",

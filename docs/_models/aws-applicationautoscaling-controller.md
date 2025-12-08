@@ -30,19 +30,23 @@ components:
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-policy/icons/color/scaling-policy-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-policy/icons/white/scaling-policy-white.svg
   description: 
-components-count: 5
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ScalableTarget and SpotFleetRequest"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and ScalableTarget"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and ScalingPolicy"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ScalingPolicy and ScalableTarget"
 relationship-count: 4
 featureList: [

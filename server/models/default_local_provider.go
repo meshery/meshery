@@ -1220,7 +1220,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					return
 				}
 
-				log.Info("seeding sample ", comp, "s")
 				var wg sync.WaitGroup
 
 				for i, file := range files {
@@ -1250,7 +1249,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 									"branch": "",
 								},
 							}
-							log.Debug("seeding "+comp+": ", pattern.Name)
 							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
 								log.Error(ErrGettingSeededComponents(err, comp+"s"))
 							}
@@ -1267,7 +1265,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				if err != nil {
 					log.Error(ErrGettingSeededComponents(err, comp))
 				} else {
-					log.Info("seeding sample ", comp, "s")
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
@@ -1283,7 +1280,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								"branch": "",
 							},
 						}
-						log.Debug("seeding "+comp+": ", name)
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))

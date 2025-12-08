@@ -50,40 +50,44 @@ components:
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
   description: 
-components-count: 10
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 11
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and VPCOrigin"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and CachePolicy"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and Distribution"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and Function"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and OriginAccessControl"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and OriginRequestPolicy"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and CachePolicy"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and Function"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and OriginAccessControl"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and OriginRequestPolicy"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between Distribution and ResponseHeadersPolicy"
 relationship-count: 11
 featureList: [

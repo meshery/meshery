@@ -75,6 +75,38 @@ Name: **“None”**
 - Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
+### Runtime Configuration Options
+
+Meshery provides runtime configuration options to control provider behavior:
+
+#### PROVIDER_CAPABILITIES_FILEPATH
+
+This environment variable allows you to specify a local file path to load provider capabilities from a static JSON file instead of fetching them from the remote provider's `/capabilities` endpoint. This is useful for:
+- Offline development and testing
+- Environments with restricted network access
+- Ensuring consistent provider capabilities across deployments
+
+Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
+
+#### SKIP_DOWNLOAD_EXTENSIONS
+
+This boolean environment variable controls whether Meshery downloads and refreshes provider extension packages. When set to `true`, Meshery will skip downloading extension packages even when new versions are available. This is particularly useful for:
+- Development environments where you want to use locally modified extensions
+- Deployments where extensions are pre-packaged or managed separately
+- Reducing startup time and network bandwidth usage
+- Preventing automatic updates to extension packages
+
+Default: `false` (extensions are downloaded/refreshed)
+
+Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
+
+**Note:** Extension downloads occur during:
+- User login (via the TokenHandler)
+- Provider capability refresh operations
+- Release channel updates
+
+When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
 ### Design Principles: Meshery Remote Provider Framework
 
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
@@ -128,6 +160,36 @@ The UserPrefs extension point expects and loads a component to be displayed into
 ### Navigator
 
 The Navigator extension point loads a set of menu items to be displayed in the menu bar on the left hand side of the Meshery UI.
+
+## Provider-Defined Redirects
+
+Remote Providers can define custom URL redirects through the `redirects` field in the capabilities response. This allows providers to dynamically control how certain URL paths are handled by the Meshery server, enabling seamless navigation experiences for users.
+
+### How Redirects Work
+
+When Meshery server receives a request for a specific URL path, it checks if the connected Remote Provider has defined a redirect for that path in its capabilities. If a matching redirect is found, the server issues an HTTP permanent redirect (308) to the target URL.
+
+### Configuring Redirects
+
+Redirects are defined as a key-value map in the provider's capabilities response, where:
+- **Key**: The source URL path to intercept (e.g., `/`)
+- **Value**: The destination URL to redirect to (e.g., `/extension/meshmap`)
+
+Example configuration in the capabilities response:
+
+{% capture code_content %}"redirects": {
+  "/": "/extension/meshmap",
+  "/dashboard": "/extension/meshmap/dashboard"
+}{% endcapture %}
+{% include code.html code=code_content %}
+
+### Use Cases
+
+1. **Default Landing Page**: Redirect users from the root path (`/`) to a custom extension page.
+2. **Custom Navigation**: Guide users to specific extension pages based on their workflow.
+3. **URL Aliasing**: Create shorter or more memorable URLs that redirect to extension endpoints.
+
+{% include alert.html type="info" title="Note" content="Redirects are evaluated before serving UI content. Only exact path matches are redirected." %}
 
 ## Capabilities Endpoint Example
 
@@ -220,6 +282,9 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
         "component": "/provider/collaborator/avatar.js"
       }
     ]
+  },
+  "redirects": {
+    "/": "/extension/meshmap"
   },
   "capabilities": [
     {

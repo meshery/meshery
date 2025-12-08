@@ -22,16 +22,20 @@ components:
   colorIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-mq-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-mq-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between broker and SecurityGroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between broker and subnet"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between broker and SecurityGroup"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and  broker "
 relationship-count: 3
 featureList: [

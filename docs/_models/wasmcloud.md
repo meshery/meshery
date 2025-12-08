@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/wasmcloud
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 components-count: 0
 relationships: 

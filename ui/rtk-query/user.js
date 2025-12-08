@@ -327,6 +327,7 @@ export const useGetSelectedOrganization = () => {
 
   return {
     selectedOrganization,
+    allOrganizations: allOrgs?.organizations || [],
     didFallback: !existingSelectedOrganization,
     isLoading: isLoadingUserPrefs || isLoadingAllOrgs,
     isError: errorLoadingUserPrefs || errorLoadingAllOrgs,
@@ -368,27 +369,6 @@ export const useGetSelectedWorkspace = () => {
   const selectedWorkspace = existingSelectedWorkspace ?? workspacesData?.workspaces?.[0];
 
   const didFallback = !existingSelectedWorkspace;
-
-  // Update the selected workspace in user preferences if it was not set before
-  // useEffect(() => {
-  //   if (!isLoadingPrefs && didFallback && selectedWorkspaceID) {
-  //     console.log(
-  //       '[getCurrentWorkspace] setting default workspace',
-  //       selectedWorkspaceID,
-  //       selectedOrganization?.id,
-  //     );
-  //     updateSelectedWorkspace({
-  //       orgId: selectedOrganization?.id,
-  //       workspaceId: selectedWorkspaceID,
-  //     });
-  //   }
-  // }, [
-  //   isLoadingPrefs,
-  //   didFallback,
-  //   selectedOrganization?.id,
-  //   selectedWorkspaceID,
-  //   updateSelectedWorkspace,
-  // ]);
 
   return {
     selectedWorkspace,

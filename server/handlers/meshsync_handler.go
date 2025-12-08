@@ -344,11 +344,20 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	if asDesign {
 		rawDesign := ConvertToPatternFile(resources, true) // strip schema
-		resources = []model.KubernetesResource{}           // clear resources to save memory
+
+		rawDesign.Preferences = &pattern.DesignPreferences{
+			Layers: map[string]interface{}{
+				"relationships": map[string]interface{}{
+					"hierarchical-sibling-matchlabels": false,
+				},
+			},
+		}
+
+		resources = []model.KubernetesResource{} // clear resources to save memory
 		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
 		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
 			Design: rawDesign,
-		})
+		}, 1)
 
 		if error != nil {
 			design = rawDesign

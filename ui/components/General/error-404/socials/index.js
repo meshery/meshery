@@ -37,9 +37,9 @@ export default function Socials() {
         <Tooltip
           TransitionComponent={Fade}
           TransitionProps={{ timeout: 600 }}
-          title="Follow Meshery on Twitter"
+          title="Follow Meshery on X"
         >
-          <a href="https://twitter.com/mesheryio">
+          <a href="https://x.com/mesheryio">
             <TwitterIcon height={40} width={40} />
           </a>
         </Tooltip>

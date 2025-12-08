@@ -8,36 +8,30 @@ language: en
 list: include
 ---
 
-Meshery UI has a number of extension points that allow users to customize their experience with third-party plugins.
+Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.
 
-## Designing Custom Components for Meshery Extension Point
+### Extensibility: Customizing Text-based Forms using RJSF Custom Component
 
-The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called Kanvas.
-Meshery can provide the extension point in various ways by providing the feature of custom-components. One of the example where these custom components are used is RJSF forms in meshery-extension
-
-### Extensibility: RJSF Custom Component
-
-RJSFWrapperComponent are the customizations done on RJSF forms overriding the default behaviour of meshery-ui rjsf forms.
-The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) under these component to receive the custom-props from Meshery-extension.
-{% capture code_content %} <RJSFWrapperComponent {...props}>
-<RJSFForm
-isLoading={isLoading}
-schema={schema}
-data={data}
-onChange={(e) => {
-setData(e.formData)
-}}
-jsonSchema={jsonSchema}
-/>
-</RJSFWrapperComponent>{% endcapture %}
+RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) in this component to receive custom props from a Meshery extension.
+{% capture code_content %}
+<RJSFWrapperComponent {...props}>
+  <RJSFForm
+    isLoading={isLoading}
+    schema={schema}
+    data={data}
+    onChange={(e) => {
+      setData(e.formData)
+    }}
+    jsonSchema={jsonSchema}
+  />
+</RJSFWrapperComponent>
+{% endcapture %}
 {% include code.html code=code_content %}
-These props are received in the RJSF forms like this: [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
+See this [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91) as an example of how these properties are received.
 
 ### Extensibility: User Accounts
 
-Meshery leverages remote providers for identity management. These providers can implement user_account extensions to handle custom user management scenarios.
-
-The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
+Meshery Server uses [Providers](/extensibility/providers) for identity management. Providers can implement the `user_account` extension to handle custom user management scenarios. The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
 
 
 ###  Build-Time UI Extensibility
@@ -79,6 +73,32 @@ To customize the Meshery UI:
 1. Modify the configuration options according to your requirements.
 1. Rebuild the Meshery application to apply your changes.
 
+### Loading Screen Message Persistence
+
+Meshery UI displays a randomly selected loading message while the application and extensions load. To ensure a consistent user experience, the same loading message is displayed across all loading screens (main UI and extensions) during a single session.
+
+#### How It Works
+
+The loading message is selected once and stored in the browser's `window` object (`window.__mesheryLoadingMessage`). All subsequent loading screens retrieve this persisted message, preventing jarring re-renders with different messages.
+
+#### Using the Persisted Loading Message in UI Plugins
+
+**No changes needed** for plugins that:
+- Use `DynamicFullScrrenLoader` (already imports `randomLoadingMessage`)
+- Are loaded through the main Meshery UI framework
+
+**For standalone loaders**, import the persisted message:
+
+```javascript
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+// or
+import { getPersistedLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+
+// Then use in your loading component:
+<LoadingScreen message={randomLoadingMessage} />
+```
+
+The `randomLoadingMessage` export automatically retrieves the persisted value from `window.__mesheryLoadingMessage`, ensuring consistency across all loaders in your plugin.
 
 #### Passing new custom prop to forms:
 

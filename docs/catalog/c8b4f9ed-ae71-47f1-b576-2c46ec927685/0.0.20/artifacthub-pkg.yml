@@ -1,0 +1,24 @@
+version: 0.0.20
+name: ms-catalogs-grpc-microservice
+displayName: MS Catalogs gRPC Microservice
+createdAt: "2025-10-12T16:16:25Z"
+description: Production-ready gRPC microservice for catalog management
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c8b4f9ed-ae71-47f1-b576-2c46ec927685/0.0.20/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Resource Requirements: Minimum 2 CPU cores and 4GB RAM per replica. Requires persistent storage.\n\nDependencies: Kubernetes 1.19+, gRPC client compatibility, separate database backend configuration required.\n\nSecurity: Contains sensitive credentials in secrets. Ensure proper RBAC and consider TLS for production.\n\nScaling: HPA configured for CPU/memory scaling. Database connections may need tuning for high replica counts.\n\nProduction: Update image tags, configure monitoring, set up backups, and validate resource limits. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f5f6fccb-7c48-497d-a848-21f03d793cfa
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c8b4f9ed-ae71-47f1-b576-2c46ec927685-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c8b4f9ed-ae71-47f1-b576-2c46ec927685-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

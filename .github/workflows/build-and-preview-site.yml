@@ -5,7 +5,9 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - '!**'
+      - '!docs/meetings/**'
       - 'docs/**'
+      
 jobs:
   trigger-site-preview:
     runs-on: ubuntu-24.04

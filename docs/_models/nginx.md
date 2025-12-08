@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/nginx
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: Artifact Hub
+registrant: Github
 components: 
 components-count: 0
 relationships: 

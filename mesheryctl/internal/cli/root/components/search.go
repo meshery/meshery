@@ -16,6 +16,8 @@ package components
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -42,25 +44,28 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, args[0]))
+		componentName := strings.Join(args, " ")
+		searchValue := url.Values{}
+		searchValue.Add("search", componentName)
+		searchValue.Add("pagesize", "all")
+
+		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
 
 		if err != nil {
 			return err
 		}
 
-		header := []string{"Model", "kind", "Version"}
+		header := []string{"Name", "Model", "kind", "Version"}
 
 		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		count, _ := cmd.Flags().GetBool("count")
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "components",
 			Header:           header,
 			Rows:             rows,
 			Count:            componentsCount,
-			DisplayCountOnly: count,
-			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: false,
+			IsPage:           false,
 		}
 
 		err = display.List(dataToDisplay)

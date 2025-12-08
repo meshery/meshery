@@ -23,6 +23,7 @@ import (
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
 )
 
@@ -154,9 +155,16 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // Helper method to make design evaluation based on the relationship policies.
+// evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
+	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
+
+	// hydrate the design file components from the registry if needed
+	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
+		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
 
@@ -192,7 +200,7 @@ func (h *Handler) EvaluateDesign(
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
 
-		if doesntNeedReeval(evaluationResponse) {
+		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
 			break
 		}
@@ -205,6 +213,10 @@ func (h *Handler) EvaluateDesign(
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+
+	// dehydrate the design file components to remove unnecessary details
+	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+
 	return lastEvaluationResponse, nil
 }
 
@@ -370,7 +382,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	go func() {
 		// Evaluate specified relationship policies
 		// Perform the CPU-intensive work
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 
 		if err != nil {
 			evalErrChan <- err // Send the error

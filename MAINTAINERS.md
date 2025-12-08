@@ -35,7 +35,6 @@
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
-| [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)         | @revolyssup         | API7        |
 | [Sangram Rath](https://meshery.io/community/members/sangram-rath)          | @sangramrath        | OD10        |
 | [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit |
 

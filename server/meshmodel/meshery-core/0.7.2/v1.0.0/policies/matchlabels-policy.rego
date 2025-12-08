@@ -122,10 +122,10 @@ get_components_merged(field, value, field_pairs) := {component |
 
 
 identify_matchlabel_relationships(relationship,design_file) := identified_rels if {
-	
+
 
 	identified_rels := {new_relationship |
-		
+
 		# limit matchlabel relationships
 		identified_matchlabels := truncate_set(identify_matchlabels(design_file, relationship), MAX_MATCHLABELS)
 		some match_label in identified_matchlabels

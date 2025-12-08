@@ -11,6 +11,7 @@ const organizationsApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getOrgs: builder.query({
+        keepUnusedDataFor: 0,
         query: (queryArgs) => ({
           url: `identity/orgs`,
           params: {

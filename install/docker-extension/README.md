@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fdiscuss.meshery.io" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack"></a>
-<a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
+<a href="https://x.com/intent/follow?screen_name=mesheryio" alt="X Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
 </p>
 

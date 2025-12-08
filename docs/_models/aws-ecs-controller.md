@@ -30,13 +30,17 @@ components:
   colorIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
-components-count: 5
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-ecs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-ecs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between service and TaskDefinition"
-- type: "Parent"
-  kind: "Hierarchical"
+- type: "parent"
+  kind: "hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
 relationship-count: 2
 featureList: [

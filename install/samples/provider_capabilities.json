@@ -1,0 +1,226 @@
+{
+  "provider_type": "remote",
+  "package_version": "v0.8.157-1",
+  "package_url": "https://github.com/layer5labs/meshery-extensions-packages/releases/download/v0.8.157-1/provider-meshery.tar.gz",
+  "provider_name": "Layer5",
+  "provider_description": [
+    "User Identity with Multi-tenancy: Orgs, Teams, Users",
+    "Environments, Workspaces, and private catalogs",
+    "GitHub integration and design snapshots",
+    "Performance test profiles and result history",
+    "Learning Academy and Challenges",
+    "Free, Team, and Enterprise subscription plans"
+  ],
+  "provider_url": "https://cloud.layer5.io",
+  "extensions": {
+    "navigator": [
+      {
+        "title": "Kanvas",
+        "on_click_callback": 1,
+        "href": {
+          "uri": "/meshmap",
+          "external": false
+        },
+        "component": "/provider/navigator/meshmap/index.js?packageVersion=v0.8.157-1",
+        "icon": "/provider/navigator/img/kanvas-icon.svg",
+        "link": true,
+        "show": true,
+        "type": "full_page",
+        "allowedTo": {
+          "designer": {
+            "design": true,
+            "application": true,
+            "filter": true,
+            "save": true,
+            "new": true,
+            "saveAs": true
+          }
+        },
+        "isBeta": true
+      }
+    ],
+    "user_prefs": [
+      {
+        "component": "/provider/userpref/meshmap_userpref/index.js",
+        "type": "component"
+      }
+    ],
+    "graphql": [
+      {
+        "component": "meshmap",
+        "path": "provider/navigator/meshmap/graphql/plugin.so",
+        "type": "backend"
+      }
+    ],
+    "account": [
+      {
+        "title": "Cloud Account",
+        "on_click_callback": 1,
+        "href": {
+          "uri": "https://cloud.layer5.io/account/profile",
+          "external": true
+        },
+        "link": true,
+        "show": true,
+        "type": "full_page"
+      },
+      {
+        "title": "Cloud Catalog",
+        "on_click_callback": 1,
+        "href": {
+          "uri": "https://cloud.layer5.io/catalog",
+          "external": true
+        },
+        "link": true,
+        "show": true,
+        "type": "link"
+      },
+      {
+        "title": "Cloud Dashboard",
+        "on_click_callback": 1,
+        "href": {
+          "uri": "https://cloud.layer5.io",
+          "external": true
+        },
+        "link": true,
+        "show": true,
+        "type": "link"
+      }
+    ],
+    "collaborator": [
+      {
+        "component": "/provider/navigator/meshmap/collaboratorsPlugin.js",
+        "type": "component"
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "feature": "sync-prefs",
+      "endpoint": "/api/identity/users/preferences"
+    },
+    {
+      "feature": "persist-results",
+      "endpoint": "/api/performance/results"
+    },
+    {
+      "feature": "persist-result",
+      "endpoint": "/api/performance/results"
+    },
+    {
+      "feature": "persist-smi-results",
+      "endpoint": "/api/smi/results"
+    },
+    {
+      "feature": "persist-metrics",
+      "endpoint": "/api/performance/results/metrics"
+    },
+    {
+      "feature": "persist-events",
+      "endpoint": "/api/events"
+    },
+    {
+      "feature": "persist-smp-test-profile",
+      "endpoint": "/user/test-config"
+    },
+    {
+      "feature": "persist-performance-profiles",
+      "endpoint": "/api/performance/profiles"
+    },
+    {
+      "feature": "persist-schedules",
+      "endpoint": "/user/schedules"
+    },
+    {
+      "feature": "persist-meshery-patterns",
+      "endpoint": "/api/content/patterns"
+    },
+    {
+      "feature": "persist-meshery-filters",
+      "endpoint": "/api/content/filters"
+    },
+    {
+      "feature": "persist-meshery-applications",
+      "endpoint": "/api/content/applications"
+    },
+    {
+      "feature": "persist-meshery-pattern-resources",
+      "endpoint": "/api/content/patterns/resource"
+    },
+    {
+      "feature": "meshery-patterns-catalog",
+      "endpoint": "/api/catalog/content/pattern"
+    },
+    {
+      "feature": "meshery-filters-catalog",
+      "endpoint": "/api/catalog/content/filter"
+    },
+    {
+      "feature": "clone-meshery-patterns",
+      "endpoint": "/api/content/patterns/clone"
+    },
+    {
+      "feature": "clone-meshery-filters",
+      "endpoint": "/api/content/filters/clone"
+    },
+    {
+      "feature": "share-designs",
+      "endpoint": "/api/content/design/share"
+    },
+    {
+      "feature": "persist-connection",
+      "endpoint": "/api/integrations/connections"
+    },
+    {
+      "feature": "persist-credentials",
+      "endpoint": "/api/integrations/credentials"
+    },
+    {
+      "feature": "users-profile",
+      "endpoint": "/api/identity/users/profile"
+    },
+    {
+      "feature": "users-identity",
+      "endpoint": "/api/users"
+    },
+    {
+      "feature": "users-keys",
+      "endpoint": "/api/identity/users/keys"
+    },
+    {
+      "feature": "organizations",
+      "endpoint": "/api/identity/orgs"
+    },
+    {
+      "feature": "environments",
+      "endpoint": "/api/environments"
+    },
+    {
+      "feature": "workspaces",
+      "endpoint": "/api/workspaces"
+    },
+    {
+      "feature": "persist-anonymous-user",
+      "endpoint": "/api/identity/users/anonymous"
+    }
+  ],
+  "redirects": {
+    "/": "/extension/meshmap",
+    "": "/extension/meshmap"
+  },
+  "restrictedAccess": {
+    "isMesheryUiRestricted": true,
+    "allowedComponents": {
+      "navigator": {
+        "help": true,
+        "lifecycle": {},
+        "configuration": {}
+      },
+      "header": {
+        "contextSwitcher": true,
+        "notifications": true,
+        "profile": true
+      }
+    }
+  }
+}

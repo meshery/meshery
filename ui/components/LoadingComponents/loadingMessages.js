@@ -70,4 +70,20 @@ export const getRandomLoadingMessage = () => {
   return LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
 };
 
-export const randomLoadingMessage = getRandomLoadingMessage(); // random per app load
+/**
+ * Get a persisted loading message from the window object, or generate a new one
+ * This ensures that the same loading message is used across all loading screens
+ * in the app, including UI extensions.
+ */
+export const getPersistedLoadingMessage = () => {
+  if (typeof window !== 'undefined') {
+    if (!window.__mesheryLoadingMessage) {
+      window.__mesheryLoadingMessage = getRandomLoadingMessage();
+    }
+    return window.__mesheryLoadingMessage;
+  }
+  // Fallback for server-side rendering
+  return getRandomLoadingMessage();
+};
+
+export const randomLoadingMessage = getPersistedLoadingMessage(); // random per app load, persisted in window
