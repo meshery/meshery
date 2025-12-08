@@ -36,13 +36,10 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
-var (
-	// OKE command flags
-	okeClusterID    string
-	okeRegion       string
-	okeProfile      string
-	okeCompartmentID string
-)
+	var (
+		okeRegionFlag string
+		okeClusterIDFlag string
+	)
 
 func getContexts(configFile string) ([]string, error) {
 
@@ -340,55 +337,20 @@ mesheryctl system config minikube
 var okeConfigCmd = &cobra.Command{
 	Use:   "oke",
 	Short: "Configure Meshery to use OKE cluster",
-	Long: `Configure Meshery to connect to Oracle Kubernetes Engine (OKE) cluster.
-
-This command automates the process of configuring Meshery to work with your OKE clusters.
-It uses the OCI CLI to discover clusters, generate kubeconfig, and register the context with Meshery.
-
-Prerequisites:
-  - OCI CLI must be installed (https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm)
-  - OCI CLI must be configured with valid credentials (run 'oci setup config')
-  - User must have IAM permissions to access OKE clusters
-
-The command supports both interactive and non-interactive modes:
-  - Interactive: Prompts for region and cluster selection
-  - Non-interactive: Specify all parameters via flags for automation
-
-Required IAM Policies:
-  - Allow group <your-group> to manage cluster-family in compartment <compartment>
-  - Allow group <your-group> to use virtual-network-family in compartment <compartment>`,
+	Long:  `Configure Meshery to connect to OKE cluster`,
 	Example: `
-// Basic usage - interactive prompts for all parameters
+// Interactive mode - prompts for region and cluster ID
 mesheryctl system config oke
-
-// Configure with authentication token (for CI/CD or automation)
-mesheryctl system config oke --token auth.json
 
 // Specify cluster ID and region (non-interactive)
 mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
 
-// Use a specific OCI profile (useful for multi-tenancy)
-mesheryctl system config oke --profile production --region us-ashburn-1
+// Using short flag for region
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1
 
-// Specify compartment ID to search for clusters
-mesheryctl system config oke --compartment-id ocid1.compartment.oc1..xxx --region us-phoenix-1
-
-// Combine all options for fully automated configuration
-mesheryctl system config oke \
-  --cluster-id ocid1.cluster.oc1.iad.xxx \
-  --region us-ashburn-1 \
-  --compartment-id ocid1.compartment.oc1..xxx \
-  --profile myprofile \
-  --token auth.json
-
-// Use with default profile and auto-discovered region
-mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx
-
-Troubleshooting:
-  - If OCI CLI is not found, install it from the link above
-  - If authentication fails, run 'oci setup config' to configure credentials
-  - If no clusters are found, verify your IAM permissions and region
-  - For network issues, check OCI service endpoint accessibility`,
+// Configure with authentication token (for CI/CD or automation)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1 --token auth.json
+	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) >= 1 {
 			return errors.New("more than one config name provided")
@@ -396,52 +358,62 @@ Troubleshooting:
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		okeCheck := exec.Command("oci", "--version")
+		okeCheck.Stdout = os.Stdout
+		okeCheck.Stderr = os.Stderr
+		err := okeCheck.Run()
+		if err != nil {
+			log.Fatalf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm ")
+		}
 		log.Info("Configuring Meshery to access OKE...")
-		
-		// Set default profile if not provided
-		if okeProfile == "" {
-			okeProfile = "DEFAULT"
-			log.Debugf("Using default OCI profile: %s", okeProfile)
+		var regionName, clusterID string
+
+		// Respect flags if provided
+		regionName = okeRegionFlag
+		clusterID = okeClusterIDFlag
+
+		// Prompt user for OCI region name if not provided via flag
+		if regionName == "" {
+			fmt.Print("Please enter the OCI region name: ")
+			_, err = fmt.Scanf("%s", &regionName)
+			if err != nil {
+				log.Warnf("Error reading OCI region name: %s", err.Error())
+				fmt.Print("Let's try again. Please enter the OCI region name: ")
+				_, err = fmt.Scanf("%s", &regionName)
+				if err != nil {
+					log.Fatalf("Error reading OCI region name: %s", err.Error())
+				}
+			}
 		}
-		
-		// Validate prerequisites
-		if err := validatePrerequisites(okeProfile); err != nil {
-			log.Fatal(err)
-			return err
+
+		// Prompt user for OKE cluster ID if not provided via flag
+		if clusterID == "" {
+			fmt.Print("Please enter the OKE cluster ID: ")
+			_, err = fmt.Scanf("%s", &clusterID)
+			if err != nil {
+				log.Warnf("Error reading OKE cluster ID: %s", err.Error())
+				fmt.Print("Let's try again. Please enter the OKE cluster ID: ")
+				_, err = fmt.Scanf("%s", &clusterID)
+				if err != nil {
+					log.Fatalf("Error reading OKE cluster ID: %s", err.Error())
+				}
+			}
 		}
-		
-		log.Info("Prerequisites validated successfully")
-		
-		// Collect OKE parameters (cluster ID, region, profile, compartment ID)
-		clusterID, region, profile, compartmentID, err := collectOKEParameters(okeClusterID, okeRegion, okeProfile, okeCompartmentID)
+
+		// Build the OCI CLI syntax to fetch cluster config in kubeconfig.yaml file
+		okeCmd := exec.Command("oci", "ce", "cluster", "create-kubeconfig", "--cluster-id", clusterID, "--region", regionName, "--file", utils.ConfigPath, "--overwrite")
+		okeCmd.Stdout = os.Stdout
+		okeCmd.Stderr = os.Stderr
+		// Write OKE compatible config to the filesystem
+		err = okeCmd.Run()
 		if err != nil {
-			log.Fatalf("Error collecting OKE parameters: %v", err)
+			log.Fatalf("Error generating kubeconfig: %s", err.Error())
 			return err
 		}
-		
-		log.Debugf("Using compartment ID: %s", compartmentID)
-		
-		log.Infof("Configuration parameters collected - Profile: %s, Region: %s, Cluster: %s", profile, region, clusterID)
-		
-		// Generate kubeconfig using OCI CLI
-		log.Info("Generating kubeconfig for OKE cluster...")
-		err = generateOKEKubeconfig(clusterID, region, profile, utils.ConfigPath)
-		if err != nil {
-			log.Fatalf("Error generating kubeconfig: %v", err)
-			return err
-		}
-		
-		log.Infof("OKE configuration is written to: %s", utils.ConfigPath)
-		
-		// Set the token in the chosen context
+		log.Debugf("OKE configuration is written to: %s", utils.ConfigPath)
+
+		// set the token in the chosen context
 		setToken()
-		
-		// Confirm successful configuration
-		log.Info("✓ Successfully configured Meshery to use OKE cluster")
-		log.Infof("✓ Cluster: %s", clusterID)
-		log.Infof("✓ Region: %s", region)
-		log.Info("You can now use Meshery with your OKE cluster")
-		
 		return nil
 	},
 }
@@ -571,10 +543,9 @@ func init() {
 	gkeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	minikubeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	okeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
-	okeConfigCmd.Flags().StringVar(&okeClusterID, "cluster-id", "", "OKE cluster OCID")
-	okeConfigCmd.Flags().StringVar(&okeRegion, "region", "", "OCI region")
-	okeConfigCmd.Flags().StringVar(&okeProfile, "profile", "", "OCI config profile (defaults to DEFAULT)")
-	okeConfigCmd.Flags().StringVar(&okeCompartmentID, "compartment-id", "", "OCI compartment OCID (defaults to tenancy root compartment)")
+	// OKE specific flags
+	okeConfigCmd.Flags().StringVarP(&okeRegionFlag, "region", "r", "", "OCI region for OKE cluster")
+	okeConfigCmd.Flags().StringVar(&okeClusterIDFlag, "cluster-id", "", "OKE cluster OCID")
 
 	configCmd.AddCommand(availableSubcommands...)
 }

@@ -191,10 +191,9 @@ func stop() error {
 			// }
 
 			// Dry run passed; now delete meshery components with the helm pkg
-			err := applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", "")
-			if err != nil {
-				return errors.Wrap(err, "cannot stop Meshery")
-			}
+				if err := ApplyHelmChartsSmart(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", ""); err != nil {
+					return errors.Wrap(err, "cannot stop Meshery")
+				}
 		}
 
 		// Delete the CRDs for brokers and meshsyncs
