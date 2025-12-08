@@ -91,13 +91,10 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
 
   useEffect(() => {
     setSelectedFilters(defaultFilters);
-  }, [defaultFilters.length]);
-
-  useEffect(() => {
-    if (defaultFilters && defaultFilters.length > 0) {
+    if (defaultFilters?.length > 0) {
       handleFilter(transformData(defaultFilters));
     }
-  }, []);
+  }, [defaultFilters.length]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {
@@ -319,5 +316,3 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
 };
 
 export default TypingFilter;
-
-
