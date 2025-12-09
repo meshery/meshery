@@ -10,44 +10,8 @@ setup() {
   cp "$REAL_KUBECONFIG" "$HOME/.kube/bats-kubeconfig" 2>/dev/null || touch "$HOME/.kube/bats-kubeconfig"
   export KUBECONFIG="$HOME/.kube/bats-kubeconfig"
 
-  PROJECT_ROOT="$(git rev-parse --show-toplevel)"
-  export MESHERYCTL_BIN="$PROJECT_ROOT/mesheryctl/bin/mesheryctl"
-
-  if [ ! -f "$MESHERYCTL_BIN" ]; then
-    export MESHERYCTL_BIN="$(command -v mesheryctl || true)"
-  fi
-
-  if [ -z "$MESHERYCTL_BIN" ]; then
-    echo "mesheryctl binary not found. Run 'make build'."
-    exit 1
-  fi
-
+  # MESHERYCTL_BIN is already set by the e2e harness; just reuse it.
   export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
-}
-
-get_platform() {
-  $MESHERYCTL_BIN system context view 2>/dev/null \
-    | grep -i "platform:" \
-    | sed 's/.platform:[[:space:]]//'
-}
-
-wait_for_meshery_k8s() {
-  for i in {1..40}; do
-    POD_COUNT=$(kubectl get pods -n meshery 2>/dev/null | grep -c "Running")
-    [ "$POD_COUNT" -gt 0 ] && return 0
-    sleep 2
-  done
-  kubectl get pods -n meshery || true
-  return 1
-}
-
-wait_for_meshery_docker() {
-  for i in {1..40}; do
-    STATUS=$($MESHERYCTL_BIN system status 2>/dev/null | grep -i "Running")
-    [ -n "$STATUS" ] && return 0
-    sleep 2
-  done
-  return 1
 }
 
 get_meshery_url() {
@@ -76,16 +40,7 @@ get_meshery_url() {
 }
 
 @test "mesheryctl system dashboard succeeds when meshery server is running" {
-  PLATFORM=$(get_platform)
-  [ -z "$PLATFORM" ] && PLATFORM="kubernetes"
-
-  if [ "$PLATFORM" = "kubernetes" ]; then
-    wait_for_meshery_k8s
-  else
-    $MESHERYCTL_BIN system start >/dev/null 2>&1 &
-    wait_for_meshery_docker
-  fi
-
+  # Meshery Server is already running; no platform detection needed.
   MESHERY_URL=$(get_meshery_url)
 
   run $MESHERYCTL_BIN system dashboard --skip-browser
