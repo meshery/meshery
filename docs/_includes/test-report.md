@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 9th 2025, 12:40:06 pm
+- Testing started at: December 9th 2025, 1:01:20 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
-- ❌ 2 failed
+- ✅ 92 passed
+- ❌ 4 failed
 - ⚠️ 0 flaked
 - ⏩ 10 skipped
 
-⌛ _Duration: 6 minutes and 34 seconds_
+⌛ _Duration: 6 minutes and 40 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -29,14 +29,16 @@
 | 6 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 7 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 8 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 9 | chromium-local-provider | displays public design card correctly |  | ➖ |
-| 10 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 11 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 12 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 13 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 14 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 15 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 16 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 9 | chromium-meshery-provider | should identify relationships for role-rolebinding-serviceaccount-edge-binding-permission-relationship | relationship | ❌ |
+| 10 | chromium-local-provider | displays public design card correctly |  | ➖ |
+| 11 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 12 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 13 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 14 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 15 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 16 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 17 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 18 | chromium-local-provider | should identify relationships for role-rolebinding-serviceaccount-edge-binding-permission-relationship | relationship | ❌ |
 
 </div>
 </details>
@@ -47,15 +49,18 @@
 **🔗 Relationship Tests**
 
 <details>
-    <summary>[Show/Hide] Relationship Test Details (13 tests)</summary>
+    <summary>[Show/Hide] Relationship Test Details (16 tests)</summary>
     <div markdown="1">
 
 | Kind | Type | SubType | From | To | Model | Design Name | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |
+| edge | binding | permission | Role | ServiceAccount | kubernetes | role-rolebinding-serviceaccount-edge-binding-permission-relationship | ❌ |
 | edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | edge | non-binding | network | Service | Deployment | kubernetes | meshery-design | ✅ |
 | edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design | ✅ |
 | edge | non-binding | reference | ConfigMap | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
+| edge | non-binding | reference | PersistentVolume | PersistentVolumeClaim | kubernetes | pv-pvc-edge-non-binding-reference-relationship | ✅ |
+| edge | non-binding | reference | Secret | Deployment | kubernetes | secret-deployment-edge-non-binding-reference-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
 | hierarchical | parent | alias | Container | Deployment | kubernetes | meshery-design | ✅ |
