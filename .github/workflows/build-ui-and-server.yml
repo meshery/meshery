@@ -23,7 +23,9 @@ permissions: read-all
 jobs:
   ui-build:
     name: UI build
-    if: github.repository == 'meshery/meshery'
+    # 🚫 Skip fork PRs (unsafe)
+    # ✅ Run only if PR originates from a branch on this repository
+    if: github.repository == 'meshery/meshery' &&  github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -55,7 +57,7 @@ jobs:
     needs: [ui-build]
     name: UI end-to-end tests
     environment: staging-playground
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' &&  github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -151,7 +153,7 @@ jobs:
           retention-days: 14
   docker-build-test:
     name: Docker build
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' &&  github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -186,7 +188,7 @@ jobs:
           repository: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' &&  github.event.pull_request.head.repo.fork == false
     name: swagger-docs
     runs-on: ubuntu-24.04
     steps:
@@ -213,7 +215,7 @@ jobs:
   # validate graphQL schema
   graphql_validate:
     name: Validate GraphQL schema
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' &&  github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
