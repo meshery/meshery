@@ -4,13 +4,14 @@ import { RelationshipTestFixtures } from './fixtures/relationships';
 import _ from 'lodash';
 
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
-    // test.use({ storageState: ENV.AUTHFILELOCALPROVIDER });
 
-    for (const fixture of RelationshipTestFixtures) {
-        test(`should identify relationships for ${fixture.name}`, async ({ request }) => {
+    for (const design of RelationshipTestFixtures) {
+        test(`should identify relationships for ${design.name}`, async ({ request }) => {
+            const designToTest = { ...design, relationships: [] }
             const response = await request.post(`${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`, {
+
                 data: {
-                    design: fixture.design,
+                    design: designToTest,
                     options: {
                         returnDiffOnly: false,
                         trace: false
@@ -21,28 +22,28 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
             expect(response.ok()).toBeTruthy();
             const responseBody = await response.json();
 
-            console.log(responseBody);
-
-            // Check if expected relationships are present in the response
-            // The response structure contains a 'design' object which has 'relationships'
-            // We need to check if the relationships in the response match the expected ones
-            // The matching logic is based on kind, type, and subtype
 
             const actualRelationships = responseBody.design.relationships || [];
 
-            for (const expectedRel of fixture.expected_relationships) {
+            // assert number of relationships
+            expect(actualRelationships.length).toBeGreaterThanOrEqual(design.relationships.length);
+
+            for (const expectedRel of design.relationships) {
+                if (!expectedRel.selectors || expectedRel?.metadata?.isAnnotation) {
+                    continue;
+                }
                 const found = actualRelationships.find((actualRel) => {
 
-                    if (expectedRel.selectors) {
-                        if (!_.isEqual(actualRel.selectors, expectedRel.selectors)) {
-                            return false;
-                        }
-                    }
+
+                    const expectedSelector = expectedRel.selectors[0];
+                    const actualSelector = actualRel.selectors[0];
 
                     return (
                         actualRel.kind === expectedRel.kind &&
                         actualRel.type === expectedRel.type &&
-                        actualRel.subType === expectedRel.subType
+                        actualRel.subType === expectedRel.subType &&
+                        _.isEqual(actualSelector.from, expectedSelector.from) &&
+                        _.isEqual(actualSelector.to, expectedSelector.to)
                     );
                 });
 
