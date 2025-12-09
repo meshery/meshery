@@ -6,7 +6,7 @@ import _ from 'lodash';
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
 
     for (const design of RelationshipTestFixtures) {
-        test(`should identify relationships for ${design.name}`, async ({ request }) => {
+        test(`should identify relationships for ${design.name}`, async ({ request }, testInfo) => {
             const designToTest = { ...design, relationships: [] }
             const response = await request.post(`${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`, {
 
@@ -45,6 +45,27 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
                         _.isEqual(actualSelector.from, expectedSelector.from) &&
                         _.isEqual(actualSelector.to, expectedSelector.to)
                     );
+                });
+
+                // Add annotation for this relationship test result
+                const selector = expectedRel.selectors[0];
+                const fromKind = selector?.allow?.from?.[0]?.kind || '-';
+                const toKind = selector?.allow?.to?.[0]?.kind || '-';
+                const modelName = expectedRel.model?.name || '-';
+
+                const relationshipData = {
+                    kind: expectedRel.kind,
+                    type: expectedRel.type,
+                    subType: expectedRel.subType,
+                    from: fromKind,
+                    to: toKind,
+                    model: modelName,
+                    designName: design.name,
+                    status: found ? 'pass' : 'fail'
+                };
+                testInfo.annotations.push({
+                    type: 'relationship',
+                    description: JSON.stringify(relationshipData)
                 });
 
                 expect(found, `Expected relationship ${JSON.stringify(expectedRel)} not found`).toBeDefined();
