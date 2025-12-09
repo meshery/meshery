@@ -170,6 +170,59 @@ To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/gu
 
 > Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
+### Model Generation from Kubernetes Custom Resource Definitions (CRDs)
+
+When generating models from [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), Meshery automatically parses the CRD specifications and groups related components into a common model. The component generation process uses the `spec.group` field from the CRD as the **model identifier** to determine which components belong together.
+
+#### How CRD Grouping Works
+
+Components parsed from CRDs are grouped into the same model based on their `spec.group` value. This ensures that all custom resources defined under the same API group are logically organized together within a single Meshery model.
+
+**Example**: In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`. All components generated from CRDs with this same group value will be grouped under a common model identified by `cloudquota.cnrm.cloud.google.com`.
+
+{% capture code_content %}apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cnrm.cloud.google.com/version: 1.140.0
+  labels:
+    cnrm.cloud.google.com/managed-by-kcc: "true"
+    cnrm.cloud.google.com/system: "true"
+  name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
+spec:
+  group: cloudquota.cnrm.cloud.google.com  # Model identifier
+  names:
+    categories:
+    - gcp
+    kind: APIQuotaAdjusterSettings
+    plural: apiquotaadjustersettings
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          # ... additional schema definition
+{% endcapture %}
+{% include code.html code=code_content %}
+
+{% include alert.html type="info" title="CRD Model Identification" content="The <code>spec.group</code> field is the key identifier used to group components into models during the generation process. Components sharing the same group value will be packaged together in the same model." %}
+
+#### Component Generation Behavior
+
+When Meshery processes CRDs:
+
+1. **Parsing**: Each CRD is parsed to extract its schema and specifications
+2. **Grouping**: Components are grouped by their `spec.group` value into corresponding models
+3. **Registration**: The generated components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective models
+4. **Enrichment**: Components inherit default properties from their model and can be further customized
+
+This automatic grouping ensures that related Kubernetes custom resources are organized together, making them easier to discover, manage, and use within Meshery designs.
+
 ### Post Model Generation
 
 During model generation, corresponding components are created. Next step is to enrich these component details and define their capabilities and relationships.
