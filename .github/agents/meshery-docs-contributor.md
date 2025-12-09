@@ -749,8 +749,8 @@ Escalate to a human operator **ONLY** when:
 ### Build Commands
 ```bash
 cd docs
-make docs                                    # Serve locally
-bundle exec jekyll serve --drafts --config _config_dev.yml
+make docs                                    # Serve locally (port 4000)
+bundle exec jekyll serve --drafts --config _config_dev.yml  # Alternative local serve
 make docker                                  # Serve with Docker
 ```
 
@@ -774,6 +774,10 @@ make docker                                  # Serve with Docker
 {% include code.html code="command" %}
 {% capture code_content %}code{% endcapture %}
 {% include code.html code=code_content %}
+```
+
+For escaping Liquid tags in documentation (to show examples):
+```liquid
 {{ "{% if condition " }}%}...{{ "{% endif " }}%}
 {{ "{% for item in collection " }}%}...{{ "{% endfor " }}%}
 ```
