@@ -172,13 +172,13 @@ To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/gu
 
 ### Model Generation from Kubernetes Custom Resource Definitions (CRDs)
 
-When generating models from [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), Meshery automatically parses the CRD specifications and groups related components into a common model. The component generation process uses the `spec.group` field from the CRD as the **model identifier** to determine which components belong together.
+When generating models from [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), Meshery automatically parses the CRD specifications to create components. The `spec.group` field from CRDs plays an important role in **filtering** which CRDs are included when generating components for a specific model.
 
-#### How CRD Grouping Works
+#### How CRD Filtering Works
 
-Components parsed from CRDs are grouped into the same model based on their `spec.group` value. This ensures that all custom resources defined under the same API group are logically organized together within a single Meshery model.
+During model generation, the `spec.group` field can be used as a **filter** to select which CRDs should be included in a model. This allows you to group related custom resources that share the same Kubernetes API group into a single Meshery model, ensuring logical organization of components.
 
-**Example**: In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`. All components generated from CRDs with this same group value will be grouped under a common model identified by `cloudquota.cnrm.cloud.google.com`.
+**Example**: In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`. When generating a model, you can specify this group value as a filter to include all CRDs that belong to the `cloudquota.cnrm.cloud.google.com` API group.
 
 {% capture code_content %}apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -190,7 +190,7 @@ metadata:
     cnrm.cloud.google.com/system: "true"
   name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
 spec:
-  group: cloudquota.cnrm.cloud.google.com  # Model identifier
+  group: cloudquota.cnrm.cloud.google.com  # API group used for filtering
   names:
     categories:
     - gcp
@@ -210,18 +210,20 @@ spec:
 {% endcapture %}
 {% include code.html code=code_content %}
 
-{% include alert.html type="info" title="CRD Model Identification" content="The <code>spec.group</code> field is the key identifier used to group components into models during the generation process. Components sharing the same group value will be packaged together in the same model." %}
+{% include alert.html type="info" title="CRD Group Filtering" content="The <code>spec.group</code> field serves as an optional filter during component generation. When specified, only CRDs matching that API group will be processed and included in the model. If no group filter is specified, all CRDs from the source will be processed." %}
 
 #### Component Generation Behavior
 
 When Meshery processes CRDs:
 
 1. **Parsing**: Each CRD is parsed to extract its schema and specifications
-2. **Grouping**: Components are grouped by their `spec.group` value into corresponding models
-3. **Registration**: The generated components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective models
-4. **Enrichment**: Components inherit default properties from their model and can be further customized
+2. **Filtering** (Optional): If a group filter is specified, only CRDs with a matching `spec.group` value are processed
+3. **Component Creation**: A component definition is generated for each CRD, including its kind, version, and schema
+4. **Model Assignment**: Generated components are assigned to the target model
+5. **Registration**: The components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective model
+6. **Enrichment**: Components inherit default properties from their model and can be further customized
 
-This automatic grouping ensures that related Kubernetes custom resources are organized together, making them easier to discover, manage, and use within Meshery designs.
+This filtering capability allows you to organize related Kubernetes custom resources together, making them easier to discover, manage, and use within Meshery designs. For example, all Google Config Connector CRDs for a specific GCP service can be grouped into a dedicated model by using their common API group as a filter.
 
 ### Post Model Generation
 
