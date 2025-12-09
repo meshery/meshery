@@ -17,7 +17,7 @@ abstract: "Explore Kubernetes Services using Meshery using Meshery Playground, a
 
 In this tutorial, we'll learn to implement Kubernetes **Services**, the resources responsible for exposing applications inside and outside the cluster. Using Meshery Playground, an interactive live cluster environment, we'll perform hands-on labs to gain practical experience with the Kubernetes Services, without writing any YAML.
 
-> **_NOTE:_** If this is your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](https://docs.meshery.io/guides/tutorials/kubernetes-pods) tutorial first.
+> **_NOTE:_** If this is your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](https://docs.meshery.io/guides/tutorials/kubernetes-pods) tutorial first or [Exploring Kubernetes Deployments with Meshery](https://docs.meshery.io/guides/tutorials/kubernetes-deployments).
 
 
 ### Prerequisites
@@ -62,38 +62,41 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 4. Change the **Name** of the deployment and the **Namespace** if required. For this demonstration, we will leave them as they are and deploy this to the _default_ namespace.
     
 5. Set **Replicas** to `2`. Under **Selector** and **MatchLabels**, Set a _matchLabel_ pair. Here we have set `app:9988110`.
-6. Under **Template → Metadata → Labels**, add the same label `app:9988110`. 
   ![](./kubernetes-services/2025-09-04_05.png)
 
+6. Under **Template → Metadata → Labels**, add the same label `app:9988110`. 
+  ![](./kubernetes-services/metadata.png)
+
+
 7. While still under **Template** and click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** next to **Containers**. This will create a container **Containers 1**, click on it and add:  
-- **Image**: `nginx:latest`  
-- **Name**: `nginx`  
-(edit image)
+- **Image**: `meshery/meshery-milestone:latest`  
+- **Name**: `meshery-milestone`  
   ![](./kubernetes-services/2025-09-04_06.png)
 
 8. Click outside to close the modal. The deployment is now ready and it will look similar to this:
-(edit image)
   ![](./kubernetes-services/2025-09-04_07.png)
 
 
 9. Validate and Deploy the design: Click Validate (**Actions** toolbar), ensure no errors, then click **Deploy**. Wait for the deployment to complete (notifications appear on the bottom right).
 
-#### You have now deployed a Deployment with 2 pods running in the cluster.
+##### You have now deployed a Deployment with 2 pods running in the cluster.
 
 ---
 
 #### Add a ClusterIP Service
 
-1. From **Components**, search for **Service** and drag it to the canvas, Rename the service, here I will go with `service-clusterip`. Click on the service component to open its config modal. 
+1. From **Components**, search for **Service** and drag it to the canvas, rename the service, here I will go with `service-clusterip`. Click on the service component to open its config modal. 
   ![](./kubernetes-services/2025-09-04_08.png)
 
 2. In the service configuration modal:  
 - Set **Type** to `ClusterIP`.  
 - Click on  **+ Add Item**  under Ports to add a port called **Ports 1**. Click on it and add: 
   - **Port**: `80`  
-  - **TargetPort**: `80` (These match the container port that nginx serves on.)
+  - **TargetPort**: `80` (These match the container port that our image serves on.)
 - Also add the same key value pair as before under **Selector**: `app: 9988110`
 - We will also add the same label as the deployment for easier identification in Operator Mode.
+  ![](./kubernetes-services/edit-01.png)
+
 
 3. Connect the Service to the Deployment: Click over the service component until green dots appear, click the arrow and select network. Drag to the deployment. This creates a Network link.  
   ![](./kubernetes-services/2025-09-05_09.png)
