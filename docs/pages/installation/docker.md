@@ -39,6 +39,28 @@ Start Meshery by executing:
 {% capture code_content %}mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
+## Advanced Configuration
+
+### Customizing Kubernetes Configuration Location
+
+By default, Meshery looks for Kubernetes configuration in the `$HOME/.kube` directory. You can customize this location by setting the `KUBECONFIG_FOLDER` environment variable in your Docker deployment.
+
+To use a custom kubeconfig location with Docker Compose, modify your `docker-compose.yaml`:
+
+{% capture code_content %}services:
+  meshery:
+    environment:
+      - "KUBECONFIG_FOLDER=/custom/path/to/.kube"
+    volumes:
+      - /custom/path/to/.kube:/custom/path/to/.kube:ro
+{% endcapture %}
+{% include code.html code=code_content %}
+
+This is useful when:
+- Providing a Meshery deployment with a predefined Kubernetes context
+- Running Meshery in containerized environments with custom kubeconfig paths
+- Managing multiple Kubernetes configurations
+
 ## Post-Installation Steps
 
 Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.

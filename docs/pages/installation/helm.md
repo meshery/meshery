@@ -37,6 +37,18 @@ Optionally, Meshery Server supports customizing the callback URL for your remote
 
 Meshery's Helm chart supports a number of configuration options. Please refer to the [Meshery Helm chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery#readme) and [Meshery Operator Helm Chart](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#readme) for more information.
 
+#### Configuring Kubernetes Configuration Location
+
+By default, Meshery looks for Kubernetes configuration in the `/home/appuser/.kube` directory within the container. You can customize this location by setting the `KUBECONFIG_FOLDER` environment variable:
+
+{% capture code_content %}helm install meshery meshery/meshery --namespace meshery \
+  --set env.KUBECONFIG_FOLDER=/custom/path/to/.kube \
+  --create-namespace
+{% endcapture %}
+{% include code.html code=code_content %}
+
+This is useful when providing a Meshery deployment with a predefined Kubernetes context or when using custom volume mounts for kubeconfig files.
+
 ## Upgrading Meshery with Helm
 
 To upgrade an existing Meshery deployment:

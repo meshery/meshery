@@ -9,6 +9,8 @@ class MyReporter {
   expectedTest = '';
   testTable = `| Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |`;
+  relationshipTestData = [];
+  seenRelationships = new Set();
   passed = 0;
   failed = 0;
   skipped = 0;
@@ -37,6 +39,53 @@ class MyReporter {
 
     this.displayLogs(project, test.title, test.tags, status, result);
     this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
+
+    // Process relationship annotations if present
+    const relationshipAnnotations = test.annotations?.filter(a => a.type === 'relationship') || [];
+    for (const annotation of relationshipAnnotations) {
+      try {
+        const data = JSON.parse(annotation.description);
+        this.collectRelationshipData(data);
+      } catch (e) {
+        // Skip invalid annotations
+      }
+    }
+  }
+
+  collectRelationshipData(data) {
+    // Create a unique key for deduplication
+    const key = `${data.kind}|${data.type}|${data.subType}|${data.from}|${data.to}|${data.model}|${data.designName}`;
+
+    // Skip if we've already seen this relationship
+    if (this.seenRelationships.has(key)) {
+      return;
+    }
+    this.seenRelationships.add(key);
+    this.relationshipTestData.push(data);
+  }
+
+  buildRelationshipTestTable() {
+    // Sort by kind, type, subType, model, from, to
+    this.relationshipTestData.sort((a, b) => {
+      return (
+        a.kind.localeCompare(b.kind) ||
+        a.type.localeCompare(b.type) ||
+        a.subType.localeCompare(b.subType) ||
+        a.model.localeCompare(b.model) ||
+        a.from.localeCompare(b.from) ||
+        a.to.localeCompare(b.to)
+      );
+    });
+
+    let table = `| Kind | Type | SubType | From | To | Model | Design Name | Status |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |`;
+
+    for (const data of this.relationshipTestData) {
+      const statusEmoji = data.status === 'pass' ? '✅' : '❌';
+      table += `\n| ${data.kind} | ${data.type} | ${data.subType} | ${data.from} | ${data.to} | ${data.model} | ${data.designName} | ${statusEmoji} |`;
+    }
+
+    return table;
   }
 
   async onEnd(result) {
@@ -52,19 +101,17 @@ class MyReporter {
   displayLogs(project, title, tags, status, result) {
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
 
-    const logs = `${
-      this.countLog
-    }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(
-      tags,
-      status,
-    )}, Tags: ${allTags} ${
-      status === 'unexpected' && result.error !== undefined
+    const logs = `${this.countLog
+      }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(
+        tags,
+        status,
+      )}, Tags: ${allTags} ${status === 'unexpected' && result.error !== undefined
         ? ('\n' +
-            `File Location: ${result.error.location?.file ?? 'Not Found'}` +
-            '\n' +
-            result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message)
+          `File Location: ${result.error.location?.file ?? 'Not Found'}` +
+          '\n' +
+          result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message)
         : ''
-    }\n`;
+      }\n`;
 
     process.stdout.write(logs);
 
@@ -86,9 +133,8 @@ class MyReporter {
 
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
 
-    const message = `| ${
-      this.countTable
-    } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
+    const message = `| ${this.countTable
+      } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
 
     this.testTable += `\n${message}`;
     this.countTable++;
@@ -153,6 +199,8 @@ class MyReporter {
       skipped: this.skipped,
       totalTests: this.totalTests,
       testTable: this.testTable,
+      relationshipTestTable: this.buildRelationshipTestTable(),
+      relationshipTestCount: this.relationshipTestData.length,
     });
   }
 }

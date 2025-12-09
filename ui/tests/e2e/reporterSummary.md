@@ -25,4 +25,18 @@
 </details>
 <% } %>
 
+<% if (relationshipTestCount > 0) { %>
+
+**🔗 Relationship Tests**
+
+<details>
+    <summary>[Show/Hide] Relationship Test Details (<%- relationshipTestCount %> tests)</summary>
+    <div markdown="1">
+
+<%- relationshipTestTable %>
+
+</div>
+</details>
+<% } %>
+
 <!-- To see the full report, please visit our CI/CD pipeline with reporter. -->
