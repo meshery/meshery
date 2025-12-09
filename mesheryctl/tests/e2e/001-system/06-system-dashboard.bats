@@ -10,7 +10,7 @@ setup() {
   cp "$REAL_KUBECONFIG" "$HOME/.kube/bats-kubeconfig" 2>/dev/null || touch "$HOME/.kube/bats-kubeconfig"
   export KUBECONFIG="$HOME/.kube/bats-kubeconfig"
 
-  # MESHERYCTL_BIN is already set by the e2e harness; just reuse it.
+  
   export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
 }
 
@@ -40,7 +40,6 @@ get_meshery_url() {
 }
 
 @test "mesheryctl system dashboard succeeds when meshery server is running" {
-  # Meshery Server is already running; no platform detection needed.
   MESHERY_URL=$(get_meshery_url)
 
   run $MESHERYCTL_BIN system dashboard --skip-browser
