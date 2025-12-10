@@ -1,6 +1,6 @@
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/mui';
-import ajv8validator from '@rjsf/validator-ajv8';
+import customValidator from '../../../utils/rjsfValidator';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
@@ -90,7 +90,7 @@ function RJSFForm_({
           onChange={onChange}
           formData={data}
           extraErrors={extraErrors}
-          validator={validator || ajv8validator}
+          validator={validator || customValidator}
           templates={{
             ArrayFieldTemplate,
             ObjectFieldTemplate,
