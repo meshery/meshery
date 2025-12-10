@@ -179,8 +179,8 @@ Logical or declarative links between components where one component refers to an
 - Example 1) (binary and configuration) --> IstioWASMPlugin
 - Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
-<details close><summary>Visual Representation of Hierarchical - Parent - Wallet Relationship</summary>
-           <figure><br><figcaption>1. Hierarchical - Parent - Wallet: WASMFilter and IstioEnvoyFilter<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
+<details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
+           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380" style="height:30rem;width:100%;"></div>
 <script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
