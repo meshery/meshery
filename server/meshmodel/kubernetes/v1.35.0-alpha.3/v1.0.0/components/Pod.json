@@ -62,6 +62,7 @@
     }
   },
   "styles": {
+    "background-image": "none",
     "background-opacity": 0.5,
     "border-width": 2,
     "primaryColor": "#326CE5",

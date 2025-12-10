@@ -30,7 +30,6 @@ import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
-import { useSelector } from 'react-redux';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 
 const WorkspaceDataTable = ({
