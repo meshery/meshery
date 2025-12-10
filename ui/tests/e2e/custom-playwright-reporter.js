@@ -41,7 +41,8 @@ class MyReporter {
     this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
 
     // Process relationship annotations if present
-    const relationshipAnnotations = test.annotations?.filter(a => a.type === 'relationship') || [];
+    const relationshipAnnotations =
+      test.annotations?.filter((a) => a.type === 'relationship') || [];
     for (const annotation of relationshipAnnotations) {
       try {
         const data = JSON.parse(annotation.description);
@@ -101,17 +102,19 @@ class MyReporter {
   displayLogs(project, title, tags, status, result) {
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
 
-    const logs = `${this.countLog
-      }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(
-        tags,
-        status,
-      )}, Tags: ${allTags} ${status === 'unexpected' && result.error !== undefined
+    const logs = `${
+      this.countLog
+    }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(
+      tags,
+      status,
+    )}, Tags: ${allTags} ${
+      status === 'unexpected' && result.error !== undefined
         ? ('\n' +
-          `File Location: ${result.error.location?.file ?? 'Not Found'}` +
-          '\n' +
-          result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message)
+            `File Location: ${result.error.location?.file ?? 'Not Found'}` +
+            '\n' +
+            result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message)
         : ''
-      }\n`;
+    }\n`;
 
     process.stdout.write(logs);
 
@@ -133,8 +136,9 @@ class MyReporter {
 
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
 
-    const message = `| ${this.countTable
-      } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
+    const message = `| ${
+      this.countTable
+    } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
 
     this.testTable += `\n${message}`;
     this.countTable++;
