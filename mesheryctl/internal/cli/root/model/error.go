@@ -52,3 +52,26 @@ func ErrModelBuildFromStrings(message ...string) error {
 func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }
+
+// Error code for model list command
+const ErrModelsListCode = "mesheryctl-1160"
+
+func ErrModelsList(err error, page int) error {
+    return errors.New(
+        ErrModelsListCode,
+        errors.Alert,
+        []string{"Unable to list models"},
+        []string{err.Error()},
+        []string{
+            "Invalid or expired authentication token",
+            "Meshery server unreachable",
+            "Incorrect page number",
+        },
+        []string{
+            "Run `mesheryctl system login` to authenticate again",
+            "Check your Meshery server connection",
+            "Try a different page number",
+        },
+    )
+}
+
