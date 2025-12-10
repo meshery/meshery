@@ -41,7 +41,11 @@ mesheryctl model list --count
 			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
+		err := display.ListAsyncPagination(modelData, generateModelDataToDisplay)
+		if err != nil {
+			return ErrModelsList(err, page)
+		}
+		return nil
 	},
 }
 
