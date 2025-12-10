@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 10th 2025, 7:23:22 pm
+- Testing started at: December 10th 2025, 10:33:46 pm
 
 **📦 Test Result Summary**
 
-- ✅ 80 passed
-- ❌ 10 failed
+- ✅ 89 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
-- ⏩ 14 skipped
+- ⏩ 10 skipped
 
-⌛ _Duration: 7 minutes and 45 seconds_
+⌛ _Duration: 7 minutes and 8 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,34 +21,25 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Test if Left Navigation Panel is displayed |  | ❌ |
-| 2 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
-| 3 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 5 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 6 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 7 | chromium-meshery-provider | Common UI elements |  | ❌ |
-| 8 | chromium-meshery-provider | Create a Model |  | ❌ |
-| 9 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
-| 10 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 11 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
-| 12 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 13 | chromium-meshery-provider | displays public design card correctly |  | ❌ |
-| 14 | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ❌ |
-| 15 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 16 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 17 | chromium-meshery-provider | All settings tabs |  | ❌ |
-| 18 | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ❌ |
-| 19 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 20 | chromium-local-provider | displays public design card correctly |  | ➖ |
-| 21 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 22 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 23 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 24 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 25 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 26 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
-| 27 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 28 | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 6 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 7 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 8 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 9 | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 10 | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 11 | chromium-local-provider | displays public design card correctly |  | ➖ |
+| 12 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 13 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 14 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 15 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 16 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 17 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 18 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 19 | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
 
 </div>
 </details>
