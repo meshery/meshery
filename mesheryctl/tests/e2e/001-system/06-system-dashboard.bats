@@ -10,14 +10,7 @@ setup() {
   cp "$REAL_KUBECONFIG" "$HOME/.kube/bats-kubeconfig" 2>/dev/null || touch "$HOME/.kube/bats-kubeconfig"
   export KUBECONFIG="$HOME/.kube/bats-kubeconfig"
 
-  
   export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
-}
-
-get_meshery_url() {
-  $MESHERYCTL_BIN system context view \
-    | grep endpoint \
-    | sed 's/.endpoint:[[:space:]]//'
 }
 
 @test "mesheryctl system dashboard fails when kubeconfig is missing" {
@@ -40,9 +33,7 @@ get_meshery_url() {
 }
 
 @test "mesheryctl system dashboard succeeds when meshery server is running" {
-  MESHERY_URL=$(get_meshery_url)
-
   run $MESHERYCTL_BIN system dashboard --skip-browser
   assert_success
-  assert_output --regexp "$MESHERY_URL|Opening Meshery"
+  assert_output --regexp "Opening Meshery|Meshery UI available at"
 }
