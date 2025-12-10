@@ -56,7 +56,7 @@ func ErrModelBuild(err error) error {
 // Error code for model list command
 const ErrModelsListCode = "mesheryctl-1160"
 
-func ErrModelsList(err error, page int) error {
+func ErrModelsList(err error) error {
     return errors.New(
         ErrModelsListCode,
         errors.Alert,
