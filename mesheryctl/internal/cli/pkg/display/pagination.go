@@ -3,6 +3,7 @@ package display
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
@@ -34,13 +35,35 @@ func HandlePaginationAsync[T any](
 		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
+			// Check if this is an authentication error by looking at the error message
+			errMsg := strings.ToLower(err.Error())
+			if strings.Contains(errMsg, "authentication") ||
+				strings.Contains(errMsg, "token") ||
+				strings.Contains(errMsg, "unauthorized") ||
+				strings.Contains(errMsg, "login") {
+				return err
+			}
+
+			// If this is a meshkit error, check for authentication/network errors
 			if meshkitErr, ok := err.(*errors.Error); ok {
+				// Authentication errors: return as-is so caller can handle login/token flows
+				if meshkitErr.Code == utils.ErrUnauthenticatedCode ||
+					meshkitErr.Code == utils.ErrInvalidTokenCode ||
+					meshkitErr.Code == utils.ErrAttachAuthTokenCode {
+					return err
+				}
+
+				// Network/request failures: return as-is
 				if meshkitErr.Code == utils.ErrFailRequestCode {
 					return err
 				}
+
+				// For other meshkit errors, wrap with pagination context
 				return ErrorListPagination(err, currentPage)
 			}
-			return err
+
+			// Non-meshkit errors: wrap with pagination context
+			return ErrorListPagination(err, currentPage)
 		}
 
 		// Process the fetched data
