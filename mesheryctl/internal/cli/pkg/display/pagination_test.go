@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+	"strings"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -152,3 +153,91 @@ func TestHandlePaginationAsync(t *testing.T) {
 		})
 	}
 }
+
+
+
+func TestHandlePaginationAsync_AuthenticationErrors(t *testing.T) {
+	type items struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	authTests := []struct {
+		name          string
+		errorResponse string
+		statusCode    int
+		expectAuthErr bool
+	}{
+		{
+			name:          "Authentication error in response",
+			errorResponse: `{"error": "authentication failed"}`,
+			statusCode:    401,
+			expectAuthErr: true,
+		},
+		{
+			name:          "Token error in response", 
+			errorResponse: `{"error": "invalid token"}`,
+			statusCode:    401,
+			expectAuthErr: true,
+		},
+		{
+			name:          "Unauthorized error in response",
+			errorResponse: `{"error": "unauthorized access"}`,
+			statusCode:    403,
+			expectAuthErr: true,
+		},
+		{
+			name:          "Login error in response",
+			errorResponse: `{"error": "please login"}`,
+			statusCode:    401,
+			expectAuthErr: true,
+		},
+		{
+			name:          "Generic server error",
+			errorResponse: `{"error": "internal server error"}`,
+			statusCode:    500,
+			expectAuthErr: false,
+		},
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+
+	for _, tt := range authTests {
+		t.Run(tt.name, func(t *testing.T) {
+			displayData := DisplayDataAsync{
+				Page:             1,
+				UrlPath:          "test",
+				DataType:         "items",
+				DisplayCountOnly: false,
+				IsPage:           true,
+				Header:           []string{"ID", "Name"},
+			}
+
+			processDataFunc := func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			}
+
+			urlPath := "/test?page=0&pagesize=10"
+			url := testContext.BaseURL + urlPath
+
+			httpmock.RegisterResponder("GET", url,
+				httpmock.NewStringResponder(tt.statusCode, tt.errorResponse))
+
+			err := HandlePaginationAsync(10, displayData, processDataFunc)
+
+			if tt.expectAuthErr {
+				// Should return the original authentication error
+				assert.Error(t, err)
+				assert.Contains(t, strings.ToLower(err.Error()), 
+					strings.Split(strings.ToLower(tt.errorResponse), "\"")[3])
+			} else {
+				// Should wrap with pagination context
+				assert.Error(t, err)
+				// This would depend on how your API error handling works
+			}
+		})
+	}
+}
+
