@@ -43,7 +43,7 @@ mesheryctl model list --count
 
 		err := display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 		if err != nil {
-			return ErrModelsList(err, page)
+			return ErrModelsList(err)
 		}
 		return nil
 	},
