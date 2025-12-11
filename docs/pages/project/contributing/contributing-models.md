@@ -28,7 +28,7 @@ Models can describe traditional technologies (like Kubernetes workloads), or mor
 
 #### What Is the Model Schema?
 
-Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml).
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml).
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
 
@@ -219,28 +219,28 @@ In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.go
 {% capture code_content %}apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-annotations:
-cnrm.cloud.google.com/version: 1.140.0
-name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
+  annotations:
+    cnrm.cloud.google.com/version: 1.140.0
+  name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
 spec:
-group: cloudquota.cnrm.cloud.google.com # API group used for filtering
-names:
-kind: APIQuotaAdjusterSettings
-plural: apiquotaadjustersettings
-scope: Namespaced
-versions:
+  group: cloudquota.cnrm.cloud.google.com # API group used for filtering
+  names:
+    kind: APIQuotaAdjusterSettings
+    plural: apiquotaadjustersettings
+  scope: Namespaced
+  versions:
+    - name: v1beta1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
 
-- name: v1beta1
-  schema:
-  openAPIV3Schema:
-  properties:
-  apiVersion:
-  type: string
-  kind:
-  type: string
+
   {% endcapture %}
   {% include code.html code=code_content %}
-
 **CSV Model Definition Example:**
 
 ```csv
