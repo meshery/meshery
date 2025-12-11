@@ -1,16 +1,17 @@
 # GitHub Copilot Agents for Meshery
 
-This repository utilizes specialized GitHub Copilot agents to assist contributors with various aspects of the Meshery project. These agents are custom-configured AI assistants designed to understand Meshery's architecture, conventions, and best practices.
+This repository utilizes specialized GitHub Copilot agents to assist with all aspects of the Meshery project. These agents are custom-configured AI assistants designed to understand Meshery's architecture, conventions, and best practices, helping both users and contributors work effectively with Meshery.
 
 ## What are GitHub Copilot Agents?
 
-GitHub Copilot agents are specialized AI assistants configured with domain-specific knowledge and instructions. Each agent in this repository is tailored to help with specific types of contributions to Meshery, from code development to documentation writing and CI/CD workflow management.
+GitHub Copilot agents are specialized AI assistants configured with domain-specific knowledge and instructions. Each agent in this repository is tailored to help with specific aspects of working with Meshery - from using and deploying the platform, to developing new features, writing documentation, and managing CI/CD workflows.
 
 These agents provide:
 - **Context-aware assistance**: Understanding Meshery's tech stack, architecture, and conventions
 - **Consistent guidance**: Following established patterns and best practices
 - **Specialized expertise**: Domain-specific knowledge for different areas of the project
-- **Accelerated onboarding**: Helping new contributors understand project structure and workflows
+- **Accelerated onboarding**: Helping users and contributors understand project structure and workflows
+- **Comprehensive support**: Assisting with deployment, operation, development, and maintenance of Meshery
 
 ## Available Agents
 
@@ -18,25 +19,31 @@ These agents provide:
 
 **Location**: `.github/agents/meshery-code-contributor.md`
 
-**Purpose**: Expert-level software engineering agent specialized in contributing to Meshery's cloud native infrastructure and application management platform.
+**Purpose**: Expert-level software engineering agent specialized in all aspects of Meshery's cloud native infrastructure and application management platform.
 
 **Capabilities**:
+- Understanding and using Meshery Server, UI, and mesheryctl CLI
 - Contributing to Meshery Server (Go/Golang backend)
 - Developing Meshery UI (React/Next.js frontend)
 - Building mesheryctl CLI (Go/Golang with Cobra framework)
 - Understanding Meshery's design principles and architecture
 - Following code style conventions and best practices
 - Implementing schema-driven development patterns
+- Deploying and operating Meshery in various environments
+- Troubleshooting and debugging Meshery components
 
-**When to use**: When working on any code contributions to Meshery, including bug fixes, new features, or refactoring existing functionality.
+**When to use**: When working with any aspect of the Meshery codebase - from using the platform, to contributing code, debugging issues, or understanding how components work together.
 
 ### 2. Meshery Docs Contributor
 
 **Location**: `.github/agents/meshery-docs-contributor.md`
 
-**Purpose**: Specialized agent for creating, updating, and maintaining Meshery's documentation.
+**Purpose**: Specialized agent for understanding, using, and contributing to Meshery's documentation.
 
 **Capabilities**:
+- Finding and navigating Meshery's comprehensive documentation
+- Understanding Meshery concepts, features, and best practices
+- Learning how to deploy, configure, and use Meshery
 - Writing and editing documentation in Jekyll/Markdown format
 - Understanding Meshery's documentation structure and navigation
 - Following documentation style guide and conventions
@@ -44,7 +51,7 @@ These agents provide:
 - Ensuring consistency across documentation
 - Maintaining links and cross-references
 
-**When to use**: When creating new documentation, updating existing docs, fixing documentation issues, or improving clarity of explanations.
+**When to use**: When learning about Meshery features, searching for how-to guides, creating new documentation, updating existing docs, or improving clarity of explanations.
 
 ### 3. GitHub Actions Engineer
 
@@ -68,31 +75,38 @@ These agents provide:
 
 To use these agents, you need:
 - Access to GitHub Copilot (GitHub Copilot Chat or Copilot Workspace)
-- A development environment with the Meshery repository cloned
-- Familiarity with basic Meshery concepts (see [README.md](./README.md))
+- For users: Basic familiarity with cloud native concepts
+- For contributors: A development environment with the Meshery repository cloned
 
 ### How to Interact with Agents
 
 1. **In GitHub Copilot Chat**:
    - Reference the agent by mentioning its context: "Using the Meshery Code Contributor agent guidelines..."
    - Provide specific context about what you're working on
-   - Ask for guidance, code examples, or reviews
+   - Ask for guidance on using Meshery features, troubleshooting issues, or contributing code
 
-2. **In Pull Requests**:
+2. **For Meshery Users**:
+   - Get help with deploying Meshery in your environment
+   - Learn how to use specific features and capabilities
+   - Troubleshoot configuration or operational issues
+   - Understand best practices for managing cloud native infrastructure
+
+3. **In Pull Requests**:
    - GitHub Copilot may automatically use these agent definitions when reviewing or suggesting changes
    - The agents help ensure contributions align with Meshery's standards
 
-3. **During Development**:
-   - Keep the agent guidelines in mind while coding
-   - Use them as a reference for best practices
-   - Consult them when unsure about conventions
+4. **During Development**:
+   - Get assistance understanding the codebase architecture
+   - Find relevant code examples and patterns
+   - Use agents as a reference for best practices
+   - Consult them when unsure about conventions or implementation approaches
 
 ### Best Practices
 
-- **Be specific**: Provide clear context about what you're trying to accomplish
-- **Reference existing code**: Point to similar implementations when asking for guidance
+- **Be specific**: Provide clear context about what you're trying to accomplish, whether using or contributing to Meshery
+- **Reference existing code or documentation**: Point to similar implementations or relevant docs when asking for guidance
 - **Iterate**: Work with the agent iteratively, refining solutions based on feedback
-- **Validate**: Always validate agent suggestions against project standards and test thoroughly
+- **Validate**: Always validate agent suggestions against project standards, documentation, and test thoroughly in your environment
 
 ## Agent Structure
 
@@ -160,7 +174,7 @@ The `.github/copilot-instructions.md` file provides general instructions for Git
 - Common development tasks
 - Links to documentation
 
-The specialized agents in `.github/agents/` build upon this foundation with deeper, domain-specific expertise for particular types of contributions.
+The specialized agents in `.github/agents/` build upon this foundation with deeper, domain-specific expertise for all aspects of working with Meshery - from using the platform to contributing to its development.
 
 ## Additional Resources
 
@@ -172,11 +186,12 @@ The specialized agents in `.github/agents/` build upon this foundation with deep
 
 ## Questions or Feedback?
 
-If you have questions about using the agents or suggestions for improvements:
+If you have questions about using the agents, need help with Meshery, or have suggestions for improvements:
 - Open an issue in this repository
 - Ask in the [Meshery Slack community](https://slack.meshery.io)
 - Bring it up in community meetings
+- Check the [Meshery documentation](https://docs.meshery.io) for comprehensive guides
 
 ---
 
-**Note**: These agents are continuously evolving. Your feedback and contributions help make them more effective for the entire Meshery community.
+**Note**: These agents are continuously evolving to support the entire Meshery ecosystem - from users deploying and operating Meshery, to contributors developing new features. Your feedback helps make them more effective for everyone in the Meshery community.
