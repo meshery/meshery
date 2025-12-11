@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Kubernetes Cluster Permissions
-permalink: reference/kubernetes-cluster-permissions
-type: Reference
+permalink: guides/infrastructure-management/kubernetes-cluster-permissions
+type: guides
+category: infrastructure
 language: en
 abstract: Minimum kubeconfig permissions required for Meshery to connect to and manage Kubernetes clusters.
 list: include
