@@ -21,7 +21,7 @@ Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-c
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
-    <li>Access to an active kubernetes cluster.</li>
+    <li>Access to an active kubernetes cluster with appropriate <a href="{{ site.baseurl }}/reference/kubernetes-cluster-permissions">kubeconfig permissions</a>.</li>
   </ol>
 </div>
 

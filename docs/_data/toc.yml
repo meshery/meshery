@@ -310,6 +310,8 @@
           url: extensibility/ui
     - title: Error Code
       url: reference/error-codes
+    - title: Kubernetes Cluster Permissions
+      url: reference/kubernetes-cluster-permissions
     - title: Permission Keys
       url: reference/permissions
     - title: Meshery Operator & CRDs
