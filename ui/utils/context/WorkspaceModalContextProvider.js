@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
-import { mesheryEventBus } from '../eventBus';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 import { useLazyGetWorkspacesQuery } from '@/rtk-query/workspace';
 
@@ -26,11 +24,11 @@ export const WorkspaceModalContext = React.createContext({
       name: '',
     },
   },
-  onLoadResource: ({ id, workspaceId, orgId }) => {},
+  onLoadResource: () => {},
 });
 
 const WorkspaceModalContextProvider = ({ children }) => {
-  const { selectedOrganization, allOrganizations } = useGetSelectedOrganization();
+  const { allOrganizations } = useGetSelectedOrganization();
   const [getWorkspaces] = useLazyGetWorkspacesQuery();
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });

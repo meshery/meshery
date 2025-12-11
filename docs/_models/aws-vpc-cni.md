@@ -7,7 +7,7 @@ permalink: extensibility/integrations/aws-vpc-cni
 docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 
 integrations-category: Cloud Native Network
-integrations-subcategory: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
 registrant: Artifact Hub
 components: 
 - name: eni-config
