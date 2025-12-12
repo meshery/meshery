@@ -23,6 +23,7 @@ import (
 	"os/exec"
 	"bufio"
 	"strings"
+	"path/filepath"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 
@@ -365,9 +366,14 @@ mesheryctl system config oke --token auth.json
 		var clusterId, region string
 
 		// Prompt user for OKE cluster id
+		scanner := bufio.NewScanner(os.Stdin)
+
 		for {
 			fmt.Print("Please enter the cluster id:")
-			_, err = fmt.Scanf("%s", &clusterId)
+			if scanner.Scan() {
+				clusterId = strings.TrimSpace(scanner.Text())
+			}
+
 			if err != nil {
 				log.Warnf("Error reading cluster id: %s", err.Error())
 				continue
@@ -381,7 +387,7 @@ mesheryctl system config oke --token auth.json
 
 		// Prompt user for OKE cluster region
 		fmt.Print("Please enter the cluster region (press Enter to skip):")
-		scanner := bufio.NewScanner(os.Stdin)
+		
 		if scanner.Scan() {
 			region = strings.TrimSpace(scanner.Text())
 		}
@@ -403,15 +409,15 @@ mesheryctl system config oke --token auth.json
 		// Prompt user for config path
 		clusterName := strings.TrimSpace(string(nameCommandOutput))
 
-		defaultConfigPath := utils.MesheryFolder + "/config/kubeconfig-oke-" + clusterName + ".yaml"
+		
+		defaultConfigPath := filepath.Join(utils.MesheryFolder, "config", "kubeconfig-oke-"+clusterName+".yaml")
 
 		log.Print("press enter to use default")
 		fmt.Printf("config path [%s]:", strings.TrimSpace(defaultConfigPath))
 
-		scanner2 := bufio.NewScanner(os.Stdin)
 		var configPath string
-		if scanner2.Scan() {
-			inputPath := strings.TrimSpace(scanner2.Text())
+		if scanner.Scan() {
+			inputPath := strings.TrimSpace(scanner.Text())
 			if inputPath != "" {
 				configPath = inputPath
 			} else {
