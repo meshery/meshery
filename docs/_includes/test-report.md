@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 11th 2025, 5:21:46 am
+- Testing started at: December 11th 2025, 11:52:15 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
-- ❌ 6 failed
+- ✅ 89 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
 - ⏩ 10 skipped
 
-⌛ _Duration: 7 minutes and 19 seconds_
+⌛ _Duration: 7 minutes and 16 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -39,8 +39,7 @@
 | 16 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 17 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 18 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
-| 19 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
-| 20 | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 19 | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
 
 </div>
 </details>
