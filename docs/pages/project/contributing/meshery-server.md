@@ -98,6 +98,14 @@ Meshery Server supports several runtime configuration environment variables that
   - Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
   - Use cases: Development environments, pre-packaged deployments, reducing startup time
 
+#### Kubernetes Configuration
+
+- **`KUBECONFIG_FOLDER`**: Specifies the folder path where Meshery should look for Kubernetes configuration files. This allows you to provide a Meshery deployment with a predefined Kubernetes context.
+  - Default: `$HOME/.kube` (or `/home/appuser/.kube` in containerized deployments)
+  - Example: `KUBECONFIG_FOLDER=/home/appuser/.kube`
+  - Use cases: Custom kubeconfig locations, pre-configured Kubernetes contexts, containerized deployments
+  - Note: Meshery looks for a `config` file within this folder (e.g., `/home/appuser/.kube/config`)
+
 #### Other Configuration Variables
 
 - **`SKIP_DOWNLOAD_CONTENT`**: Skips downloading seed content for patterns, filters, and applications.
