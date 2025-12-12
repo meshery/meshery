@@ -354,19 +354,29 @@ mesheryctl system config oke --token auth.json
 		if err != nil {
 			log.Fatalf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm ")
 		}
+
+		okeConfigCheck := exec.Command("oci", "os", "ns", "get")
+		err = okeConfigCheck.Run()
+		if err != nil {
+			log.Fatalf("OCI CLI not configured. Please configure OCI CLI using 'oci setup config' and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm#configfile ")
+		}
+
 		log.Info("Configuring Meshery to access OKE...")
 		var clusterId, region string
 
 		// Prompt user for OKE cluster id
-		fmt.Print("Please enter the cluster id:")
-		_, err = fmt.Scanf("%s", &clusterId)
-		if err != nil {
-			log.Warnf("Error reading cluster id: %s", err.Error())
+		for {
 			fmt.Print("Please enter the cluster id:")
 			_, err = fmt.Scanf("%s", &clusterId)
 			if err != nil {
-				log.Fatalf("Error reading cluster id: %s", err.Error())
+				log.Warnf("Error reading cluster id: %s", err.Error())
+				continue
 			}
+			idParts := strings.Split(clusterId, ".")
+			if len(idParts) == 5 && idParts[0] == "ocid1" {
+				break
+			}
+			log.Warn("Incorrect cluster id format")
 		}
 
 		// Prompt user for OKE cluster region
@@ -382,8 +392,37 @@ mesheryctl system config oke --token auth.json
 			log.Info("No region provided. Proceeding without region...")
 		}
 
+		//get the cluster name from the cluster id
+		nameCommand := exec.Command("oci", "ce", "cluster", "get", "--cluster-id", clusterId, "--query", "data.name", "--raw-output")
+		nameCommandOutput, err := nameCommand.Output()
+		if err != nil {
+			log.Fatalf("Error getting cluster name: %s", err.Error())
+			return err
+		}
+
+		// Prompt user for config path
+		clusterName := strings.TrimSpace(string(nameCommandOutput))
+
+		defaultConfigPath := utils.ConfigPath + "/kubeconfig-oke-" + clusterName + ".yaml"
+
+		log.Print("press enter to use default")
+		log.Printf("config path [%s]:", defaultConfigPath)
+
+		scanner2 := bufio.NewScanner(os.Stdin)
+		var configPath string
+		if scanner2.Scan() {
+			inputPath := strings.TrimSpace(scanner2.Text())
+			if inputPath != "" {
+				configPath = inputPath
+			} else {
+				configPath = defaultConfigPath
+			}
+		} else {
+			configPath = defaultConfigPath
+		}
+
 		// Build the oci CLI syntax to fetch cluster config in kubeconfig.yaml file
-		okeCmd := exec.Command("oci", "ce", "cluster", "create-kubeconfig", "--cluster-id", clusterId, "--overwrite", "--file", utils.ConfigPath)
+		okeCmd := exec.Command("oci", "ce", "cluster", "create-kubeconfig", "--cluster-id", clusterId, "--overwrite", "--file", configPath)
 		if region != "" {
 			okeCmd.Args = append(okeCmd.Args, "--region", region)
 		}
@@ -395,7 +434,7 @@ mesheryctl system config oke --token auth.json
 			log.Fatalf("Error generating kubeconfig: %s", err.Error())
 			return err
 		}
-		log.Debugf("OKE configuration is written to: %s", utils.ConfigPath)
+		log.Debugf("OKE configuration is written to: %s", configPath)
 
 		// set the token in the chosen context
 		setToken()

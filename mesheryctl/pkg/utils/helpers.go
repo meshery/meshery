@@ -422,6 +422,7 @@ func SetFileLocation() error {
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
+	ConfigPath = filepath.Join(MesheryFolder, "config")
 	return nil
 }
 
