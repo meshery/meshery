@@ -403,10 +403,10 @@ mesheryctl system config oke --token auth.json
 		// Prompt user for config path
 		clusterName := strings.TrimSpace(string(nameCommandOutput))
 
-		defaultConfigPath := utils.ConfigPath + "/kubeconfig-oke-" + clusterName + ".yaml"
+		defaultConfigPath := utils.MesheryFolder + "/config/kubeconfig-oke-" + clusterName + ".yaml"
 
 		log.Print("press enter to use default")
-		log.Printf("config path [%s]:", defaultConfigPath)
+		log.Printf("config path [%s]:", strings.TrimSpace(defaultConfigPath))
 
 		scanner2 := bufio.NewScanner(os.Stdin)
 		var configPath string
