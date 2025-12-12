@@ -170,6 +170,61 @@ To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/gu
 
 > Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
+### Model Generation from Kubernetes Custom Resource Definitions (CRDs)
+
+When generating models from [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), Meshery automatically parses the CRD specifications to create components. During model creation, you can **optionally specify a group filter** based on the `spec.group` field from CRDs to control which CRDs are included when generating components for that model.
+
+#### How CRD Filtering Works
+
+During model generation, you as the user can specify a **group filter value** that will be matched against the `spec.group` field of CRDs. This user-specified filter allows you to selectively include only CRDs that belong to a specific Kubernetes API group in your model, ensuring logical organization of related components.
+
+**Example**: In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`. When creating a model, you would **explicitly specify** `cloudquota.cnrm.cloud.google.com` as the group filter value (e.g., in the model definition spreadsheet or via the UI). Meshery will then include only CRDs matching this API group when generating components for that model.
+
+{% capture code_content %}apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    cnrm.cloud.google.com/version: 1.140.0
+  labels:
+    cnrm.cloud.google.com/managed-by-kcc: "true"
+    cnrm.cloud.google.com/system: "true"
+  name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
+spec:
+  group: cloudquota.cnrm.cloud.google.com  # API group used for filtering
+  names:
+    categories:
+    - gcp
+    kind: APIQuotaAdjusterSettings
+    plural: apiquotaadjustersettings
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          # ... additional schema definition
+{% endcapture %}
+{% include code.html code=code_content %}
+
+{% include alert.html type="info" title="User-Specified Group Filtering" content="Group filtering is <strong>not automatic</strong>. You must explicitly specify the group filter value when creating or configuring a model. When you provide a group filter, only CRDs with a matching <code>spec.group</code> field will be processed and included in the model. If you do not specify a group filter, all CRDs from the source will be processed." %}
+
+#### Component Generation Behavior
+
+When Meshery processes CRDs:
+
+1. **Parsing**: Each CRD is parsed to extract its schema and specifications
+2. **Filtering** (Optional): If a group filter is specified, only CRDs with a matching `spec.group` value are processed
+3. **Component Creation**: A component definition is generated for each CRD, including its kind, version, and schema
+4. **Model Assignment**: Generated components are assigned to the target model
+5. **Registration**: The components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective model
+6. **Enrichment**: Components inherit default properties from their model and can be further customized
+
+This user-controlled filtering capability allows you to organize related Kubernetes custom resources together, making them easier to discover, manage, and use within Meshery designs. For example, to create a model containing all Google Config Connector CRDs for a specific GCP service, you would explicitly specify their common API group value (e.g., `cloudquota.cnrm.cloud.google.com`) as the group filter when defining the model.
+
 ### Post Model Generation
 
 During model generation, corresponding components are created. Next step is to enrich these component details and define their capabilities and relationships.

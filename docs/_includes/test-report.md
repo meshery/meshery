@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 3rd 2025, 11:50:36 pm
+- Testing started at: December 12th 2025, 5:31:44 pm
 
 **📦 Test Result Summary**
 
-- ✅ 81 passed
-- ❌ 2 failed
-- ⚠️ 2 flaked
-- ⏩ 6 skipped
+- ✅ 80 passed
+- ❌ 10 failed
+- ⚠️ 0 flaked
+- ⏩ 14 skipped
 
-⌛ _Duration: 9 minutes and 23 seconds_
+⌛ _Duration: 7 minutes and 30 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,16 +21,67 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 5 | chromium-meshery-provider | deletes a published design from the list |  | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 10 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | chromium-meshery-provider | Test if Left Navigation Panel is displayed |  | ❌ |
+| 2 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
+| 3 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 6 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 7 | chromium-meshery-provider | Logout from current user session |  | ❌ |
+| 8 | chromium-meshery-provider | Create a Model |  | ❌ |
+| 9 | chromium-meshery-provider | Search a Model and Export it |  | ➖ |
+| 10 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
+| 11 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
+| 12 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
+| 13 | chromium-meshery-provider | Verify Kanvas Details |  | ❌ |
+| 14 | chromium-meshery-provider | displays public design card correctly |  | ❌ |
+| 15 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 16 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 17 | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ❌ |
+| 18 | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ❌ |
+| 19 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 20 | chromium-local-provider | displays public design card correctly |  | ➖ |
+| 21 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 22 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 23 | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 24 | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 25 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 26 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 27 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
+| 28 | chromium-local-provider | should identify relationships for All Relationships | relationship | ❌ |
+
+</div>
+</details>
+
+
+
+
+**🔗 Relationship Tests**
+
+<details>
+    <summary>[Show/Hide] Relationship Test Details (18 tests)</summary>
+    <div markdown="1">
+
+| Kind | Type | SubType | From | To | Model | Design Name | Status |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- | :---: |
+| edge | binding | permission | ClusterRole | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
+| edge | binding | permission | Role | ServiceAccount | kubernetes | Understanding Relationships | ❌ |
+| edge | non-binding | network | Service | Deployment | kubernetes | service-to-deployment-network | ✅ |
+| edge | non-binding | network | Service | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
+| edge | non-binding | reference | ClusterRoleBinding | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | deployment-configmap-reference-relationship | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | service-to-deployment-network | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | parent | alias | Container | Deployment | kubernetes | Understanding Relationships | ✅ |
+| hierarchical | parent | alias | Container | Pod | kubernetes | container-hierarchical-parent-alias-relationship | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | hierarchical-parent-namespace-relationship | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | service-to-deployment-network | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | pv-pvc-edge-non-binding-reference-relationship | ✅ |
+| hierarchical | parent | inventory | * | Namespace | kubernetes | Understanding Relationships | ✅ |
+| hierarchical | sibling | matchlabels | ClusterRole | ClusterRole | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | sibling | matchlabels | Deployment | Deployment | kubernetes | meshery-design-fixture.json | ✅ |
+| hierarchical | sibling | matchlabels | Service | Service | kubernetes | meshery-design-fixture.json | ✅ |
 
 </div>
 </details>
