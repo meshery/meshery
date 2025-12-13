@@ -502,7 +502,7 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 func UpdateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
 
-	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
+	start := DockerComposeCommand("-f", DockerComposeFile, "pull")
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr
 	if err := start.Run(); err != nil {
@@ -1304,3 +1304,4 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	}
 	return config.CurrentContext, nil
 }
+

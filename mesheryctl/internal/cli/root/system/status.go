@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -111,7 +110,7 @@ mesheryctl system status --verbose
 		switch currPlatform {
 		case "docker":
 			// List the running Meshery containers
-			start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
+			start := utils.DockerComposeCommand("-f", utils.DockerComposeFile, "ps")
 
 			outputStd, err := start.Output()
 			if err != nil {
