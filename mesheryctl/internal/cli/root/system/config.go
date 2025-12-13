@@ -36,6 +36,29 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
+var (
+	okeRegionFlag    string
+	okeClusterIDFlag string
+)
+
+// promptUserInput prompts the user for input with retry logic
+func promptUserInput(prompt string) (string, error) {
+	var input string
+	for {
+		fmt.Print(prompt)
+		_, err := fmt.Scanf("%s", &input)
+		if err == nil && input != "" {
+			return input, nil
+		}
+		if err != nil {
+			log.Warnf("Error reading input: %s", err.Error())
+		} else {
+			log.Warn("Input cannot be empty")
+		}
+		fmt.Print("Let's try again. ")
+	}
+}
+
 func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -180,8 +203,10 @@ mesheryctl system config aks
 		}
 		log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -250,8 +275,10 @@ mesheryctl system config eks
 		}
 		log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -283,8 +310,10 @@ mesheryctl system config gke
 		}
 		log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -323,8 +352,99 @@ mesheryctl system config minikube
 
 		log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
+		return nil
+	},
+}
+
+var okeConfigCmd = &cobra.Command{
+	Use:   "oke",
+	Short: "Configure Meshery to use OKE cluster",
+	Long:  `Configure Meshery to connect to OKE cluster`,
+	Example: `
+// Interactive mode - prompts for region and cluster ID
+mesheryctl system config oke
+
+// Specify cluster ID and region (non-interactive)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx --region us-phoenix-1
+
+// Using short flag for region
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1
+
+// Configure with authentication token (for CI/CD or automation)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1 --token auth.json
+	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Check if OCI CLI is installed
+		okeCheck := exec.Command("oci", "--version")
+		err := okeCheck.Run()
+		if err != nil {
+			return fmt.Errorf("OCI CLI not found. Please install OCI CLI and try again. \nSee https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm")
+		}
+
+		// Check if OCI CLI is configured
+		configCheck := exec.Command("oci", "iam", "region", "list", "--output", "table")
+		if err := configCheck.Run(); err != nil {
+			log.Warn("OCI CLI may not be configured properly.")
+			log.Info("Please run 'oci setup config' to configure OCI CLI before proceeding.")
+			log.Info("See: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm")
+		}
+
+		log.Info("Configuring Meshery to access OKE...")
+		var regionName, clusterID string
+
+		// Respect flags if provided
+		regionName = okeRegionFlag
+		clusterID = okeClusterIDFlag
+
+		// Prompt user for OCI region name if not provided via flag
+		if regionName == "" {
+			regionName, err = promptUserInput("Please enter the OCI region name: ")
+			if err != nil {
+				return fmt.Errorf("error reading OCI region name: %w", err)
+			}
+		}
+
+		// Prompt user for OKE cluster ID if not provided via flag
+		if clusterID == "" {
+			clusterID, err = promptUserInput("Please enter the OKE cluster ID: ")
+			if err != nil {
+				return fmt.Errorf("error reading OKE cluster ID: %w", err)
+			}
+		}
+
+		// Build the OCI CLI syntax to fetch cluster config in kubeconfig.yaml file
+		okeCmd := exec.Command("oci", "ce", "cluster", "create-kubeconfig", "--cluster-id", clusterID, "--region", regionName, "--file", utils.ConfigPath, "--overwrite")
+		okeCmd.Stdout = os.Stdout
+		okeCmd.Stderr = os.Stderr
+		// Write OKE compatible config to the filesystem
+		err = okeCmd.Run()
+		if err != nil {
+			return fmt.Errorf(`error generating kubeconfig: %w
+
+Possible causes:
+1. OCI CLI is not configured. Run 'oci setup config' to configure it.
+2. Invalid cluster ID or region provided.
+3. Insufficient permissions to access the cluster.
+
+For OCI CLI setup, see: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm
+For OCI CLI configuration, see: https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm`, err)
+		}
+		log.Debugf("OKE configuration is written to: %s", utils.ConfigPath)
+
+		// Set context for Meshery
+		if err := setContextForMeshery(); err != nil {
+			return fmt.Errorf("error setting context: %w", err)
+		}
 		return nil
 	},
 }
@@ -332,11 +452,66 @@ mesheryctl system config minikube
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
-	Long:  `Configure the Kubernetes cluster used by Meshery.`,
+	Long: `Configure the Kubernetes cluster used by Meshery.
+
+This command provides subcommands for configuring Meshery to work with various
+Kubernetes cluster types. Each subcommand automates the process of generating
+kubeconfig and registering the cluster context with Meshery.
+
+Supported Kubernetes Platforms:
+  - aks:      Azure Kubernetes Service (Microsoft Azure)
+  - eks:      Elastic Kubernetes Service (Amazon Web Services)  
+  - gke:      Google Kubernetes Engine (Google Cloud Platform)
+  - minikube: Minikube (Local Kubernetes)
+  - oke:      Oracle Kubernetes Engine (Oracle Cloud Infrastructure)
+
+Each platform has specific prerequisites and configuration requirements:
+
+Azure Kubernetes Service (AKS):
+  Prerequisites: Azure CLI installed and configured
+  Authentication: Uses Azure CLI credentials
+  
+Amazon Elastic Kubernetes Service (EKS):
+  Prerequisites: AWS CLI installed and configured
+  Authentication: Uses AWS CLI credentials and IAM roles
+  
+Google Kubernetes Engine (GKE):
+  Prerequisites: Google Cloud SDK installed and configured
+  Authentication: Uses gcloud credentials and service accounts
+  
+Minikube:
+  Prerequisites: Minikube installed and running
+  Authentication: Uses local kubeconfig from minikube
+  
+Oracle Kubernetes Engine (OKE):
+  Prerequisites: OCI CLI installed and configured
+  Authentication: Uses OCI CLI credentials and IAM policies
+  Required IAM policies:
+    - Allow group <group> to manage cluster-family in compartment <compartment>
+    - Allow group <group> to use virtual-network-family in compartment <compartment>
+
+Use 'mesheryctl system config <platform> --help' for platform-specific details and examples.`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
-Example: mesheryctl system config eks
-Description: Configure the Kubernetes cluster used by Meshery.`
+		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube|oke]
+Example: mesheryctl system config oke
+Description: Configure the Kubernetes cluster used by Meshery.
+
+Supported platforms:
+  aks      - Azure Kubernetes Service (Microsoft Azure)
+  eks      - Amazon Elastic Kubernetes Service (AWS)
+  gke      - Google Kubernetes Engine (Google Cloud)
+  minikube - Minikube (local Kubernetes development)
+  oke      - Oracle Kubernetes Engine (Oracle Cloud Infrastructure)
+
+Prerequisites by platform:
+  aks      - Azure CLI (az) installed and authenticated
+  eks      - AWS CLI (aws) installed and configured
+  gke      - Google Cloud SDK (gcloud) installed and authenticated
+  minikube - Minikube installed and cluster running
+  oke      - OCI CLI (oci) installed and configured with proper IAM policies
+
+For platform-specific help and examples:
+  mesheryctl system config <platform> --help`
 
 		if len(args) == 0 {
 			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
@@ -346,19 +521,27 @@ Description: Configure the Kubernetes cluster used by Meshery.`
 		return nil
 	},
 	Example: `
-// Set configuration according to k8s cluster
-mesheryctl system config [aks|eks|gke|minikube]
+// Configure Meshery for Azure Kubernetes Service
+mesheryctl system config aks
 
-// Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
-mesheryctl system config --token "~/Downloads/auth.json"
-	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+// Configure Meshery for Amazon EKS  
+mesheryctl system config eks
 
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\".", args[0])))
-		}
-		return nil
-	},
+// Configure Meshery for Google Kubernetes Engine
+mesheryctl system config gke
+
+// Configure Meshery for Minikube
+mesheryctl system config minikube
+
+// Configure Meshery for Oracle Kubernetes Engine (interactive)
+mesheryctl system config oke
+
+// Configure OKE with authentication token
+mesheryctl system config oke --token auth.json
+
+// Configure OKE with specific cluster and region (non-interactive)
+mesheryctl system config oke --cluster-id ocid1.cluster.oc1.phx.xxx -r us-phoenix-1`,
+
 }
 
 func init() {
@@ -367,26 +550,32 @@ func init() {
 		eksConfigCmd,
 		gkeConfigCmd,
 		minikubeConfigCmd,
+		okeConfigCmd,
 	}
 
 	aksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	eksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	gkeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	minikubeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	okeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	// OKE specific flags
+	okeConfigCmd.Flags().StringVarP(&okeRegionFlag, "region", "r", "", "OCI region for OKE cluster")
+	okeConfigCmd.Flags().StringVar(&okeClusterIDFlag, "cluster-id", "", "OKE cluster OCID")
 
 	configCmd.AddCommand(availableSubcommands...)
 }
 
-// Given the token path, get the context and set the token in the chosen context
-func setToken() {
+// setContextForMeshery gets available contexts and allows user to select one to set in Meshery
+func setContextForMeshery() error {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		log.Fatalf("%v", err.Error())
+		return err
 	}
 	if len(contexts) < 1 {
-		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
+		return fmt.Errorf("no contexts found")
 	}
+	
 	choosenCtx := contexts[0]
 	if len(contexts) > 1 {
 		fmt.Println("List of available contexts: ")
@@ -397,14 +586,14 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			log.Fatalf("Error reading input:  %s", err.Error())
+			return fmt.Errorf("error reading input: %s", err.Error())
+		}
+		if choice < 1 || choice > len(contexts) {
+			return fmt.Errorf("invalid choice: %d", choice)
 		}
 		choosenCtx = contexts[choice-1]
 	}
 
-	log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
-	err = setContext(utils.ConfigPath, choosenCtx)
-	if err != nil {
-		log.Fatalf("Error setting context: %s", err.Error())
-	}
+	log.Debugf("Chosen context: %s out of %d available contexts", choosenCtx, len(contexts))
+	return setContext(utils.ConfigPath, choosenCtx)
 }
