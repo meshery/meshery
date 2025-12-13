@@ -104,4 +104,146 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
  <div class="clipboardjs">kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml</div></div>
  </pre>
 
+# Kubeconfig Permissions Required
+
+When connecting Meshery to your Kubernetes cluster, your kubeconfig must have sufficient RBAC permissions to allow Meshery to deploy and manage service meshes and applications.
+
+## Required Permissions
+
+Meshery requires permissions to manage the following Kubernetes resources:
+
+### Core Resources
+- **Namespaces, Pods, Services, ConfigMaps, Secrets, ServiceAccounts**
+- **PersistentVolumes, PersistentVolumeClaims**
+
+### Workload Resources
+- **Deployments, StatefulSets, DaemonSets, ReplicaSets**
+- **Jobs, CronJobs**
+
+### Network Resources
+- **Ingresses, NetworkPolicies**
+
+### RBAC Resources
+- **Roles, RoleBindings, ClusterRoles, ClusterRoleBindings**
+
+### Custom Resources
+- **CustomResourceDefinitions (CRDs)**
+- **All service mesh custom resources**
+
+## Minimum Required ClusterRole
+
+Below is a ClusterRole definition with the minimum permissions required for Meshery:
+
+{% capture code_content %}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-role
+rules:
+# Core resources
+- apiGroups: [""]
+  resources: ["namespaces", "pods", "services", "configmaps", "secrets", "serviceaccounts", "persistentvolumes", "persistentvolumeclaims"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
+# Workloads
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
+# Batch resources
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["create", "get", "list", "watch", "update", "delete"]
+# Network resources
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["create", "get", "list", "watch", "update", "delete"]
+# RBAC
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "bind", "escalate"]
+# CRDs
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["create", "get", "list", "watch", "update", "delete"]
+# All custom resources
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
+{% endcapture %}
+{% include code.html code=code_content %}
+
+## Creating a ServiceAccount with Required Permissions
+
+### Step 1: Create the ClusterRole
+
+Save the ClusterRole definition above to a file (e.g., `meshery-clusterrole.yaml`) and apply it:
+
+{% capture code_content %}kubectl apply -f meshery-clusterrole.yaml{% endcapture %}
+{% include code.html code=code_content %}
+
+### Step 2: Create a ServiceAccount
+
+{% capture code_content %}kubectl create namespace meshery
+kubectl create serviceaccount meshery-sa -n meshery{% endcapture %}
+{% include code.html code=code_content %}
+
+### Step 3: Create ClusterRoleBinding
+
+Create a file named `meshery-clusterrolebinding.yaml`:
+
+{% capture code_content %}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-role
+subjects:
+- kind: ServiceAccount
+  name: meshery-sa
+  namespace: meshery
+{% endcapture %}
+{% include code.html code=code_content %}
+
+Apply the binding:
+
+{% capture code_content %}kubectl apply -f meshery-clusterrolebinding.yaml{% endcapture %}
+{% include code.html code=code_content %}
+
+### Step 4: Generate ServiceAccount Token
+
+{% capture code_content %}kubectl create token meshery-sa -n meshery --duration=87600h{% endcapture %}
+{% include code.html code=code_content %}
+
+## Verifying Permissions
+
+To verify your kubeconfig has the required permissions:
+
+{% capture code_content %}# Check namespace permissions
+kubectl auth can-i create namespaces
+
+# Check deployment permissions
+kubectl auth can-i create deployments --all-namespaces
+
+# Check CRD permissions
+kubectl auth can-i create customresourcedefinitions{% endcapture %}
+{% include code.html code=code_content %}
+
+All commands should return `yes` for Meshery to function properly.
+
+## Troubleshooting Permission Issues
+
+If you encounter permission denied errors when using Meshery:
+
+1. **Verify your current permissions:**
+   {% capture code_content %}kubectl auth can-i --list{% endcapture %}
+   {% include code.html code=code_content %}
+
+2. **Check the ClusterRoleBinding:**
+   {% capture code_content %}kubectl get clusterrolebinding meshery-binding -o yaml{% endcapture %}
+   {% include code.html code=code_content %}
+
+3. **For restricted environments** (GKE Autopilot, OpenShift), consult your cluster administrator for appropriate permissions or SecurityContextConstraints.
+
 {% include related-discussions.html tag="meshery" %}
