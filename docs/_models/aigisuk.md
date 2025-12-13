@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: AIGIS UK
 subtitle: Collaborative and visual infrastructure as design for AIGIS UK
