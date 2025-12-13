@@ -46,8 +46,6 @@ These assumed defaults should be easily overridden by the user with flags.
 
 For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overridden with the `--platform` flag.
 
-For example, if `mesheryctl design` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
-
 ### User Experience: GUI vs CLI
 
 Ideally, all functionally provided in Meshery UI should be available to users via CLI (in `mesheryctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.

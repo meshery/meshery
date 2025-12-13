@@ -7,14 +7,13 @@ import pvPvcReferenceFixture from './pv-pvc-edge-non-binding-reference-fixture.j
 import secretDeploymentReferenceFixture from './secret-deployment-edge-non-binding-reference-fixture.json';
 import roleRolebindingPermissionFixture from './role-rolebinding-serviceaccount-edge-binding-permission-fixture.json';
 
-
 export const RelationshipTestFixtures = [
-    serviceDeploymentNetworkFixture,
-    namespaceHierarchicalParentInventoryFixture,
-    configmapPodReferenceFixture,
-    containerHierarchicalParentAliasFixture,
-    mesheryDesignFixture,
-    pvPvcReferenceFixture,
-    secretDeploymentReferenceFixture,
-    roleRolebindingPermissionFixture
+  serviceDeploymentNetworkFixture,
+  namespaceHierarchicalParentInventoryFixture,
+  configmapPodReferenceFixture,
+  containerHierarchicalParentAliasFixture,
+  mesheryDesignFixture,
+  pvPvcReferenceFixture,
+  secretDeploymentReferenceFixture,
+  roleRolebindingPermissionFixture,
 ];

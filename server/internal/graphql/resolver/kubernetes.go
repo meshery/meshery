@@ -170,7 +170,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 	contextsChan := make(chan *model.K8sContextsPage)
 
 	r.Config.K8scontextChannel.SubscribeContext(ch)
-	r.Log.Info("K8s context subscription started")
+	r.Log.Debugf("K8s context subscription started for context: %v", *selector.Search)
 
 	go func() {
 		for {
@@ -184,7 +184,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 				contextsChan <- contexts
 
 			case <-ctx.Done():
-				r.Log.Info("K8s context subscription stopped")
+				r.Log.Debugf("K8s context subscription stopped for context: %v", *selector.Search)
 				return
 			}
 		}

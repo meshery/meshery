@@ -8308,7 +8308,7 @@ paths:
                 - GetMeshmodelRelationshipByName
     /api/meshmodels/register:
         post:
-            description: Register model based on thier Schema Version.
+            description: Register model based on their Schema Version.
             operationId: idRegisterMeshmodels
             responses:
                 "200":
