@@ -23,11 +23,12 @@ At the core of this system are **Meshery Models** — packages that define a spe
 - **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
+
 > Learn more: [What are Meshery Models?]({{site.baseurl}}/concepts/logical/models)
 
 #### What Is the Model Schema?
 
-Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml). 
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml).
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
 
@@ -117,24 +118,23 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 - **Container Alias:**
   Alias components that simulate real workloads, combining configuration, view, and operational capabilities.
 
-
 #### Individual Capabilities
 
-| Capability| Description | Kind |
-|---------------------------|----------------------------------------------|-----------|
-| **Performance Test**                     | Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.  | action    |
-| **Workload Configuration**               | Configure the workload specific setting of a component.                                | mutate    |
-| **Labels and Annotations Configuration** | Configure Labels And Annotations for the component.                         | mutate    |
-| **Relationships**                        | View defined relationships for the component.                               | view      |
-| **Json Schema**                          | View the underlying JSON Schema definition of the component.                | view      |
-| **Styling**                              | Configure the visual styles for the component.                              | mutate    |
-| **Change Shape**                         | Change the shape of the component.                                          | mutate    |
-| **Compound Drag and Drop**               | Drag and Drop a component into a parent component in graph view.            | interaction |
-| **Body Text**                            | Add textual content within the body of a node.                              | mutate    |
-| **Show Label**                           | Display label text associated with a node (similar to `Body Text`).         | view      |
-| **Resolve Component**                    | Mark the status of a component as resolved.                                 | mutate    |
-| **Interactive Terminal**                 | Initiate a terminal session.                                                | action    |
-| **Stream Logs**                          | Initiate log streaming session.                                             | action    |
+| Capability                               | Description                                                                                                      | Kind        |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Performance Test**                     | Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results. | action      |
+| **Workload Configuration**               | Configure the workload specific setting of a component.                                                          | mutate      |
+| **Labels and Annotations Configuration** | Configure Labels And Annotations for the component.                                                              | mutate      |
+| **Relationships**                        | View defined relationships for the component.                                                                    | view        |
+| **Json Schema**                          | View the underlying JSON Schema definition of the component.                                                     | view        |
+| **Styling**                              | Configure the visual styles for the component.                                                                   | mutate      |
+| **Change Shape**                         | Change the shape of the component.                                                                               | mutate      |
+| **Compound Drag and Drop**               | Drag and Drop a component into a parent component in graph view.                                                 | interaction |
+| **Body Text**                            | Add textual content within the body of a node.                                                                   | mutate      |
+| **Show Label**                           | Display label text associated with a node (similar to `Body Text`).                                              | view        |
+| **Resolve Component**                    | Mark the status of a component as resolved.                                                                      | mutate      |
+| **Interactive Terminal**                 | Initiate a terminal session.                                                                                     | action      |
+| **Stream Logs**                          | Initiate log streaming session.                                                                                  | action      |
 
 {% include alert.html type="info" title="Capabilities Schema example" content='<details><summary>Capabilities schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/capability.json",
@@ -142,7 +142,7 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 "description": "Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.",
 "additionalProperties": false,
 "type": "object",
-"required": 
+"required":
 .
 ...
 .
@@ -150,17 +150,18 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 "description": "Top-level categorization of the capability",
 "additionalProperties": false,
 "anyOf": [
-  {
-    "const": "action",
-    "description": "For capabilities related to executing actions on entities. Example: initiate log streaming on a Pod. Example: initiate deployment of a component."
-  },
-  {
-    "const": "mutate",
-    "description": "For capabilities related to mutating an entity. Example: the ability to change the configuration of a component."
-  },
-  .
-  .
-  .
+{
+"const": "action",
+"description": "For capabilities related to executing actions on entities. Example: initiate log streaming on a Pod. Example: initiate deployment of a component."
+},
+{
+"const": "mutate",
+"description": "For capabilities related to mutating an entity. Example: the ability to change the configuration of a component."
+},
+.
+.
+.
+
 </pre></details> See <a href="https://github.com/meshery/schemas/blob/master/typescript/constructs/v1alpha1/capability/CapabilityOpenApiSchema.ts">Capabilities Schema</a> for more details.' %}
 
 ### Importing and Creating Models
@@ -170,60 +171,96 @@ To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/gu
 
 > Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
-### Model Generation from Kubernetes Custom Resource Definitions (CRDs)
+### Model Generation from Schemas
 
-When generating models from [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/), Meshery automatically parses the CRD specifications to create components. During model creation, you can **optionally specify a group filter** based on the `spec.group` field from CRDs to control which CRDs are included when generating components for that model.
+Meshery automatically generates models and components by parsing schemas from various sources. While [Kubernetes Custom Resource Definitions (CRDs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) are a common source, Meshery can create components from any valid schema definition.
 
-#### How CRD Filtering Works
+#### Component Grouping into Models
 
-During model generation, you as the user can specify a **group filter value** that will be matched against the `spec.group` field of CRDs. This user-specified filter allows you to selectively include only CRDs that belong to a specific Kubernetes API group in your model, ensuring logical organization of related components.
+When generating components, Meshery processes input schemas and automatically organizes them into **Models**. This grouping process logically binds related components together based on their source.
 
-**Example**: In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`. When creating a model, you would **explicitly specify** `cloudquota.cnrm.cloud.google.com` as the group filter value (e.g., in the model definition spreadsheet or via the UI). Meshery will then include only CRDs matching this API group when generating components for that model.
+**Source-Based Grouping:**  
+Components are grouped based on their origin—such as a specific GitHub repository, Helm chart, or Kubernetes cluster. For example:
+
+- Importing a Helm chart for Prometheus from ArtifactHub creates a "Prometheus" Model containing all resources defined in that chart (Services, Deployments, ConfigMaps, etc.) as components
+- Connecting to a Kubernetes cluster creates a "Kubernetes" Model containing all discovered CRDs as components
+- Importing from a GitHub repository creates a model named after the repository
+
+**Metadata Preservation:**  
+For Kubernetes CRDs, the `spec.group` field is extracted and stored as part of each component's API version (e.g., `networking.k8s.io/v1`). This metadata is preserved but does not determine model assignment for direct imports.
+
+#### Component Generation Behavior
+
+When Meshery processes schemas:
+
+1. **Parsing**: The source is parsed to extract schema specifications for every entity.
+2. **Component Creation**: A component definition is generated for each entity, capturing its kind, version, and schema.
+3. **Model Assignment**: Components are automatically assigned to a Model based on their source context.
+4. **Registration**: Components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective model.
+5. **Enrichment**: Components inherit default properties from their model and can be further customized.
+
+This automatic grouping allows you to manage related resources as cohesive units within Meshery designs.
+
+#### Advanced: Grouping by API Group (CSV Imports)
+
+When importing models via CSV or Google Spreadsheet, you can optionally specify a `group` field to filter which CRDs are included based on their `spec.group` value. This filtering capability is **specific to CSV/spreadsheet imports** and is not available for direct imports from GitHub repositories, ArtifactHub packages, or live Kubernetes clusters.
+
+**How Group Filtering Works:**
+
+During CSV import, if you specify a `group` value in your model definition, Meshery will only process CRDs whose `spec.group` field matches the specified value. This allows you to create focused models containing only components from a specific Kubernetes API group.
+
+- **With a group specified**: Only CRDs matching the `spec.group` value are processed
+- **Without a group specified** (empty field): All CRDs from the source are processed
+
+**Example:**
+
+In the CRD below, the `spec.group` field has the value `cloudquota.cnrm.cloud.google.com`:
 
 {% capture code_content %}apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     cnrm.cloud.google.com/version: 1.140.0
-  labels:
-    cnrm.cloud.google.com/managed-by-kcc: "true"
-    cnrm.cloud.google.com/system: "true"
   name: apiquotaadjustersettings.cloudquota.cnrm.cloud.google.com
 spec:
-  group: cloudquota.cnrm.cloud.google.com  # API group used for filtering
+  group: cloudquota.cnrm.cloud.google.com # API group used for filtering
   names:
-    categories:
-    - gcp
     kind: APIQuotaAdjusterSettings
     plural: apiquotaadjustersettings
   scope: Namespaced
   versions:
-  - name: v1beta1
-    schema:
-      openAPIV3Schema:
-        properties:
-          apiVersion:
-            type: string
-          kind:
-            type: string
-          # ... additional schema definition
-{% endcapture %}
-{% include code.html code=code_content %}
+    - name: v1beta1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
 
-{% include alert.html type="info" title="User-Specified Group Filtering" content="Group filtering is <strong>not automatic</strong>. You must explicitly specify the group filter value when creating or configuring a model. When you provide a group filter, only CRDs with a matching <code>spec.group</code> field will be processed and included in the model. If you do not specify a group filter, all CRDs from the source will be processed." %}
 
-#### Component Generation Behavior
+  {% endcapture %}
+  {% include code.html code=code_content %}
+**CSV Model Definition Example:**
 
-When Meshery processes CRDs:
+```csv
+model,group,category,modelDisplayName,registrant
+gcp-cloudquota,cloudquota.cnrm.cloud.google.com,Cloud Native Network,GCP Cloud Quota,artifacthub
+```
 
-1. **Parsing**: Each CRD is parsed to extract its schema and specifications
-2. **Filtering** (Optional): If a group filter is specified, only CRDs with a matching `spec.group` value are processed
-3. **Component Creation**: A component definition is generated for each CRD, including its kind, version, and schema
-4. **Model Assignment**: Generated components are assigned to the target model
-5. **Registration**: The components are registered in Meshery's [Registry]({{site.baseurl}}/concepts/logical/registry) under their respective model
-6. **Enrichment**: Components inherit default properties from their model and can be further customized
+When this CSV is imported with associated CRD files, only CRDs from the `cloudquota.cnrm.cloud.google.com` API group will be included as components in the "gcp-cloudquota" model.
 
-This user-controlled filtering capability allows you to organize related Kubernetes custom resources together, making them easier to discover, manage, and use within Meshery designs. For example, to create a model containing all Google Config Connector CRDs for a specific GCP service, you would explicitly specify their common API group value (e.g., `cloudquota.cnrm.cloud.google.com`) as the group filter when defining the model.
+{% include alert.html type="info" title="CSV Import Only" content="Group filtering is only available when importing via CSV or Google Spreadsheet. For all other import methods (GitHub repositories, ArtifactHub/Helm packages, or live Kubernetes clusters), all available resources are processed and organized into models based on their source." %}
+
+**When to Use Group Filtering:**
+
+Group filtering is useful when:
+
+- You want to create separate models for different API groups from the same source
+- You're working with a large collection of CRDs and need to organize them by Kubernetes API group
+- You need fine-grained control over which CRDs are included in a specific model
+
+For most use cases, the automatic source-based grouping is sufficient and requires no additional configuration.
 
 ### Post Model Generation
 
@@ -250,7 +287,7 @@ During model generation, corresponding components are created. Next step is to e
      - Review and confirm assigned capabilities
      - Modify capabilities as needed
 
-    See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
+   See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
 
 2. **Identify Relationships**
 
@@ -266,7 +303,7 @@ During model generation, corresponding components are created. Next step is to e
    - **2.3. Create Definitions**
      Codify the relationships you have identified into a Relationship Definition
 
-    See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
+   See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
 
 ## Next Steps
 
