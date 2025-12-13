@@ -99,11 +99,11 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 
 
 3. Connect the Service to the Deployment: Click over the service component until green dots appear, click the arrow and select network. Drag to the deployment. This creates a Network link.  
-  ![](./kubernetes-services/2025-09-05_09.png)
+  ![](./kubernetes-services/2025-12-13_1.png)
 
 From the Actions Tab, Undeploy the deployment first and then, validate and dry-run the new design, resolve any errors that may arise. Now, deploy the design. A pop up in the bottom right will confirm that the design is successfully configured.
 
-  ![](./kubernetes-services/2025-09-05_10.png)
+  ![](./kubernetes-services/2025-12-13_2.png)
 
 Switch to Operator mode, explore the Service details. select the service-clusterip resource to see its details. 
   ![](./kubernetes-services/2025-09-05_11.png)
@@ -119,7 +119,7 @@ This Service has a ClusterIP (10.98.146.20) and a selector (app=9988110). Any Po
  
 To allow external access, we’ll use a NodePort service. For simplicity purposes, I will switch from using deployment to Pod for our next Service. 
 
-1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _nginx:latest_ for this exercise. Give the container a name and a unique label(This unique label will be used by the service selector.). 
+1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _meshery/meshery-milestone:latest_ for this exercise. Give the container a name and a unique label(This unique label will be used by the service selector.). 
   ![](./kubernetes-services/2025-09-06_13.png)
 
 2. Now, drag a Service component onto the canvas and rename it to `service-nodeport`.
@@ -134,25 +134,23 @@ To allow external access, we’ll use a NodePort service. For simplicity purpose
   ![](./kubernetes-services/2025-09-06_15.png)
 
 
-7. Validate and deploy from the Action tab at the top right.
+5. Validate and deploy from the Action tab at the top right.
+  ![](./kubernetes-services/2025-12-13_3.png)
 
 > **_NOTE:_** Always undeploy your previous designs before deploying a new one.
 
 Now switch to Operator mode, click on any component to view details(like type or selector) about the Service or the Pod.
-  ![](./kubernetes-services/2025-09-06_16.png)
+  ![](./kubernetes-services/2025-12-13_4.png)
 
 Note that this service is mapped NodePort and is accessible on the **Node’s IP address**.
 
-Expand the details section and you will see a NodePort value (30091), this means the service is exposed on each Node’s IP at port 30091. You can access the NGINX app externally via `http://<NodeIP>:30091`.  
+Expand the details section and you will see a NodePort value (30091), this means the service is exposed on each Node’s IP at port 30091. You can access the app externally via `http://<NodeIP>:30091`.  
   ![](./kubernetes-services/2025-09-06_17.png)
 
 
-The Operator mode also provides a interactive terminal, click on the Pod to reveal the initiate terminal session option.
-  ![](./kubernetes-services/2025-09-06_18.png)
+The Operator mode also provides a interactive terminal, along with other Details about the Pod. Click on the Pod to reveal the initiate terminal session option.
+  ![](./kubernetes-services/2025-13-12_5.png)
  
-You can test inside this terminal.
-(i dont know what to test yet help!)
-The response indicates that the NodePort is reachable from the pod.
 
 ---
 
@@ -161,7 +159,7 @@ The response indicates that the NodePort is reachable from the pod.
 
 Finally, we’ll create a LoadBalancer service. In a real cloud environment, this would provision an external load balancer. In Meshery Playground, you will see how the service object is defined, even though a real cloud IP isn’t provided.
 
-1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `nginx`, Image `nginx:latest`, and add label `app: 8080`.
+1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `meshery-milestone`, Image `meshery/meshery-milestone:latest`, and add label `app: 8080`.
 2. Drag a Service component onto the canvas, rename it `service-loadbalancer`. 
 3. In the service’s Configure panel, set **Type** to `LoadBalancer`. Under Selector, add app: `app: 8080`
 4. Under Ports, click **+ Add Item**. Expand Ports 1 and set port: `80`, TargetPort: `80`. 
@@ -170,7 +168,7 @@ Finally, we’ll create a LoadBalancer service. In a real cloud environment, thi
 
 
 5. Close the panel. 
-  ![](./kubernetes-services/2025-09-06_19.png)
+  ![](./kubernetes-services/2025-12-13_6.png)
 
 
 6. Validate and Deploy (undeploy the old design first).  
