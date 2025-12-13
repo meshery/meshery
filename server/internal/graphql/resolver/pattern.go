@@ -9,7 +9,10 @@ import (
 )
 
 func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PatternPageResult, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
 	// user := ctx.Value(models.UserCtxKey).(*models.User)
 	// prefObj := ctx.Value(models.PerfObjCtxKey).(*models.Preference)
 	var updateAfter string
@@ -45,9 +48,6 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 
 	// mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserID)
 	// err = mc.AddMetadataForPatterns(ctx, &resp)
-	if err != nil {
-		r.Log.Error(ErrFetchingPatterns(err))
-	}
 
 	patterns := &model.PatternPageResult{}
 

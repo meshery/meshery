@@ -39,7 +39,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		if actions.HardReset == "true" {
 			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-			if err != nil && os.IsNotExist(err) {
+			if err != nil && !os.IsExist(err) {
 				return "", err
 			}
 

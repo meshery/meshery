@@ -23,7 +23,10 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
 
 	bdr, err := provider.GetResult(tokenString, resultID)
 
@@ -59,9 +62,20 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 		return nil, handlers.ErrQueryGet("*profileID")
 	}
 
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	order := ""
+	if selector.Order != nil {
+		order = *selector.Order
+	}
 
-	bdr, err := provider.FetchResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, profileID)
+	bdr, err := provider.FetchResults(tokenString, selector.Page, selector.PageSize, search, order, profileID)
 
 	if err != nil {
 		r.Log.Error(err)
@@ -112,6 +126,7 @@ func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Pro
 	perfResultChannel := make(chan *model.PerfPageResult)
 
 	go func() {
+		defer close(perfResultChannel)
 		r.Log.Info("Performance Result subscription started")
 
 		for {
@@ -142,6 +157,7 @@ func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Pr
 	}
 
 	go func() {
+		defer close(performanceProfilesChannel)
 		r.Log.Info("PerformanceProfiles subscription started")
 
 		for {
@@ -165,9 +181,20 @@ func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Pr
 }
 
 func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageProfiles, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	order := ""
+	if selector.Order != nil {
+		order = *selector.Order
+	}
 
-	bdr, err := provider.GetPerformanceProfiles(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	bdr, err := provider.GetPerformanceProfiles(tokenString, selector.Page, selector.PageSize, search, order)
 
 	if err != nil {
 		r.Log.Error(err)
@@ -185,9 +212,28 @@ func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.P
 }
 
 func (r *Resolver) fetchAllResults(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageResult, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	order := ""
+	if selector.Order != nil {
+		order = *selector.Order
+	}
+	from := ""
+	if selector.From != nil {
+		from = *selector.From
+	}
+	to := ""
+	if selector.To != nil {
+		to = *selector.To
+	}
 
-	bdr, err := provider.FetchAllResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, *selector.From, *selector.To)
+	bdr, err := provider.FetchAllResults(tokenString, selector.Page, selector.PageSize, search, order, from, to)
 
 	if err != nil {
 		r.Log.Error(err)
