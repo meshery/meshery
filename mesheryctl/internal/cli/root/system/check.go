@@ -718,6 +718,24 @@ func mesheryReadinessHealthCheck() (bool, error) {
 	return true, nil
 }
 
+func operatorReadinessHealthCheck() (bool, error) {
+	kubeClient, err := initializeKubernetesClient()
+	if err != nil {
+		return false, err
+	}
+
+	// Operator-related components to check
+	resources := []string{"meshery-operator", "meshery-meshsync", "meshery-broker"}
+
+	for _, comp := range resources {
+		if err := utils.WaitForPodRunning(kubeClient, comp, utils.MesheryNamespace, 300); err != nil {
+			return false, fmt.Errorf("resource %s is not ready: %w", comp, err)
+		}
+	}
+
+	return true, nil
+}
+
 func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
