@@ -25,6 +25,7 @@ const (
 	ErrInvalidJSONFileCode          = "mesheryctl-1052"
 	ErrHealthCheckerCode            = "mesheryctl-1053"
 	ErrPerformanceProfileResultCode = "mesheryctl-1054"
+	ErrPerformanceProfileDeleteCode = "mesheryctl-1154"
 )
 
 func ErrReadFilepath(err error) error {
@@ -117,6 +118,8 @@ func formatErrorWithReference() string {
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/profile")
 	case "result":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/result")
+	case "delete":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/delete")
 	}
 	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }
@@ -153,4 +156,12 @@ func ErrPerformanceProfileResult(err error) error {
 		[]string{"Unable to display performance Profile" + err.Error()},
 		[]string{"Failed to fetch results for a specific profile"},
 		[]string{"Check your network connection and ensure Meshery is running .", formatErrorWithReference()})
+}
+
+func ErrPerformanceProfileDelete(err error) error {
+	return errors.New(ErrPerformanceProfileDeleteCode, errors.Alert,
+		[]string{"Error deleting performance profile"},
+		[]string{"Unable to delete performance profile: " + err.Error()},
+		[]string{"Failed to delete the specified performance profile"},
+		[]string{"Check your network connection and ensure Meshery is running.", formatErrorWithReference()})
 }
