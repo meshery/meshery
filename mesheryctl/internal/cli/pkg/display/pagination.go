@@ -14,6 +14,13 @@ import (
 
 var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 
+var serverAndNetworkErrors = []string{
+	utils.ErrUnauthenticatedCode,
+	utils.ErrInvalidTokenCode,
+	utils.ErrAttachAuthTokenCode,
+	utils.ErrFailRequestCode,
+}
+
 func HandlePaginationAsync[T any](
 	pageSize int,
 	displayData DisplayDataAsync,
@@ -25,13 +32,6 @@ func HandlePaginationAsync[T any](
 
 	if currentPage < 0 {
 		currentPage = 0
-	}
-
-	var serverAndNetworkErrors = []string{
-		utils.ErrUnauthenticatedCode,
-		utils.ErrInvalidTokenCode,
-		utils.ErrAttachAuthTokenCode,
-		utils.ErrFailRequestCode,
 	}
 
 	for {

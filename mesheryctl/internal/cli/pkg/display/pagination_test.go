@@ -104,11 +104,8 @@ func TestHandlePaginationAsync(t *testing.T) {
 			},
 			urlPath: "/test?page=0&pagesize=2",
 			apiResponse: apiResponse{
-				Code: 200,
-				Items: []items{
-					{ID: "1", Name: "Item1"},
-					{ID: "2", Name: "Item2"},
-				},
+				Code:  200,
+				Items: []items{},
 			},
 			exceptedResponse: "No items found\n",
 			expectedError:    nil,
