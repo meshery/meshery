@@ -170,7 +170,31 @@ components:
   colorIcon: assets/img/integrations/kubedb/components/ignite-version/icons/color/ignite-version-color.svg
   whiteIcon: assets/img/integrations/kubedb/components/ignite-version/icons/white/ignite-version-white.svg
   description: 
-components-count: 40
+- name: db2version
+  colorIcon: assets/img/integrations/kubedb/components/db2version/icons/color/db2version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/db2version/icons/white/db2version-white.svg
+  description: 
+- name: hana-db-version
+  colorIcon: assets/img/integrations/kubedb/components/hana-db-version/icons/color/hana-db-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/hana-db-version/icons/white/hana-db-version-white.svg
+  description: 
+- name: milvus-version
+  colorIcon: assets/img/integrations/kubedb/components/milvus-version/icons/color/milvus-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/milvus-version/icons/white/milvus-version-white.svg
+  description: 
+- name: neo4j-version
+  colorIcon: assets/img/integrations/kubedb/components/neo4j-version/icons/color/neo4j-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/neo4j-version/icons/white/neo4j-version-white.svg
+  description: 
+- name: qdrant-version
+  colorIcon: assets/img/integrations/kubedb/components/qdrant-version/icons/color/qdrant-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/qdrant-version/icons/white/qdrant-version-white.svg
+  description: 
+- name: weaviate-version
+  colorIcon: assets/img/integrations/kubedb/components/weaviate-version/icons/color/weaviate-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/weaviate-version/icons/white/weaviate-version-white.svg
+  description: 
+components-count: 46
 relationships: 
 relationship-count: 0
 featureList: [
