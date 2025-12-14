@@ -3,6 +3,7 @@ package display
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
@@ -26,6 +27,13 @@ func HandlePaginationAsync[T any](
 		currentPage = 0
 	}
 
+	var serverAndNetworkErrors = []string{
+		utils.ErrUnauthenticatedCode,
+		utils.ErrInvalidTokenCode,
+		utils.ErrAttachAuthTokenCode,
+		utils.ErrFailRequestCode,
+	}
+
 	for {
 		// Clear the terminal screen
 		utils.ClearLine()
@@ -35,7 +43,7 @@ func HandlePaginationAsync[T any](
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			if meshkitErr, ok := err.(*errors.Error); ok {
-				if meshkitErr.Code == utils.ErrFailRequestCode {
+				if slices.Contains(serverAndNetworkErrors, meshkitErr.Code) {
 					return err
 				}
 				return ErrorListPagination(err, currentPage)

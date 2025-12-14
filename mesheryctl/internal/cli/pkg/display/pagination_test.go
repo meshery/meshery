@@ -3,6 +3,7 @@ package display
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"testing"
 
@@ -18,6 +19,11 @@ func TestHandlePaginationAsync(t *testing.T) {
 		Name string `json:"name"`
 	}
 
+	type apiResponse struct {
+		Code  int     `json:"code"`
+		Items []items `json:"items"`
+	}
+
 	// Test cases
 	tests := []struct {
 		name             string
@@ -27,7 +33,8 @@ func TestHandlePaginationAsync(t *testing.T) {
 		urlPath          string
 		expectedError    error
 		exceptedResponse string
-		apiResponse      []items
+		apiResponse      apiResponse
+		hasToken         bool
 	}{
 		{
 			name:     "Successful pagination",
@@ -44,12 +51,16 @@ func TestHandlePaginationAsync(t *testing.T) {
 				return [][]string{{"1", "Item1"}, {"2", "Item2"}}, 2
 			},
 			urlPath: "/test?page=0&pagesize=2",
-			apiResponse: []items{
-				{ID: "1", Name: "Item1"},
-				{ID: "2", Name: "Item2"},
+			apiResponse: apiResponse{
+				Code: 200,
+				Items: []items{
+					{ID: "1", Name: "Item1"},
+					{ID: "2", Name: "Item2"},
+				},
 			},
 			exceptedResponse: "Total number of items: 2\nPage: 1\n\x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
 			expectedError:    nil,
+			hasToken:         true,
 		},
 		{
 			name:     "Successful count",
@@ -66,12 +77,16 @@ func TestHandlePaginationAsync(t *testing.T) {
 				return [][]string{{"1", "Item1"}, {"2", "Item2"}}, 2
 			},
 			urlPath: "/test?page=0&pagesize=2",
-			apiResponse: []items{
-				{ID: "1", Name: "Item1"},
-				{ID: "2", Name: "Item2"},
+			apiResponse: apiResponse{
+				Code: 200,
+				Items: []items{
+					{ID: "1", Name: "Item1"},
+					{ID: "2", Name: "Item2"},
+				},
 			},
 			exceptedResponse: "Total number of items: 2\n",
 			expectedError:    nil,
+			hasToken:         true,
 		},
 		{
 			name:     "Successful count empty response",
@@ -87,10 +102,63 @@ func TestHandlePaginationAsync(t *testing.T) {
 			processDataFunc: func(data *[]items) ([][]string, int64) {
 				return [][]string{}, 0
 			},
-			urlPath:          "/test?page=0&pagesize=2",
-			apiResponse:      []items{},
+			urlPath: "/test?page=0&pagesize=2",
+			apiResponse: apiResponse{
+				Code: 200,
+				Items: []items{
+					{ID: "1", Name: "Item1"},
+					{ID: "2", Name: "Item2"},
+				},
+			},
 			exceptedResponse: "No items found\n",
 			expectedError:    nil,
+			hasToken:         true,
+		},
+		{
+			name:     "Failed when missing token",
+			pageSize: 2,
+			displayData: DisplayDataAsync{
+				Page:             1,
+				UrlPath:          "test",
+				DataType:         "items",
+				DisplayCountOnly: true,
+				IsPage:           false,
+				Header:           []string{"ID", "Name"},
+			},
+			processDataFunc: func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			},
+			urlPath: "/test?page=0&pagesize=2",
+			apiResponse: apiResponse{
+				Code:  400,
+				Items: []items{},
+			},
+			exceptedResponse: "",
+			expectedError:    utils.ErrAttachAuthToken(fmt.Errorf("Not Set does not exist")),
+			hasToken:         false,
+		},
+		{
+			name:     "Failed when meshery server is not reachable",
+			pageSize: 2,
+			displayData: DisplayDataAsync{
+				Page:             1,
+				UrlPath:          "test",
+				DataType:         "items",
+				DisplayCountOnly: true,
+				IsPage:           false,
+				Header:           []string{"ID", "Name"},
+			},
+			processDataFunc: func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			},
+			urlPath: "/test?page=0&pagesize=2",
+			apiResponse: apiResponse{
+				Code:  302,
+				Items: []items{},
+			},
+			exceptedResponse: "",
+			expectedError:    utils.ErrInvalidToken(),
+			hasToken:         true,
 		},
 	}
 
@@ -105,8 +173,11 @@ func TestHandlePaginationAsync(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			utils.TokenFlag = utils.GetToken(t)
-			mApiRespoanse, err := json.Marshal(tt.apiResponse)
+			if tt.hasToken {
+				utils.TokenFlag = utils.GetToken(t)
+			}
+
+			mApiResponse, err := json.Marshal(tt.apiResponse.Items)
 			if err != nil {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
@@ -114,7 +185,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			url := testContext.BaseURL + tt.urlPath
 
 			httpmock.RegisterResponder("GET", url,
-				httpmock.NewStringResponder(200, string(mApiRespoanse)))
+				httpmock.NewStringResponder(tt.apiResponse.Code, string(mApiResponse)))
 
 			originalStdout := os.Stdout
 
@@ -125,6 +196,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			// Restore stdout at the end of the test.
 			defer func() {
 				os.Stdout = originalStdout
+				utils.TokenFlag = "Not Set"
 			}()
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
