@@ -203,6 +203,8 @@
           url: guides/tutorials/publish-to-artifacthub
         - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
+        - title: Exploring Kubernetes Services
+          url: guides/tutorials/kubernetes-services
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
