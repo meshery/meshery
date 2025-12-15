@@ -102,7 +102,11 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 23
+- name: managed-prefix-list
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/managed-prefix-list/icons/color/managed-prefix-list-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/managed-prefix-list/icons/white/managed-prefix-list-white.svg
+  description: 
+components-count: 24
 relationships: 
 - type: "non-binding"
   kind: "edge"
