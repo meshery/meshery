@@ -110,25 +110,34 @@ When connecting Meshery to your Kubernetes cluster, your kubeconfig must have su
 
 ## Required Permissions
 
-Meshery requires permissions to manage the following Kubernetes resources:
+Meshery requires permissions to manage the following Kubernetes resources. Each permission is necessary for specific Meshery operations:
 
 ### Core Resources
 - **Namespaces, Pods, Services, ConfigMaps, Secrets, ServiceAccounts**
+  - *Why needed*: Meshery deploys service mesh components and applications into namespaces, manages their lifecycle, and stores configuration data
 - **PersistentVolumes, PersistentVolumeClaims**
+  - *Why needed*: Service mesh control planes may require persistent storage for state and metrics
 
 ### Workload Resources
 - **Deployments, StatefulSets, DaemonSets, ReplicaSets**
+  - *Why needed*: Service mesh components are deployed as these workload types; Meshery manages their deployment, scaling, and updates
 - **Jobs, CronJobs**
+  - *Why needed*: Meshery may run maintenance tasks, certificate rotation, or scheduled operations for service meshes
 
 ### Network Resources
 - **Ingresses, NetworkPolicies**
+  - *Why needed*: Meshery configures external access to service mesh UIs and enforces network security policies between services
 
 ### RBAC Resources
 - **Roles, RoleBindings, ClusterRoles, ClusterRoleBindings**
+  - *Why needed*: Service mesh components require specific RBAC permissions; Meshery creates these roles following the principle of least privilege
+  - **Note on `escalate` verb**: The `escalate` permission allows Meshery to grant service mesh components the specific permissions they need to function. While this is a powerful permission, it's necessary because different service meshes require different RBAC configurations. In production environments, consider using a dedicated cluster or namespace for Meshery with strict access controls.
 
 ### Custom Resources
 - **CustomResourceDefinitions (CRDs)**
-- **All service mesh custom resources**
+  - *Why needed*: Service meshes extend Kubernetes with custom resources (e.g., VirtualServices, DestinationRules); Meshery installs and manages these CRDs
+- **All Custom Resources (wildcard `*` permissions)**
+  - *Why needed*: Different service meshes use different CRDs. The wildcard permission allows Meshery to manage any service mesh without requiring per-mesh permission updates. This is a trade-off between operational convenience and the principle of least privilege. For enhanced security in production, consider creating specific roles for each service mesh you plan to use.
 
 ## Minimum Required ClusterRole
 
@@ -151,11 +160,11 @@ rules:
 # Batch resources
 - apiGroups: ["batch"]
   resources: ["jobs", "cronjobs"]
-  verbs: ["create", "get", "list", "watch", "update", "delete"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
 # Network resources
 - apiGroups: ["networking.k8s.io"]
   resources: ["ingresses", "networkpolicies"]
-  verbs: ["create", "get", "list", "watch", "update", "delete"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
 # RBAC
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
@@ -163,13 +172,19 @@ rules:
 # CRDs
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions"]
-  verbs: ["create", "get", "list", "watch", "update", "delete"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
 # All custom resources
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
 {% endcapture %}
 {% include code.html code=code_content %}
+
+**Security Note**: This ClusterRole grants broad permissions necessary for Meshery to manage multiple service meshes. In production environments:
+- Consider using a dedicated Kubernetes cluster for Meshery
+- Implement additional security controls like admission controllers
+- Regularly audit the permissions granted to Meshery
+- For specific service mesh deployments, you can create more restrictive roles targeting only the CRDs needed
 
 ## Creating a ServiceAccount with Required Permissions
 
@@ -213,8 +228,15 @@ Apply the binding:
 
 ### Step 4: Generate ServiceAccount Token
 
-{% capture code_content %}kubectl create token meshery-sa -n meshery --duration=87600h{% endcapture %}
+{% capture code_content %}kubectl create token meshery-sa -n meshery --duration=8760h{% endcapture %}
 {% include code.html code=code_content %}
+
+**Security Warning**: The example uses a 1-year token duration (`8760h`). For production use:
+- Use shorter token durations aligned with your organization's security policies
+- Implement token rotation procedures
+- Consider using workload identity or OIDC authentication where available
+- Long-lived tokens pose security risks if compromised
+- Some organizations may require tokens with durations of days or weeks, not years
 
 ## Verifying Permissions
 
