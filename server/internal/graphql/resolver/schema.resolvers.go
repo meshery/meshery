@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -455,19 +456,25 @@ func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan chan struct{}, publ
 
 	return func(meshsyncEvent *model.MeshSyncEvent) {
 		// create a key to uniquely identify meshsync objects with its type, context and resource uid (if present)
-		key := meshsyncEvent.Type + ":" + meshsyncEvent.ConnectionID
+		var b strings.Builder
+		b.WriteString(meshsyncEvent.Type)
+		b.WriteByte(':')
+		b.WriteString(meshsyncEvent.ConnectionID)
 		if objMap, ok := meshsyncEvent.Object.(map[string]interface{}); ok {
 			if kindVal, ok := objMap["kind"]; ok {
-				key += ":" + fmt.Sprint(kindVal)
+				b.WriteByte(':')
+				_, _ = fmt.Fprint(&b, kindVal)
 			}
 			if metadataVal, ok := objMap["metadata"]; ok {
 				if metadataMap, ok := metadataVal.(map[string]interface{}); ok {
 					if uidVal, ok := metadataMap["uid"]; ok && uidVal != nil {
-						key += ":" + fmt.Sprint(uidVal)
+						b.WriteByte(':')
+						_, _ = fmt.Fprint(&b, uidVal)
 					}
 				}
 			}
 		}
+		key := b.String()
 
 		processMap.mu.Lock()
 		processMap.processMap[key] = meshsyncEvent

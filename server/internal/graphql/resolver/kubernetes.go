@@ -177,8 +177,8 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 	r.Log.Debugf("K8s context subscription started for context: %v", search)
 
 	go func() {
+		defer r.Config.K8scontextChannel.UnsubscribeContext(ch)
 		defer close(contextsChan)
-		defer close(ch)
 		for {
 			select {
 			case <-ch:
