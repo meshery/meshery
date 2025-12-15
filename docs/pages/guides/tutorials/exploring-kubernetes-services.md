@@ -93,7 +93,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 - Click on  **+ Add Item**  under Ports to add a port called **Ports 1**. Click on it and add: 
   - **Port**: `80`  
   - **TargetPort**: `80` (These match the container port that our image serves on.)
-- Also add the same key value pair as before under **Selector**: `app: 9988110`
+- Also add the same key value pair as before under **Selector**: `app:9988110`
 - We will also add the same label as the deployment for easier identification in Operator Mode.
   ![](./kubernetes-services/edit-01.png)
 
@@ -105,7 +105,7 @@ From the Actions Tab, Undeploy the deployment first and then, validate and dry-r
 
   ![](./kubernetes-services/2025-12-13_2.png)
 
-Switch to Operator mode, explore the Service details. select the service-clusterip resource to see its details. 
+Switch to Operator mode, explore the Service details. Select the service-clusterip resource to see its details. 
   ![](./kubernetes-services/2025-09-05_11.png)
 
 Notice the ClusterIP listed under Addresses and that no external IP or NodePort is assigned. This confirms that a ClusterIP service provides an internal IP reachable only within the cluster.
@@ -119,7 +119,7 @@ This Service has a ClusterIP (10.98.146.20) and a selector (app=9988110). Any Po
  
 To allow external access, we’ll use a NodePort service. For simplicity purposes, I will switch from using deployment to Pod for our next Service. 
 
-1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _meshery/meshery-milestone:latest_ for this exercise. Give the container a name and a unique label(This unique label will be used by the service selector.). 
+1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _meshery/meshery-milestone:latest_ for this exercise. Give the container a name and a unique label (This unique label will be used by the service selector.). 
   ![](./kubernetes-services/2025-09-06_13.png)
 
 2. Now, drag a Service component onto the canvas and rename it to `service-nodeport`.
@@ -146,8 +146,8 @@ Expand the details section and you will see a NodePort value (30091), this means
   ![](./kubernetes-services/2025-09-06_17.png)
 
 
-The Operator mode also provides a interactive terminal, along with other Details about the Pod. Click on the Pod to reveal the initiate terminal session option.
-  ![](./kubernetes-services/2025-13-12_5.png)
+The Operator mode also provides an interactive terminal, along with other Details about the Pod. Click on the Pod to reveal the `Initiate Terminal Session` option.
+  ![](./kubernetes-services/2025-12-13_5.png)
  
 
 ---
@@ -157,10 +157,10 @@ The Operator mode also provides a interactive terminal, along with other Details
 
 Finally, we’ll create a LoadBalancer service. In a real cloud environment, this would provision an external load balancer. In Meshery Playground, you will see how the service object is defined, even though a real cloud IP isn’t provided.
 
-1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `meshery-milestone`, Image `meshery/meshery-milestone:latest`, and add label `app: 8080`.
+1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `meshery-milestone`, Image `meshery/meshery-milestone:latest`, and add label `app:8080`.
 2. Drag a Service component onto the canvas, rename it `service-loadbalancer`. 
-3. In the service’s Configure panel, set **Type** to `LoadBalancer`. Under Selector, add app: `app: 8080`
-4. Under Ports, click **+ Add Item**. Expand Ports 1 and set port: `80`, TargetPort: `80`. 
+3. In the service’s Configure panel, set **Type** to `LoadBalancer`. Under Selector, add `app:8080`.
+4. Under Ports, click **+ Add Item**. Expand **Ports 1** and set: 
 - **Port**: `80`  
 - **TargetPort**: `80`  
 
@@ -180,7 +180,7 @@ In Operate mode, observe the LoadBalancer service. In a real Kubernetes environm
 
 To remove all the resources you created in this tutorial: in Design mode, go to Actions → Undeploy and confirm. This will delete the Deployments/Pods and Services from the cluster.
 
---- 
+---
 
 ### Conclusion
 
