@@ -160,7 +160,7 @@ jobs:
       # Approve the PR using the community manager token
       - name: ✅ Auto-Approve PR
         if: steps.validate.outputs.is_valid == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
@@ -234,7 +234,7 @@ jobs:
       # Post status comment on successful merge
       - name: 📢 Post Success Comment
         if: steps.validate.outputs.is_valid == 'true' && success()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
@@ -266,7 +266,7 @@ jobs:
       # Post rejection comment if validation failed
       - name: 📢 Post Rejection Comment
         if: steps.validate.outputs.is_valid != 'true' && failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |

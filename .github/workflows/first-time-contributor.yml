@@ -24,7 +24,7 @@ jobs:
       }}
     steps:
       - name: Leave Welcome Comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }} 
           script: |
@@ -41,7 +41,7 @@ jobs:
               body: message
             });
       - name: Label Pull Request (Optional)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }} 
           script: |
