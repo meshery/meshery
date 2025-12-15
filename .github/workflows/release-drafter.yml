@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Drafting release
         id: release_drafter
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         with:
           config-name: release-drafter.yml
         env:
