@@ -23,7 +23,7 @@ In this tutorial, we'll learn to implement Kubernetes **Services**, the resource
 ### Prerequisites
 
 - Basic understanding of containerization and Kubernetes concepts.
-- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
+- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://playground.meshery.io/).
 
 ### Lab Scenario
 
@@ -36,7 +36,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 ### Steps
 
 #### Access Meshery Playground
-- Log in to the [Meshery Playground](https://play.meshery.io) using your credentials.  
+- Log in to the [Meshery Playground](https://playground.meshery.io/) using your credentials.  
 - On successful login, you should be at the dashboard.
 - Click **Kanvas** from the left menu to navigate to the [_Kanvas_ design](https://kanvas.new/extension/meshmap) page.
 
