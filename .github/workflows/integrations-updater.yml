@@ -105,7 +105,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Meshery.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery.io
@@ -124,7 +124,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Layer5.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./layer5
@@ -143,7 +143,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Meshery repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery
@@ -162,7 +162,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Cloud repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery-cloud
@@ -174,7 +174,7 @@ jobs:
 
       - name: Send Email on Model Publish Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v6
         with:
           server_address: smtp.gmail.com
           server_port: 465

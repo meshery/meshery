@@ -12,7 +12,7 @@ jobs:
       contents: write
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup OPA
         uses: open-policy-agent/setup-opa@v2
@@ -23,7 +23,7 @@ jobs:
         run: opa fmt --write .  # Formats ALL Rego files in repo
 
       - name: Commit formatted Rego files
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: "**/*.rego"  # Target only Rego files
           commit_user_name: "GitHub Actions"
