@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout 🛎️ repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
@@ -67,7 +67,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Docker Meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v5
         with:
           images: meshery/docker-extension-meshery
           flavor: |

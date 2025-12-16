@@ -41,7 +41,7 @@ Teams,Remove Roles from Team members,Remove roles from users in a team.,,X,,,X,,
 Teams,Assign Roles to Team members,Assign roles to users in a team,,X,,,X,,X,X,Team Management,06f33eca-950c-4daa-b46d-e73af39e0868,X,FALSE
 Teams,Open Team Invite,"This governs the team's invitation permissions, determining whether the team is allowed to extend invitations to new individuals to join through open invite link.",,X,,,X,,X,X,Organization Management,6086c0a5-cd79-48ca-8c9f-a0e0ad75343c,X,FALSE
 Organizations,Create Organization,"Establish new organization for organizing teams, users, and resource access.",,,,,,,X,X,Organization Management,17a6fa82-cdab-46db-a7ce-a9d0a1bbf40f,X,FALSE
-Organizations,Edit Organization,Edit organizations and add teams to it,,,,,,,X,X,Organization Management,d39a34fb-0ccf-4c80-8a6c-b545c8db869a,X,FALSE
+Organizations,Edit Organization,Edit organiaztions and add teams to it,,,,,,,X,X,Organization Management,d39a34fb-0ccf-4c80-8a6c-b545c8db869a,X,FALSE
 Organizations,Add User to Organization,Directly create a new user account within an organization.,,,,,,X,X,X,Organization Management,33bf7a57-f787-4208-b01c-ad9b9d9c6b6c,X,FALSE
 Organizations,Invite User to Organization,Send a request for a user to join an organization.,,,,,,X,X,X,Organization Management,c8489026-11ab-4753-a445-8e20fc032c38,X,FALSE
 Organizations,Remove User from Organization,"Discontinue user access to organization, teams and resources; cease billing accrual.",,,,,,X,X,X,Organization Management,3ed858e4-418d-4220-9d4c-a217fd466d86,X,FALSE
@@ -61,7 +61,7 @@ Settings,Connect adapter,Configure and connect to Meshery adapters,,,,,,,X,X,Set
 Settings,Connect Metrics,Configure and connect to metrics like Grafana and Promethues,,,,,,,X,X,Settings Management,b0aee906-c549-445f-be0c-b98b04d47d09,X,TRUE
 Settings,View Metrics,View already configured metrics,X,X,,,X,,X,X,Settings Management,7fe36f60-fd0a-4fda-84e5-c64a04c3ad06,X,TRUE
 Settings,View Registry,Explore entities within capabilities registry ,X,X,,,X,,X,X,Settings Management,cc069117-08cc-44e3-9c61-ae0eeca0bcf1,X,TRUE
-Performance,Add performance profile,Add a new performance profile,,,,,,,X,X,Performance Management,b2861578-c573-45fe-a95e-0356d56e1d1b,X,TRUE
+Performance,Add performace profile,Add a new performace profile,,,,,,,X,X,Performance Management,b2861578-c573-45fe-a95e-0356d56e1d1b,X,TRUE
 Performance,Run test,Run a test on performance profile,,,,,,,X,X,Performance Management,06de2b07-b4f4-4701-b87f-d92ebb66ba42,X,TRUE
 Performance,View Results,View results of performance tests,X,X,,,X,,X,X,Performance Management,0c757cc7-4038-4d9b-9b60-fa8d9fc9d27e,X,TRUE
 Performance,Edit performance test,Edit performance test,,,,,,,X,X,Performance Management,33aa5c47-a8aa-4ad5-9950-7c17042c001d,X,TRUE
@@ -71,7 +71,7 @@ Cloud native infrastructure lifecycle,Manage cloud native infrastructure life cy
 Cloud native infrastructure lifecycle,Manage cloud native infrastructure configuration,"Manage configuration for applications like EmojiVoto, HTTPBin, Image Hub, Istio Book Info",,,,,,,X,X,Infrastructure Management,0eb0558d-9b21-4e50-b4c6-bd8e9e3414f5,X,TRUE
 Cloud native infrastructure lifecycle,Apply cloud native infrastructure configuration,"Configure infrastructure with some predefined options like Automatic Sidecar injection, Envoy Filter, Policy",,,,,,,X,X,Infrastructure Management,3f20a106-24f5-4da6-a8eb-6eddaad50944,X,TRUE
 Cloud native infrastructure lifecycle,Validate cloud native infrastructure configuration,"Validate cloud native infrastructure  configuration against best practices like Analyze Running Configuration, SMI conformance",,,,,,,X,X,Infrastructure Management,8bb93f97-fcfb-4827-9fed-f931fdca7b95,X,TRUE
-Cloud native infrastructure lifecycle,Apply custom cloud native configuration,This permission grants the user the ability to apply custom configuration and customize existing configuration of their cloud native infrastructure,,,,,,,X,X,Infrastructure Management,2f4e2300-4c7e-4d48-95aa-74614a4826fe,X,TRUE
+Cloud native infrastructure lifecycle,Apply custom cloud native configuration,This permission grants the user the ability to apply custom configuration and customize existing configuration of thier cloud native infrastructure,,,,,,,X,X,Infrastructure Management,2f4e2300-4c7e-4d48-95aa-74614a4826fe,X,TRUE
 Cloud native infrastructure lifecycle,Deploy cloud native infrastructure,"This permission grants the user the ability to deploy their infrastructure to a cluster through Meshery. Meshery allows users to visualize, work on and manage various cloud native technologies",,,,,,,X,X,Infrastructure Management,f7e70ffb-333d-43b3-a76e-0e6c63b9fbfa,X,TRUE
 Cloud native infrastructure lifecycle,Undeploy cloud native infrastructure,"This permission grants the user the ability to undeploy their infrastructure from a cluster through Meshery. Meshery allows users to visualize, work on and manage various cloud native technologies",,,,,,,X,X,Infrastructure Management,6e7f6f4f-4321-4e42-9eff-6a8323f32e84,X,TRUE
 Cloud native infrastructure lifecycle,View cloud native infrastructure,"This permission grants the user the ability to view all cloud native infrastructure in Meshery. Meshery allows users to visualize, work on and manage various cloud native technologies.",X,X,,,X,,X,X,Infrastructure Management,fdc485dc-f68b-405c-9e54-7b9a7254c282,X,TRUE
