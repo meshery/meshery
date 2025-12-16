@@ -39,7 +39,7 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.7
-          args: --cofig=.golangci.yml --timeout=10m
+          args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-24.04
