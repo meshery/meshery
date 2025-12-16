@@ -104,106 +104,122 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
  <div class="clipboardjs">kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml</div></div>
  </pre>
 
-# Kubeconfig Permissions Required
+# Kubeconfig Permissions
 
-When connecting Meshery to your Kubernetes cluster, your kubeconfig must have sufficient RBAC permissions to allow Meshery to deploy and manage service meshes and applications.
+When connecting Meshery to your Kubernetes cluster, the required permissions vary based on:
+- Which service meshes you're deploying (Istio, Linkerd, Consul, etc.)
+- Your deployment method (in-cluster vs out-of-cluster)
+- Which Meshery features you're using
 
-## Required Permissions
+Rather than providing a static list of permissions that may become outdated, this guide shows you **how to discover and troubleshoot** the permissions Meshery needs for your specific use case.
 
-Meshery requires permissions to manage the following Kubernetes resources. Each permission is necessary for specific Meshery operations:
+## Understanding Permission Requirements
 
-### Core Resources
-- **Namespaces, Pods, Services, ConfigMaps, Secrets, ServiceAccounts**
-  - *Why needed*: Meshery deploys service mesh components and applications into namespaces, manages their lifecycle, and stores configuration data
-- **PersistentVolumes, PersistentVolumeClaims**
-  - *Why needed*: Service mesh control planes may require persistent storage for state and metrics
+Meshery's permission requirements are **dynamic** and depend on:
 
-### Workload Resources
-- **Deployments, StatefulSets, DaemonSets, ReplicaSets**
-  - *Why needed*: Service mesh components are deployed as these workload types; Meshery manages their deployment, scaling, and updates
-- **Jobs, CronJobs**
-  - *Why needed*: Meshery may run maintenance tasks, certificate rotation, or scheduled operations for service meshes
+1. **Service Mesh Adapters**: Each service mesh (Istio, Linkerd, Consul) has its own CRDs and resource requirements
+2. **Deployment Mode**: In-cluster deployments may need different permissions than out-of-cluster
+3. **Features Used**: Different Meshery features (performance testing, configuration management, observability) access different resources
 
-### Network Resources
-- **Ingresses, NetworkPolicies**
-  - *Why needed*: Meshery configures external access to service mesh UIs and enforces network security policies between services
+This means there's no single "correct" permission set - your needs will vary.
 
-### RBAC Resources
-- **Roles, RoleBindings, ClusterRoles, ClusterRoleBindings**
-  - *Why needed*: Service mesh components require specific RBAC permissions; Meshery creates these roles following the principle of least privilege
-  - **Note on `escalate` verb**: The `escalate` permission allows Meshery to grant service mesh components the specific permissions they need to function. While this is a powerful permission, it's necessary because different service meshes require different RBAC configurations. In production environments, consider using a dedicated cluster or namespace for Meshery with strict access controls.
+## Minimal Starting Permissions
 
-### Custom Resources
-- **CustomResourceDefinitions (CRDs)**
-  - *Why needed*: Service meshes extend Kubernetes with custom resources (e.g., VirtualServices, DestinationRules); Meshery installs and manages these CRDs
-- **All Custom Resources (wildcard `*` permissions)**
-  - *Why needed*: Different service meshes use different CRDs. The wildcard permission allows Meshery to manage any service mesh without requiring per-mesh permission updates. This is a trade-off between operational convenience and the principle of least privilege. For enhanced security in production, consider creating specific roles for each service mesh you plan to use.
-
-## Minimum Required ClusterRole
-
-Below is a ClusterRole definition with the minimum permissions required for Meshery:
+For initial Meshery deployment, start with these minimal permissions and add more as needed:
 
 {% capture code_content %}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: meshery-role
+  name: meshery-minimal
 rules:
-# Core resources
+# Minimal permissions to deploy Meshery
 - apiGroups: [""]
-  resources: ["namespaces", "pods", "services", "configmaps", "secrets", "serviceaccounts", "persistentvolumes", "persistentvolumeclaims"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-# Workloads
+  resources: ["namespaces", "pods", "services"]
+  verbs: ["get", "list", "watch"]
 - apiGroups: ["apps"]
-  resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-# Batch resources
-- apiGroups: ["batch"]
-  resources: ["jobs", "cronjobs"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-# Network resources
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses", "networkpolicies"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-# RBAC
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "bind", "escalate"]
-# CRDs
-- apiGroups: ["apiextensions.k8s.io"]
-  resources: ["customresourcedefinitions"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
-# All custom resources
-- apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
 {% endcapture %}
 {% include code.html code=code_content %}
 
-**Security Note**: This ClusterRole grants broad permissions necessary for Meshery to manage multiple service meshes. In production environments:
-- Consider using a dedicated Kubernetes cluster for Meshery
-- Implement additional security controls like admission controllers
-- Regularly audit the permissions granted to Meshery
-- For specific service mesh deployments, you can create more restrictive roles targeting only the CRDs needed
+**Note**: This minimal role allows Meshery to start and observe your cluster, but you'll need additional permissions to deploy and manage service meshes.
 
-## Creating a ServiceAccount with Required Permissions
+## Discovering Required Permissions
 
-### Step 1: Create the ClusterRole
+When Meshery needs permissions it doesn't have, you'll see errors like:
+```
+Error: services is forbidden: User "system:serviceaccount:meshery:meshery-sa" 
+cannot create resource "services" in API group "" in the namespace "istio-system"
+```
 
-Save the ClusterRole definition above to a file (e.g., `meshery-clusterrole.yaml`) and apply it:
+### How to Grant Missing Permissions
+
+1. **Identify the missing permission** from the error message:
+   - Resource: `services`
+   - Verb: `create`
+   - API Group: `""` (core)
+   - Namespace: `istio-system`
+
+2. **Update your ClusterRole** to add the permission:
+
+{% capture code_content %}
+# Add this rule to your ClusterRole
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["create", "get", "list", "watch", "update", "delete"]
+{% endcapture %}
+{% include code.html code=code_content %}
+
+3. **Apply the updated role**:
 
 {% capture code_content %}kubectl apply -f meshery-clusterrole.yaml{% endcapture %}
 {% include code.html code=code_content %}
 
-### Step 2: Create a ServiceAccount
+## Common Permission Patterns
+
+Based on the service mesh you're deploying, you'll typically need permissions for:
+
+### For Istio
+- CRDs: `VirtualService`, `DestinationRule`, `Gateway`, etc.
+- Resources: Services, Deployments, ConfigMaps in `istio-system` namespace
+
+### For Linkerd
+- CRDs: `ServiceProfile`, `TrafficSplit`
+- Resources: Deployments, Services in `linkerd` namespace
+
+### For Consul
+- CRDs: `ServiceDefaults`, `ServiceRouter`, `ServiceSplitter`
+- Resources: StatefulSets, Services in `consul` namespace
+
+## Checking Your Current Permissions
+
+To see what permissions your kubeconfig currently has:
+
+{% capture code_content %}# Check if you can perform specific actions
+kubectl auth can-i create deployments --all-namespaces
+kubectl auth can-i create customresourcedefinitions
+kubectl auth can-i get pods --all-namespaces
+
+# List all your permissions
+kubectl auth can-i --list{% endcapture %}
+{% include code.html code=code_content %}
+
+## Creating a ServiceAccount (Recommended)
+
+Instead of using your personal kubeconfig, create a dedicated ServiceAccount for Meshery:
+
+### Step 1: Create Namespace and ServiceAccount
 
 {% capture code_content %}kubectl create namespace meshery
 kubectl create serviceaccount meshery-sa -n meshery{% endcapture %}
 {% include code.html code=code_content %}
 
-### Step 3: Create ClusterRoleBinding
+### Step 2: Create ClusterRole with Minimal Permissions
 
-Create a file named `meshery-clusterrolebinding.yaml`:
+Start with minimal permissions and expand as needed based on errors you encounter.
+
+### Step 3: Bind the Role
 
 {% capture code_content %}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -213,7 +229,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: meshery-role
+  name: meshery-minimal
 subjects:
 - kind: ServiceAccount
   name: meshery-sa
@@ -221,51 +237,75 @@ subjects:
 {% endcapture %}
 {% include code.html code=code_content %}
 
-Apply the binding:
+### Step 4: Generate Token
 
-{% capture code_content %}kubectl apply -f meshery-clusterrolebinding.yaml{% endcapture %}
+{% capture code_content %}# Create a short-lived token (adjust duration as needed)
+kubectl create token meshery-sa -n meshery --duration=8760h{% endcapture %}
 {% include code.html code=code_content %}
 
-### Step 4: Generate ServiceAccount Token
+**Security Best Practice**: Use the shortest token duration that works for your workflow. For production, consider integrating with your organization's identity provider using OIDC.
 
-{% capture code_content %}kubectl create token meshery-sa -n meshery --duration=8760h{% endcapture %}
+## Troubleshooting Permission Errors
+
+### Common Error: "Forbidden"
+```
+Error: services is forbidden: User cannot create resource
+```
+
+**Solution**: Add the missing verb and resource to your ClusterRole.
+
+### Common Error: "Unknown CustomResourceDefinition"
+```
+Error: the server doesn't have a resource type "virtualservices"
+```
+
+**Solution**: The CRD isn't installed, or you lack permissions to access it. First, verify the CRD exists:
+
+{% capture code_content %}kubectl get crd virtualservices.networking.istio.io{% endcapture %}
 {% include code.html code=code_content %}
 
-**Security Warning**: The example uses a 1-year token duration (`8760h`). For production use:
-- Use shorter token durations aligned with your organization's security policies
-- Implement token rotation procedures
-- Consider using workload identity or OIDC authentication where available
-- Long-lived tokens pose security risks if compromised
-- Some organizations may require tokens with durations of days or weeks, not years
+### Common Error: "Cannot list resource in the namespace"
 
-## Verifying Permissions
+**Solution**: Your role may have cluster-wide permissions but not namespace-specific permissions, or vice versa.
 
-To verify your kubeconfig has the required permissions:
+## Security Considerations
 
-{% capture code_content %}# Check namespace permissions
-kubectl auth can-i create namespaces
+When granting permissions to Meshery:
 
-# Check deployment permissions
-kubectl auth can-i create deployments --all-namespaces
+1. **Start Minimal**: Begin with read-only permissions and add write permissions only as needed
+2. **Use Namespaces**: Limit permissions to specific namespaces where possible
+3. **Audit Regularly**: Review and remove unused permissions periodically
+4. **Use ServiceAccounts**: Don't use cluster-admin for Meshery in production
+5. **Token Rotation**: Implement token rotation policies for long-running deployments
 
-# Check CRD permissions
-kubectl auth can-i create customresourcedefinitions{% endcapture %}
-{% include code.html code=code_content %}
+## Advanced: Environment-Specific Considerations
 
-All commands should return `yes` for Meshery to function properly.
+### GKE Autopilot
+- Some permissions may be restricted by Google's security policies
+- Workload Identity is recommended over service account keys
 
-## Troubleshooting Permission Issues
+### OpenShift
+- Use SecurityContextConstraints (SCC) instead of PSPs
+- May need additional permissions for routes
 
-If you encounter permission denied errors when using Meshery:
+### AKS
+- Azure AD integration is recommended for authentication
+- Use managed identities where possible
 
-1. **Verify your current permissions:**
-   {% capture code_content %}kubectl auth can-i --list{% endcapture %}
-   {% include code.html code=code_content %}
+## Getting Help
 
-2. **Check the ClusterRoleBinding:**
-   {% capture code_content %}kubectl get clusterrolebinding meshery-binding -o yaml{% endcapture %}
-   {% include code.html code=code_content %}
+If you continue to experience permission errors:
 
-3. **For restricted environments** (GKE Autopilot, OpenShift), consult your cluster administrator for appropriate permissions or SecurityContextConstraints.
+1. Check Meshery logs for specific permission denials
+2. Post in [Meshery Slack](https://slack.layer5.io) with the error message
+3. Review [GitHub Discussions](https://github.com/meshery/meshery/discussions) for similar issues
+
+## Reference: Full Permissions Example
+
+For users who need a comprehensive starting point (understanding it may grant more permissions than necessary):
+
+See [Meshery's Helm chart RBAC configuration](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery/templates) for the permissions used in standard installations.
+
+**Warning**: These permissions are designed for a full Meshery installation with all features enabled. For production use, audit and reduce these permissions based on your actual needs.
 
 {% include related-discussions.html tag="meshery" %}
