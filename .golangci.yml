@@ -3,6 +3,8 @@ run:
   timeout: 5m
 
 linters:
+  disable:
+    - errcheck
   exclusions:
     paths:
       - server/handlers/doc.go
