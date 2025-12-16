@@ -32,7 +32,7 @@ jobs:
       - name: Zip Site
         run: bash docs/script.sh
       - name: Upload files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: site-dir
           path: ./site-dir.zip

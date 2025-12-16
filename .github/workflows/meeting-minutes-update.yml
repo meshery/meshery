@@ -28,7 +28,7 @@ jobs:
         run: git pull origin master
       
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: .github/meetings/archive/*.md
           commit_user_name: Meeting Minutes Bot
