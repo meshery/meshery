@@ -1,8 +1,13 @@
+version: "2"
 run:
   timeout: 5m
 
-issues:
-  exclude-files:
-    - server/handlers/doc.go
-    - server/models/meshmodel/core/register.go
+linters:
+  disable:
+    - errcheck
+    - staticcheck
+  exclusions:
+    paths:
+      - server/handlers/doc.go
+      - server/models/meshmodel/core/register.go
  

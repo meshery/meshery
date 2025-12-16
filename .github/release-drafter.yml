@@ -1,6 +1,5 @@
 name-template: 'Meshery v$NEXT_PATCH_VERSION'
 tag-template: 'v$NEXT_PATCH_VERSION'
-no-duplicate-categories: true
 categories:
   - title: '🚀 Features'
     labels:
