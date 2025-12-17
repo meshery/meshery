@@ -92,6 +92,7 @@ func (c *ComposeClient) Up(ctx context.Context, composefile string) error {
 	upOptions := api.UpOptions{
 		Create: api.CreateOptions{
 			RemoveOrphans: false,
+			Recreate:      api.RecreateDiverged, // Recreate containers if config diverged
 		},
 		Start: api.StartOptions{
 			Project: project, // Pass the project to avoid rebuilding from containers
