@@ -127,10 +127,11 @@ mesheryctl system logs meshery-istio
 		case "docker":
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			if !ok {
-				log.Error("No logs to show. Meshery is not running.")
+				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
 			log.Info("Starting Meshery logging...")
@@ -165,10 +166,11 @@ mesheryctl system logs meshery-istio
 
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			if !ok {
-				log.Error("No logs to show. Meshery is not running.")
+				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
 

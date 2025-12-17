@@ -58,12 +58,12 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			log.Error("failed to check Meshery Server status: ", err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		if !isRunning {
-			log.Error(`Meshery Server is not running. Run "mesheryctl system start" to start Meshery.`)
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
 			return nil
 		}
 
@@ -76,7 +76,7 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			log.Printf("authentication failed: Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`.", mctlCfg.GetBaseMesheryURL())
+			log.Error("authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 			return nil
 		}
 
