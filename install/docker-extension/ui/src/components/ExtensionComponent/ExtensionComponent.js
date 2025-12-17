@@ -39,56 +39,17 @@ import {
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
 } from "@sistent/sistent";
-import { MESHMAP, providerUrl,SELECTED_PROVIDER_NAME } from "../utils/constants";
+import {
+  MESHMAP,
+  providerUrl,
+  SELECTED_PROVIDER_NAME,
+} from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";
 const UnauthenticatedMsg = "Unauthenticated";
 const proxyUrl = "http://127.0.0.1:7877";
 const httpDelete = "DELETE";
 const httpPost = "POST";
-
-// const adapters = {
-//   APP_MESH: {
-//     displayName: 'App Mesh',
-//     icon: <AppmeshIcon width={40} height={40} />,
-//     name: 'APP_MESH',
-//   },
-//   CILIUM_SERVICE_MESH: {
-//     displayName: 'Cilium',
-//     icon: <CiliumIcon width={40} height={40} />,
-//     name: 'CILIUM_SERVICE_MESH',
-//   },
-//   CONSUL: {
-//     displayName: 'Consul',
-//     icon: <ConsulIcon width={40} height={40} />,
-//     name: 'CONSUL',
-//   },
-//   ISTIO: {
-//     displayName: 'Istio',
-//     icon: <IstioIcon width={40} height={40} />,
-//     name: 'ISTIO',
-//   },
-//   KUMA: {
-//     displayName: 'Kuma',
-//     icon: <KumaIcon width={40} height={40} />,
-//     name: 'KUMA',
-//   },
-//   LINKERD: {
-//     displayName: 'Linkerd',
-//     icon: <LinkerdIcon width={40} height={40} />,
-//     name: 'LINKERD',
-//   },
-//   NGINX_SERVICE_MESH: {
-//     displayName: 'NGINX',
-//     icon: <NginxIcon width={38} height={40} />,
-//     name: 'NGINX_SERVICE_MESH',
-//   },
-//   TRAEFIK_MESH: {
-//     displayName: 'Traefix Mesh',
-//     icon: <TraefikIcon width={40} height={40} />,
-//     name: 'TRAEFIK_MESH',
-//   },
-// }
 
 const useThemeDetector = () => {
   const getCurrentTheme = () =>
@@ -120,15 +81,6 @@ const ExtensionsComponent = () => {
   const [filter, setFilter] = useState(null);
   const [userDesigns, setUserDesigns] = useState(null);
 
-  // useEffect(() => {
-  //   if (meshAdapters && meshAdapters.length !== 0) {
-  //     setSwitchesState(
-  //       meshAdapters.map((adapter) => ({
-  //         [adapter.name]: false,
-  //       })),
-  //     )
-  //   }
-  // }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null);
 
   const logout = () => {
@@ -150,14 +102,6 @@ const ExtensionsComponent = () => {
     })
       .then(console.log)
       .catch(console.error);
-
-    // if (resp.error) {
-    //   window.ddClient.desktopUI.toast.error(
-    //     "Error submitting feedback. Check your Internet connection and try again."
-    //   );
-    //   return;
-    // }
-    // window.ddClient.desktopUI.toast.success("Thank you! We have received your feedback.");
   };
 
   useEffect(() => {
@@ -264,45 +208,6 @@ const ExtensionsComponent = () => {
     isChanging(true);
     setIsHovered(true);
   };
-  // const submitConfig = (mesh, deprovision = false, meshAdapters) => {
-  //   const targetMesh = meshAdapters.find((msh) => msh.name === mesh)
-  //   const deployQuery = targetMesh.ops.find((op) => !op.category).key
-  //   const data = {
-  //     adapter: targetMesh.adapter_location,
-  //     query: deployQuery,
-  //     namespace: 'default',
-  //     customBody: '',
-  //     deleteOp: deprovision ? 'on' : '',
-  //   }
-
-  //   const params = Object.keys(data)
-  //     .map(
-  //       (key) => `${encodeURIComponentkey)}=${encodeURIComponent(data[key])}`,
-  //     )
-  //     .join('&')
-  //   fetch(proxyUrl + '/api/system/adapter/operation', {
-  //     credentials: 'same-origin',
-  //     method: 'POST',
-  //     credentials: 'include',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-  //     },
-  //     mode: 'no-cors',
-  //     body: params,
-  //   })
-  //     .then(() => {
-  //       window.ddClient.desktopUI.toast.success(
-  //         `Request received. ${deprovision ? 'Deprovisioning' : 'Provisioning'
-  //         } Service Mesh...`,
-  //       )
-  //     })
-  //     .catch(() => {
-  //       window.ddClient.desktopUI.toast.error(
-  //         `Could not ${deprovision ? 'Deprovision' : 'Provision'
-  //         } the Service Mesh due to some error.`,
-  //       )
-  //     })
-  // }
 
   const handleImport = () => {
     const file = document.getElementById("upload-button").files[0];
@@ -318,7 +223,7 @@ const ExtensionsComponent = () => {
       });
       if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
-          "Some error occured while uploading the compose file. "
+          "Some error occured while uploading the compose file. ",
         );
         return;
       }
@@ -332,13 +237,13 @@ const ExtensionsComponent = () => {
       })
         .then((res) => {
           window.ddClient.desktopUI.toast.success(
-            "Compose file has been uploaded with name: " + name
+            "Compose file has been uploaded with name: " + name,
           );
         })
         .catch(() =>
           window.ddClient.desktopUI.toast.error(
-            "Some error occured while uploading the compose file."
-          )
+            "Some error occured while uploading the compose file.",
+          ),
         );
     });
     reader.readAsText(file);
@@ -346,7 +251,7 @@ const ExtensionsComponent = () => {
 
   const OpenDocs = () => {
     window.ddClient.host.openExternal(
-      `https://docs.meshery.io/installation/docker/docker-extension`
+      `https://docs.meshery.io/installation/docker/docker-extension`,
     );
   };
 
@@ -396,15 +301,7 @@ const ExtensionsComponent = () => {
           >
             <AccountDiv>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={
-                    token &&
-                    `http://localhost:9081/api/user/token?token=" +
-                      token +
-                      "&provider=${SELECTED_PROVIDER_NAME}`
-                  }
-                >
+                <a style={{ textDecoration: "none" }} href={token && proxyUrl}>
                   {isLoggedIn ? (
                     <div
                       onMouseEnter={() => setIsHovered(!isHovered)}
@@ -426,12 +323,7 @@ const ExtensionsComponent = () => {
                   <LinkButton>
                     <StyledLink
                       style={{ textDecoration: "none", color: "white" }}
-                      href={
-                        token &&
-                        `http://localhost:9081/api/user/token?token=" +
-                          token +
-                          "&provider=${SELECTED_PROVIDER_NAME}`
-                      }
+                      href={token && proxyUrl}
                     >
                       Launch Meshery
                     </StyledLink>
@@ -448,11 +340,11 @@ const ExtensionsComponent = () => {
                   color="primary"
                   component="span"
                   onClick={() => {
-                    const url =  providerUrl + "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14"
-                    console.log("provider url",url)
-                    window.ddClient.host.openExternal(
-                      url
-                    );
+                    const url =
+                      providerUrl +
+                      "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14";
+                    console.log("provider url", url);
+                    window.ddClient.host.openExternal(url);
                   }}
                 >
                   Login
@@ -608,7 +500,7 @@ const ExtensionsComponent = () => {
                                 <CatalogCard
                                   onCardClick={() => {
                                     window.ddClient.host.openExternal(
-                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`
+                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`,
                                     );
                                   }}
                                   pattern={pattern}
@@ -625,7 +517,7 @@ const ExtensionsComponent = () => {
                       <StyledButton
                         onClick={() => {
                           window.ddClient.host.openExternal(
-                            `${providerUrl}/catalog`
+                            `${providerUrl}/catalog`,
                           );
                         }}
                       >
@@ -682,20 +574,6 @@ const ExtensionsComponent = () => {
             </div>
           )}
         </SectionWrapper>
-
-        {/*
-
-        // Feedback component is comment currently because the api required to use this authentication error
-
-        <SistentThemeProviderWithoutBaseLine>
-          <FeedbackButton
-            containerStyles={{ zIndex: 10 }}
-            renderPosition="right-middle"
-            onSubmit={onSubmit}
-          />
-        </SistentThemeProviderWithoutBaseLine>
-
-        */}
       </ComponentWrapper>
     </DockerMuiThemeProvider>
   );
