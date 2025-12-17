@@ -346,7 +346,7 @@ export const keys = {
     action: 'cc069117-08cc-44e3-9c61-ae0eeca0bcf1',
   },
   ADD_PERFORMANCE_PROFILE: {
-    subject: 'Add performace profile',
+    subject: 'Add performance profile',
     action: 'b2861578-c573-45fe-a95e-0356d56e1d1b',
   },
   RUN_TEST: {

@@ -31,11 +31,11 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.28.5",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.39.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^15.3.4",
-    "@eslint/js": "^9.39.0",
-    "@eslint/eslintrc": "^3.2.0",
-    "@babel/preset-react": "^7.28.5",
     "start-server-and-test": "^2.0.13"
   },
   "engines": {
