@@ -15,8 +15,8 @@
 package system
 
 import (
+	"context"
 	"fmt"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -110,15 +110,16 @@ mesheryctl system status --verbose
 
 		switch currPlatform {
 		case "docker":
-			// List the running Meshery containers
-			start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
+			// List the running Meshery containers using compose library
+			composeClient, err := utils.NewComposeClient()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+			}
 
-			outputStd, err := start.Output()
+			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}
-
-			outputString := string(outputStd)
 
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)

@@ -141,11 +141,16 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	switch currPlatform {
 	case "docker":
 		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			// Use compose library instead of exec.Command
+			composeClient, err := NewComposeClient()
 			if err != nil {
 				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
 			}
-			return strings.Contains(string(op), "meshery"), nil
+			containers, err := composeClient.Ps(context.Background(), DockerComposeFile)
+			if err != nil {
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+			}
+			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":
 		{
@@ -182,11 +187,16 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	switch currPlatform {
 	case "docker":
 		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			// Use compose library instead of exec.Command
+			composeClient, err := NewComposeClient()
 			if err != nil {
 				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
 			}
-			return strings.Contains(string(op), "meshery"), nil
+			containers, err := composeClient.Ps(context.Background(), DockerComposeFile)
+			if err != nil {
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+			}
+			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":
 		{
