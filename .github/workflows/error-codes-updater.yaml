@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
 
 jobs:
   Update-error-codes:
