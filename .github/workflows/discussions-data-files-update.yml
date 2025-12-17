@@ -13,7 +13,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.MESHERY_CI }}
       - name: Fetch data for mesheryctl tag
@@ -32,7 +32,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs/_data/discuss/*.json
           commit_user_name: Discussions bot

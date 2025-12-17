@@ -1,11 +1,11 @@
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+const js = require('@eslint/js');
+const { FlatCompat } = require('@eslint/eslintrc');
 
 const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
 });
 
-export default [
+module.exports = [
   {
     ignores: [
       'node_modules/**',
@@ -27,14 +27,14 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parser: (await import('@babel/eslint-parser')).default,
+      parser: require('@babel/eslint-parser'),
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
         requireConfigFile: false,
         babelOptions: {
-          presets: ['@babel/preset-react'],
+          presets: [require('@babel/preset-react')],
         },
       },
     },
