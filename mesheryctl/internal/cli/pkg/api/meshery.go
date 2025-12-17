@@ -9,7 +9,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -66,7 +65,8 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader) (*http.Respo
 	if err != nil {
 		if meshkitErr, ok := err.(*mErrors.Error); ok {
 			if meshkitErr.Code == utils.ErrFailRequestCode {
-				return nil, utils.ErrFailRequest(errors.New("Request failed.\nEnsure meshery server is available."))
+				endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
+				return nil, utils.ErrFailRequest(fmt.Errorf("unable to connect to Meshery server at %s (current context).\n%s", endpoint, meshkitErr.SuggestedRemediation[0]))
 			}
 		}
 		return nil, err
