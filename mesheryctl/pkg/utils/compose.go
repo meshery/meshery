@@ -68,6 +68,7 @@ func LoadProject(ctx context.Context, composefile string) (*types.Project, error
 		[]string{composefile},
 		cli.WithOsEnv,
 		cli.WithDotEnv,
+		cli.WithName("meshery"), // Explicitly set project name to match docker-compose behavior
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create project options: %w", err)
@@ -93,7 +94,8 @@ func (c *ComposeClient) Up(ctx context.Context, composefile string) error {
 			RemoveOrphans: false,
 		},
 		Start: api.StartOptions{
-			Attach: nil,
+			Project: project, // Pass the project to avoid rebuilding from containers
+			Attach:  nil,
 		},
 	}
 
