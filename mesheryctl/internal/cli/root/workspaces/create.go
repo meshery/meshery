@@ -72,6 +72,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 			}
 			return err
 		}
+	defer res.Body.Close()
 
 		utils.Log.Info("Workspace ", workspacePayload.Name, " created in organization ", workspacePayload.OrganizationID)
 		return nil
