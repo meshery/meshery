@@ -170,9 +170,15 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 	contextsChan := make(chan *model.K8sContextsPage)
 
 	r.Config.K8scontextChannel.SubscribeContext(ch)
-	r.Log.Debugf("K8s context subscription started for context: %v", *selector.Search)
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	r.Log.Debugf("K8s context subscription started for context: %v", search)
 
 	go func() {
+		defer r.Config.K8scontextChannel.UnsubscribeContext(ch)
+		defer close(contextsChan)
 		for {
 			select {
 			case <-ch:
@@ -184,7 +190,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 				contextsChan <- contexts
 
 			case <-ctx.Done():
-				r.Log.Debugf("K8s context subscription stopped for context: %v", *selector.Search)
+				r.Log.Debugf("K8s context subscription stopped for context: %v", search)
 				return
 			}
 		}
@@ -193,9 +199,20 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 }
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	order := ""
+	if selector.Order != nil {
+		order = *selector.Order
+	}
 	// If the data from this subscriotion will be only used to manage then retrieve connected conns only. Right now in the settings page we need all avaliable contexts hence retireving conns of all statuses.
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, "", false)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, search, order, "", false)
 	if err != nil {
 		return nil, err
 	}
