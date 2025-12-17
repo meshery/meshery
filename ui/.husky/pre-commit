@@ -1,4 +1,8 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env sh
 
-cd ui && npx lint-staged
+# Get the root of the git repository
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+make ui-lint FIX=true
+make ui-provider-lint FIX=true

@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "prepare": "cd ../ui && husky",
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
@@ -36,6 +37,7 @@
     "@eslint/js": "^9.39.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "^15.3.4",
+    "husky": "^9.1.7",
     "start-server-and-test": "^2.0.13"
   },
   "engines": {
