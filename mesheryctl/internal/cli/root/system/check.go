@@ -311,7 +311,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	} else { // if not error we check if we are supposed to print logs
 		// logging if we're supposed to
 		if hc.Options.PrintLogs {
-			log.Info("✓ Docker Compose is available")
+			log.Info("✓ docker compose is available")
 		}
 	}
 
