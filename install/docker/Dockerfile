@@ -23,6 +23,7 @@ FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
+ENV SKIP_HOOKS=1
 RUN npm ci --omit=dev --legacy-peer-deps
 
 # Build NextJS Application
