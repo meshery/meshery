@@ -114,6 +114,8 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrRequestResponse(err)
 	}
+	defer res.Body.Close()
+
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
