@@ -111,7 +111,7 @@ When connecting Meshery to your Kubernetes cluster, the required permissions var
 - Your deployment method (in-cluster vs out-of-cluster)
 - Which Meshery features you're using
 
-Rather than providing a static list of permissions that may become outdated, this guide shows you **how to discover and troubleshoot** the permissions Meshery needs for your specific use case.
+This guide shows you **how to discover and troubleshoot** the permissions Meshery needs for your specific use case.
 
 ## Understanding Permission Requirements
 
