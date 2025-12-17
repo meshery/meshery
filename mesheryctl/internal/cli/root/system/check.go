@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os/exec"
 	"runtime"
 	"strings"
-	"os/exec"
 
 	"github.com/pkg/errors"
 
