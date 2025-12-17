@@ -37,7 +37,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs
           commit_user_name: l5io
@@ -78,7 +78,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs
           commit_user_name: l5io
@@ -228,7 +228,7 @@ jobs:
           echo "${{ env.EMAIL_BODY }}"
       - name: Send Email Notification
         if: env.EMAIL_BODY != ''
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v6
         with:
           server_address: smtp.gmail.com
           server_port: 465

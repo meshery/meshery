@@ -6,12 +6,14 @@ on:
     paths:
       - "**.go"
       - "**.golden"
+      - ".github/workflows/go-testing-ci.yml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - "**.golden"
+      - ".github/workflows/go-testing-ci.yml"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -29,27 +31,27 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v1.64
+          version: v2.7
           args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-24.04
     needs: golangci
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.24"
       - name: Run coverage
@@ -65,13 +67,13 @@ jobs:
     runs-on: ubuntu-24.04
     needs: golangci
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.24"
       - name: Install Docker Compose
@@ -106,7 +108,7 @@ jobs:
           
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage.txt
           flags: gointegrationtests     
