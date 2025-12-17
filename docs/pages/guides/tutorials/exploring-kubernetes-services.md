@@ -127,7 +127,7 @@ To allow external access, we’ll use a NodePort service. For simplicity purpose
 3. Under the config modal, Set **Type** to `NodePort` and the same selector as the Pod label, so that our service is connected with our Pod.
   ![](./kubernetes-services/2025-09-06_14.png)
 
-4. Click on **+ Add Item** under Ports to reveal **Ports-1**, expand **Ports-1** and add: 
+4. Click on **+ Add Item** under Ports to reveal **Ports 1**, expand **Ports 1** and add: 
 - **Port**: `80`  
 - **TargetPort**: `80`  
 - **NodePort**: `30091` (or leave blank to auto-assign). 
@@ -157,7 +157,7 @@ The Operator mode also provides an interactive terminal, along with other Detail
 
 Finally, we’ll create a LoadBalancer service. In a real cloud environment, this would provision an external load balancer. In Meshery Playground, you will see how the service object is defined, even though a real cloud IP isn’t provided.
 
-1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `meshery-milestone`, Image `meshery/meshery-milestone:latest`, and add label `app:8080`.
+1. In Design mode, add another Pod to the canvas (as before). Add a container with Name `meshery-milestone`, Image `meshery/meshery-milestone:latest`, and add label `app:8080` (or any unique label).
 2. Drag a Service component onto the canvas, rename it `service-loadbalancer`. 
 3. In the service’s Configure panel, set **Type** to `LoadBalancer`. Under Selector, add `app:8080`.
 4. Under Ports, click **+ Add Item**. Expand **Ports 1** and set: 
