@@ -66,7 +66,12 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader) (*http.Respo
 		if meshkitErr, ok := err.(*mErrors.Error); ok {
 			if meshkitErr.Code == utils.ErrFailRequestCode {
 				endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
-				return nil, utils.ErrFailRequest(fmt.Errorf("unable to connect to Meshery server at %s (current context).\n%s", endpoint, meshkitErr.SuggestedRemediation[0]))
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
+				errSuggestedRemediation := "Please ensure that the Meshery server is running and accessible."
+				if len(meshkitErr.SuggestedRemediation) > 0 {
+					errSuggestedRemediation = meshkitErr.SuggestedRemediation[0]
+				}
+				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\nError code: %s - reference https://docs.meshery.io/reference/error-codes#meshery-client-for-mesheryctl", errCtx, errSuggestedRemediation, meshkitErr.Code))
 			}
 		}
 		return nil, err
