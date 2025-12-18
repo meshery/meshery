@@ -82,7 +82,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/Users/l/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

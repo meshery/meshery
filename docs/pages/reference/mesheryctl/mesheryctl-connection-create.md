@@ -1,60 +1,64 @@
 ---
 layout: default
-title: mesheryctl-component
-permalink: reference/mesheryctl/component
-redirect_from: reference/mesheryctl/component/
+title: mesheryctl-connection-create
+permalink: reference/mesheryctl/connection/create
+redirect_from: reference/mesheryctl/connection/create/
 type: reference
 display-title: "false"
 language: en
-command: component
-subcommand: nil
+command: connection
+subcommand: create
 ---
 
-# mesheryctl component
+# mesheryctl connection create
 
-Manage components
+Create a new connection
 
 ## Synopsis
 
-List, search and view component(s) and detailed informations
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component
+Create a new connection to a Kubernetes cluster or other supported platform
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component [flags]
+mesheryctl connection create [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Display number of available components in Meshery
+Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component --count
+mesheryctl connection create --type aks
 
 </div>
 </pre> 
 
-List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list
+mesheryctl connection create --type eks
 
 </div>
 </pre> 
 
-Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [component-name]
+mesheryctl connection create --type gke
 
 </div>
 </pre> 
 
-View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl connection create --type minikube
+
+</div>
+</pre> 
+
+Create a connection with a token
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type gke --token auth.json
 
 </div>
 </pre> 
@@ -63,8 +67,9 @@ mesheryctl component view [component-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   (optional) Get the number of components in total
-  -h, --help    help for component
+  -h, --help           help for create
+      --token string   Path to token for authenticating to Meshery API
+  -t, --type string    Type of connection to create (aks|eks|gke|minikube)
 
 </div>
 </pre>
@@ -80,9 +85,5 @@ mesheryctl component view [component-name]
 </pre>
 
 ## See Also
-
-* [mesheryctl component list](/reference/mesheryctl/component/list)
-* [mesheryctl component search](/reference/mesheryctl/component/search)
-* [mesheryctl component view](/reference/mesheryctl/component/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
