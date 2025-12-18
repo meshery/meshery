@@ -1,36 +1,35 @@
 ---
 layout: default
-title: mesheryctl-filter-delete
-permalink: reference/mesheryctl/filter/delete
-redirect_from: reference/mesheryctl/filter/delete/
+title: mesheryctl-connection-view
+permalink: reference/mesheryctl/connection/view
+redirect_from: reference/mesheryctl/connection/view/
 type: reference
 display-title: "false"
 language: en
-command: filter
-subcommand: delete
+command: connection
+subcommand: view
 ---
 
-# mesheryctl filter delete
+# mesheryctl connection view
 
-Delete a filter file
+View a connection
 
 ## Synopsis
 
-Delete a filter file using the name or ID of a filter
+View a connection by its ID or name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter delete [filter-name | ID] [flags]
+mesheryctl connection view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Delete the specified WASM filter file using name or ID
-A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
+View details of a specific connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter delete [filter-name | ID]
+mesheryctl connection view [connection-name]
 
 </div>
 </pre> 
@@ -39,7 +38,9 @@ mesheryctl filter delete [filter-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for delete
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>
@@ -49,7 +50,6 @@ mesheryctl filter delete [filter-name | ID]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/Users/l/.meshery/config.yaml")
-  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>
