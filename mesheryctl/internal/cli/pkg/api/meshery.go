@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -71,11 +72,16 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader) (*http.Respo
 				if len(meshkitErr.SuggestedRemediation) > 0 {
 					errSuggestedRemediation = meshkitErr.SuggestedRemediation[0]
 				}
-				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\nError code: %s - reference https://docs.meshery.io/reference/error-codes#meshery-client-for-mesheryctl", errCtx, errSuggestedRemediation, meshkitErr.Code))
+				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errSuggestedRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
 			}
 		}
 		return nil, err
 	}
 
 	return resp, nil
+}
+
+func generateErrorReferenceDetails(referenceCodeName, code string) string {
+	codeNumber := strings.Split(code, "-")[1]
+	return fmt.Sprintf("\nDetails in meshery errors reference https://docs.meshery.io/reference/error-codes.\nCode: %s-%s", referenceCodeName, codeNumber)
 }
