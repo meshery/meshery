@@ -11,6 +11,14 @@ builds:
 
   env:
     - CGO_ENABLED=0
+    - GOTOOLCHAIN=go1.24.11
+
+  flags:
+    - -buildmode=exe
+    
+  tags:
+    - netgo
+    - osusergo
 
   ldflags:
     - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
