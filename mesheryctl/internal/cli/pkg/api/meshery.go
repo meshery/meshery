@@ -67,7 +67,7 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 	// Add any provided headers to the request. This is important for callers
 	// that construct bodies externally (e.g., multipart form) and need to
 	// preserve Content-Type or other headers.
-for k, v := range headers {
+	for k, v := range headers {
 		if http.CanonicalHeaderKey(k) == "Content-Type" {
 			// Ensure we set Content-Type directly (replace any existing)
 			req.Header.Set(k, v)

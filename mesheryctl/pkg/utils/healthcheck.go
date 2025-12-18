@@ -12,6 +12,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/pkg/errors"
 
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
