@@ -188,7 +188,7 @@ func createGKEConnection() error {
 	log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
-		log.Fatal("Error generating config:", err)
+		log.Errorf("Error generating config: %v", err)
 		return err
 	}
 	log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
