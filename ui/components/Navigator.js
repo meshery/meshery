@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
 import HelpIcon from '@mui/icons-material/Help';
@@ -291,6 +291,8 @@ const Navigator_ = () => {
   const { catalogVisibility } = useSelector((state) => state.ui);
   const theme = useTheme();
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width:599px)');
+  const sidebarNodeRef = useRef(null);
   const [state, setState] = useState({
     path: '',
     meshAdapters,
@@ -321,6 +323,29 @@ const Navigator_ = () => {
     fetchCapabilities();
     fetchVersionDetails();
   }, []);
+
+  // Close the drawer on small screens when clicking outside of it or when path change
+  useEffect(() => {
+    if (!isMobile || isDrawerCollapsed) return;
+
+    const handleClickOutside = (e) => {
+      if (sidebarNodeRef.current && !sidebarNodeRef.current.contains(e.target)) {
+        dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+      }
+    };
+
+    const handleRouteChange = () => {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [isMobile, isDrawerCollapsed, router.events, dispatch]);
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -1109,13 +1134,15 @@ const Navigator_ = () => {
   return (
     <NoSsr>
       <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
+        <div ref={sidebarNodeRef}>
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </div>
       </SidebarDrawer>
     </NoSsr>
   );
