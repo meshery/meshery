@@ -158,7 +158,8 @@ mesheryctl system update --skip-reset
 
 			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			if !running {
 				// Meshery is not running, run the start command

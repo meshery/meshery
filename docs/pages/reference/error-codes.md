@@ -188,7 +188,7 @@ text-orientation: mixed;" %}
         {% assign severity = "background-color: transparent; color: black; writing-mode: vertical-rl;
 text-orientation: mixed;" %}
       {% endif %}
-      <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
+      <tr id="{{err_code[1]['name']}}-{{err_code[1]['code']}}" class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]['name'] }}-more-info');">
         <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
         <td id="{{ heading | slugify }}-{{err_code[1]["code"] }}" class="error-name-code">
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>

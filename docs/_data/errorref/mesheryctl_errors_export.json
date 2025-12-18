@@ -784,7 +784,7 @@
         "long_description": "",
         "short_description": "Failed to make a request",
         "probable_cause": "Meshery server is not reachable.",
-        "suggested_remediation": "Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."
+        "suggested_remediation": "Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."
       },
       "1091": {
         "name": "ErrInvalidTokenCode",
