@@ -13,20 +13,20 @@ var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
 	Long: `List all available connections.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/list`,
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list`,
 	Example: `
 // List all the connections
-mesheryctl exp connection list
+mesheryctl connection list
 
 // List all the connections with page number
-mesheryctl exp connection list --page [page-number]
+mesheryctl connection list --page [page-number]
 
 // Display total count of all available connections
-mesheryctl exp connection list --count
+mesheryctl connection list --count
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl connection list \nRun 'mesheryctl connection list --help' to see detailed help message"
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}

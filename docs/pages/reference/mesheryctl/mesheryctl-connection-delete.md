@@ -1,34 +1,35 @@
 ---
 layout: default
-title: mesheryctl-system-token-delete
-permalink: reference/mesheryctl/system/token/delete
-redirect_from: reference/mesheryctl/system/token/delete/
+title: mesheryctl-connection-delete
+permalink: reference/mesheryctl/connection/delete
+redirect_from: reference/mesheryctl/connection/delete/
 type: reference
 display-title: "false"
 language: en
-command: system
-subcommand: token
+command: connection
+subcommand: delete
 ---
 
-# mesheryctl system token delete
+# mesheryctl connection delete
 
-Delete a token from your meshconfig
+Delete a connection
 
 ## Synopsis
 
-Delete the token with provided token name from your meshconfig tokens.
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token delete [flags]
+mesheryctl connection delete [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token delete [token-name]
+mesheryctl connection delete [connection_id]
 
 </div>
 </pre> 
@@ -46,10 +47,8 @@ mesheryctl system token delete [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "~/.meshery/config.yaml")
-  -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
-  -y, --yes              (optional) assume yes for user interactive prompts.
+      --config string   path to config file (default "~/.meshery/config.yaml")
+  -v, --verbose         verbose output
 
 </div>
 </pre>
