@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long: `Delete a connection providing the connection ID.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete`,
+	Long:  `Delete a connection`,
 
 	Example: `
-// Delete a specific connection
-mesheryctl exp connection delete [connection_id]
+// Delete a connection
+mesheryctl connection delete [connection_id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "[ Connection ID ] isn't specified\n\nUsage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl connection delete \nRun 'mesheryctl connection delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -30,16 +30,29 @@ mesheryctl exp connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		connectionDeletePath := fmt.Sprintf("%s/%s", connectionApiPath, args[0])
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return utils.ErrLoadConfig(err)
+		}
 
-		resp, err := api.Delete(connectionDeletePath)
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
+		req, err := utils.NewRequest(http.MethodDelete, url, nil)
 		if err != nil {
 			return err
 		}
 
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
+
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
+
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted")
+			utils.Log.Info("Connection deleted successfully")
 			return nil
 		}
 
