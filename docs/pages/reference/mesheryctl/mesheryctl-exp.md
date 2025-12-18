@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl exp
 
-Experimental commands for mesheryctl
+Preview experimental commands
 
 ## Synopsis
 

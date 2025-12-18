@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl system
 
-Meshery Lifecycle Management
+Configure, deploy, and operate Meshery deployments
 
 ## Synopsis
 

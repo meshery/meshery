@@ -32,7 +32,7 @@ var (
 // DesignCmd represents the root command for design commands
 var DesignCmd = &cobra.Command{
 	Use:   "design",
-	Short: "Cloud Native Designs Management",
+	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `

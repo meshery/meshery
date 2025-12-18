@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl connection
 
-Manage Meshery connection
+Manage Meshery connections
 
 ## Synopsis
 

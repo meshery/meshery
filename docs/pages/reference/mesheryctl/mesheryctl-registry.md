@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl registry
 
-Model Database
+Manage the capability registry
 
 ## Synopsis
 
