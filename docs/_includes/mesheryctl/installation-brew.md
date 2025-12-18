@@ -61,7 +61,7 @@ meshery/tap/mesheryctl 0.3.2 -> 0.3.4
 ######################################################################## 100.0%
 🍺  /usr/local/Cellar/mesheryctl/0.3.4: 5 files, 10.2MB, built in 4 seconds
 Removing: /usr/local/Cellar/mesheryctl/0.3.2... (5 files, 10.2MB)
-Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
+Removing: ~ee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> Checking for dependents of upgraded formulae...
 ==> No dependents found!
 </code></pre>

@@ -63,7 +63,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/Users/l/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token for authenticating to Meshery API
   -v, --verbose         verbose output
 
