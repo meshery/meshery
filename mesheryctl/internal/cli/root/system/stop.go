@@ -106,8 +106,7 @@ func stop() error {
 
 	ok, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return err
 	}
 	// if --force passed possibly no deployments running but other stale resource present
 	if !ok && !forceDelete {
