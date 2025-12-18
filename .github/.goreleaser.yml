@@ -43,7 +43,7 @@ builds:
     id: darwin
 
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
 
     ldflags:
       - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
