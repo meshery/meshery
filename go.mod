@@ -191,7 +191,7 @@ require (
 	github.com/fluxcd/pkg/sourceignore v0.10.0 // indirect
 	github.com/fluxcd/pkg/tar v0.10.0 // indirect
 	github.com/fluxcd/pkg/version v0.6.0 // indirect
-	github.com/fsnotify/fsevents v0.2.0 // indirect
+	github.com/fsnotify/fsevents v0.1.1 // indirect
 	github.com/fsouza/go-dockerclient v1.12.0 // indirect
 	github.com/fvbommel/sortorder v1.1.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
@@ -410,3 +410,5 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 	tags.cncf.io/container-device-interface v1.0.1 // indirect
 )
+
+exclude github.com/fsnotify/fsevents v0.2.0
