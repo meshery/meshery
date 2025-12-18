@@ -404,9 +404,7 @@ const ExtensionsComponent = () => {
                   style={{ textDecoration: "none" }}
                   href={
                     token &&
-                    `http://localhost:9081/api/user/token?token=" +
-                      token +
-                      "&provider=${SELECTED_PROVIDER_NAME}`
+                    `http://localhost:9081/api/user/token?token=${token}&provider=${SELECTED_PROVIDER_NAME}`
                   }
                 >
                   {isLoggedIn ? (
