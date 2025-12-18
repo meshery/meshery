@@ -51,6 +51,7 @@ mesheryctl system [flags]
 * [mesheryctl system check](/reference/mesheryctl/system/check)
 * [mesheryctl system context](/reference/mesheryctl/system/context)
 * [mesheryctl system dashboard](/reference/mesheryctl/system/dashboard)
+* [mesheryctl system delete](/reference/mesheryctl/system/delete)
 * [mesheryctl system login](/reference/mesheryctl/system/login)
 * [mesheryctl system logout](/reference/mesheryctl/system/logout)
 * [mesheryctl system logs](/reference/mesheryctl/system/logs)
