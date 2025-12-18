@@ -15,7 +15,7 @@ import (
 const connectionApiPath = "api/integrations/connections"
 
 var (
-	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd}
+	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd, createConnectionCmd}
 
 	pageNumberFlag int
 )
