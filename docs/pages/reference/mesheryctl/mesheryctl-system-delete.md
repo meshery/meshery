@@ -1,43 +1,43 @@
 ---
 layout: default
-title: mesheryctl-system-config-eks
-permalink: reference/mesheryctl/system/config/eks
-redirect_from: reference/mesheryctl/system/config/eks/
+title: mesheryctl-system-delete
+permalink: reference/mesheryctl/system/delete
+redirect_from: reference/mesheryctl/system/delete/
 type: reference
 display-title: "false"
 language: en
 command: system
-subcommand: config
+subcommand: delete
 ---
 
-# mesheryctl system config eks
+# mesheryctl system delete
 
-Configure Meshery to use EKS cluster
+Delete Meshery containers
 
 ## Synopsis
 
-Configure Meshery to connect to EKS cluster
+Delete Meshery containers. This command removes all Meshery containers created by docker-compose.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system config eks [flags]
+mesheryctl system delete [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Configure Meshery to connect to EKS cluster using auth token
+Delete Meshery containers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system config eks --token auth.json
+mesheryctl system delete
 
 </div>
 </pre> 
 
-Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
+Delete Meshery containers without confirmation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system config eks
+mesheryctl system delete -y
 
 </div>
 </pre> 
@@ -46,8 +46,7 @@ mesheryctl system config eks
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for eks
-  -t, --token string   Path to token for authenticating to Meshery API
+  -h, --help   help for delete
 
 </div>
 </pre>

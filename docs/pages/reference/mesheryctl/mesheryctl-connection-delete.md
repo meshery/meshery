@@ -1,36 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-connection-delete
-permalink: reference/mesheryctl/exp/connection/delete
-redirect_from: reference/mesheryctl/exp/connection/delete/
+title: mesheryctl-connection-delete
+permalink: reference/mesheryctl/connection/delete
+redirect_from: reference/mesheryctl/connection/delete/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: connection
+command: connection
+subcommand: delete
 ---
 
-# mesheryctl exp connection delete
+# mesheryctl connection delete
 
 Delete a connection
 
 ## Synopsis
 
-Delete a connection providing the connection ID.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection delete [flags]
+mesheryctl connection delete [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Delete a specific connection
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection delete [connection_id]
+mesheryctl connection delete [connection_id]
 
 </div>
 </pre> 

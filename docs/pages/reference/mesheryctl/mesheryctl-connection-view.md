@@ -1,44 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-organization
-permalink: reference/mesheryctl/exp/organization
-redirect_from: reference/mesheryctl/exp/organization/
+title: mesheryctl-connection-view
+permalink: reference/mesheryctl/connection/view
+redirect_from: reference/mesheryctl/connection/view/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: organization
+command: connection
+subcommand: view
 ---
 
-# mesheryctl exp organization
+# mesheryctl connection view
 
-Interact with registered orgnizations
+View a connection
 
 ## Synopsis
 
-Interact with registered organizations to display detailled informations
-Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations
+View a connection by its ID or name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp organization [flags]
+mesheryctl connection view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Number of  registered orgs
+View details of a specific connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp organization --count
-
-</div>
-</pre> 
-
-List registerd orgs
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp organization list
+mesheryctl connection view [connection-name]
 
 </div>
 </pre> 
@@ -47,8 +38,9 @@ mesheryctl exp organization list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered organizations
-  -h, --help    help for organization
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>
@@ -64,7 +56,5 @@ mesheryctl exp organization list
 </pre>
 
 ## See Also
-
-* [mesheryctl exp organization list](/reference/mesheryctl/exp/organization/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -15,7 +15,7 @@ import (
 const connectionApiPath = "api/integrations/connections"
 
 var (
-	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd}
+	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd, createConnectionCmd}
 
 	pageNumberFlag int
 )
@@ -24,7 +24,7 @@ var ConnectionsCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage Meshery connection",
 	Long: `View and manage your Meshery connection.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection`,
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection`,
 	Example: `
 // Display total count of all available connections
 mesheryctl exp connection --count
