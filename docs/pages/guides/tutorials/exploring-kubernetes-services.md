@@ -171,7 +171,7 @@ Finally, we’ll create a LoadBalancer service. In a real cloud environment, thi
 
 6. Validate and Deploy (undeploy the old design first).  
 
-In Operate mode, observe the LoadBalancer service. In a real Kubernetes environment, a LoadBalancer provides an **external IP address**. 
+In Operator mode, observe the LoadBalancer service. In a real Kubernetes environment, a LoadBalancer provides an **external IP address**. 
   ![](./kubernetes-services/2025-12-13_7.png)
 
 ---
