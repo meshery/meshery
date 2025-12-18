@@ -25,7 +25,13 @@ type catalogFilterPage struct {
 }
 
 func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
-	token := ctx.Value(models.TokenCtxKey).(string)
+	if selector == nil {
+		return nil, ErrInvalidRequest
+	}
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || token == "" {
+		return nil, ErrInvalidRequest
+	}
 	metrics := "false"
 
 	// Convert []*string to []string for class
@@ -96,7 +102,13 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 }
 
 func (r *queryResolver) fetchCatalogFilter(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
-	token := ctx.Value(models.TokenCtxKey).(string)
+	if selector == nil {
+		return nil, ErrInvalidRequest
+	}
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || token == "" {
+		return nil, ErrInvalidRequest
+	}
 	resp, err := provider.GetCatalogMesheryFilters(token, selector.Page, selector.Pagesize, selector.Search, selector.Order)
 
 	if err != nil {
