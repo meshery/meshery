@@ -81,5 +81,5 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader) (*http.Respo
 
 func generateErrorReferenceDetails(referenceCodeName, code string) string {
 	codeNumber := strings.Split(code, "-")[1]
-	return fmt.Sprintf("\nDetails in meshery errors reference https://docs.meshery.io/reference/error-codes.\nCode: %s-%s", referenceCodeName, codeNumber)
+	return fmt.Sprintf("\nFor additional details see https://docs.meshery.io/reference/error-codes#%s-%s", referenceCodeName, codeNumber)
 }
