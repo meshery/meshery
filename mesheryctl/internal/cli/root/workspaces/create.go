@@ -58,7 +58,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 			return utils.ErrUnmarshal(err)
 		}
 
-		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes))
+		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if meshkitErr, ok := err.(*mErrors.Error); ok {
 				if meshkitErr.Code == utils.ErrFailRequestCode {
@@ -72,6 +72,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 			}
 			return err
 		}
+	defer res.Body.Close()
 
 		utils.Log.Info("Workspace ", workspacePayload.Name, " created in organization ", workspacePayload.OrganizationID)
 		return nil
