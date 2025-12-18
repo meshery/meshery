@@ -79,7 +79,7 @@ jobs:
       - name: Verify Docker Details
         run: |
           docker version
-	  docker compose ps
+	      docker compose ps
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 
       - name: Create k8s Kind Cluster
