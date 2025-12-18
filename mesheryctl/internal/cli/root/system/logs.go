@@ -15,12 +15,10 @@
 package system
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 
@@ -141,23 +139,14 @@ mesheryctl system logs meshery-istio
 				return nil
 			}
 
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
-
-			cmdReader, err := cmdlog.StdoutPipe()
+			// Use compose library instead of exec.Command
+			composeClient, err := utils.NewComposeClient()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
+				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
 			}
-			scanner := bufio.NewScanner(cmdReader)
-			go func() {
-				for scanner.Scan() {
-					fmt.Println(scanner.Text())
-				}
-			}()
-			if err := cmdlog.Start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("failed start logger"))
-			}
-			if err := cmdlog.Wait(); err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
+
+			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to get logs"))
 			}
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
