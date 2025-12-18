@@ -17,7 +17,7 @@ Manage Meshery connection
 ## Synopsis
 
 View and manage your Meshery connection.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection [flags]

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-exp-connection-list
-permalink: reference/mesheryctl/exp/connection/list
+permalink: reference/mesheryctl/connection/list
 redirect_from: reference/mesheryctl/exp/connection/list/
 type: reference
 display-title: "false"
@@ -17,7 +17,7 @@ List all the connections
 ## Synopsis
 
 List all available connections.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/list
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connection list [flags]
