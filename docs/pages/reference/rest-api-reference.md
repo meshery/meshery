@@ -11,11 +11,11 @@ language: en
 
 ## Meshery's APIs
 
-Each of Meshery's APIs are subject to the following authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
+Each of Meshery's APIs is subject to the following authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
 
 <details>
   <summary>Authentication</summary>
-  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication. {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
+  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication. {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>" %}
 </details>
 
 ### How to get your token
@@ -49,7 +49,7 @@ Using Meshery UI, you can get a copy of your authentication token by following t
 <details>
   <summary>Meshery CLI</summary>
   <br />
-Using <a href='/reference/mesheryctl'>Meshery CLI</a>, you can get a copy of your authentication token by executing this command:
+Using <a href='/reference/mesheryctl'>Meshery CLI</a>, you can get a copy of your authentication token by executing the following command:
   <br/>
   <br/>
   <pre class="codeblock-pre">
@@ -83,6 +83,6 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 ## Endpoints
 
-Self-generated documentation based on Meshery's OpenAPI specification for it's REST API.
+Self-generated documentation based on Meshery's OpenAPI specification for its REST API.
 
 {% include alert.html type="info" title="An alternative overview" content="See the <a href='https://docs.google.com/spreadsheets/d/1ABJCbfQRi0uN_YoP2kmHZ-lTI4S4QuvRk1_unomKNRE/edit'>Meshery API Endpoints spreadsheet</a> for an alternative overview of these endpoints." %}
