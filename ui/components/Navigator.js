@@ -342,7 +342,7 @@ const Navigator_ = () => {
     router.events.on('routeChangeStart', handleRouteChange);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [isMobile, isDrawerCollapsed, router.events, dispatch]);
