@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
@@ -108,9 +109,9 @@ const (
 	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
 	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
 	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
-	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
-	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
-	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/connections/list"
 	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
 	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
 	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
@@ -502,10 +503,12 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 func UpdateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
 
-	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
-	start.Stdout = os.Stdout
-	start.Stderr = os.Stderr
-	if err := start.Run(); err != nil {
+	// Use compose library instead of exec.Command
+	composeClient, err := NewComposeClient()
+	if err != nil {
+		return errors.Wrap(err, SystemError("failed to create compose client"))
+	}
+	if err := composeClient.Pull(context.Background(), DockerComposeFile); err != nil {
 		return errors.Wrap(err, SystemError("failed to start meshery"))
 	}
 	return nil
