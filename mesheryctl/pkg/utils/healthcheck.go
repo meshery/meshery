@@ -13,7 +13,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -144,7 +143,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			// Use compose library instead of exec.Command
 			composeClient, err := NewComposeClient()
 			if err != nil {
-				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 			containers, err := composeClient.Ps(context.Background(), DockerComposeFile)
 			if err != nil {
@@ -157,7 +156,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			client, err := meshkitkube.New([]byte(""))
 
 			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
+				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 
 			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
@@ -190,7 +189,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			// Use compose library instead of exec.Command
 			composeClient, err := NewComposeClient()
 			if err != nil {
-				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 			containers, err := composeClient.Ps(context.Background(), DockerComposeFile)
 			if err != nil {
@@ -203,7 +202,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			client, err := meshkitkube.New([]byte(""))
 
 			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
+				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)

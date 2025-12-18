@@ -101,10 +101,11 @@ mesheryctl system status --verbose
 
 		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		if !ok {
-			log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 			return nil
 		}
 
