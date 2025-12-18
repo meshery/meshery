@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 
@@ -141,7 +140,7 @@ mesheryctl system logs meshery-istio
 				return nil
 			}
 
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+			cmdlog := utils.DockerComposeCommand("-f", utils.DockerComposeFile, "logs", "-f")
 
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
