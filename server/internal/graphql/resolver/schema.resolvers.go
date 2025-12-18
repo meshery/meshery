@@ -7,7 +7,9 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -206,6 +208,8 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 		}
 	}
 	go func() {
+		defer close(resChan)
+
 		ctrlsStatusList := make([]*model.MesheryControllersStatusListItem, 0)
 		// first send the initial status of the controllers
 		for connectionID, controllerMap := range statusMapPerConnection {
@@ -218,50 +222,69 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 				})
 			}
 		}
-		resChan <- ctrlsStatusList
-		ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
-		// do this every 5 seconds
+		select {
+		case resChan <- ctrlsStatusList:
+		case <-ctx.Done():
+			return
+		}
+
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+
 		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+			}
+
 			for _, connectionID := range connectionIDs {
 				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-				if ok && inst != nil {
-					machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-					if err != nil {
-						r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-						continue
-					}
-					ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-					for controller, handler := range ctrlHandlers {
-						newStatus := handler.GetStatus()
+				if !ok || inst == nil {
+					continue
+				}
 
-						version, err := handler.GetVersion()
-						if err != nil {
-							er := model.ErrMesheryControllersStatusSubscription(err)
-							r.Log.Error(er)
+				machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+				if err != nil {
+					r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
+					continue
+				}
+
+				ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
+				for controller, controllerHandler := range ctrlHandlers {
+					newStatus := controllerHandler.GetStatus()
+
+					version, err := controllerHandler.GetVersion()
+					if err != nil {
+						er := model.ErrMesheryControllersStatusSubscription(err)
+						r.Log.Error(er)
+					}
+
+					if _, ok := statusMapPerConnection[connectionID]; !ok {
+						statusMapPerConnection[connectionID] = make(map[models.MesheryController]models.MesheryControllerStatusAndVersion)
+					}
+
+					previous, hasPrevious := statusMapPerConnection[connectionID][controller]
+					if !hasPrevious || newStatus != previous.Status || version != previous.Version {
+						update := []*model.MesheryControllersStatusListItem{{
+							ConnectionID: connectionID,
+							Controller:   model.GetInternalController(controller),
+							Status:       model.GetInternalControllerStatus(newStatus),
+							Version:      version,
+						}}
+						select {
+						case resChan <- update:
+						case <-ctx.Done():
+							return
 						}
-						// if the status has changed, send that to the subscription
-						if newStatus != statusMapPerConnection[connectionID][controller].Status {
-							ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
-								ConnectionID: connectionID,
-								Controller:   model.GetInternalController(controller),
-								Status:       model.GetInternalControllerStatus(newStatus),
-								Version:      version,
-							})
-							resChan <- ctrlsStatusList
-						}
-						// update the status list with newStatus
-						if _, ok := statusMapPerConnection[connectionID][controller]; ok {
-							statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
-								Status:  newStatus,
-								Version: version,
-							}
-						}
-						ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
+					}
+
+					statusMapPerConnection[connectionID][controller] = models.MesheryControllerStatusAndVersion{
+						Status:  newStatus,
+						Version: version,
 					}
 				}
 			}
-			// establish a watch connection to get updates, ideally in meshery-operator
-			time.Sleep(time.Second * 5)
 		}
 	}()
 	return resChan, nil
@@ -320,7 +343,7 @@ type subscriptionResolver struct{ *Resolver }
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, connectionIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
-	isSubscriptionFlushed := false
+	var isSubscriptionFlushed atomic.Bool
 	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
@@ -354,24 +377,33 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 			}
 			go func(connectionID string, brokerEventsChan chan *broker.Message) {
 				publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(handler.MeshsyncChannel, resChan, r, 5*time.Second)
-				for event := range brokerEventsChan {
-					if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
-						// TODO: Handle errors accordingly
-						continue
-					}
+				for {
+					select {
+					case <-ctx.Done():
+						return
+					case event, ok := <-brokerEventsChan:
+						if !ok {
+							return
+						}
 
-					// skip event that UI doesn't want to listen to
-					if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
-						continue
-					}
+						if event.EventType == broker.ErrorEvent || isSubscriptionFlushed.Load() { // better close the parent channel, but it is throwing panic
+							// TODO: Handle errors accordingly
+							continue
+						}
 
-					// handle the events
-					res := &model.MeshSyncEvent{
-						ConnectionID: connectionID,
-						Type:         string(event.EventType),
-						Object:       event.Object,
+						// skip event that UI doesn't want to listen to
+						if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
+							continue
+						}
+
+						// handle the events
+						res := &model.MeshSyncEvent{
+							ConnectionID: connectionID,
+							Type:         string(event.EventType),
+							Object:       event.Object,
+						}
+						publishHandlerWithProcessing(res)
 					}
-					publishHandlerWithProcessing(res)
 				}
 			}(connectionID, brokerEventsChan)
 		}
@@ -379,15 +411,8 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 
 	// handle subscription dispose
 	go func() {
-	loop:
-		for {
-			select {
-			case <-ctx.Done(): // executes when the subscription is dumped
-				isSubscriptionFlushed = true
-				break loop
-			default:
-			}
-		}
+		<-ctx.Done() // executes when the subscription is dumped
+		isSubscriptionFlushed.Store(true)
 	}()
 
 	return resChan, nil
@@ -421,72 +446,64 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 	return nil, ErrInvalidRequest
 }
 func processAndRateLimitTheResponseOnGqlChannel(meshsyncChan chan struct{}, publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
-	shouldWait := false
 	type syncedProcessMap struct {
 		mu         sync.Mutex
 		processMap map[string]*model.MeshSyncEvent
+		flushing   bool
 	}
 
 	processMap := syncedProcessMap{processMap: make(map[string]*model.MeshSyncEvent)}
 
-	isLast := false
-
 	return func(meshsyncEvent *model.MeshSyncEvent) {
-		// create a key to uniquely identify meshsync objects with its type, purpose, ctx and resource uniqueId
-		var key string
-		key += meshsyncEvent.Type
-		key += (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
-		key += meshsyncEvent.ConnectionID
-		metadata := (meshsyncEvent.Object).(map[string]interface{})["metadata"]
-		// the metadata.uid could alone be used as key, but has a danger that it may not be avaiable
-		// this uid is coming from the ObjectMeta of the resource, but it is possible that modified and Add or Delete may come under one key, which isn't desired
-		if metadata != nil && metadata != "" && metadata.(map[string]interface{})["uid"] != nil {
-			key += metadata.(map[string]interface{})["uid"].(string)
+		// create a key to uniquely identify meshsync objects with its type, context and resource uid (if present)
+		var b strings.Builder
+		b.WriteString(meshsyncEvent.Type)
+		b.WriteByte(':')
+		b.WriteString(meshsyncEvent.ConnectionID)
+		if objMap, ok := meshsyncEvent.Object.(map[string]interface{}); ok {
+			if kindVal, ok := objMap["kind"]; ok {
+				b.WriteByte(':')
+				_, _ = fmt.Fprint(&b, kindVal)
+			}
+			if metadataVal, ok := objMap["metadata"]; ok {
+				if metadataMap, ok := metadataVal.(map[string]interface{}); ok {
+					if uidVal, ok := metadataMap["uid"]; ok && uidVal != nil {
+						b.WriteByte(':')
+						_, _ = fmt.Fprint(&b, uidVal)
+					}
+				}
+			}
 		}
+		key := b.String()
 
 		processMap.mu.Lock()
-		// Deduplicates the same event by storing it as a map rather
 		processMap.processMap[key] = meshsyncEvent
+		if processMap.flushing {
+			processMap.mu.Unlock()
+			return
+		}
+		processMap.flushing = true
 		processMap.mu.Unlock()
 
-		if !shouldWait {
-			shouldWait = true
-			isLast = false
+		go func() {
+			timer := time.NewTimer(d)
+			defer timer.Stop()
+			<-timer.C
 
-			go func() {
-				<-time.After(d)
-				shouldWait = false
+			processMap.mu.Lock()
+			items := make([]*model.MeshSyncEvent, 0, len(processMap.processMap))
+			for k, v := range processMap.processMap {
+				items = append(items, v)
+				delete(processMap.processMap, k)
+			}
+			processMap.flushing = false
+			processMap.mu.Unlock()
 
-				processMap.mu.Lock()
-				for k, v := range processMap.processMap {
-					publishChannel <- v
-					go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
-					// instead send the MeshSync event itself and update the plugin to send out this particular event instead of again querying the database.
-					go func() {
-						meshsyncChan <- struct{}{}
-					}()
-					// delete the key once processed to collect new entries
-					delete(processMap.processMap, k)
-				}
-				processMap.mu.Unlock()
-			}()
-		} else {
-			// don't let the last items stay in the queue until next event, but execute once the timer ends
-			isLast = true
-			go func() {
-				<-time.After(d)
-				if isLast {
-					processMap.mu.Lock()
-					for k, v := range processMap.processMap {
-						publishChannel <- v
-						go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
-
-						// delete the key once processed to collect new entries
-						delete(processMap.processMap, k)
-					}
-					processMap.mu.Unlock()
-				}
-			}()
-		}
+			for _, v := range items {
+				publishChannel <- v
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
+				go func() { meshsyncChan <- struct{}{} }()
+			}
+		}()
 	}
 }

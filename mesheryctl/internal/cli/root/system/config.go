@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"os/exec"
 	"bufio"
@@ -55,10 +54,16 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, ErrUploadFileParams(err)
 	}
 
-	res, err := api.Add("api/system/kubernetes/contexts", req.Body)
+	// Preserve the multipart Content-Type header when sending via the api client.
+	headers := map[string]string{
+		"Content-Type": req.Header.Get("Content-Type"),
+	}
+
+	res, err := api.Add("api/system/kubernetes/contexts", req.Body, headers)
 	if err != nil {
 		return nil, err
 	}
+	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, utils.ErrReadResponseBody(err)
@@ -90,7 +95,6 @@ func getContexts(configFile string) ([]string, error) {
 }
 
 func setContext(configFile, cname string) error {
-	client := &http.Client{}
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
@@ -106,10 +110,16 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return ErrUploadFileParams(err)
 	}
-	res, err := client.Do(req)
+	headers := map[string]string{
+		"Content-Type": req.Header.Get("Content-Type"),
+	}
+	res, err := api.Add("api/system/kubernetes", req.Body, headers)
 	if err != nil {
 		return utils.ErrRequestResponse(err)
 	}
+	defer res.Body.Close()
+	defer res.Body.Close()
+
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
@@ -324,7 +334,8 @@ mesheryctl system config minikube
 			return err
 		}
 
-		log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
+		log.Infof("A flattened Minikube kubeconfig file available at: %s", utils.ConfigPath)
+		log.Info("A new Meshery connection has been created. Run `mesheryctl connnection list` for details.")
 
 		// set the token in the chosen context
 		setToken()
@@ -449,14 +460,15 @@ mesheryctl system config oke --token auth.json
 }
 
 var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Configure Meshery",
-	Long:  `Configure the Kubernetes cluster used by Meshery.`,
+	Use:        "config",
+	Short:      "Configure Meshery",
+	Long:       `Configure the Kubernetes cluster used by Meshery.`,
+	Deprecated: "Please use 'mesheryctl connection create --type <k8s-type>' instead.",
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube|oke]
 Example: mesheryctl system config eks
-Description: Configure the Kubernetes cluster used by Meshery.`
-
+Description: Configure the Kubernetes cluster used by Meshery.
+NOTE: This command is deprecated. Please use 'mesheryctl connection create --type <k8s-type>' instead.`
 		if len(args) == 0 {
 			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -465,11 +477,15 @@ Description: Configure the Kubernetes cluster used by Meshery.`
 		return nil
 	},
 	Example: `
-// Set configuration according to k8s cluster
+// Set configuration according to k8s cluster (DEPRECATED: use 'mesheryctl connection create' instead)
 mesheryctl system config [aks|eks|gke|minikube|oke]
+
 
 // Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
 mesheryctl system config --token "~/Downloads/auth.json"
+
+// NEW: Use the connection create command instead
+mesheryctl connection create --type [aks|eks|gke|minikube]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 

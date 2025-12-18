@@ -22,6 +22,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/environments"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental"
@@ -118,9 +119,28 @@ func init() {
 		components.ComponentCmd,
 		model.ModelCmd,
 		environments.EnvironmentCmd,
+		connections.ConnectionsCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+	RootCmd.SetHelpCommand(newHelpCommand())
+}
+
+func newHelpCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "help [command]",
+		Short: "Show help for any command",
+		Long:  "Show help for any command.",
+		Run: func(c *cobra.Command, args []string) {
+			cmd, _, err := c.Root().Find(args)
+			if cmd == nil || err != nil {
+				c.Println(c.UsageString())
+				return
+			}
+			cmd.InitDefaultHelpFlag()
+			cmd.HelpFunc()(cmd, args)
+		},
+	}
 }
 
 func TreePath() *cobra.Command {
