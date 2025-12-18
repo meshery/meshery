@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -80,11 +80,20 @@ for k, v := range headers {
 	if err != nil {
 		if meshkitErr, ok := err.(*mErrors.Error); ok {
 			if meshkitErr.Code == utils.ErrFailRequestCode {
-				return nil, utils.ErrFailRequest(errors.New("Request failed.\nEnsure meshery server is available."))
+				endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
+				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
+				errRemediation := mErrors.GetRemedy(failedReqErr)
+				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
 			}
 		}
 		return nil, err
 	}
 
 	return resp, nil
+}
+
+func generateErrorReferenceDetails(referenceCodeName, code string) string {
+	codeNumber := strings.Split(code, "-")[1]
+	return fmt.Sprintf("\nFor additional details see https://docs.meshery.io/reference/error-codes#%s-%s", referenceCodeName, codeNumber)
 }

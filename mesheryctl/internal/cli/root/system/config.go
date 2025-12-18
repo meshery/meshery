@@ -340,14 +340,15 @@ mesheryctl system config minikube
 }
 
 var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Configure Meshery",
-	Long:  `Configure the Kubernetes cluster used by Meshery.`,
+	Use:        "config",
+	Short:      "Configure Meshery",
+	Long:       `Configure the Kubernetes cluster used by Meshery.`,
+	Deprecated: "Please use 'mesheryctl connection create --type <k8s-type>' instead.",
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
 Example: mesheryctl system config eks
-Description: Configure the Kubernetes cluster used by Meshery.`
-
+Description: Configure the Kubernetes cluster used by Meshery.
+NOTE: This command is deprecated. Please use 'mesheryctl connection create --type <k8s-type>' instead.`
 		if len(args) == 0 {
 			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -356,11 +357,14 @@ Description: Configure the Kubernetes cluster used by Meshery.`
 		return nil
 	},
 	Example: `
-// Set configuration according to k8s cluster
+// Set configuration according to k8s cluster (DEPRECATED: use 'mesheryctl connection create' instead)
 mesheryctl system config [aks|eks|gke|minikube]
 
 // Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
 mesheryctl system config --token "~/Downloads/auth.json"
+
+// NEW: Use the connection create command instead
+mesheryctl connection create --type [aks|eks|gke|minikube]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
