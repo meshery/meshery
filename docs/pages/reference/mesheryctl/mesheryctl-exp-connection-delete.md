@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-exp-connection-delete
-permalink: reference/mesheryctl/exp/connection/delete
+permalink: reference/mesheryctl/connection/delete
 redirect_from: reference/mesheryctl/exp/connection/delete/
 type: reference
 display-title: "false"
@@ -17,7 +17,7 @@ Delete a connection
 ## Synopsis
 
 Delete a connection providing the connection ID.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/delete
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connection delete [flags]

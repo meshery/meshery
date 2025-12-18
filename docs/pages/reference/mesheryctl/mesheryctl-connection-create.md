@@ -1,67 +1,64 @@
 ---
 layout: default
-title: mesheryctl-perf
-permalink: reference/mesheryctl/perf
-redirect_from: reference/mesheryctl/perf/
+title: mesheryctl-connection-create
+permalink: reference/mesheryctl/connection/create
+redirect_from: reference/mesheryctl/connection/create/
 type: reference
 display-title: "false"
 language: en
-command: perf
-subcommand: nil
+command: connection
+subcommand: create
 ---
 
-# mesheryctl perf
+# mesheryctl connection create
 
-Performance Management
+Create a new connection
 
 ## Synopsis
 
-Performance Management & Benchmarking.
-
+Create a new connection to a Kubernetes cluster or other supported platform
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf [flags]
+mesheryctl connection create [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Run performance test:
+Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
-
-</div>
-</pre> 
-
-List performance profiles:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl perf profile sam-test
-
-</div>
-</pre> 
-
-List performance results:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl perf result sam-test
-
-</div>
-</pre> 
-
-Display Perf profile in JSON or YAML:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl perf result -o json
+mesheryctl connection create --type aks
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf result -o yaml
+mesheryctl connection create --type eks
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type gke
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type minikube
+
+</div>
+</pre> 
+
+Create a connection with a token
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type gke --token auth.json
 
 </div>
 </pre> 
@@ -70,10 +67,9 @@ mesheryctl perf result -o yaml
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for perf
-  -o, --output-format string   (optional) format to display in [json|yaml]
-  -t, --token string           (required) Path to meshery auth config
-  -y, --yes                    (optional) assume yes for user interactive prompts.
+  -h, --help           help for create
+      --token string   Path to token for authenticating to Meshery API
+  -t, --type string    Type of connection to create (aks|eks|gke|minikube)
 
 </div>
 </pre>
@@ -89,9 +85,5 @@ mesheryctl perf result -o yaml
 </pre>
 
 ## See Also
-
-* [mesheryctl perf apply](/reference/mesheryctl/perf/apply)
-* [mesheryctl perf profile](/reference/mesheryctl/perf/profile)
-* [mesheryctl perf result](/reference/mesheryctl/perf/result)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

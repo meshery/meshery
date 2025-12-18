@@ -1,51 +1,52 @@
 ---
 layout: default
-title: mesheryctl-filter-list
-permalink: reference/mesheryctl/filter/list
-redirect_from: reference/mesheryctl/filter/list/
+title: mesheryctl-connection-list
+permalink: reference/mesheryctl/connection/list
+redirect_from: reference/mesheryctl/connection/list/
 type: reference
 display-title: "false"
 language: en
-command: filter
+command: connection
 subcommand: list
 ---
 
-# mesheryctl filter list
+# mesheryctl connection list
 
-List filters
+List all the connections
 
 ## Synopsis
 
-Display list of all available filter files.
+List all available connections.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter list [flags]
+mesheryctl connection list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all WASM filter files present
+List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter list	(maximum 25 filters)
+mesheryctl connection list
 
 </div>
 </pre> 
 
-Search for filter
+List all the connections with page number
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter list Test (maximum 25 filters)
+mesheryctl connection list --page [page-number]
 
 </div>
 </pre> 
 
-Search for filter with space
+Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter list 'Test Filter' (maximum 25 filters)
+mesheryctl connection list --count
 
 </div>
 </pre> 
@@ -54,9 +55,9 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -c, --count      Display the count of total available connections
   -h, --help       help for list
-  -p, --page int   (optional) List next set of filters with --page (default = 1) (default 1)
-  -v, --verbose    Display full length user and filter file identifiers
+  -p, --page int   Page number (default 1)
 
 </div>
 </pre>
@@ -66,7 +67,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "~/.meshery/config.yaml")
-  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
 
 </div>
 </pre>

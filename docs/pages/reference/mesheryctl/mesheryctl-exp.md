@@ -37,7 +37,7 @@ mesheryctl exp [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -45,8 +45,7 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl exp connection](/reference/mesheryctl/exp/connection)
-* [mesheryctl exp organization](/reference/mesheryctl/exp/organization)
+* [mesheryctl environment](/reference/mesheryctl/main)
 * [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)
 * [mesheryctl exp workspace](/reference/mesheryctl/exp/workspace)
 

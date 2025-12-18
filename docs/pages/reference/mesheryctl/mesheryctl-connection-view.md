@@ -1,52 +1,35 @@
 ---
 layout: default
-title: mesheryctl-component-view
-permalink: reference/mesheryctl/component/view
-redirect_from: reference/mesheryctl/component/view/
+title: mesheryctl-connection-view
+permalink: reference/mesheryctl/connection/view
+redirect_from: reference/mesheryctl/connection/view/
 type: reference
 display-title: "false"
 language: en
-command: component
+command: connection
 subcommand: view
 ---
 
-# mesheryctl component view
+# mesheryctl connection view
 
-View registered components
+View a connection
 
 ## Synopsis
 
-View a component registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/view
+View a connection by its ID or name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [flags]
+mesheryctl connection view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View details of a specific component
+View details of a specific connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
-
-</div>
-</pre> 
-
-View details of a specific component in specifed format 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl component view [component-name] -o [json|yaml]
-
-</div>
-</pre> 
-
-View details of a specific component in specified format and save it as a file
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl component view [component-name] -o [json|yaml] --save
+mesheryctl connection view [connection-name]
 
 </div>
 </pre> 
