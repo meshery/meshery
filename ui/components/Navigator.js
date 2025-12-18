@@ -338,7 +338,7 @@ const Navigator_ = () => {
       dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     router.events.on('routeChangeStart', handleRouteChange);
 
     return () => {
@@ -1133,16 +1133,14 @@ const Navigator_ = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        <div ref={sidebarNodeRef}>
-          {Title}
-          {Menu}
-          <FixedSidebarFooter>
-            {Chevron}
-            {HelpIcons}
-            {Version}
-          </FixedSidebarFooter>
-        </div>
+      <SidebarDrawer ref={sidebarNodeRef} isCollapsed={isDrawerCollapsed} variant="permanent">
+        {Title}
+        {Menu}
+        <FixedSidebarFooter>
+          {Chevron}
+          {HelpIcons}
+          {Version}
+        </FixedSidebarFooter>
       </SidebarDrawer>
     </NoSsr>
   );
