@@ -45,7 +45,7 @@ var (
 	watch      bool
 	AdapterCmd = &cobra.Command{
 		Use:   "adapter",
-		Short: "Manage service mesh adapters",
+		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

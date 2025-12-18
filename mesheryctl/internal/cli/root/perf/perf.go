@@ -34,7 +34,7 @@ var (
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Run performance tests",
-	Long: `Performance Management & Benchmarking.
+	Long: `Load generation and performance characterization
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Run performance test:
