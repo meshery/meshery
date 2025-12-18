@@ -42,7 +42,7 @@ var linkDoc = map[string]string{
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Version of mesheryctl",
+	Short: "Show mesheryctl version",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Example: `
 // To view the current version and SHA of release binary of mesheryctl client 

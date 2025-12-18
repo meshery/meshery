@@ -33,7 +33,7 @@ var (
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
-	Short: "Performance Management",
+	Short: "Run performance tests",
 	Long: `Performance Management & Benchmarking.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `

@@ -38,7 +38,7 @@ var (
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "Manage models",
+	Short: "Manage Meshery models",
 	Long: `Export, generate, import, list, search and view model(s) and detailed informations
 Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
