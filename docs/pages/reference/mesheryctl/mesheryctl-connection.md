@@ -1,26 +1,26 @@
 ---
 layout: default
-title: mesheryctl-exp-connection
-permalink: reference/mesheryctl/exp/connection
-redirect_from: reference/mesheryctl/exp/connection/
+title: mesheryctl-connection
+permalink: reference/mesheryctl/connection
+redirect_from: reference/mesheryctl/connection/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: connection
+command: connection
+subcommand: nil
 ---
 
-# mesheryctl exp connection
+# mesheryctl connection
 
 Manage Meshery connection
 
 ## Synopsis
 
 View and manage your Meshery connection.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection [flags]
+mesheryctl connection [flags]
 
 </div>
 </pre> 
@@ -73,7 +73,9 @@ mesheryctl exp connection delete [connection_id]
 
 ## See Also
 
-* [mesheryctl exp connection delete](/reference/mesheryctl/exp/connection/delete)
-* [mesheryctl exp connection list](/reference/mesheryctl/exp/connection/list)
+* [mesheryctl connection create](/reference/mesheryctl/connection/create)
+* [mesheryctl connection delete](/reference/mesheryctl/connection/delete)
+* [mesheryctl connection list](/reference/mesheryctl/connection/list)
+* [mesheryctl connection view](/reference/mesheryctl/connection/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

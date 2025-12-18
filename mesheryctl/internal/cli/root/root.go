@@ -22,6 +22,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/environments"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental"
@@ -118,6 +119,7 @@ func init() {
 		components.ComponentCmd,
 		model.ModelCmd,
 		environments.EnvironmentCmd,
+		connections.ConnectionsCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
