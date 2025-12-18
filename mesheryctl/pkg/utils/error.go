@@ -417,7 +417,7 @@ func ErrFailRequest(err error) error {
 		[]string{"Failed to make a request"},
 		[]string{err.Error()},
 		[]string{"Meshery server is not reachable."},
-		[]string{"Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."})
+		[]string{"Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."})
 }
 
 func ErrUnauthenticated() error {
