@@ -9,9 +9,6 @@ before:
 builds:
 - main: ./mesheryctl/cmd/mesheryctl/main.go
 
-  env:
-    - CGO_ENABLED=0
-
   ldflags:
     - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
     - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root/constants.commitsha={{.ShortCommit}}
