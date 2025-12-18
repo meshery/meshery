@@ -36,7 +36,7 @@ Start Meshery by executing:
 
  <script src="/assets/js/terminal.js" data-termynal-container="#termynal1"></script> -->
 
-{% capture code_content %}mesheryctl system start{% endcapture %}
+{% capture code_content %}mesheryctl system start -p docker{% endcapture %}
 {% include code.html code=code_content %}
 
 ## Advanced Configuration
