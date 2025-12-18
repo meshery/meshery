@@ -250,6 +250,11 @@ func getContexts(configFile string) ([]string, error) {
 	if err != nil {
 		return nil, utils.ErrRequestResponse(err)
 	}
+	if res.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		return nil, fmt.Errorf("failed to get contexts: received status code %d with body %s", res.StatusCode, string(body))
+	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
