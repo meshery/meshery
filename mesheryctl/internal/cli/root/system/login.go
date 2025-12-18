@@ -76,8 +76,7 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			utils.Log.Error(errors.New("authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`."))
-			return nil
+			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
 
 		log.Println("authenticated")
