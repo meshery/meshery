@@ -378,9 +378,12 @@ func start() error {
 				break
 			}
 
-			// Provide progress feedback
-			if i > 0 && i%6 == 0 { // Every 30 seconds
+			// Provide progress feedback every 30 seconds
+			if i > 0 && i%6 == 0 {
+				spinner.Stop()
 				log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
+				spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
+				spinner.Start()
 			}
 		}
 
