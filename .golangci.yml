@@ -10,5 +10,4 @@ linters:
     paths:
       - server/handlers/doc.go
       - server/models/meshmodel/core/register.go
-      - mesheryctl/pkg/utils/compose.go
  
