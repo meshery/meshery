@@ -25,7 +25,7 @@ Follow the installation steps to install the mesheryctl CLI. Then, execute:
 <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
 </pre>
 
-If you are running Meshery on Docker, execute the following command.
+If you are installing Meshery on Docker, execute the following command.
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">./mesheryctl system start -p docker</div></div>
 </pre>
