@@ -298,6 +298,8 @@
       children:
         - title: Authorization
           url: extensibility/authorization
+        - title: Build-time
+          url: extensibility/build-time
         - title: Load Generators
           url: extensibility/load-generators
         - title: Providers
@@ -310,7 +312,7 @@
       url: reference/error-codes
     - title: Permission Keys
       url: reference/permissions
-    - title: Meshery Operator CRD
+    - title: Meshery Operator & CRDs
       url: reference/meshery-operator-crds
     - title: CLI Command
       url: reference/mesheryctl

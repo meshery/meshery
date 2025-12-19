@@ -2,7 +2,7 @@
   "id": "8738285d-de4d-421a-aab7-e8760ba57537",
   "name": "NGINX Pod with Meshery Milestone app",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.5",
+  "version": "0.0.11",
   "metadata": {
     "resolvedAliases": {
       "2aa5d193-bb34-4b93-a29a-0bf98b17c99c": {
@@ -27,68 +27,53 @@
   },
   "components": [
     {
-      "id": "2aa5d193-bb34-4b93-a29a-0bf98b17c99c",
+      "id": "1c463748-0c91-44c0-8aec-c5dd63e032d3",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
-      "displayName": "containers.0",
+      "displayName": "",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "550bfe31-5015-a0d1-b695-369c97b4e903",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-          "name": "meshery",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "2025-06-18T06:12:24.097168009Z",
-          "updated_at": "2025-06-18T06:12:24.097168009Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "This is a simple example design, containing a single Kubernetes Pod with sample application \"meshery-milestone\" running on NGINX.",
+        "body-text-color": "rgb(177,182,184)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(0,179,159)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
         "position": {
-          "x": 348.2637414852646,
-          "y": 598.4504079914683
+          "x": 510.7690355329949,
+          "y": 618.9208121827411
         },
-        "primaryColor": "#326CE5",
-        "secondaryColor": "#00D3A9",
-        "shape": "circle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "primaryColor": "rgb(0,179,159)",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
         "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 180,
+        "z-index": 1
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -101,7 +86,7 @@
       "configuration": {},
       "component": {
         "version": "core.meshery.io/v1alpha1",
-        "kind": "Container",
+        "kind": "TextBox",
         "schema": ""
       }
     },
@@ -112,48 +97,17 @@
       "displayName": "pod-wy",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "e633cca6-b6e1-65bf-a440-0d58915e75dd",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "kubernetes",
         "displayName": "Kubernetes",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "f9a29d70-c287-426c-a90c-2a96590c8083",
-          "name": "Github",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "github",
-          "status": "registered",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "2025-06-18T06:12:13.852899628Z",
-          "updated_at": "2025-06-18T06:12:13.852899628Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "f9a29d70-c287-426c-a90c-2a96590c8083",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Scheduling \u0026 Orchestration",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#326CE5",
-          "secondaryColor": "#7aa1f0",
-          "shape": "circle",
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+          "kind": "github"
         },
         "model": {
           "version": "v1.32.0-alpha.3"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
         "background-opacity": 0.5,
@@ -180,7 +134,7 @@
         "width": 24,
         "z-index": 2
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -218,84 +172,37 @@
       }
     },
     {
-      "id": "1c463748-0c91-44c0-8aec-c5dd63e032d3",
+      "id": "2aa5d193-bb34-4b93-a29a-0bf98b17c99c",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
-      "displayName": "",
+      "displayName": "containers.0",
       "description": "",
       "format": "JSON",
-      "model": {
-        "id": "550bfe31-5015-a0d1-b695-369c97b4e903",
-        "schemaVersion": "models.meshery.io/v1beta1",
+      "modelReference": {
         "version": "v1.0.0",
         "name": "meshery-core",
         "displayName": "Meshery Core",
-        "status": "enabled",
+        "id": "00000000-0000-0000-0000-000000000000",
         "registrant": {
-          "id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-          "name": "meshery",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "2025-06-18T06:12:24.097168009Z",
-          "updated_at": "2025-06-18T06:12:24.097168009Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+          "kind": "meshery"
         },
         "model": {
           "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "This is a simple example design, containing a single Kubernetes Pod with sample application \"meshery-milestone\" running on NGINX.",
-        "body-text-color": "#808080",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-vertical-align": "center",
-        "border-color": "#808080",
-        "border-style": "dashed",
-        "border-width": 1,
-        "height": 60,
-        "opacity": 1,
-        "padding": 6,
         "position": {
-          "x": 510,
-          "y": 610
+          "x": 350,
+          "y": 612
         },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#FFDE00",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
         "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
-        "width": 180,
-        "z-index": 1
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
       },
-      "capabilities": [],
+      "capabilities": null,
       "status": "enabled",
       "metadata": {
         "configurationUISchema": "",
@@ -308,7 +215,7 @@
       "configuration": {},
       "component": {
         "version": "core.meshery.io/v1alpha1",
-        "kind": "TextBox",
+        "kind": "Container",
         "schema": ""
       }
     }
@@ -339,47 +246,16 @@
         "isAnnotation": false
       },
       "model": {
-        "id": "e633cca6-b6e1-65bf-a440-0d58915e75dd",
-        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "kubernetes",
         "displayName": "Kubernetes",
-        "status": "enabled",
+        "id": "e633cca6-b6e1-65bf-a440-0d58915e75dd",
         "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "f9a29d70-c287-426c-a90c-2a96590c8083",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Scheduling \u0026 Orchestration",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#326CE5",
-          "secondaryColor": "#7aa1f0",
-          "shape": "circle",
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+          "kind": ""
         },
         "model": {
           "version": "v1.32.0-alpha.3"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
+        }
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -392,39 +268,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "meshery-core",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "kind": "github"
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": {
                   "patchStrategy": "replace",
@@ -454,39 +307,16 @@
                 "match": {},
                 "match_strategy_matrix": null,
                 "model": {
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "schemaVersion": "",
                   "version": "",
                   "name": "kubernetes",
                   "displayName": "",
-                  "status": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
                   "registrant": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "",
-                    "sub_type": "",
-                    "kind": "github",
-                    "status": "",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "0001-01-01T00:00:00Z",
-                    "updated_at": "0001-01-01T00:00:00Z",
-                    "deleted_at": "0001-01-01T00:00:00Z"
+                    "kind": "github"
                   },
-                  "connection_id": "00000000-0000-0000-0000-000000000000",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": ""
-                  },
-                  "subCategory": "",
-                  "metadata": null,
                   "model": {
                     "version": ""
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
+                  }
                 },
                 "patch": {
                   "patchStrategy": "replace",

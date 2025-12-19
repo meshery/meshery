@@ -3,14 +3,23 @@ package display
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 )
 
 var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+
+var serverAndNetworkErrors = []string{
+	utils.ErrUnauthenticatedCode,
+	utils.ErrInvalidTokenCode,
+	utils.ErrAttachAuthTokenCode,
+	utils.ErrFailRequestCode,
+}
 
 func HandlePaginationAsync[T any](
 	pageSize int,
@@ -33,7 +42,13 @@ func HandlePaginationAsync[T any](
 		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
-			return fmt.Errorf("failed to fetch data for page %d: %w", currentPage, err)
+			if meshkitErr, ok := err.(*errors.Error); ok {
+				if slices.Contains(serverAndNetworkErrors, meshkitErr.Code) {
+					return err
+				}
+				return ErrorListPagination(err, currentPage)
+			}
+			return err
 		}
 
 		// Process the fetched data

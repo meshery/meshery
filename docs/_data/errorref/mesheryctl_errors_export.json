@@ -784,7 +784,7 @@
         "long_description": "",
         "short_description": "Failed to make a request",
         "probable_cause": "Meshery server is not reachable.",
-        "suggested_remediation": "Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."
+        "suggested_remediation": "Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."
       },
       "1091": {
         "name": "ErrInvalidTokenCode",
@@ -1298,6 +1298,33 @@
         "short_description": "Failed to display output in table format",
         "probable_cause": "Table rendering issue",
         "suggested_remediation": "Ensure the data being rendered is valid and properly structured."
+      },
+      "1155": {
+        "name": "ErrFlagsInvalidCode",
+        "code": "1155",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid flag provided",
+        "probable_cause": "The flag provided is invalid.",
+        "suggested_remediation": "Provide a valid flag"
+      },
+      "1156": {
+        "name": "ErrOutputToYamlCode",
+        "code": "1156",
+        "severity": "Alert",
+        "long_description": "Error occurred while formatting to YAML",
+        "short_description": "Failed to format output in YAML",
+        "probable_cause": "The content provided for formatting failed.",
+        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+      },
+      "1157": {
+        "name": "ErrListPaginationCode",
+        "code": "1157",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to fetch data from Meshery server.",
+        "probable_cause": "While fetching data from Meshery server an error occurred.",
+        "suggested_remediation": "Please check if returned data is valid"
       }
     }
   }

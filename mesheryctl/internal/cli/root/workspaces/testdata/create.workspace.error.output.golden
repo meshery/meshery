@@ -1,0 +1,4 @@
+Failed to create "workspace-test-error" workspace in "2d2c0b60-076a-4f0a-8a63-de538570a553" organization.
+Ensure you provide a valid organization ID.
+
+See https://docs.meshery.io/reference/mesheryctl/exp/workspace/create for usage details

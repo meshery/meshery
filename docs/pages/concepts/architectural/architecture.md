@@ -36,8 +36,8 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 
 In Meshery v0.6.0, Adapters will register with Meshery Server over HTTP POST. If Meshery Server is not available, Meshery Adapters will backoff and retry to connect to Meshery Server perpetually.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" width="50%" /></a>
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
@@ -54,8 +54,8 @@ _Figure: Meshery Adapter Operation Registration_
 
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" width="50%" /></a>
 
 _Figure: Clients use Meshery's [REST API](/extensibility/api#rest), [GraphQL API](/extensibility/api#graphql), or a combination of both._
 
@@ -63,8 +63,8 @@ _Figure: Clients use Meshery's [REST API](/extensibility/api#rest), [GraphQL API
 
 As a point of extensibility, Meshery supports two types of [providers](/extensibility/providers): _Local_ and _Remote_.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.webp" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.webp" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Provider architecture</figcaption>
 </figure>
@@ -95,8 +95,8 @@ See the [**Operator**]({{ site.baseurl }}/concepts/architecture/operator) sectio
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.svg" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
@@ -177,4 +177,4 @@ See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) sectio
 
 <br>
 
-Please also see the [Troubleshooting Toolkit](https://docs.google.com/document/d/1q-aayRqx3QKIk2soTaTTTH-jmHcVXHwNYFsYkFawaME/edit#heading=h.ngupcd4j1pfm) and the [Meshery v0.7.0: Connection States (Kubnernetes) Design Review](http://discuss.meshery.io/t/meshery-v0-7-0-connection-states-kubnernetes-design-review/958)
+Please also see the [Troubleshooting Toolkit](https://docs.google.com/document/d/1q-aayRqx3QKIk2soTaTTTH-jmHcVXHwNYFsYkFawaME/edit#heading=h.ngupcd4j1pfm) and the [Meshery v0.7.0: Connection States (Kubnernetes) Design Review](https://discuss.layer5.io/t/meshery-v0-7-0-connection-states-kubnernetes-design-review/958)

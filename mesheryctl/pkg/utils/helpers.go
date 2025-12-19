@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
@@ -45,7 +46,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Meshery Kubernetes Deployment URLs
-	baseConfigURL = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	baseConfigURL = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/"
 	OperatorURL   = baseConfigURL + "manifests/default.yaml"
 	BrokerURL     = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
@@ -108,9 +109,9 @@ const (
 	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
 	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
 	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
-	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
-	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
-	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/connections/list"
 	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
 	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
 	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
@@ -172,9 +173,9 @@ const (
 	cmdRelationshipView         cmdType = "relationship view"
 	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdRelationshipList         cmdType = "relationship list"
-	cmdWorkspace                cmdType = "workspace"
-	cmdWorkspaceList            cmdType = "workspace list"
-	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdExpWorkspace             cmdType = "exp workspace"
+	cmdExpWorkspaceList         cmdType = "exp workspace list"
+	cmdExpWorkspaceCreate       cmdType = "exp workspace create"
 	cmdEnvironment              cmdType = "environment"
 	cmdEnvironmentCreate        cmdType = "environment create"
 	cmdEnvironmentDelete        cmdType = "environment delete"
@@ -226,13 +227,13 @@ var (
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
 	//MesheryOperator is the file for default Meshery operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/manifests/default.yaml
 	MesheryOperator = "default.yaml"
 	//MesheryOperatorBroker is the file for the Meshery broker
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
 	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
 	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
@@ -502,10 +503,12 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 func UpdateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
 
-	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
-	start.Stdout = os.Stdout
-	start.Stderr = os.Stderr
-	if err := start.Run(); err != nil {
+	// Use compose library instead of exec.Command
+	composeClient, err := NewComposeClient()
+	if err != nil {
+		return errors.Wrap(err, SystemError("failed to create compose client"))
+	}
+	if err := composeClient.Pull(context.Background(), DockerComposeFile); err != nil {
 		return errors.Wrap(err, SystemError("failed to start meshery"))
 	}
 	return nil

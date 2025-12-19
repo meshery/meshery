@@ -17,8 +17,6 @@ package experimental
 import (
 	"fmt"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/organizations"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/relationships"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -33,7 +31,7 @@ var (
 // ExpCmd represents the Experimental commands
 var ExpCmd = &cobra.Command{
 	Use:   "exp",
-	Short: "Experimental commands for mesheryctl",
+	Short: "Preview experimental commands",
 	Long:  `Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -47,7 +45,7 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, connections.ConnectionsCmd, relationships.RelationshipCmd, workspaces.WorkSpaceCmd, organizations.OrgCmd)
+	availableSubcommands = append(availableSubcommands, relationships.RelationshipCmd, workspaces.WorkSpaceCmd)
 
 	ExpCmd.AddCommand(availableSubcommands...)
 }

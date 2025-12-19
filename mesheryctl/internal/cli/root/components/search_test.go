@@ -31,7 +31,7 @@ func TestSearchComponent(t *testing.T) {
 		{
 			Name:             "Search components with query parameter",
 			Args:             []string{"search", "Test"},
-			URL:              fmt.Sprintf("/%s?search=Test&pagesize=all", componentApiPath),
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,

@@ -34,9 +34,25 @@ components:
   colorIcon: assets/img/integrations/aws-ssm-controller/components/resource-data-sync/icons/color/resource-data-sync-color.svg
   whiteIcon: assets/img/integrations/aws-ssm-controller/components/resource-data-sync/icons/white/resource-data-sync-white.svg
   description: 
-components-count: 6
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-ssm-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-ssm-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 7
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between ResourceDataSync and Bucket"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and document"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and PatchBaseline"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and ResourceDataSync"
+relationship-count: 4
 featureList: [
   "Centralized management of AWS resources",
   "Automation of operational tasks",

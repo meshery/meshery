@@ -32,6 +32,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/models/oci"
+	meshkitPatternHelpers "github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/catalog"
 
@@ -201,6 +202,9 @@ func (h *Handler) handlePatternPOST(
 	if requestPayload.ID != nil {
 		eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
 	}
+
+	// Dehydrate the pattern before saving to the database to reduce size
+	meshkitPatternHelpers.DehydratePattern(&requestPayload.DesignFile)
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 
@@ -737,6 +741,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 		return
 	}
+
+	// publish a download event
+	downloadEvent := events.DesignDownloadEvent(*pattern.ID, pattern.Name, userID, *h.SystemID)
+	_ = provider.PersistEvent(*downloadEvent, nil)
+	go h.config.EventBroadcaster.Publish(userID, downloadEvent)
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {

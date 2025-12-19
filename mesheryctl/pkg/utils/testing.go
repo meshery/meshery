@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -287,7 +288,7 @@ func StartMockMesheryServer(t *testing.T) error {
 // handle properly in test. This function will remove undesired characters
 // and spaces to ensure excepted versus actual result match when using http.MockURL
 func CleanStringFromHandlePagination(data string) string {
-	cleaned := stripAnsiEscapeCodes(data)
+	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)
 	return cleaned
 }
@@ -301,7 +302,7 @@ func CleanStringFromHandlePagination(data string) string {
 // Returns:
 //
 //	A string with the ANSI escape codes removed.
-func stripAnsiEscapeCodes(text string) string {
+func StripAnsiEscapeCodes(text string) string {
 	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 	return ansi.ReplaceAllString(text, "")
 }
@@ -458,8 +459,19 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 				TokenFlag = GetToken(t)
 
-				httpmock.RegisterResponder(tt.HttpMethod, testContext.BaseURL+tt.URL,
-					httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				url := testContext.BaseURL + tt.URL
+				httpMethod := tt.HttpMethod
+
+				if tt.HttpStatusCode < 0 {
+					httpmock.RegisterResponder(httpMethod, url,
+						func(req *http.Request) (*http.Response, error) {
+							return nil, &net.OpError{Op: "dial", Net: "tcp", Addr: nil, Err: net.ErrClosed}
+						})
+				} else {
+					httpmock.RegisterResponder(httpMethod, url,
+						httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+				}
+
 			}
 
 			testdataDir := filepath.Join(commandDir, "testdata")

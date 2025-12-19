@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -34,7 +33,7 @@ import (
 	"github.com/spf13/viper"
 	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
-	"github.com/layer5io/meshery-operator/api/v1alpha1"
+	"github.com/meshery/meshery-operator/api/v1alpha1"
 )
 
 var (
@@ -125,20 +124,19 @@ func stop() error {
 
 		log.Info("Stopping Meshery resources...")
 
-		// Stop all Docker containers
-		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-		stop.Stdout = os.Stdout
-		stop.Stderr = os.Stderr
+		// Use compose library instead of exec.Command
+		composeClient, err := utils.NewComposeClient()
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+		}
 
-		if err := stop.Run(); err != nil {
+		// Stop all Docker containers
+		if err := composeClient.Stop(context.Background(), utils.DockerComposeFile); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
 		}
 
 		// Remove all Docker containers
-		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
+		if err := composeClient.Remove(context.Background(), utils.DockerComposeFile); err != nil {
 			return ErrStopMeshery(err)
 		}
 		log.Info("Meshery resources is stopped.")

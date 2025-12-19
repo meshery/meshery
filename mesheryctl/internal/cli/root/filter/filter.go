@@ -29,7 +29,7 @@ var (
 // FilterCmd represents the root command for filter commands
 var FilterCmd = &cobra.Command{
 	Use:   "filter",
-	Short: "Cloud Native Filter Management",
+	Short: "Manage WebAssembly filters",
 	Long: `Cloud Native Filter Management
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `

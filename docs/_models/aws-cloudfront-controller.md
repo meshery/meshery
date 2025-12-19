@@ -50,9 +50,46 @@ components:
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
   description: 
-components-count: 10
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 11
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and VPCOrigin"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and CachePolicy"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and Distribution"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and Function"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and OriginAccessControl"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and OriginRequestPolicy"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and CachePolicy"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and Function"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and OriginAccessControl"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and OriginRequestPolicy"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Distribution and ResponseHeadersPolicy"
+relationship-count: 11
 featureList: [
   "Global content delivery",
   "Improves website and application performance",

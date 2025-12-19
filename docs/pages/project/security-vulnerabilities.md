@@ -103,7 +103,7 @@ branches.
 
 - Once the binaries are available, an announcement is sent out on the following channels:
   - The [Meshery blog](https://meshery.io/blog/)
-  - The [Meshery Twitter feed](https://twitter.com/mesheryio)
+  - The [Meshery X feed](https://x.com/mesheryio)
   - The [#announcements](https://mesheryio.slack.com/archives/CSF3PSZT9) channel on community [Slack](https://slack.meshery.io/)
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version.

@@ -30,7 +30,7 @@ import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
-import { useSelector } from 'react-redux';
+import { useGetSelectedOrganization } from '@/rtk-query/user';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -63,7 +63,7 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const { organization } = useSelector((state) => state.ui);
+  const { selectedOrganization: organization } = useGetSelectedOrganization();
   const { id: org_id } = organization;
 
   const theme = useTheme();

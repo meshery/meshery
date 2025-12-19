@@ -23,7 +23,7 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 REMOTE_PROVIDER="Layer5"
 
 LOCAL_PROVIDER="None"
-GOVERSION = 1.24
+GOVERSION = 1.25
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
@@ -50,6 +50,7 @@ MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
+PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provider. If empty, capabilities will be fetched from remote provider.
 
 #-----------------------------------------------------------------------------
 # Server
