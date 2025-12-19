@@ -421,7 +421,7 @@ func start() error {
 			time.Sleep(2 * time.Second)
 
 			res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
-			if !res {
+			if res {
 				endpointReady = true
 				break
 			}
