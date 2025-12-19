@@ -10,6 +10,7 @@ services:
     pull_policy: always
     environment:
       - "PROVIDER_BASE_URLS=https://cloud.layer5.io"
+      # - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006  meshery-cilium:10012"
       - "EVENT=mesheryLocal"
       - "KUBECONFIG_FOLDER=/home/appuser/.kube"
       - "PORT=9081"
@@ -18,3 +19,5 @@ services:
       - $HOME/.kube:/home/appuser/.kube:ro
       - $HOME/.minikube:$HOME/.minikube:ro
       - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9081:9081"

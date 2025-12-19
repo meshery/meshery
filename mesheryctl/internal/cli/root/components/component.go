@@ -37,7 +37,7 @@ var (
 // ComponentCmd represents the mesheryctl component command
 var ComponentCmd = &cobra.Command{
 	Use:   "component",
-	Short: "Manage components",
+	Short: "Manage Meshery components",
 	Long: `List, search and view component(s) and detailed informations
 Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component`,
 	Example: `

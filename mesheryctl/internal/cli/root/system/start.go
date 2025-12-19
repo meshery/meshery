@@ -334,51 +334,109 @@ func start() error {
 		// 	return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
 		// }
 
-		log.Info("Starting Meshery...")
-
 		// Use compose library instead of exec.Command
 		composeClient, err := utils.NewComposeClient()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to create compose client"))
 		}
 
+		spinner := utils.CreateDefaultSpinner("Starting Meshery...", "\nMeshery containers started.")
+		spinner.Start()
+
 		err = composeClient.Up(context.Background(), utils.DockerComposeFile)
 		if err != nil {
+			spinner.Stop()
 			return errors.Wrap(err, utils.SystemError("failed to run Meshery Server"))
 		}
 
-		checkFlag := 0 //flag to check
+		spinner.Stop()
 
-		// Check container status using compose library
-		containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+		// Wait for containers to be running with a timeout
+		spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
+		spinner.Start()
+
+		mesheryRunning := false
+		maxRetries := 60 // 60 retries * 5 seconds = 5 minutes timeout
+		for i := 0; i < maxRetries; i++ {
+			time.Sleep(5 * time.Second)
+
+			containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
+			if err != nil {
+				spinner.Stop()
+				return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+			}
+
+			// Check if meshery container is running
+			for _, c := range containers {
+				if c.Service == "meshery" && c.State == "running" {
+					mesheryRunning = true
+					break
+				}
+			}
+
+			if mesheryRunning {
+				break
+			}
+
+			// Provide progress feedback every 30 seconds
+			if i > 0 && i%6 == 0 {
+				spinner.Stop()
+				log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
+				spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
+				spinner.Start()
+			}
 		}
+
+		spinner.Stop()
+
+		if !mesheryRunning {
+			log.Info("Timeout waiting for Meshery container to start. Checking container status...")
+			containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+			}
+
+			// Show container status for debugging
+			log.Info("Container status:")
+			for _, c := range containers {
+				log.Infof("  %s: %s", c.Service, c.State)
+			}
+
+			log.Info("\nShowing Meshery logs:")
+			err = composeClient.Logs(context.Background(), utils.DockerComposeFile, false, os.Stdout)
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to get logs"))
+			}
+
+			return errors.New("timeout: Meshery container did not start within the expected time. Please check the logs above for more details")
+		}
+
+		// Wait for Meshery to be accessible via TCP
+		spinner = utils.CreateDefaultSpinner("Verifying Meshery endpoint accessibility...", "\nMeshery endpoint is accessible.")
+		spinner.Start()
 
 		var mockEndpoint *meshkitutils.MockOptions
 		mockEndpoint = nil
 
-		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
-		if res {
-			return errors.New("the endpoint is not accessible")
-		}
+		endpointReady := false
+		maxEndpointRetries := 30 // 30 retries * 2 seconds = 1 minute timeout for endpoint check
+		for i := 0; i < maxEndpointRetries; i++ {
+			time.Sleep(2 * time.Second)
 
-		//check for meshery container running status
-		for _, c := range containers {
-			if c.Service == "meshery" && c.State == "running" {
-				checkFlag = 0
+			res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
+			if res {
+				endpointReady = true
 				break
 			}
-			checkFlag = 1
 		}
 
-		//if meshery failed to start showing logs
-		if checkFlag == 1 {
-			log.Info("Starting Meshery logging . . .")
-			err = composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout)
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to get logs"))
-			}
+		spinner.Stop()
+
+		if !endpointReady {
+			log.Warn("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
+			log.Info("You can check the status later with: mesheryctl system status")
+		} else {
+			log.Info("Meshery is now running!")
 		}
 
 	case "kubernetes":

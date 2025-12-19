@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl filter
 
-Cloud Native Filter Management
+Manage WebAssembly filters
 
 ## Synopsis
 
