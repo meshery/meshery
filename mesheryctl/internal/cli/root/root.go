@@ -123,6 +123,24 @@ func init() {
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+	RootCmd.SetHelpCommand(newHelpCommand())
+}
+
+func newHelpCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "help [command]",
+		Short: "Show help for any command",
+		Long:  "Show help for any command.",
+		Run: func(c *cobra.Command, args []string) {
+			cmd, _, err := c.Root().Find(args)
+			if cmd == nil || err != nil {
+				c.Println(c.UsageString())
+				return
+			}
+			cmd.InitDefaultHelpFlag()
+			cmd.HelpFunc()(cmd, args)
+		},
+	}
 }
 
 func TreePath() *cobra.Command {

@@ -58,7 +58,83 @@ components:
   colorIcon: assets/img/integrations/gitlab/components/traefik-service/icons/color/traefik-service-color.svg
   whiteIcon: assets/img/integrations/gitlab/components/traefik-service/icons/white/traefik-service-white.svg
   description: 
-components-count: 12
+- name: backend-tls-policy
+  colorIcon: assets/img/integrations/gitlab/components/backend-tls-policy/icons/color/backend-tls-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/backend-tls-policy/icons/white/backend-tls-policy-white.svg
+  description: 
+- name: gateway-class
+  colorIcon: assets/img/integrations/gitlab/components/gateway-class/icons/color/gateway-class-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/gateway-class/icons/white/gateway-class-white.svg
+  description: 
+- name: gateway
+  colorIcon: assets/img/integrations/gitlab/components/gateway/icons/color/gateway-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/gateway/icons/white/gateway-white.svg
+  description: 
+- name: grpc-route
+  colorIcon: assets/img/integrations/gitlab/components/grpc-route/icons/color/grpc-route-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/grpc-route/icons/white/grpc-route-white.svg
+  description: 
+- name: http-route
+  colorIcon: assets/img/integrations/gitlab/components/http-route/icons/color/http-route-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/http-route/icons/white/http-route-white.svg
+  description: 
+- name: reference-grant
+  colorIcon: assets/img/integrations/gitlab/components/reference-grant/icons/color/reference-grant-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/reference-grant/icons/white/reference-grant-white.svg
+  description: 
+- name: tcp-route
+  colorIcon: assets/img/integrations/gitlab/components/tcp-route/icons/color/tcp-route-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/tcp-route/icons/white/tcp-route-white.svg
+  description: 
+- name: tls-route
+  colorIcon: assets/img/integrations/gitlab/components/tls-route/icons/color/tls-route-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/tls-route/icons/white/tls-route-white.svg
+  description: 
+- name: udp-route
+  colorIcon: assets/img/integrations/gitlab/components/udp-route/icons/color/udp-route-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/udp-route/icons/white/udp-route-white.svg
+  description: 
+- name: x-backend-traffic-policy
+  colorIcon: assets/img/integrations/gitlab/components/x-backend-traffic-policy/icons/color/x-backend-traffic-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/x-backend-traffic-policy/icons/white/x-backend-traffic-policy-white.svg
+  description: 
+- name: x-listener-set
+  colorIcon: assets/img/integrations/gitlab/components/x-listener-set/icons/color/x-listener-set-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/x-listener-set/icons/white/x-listener-set-white.svg
+  description: 
+- name: x-mesh
+  colorIcon: assets/img/integrations/gitlab/components/x-mesh/icons/color/x-mesh-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/x-mesh/icons/white/x-mesh-white.svg
+  description: 
+- name: backend-traffic-policy
+  colorIcon: assets/img/integrations/gitlab/components/backend-traffic-policy/icons/color/backend-traffic-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/backend-traffic-policy/icons/white/backend-traffic-policy-white.svg
+  description: 
+- name: client-traffic-policy
+  colorIcon: assets/img/integrations/gitlab/components/client-traffic-policy/icons/color/client-traffic-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/client-traffic-policy/icons/white/client-traffic-policy-white.svg
+  description: 
+- name: envoy-extension-policy
+  colorIcon: assets/img/integrations/gitlab/components/envoy-extension-policy/icons/color/envoy-extension-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/envoy-extension-policy/icons/white/envoy-extension-policy-white.svg
+  description: 
+- name: envoy-patch-policy
+  colorIcon: assets/img/integrations/gitlab/components/envoy-patch-policy/icons/color/envoy-patch-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/envoy-patch-policy/icons/white/envoy-patch-policy-white.svg
+  description: 
+- name: envoy-proxy
+  colorIcon: assets/img/integrations/gitlab/components/envoy-proxy/icons/color/envoy-proxy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/envoy-proxy/icons/white/envoy-proxy-white.svg
+  description: 
+- name: http-route-filter
+  colorIcon: assets/img/integrations/gitlab/components/http-route-filter/icons/color/http-route-filter-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/http-route-filter/icons/white/http-route-filter-white.svg
+  description: 
+- name: security-policy
+  colorIcon: assets/img/integrations/gitlab/components/security-policy/icons/color/security-policy-color.svg
+  whiteIcon: assets/img/integrations/gitlab/components/security-policy/icons/white/security-policy-white.svg
+  description: 
+components-count: 31
 relationships: 
 relationship-count: 0
 featureList: [

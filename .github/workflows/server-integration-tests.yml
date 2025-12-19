@@ -50,7 +50,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster

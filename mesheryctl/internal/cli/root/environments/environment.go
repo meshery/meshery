@@ -33,7 +33,7 @@ var (
 
 var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
-	Short: "View list of environments and detail of environments",
+	Short: "Manage environments",
 	Long: `View list of environments and detailed information of a specific environments
 Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
 	`,
