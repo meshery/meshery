@@ -30,7 +30,7 @@ mesheryctl connection [flags]
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection --count
+mesheryctl exp connection --count
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl connection --count
 List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list
+mesheryctl exp connection list
 
 </div>
 </pre> 
@@ -46,7 +46,7 @@ mesheryctl connection list
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection delete [connection_id]
+mesheryctl exp connection delete [connection_id]
 
 </div>
 </pre> 
