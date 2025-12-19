@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "workstations.cnrm.cloud.google.com/v1alpha1",
     "kind": "Workstation",
     "schema": "{\n \"description\": \"Workstation is the Schema for the Workstation API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkstationSpec defines the desired state of Workstation\",\n   \"properties\": {\n    \"annotations\": {\n     \"description\": \"Optional. Client-specified annotations.\",\n     \"items\": {\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key for the annotation.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value for the annotation.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"Optional. Human-readable name for this workstation.\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"description\": \"Optional. [Labels](https://cloud.google.com/workstations/docs/label-resources) that are applied to the workstation and that are also propagated to the underlying Compute Engine resources.\",\n     \"items\": {\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key for the label.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value for the label.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"parentRef\": {\n     \"description\": \"Parent is a reference to the parent WorkstationConfig for this Workstation.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed WorkstationConfig resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/workstationClusters/{{workstationclusterID}}/workstationConfigs/{{workstationconfigID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a WorkstationConfig resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a WorkstationConfig resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The Workstation name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parentRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Workstation\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

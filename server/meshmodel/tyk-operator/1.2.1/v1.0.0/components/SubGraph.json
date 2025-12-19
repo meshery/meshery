@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "tyk.tyk.io/v1alpha1",
     "kind": "SubGraph",
     "schema": "{\n \"description\": \"SubGraph is the Schema for the subgraphs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubGraphSpec defines the desired state of SubGraph\",\n   \"properties\": {\n    \"schema\": {\n     \"type\": \"string\"\n    },\n    \"sdl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"schema\",\n    \"sdl\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sub Graph\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

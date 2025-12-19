@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "network.qingcloud.com/v1alpha1",
     "kind": "IPAMHandle",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the IPAMHandle.\",\n   \"properties\": {\n    \"block\": {\n     \"additionalProperties\": {\n      \"type\": \"integer\"\n     },\n     \"type\": \"object\"\n    },\n    \"deleted\": {\n     \"type\": \"boolean\"\n    },\n    \"handleID\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"block\",\n    \"deleted\",\n    \"handleID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IPAM Handle\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

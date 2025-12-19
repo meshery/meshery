@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "k8s.netris.ai/v1alpha1",
     "kind": "AllocationMeta",
     "schema": "{\n \"description\": \"AllocationMeta is the Schema for the allocationmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AllocationMetaSpec defines the desired state of AllocationMeta\",\n   \"properties\": {\n    \"allocationGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"allocationName\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"prefix\": {\n     \"type\": \"string\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"tenant\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allocationGeneration\",\n    \"allocationName\",\n    \"id\",\n    \"imported\",\n    \"prefix\",\n    \"reclaimPolicy\",\n    \"tenant\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Allocation Meta\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

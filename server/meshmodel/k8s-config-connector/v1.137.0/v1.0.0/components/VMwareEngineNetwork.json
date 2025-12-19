@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "vmwareengine.cnrm.cloud.google.com/v1alpha1",
     "kind": "VMwareEngineNetwork",
     "schema": "{\n \"description\": \"VMwareEngineNetwork is the Schema for the VMwareEngineNetwork API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VMwareEngineNetworkSpec defines the desired state of VMwareEngineNetwork\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"User-provided description for this VMware Engine network.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Location field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"projectRef\": {\n     \"description\": \"The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The VMwareEngineNetwork name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Required. VMware Engine network type.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"V Mware Engine Network\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

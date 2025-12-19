@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "engine.kubevault.com/v1alpha1",
     "kind": "PKIRole",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"additionalPayload\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"allowSubdomains\": {\n     \"type\": \"boolean\"\n    },\n    \"allowedDomains\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"country\": {\n     \"type\": \"string\"\n    },\n    \"issuerRef\": {\n     \"type\": \"string\"\n    },\n    \"maxTTL\": {\n     \"type\": \"string\"\n    },\n    \"organization\": {\n     \"type\": \"string\"\n    },\n    \"ou\": {\n     \"type\": \"string\"\n    },\n    \"secretEngineRef\": {\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"ttl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"secretEngineRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"PKI Role\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

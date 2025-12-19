@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "policy.jspolicy.com/v1beta1",
     "kind": "JsPolicyBundle",
     "schema": "{\n \"description\": \"JsPolicyBundle holds the bundled payload\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bundle\": {\n     \"description\": \"Bundle holds the bundled payload (including dependencies and minified javascript code)\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Js Policy Bundle\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "policy.clusterpedia.io/v1alpha1",
     "kind": "ClusterImportPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"creationCondition\": {\n     \"type\": \"string\"\n    },\n    \"nameTemplate\": {\n     \"type\": \"string\"\n    },\n    \"references\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"nameTemplate\": {\n        \"type\": \"string\"\n       },\n       \"namespaceTemplate\": {\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"type\": \"string\"\n       },\n       \"versions\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"group\",\n       \"key\",\n       \"nameTemplate\",\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"key\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"source\": {\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"type\": \"string\"\n      },\n      \"selectorTemplate\": {\n       \"type\": \"string\"\n      },\n      \"versions\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"template\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"creationCondition\",\n    \"nameTemplate\",\n    \"source\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Import Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

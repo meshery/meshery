@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "aquasecurity.github.io/v1alpha1",
     "kind": "KubeHunterReport",
     "schema": "{\n \"properties\": {\n  \"report\": {\n   \"properties\": {\n    \"scanner\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"vendor\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"vendor\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"summary\": {\n     \"properties\": {\n      \"highCount\": {\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      },\n      \"lowCount\": {\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      },\n      \"mediumCount\": {\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      },\n      \"unknownCount\": {\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"highCount\",\n      \"mediumCount\",\n      \"lowCount\",\n      \"unknownCount\"\n     ],\n     \"type\": \"object\"\n    },\n    \"vulnerabilities\": {\n     \"items\": {\n      \"properties\": {\n       \"avd_reference\": {\n        \"type\": \"string\"\n       },\n       \"category\": {\n        \"type\": \"string\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       },\n       \"evidence\": {\n        \"type\": \"string\"\n       },\n       \"location\": {\n        \"type\": \"string\"\n       },\n       \"severity\": {\n        \"enum\": [\n         \"high\",\n         \"medium\",\n         \"low\",\n         \"unknown\"\n        ],\n        \"type\": \"string\"\n       },\n       \"vid\": {\n        \"type\": \"string\"\n       },\n       \"vulnerability\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"location\",\n       \"vid\",\n       \"category\",\n       \"severity\",\n       \"vulnerability\",\n       \"description\",\n       \"evidence\",\n       \"avd_reference\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"scanner\",\n    \"summary\",\n    \"vulnerabilities\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"apiVersion\",\n  \"kind\",\n  \"metadata\",\n  \"report\"\n ],\n \"title\": \"Kube Hunter Report\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

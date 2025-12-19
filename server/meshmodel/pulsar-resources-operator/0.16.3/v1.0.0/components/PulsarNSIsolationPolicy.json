@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "resource.streamnative.io/v1alpha1",
     "kind": "PulsarNSIsolationPolicy",
     "schema": "{\n \"description\": \"PulsarNSIsolationPolicy is the Schema for the pulsar ns-isolation-policy API\\nIt represents a Pulsar NsIsolationPolicy in the Kubernetes cluster and includes both\\nthe desired state (Spec) and the observed state (Status) of the policy.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarNSIsolationPolicySpec defines the desired state of a Pulsar namespace isolation policy.\\nIt corresponds to the configuration options available in Pulsar's namespaceIsolationPolicies admin API.\",\n   \"properties\": {\n    \"autoFailoverPolicyParams\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"AutoFailoverPolicyParams auto failover policy parameters\",\n     \"type\": \"object\"\n    },\n    \"autoFailoverPolicyType\": {\n     \"description\": \"AutoFailoverPolicyType auto failover policy type name, only support min_available now\",\n     \"enum\": [\n      \"min_available\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cluster\": {\n     \"description\": \"Cluster is the name of the Pulsar Cluster\",\n     \"type\": \"string\"\n    },\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\\nused to connect to the Pulsar cluster for this ns-isolation-policy.\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"name\": {\n     \"description\": \"Name is the policy name\",\n     \"type\": \"string\"\n    },\n    \"namespaces\": {\n     \"description\": \"Namespaces namespaces-regex list\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"primary\": {\n     \"description\": \"Primary primary-broker-regex list\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"secondary\": {\n     \"description\": \"Secondary secondary-broker-regex list, optional\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"autoFailoverPolicyParams\",\n    \"autoFailoverPolicyType\",\n    \"cluster\",\n    \"connectionRef\",\n    \"name\",\n    \"namespaces\",\n    \"primary\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar NS Isolation Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

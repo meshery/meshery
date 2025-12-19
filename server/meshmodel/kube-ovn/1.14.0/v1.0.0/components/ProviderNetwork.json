@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "ProviderNetwork",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"customInterfaces\": {\n     \"items\": {\n      \"properties\": {\n       \"interface\": {\n        \"maxLength\": 15,\n        \"pattern\": \"^[^/\\\\s]+$\",\n        \"type\": \"string\"\n       },\n       \"nodes\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultInterface\": {\n     \"maxLength\": 15,\n     \"pattern\": \"^[^/\\\\s]+$\",\n     \"type\": \"string\"\n    },\n    \"exchangeLinkName\": {\n     \"type\": \"boolean\"\n    },\n    \"excludeNodes\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"defaultInterface\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Provider Network\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

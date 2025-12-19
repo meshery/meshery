@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "edgecontainer.cnrm.cloud.google.com/v1alpha1",
     "kind": "EdgeContainerMachine",
     "schema": "{\n \"description\": \"EdgeContainerMachine is the Schema for the EdgeContainerMachine API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EdgeContainerMachineSpec defines the desired state of EdgeContainerMachine\",\n   \"properties\": {\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels associated with this resource.\",\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Required. The location of the machine.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Required. The host project of the machine.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The EdgeContainerMachine name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"zone\": {\n     \"description\": \"The Google Distributed Cloud Edge zone of this machine.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Edge Container Machine\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
