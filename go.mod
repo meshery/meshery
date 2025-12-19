@@ -47,7 +47,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.55
+	github.com/meshery/meshkit v0.8.56
 	github.com/meshery/meshsync v0.8.26
 	github.com/meshery/schemas v0.8.94
 	github.com/nsf/termbox-go v1.1.1
