@@ -1,8 +1,6 @@
 module github.com/meshery/meshery
 
-go 1.24.9
-
-toolchain go1.24.11
+go 1.25.5
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
@@ -12,7 +10,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.92 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.50 => ../meshkit
+// replace github.com/meshery/meshkit v0.8.54 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
