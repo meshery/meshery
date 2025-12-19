@@ -5,12 +5,15 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 )
 
@@ -82,7 +85,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	// adapterLoc := req.PostFormValue("adapter")
 	adapterLoc := req.URL.Query().Get("adapter")
 	h.log.Debug("Adapter url to ping: ", adapterLoc)
-	//logrus.Debug("Adapter url to ping: ", adapterLoc)
+	// logrus.Debug("Adapter url to ping: ", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -114,6 +117,58 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	_, _ = w.Write([]byte("{}"))
 }
 
+// For Configuration category, it further sub-categorizes by prefix (Add-ons, Policies, etc.)
+func categorizeAdapterOps(ops []*meshes.SupportedOperation) map[string]interface{} {
+	categoryNames := map[meshes.OpCategory]string{
+		meshes.OpCategory_INSTALL:            "Service Mesh",
+		meshes.OpCategory_SAMPLE_APPLICATION: "Sample Applications",
+		meshes.OpCategory_CONFIGURE:          "Configuration",
+		meshes.OpCategory_CUSTOM:             "Custom Operations",
+	}
+
+	result := make(map[string]interface{})
+	configSubcategories := make(map[string][]string)
+
+	for _, op := range ops {
+		if op.Category == meshes.OpCategory_VALIDATE {
+			continue
+		}
+
+		catName, ok := categoryNames[op.Category]
+		if !ok {
+			catName = "Custom Operations"
+		}
+
+		if op.Category == meshes.OpCategory_CONFIGURE {
+			value := op.Value
+			switch {
+			case strings.HasPrefix(value, "Add-on:"):
+				name := strings.TrimSpace(strings.TrimPrefix(value, "Add-on:"))
+				configSubcategories["Add-ons"] = append(configSubcategories["Add-ons"], name)
+			case strings.HasPrefix(value, "Policy:"):
+				name := strings.TrimSpace(strings.TrimPrefix(value, "Policy:"))
+				configSubcategories["Policies"] = append(configSubcategories["Policies"], name)
+			default:
+				configSubcategories["Other"] = append(configSubcategories["Other"], value)
+			}
+		} else {
+			// For non-Configuration categories, store as simple string array
+			if existing, ok := result[catName].([]string); ok {
+				result[catName] = append(existing, op.Value)
+			} else {
+				result[catName] = []string{op.Value}
+			}
+		}
+	}
+
+	// Add Configuration sub-categories if any exist
+	if len(configSubcategories) > 0 {
+		result["Configuration"] = configSubcategories
+	}
+
+	return result
+}
+
 // swagger:route POST /api/system/adapter/manage SystemAPI idPostAdapterConfig
 // Handle POST requests to persist adapter config
 //
@@ -134,7 +189,18 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
+
 	var err error
+	var targetAdapter *models.Adapter
+	var event *events.Event
+
+	userID := uuid.FromStringOrNil(user.ID)
+
+	// Build event object
+	eventBuilder := events.NewEvent().
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("adapter")
 
 	switch req.Method {
 	case http.MethodPost:
@@ -146,21 +212,99 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
-		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
+
+		meshAdapters, targetAdapter, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
-			// h.log.Error(ErrRetrieveData(err))
-			http.Error(w, ErrRetrieveData(err).Error(), http.StatusInternalServerError)
+			err = ErrRetrieveData(err)
+
+			h.log.Error(err)
+
+			errDescription := errors.GetSDescription(err)
+			errRemedy := errors.GetRemedy(err)
+			errProbableCause := errors.GetCause(err)
+
+			metadata := map[string]interface{}{
+				"Details":               errDescription,
+				"Suggested_Remediation": errRemedy,
+				"Probable Cause":        errProbableCause,
+				"location":              meshLocationURL,
+			}
+
+			event = eventBuilder.
+				WithSeverity(events.Error).
+				WithDescription("Error adding Adapter").
+				WithAction(models.Register).
+				WithMetadata(metadata).
+				Build()
+
+			_err := provider.PersistEvent(*event, nil)
+			if _err != nil {
+				h.log.Debug(fmt.Sprintf("Failed to persist event: %v", _err))
+			}
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
+
+		if targetAdapter == nil {
+			description := fmt.Sprintf("An adapter is already configured at %s", meshLocationURL)
+			metadata := map[string]interface{}{
+				"location": meshLocationURL,
+			}
+			event = eventBuilder.
+				WithSeverity(events.Informational).
+				WithDescription(description).
+				WithAction(models.Register).
+				WithMetadata(metadata).
+				Build()
+
+		} else {
+
+			description := fmt.Sprintf("%s Adapter (%s) configured", targetAdapter.Name, targetAdapter.Version)
+			metadata := map[string]interface{}{
+				"adapter_name": targetAdapter.Name,
+				"version":      targetAdapter.Version,
+				"location":     targetAdapter.Location,
+				"manifest":     categorizeAdapterOps(targetAdapter.Ops),
+			}
+
+			event = eventBuilder.
+				WithSeverity(events.Success).
+				WithDescription(description).
+				WithAction(models.Register).
+				WithMetadata(metadata).
+				Build()
+		}
+
 	case http.MethodDelete:
-		meshAdapters, err = h.deleteAdapter(meshAdapters, w, req)
+		meshAdapters, targetAdapter, err = h.deleteAdapter(meshAdapters, w, req)
 		if err != nil {
 			return // error is handled appropriately in the relevant method
 		}
+
+		description := fmt.Sprintf("Removed %s Adapter", targetAdapter.Name)
+		metadata := map[string]interface{}{
+			"location": targetAdapter.Location,
+		}
+
+		event = eventBuilder.
+			WithSeverity(events.Success).
+			WithDescription(description).
+			WithAction(models.Unregister).
+			WithMetadata(metadata).
+			Build()
+
 	default:
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
+
+	err = provider.PersistEvent(*event, nil)
+	if err != nil {
+		h.log.Debug(fmt.Sprintf("Failed to persist event: %v", err))
+	}
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	prefObj.MeshAdapters = meshAdapters
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
@@ -179,7 +323,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, _ *models.Preference, meshLocationURL string, _ models.Provider) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, _ *models.Preference, meshLocationURL string, _ models.Provider) ([]*models.Adapter, *models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -194,13 +338,13 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 
 	if alreadyConfigured {
 		h.log.Debug("Adapter already configured...")
-		return meshAdapters, nil
+		return meshAdapters, nil, nil
 	}
 	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
-		return meshAdapters, ErrMeshClient
+		return meshAdapters, nil, ErrMeshClient
 	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)
 	defer func() {
@@ -210,14 +354,14 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
-		return meshAdapters, err
+		return meshAdapters, nil, err
 	}
 	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
-		return meshAdapters, err
+		return meshAdapters, nil, err
 	}
 	h.log.Debug("retrieved name for adapter: ", meshLocationURL)
 	result := &models.Adapter{
@@ -230,10 +374,10 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 
 	h.config.AdapterTracker.AddAdapter(ctx, *result)
 	meshAdapters = append(meshAdapters, result)
-	return meshAdapters, nil
+	return meshAdapters, result, nil
 }
 
-func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
+func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, *models.Adapter, error) {
 	adapterLoc := req.URL.Query().Get("adapter")
 	h.log.Debug("URL of adapter to be removed: ", adapterLoc)
 
@@ -248,7 +392,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	if aID < 0 {
 		h.log.Error(ErrValidAdapter)
 		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
-		return meshAdapters, ErrValidAdapter
+		return meshAdapters, nil, ErrValidAdapter
 	}
 
 	newMeshAdapters := []*models.Adapter{}
@@ -264,7 +408,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	h.log.Debug("Old adapters: ", b)
 	b, _ = json.Marshal(newMeshAdapters)
 	h.log.Debug("New adapters: ", b)
-	return newMeshAdapters, nil
+	return newMeshAdapters, meshAdapters[aID], nil
 }
 
 // swagger:route POST /api/system/adapter/operation SystemAPI idPostAdapterOperation
@@ -341,7 +485,6 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		_ = mClient.Close()
 	}()
 	operationID, err := uuid.NewV4()
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

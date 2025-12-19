@@ -182,7 +182,7 @@ const MeshAdapterConfigComponent = () => {
       if (result) {
         setMeshAdapters(result);
         setMeshLocationURL('');
-        notify({ message: 'Adapter configured.', event_type: EVENT_TYPES.SUCCESS });
+        // Server-side event handles notification via Notification Center
         dispatch(updateAdaptersInfo({ meshAdapters: result }));
       }
     } catch (error) {
@@ -203,7 +203,7 @@ const MeshAdapterConfigComponent = () => {
 
       if (result) {
         setMeshAdapters(result);
-        notify({ message: 'Adapter removed.', event_type: EVENT_TYPES.SUCCESS });
+        // Server-side event handles notification via Notification Center
         dispatch(updateAdaptersInfo({ meshAdapters: result }));
       }
     } catch (error) {
@@ -351,9 +351,9 @@ const MeshAdapterConfigComponent = () => {
     }, variables);
   };
 
-  const handleError = (msg) => (error) => {
+  const handleError = () => () => {
     updateProgress({ showProgress: false });
-    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
+    // Server-side event handles error notification via Notification Center
   };
 
   const configureTemplate = () => {
