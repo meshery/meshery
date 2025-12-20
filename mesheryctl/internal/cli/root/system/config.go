@@ -15,14 +15,15 @@
 package system
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
-	"bufio"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 
@@ -443,16 +444,17 @@ mesheryctl system config oke --token auth.json
 		if region != "" {
 			okeCmd.Args = append(okeCmd.Args, "--region", region)
 		}
+		var stderr bytes.Buffer
 		okeCmd.Stdout = os.Stdout
-		okeCmd.Stderr = os.Stderr
+		okeCmd.Stderr = &stderr
 		// Write OKE compatible config to the filesystem
 		err = okeCmd.Run()
 		if err != nil {
-			log.Fatalf("Error generating kubeconfig: %s", err.Error())
-			return err
+			log.Errorf("Error generating kubeconfig: %s - %s", err.Error(), stderr.String())
+			return nil
 		}
-		log.Debugf("OKE configuration is written to: %s", configPath)
 
+		log.Infof("New config written to the kubeconfig file: %s", configPath)
 		// set the token in the chosen context
 		setToken()
 		return nil
