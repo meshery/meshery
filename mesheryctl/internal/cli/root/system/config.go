@@ -445,7 +445,7 @@ mesheryctl system config oke --token auth.json
 			okeCmd.Args = append(okeCmd.Args, "--region", region)
 		}
 		var stderr bytes.Buffer
-		okeCmd.Stdout = os.Stdout
+		okeCmd.Stdout = io.Discard
 		okeCmd.Stderr = &stderr
 		// Write OKE compatible config to the filesystem
 		err = okeCmd.Run()
