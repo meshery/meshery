@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "sns.services.k8s.aws/v1alpha1",
     "kind": "PlatformEndpoint",
     "schema": "{\n \"description\": \"PlatformEndpoint is the Schema for the PlatformEndpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PlatformEndpointSpec defines the desired state of PlatformEndpoint.\",\n   \"properties\": {\n    \"customUserData\": {\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"type\": \"string\"\n    },\n    \"platformApplicationARN\": {\n     \"description\": \"PlatformApplicationArn returned from CreatePlatformApplication is used to\\ncreate a an endpoint.\",\n     \"type\": \"string\"\n    },\n    \"token\": {\n     \"description\": \"Unique identifier created by the notification service for an app on a device.\\nThe specific name for Token will vary, depending on which notification service\\nis being used. For example, when using APNS as the notification service,\\nyou need the device token. Alternatively, when using GCM (Firebase Cloud\\nMessaging) or ADM, the device token equivalent is called the registration\\nID.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"platformApplicationARN\",\n    \"token\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Platform Endpoint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

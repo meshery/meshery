@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "kms.cnrm.cloud.google.com/v1beta1",
     "kind": "KMSImportJob",
     "schema": "{\n \"description\": \"KMSImportJob is the Schema for the KMSImportJob API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KMSImportJobSpec defines the desired state of KMSImportJob\",\n   \"properties\": {\n    \"importMethod\": {\n     \"description\": \"Required. Immutable. The wrapping method to be used for incoming key material.\",\n     \"type\": \"string\"\n    },\n    \"kmsKeyRingRef\": {\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \" If provided must be in the format `projects/[kms_project_id]/locations/[region]/keyRings/[key_ring_id]`.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `KMSKeyRing` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `metadata.namespace` field of a `KMSKeyRing` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"protectionLevel\": {\n     \"description\": \"Required. Immutable. The protection level of the [ImportJob][google.cloud.kms.v1.ImportJob]. This must match the [protection_level][google.cloud.kms.v1.CryptoKeyVersionTemplate.protection_level] of the [version_template][google.cloud.kms.v1.CryptoKey.version_template] on the [CryptoKey][google.cloud.kms.v1.CryptoKey] you attempt to import into.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"The KMSImportJob name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"importMethod\",\n    \"kmsKeyRingRef\",\n    \"protectionLevel\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Import Job\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

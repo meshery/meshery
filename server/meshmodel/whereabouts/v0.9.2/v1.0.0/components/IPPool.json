@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -143,5 +145,7 @@
     "version": "whereabouts.cni.cncf.io/v1alpha1",
     "kind": "IPPool",
     "schema": "{\n \"description\": \"IPPool is the Schema for the ippools API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPPoolSpec defines the desired state of IPPool\",\n   \"properties\": {\n    \"allocations\": {\n     \"additionalProperties\": {\n      \"description\": \"IPAllocation represents metadata about the pod/container owner of a specific IP\",\n      \"properties\": {\n       \"id\": {\n        \"type\": \"string\"\n       },\n       \"ifname\": {\n        \"type\": \"string\"\n       },\n       \"podref\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"id\",\n       \"podref\"\n      ],\n      \"type\": \"object\"\n     },\n     \"description\": \"Allocations is the set of allocated IPs for the given range. Its` indices are a direct mapping to the\\nIP with the same index/offset for the pool's range.\",\n     \"type\": \"object\"\n    },\n    \"range\": {\n     \"description\": \"Range is a RFC 4632/4291-style string that represents an IP address and prefix length in CIDR notation\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allocations\",\n    \"range\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP Pool\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

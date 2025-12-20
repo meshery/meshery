@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -128,5 +130,7 @@
     "version": "capsule.clastix.io/v1beta2",
     "kind": "TenantOwner",
     "schema": "{\n \"description\": \"TenantOwner is the Schema for the tenantowners API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired state of TenantOwner.\",\n   \"properties\": {\n    \"clusterRoles\": {\n     \"default\": [\n      \"admin\",\n      \"capsule-namespace-deleter\"\n     ],\n     \"description\": \"Defines additional cluster-roles for the specific Owner.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"kind\": {\n     \"description\": \"Kind of entity. Possible values are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\"\",\n     \"enum\": [\n      \"User\",\n      \"Group\",\n      \"ServiceAccount\"\n     ],\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name of the entity.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"kind\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Tenant Owner\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

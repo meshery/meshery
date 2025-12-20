@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -128,5 +130,7 @@
     "version": "templates.gatekeeper.sh/v1",
     "kind": "ConstraintTemplate",
     "schema": "{\n \"description\": \"ConstraintTemplate is the Schema for the constrainttemplates API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ConstraintTemplateSpec defines the desired state of ConstraintTemplate.\",\n   \"properties\": {\n    \"crd\": {\n     \"properties\": {\n      \"spec\": {\n       \"properties\": {\n        \"names\": {\n         \"properties\": {\n          \"kind\": {\n           \"type\": \"string\"\n          },\n          \"shortNames\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"validation\": {\n         \"default\": {\n          \"legacySchema\": false\n         },\n         \"properties\": {\n          \"legacySchema\": {\n           \"default\": false,\n           \"type\": \"boolean\"\n          },\n          \"openAPIV3Schema\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targets\": {\n     \"items\": {\n      \"properties\": {\n       \"code\": {\n        \"description\": \"The source code options for the constraint template. \\\"Rego\\\" can only\\nbe specified in one place (either here or in the \\\"rego\\\" field)\",\n        \"items\": {\n         \"properties\": {\n          \"engine\": {\n           \"description\": \"The engine used to evaluate the code. Example: \\\"Rego\\\". Required.\",\n           \"type\": \"string\"\n          },\n          \"source\": {\n           \"description\": \"The source code for the template. Required.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"engine\",\n          \"source\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-map-keys\": [\n         \"engine\"\n        ],\n        \"x-kubernetes-list-type\": \"map\"\n       },\n       \"libs\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"rego\": {\n        \"type\": \"string\"\n       },\n       \"target\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Constraint Template\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

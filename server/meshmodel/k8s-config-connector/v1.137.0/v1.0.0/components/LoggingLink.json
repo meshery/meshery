@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "logging.cnrm.cloud.google.com/v1alpha1",
     "kind": "LoggingLink",
     "schema": "{\n \"description\": \"LoggingLink is the Schema for the LoggingLink API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LoggingLinkSpec defines the desired state of LoggingLink\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Describes this link. The maximum length of the description is 8000 characters.\",\n     \"type\": \"string\"\n    },\n    \"loggingLogBucketRef\": {\n     \"description\": \"The LoggingLogBucket that this Link is associated with\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed LoggingLogBucket resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/buckets/{{bucketID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a LoggingLogBucket resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a LoggingLogBucket resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. The LoggingLink name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Logging Link\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "crd.antrea.io/v1alpha1",
     "kind": "ExternalNode",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"interfaces\": {\n     \"items\": {\n      \"properties\": {\n       \"ips\": {\n        \"items\": {\n         \"oneOf\": [\n          {\n           \"format\": \"ipv4\"\n          },\n          {\n           \"format\": \"ipv6\"\n          }\n         ],\n         \"type\": \"string\"\n        },\n        \"minItems\": 1,\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"maxItems\": 1,\n     \"minItems\": 1,\n     \"required\": [\n      \"ips\"\n     ],\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"interfaces\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"External Node\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

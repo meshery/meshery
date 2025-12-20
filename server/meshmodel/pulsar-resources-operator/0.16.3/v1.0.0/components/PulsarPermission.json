@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "resource.streamnative.io/v1alpha1",
     "kind": "PulsarPermission",
     "schema": "{\n \"description\": \"PulsarPermission is the Schema for the pulsarpermissions API.\\nIt represents a set of permissions granted to specific roles for a Pulsar resource (namespace or topic).\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarPermissionSpec defines the desired state of PulsarPermission.\\nIt specifies the configuration for granting permissions to Pulsar resources.\",\n   \"properties\": {\n    \"actions\": {\n     \"description\": \"Actions is a list of permissions to grant.\\nValid options include \\\"produce\\\", \\\"consume\\\", and \\\"functions\\\".\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\\nused to connect to the Pulsar cluster for this permission.\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"LifecyclePolicy determines how to handle the Pulsar permissions\\nwhen the PulsarPermission resource is deleted.\",\n     \"type\": \"string\"\n    },\n    \"resourceName\": {\n     \"description\": \"ResourceName is the name of the target resource (namespace or topic)\\nto which the permissions will be granted.\",\n     \"type\": \"string\"\n    },\n    \"resourceType\": {\n     \"description\": \"ResourceType indicates whether the permission is for a namespace or a topic.\",\n     \"enum\": [\n      \"namespace\",\n      \"topic\"\n     ],\n     \"type\": \"string\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is a list of role names that will be granted the specified permissions\\nfor the target resource.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\",\n    \"resourceName\",\n    \"resourceType\",\n    \"roles\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Permission\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

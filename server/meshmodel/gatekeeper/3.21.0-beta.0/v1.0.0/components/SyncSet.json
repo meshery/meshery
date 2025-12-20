@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -128,5 +130,7 @@
     "version": "syncset.gatekeeper.sh/v1alpha1",
     "kind": "SyncSet",
     "schema": "{\n \"description\": \"SyncSet defines which resources Gatekeeper will cache. The union of all SyncSets plus the syncOnly field of Gatekeeper's Config resource defines the sets of resources that will be synced.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"gvks\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sync Set\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

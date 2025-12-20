@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "firebase.cnrm.cloud.google.com/v1alpha1",
     "kind": "FirebaseWebApp",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"apiKeyId\": {\n     \"description\": \"The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the WebApp.\\nIf apiKeyId is not set during creation, then Firebase automatically associates an apiKeyId with the WebApp.\\nThis auto-associated key may be an existing valid key or, if no valid key exists, a new one will be provisioned.\",\n     \"type\": \"string\"\n    },\n    \"deletionPolicy\": {\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The user-assigned display name of the App.\",\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"description\": \"Immutable.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Firebase Web App\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

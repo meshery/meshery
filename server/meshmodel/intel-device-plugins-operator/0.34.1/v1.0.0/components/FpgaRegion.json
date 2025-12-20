@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "fpga.intel.com/v2",
     "kind": "FpgaRegion",
     "schema": "{\n \"description\": \"FpgaRegion is a specification for a FPGA region resource which can be programmed\\nwith a bitstream.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FpgaRegionSpec contains actual specs for FpgaRegion.\",\n   \"properties\": {\n    \"interfaceId\": {\n     \"pattern\": \"^[0-9a-f]{8,32}$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"interfaceId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Fpga Region\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

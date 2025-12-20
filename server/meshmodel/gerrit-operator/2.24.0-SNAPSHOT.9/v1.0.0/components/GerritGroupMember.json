@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "v2.edp.epam.com/v1",
     "kind": "GerritGroupMember",
     "schema": "{\n \"description\": \"GerritGroupMember is the Schema for the gerrit group member API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritGroupMemberSpec defines the desired state of GerritGroupMember.\",\n   \"properties\": {\n    \"accountId\": {\n     \"type\": \"string\"\n    },\n    \"groupId\": {\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"description\": \"OwnerName indicates which gerrit CR should be taken to initialize correct client.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"accountId\",\n    \"groupId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Group Member\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

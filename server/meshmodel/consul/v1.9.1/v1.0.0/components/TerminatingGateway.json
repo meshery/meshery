@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "TerminatingGateway",
     "schema": "{\n \"description\": \"TerminatingGateway is the Schema for the terminatinggateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TerminatingGatewaySpec defines the desired state of TerminatingGateway.\",\n   \"properties\": {\n    \"services\": {\n     \"description\": \"Services is a list of service names represented by the terminating gateway.\",\n     \"items\": {\n      \"description\": \"A LinkedService is a service represented by a terminating gateway.\",\n      \"properties\": {\n       \"caFile\": {\n        \"description\": \"CAFile is the optional path to a CA certificate to use for TLS connections\\nfrom the gateway to the linked service.\",\n        \"type\": \"string\"\n       },\n       \"certFile\": {\n        \"description\": \"CertFile is the optional path to a client certificate to use for TLS connections\\nfrom the gateway to the linked service.\",\n        \"type\": \"string\"\n       },\n       \"disableAutoHostRewrite\": {\n        \"description\": \"DisableAutoHostRewrite disables terminating gateways auto host rewrite feature when set to true.\",\n        \"type\": \"boolean\"\n       },\n       \"keyFile\": {\n        \"description\": \"KeyFile is the optional path to a private key to use for TLS connections\\nfrom the gateway to the linked service.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of the service, as defined in Consul's catalog.\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"The namespace the service is registered in.\",\n        \"type\": \"string\"\n       },\n       \"sni\": {\n        \"description\": \"SNI is the optional name to specify during the TLS handshake with a linked service.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Terminating Gateway\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

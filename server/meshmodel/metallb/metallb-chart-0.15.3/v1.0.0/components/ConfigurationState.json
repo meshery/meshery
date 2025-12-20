@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -128,5 +130,7 @@
     "version": "metallb.io/v1beta1",
     "kind": "ConfigurationState",
     "schema": "{\n \"description\": \"ConfigurationState is a status-only CRD that reports configuration validation results from MetalLB components.\\nLabels:\\n  - metallb.io/component-type: \\\"controller\\\" or \\\"speaker\\\"\\n  - metallb.io/node-name: node name (only for speaker)\",\n \"properties\": {},\n \"title\": \"Configuration State\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "argoproj.io/v1beta1",
     "kind": "NamespaceManagement",
     "schema": "{\n \"description\": \"NamespaceManagement is the Schema for the namespacemanagements API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NamespaceManagementSpec defines the desired state of NamespaceManagement\",\n   \"properties\": {\n    \"managedBy\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"managedBy\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Namespace Management\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
