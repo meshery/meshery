@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Typography, ResponsiveDataTable } from '@sistent/sistent';
+import { Button, Typography, ResponsiveDataTable, styled } from '@sistent/sistent';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -12,6 +12,20 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
+
+const Z_INDEX_STICKY_HEADER = 10;
+const StyledTableContainer = styled('div')({
+  '& .MuiTableHead-root': {
+    position: 'sticky',
+    top: 0,
+    zIndex: Z_INDEX_STICKY_HEADER,
+  },
+  '& .MuiTableCell-head': {
+    position: 'sticky !important',
+    top: 0,
+    zIndex: Z_INDEX_STICKY_HEADER,
+  },
+});
 
 const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0);
@@ -160,14 +174,16 @@ const DatabaseSummary = (props) => {
           />
         </div>
       </ToolWrapper>
-      <ResponsiveDataTable
-        data={databaseSummary?.tables}
-        options={table_options}
-        columns={columns}
-        tableCols={tableCols}
-        updateCols={updateCols}
-        columnVisibility={columnVisibility}
-      />
+      <StyledTableContainer>
+        <ResponsiveDataTable
+          data={databaseSummary?.tables}
+          options={table_options}
+          columns={columns}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
+        />
+      </StyledTableContainer>
     </>
   );
 };
