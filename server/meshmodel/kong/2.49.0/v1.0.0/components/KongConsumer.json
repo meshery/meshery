@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "configuration.konghq.com/v1",
     "kind": "KongConsumer",
     "schema": "{\n \"description\": \"KongConsumer is the Schema for the kongconsumers API.\",\n \"properties\": {\n  \"consumerGroups\": {\n   \"description\": \"ConsumerGroups are references to consumer groups (that consumer wants to be part of)\\nprovisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\",\n   \"x-kubernetes-list-type\": \"set\"\n  },\n  \"credentials\": {\n   \"description\": \"Credentials are references to secrets containing a credential to be\\nprovisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\",\n   \"x-kubernetes-list-type\": \"set\"\n  },\n  \"custom_id\": {\n   \"description\": \"CustomID is a Kong cluster-unique existing ID for the consumer - useful for mapping\\nKong with users in your existing database.\",\n   \"type\": \"string\"\n  },\n  \"username\": {\n   \"description\": \"Username is a Kong cluster-unique username of the consumer.\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Kong Consumer\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"Need to provide either username or custom_id\",\n   \"rule\": \"has(self.username) || has(self.custom_id)\"\n  }\n ]\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

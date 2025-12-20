@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "catalog.kubedb.com/v1alpha1",
     "kind": "KafkaConnectorVersion",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"connectorPlugin\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deprecated\": {\n     \"type\": \"boolean\"\n    },\n    \"securityContext\": {\n     \"properties\": {\n      \"runAsUser\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectorPlugin\",\n    \"type\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Connector Version\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

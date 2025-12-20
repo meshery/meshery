@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "harmonizer.io/v1beta1",
     "kind": "Team",
     "schema": "{\n \"description\": \"Team is the Schema for the teams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TeamSpec defines the desired state of Team\",\n   \"properties\": {\n    \"members\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"teamName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Team\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "stash.appscode.com/v1beta1",
     "kind": "BackupSession",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"invoker\": {\n     \"properties\": {\n      \"apiGroup\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"retryLeft\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Session\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

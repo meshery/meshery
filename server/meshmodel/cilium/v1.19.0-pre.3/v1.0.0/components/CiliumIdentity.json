@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "cilium.io/v2",
     "kind": "CiliumIdentity",
     "schema": "{\n \"description\": \"CiliumIdentity is a CRD that represents an identity managed by Cilium.\\nIt is intended as a backing store for identity allocation, acting as the\\nglobal coordination backend, and can be used in place of a KVStore (such as\\netcd).\\nThe name of the CRD is the numeric identity and the labels on the CRD object\\nare the kubernetes sourced labels seen by cilium. This is currently the\\nonly label source possible when running under kubernetes. Non-kubernetes\\nlabels are filtered but all labels, from all sources, are places in the\\nSecurityLabels field. These also include the source and are used to define\\nthe identity.\\nThe labels under metav1.ObjectMeta can be used when searching for\\nCiliumIdentity instances that include particular labels. This can be done\\nwith invocations such as:\\n\\n\\tkubectl get ciliumid -l 'foo=bar'\",\n \"properties\": {\n  \"security-labels\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"description\": \"SecurityLabels is the source-of-truth set of labels for this identity.\",\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"security-labels\"\n ],\n \"title\": \"Cilium Identity\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

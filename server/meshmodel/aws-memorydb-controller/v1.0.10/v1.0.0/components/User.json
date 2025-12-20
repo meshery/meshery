@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "memorydb.services.k8s.aws/v1alpha1",
     "kind": "User",
     "schema": "{\n \"description\": \"User is the Schema for the Users API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UserSpec defines the desired state of User.\\n\\nYou create users and assign them specific permissions by using an access\\nstring. You assign the users to Access Control Lists aligned with a specific\\nrole (administrators, human resources) that are then deployed to one or more\\nMemoryDB clusters.\",\n   \"properties\": {\n    \"accessString\": {\n     \"description\": \"Access permissions string used for this user.\",\n     \"type\": \"string\"\n    },\n    \"authenticationMode\": {\n     \"description\": \"Denotes the user's authentication properties, such as whether it requires\\na password to authenticate.\",\n     \"properties\": {\n      \"passwords\": {\n       \"items\": {\n        \"description\": \"SecretKeyReference combines a k8s corev1.SecretReference with a\\nspecific key within the referred-to Secret\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key within the secret\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"name is unique within a namespace to reference a secret resource.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"namespace defines the space within which the secret name must be unique.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"type\": \"array\"\n      },\n      \"type_\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the user. This value must be unique as it also serves as the\\nuser identifier.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be added to this resource. A tag is a key-value pair. A\\ntag key must be accompanied by a tag value, although null is accepted.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an MemoryDB resource. Tags are composed of a Key/Value\\npair. You can use tags to categorize and track all your MemoryDB resources.\\nWhen you add or remove tags on clusters, those actions will be replicated\\nto all nodes in the cluster. A tag with a null Value is permitted. For more\\ninformation, see Tagging your MemoryDB resources (https://docs.aws.amazon.com/MemoryDB/latest/devguide/tagging-resources.html)\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"accessString\",\n    \"authenticationMode\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -61,6 +61,11 @@ jobs:
         working-directory: ./meshery/mesheryctl
         run: ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../../meshery.io/integrations ../meshery.io/assets/images/integration -o js
 
+      - name: Clean paths in data.js
+        working-directory: ./meshery.io/integrations
+        run: |
+          sed -i 's|"meshery\.io/|"/|g' data.js
+
       - name: Build and inject OCI files to custom models in catalog
         working-directory: ./meshery/mesheryctl
         run: |

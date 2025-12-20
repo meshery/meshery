@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "edge.kubegems.io/v1beta1",
     "kind": "EdgeCluster",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"register\": {\n     \"properties\": {\n      \"bootstrapToken\": {\n       \"type\": \"string\"\n      },\n      \"certs\": {\n       \"properties\": {\n        \"ca\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"cert\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"expiresAt\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"hubName\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

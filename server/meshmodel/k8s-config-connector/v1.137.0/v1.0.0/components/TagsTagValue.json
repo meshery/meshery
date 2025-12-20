@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "tags.cnrm.cloud.google.com/v1beta1",
     "kind": "TagsTagValue",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"User-assigned description of the TagValue. Must not exceed 256 characters.\",\n     \"type\": \"string\"\n    },\n    \"parentRef\": {\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: string of the format `tagKeys/{{value}}`, where {{value}} is the `name` field of a `TagsTagKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"shortName\": {\n     \"description\": \"Immutable. Input only. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey.\\n\\nThe short name must be 63 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parentRef\",\n    \"shortName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Tags Tag Value\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

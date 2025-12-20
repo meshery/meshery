@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "apigee.cnrm.cloud.google.com/v1alpha1",
     "kind": "ApigeeSyncAuthorization",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"identities\": {\n     \"description\": \"Array of service accounts to grant access to control plane resources, each specified using the following format: 'serviceAccount:service-account-name'.\\n\\nThe 'service-account-name' is formatted like an email address. For example: my-synchronizer-manager-serviceAccount@my_project_id.iam.gserviceaccount.com\\n\\nYou might specify multiple service accounts, for example, if you have multiple environments and wish to assign a unique service account to each one.\\n\\nThe service accounts must have **Apigee Synchronizer Manager** role. See also [Create service accounts](https://cloud.google.com/apigee/docs/hybrid/v1.8/sa-about#create-the-service-accounts).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"identities\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Apigee Sync Authorization\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

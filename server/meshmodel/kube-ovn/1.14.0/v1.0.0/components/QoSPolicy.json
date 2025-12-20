@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "QoSPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bandwidthLimitRules\": {\n     \"items\": {\n      \"properties\": {\n       \"burstMax\": {\n        \"type\": \"string\"\n       },\n       \"direction\": {\n        \"type\": \"string\"\n       },\n       \"interface\": {\n        \"type\": \"string\"\n       },\n       \"matchType\": {\n        \"type\": \"string\"\n       },\n       \"matchValue\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"rateMax\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"name\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"bindingType\": {\n     \"type\": \"string\"\n    },\n    \"shared\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Qo S Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

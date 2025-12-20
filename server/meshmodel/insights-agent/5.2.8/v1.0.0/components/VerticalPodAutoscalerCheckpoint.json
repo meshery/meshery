@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "autoscaling.k8s.io/v1",
     "kind": "VerticalPodAutoscalerCheckpoint",
     "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

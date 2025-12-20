@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "identity.bytebuilders.dev/v1alpha1",
     "kind": "TeamUser",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"avatarURL\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"type\": \"string\"\n    },\n    \"fullName\": {\n     \"type\": \"string\"\n    },\n    \"isPublic\": {\n     \"type\": \"boolean\"\n    },\n    \"orgID\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"orgName\": {\n     \"type\": \"string\"\n    },\n    \"teamID\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"teamName\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"userID\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"userName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"isPublic\",\n    \"orgID\",\n    \"teamID\",\n    \"userID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Team User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "apiextensions.crossplane.io/v1alpha1",
     "kind": "ManagedResourceActivationPolicy",
     "schema": "{\n \"description\": \"A ManagedResourceActivationPolicy defines the activation policy for ManagedResourceDefinitions.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ManagedResourceActivationPolicySpec specifies the desired activation state of ManagedResourceDefinitions.\",\n   \"properties\": {\n    \"activate\": {\n     \"description\": \"Activations is an array of MRD names to activate. Supports wildcard\\nprefixes (like `*.aws.crossplane.io`) but not full regular expressions.\",\n     \"items\": {\n      \"description\": \"ActivationPolicy matches on MRD names with wildcard prefix support.\",\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"activate\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Managed Resource Activation Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

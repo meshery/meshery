@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "binding.operators.coreos.com/v1alpha1",
     "kind": "BindableKinds",
     "schema": "{\n \"description\": \"BindableKinds is the Schema for the bindablekinds API\",\n \"properties\": {},\n \"title\": \"Bindable Kinds\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

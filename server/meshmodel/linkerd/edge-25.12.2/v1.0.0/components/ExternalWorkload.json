@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "workload.linkerd.io/v1alpha1",
     "kind": "ExternalWorkload",
     "schema": "{\n \"description\": \"An ExternalWorkload describes a single workload (i.e. a deployable unit) external to the cluster that should be enrolled in the mesh.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"meshTls\": {\n     \"description\": \"meshTls describes TLS settings associated with an external workload.\",\n     \"properties\": {\n      \"identity\": {\n       \"description\": \"identity of the workload. Corresponds to the identity used in the workload's certificate. It is used by peers to perform verification in the mTLS handshake.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"serverName\": {\n       \"description\": \"serverName is the name of the workload in DNS format. It is used by the workload to terminate TLS using SNI.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"identity\",\n      \"serverName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ports\": {\n     \"description\": \"ports describes a list of ports exposed by the workload\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"description\": \"name must be an IANA_SVC_NAME and unique within the ports set. Each named port can be referred to by services.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"format\": \"int32\",\n        \"maximum\": 65535,\n        \"minimum\": 1,\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"default\": \"TCP\",\n        \"description\": \"protocol exposed by the port. Must be UDP or TCP. Defaults to TCP.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"workloadIPs\": {\n     \"description\": \"workloadIPs contains a list of IP addresses that can be used to send traffic to the workload.\",\n     \"items\": {\n      \"properties\": {\n       \"ip\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"maxItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"meshTls\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"External Workload\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

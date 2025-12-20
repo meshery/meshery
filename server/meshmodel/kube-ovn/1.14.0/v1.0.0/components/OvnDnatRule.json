@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "OvnDnatRule",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"externalPort\": {\n     \"type\": \"string\"\n    },\n    \"internalPort\": {\n     \"type\": \"string\"\n    },\n    \"ipName\": {\n     \"type\": \"string\"\n    },\n    \"ipType\": {\n     \"type\": \"string\"\n    },\n    \"ovnEip\": {\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"type\": \"string\"\n    },\n    \"v4Ip\": {\n     \"type\": \"string\"\n    },\n    \"v6Ip\": {\n     \"type\": \"string\"\n    },\n    \"vpc\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ovn Dnat Rule\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
