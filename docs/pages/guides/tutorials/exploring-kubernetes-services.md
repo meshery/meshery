@@ -68,7 +68,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
   ![](./kubernetes-services/metadata.png)
 
 
-7. While still under **Template** and click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** next to **Containers**. This will create a container **Containers 1**, click on it and add:  
+7. While still under **Template**, click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** next to **Containers**. This will create a container **Containers 1**. Click on it and add:  
 - **Image**: `meshery/meshery-milestone:latest`  
 - **Name**: `meshery-milestone`  
   ![](./kubernetes-services/2025-09-04_06.png)
@@ -77,7 +77,7 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
   ![](./kubernetes-services/2025-09-04_07.png)
 
 
-9. Validate and Deploy the design: Click Validate (**Actions** toolbar), ensure no errors, then click **Deploy**. Wait for the deployment to complete (notifications appear on the bottom right).
+9. Validate and Deploy the design: Click Validate (**Actions** toolbar), ensure that there are no errors and then click Deploy. Wait for the deployment to complete (Notifications will appear on bottom right).
 
 ##### You have now deployed a Deployment with 2 pods running in the cluster.
 
@@ -105,7 +105,7 @@ From the Actions Tab, Undeploy the deployment first and then, validate and dry-r
 
   ![](./kubernetes-services/2025-12-13_2.png)
 
-Switch to Operator mode, explore the Service details. Select the service-clusterip resource to see its details. 
+Switch to Operator mode, explore the Service details. Select the `service-clusterip` resource to see its details. 
   ![](./kubernetes-services/2025-09-05_11.png)
 
 Notice the ClusterIP listed under Addresses and that no external IP or NodePort is assigned. This confirms that a ClusterIP service provides an internal IP reachable only within the cluster.
@@ -117,14 +117,14 @@ This Service has a ClusterIP (10.98.146.20) and a selector (app=9988110). Any Po
 
 #### Add a NodePort Service
  
-To allow external access, we’ll use a NodePort service. For simplicity purposes, I will switch from using deployment to Pod for our next Service. 
+To allow external access, we’ll use a NodePort service. For simplicity, I will switch from using deployment to Pod for our next Service. 
 
 1. Back in Design mode, we will drag a Pod from the dock onto the canvas. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container. Expand **Containers-1**. Next, fill out some of the required container specifications. Start by entering the container image, we will use _meshery/meshery-milestone:latest_ for this exercise. Give the container a name and a unique label (This unique label will be used by the service selector.). 
   ![](./kubernetes-services/2025-09-06_13.png)
 
 2. Now, drag a Service component onto the canvas and rename it to `service-nodeport`.
 
-3. Under the config modal, Set **Type** to `NodePort` and the same selector as the Pod label, so that our service is connected with our Pod.
+3. Under the config modal, set **Type** to `NodePort` and the same selector as the Pod label, so that our Service is able to connect with our Pod.
   ![](./kubernetes-services/2025-09-06_14.png)
 
 4. Click on **+ Add Item** under Ports to reveal **Ports 1**, expand **Ports 1** and add: 
@@ -149,6 +149,7 @@ Expand the details section and you will see a NodePort value (30091), this means
 The Operator mode also provides an interactive terminal, along with other Details about the Pod. Click on the Pod to reveal the `Initiate Terminal Session` option.
   ![](./kubernetes-services/2025-12-13_5.png)
  
+> **_NOTE:_** In Meshery Playground, Node IPs may not be directly reachable from your local machine due to the sandboxed environment. The NodePort value confirms that the Service is correctly exposed by Kubernetes, even if direct browser access is restricted.
 
 ---
 
