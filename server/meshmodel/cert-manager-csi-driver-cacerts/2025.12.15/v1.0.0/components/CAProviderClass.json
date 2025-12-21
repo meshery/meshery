@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "cacerts.csi.cert-manager.io/v1alpha1",
     "kind": "CAProviderClass",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"refs\": {\n     \"items\": {\n      \"properties\": {\n       \"apiGroup\": {\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"CA Provider Class\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

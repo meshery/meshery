@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "bgppeer.loxilb.io/v1",
     "kind": "BGPPeerService",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"ipAddress\": {\n     \"type\": \"string\"\n    },\n    \"remoteAs\": {\n     \"type\": \"integer\"\n    },\n    \"remotePort\": {\n     \"type\": \"integer\"\n    },\n    \"setMultiHop\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"ipAddress\",\n    \"remoteAs\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"BGP Peer Service\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

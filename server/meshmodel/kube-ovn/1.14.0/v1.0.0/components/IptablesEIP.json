@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "IptablesEIP",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"externalSubnet\": {\n     \"type\": \"string\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"natGwDp\": {\n     \"type\": \"string\"\n    },\n    \"qosPolicy\": {\n     \"type\": \"string\"\n    },\n    \"v4ip\": {\n     \"type\": \"string\"\n    },\n    \"v6ip\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Iptables EIP\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

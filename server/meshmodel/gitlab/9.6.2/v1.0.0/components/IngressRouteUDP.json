@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "traefik.containo.us/v1alpha1",
     "kind": "IngressRouteUDP",
     "schema": "{\n \"description\": \"IngressRouteUDP is an Ingress CRD specification.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteUDPSpec is a specification for a IngressRouteUDPSpec resource.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"items\": {\n      \"description\": \"RouteUDP contains the set of routes.\",\n      \"properties\": {\n       \"services\": {\n        \"items\": {\n         \"description\": \"ServiceUDP defines an upstream to proxy traffic.\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"weight\": {\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route UDP\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

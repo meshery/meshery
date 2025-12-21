@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "netapp.cnrm.cloud.google.com/v1alpha1",
     "kind": "NetAppBackupPolicy",
     "schema": "{\n \"description\": \"NetAppBackupPolicy is the Schema for the NetAppBackupPolicy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetAppBackupPolicySpec defines the desired state of NetAppBackupPolicy\",\n   \"properties\": {\n    \"dailyBackupLimit\": {\n     \"description\": \"Number of daily backups to keep. Note that the minimum daily backup limit is 2.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"Description of the backup policy.\",\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"description\": \"If enabled, make backups automatically according to the schedules. This will be applied to all volumes that have this policy attached and enforced on volume level. If not specified, default is true.\",\n     \"type\": \"boolean\"\n    },\n    \"location\": {\n     \"type\": \"string\"\n    },\n    \"monthlyBackupLimit\": {\n     \"description\": \"Number of monthly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"projectRef\": {\n     \"description\": \"The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The GCP resource identifier. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"weeklyBackupLimit\": {\n     \"description\": \"Number of weekly backups to keep. Note that the sum of daily, weekly and monthly backups should be greater than 1.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Net App Backup Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

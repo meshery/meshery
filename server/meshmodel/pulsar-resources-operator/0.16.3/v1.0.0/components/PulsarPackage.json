@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "resource.streamnative.io/v1alpha1",
     "kind": "PulsarPackage",
     "schema": "{\n \"description\": \"PulsarPackage is the Schema for the pulsar package management service's package API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarPackageSpec defines the desired state of PulsarPackage\",\n   \"properties\": {\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"contact\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"fileURL\": {\n     \"description\": \"FileURL is the download-able URL of the package from http or https protocol\\nSupport cloud storage providers: AWS S3 (s3://), Google Cloud Storage (gs://), Azure Blob Storage (azblob://)\",\n     \"type\": \"string\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"PulsarResourceLifeCyclePolicy defines the behavior for managing Pulsar resources\\nwhen the corresponding custom resource (CR) is deleted from the Kubernetes cluster.\\nThis policy allows users to control whether Pulsar resources should be retained or\\nremoved from the Pulsar cluster after the CR is deleted.\",\n     \"enum\": [\n      \"CleanUpAfterDeletion\",\n      \"KeepAfterDeletion\"\n     ],\n     \"type\": \"string\"\n    },\n    \"packageURL\": {\n     \"description\": \"PackageURL is the Pulsar Package URL, in format of type://tenant/namespace/package@version\",\n     \"type\": \"string\"\n    },\n    \"properties\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"syncPolicy\": {\n     \"description\": \"SyncPolicy represents the sync policy of the package, including Always, IfNotPresent, Never\\nDefaults to Always if @latest tag is used in the package URL, or IfNotPresent otherwise\",\n     \"enum\": [\n      \"Always\",\n      \"IfNotPresent\",\n      \"Never\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\",\n    \"fileURL\",\n    \"packageURL\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Package\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

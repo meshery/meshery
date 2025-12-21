@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "cilium.io/v2",
     "kind": "CiliumEndpoint",
     "schema": "{\n \"description\": \"CiliumEndpoint is the status of a Cilium policy rule.\",\n \"properties\": {},\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"Cilium Endpoint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

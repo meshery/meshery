@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "tyk.tyk.io/v1alpha1",
     "kind": "TykStreamsApiDefinition",
     "schema": "{\n \"description\": \"TykStreamsApiDefinition is the Schema for the tykstreamsapidefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TykStreamsApiDefinitionSpec defines the desired state of TykStreamsApiDefinition\",\n   \"properties\": {\n    \"contextRef\": {\n     \"description\": \"Context specify namespace/name of the OperatorContext object used for\\nreconciling this APIDefinition\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"k8s resource name\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The k8s namespace of the resource being targeted. When omitted this will be\\nset to the namespace of the object that is being reconciled.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tykStreams\": {\n     \"description\": \"TykStreams provides storage information about Tyk Streams\",\n     \"properties\": {\n      \"configmapRef\": {\n       \"description\": \"ConfigmapRef provides information of configmap in which Tyk Streams is stored\",\n       \"properties\": {\n        \"keyName\": {\n         \"description\": \"KeyName is the key of configmap in which Tyk OAS doc is stored\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of configmap\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace is the namespace of configmap.\\nIf Namespace is not provided, we assume that the ConfigMap is in the same\\nnamespace as TykOasApiDefinition resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"keyName\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"configmapRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"tykStreams\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tyk Streams Api Definition\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

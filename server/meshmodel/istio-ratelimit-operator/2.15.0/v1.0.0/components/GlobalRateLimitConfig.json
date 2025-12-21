@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "ratelimit.zufardhiyaulhaq.com/v1alpha1",
     "kind": "GlobalRateLimitConfig",
     "schema": "{\n \"description\": \"GlobalRateLimitConfig is the Schema for the globalratelimitconfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalRateLimitConfigSpec defines the desired state of GlobalRateLimitConfig\",\n   \"properties\": {\n    \"ratelimit\": {\n     \"properties\": {\n      \"spec\": {\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"failure_mode_deny\": {\n         \"type\": \"boolean\"\n        },\n        \"service\": {\n         \"properties\": {\n          \"address\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"type\": \"integer\"\n          },\n          \"type\": {\n           \"enum\": [\n            \"service\",\n            \"fqdn\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"type\"\n         ],\n         \"type\": \"object\"\n        },\n        \"timeout\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"domain\",\n        \"failure_mode_deny\",\n        \"service\",\n        \"timeout\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"spec\"\n     ],\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"istio_version\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"sni\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"istio_version\",\n      \"labels\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"gateway\",\n      \"sidecar\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ratelimit\",\n    \"selector\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Rate Limit Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

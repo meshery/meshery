@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "compute.cnrm.cloud.google.com/v1alpha1",
     "kind": "ComputeOrganizationSecurityPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A textual description for the organization security policy.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"Immutable. A textual name of the security policy.\",\n     \"type\": \"string\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The parent of this OrganizationSecurityPolicy in the Cloud Resource Hierarchy.\\nFormat: organizations/{organization_id} or folders/{folder_id}.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The policyId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type indicates the intended use of the security policy.\\nFor organization security policies, the only supported type\\nis \\\"FIREWALL\\\". Default value: \\\"FIREWALL\\\" Possible values: [\\\"FIREWALL\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"parent\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Organization Security Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
