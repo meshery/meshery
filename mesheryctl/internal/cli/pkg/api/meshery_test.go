@@ -22,6 +22,12 @@ type makeRequestTestCase struct {
 }
 
 func TestMakeRequest_Failures(t *testing.T) {
+	utils.SetupContextEnv(t)
+	//initialize mock server for handling requests
+	utils.StartMockery(t)
+	// create a test helper
+	testContext := utils.NewTestHelper(t)
+
 	tests := []makeRequestTestCase{
 		{
 			name:             "No Token Provided",
@@ -32,19 +38,19 @@ func TestMakeRequest_Failures(t *testing.T) {
 			expectedError:    utils.ErrAttachAuthToken(fmt.Errorf("Not Set does not exist")),
 		},
 		{
-			name:             "Invalid URL",
+			name:             "",
 			httpMethod:       http.MethodGet,
 			urlPath:          "/",
 			hasToken:         true,
 			expectedResponse: nil,
-			expectedError:    utils.ErrFailRequest(fmt.Errorf("parse \"http://%%41:8080/\": invalid URL escape \"%%41\"")),
+			expectedError: func() error {
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", testContext.BaseURL)
+				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
+				errRemediation := errors.GetRemedy(failedReqErr)
+				return utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
+			}(),
 		},
 	}
-	utils.SetupContextEnv(t)
-	//initialize mock server for handling requests
-	utils.StartMockery(t)
-	// create a test helper
-	testContext := utils.NewTestHelper(t)
 
 	for _, tt := range tests {
 
@@ -64,13 +70,14 @@ func TestMakeRequest_Failures(t *testing.T) {
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-			resp, err := makeRequest(url, tt.httpMethod, nil)
+			resp, err := makeRequest(url, tt.httpMethod, nil, nil)
 			if tt.expectedError != nil {
 				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.expectedError))
 				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.expectedError))
 				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.expectedError))
-				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.expectedError))
-				assert.EqualError(t, err, tt.expectedError.Error())
+				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.expectedError))
+				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.expectedError))
+				assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.expectedError))
 			} else {
 				assert.Equal(t, tt.expectedResponse, resp)
 			}
