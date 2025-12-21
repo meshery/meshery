@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Meshery CLI Contributing Guidelines"
+title: "Meshery CLI Style Guide"
 abstract: "Design principles and code conventions."
 permalink: project/contributing/contributing-cli-guide
 type: project
