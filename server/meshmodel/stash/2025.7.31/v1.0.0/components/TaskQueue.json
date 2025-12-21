@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "batch.k8s.appscode.com/v1alpha1",
     "kind": "TaskQueue",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"maxConcurrentTasks\": {\n     \"default\": 10,\n     \"type\": \"integer\"\n    },\n    \"tasks\": {\n     \"items\": {\n      \"properties\": {\n       \"rules\": {\n        \"properties\": {\n         \"failed\": {\n          \"type\": \"string\"\n         },\n         \"inProgress\": {\n          \"type\": \"string\"\n         },\n         \"success\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"failed\",\n         \"inProgress\",\n         \"success\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"group\",\n         \"kind\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"rules\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Task Queue\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

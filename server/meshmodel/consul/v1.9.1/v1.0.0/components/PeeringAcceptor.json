@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "PeeringAcceptor",
     "schema": "{\n \"description\": \"PeeringAcceptor is the Schema for the peeringacceptors API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PeeringAcceptorSpec defines the desired state of PeeringAcceptor.\",\n   \"properties\": {\n    \"peer\": {\n     \"description\": \"Peer describes the information needed to create a peering.\",\n     \"properties\": {\n      \"secret\": {\n       \"description\": \"Secret describes how to store the generated peering token.\",\n       \"properties\": {\n        \"backend\": {\n         \"description\": \"Backend is where the generated secret is stored. Currently supports the value: \\\"kubernetes\\\".\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"description\": \"Key is the key of the secret generated.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the secret generated.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"peer\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Peering Acceptor\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -81,7 +81,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin

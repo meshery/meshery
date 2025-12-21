@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "ratelimit.zufardhiyaulhaq.com/v1alpha1",
     "kind": "LocalRateLimit",
     "schema": "{\n \"description\": \"LocalRateLimit is the Schema for the localratelimits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LocalRateLimitSpec defines the desired state of LocalRateLimit\",\n   \"properties\": {\n    \"config\": {\n     \"type\": \"string\"\n    },\n    \"limit\": {\n     \"properties\": {\n      \"requests_per_unit\": {\n       \"type\": \"integer\"\n      },\n      \"unit\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"route\": {\n       \"type\": \"string\"\n      },\n      \"vhost\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"vhost\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Local Rate Limit\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "velero.io/v1",
     "kind": "ServerStatusRequest",
     "schema": "{\n \"description\": \"ServerStatusRequest is a request to access current status information about\\nthe Velero server.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServerStatusRequestSpec is the specification for a ServerStatusRequest.\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Server Status Request\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

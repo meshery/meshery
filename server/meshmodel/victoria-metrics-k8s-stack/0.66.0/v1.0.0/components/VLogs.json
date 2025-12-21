@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "operator.victoriametrics.com/v1beta1",
     "kind": "VLogs",
     "schema": "{\n \"description\": \"VLogs is fast, cost-effective and scalable logs database.\\nVLogs is the Schema for the vlogs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VLogsSpec defines the desired state of VLogs\\nVLogs is deprecated, migrate to the VLSingle\",\n   \"format\": \"textarea\",\n   \"required\": [\n    \"retentionPeriod\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"title\": \"V Logs\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

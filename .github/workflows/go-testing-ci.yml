@@ -25,7 +25,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.24]
+        go: [1.25]
         os: [ubuntu-24.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -75,7 +75,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Verify Docker Details
         run: |
           docker version

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "k8s.nginx.org/v1",
     "kind": "GlobalConfiguration",
     "schema": "{\n \"description\": \"GlobalConfiguration defines the GlobalConfiguration resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalConfigurationSpec resource defines the global configuration parameters of the Ingress Controller.\",\n   \"properties\": {\n    \"listeners\": {\n     \"description\": \"Listeners field of the GlobalConfigurationSpec resource\",\n     \"items\": {\n      \"description\": \"Listener defines a listener.\",\n      \"properties\": {\n       \"ipv4\": {\n        \"description\": \"Specifies the IPv4 address to listen on.\",\n        \"type\": \"string\"\n       },\n       \"ipv6\": {\n        \"description\": \"ipv6 addresse that NGINX will listen on.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"The name of the listener. The name must be unique across all listeners.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"The port on which the listener will accept connections.\",\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"description\": \"The protocol of the listener. For example, HTTP.\",\n        \"type\": \"string\"\n       },\n       \"ssl\": {\n        \"description\": \"Whether the listener will be listening for SSL connections\",\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

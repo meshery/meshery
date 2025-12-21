@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "MeshService",
     "schema": "{\n \"description\": \"MeshService holds a reference to an externally managed Consul Service Mesh service.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of MeshService.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"Name holds the service name for a Consul service.\",\n     \"type\": \"string\"\n    },\n    \"peer\": {\n     \"description\": \"Peer optionally specifies the name of the peer exporting the Consul service.\\nIf not specified, the Consul service is assumed to be in the local datacenter.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Service\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "policy.linkerd.io/v1alpha1",
     "kind": "Server",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"podSelector\": {\n     \"description\": \"Selects pods in the same namespace.\",\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"matchExpressions\"\n       ]\n      },\n      {\n       \"required\": [\n        \"matchLabels\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"enum\": [\n           \"In\",\n           \"NotIn\",\n           \"Exists\",\n           \"DoesNotExist\"\n          ],\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"port\": {\n     \"description\": \"A port name or number. Must exist in a pod spec.\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"proxyProtocol\": {\n     \"default\": \"unknown\",\n     \"description\": \"Configures protocol discovery for inbound connections.\\nSupersedes the `config.linkerd.io/opaque-ports` annotation.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"podSelector\",\n    \"port\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Server\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

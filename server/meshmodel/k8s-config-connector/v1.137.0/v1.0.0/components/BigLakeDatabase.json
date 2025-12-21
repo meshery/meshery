@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "bigquerybiglake.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigLakeDatabase",
     "schema": "{\n \"description\": \"BigLakeDatabase is the Schema for the BigLakeDatabase API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BigLakeDatabaseSpec defines the desired state of BigLakeDatabase\",\n   \"properties\": {\n    \"hiveOptions\": {\n     \"description\": \"Options of a Hive database.\",\n     \"properties\": {\n      \"locationURI\": {\n       \"description\": \"Cloud Storage folder URI where the database data is stored, starting with \\\"gs://\\\".\",\n       \"type\": \"string\"\n      },\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Stores user supplied Hive database parameters.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Required. The location of the application.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Required. The host project of the application.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The BigLakeDatabase name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"The database type.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Lake Database\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

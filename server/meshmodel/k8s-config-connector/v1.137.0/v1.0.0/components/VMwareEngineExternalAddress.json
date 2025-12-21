@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "vmwareengine.cnrm.cloud.google.com/v1beta1",
     "kind": "VMwareEngineExternalAddress",
     "schema": "{\n \"description\": \"VMwareEngineExternalAddress is the Schema for the VMwareEngineExternalAddress API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VMwareEngineExternalAddressSpec defines the desired state of VMwareEngineExternalAddress\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"User-provided description for this resource.\",\n     \"type\": \"string\"\n    },\n    \"internalIP\": {\n     \"description\": \"The internal IP address of a workload VM.\",\n     \"type\": \"string\"\n    },\n    \"privateCloudRef\": {\n     \"description\": \"Required. The resource name of the private cloud to create a new external IP address in.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed VMwareEnginePrivateCloud resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/privateClouds/{{privatecloudID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a VMwareEnginePrivateCloud resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a VMwareEnginePrivateCloud resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The VMwareEngineExternalAddress name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"privateCloudRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"V Mware Engine External Address\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

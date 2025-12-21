@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "rollout-operator.grafana.com/v1",
     "kind": "ZoneAwarePodDisruptionBudget",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"maxUnavailable\": {\n     \"description\": \"The number of pods that can be unavailable within a zone or partition.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"maxUnavailablePercentage\": {\n     \"description\": \"Calculate the maxUnavailable value as a percentage of the StatefulSet's spec.Replica count. This option is not supported when using podNamePartitionRegex.\",\n     \"maximum\": 100,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"podNamePartitionRegex\": {\n     \"description\": \"A regular expression for returning a partition name given a pod name. This field is optional and should only be used when the ZoneAwarePodDisruptionBudget is to be scoped to a partition, such as a multi-zone ingester deployment with ingest_storage_enabled. Enabling this changes the ZPDB functionality such that minAvailability is applied across ALL zones for a given partition. When not enabled, the minAvailability is applied to pods within the eviction zone assuming there are no disruptions in the other zones.\",\n     \"type\": \"string\"\n    },\n    \"podNameRegexGroup\": {\n     \"description\": \"The regular expression group number that contains the partition name. This field is only required when the podNamePartitionRegex field is set and has more then one subexpression grouping. The default value is 1.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"A selector for finding pods and statefulsets that this ZoneAwarePodDisruptionBudget applies to.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"matchLabels\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Zone Aware Pod Disruption Budget\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

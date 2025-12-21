@@ -1309,13 +1309,13 @@
         "suggested_remediation": "Provide a valid flag"
       },
       "1156": {
-        "name": "ErrOutputToYamlCode",
+        "name": "ErrMesheryServerNotRunningCode",
         "code": "1156",
         "severity": "Alert",
-        "long_description": "Error occurred while formatting to YAML",
-        "short_description": "Failed to format output in YAML",
-        "probable_cause": "The content provided for formatting failed.",
-        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+        "long_description": "",
+        "short_description": "Meshery Server is not running",
+        "probable_cause": "Meshery Server is not running or is unreachable\nDocker or Kubernetes environment is not ready\nNetwork connectivity issues",
+        "suggested_remediation": "Start Meshery Server with `mesheryctl system start`\nVerify system readiness with `mesheryctl system check --preflight`\nCheck your network connection and firewall settings"
       },
       "1157": {
         "name": "ErrListPaginationCode",
@@ -1325,6 +1325,15 @@
         "short_description": "Failed to fetch data from Meshery server.",
         "probable_cause": "While fetching data from Meshery server an error occurred.",
         "suggested_remediation": "Please check if returned data is valid"
+      },
+      "1158": {
+        "name": "ErrOutputToYamlCode",
+        "code": "1158",
+        "severity": "Alert",
+        "long_description": "Error occurred while formatting to YAML",
+        "short_description": "Failed to format output in YAML",
+        "probable_cause": "The content provided for formatting failed.",
+        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
       }
     }
   }

@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "bigtable.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigtableAuthorizedView",
     "schema": "{\n \"description\": \"BigtableAuthorizedView is the Schema for the BigtableAuthorizedView API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BigtableAuthorizedViewSpec defines the desired state of BigtableAuthorizedView\",\n   \"properties\": {\n    \"deletionProtection\": {\n     \"description\": \"Set to true to make the AuthorizedView protected against deletion. The parent Table and containing Instance cannot be deleted if an AuthorizedView has this bit set.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"The BigtableAuthorizedView name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"subsetView\": {\n     \"description\": \"An AuthorizedView permitting access to an explicit subset of a Table.\",\n     \"properties\": {\n      \"rowPrefixes\": {\n       \"description\": \"Row prefixes to be included in the AuthorizedView. To provide access to all rows, include the empty string as a prefix (\\\"\\\").\",\n       \"items\": {\n        \"format\": \"byte\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tableRef\": {\n     \"description\": \"TableRef defines the resource reference to BigtableTable, which \\\"External\\\" field holds the GCP identifier for the KRM object.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed BigtableTable resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"tableRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Bigtable Authorized View\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

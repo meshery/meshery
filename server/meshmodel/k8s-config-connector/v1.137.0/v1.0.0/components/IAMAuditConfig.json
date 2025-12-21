@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "iam.cnrm.cloud.google.com/v1beta1",
     "kind": "IAMAuditConfig",
     "schema": "{\n \"description\": \"IAMAuditConfig is the schema for the IAM audit logging API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IAMAuditConfigSpec defines the desired state of IAMAuditConfig.\",\n   \"properties\": {\n    \"auditLogConfigs\": {\n     \"description\": \"Required. The configuration for logging of each type of permission.\",\n     \"items\": {\n      \"properties\": {\n       \"exemptedMembers\": {\n        \"description\": \"Identities that do not cause logging for this type of permission. The format is the same as that for 'members' in IAMPolicy/IAMPolicyMember.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"logType\": {\n        \"description\": \"Permission type for which logging is to be configured. Must be one of 'DATA_READ', 'DATA_WRITE', or 'ADMIN_READ'.\",\n        \"pattern\": \"^(DATA_READ|DATA_WRITE|ADMIN_READ)$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"logType\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceRef\": {\n     \"description\": \"Immutable. Required. The GCP resource to set the IAMAuditConfig on (e.g. project).\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the referenced resource\",\n       \"type\": \"string\"\n      },\n      \"external\": {\n       \"description\": \"The external name of the referenced resource\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"resourceRef is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"service\": {\n     \"description\": \"Immutable. Required. The service for which to enable Data Access audit logs. The special value 'allServices' covers all services. Note that if there are audit configs covering both 'allServices' and a specific service, then the union of the two audit configs is used for that service: the 'logTypes' specified in each 'auditLogConfig' are enabled, and the 'exemptedMembers' in each 'auditLogConfig' are exempted.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"service is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"auditLogConfigs\",\n    \"resourceRef\",\n    \"service\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Audit Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

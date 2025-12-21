@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "engine.kubevault.com/v1alpha1",
     "kind": "GCPRole",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bindings\": {\n     \"type\": \"string\"\n    },\n    \"path\": {\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"type\": \"string\"\n    },\n    \"secretEngineRef\": {\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"secretType\": {\n     \"enum\": [\n      \"access_token\",\n      \"service_account_key\"\n     ],\n     \"type\": \"string\"\n    },\n    \"tokenScopes\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"bindings\",\n    \"project\",\n    \"secretEngineRef\",\n    \"secretType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"GCP Role\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

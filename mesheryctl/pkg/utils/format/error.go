@@ -4,7 +4,7 @@ import "github.com/meshery/meshkit/errors"
 
 var (
 	ErrOutputToJsonCode = "mesheryctl-1147"
-	ErrOutputToYamlCode = "mesheryctl-1156"
+	ErrOutputToYamlCode = "mesheryctl-1158"
 )
 
 func ErrOutputToJson() error {

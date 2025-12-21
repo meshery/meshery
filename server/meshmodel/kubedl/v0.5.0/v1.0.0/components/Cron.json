@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "apps.kubedl.io/v1alpha1",
     "kind": "Cron",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"concurrencyPolicy\": {\n     \"type\": \"string\"\n    },\n    \"deadline\": {\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"historyLimit\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"schedule\": {\n     \"type\": \"string\"\n    },\n    \"suspend\": {\n     \"type\": \"boolean\"\n    },\n    \"template\": {\n     \"properties\": {\n      \"apiVersion\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"workload\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"schedule\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cron\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
