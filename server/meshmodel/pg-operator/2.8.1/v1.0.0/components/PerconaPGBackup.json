@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "pgv2.percona.com/v2",
     "kind": "PerconaPGBackup",
     "schema": "{\n \"description\": \"PerconaPGBackup is the CRD that defines a Percona PostgreSQL Backup\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"options\": {\n     \"description\": \"Command line options to include when running the pgBackRest backup command.\\nhttps://pgbackrest.org/command.html#command-backup\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"pgCluster\": {\n     \"type\": \"string\"\n    },\n    \"repoName\": {\n     \"description\": \"The name of the pgBackRest repo to run the backup command against.\",\n     \"pattern\": \"^repo[1-4]\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"pgCluster\",\n    \"repoName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Percona PG Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

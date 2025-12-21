@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "eventing.knative.dev/v1beta3",
     "kind": "EventType",
     "schema": "{\n \"description\": \"EventType represents a type of event that can be consumed from a resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of the EventType.\",\n   \"properties\": {\n    \"attributes\": {\n     \"description\": \"CloudEvent attribute and extension attributes.\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name of the CloudEvent attribute.\",\n        \"type\": \"string\"\n       },\n       \"required\": {\n        \"description\": \"Indicates whether the attribute is required.\",\n        \"type\": \"boolean\"\n       },\n       \"value\": {\n        \"description\": \"Value of the attribute. May be a template string using curly brackets {} to represent variable sections of the string.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"Description is an optional field used to describe the EventType, in any meaningful way.\",\n     \"type\": \"string\"\n    },\n    \"reference\": {\n     \"description\": \"Reference a resource. For example, Broker.\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"Address points to a specific Address Name\",\n       \"type\": \"string\"\n      },\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Event Type\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

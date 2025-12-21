@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "externaldns.k8s.io/v1alpha1",
     "kind": "DNSEndpoint",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DNSEndpointSpec defines the desired state of DNSEndpoint\",\n   \"properties\": {\n    \"endpoints\": {\n     \"items\": {\n      \"description\": \"Endpoint is a high-level way of a connection between a service and an IP\",\n      \"properties\": {\n       \"dnsName\": {\n        \"description\": \"The hostname of the DNS record\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels stores labels defined for the Endpoint\",\n        \"type\": \"object\"\n       },\n       \"providerSpecific\": {\n        \"description\": \"ProviderSpecific stores provider specific config\",\n        \"items\": {\n         \"description\": \"ProviderSpecificProperty holds the name and value of a configuration which is specific to individual DNS providers\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"recordTTL\": {\n        \"description\": \"TTL for the record\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"recordType\": {\n        \"description\": \"RecordType type of record, e.g. CNAME, A, SRV, TXT etc\",\n        \"type\": \"string\"\n       },\n       \"setIdentifier\": {\n        \"description\": \"Identifier to distinguish multiple records with the same name and type (e.g. Route53 records with routing policies other than 'simple')\",\n        \"type\": \"string\"\n       },\n       \"targets\": {\n        \"description\": \"The targets the DNS record points to\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DNS Endpoint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

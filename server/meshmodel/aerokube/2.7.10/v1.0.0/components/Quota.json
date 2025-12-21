@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "moon.aerokube.com/v1",
     "kind": "Quota",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"browsers\": {\n     \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n     \"type\": \"string\"\n    },\n    \"devices\": {\n     \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"browsers\",\n    \"config\",\n    \"devices\",\n    \"namespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Quota\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

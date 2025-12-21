@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "policy.linkerd.io/v1alpha1",
     "kind": "EgressNetwork",
     "schema": "{\n \"description\": \"An EgressNetwork captures traffic to egress destinations\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"networks\": {\n     \"items\": {\n      \"properties\": {\n       \"cidr\": {\n        \"description\": \"The CIDR of the network to be authorized.\",\n        \"type\": \"string\"\n       },\n       \"except\": {\n        \"description\": \"A list of IP networks/addresses not to be included in the above `cidr`.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"cidr\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"trafficPolicy\": {\n     \"description\": \"This field controls the traffic policy enforced upon traffic that does not match any explicit route resources associated with an instance of this object. The values that are allowed currently are:\\n - Allow - permits all traffic, even if it has not been\\n              explicitly described via attaching an xRoute\\n              resources.\\n - Deny -  blocks all traffic that has not been described via\\n              attaching an xRoute resource.\",\n     \"enum\": [\n      \"Allow\",\n      \"Deny\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"trafficPolicy\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Egress Network\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "velero.io/v1",
     "kind": "BackupRepository",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupRepositorySpec is the specification for a BackupRepository.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the BackupStorageLocation\\nthat should contain this repository.\",\n     \"type\": \"string\"\n    },\n    \"maintenanceFrequency\": {\n     \"description\": \"MaintenanceFrequency is how often maintenance should be run.\",\n     \"type\": \"string\"\n    },\n    \"repositoryConfig\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"RepositoryConfig is for repository-specific configuration fields.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"repositoryType\": {\n     \"description\": \"RepositoryType indicates the type of the backend repository\",\n     \"enum\": [\n      \"kopia\",\n      \"restic\",\n      \"\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resticIdentifier\": {\n     \"description\": \"ResticIdentifier is the full restic-compatible string for identifying\\nthis repository. This field is only used when RepositoryType is \\\"restic\\\".\",\n     \"type\": \"string\"\n    },\n    \"volumeNamespace\": {\n     \"description\": \"VolumeNamespace is the namespace this backup repository contains\\npod volume backups for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"maintenanceFrequency\",\n    \"volumeNamespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Repository\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

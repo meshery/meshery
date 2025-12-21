@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "RouteRetryFilter",
     "schema": "{\n \"description\": \"RouteRetryFilter is the Schema for the routeretryfilters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RouteRetryFilterSpec defines the desired state of RouteRetryFilter.\",\n   \"properties\": {\n    \"numRetries\": {\n     \"format\": \"int32\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"retryOn\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"retryOnConnectFailure\": {\n     \"type\": \"boolean\"\n    },\n    \"retryOnStatusCodes\": {\n     \"items\": {\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Route Retry Filter\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

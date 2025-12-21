@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "configuration.konghq.com/v1alpha1",
     "kind": "KongLicense",
     "schema": "{\n \"description\": \"KongLicense stores a Kong enterprise license to apply to managed Kong gateway instances.\",\n \"properties\": {\n  \"enabled\": {\n   \"default\": true,\n   \"description\": \"Enabled is set to true to let controllers (like KIC or KGO) to reconcile it.\\nDefault value is true to apply the license by default.\",\n   \"type\": \"boolean\"\n  },\n  \"rawLicenseString\": {\n   \"description\": \"RawLicenseString is a string with the raw content of the license.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"enabled\",\n  \"rawLicenseString\"\n ],\n \"title\": \"Kong License\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

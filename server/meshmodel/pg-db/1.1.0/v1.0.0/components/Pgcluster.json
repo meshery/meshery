@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "pg.percona.com/v1",
     "kind": "Pgcluster",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"ccpimage\": {\n     \"type\": \"string\"\n    },\n    \"ccpimagetag\": {\n     \"type\": \"string\"\n    },\n    \"clustername\": {\n     \"type\": \"string\"\n    },\n    \"database\": {\n     \"type\": \"string\"\n    },\n    \"exporterport\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"pgbadgerport\": {\n     \"type\": \"string\"\n    },\n    \"port\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Pgcluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

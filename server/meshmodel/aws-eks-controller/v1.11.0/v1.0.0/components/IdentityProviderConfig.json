@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "eks.services.k8s.aws/v1alpha1",
     "kind": "IdentityProviderConfig",
     "schema": "{\n \"description\": \"IdentityProviderConfig is the Schema for the IdentityProviderConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IdentityProviderConfigSpec defines the desired state of IdentityProviderConfig.\\n\\nAn object representing an identity provider configuration.\",\n   \"properties\": {\n    \"clusterName\": {\n     \"description\": \"The name of your cluster.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"clusterRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"An object representing an OpenID Connect (OIDC) identity provider configuration.\",\n     \"properties\": {\n      \"clientID\": {\n       \"type\": \"string\"\n      },\n      \"groupsClaim\": {\n       \"type\": \"string\"\n      },\n      \"groupsPrefix\": {\n       \"type\": \"string\"\n      },\n      \"identityProviderConfigName\": {\n       \"type\": \"string\"\n      },\n      \"issuerURL\": {\n       \"type\": \"string\"\n      },\n      \"requiredClaims\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"usernameClaim\": {\n       \"type\": \"string\"\n      },\n      \"usernamePrefix\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Metadata that assists with categorization and organization. Each tag consists\\nof a key and an optional value. You define both. Tags don't propagate to\\nany other cluster or Amazon Web Services resources.\",\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"oidc\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Identity Provider Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "documentdb.services.k8s.aws/v1alpha1",
     "kind": "DBSubnetGroup",
     "schema": "{\n \"description\": \"DBSubnetGroup is the Schema for the DBSubnetGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DBSubnetGroupSpec defines the desired state of DBSubnetGroup.\\n\\nDetailed information about a subnet group.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The description for the subnet group.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name for the subnet group. This value is stored as a lowercase string.\\n\\nConstraints: Must contain no more than 255 letters, numbers, periods, underscores,\\nspaces, or hyphens. Must not be default.\\n\\nExample: mySubnetgroup\",\n     \"type\": \"string\"\n    },\n    \"subnetIDs\": {\n     \"description\": \"The Amazon EC2 subnet IDs for the subnet group.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags to be assigned to the subnet group.\",\n     \"items\": {\n      \"description\": \"Metadata assigned to an Amazon DocumentDB resource consisting of a key-value\\npair.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"description\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DB Subnet Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

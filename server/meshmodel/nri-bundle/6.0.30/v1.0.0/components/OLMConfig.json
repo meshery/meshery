@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "operators.coreos.com/v1",
     "kind": "OLMConfig",
     "schema": "{\n \"description\": \"OLMConfig is a resource responsible for configuring OLM.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OLMConfigSpec is the spec for an OLMConfig resource.\",\n   \"properties\": {\n    \"features\": {\n     \"description\": \"Features contains the list of configurable OLM features.\",\n     \"properties\": {\n      \"disableCopiedCSVs\": {\n       \"description\": \"DisableCopiedCSVs is used to disable OLM's \\\"Copied CSV\\\" feature for operators installed at the cluster scope, where a cluster scoped operator is one that has been installed in an OperatorGroup that targets all namespaces. When reenabled, OLM will recreate the \\\"Copied CSVs\\\" for each cluster scoped operator.\",\n       \"type\": \"boolean\"\n      },\n      \"packageServerSyncInterval\": {\n       \"description\": \"PackageServerSyncInterval is used to define the sync interval for packagerserver pods. Packageserver pods periodically check the status of CatalogSources; this specifies the period using duration format (e.g. \\\"60m\\\"). For this parameter, only hours (\\\"h\\\"), minutes (\\\"m\\\"), and seconds (\\\"s\\\") may be specified. When not specified, the period defaults to the value specified within the packageserver.\",\n       \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(s|m|h))+$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"OLM Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

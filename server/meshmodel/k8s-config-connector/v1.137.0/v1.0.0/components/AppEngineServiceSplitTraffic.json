@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "appengine.cnrm.cloud.google.com/v1alpha1",
     "kind": "AppEngineServiceSplitTraffic",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"migrateTraffic\": {\n     \"description\": \"If set to true traffic will be migrated to this version.\",\n     \"type\": \"boolean\"\n    },\n    \"project\": {\n     \"description\": \"Immutable.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"split\": {\n     \"description\": \"Mapping that defines fractional HTTP traffic diversion to different versions within the service.\",\n     \"properties\": {\n      \"allocations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Mapping from version IDs within the service to fractional (0.000, 1] allocations of traffic for that version. Each version can be specified only once, but some versions in the service may not have any traffic allocation. Services that have traffic allocated cannot be deleted until either the service is deleted or their traffic allocation is removed. Allocations must sum to 1. Up to two decimal place precision is supported for IP-based splits and up to three decimal places is supported for cookie-based splits.\",\n       \"type\": \"object\"\n      },\n      \"shardBy\": {\n       \"description\": \"Mechanism used to determine which version a request is sent to. The traffic selection algorithm will be stable for either type until allocations are changed. Possible values: [\\\"UNSPECIFIED\\\", \\\"COOKIE\\\", \\\"IP\\\", \\\"RANDOM\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"allocations\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"split\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Engine Service Split Traffic\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
