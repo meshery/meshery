@@ -38,7 +38,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 			expectedError:    utils.ErrAttachAuthToken(fmt.Errorf("Not Set does not exist")),
 		},
 		{
-			name:             "",
+			name:             "Server Not Reachable",
 			httpMethod:       http.MethodGet,
 			urlPath:          "/",
 			hasToken:         true,
