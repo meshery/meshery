@@ -64,6 +64,18 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"description"}, " | "))),
 		},
 		{
+			Name:             "Given multiple missing flags trigger an error",
+			Args:             []string{"create", "-d", "integration test"},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   404,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"orgId", "name"}, " | "))),
+		},
+		{
 			Name:             "Given an invalid organization Id trigger an error",
 			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
 			URL:              "/api/workspaces",
