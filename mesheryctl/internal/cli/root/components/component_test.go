@@ -35,7 +35,7 @@ func TestComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", "invalidCommand")),
 		},
 		{
-			Name:             "Given no args aprovided nd flag count is false trigger an error",
+			Name:             "Given no args provided and flag count is false trigger an error",
 			Args:             []string{},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
@@ -46,7 +46,7 @@ func TestComponent(t *testing.T) {
 		},
 		{
 			Name:             "Given an empty args provided and flags count is false trigger an error",
-			Args:             []string{},
+			Args:             []string{""},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "",
