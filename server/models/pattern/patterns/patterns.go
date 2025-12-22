@@ -80,9 +80,11 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
-						errsMx.Lock()
-						errs = append(errs, err)
-						errsMx.Unlock()
+						func() {
+							errsMx.Lock()
+							defer errsMx.Unlock()
+							errs = append(errs, err)
+						}()
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
