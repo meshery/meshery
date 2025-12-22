@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 )
 
 func TestCreateWorkspace(t *testing.T) {
@@ -18,16 +19,63 @@ func TestCreateWorkspace(t *testing.T) {
 
 	tests := []utils.MesheryCommamdTest{
 		{
-			Name:             "Create workspace without arguments",
+			Name:             "Given no flags provided trigger an error",
 			Args:             []string{"create"},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
 			Fixture:          "",
-			ExpectedResponse: "create.workspace.missing.flag.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
 		},
 		{
-			Name:             "Create workspace successfully",
+			Name:             "Given missing flag orgId trigger an error",
+			Args:             []string{"create", "-n", "workspace-test", "-d", "integration test"},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+		},
+		{
+			Name:             "Given missing flag name trigger an error",
+			Args:             []string{"create", "--orgId", testOrgId, "-d", "integration test"},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+		},
+		{
+			Name:             "Given missing flag description trigger an error",
+			Args:             []string{"create", "--orgId", testOrgId, "-n", "workspace-test"},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+		},
+		{
+			Name:             "Given an invalid organization Id trigger an error",
+			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			HttpStatusCode:   404,
+			Fixture:          "create.workspace.api.nil.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    returnFailedCreateWorkspaceError("workspace-test-error", testOrgId),
+		},
+		{
+			Name:             "Given all requirements met, create workspace successfully",
 			Args:             []string{"create", "-n", "workspace-test", "-d", "integration test", "--orgId", testOrgId},
 			URL:              "/api/workspaces",
 			HttpMethod:       "POST",
@@ -35,26 +83,6 @@ func TestCreateWorkspace(t *testing.T) {
 			Fixture:          "create.workspace.api.response.golden",
 			ExpectedResponse: "create.workspace.success.output.golden",
 			ExpectError:      false,
-		},
-		{
-			Name:             "Create workspace fails with invalid organization ID",
-			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
-			URL:              "/api/workspaces",
-			HttpMethod:       "POST",
-			HttpStatusCode:   404,
-			Fixture:          "create.workspace.api.nil.response.golden",
-			ExpectedResponse: "create.workspace.error.output.golden",
-			ExpectError:      true,
-		},
-		{
-			Name:             "Create workspace fails when server not reachable",
-			Args:             []string{"create", "-n", "workspace-test-error", "-d", "integration test", "--orgId", testOrgId},
-			URL:              "/api/workspaces",
-			HttpMethod:       "POST",
-			HttpStatusCode:   -1,
-			Fixture:          "create.workspace.api.nil.response.golden",
-			ExpectedResponse: "create.workspace.server.error.output.golden",
-			ExpectError:      true,
 		},
 	}
 

@@ -42,21 +42,21 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
-			return returnNoArgProvidedError()
+			return returnInvalidArgumentProvidedError()
 		}
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", "invalidCommand"))
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", args[0]))
 		}
 
 		return nil
 	},
 }
 
-func returnNoArgProvidedError() error {
+func returnInvalidArgumentProvidedError() error {
 	errMsg := "Usage: mesheryctl exp workspace [subcommand]\nRun 'mesheryctl exp workspace --help' to see detailed help message"
 	return utils.ErrInvalidArgument(fmt.Errorf("no subcommand specified. %s", errMsg))
 }

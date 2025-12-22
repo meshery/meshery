@@ -25,8 +25,10 @@ func TestSearchComponent(t *testing.T) {
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.no.agrs.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage)),
 		},
 		{
 			Name:             "Search components with query parameter",

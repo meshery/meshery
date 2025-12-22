@@ -31,7 +31,7 @@ func TestWorkspaces(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    returnNoArgProvidedError(),
+			ExpectedError:    returnInvalidArgumentProvidedError(),
 		},
 		{
 			Name:             "Given invalid subcommand name provided trigger an error",

@@ -20,10 +20,11 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 )
+
+var listUsageErrorMessage = "Usage: mesheryctl exp workspace list --orgId [Organization ID]\nRun 'mesheryctl exp workspace list --help' to see detailed help message"
 
 var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
@@ -46,7 +47,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 		if orgIdFlag == "" {
 			const errorMsg = "[ Organization ID ] isn't specified\n\nUsage: \nmesheryctl  exp workspace list --orgId [Organization ID]\nmesheryctl  exp workspace list --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errorMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
 		}
 
 		return nil

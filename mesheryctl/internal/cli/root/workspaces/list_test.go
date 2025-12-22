@@ -24,8 +24,10 @@ func TestListWorkspaces(t *testing.T) {
 			Args:             []string{"list"},
 			URL:              "",
 			Fixture:          "list.workspace.api.response.golden",
-			ExpectedResponse: "list.workspace.no.orgID.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage)),
 		},
 		{
 			Name:             "List workspaces providing organization ID",

@@ -26,6 +26,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
@@ -37,9 +39,8 @@ Documentation for components can be found at https://docs.meshery.io/reference/m
 mesheryctl component search [query-text]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage))
 		}
 		return nil
 	},
@@ -75,4 +76,8 @@ mesheryctl component search [query-text]
 
 		return nil
 	},
+}
+
+func returnSearchComponentError() error {
+	return utils.ErrInvalidArgument(fmt.Errorf("no search query specified. %s", usageErrorMessage))
 }

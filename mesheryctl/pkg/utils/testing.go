@@ -21,6 +21,7 @@ import (
 	"github.com/meshery/meshkit/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -415,6 +416,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
 				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
 				assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.ExpectedError))
+				ResetCommandFlags(cmd, t)
 				return
 			}
 
@@ -434,6 +436,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("List %s test", commadName)
 	}
@@ -450,15 +453,15 @@ type MesheryCommamdTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
+	IsOutputGolden   bool  `default:"true"`
+	ExpectedError    error `default:"nil"`
 }
 
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
-
 	//initialize mock server for handling requests
 	StartMockery(t)
-
 	// create a test helper
 	testContext := NewTestHelper(t)
 
@@ -500,18 +503,28 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			err := cmd.Execute()
 
 			if err != nil {
+				// Keep this check to see if output is golden file during transition
+				if tt.IsOutputGolden {
+					// if we're supposed to get an error
+					if tt.ExpectError {
+						// write it in file
+						if *updateGoldenFile {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
 
-				if tt.ExpectError {
-
-					if *updateGoldenFile {
-						golden.Write(err.Error())
+						Equals(t, expectedResponse, err.Error())
+						return
 					}
-					expectedResponse := golden.Load()
-
-					Equals(t, expectedResponse, err.Error())
-					return
+					t.Fatal(err)
 				}
-				t.Error(err)
+				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
+				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
+				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
+				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
+				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
+				ResetCommandFlags(cmd, t)
+				return
 			}
 
 			actualResponse := b.String()
@@ -526,9 +539,21 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
+
+			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("Test '%s' executed", tt.Name)
 	}
-
 	StopMockery(t)
+}
+
+func ResetCommandFlags(c *cobra.Command, t *testing.T) {
+	c.Flags().VisitAll(func(f *pflag.Flag) {
+		if err := f.Value.Set(f.DefValue); err != nil {
+			t.Fatalf("failed to reset flag %q: %v", f.Name, err)
+		}
+	})
+	for _, sub := range c.Commands() {
+		ResetCommandFlags(sub, t)
+	}
 }
