@@ -261,7 +261,7 @@ function K8sContextMenu({
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
           <CustomTooltip title="Clusters">
             <IconButton
-              aria-label="contexts"
+              aria-label="clusters"
               className="k8s-icon-button"
               onClick={(e) => {
                 e.preventDefault();
@@ -302,12 +302,10 @@ function K8sContextMenu({
                     e.stopPropagation();
                     setShowFullContextMenu((prev) => !prev);
                   }}
-                  onMouseOver={(e) => {
-                    e.stopPropagation();
+                  onMouseOver={() => {
                     setAnchorEl(true);
                   }}
-                  onMouseLeave={(e) => {
-                    e.stopPropagation();
+                  onMouseLeave={() => {
                     setAnchorEl(false);
                   }}
                 >
