@@ -20,18 +20,20 @@ import (
 	"github.com/meshery/meshery/server/models"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type componentFlags struct {
+	count bool
+}
 
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	componentApiPath = "api/meshmodels/components"
+	componentApiPath       = "api/meshmodels/components"
+	componentFlagsProvided = &componentFlags{}
 )
 
 // ComponentCmd represents the mesheryctl component command
@@ -54,13 +56,14 @@ mesheryctl component search [component-name]
 mesheryctl component view [component-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 && !count {
+		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
+		if argsIsEmpty && !componentFlagsProvided.count {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -72,11 +75,8 @@ mesheryctl component view [component-name]
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
 		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-		err = cmd.Usage()
+
+		err := cmd.Usage()
 		if err != nil {
 			return err
 		}
@@ -86,7 +86,7 @@ mesheryctl component view [component-name]
 
 func init() {
 	ComponentCmd.AddCommand(availableSubcommands...)
-	ComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.count, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
