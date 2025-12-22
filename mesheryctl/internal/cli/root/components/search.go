@@ -77,7 +77,3 @@ mesheryctl component search [query-text]
 		return nil
 	},
 }
-
-func returnSearchComponentError() error {
-	return utils.ErrInvalidArgument(fmt.Errorf("no search query specified. %s", usageErrorMessage))
-}

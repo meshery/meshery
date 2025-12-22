@@ -46,7 +46,6 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		// Check if the orgID is provided
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 		if orgIdFlag == "" {
-			const errorMsg = "[ Organization ID ] isn't specified\n\nUsage: \nmesheryctl  exp workspace list --orgId [Organization ID]\nmesheryctl  exp workspace list --help' to see detailed help message"
 			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
 		}
 
