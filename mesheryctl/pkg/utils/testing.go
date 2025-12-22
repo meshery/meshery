@@ -18,9 +18,11 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshkit/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestHelper struct {
@@ -333,6 +335,8 @@ type MesheryListCommamdTest struct {
 	Fixture          string
 	ExpectedResponse string
 	ExpectError      bool
+	ExpectedError    error `default:"nil"`
+	IsOutputGolden   bool  `default:"true"`
 }
 
 func GetToken(t *testing.T) string {
@@ -347,10 +351,8 @@ func GetToken(t *testing.T) string {
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
-
 	//initialize mock server for handling requests
 	StartMockery(t)
-
 	// create a test helper
 	testContext := NewTestHelper(t)
 
@@ -359,6 +361,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+
 			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			TokenFlag = GetToken(t)
@@ -391,18 +394,28 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			w.Close()
 
 			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *updateGoldenFile {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
+				// Keep this check to see if output is golden file during transition
+				if tt.IsOutputGolden {
+					// if we're supposed to get an error
+					if tt.ExpectError {
+						// write it in file
+						if *updateGoldenFile {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
 
-					Equals(t, expectedResponse, err.Error())
-					return
+						Equals(t, expectedResponse, err.Error())
+						return
+					}
+					t.Fatal(err)
 				}
-				t.Fatal(err)
+				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
+				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
+				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
+				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
+				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
+				assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.ExpectedError))
+				return
 			}
 
 			_, errCopy := io.Copy(&buf, r)

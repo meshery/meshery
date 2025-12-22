@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -24,12 +25,34 @@ func TestComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "launch component with invalid subcommand name",
+			Name:             "Given invalid subcommand name provided trigger an error",
 			Args:             []string{"invalidCommand"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.invalid.subcommand.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", "invalidCommand")),
+		},
+		{
+			Name:             "Given no args aprovided nd flag count is false trigger an error",
+			Args:             []string{},
+			URL:              "",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("please provide a subcommand")),
+		},
+		{
+			Name:             "Given an empty args provided and flags count is false trigger an error",
+			Args:             []string{},
+			URL:              "",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("please provide a subcommand")),
 		},
 		{
 			Name:             "display components count",
@@ -38,6 +61,7 @@ func TestComponent(t *testing.T) {
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.list.count.output.golden",
 			ExpectError:      false,
+			ExpectedError:    nil,
 		},
 	}
 

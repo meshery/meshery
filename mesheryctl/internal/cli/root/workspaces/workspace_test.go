@@ -2,6 +2,7 @@ package workspaces
 
 import (
 	"flag"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -23,14 +24,26 @@ func TestWorkspaces(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "Display error when no args and flag provided",
+			Name:             "Given no argument provided trigger an error",
 			Args:             []string{},
 			URL:              "",
 			Fixture:          "list.workspace.empty.api.response.golden",
-			ExpectedResponse: "workspace.no.args.no.flags.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    returnNoArgProvidedError(),
+		},
+		{
+			Name:             "Given invalid subcommand name provided trigger an error",
+			Args:             []string{"invalidCommand"},
+			URL:              "",
+			Fixture:          "list.workspace.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", "invalidCommand")),
 		},
 	}
 
-	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "organization")
+	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "workspace")
 }
