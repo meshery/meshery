@@ -23,7 +23,7 @@ func TestComponent(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Given invalid subcommand name provided trigger an error",
 			Args:             []string{"invalidCommand"},

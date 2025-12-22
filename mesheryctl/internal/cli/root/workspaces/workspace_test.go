@@ -22,7 +22,7 @@ func TestWorkspaces(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Given no argument provided trigger an error",
 			Args:             []string{},
