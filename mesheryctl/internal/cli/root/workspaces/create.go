@@ -18,18 +18,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var workspacePayload workspace.WorkspacePayload
-var createMissingArgumentsErrorMessage = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
+var createMissingArgumentsErrorMessage = "[ %s ] not specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
 
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
@@ -41,8 +41,18 @@ Documentation for models can be found at https://docs.meshery.io/reference/meshe
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if workspacePayload.OrganizationID == "" || workspacePayload.Name == "" || workspacePayload.Description == "" {
-			return utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage))
+		missingArgs := []string{}
+		if workspacePayload.OrganizationID == "" {
+			missingArgs = append(missingArgs, "orgId")
+		}
+		if workspacePayload.Name == "" {
+			missingArgs = append(missingArgs, "name")
+		}
+		if workspacePayload.Description == "" {
+			missingArgs = append(missingArgs, "description")
+		}
+		if len(missingArgs) > 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join(missingArgs, " | ")))
 		}
 
 		return nil

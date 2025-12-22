@@ -1,12 +1,13 @@
 package workspaces
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 )
 
 func TestCreateWorkspace(t *testing.T) {
@@ -27,7 +28,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"orgId", "name", "description"}, " | "))),
 		},
 		{
 			Name:             "Given missing flag orgId trigger an error",
@@ -38,7 +39,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"orgId"}, " | "))),
 		},
 		{
 			Name:             "Given missing flag name trigger an error",
@@ -49,7 +50,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"name"}, " | "))),
 		},
 		{
 			Name:             "Given missing flag description trigger an error",
@@ -60,7 +61,7 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New(createMissingArgumentsErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join([]string{"description"}, " | "))),
 		},
 		{
 			Name:             "Given an invalid organization Id trigger an error",
