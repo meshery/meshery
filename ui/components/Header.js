@@ -259,61 +259,63 @@ function K8sContextMenu({
     <>
       <div>
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
-          <IconButton
-            aria-label="contexts"
-            className="k8s-icon-button"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowFullContextMenu((prev) => !prev);
-            }}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(true);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(false);
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            style={{
-              marginRight: '0.5rem',
-            }}
-          >
-            <CBadgeContainer>
-              <img
-                className="k8s-image"
-                src={
-                  connectionMetadataState &&
-                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/kubernetes.svg'
-                }
-                onError={(e) => {
-                  e.target.src = '/static/img/kubernetes.svg';
-                }}
-                width="24px"
-                height="24px"
-                style={{ objectFit: 'contain' }}
-              />
-              <CBadge
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFullContextMenu((prev) => !prev);
-                }}
-                onMouseOver={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(true);
-                }}
-                onMouseLeave={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(false);
-                }}
-              >
-                {contexts?.total_count || 0}
-              </CBadge>
-            </CBadgeContainer>
-          </IconButton>
+          <CustomTooltip title="Clusters">
+            <IconButton
+              aria-label="contexts"
+              className="k8s-icon-button"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowFullContextMenu((prev) => !prev);
+              }}
+              onMouseOver={(e) => {
+                e.preventDefault();
+                setAnchorEl(true);
+              }}
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                setAnchorEl(false);
+              }}
+              aria-owns={open ? 'menu-list-grow' : undefined}
+              aria-haspopup="true"
+              style={{
+                marginRight: '0.5rem',
+              }}
+            >
+              <CBadgeContainer>
+                <img
+                  className="k8s-image"
+                  src={
+                    connectionMetadataState &&
+                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                      : '/static/img/kubernetes.svg'
+                  }
+                  onError={(e) => {
+                    e.target.src = '/static/img/kubernetes.svg';
+                  }}
+                  width="24px"
+                  height="24px"
+                  style={{ objectFit: 'contain' }}
+                />
+                <CBadge
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowFullContextMenu((prev) => !prev);
+                  }}
+                  onMouseOver={(e) => {
+                    e.stopPropagation();
+                    setAnchorEl(true);
+                  }}
+                  onMouseLeave={(e) => {
+                    e.stopPropagation();
+                    setAnchorEl(false);
+                  }}
+                >
+                  {contexts?.total_count || 0}
+                </CBadge>
+              </CBadgeContainer>
+            </IconButton>
+          </CustomTooltip>
         </CanShow>
 
         <Slide
