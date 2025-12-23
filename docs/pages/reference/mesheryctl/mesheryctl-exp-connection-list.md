@@ -20,7 +20,7 @@ List all available connections.
 Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection list [flags]
+mesheryctl connection list [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ mesheryctl exp connection list [flags]
 List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection list
+mesheryctl connection list
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl exp connection list
 List all the connections with page number
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection list --page [page-number]
+mesheryctl connection list --page [page-number]
 
 </div>
 </pre> 
@@ -46,7 +46,7 @@ mesheryctl exp connection list --page [page-number]
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection list --count
+mesheryctl connection list --count
 
 </div>
 </pre> 
