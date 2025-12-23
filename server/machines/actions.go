@@ -34,7 +34,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
