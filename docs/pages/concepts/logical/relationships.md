@@ -107,7 +107,7 @@ This Relationship type configures the networking between one or more components.
            <figure><figcaption>4. Edge - Network: Service to Endpoint<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=ab35416d-7cf7-4540-8b2e-7271ffeadde2"> (open in playground)</a></figcaption>
            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_endpoints_relationship.svg"/>
            </figure>
-           <figure><figcaption>5. Edge - Network: Service to Deployment<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=df5ec300-76d7-49a4-b049-6d507e685e95"> (open in playground)</a></figcaption>
+           <figure><figcaption>5. Edge - Network: Service to Deployment<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&amp;design=df5ec300-76d7-49a4-b049-6d507e685e95"> (open in playground)</a></figcaption>
            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.svg"/>
            </figure>
    </details>
@@ -149,7 +149,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 <details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
            <br>
-           <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7fafed12-f261-4dd3-b7e4-85cac11d9d47"> (open in playground)</a></figcaption>
+           <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&amp;design=7fafed12-f261-4dd3-b7e4-85cac11d9d47"> (open in playground)</a></figcaption>
            <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.svg">
            </figure>
    </details>
