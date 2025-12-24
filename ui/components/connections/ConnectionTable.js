@@ -322,7 +322,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       });
   };
 
-  const handleUpdateConnection = async (id, newName) => {
+  const handleUpdateConnection = React.useCallback(async (id, newName) => {
     if (!id || !newName) return false;
     try {
       await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
@@ -338,7 +338,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       });
       return false;
     }
-  };
+  }, [getConnections, notify, updateConnectionByIdMutator]);
 
   const handleDeleteConnection = async (connectionId, connectionKind) => {
     if (connectionId) {
@@ -691,7 +691,10 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                   autoFocus
                   onClick={(e) => e.stopPropagation()}
                   onBlur={(e) => saveChangedName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && saveChangedName(e.target.value)}
+                  onKeyDown={(e) => { 
+                    if (e.key === 'Enter') saveChangedName(e.target.value); 
+                    else if (e.key === 'Escape') setEditId(null); 
+                  }}              
                 />
               ) : (
                 <Typography
@@ -700,7 +703,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                     e.stopPropagation();
                     setEditId(connectionId);
                   }}
-                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  sx={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
                 >
                   {value}
                 </Typography>
