@@ -1,6 +1,6 @@
 ---
 layout: tutorials
-title: Canary Deployment using Meshery Playground
+title: Exploring Canary Deployments in Kubernetes
 abstract: Learn how to work with Canary Deployment using Meshery Playground
 permalink: guides/tutorials/canary-deployment
 model: kubernetes
@@ -15,7 +15,7 @@ abstract: "Step-by-step tutorial to perform traffic shifting (Canary Deployment)
 
 ### Introduction
 
-In canary deployments, a new version of an application is introduced to a small portion of users first, reducing risk by limiting exposure to potential bugs. Meshery Playground provides an interactive Kubernetes sandbox to design and deploy such scenarios. In this tutorial, we use Meshery’s [Kanvas](https://playground.meshery.io/extension/meshmap/) interface to deploy two versions of a sample app and configure an NGINX Ingress that splits traffic between them (a “canary” release). We’ll configure the Ingress so that, for example, 90% of requests go to the stable version and 10% to the new version. Meshery Playground make this hands-on learning easy and fun!
+In canary deployments, a new version of an application is introduced to a small portion of users first, reducing risk by limiting exposure to potential bugs. Meshery Playground provides an interactive Kubernetes sandbox to design and deploy such scenarios. In this tutorial, we use Meshery’s [Kanvas](https://playground.meshery.io/extension/meshmap/) interface to deploy two versions of a sample app and configure an NGINX Ingress that splits traffic between them (a “canary” release). We’ll configure the Ingress so that, for example, 90% of requests go to the stable version and 10% to the new version. Meshery Playground makes this hands-on learning easy and fun!
 
 > **_NOTE:_** If this is your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](https://docs.meshery.io/guides/tutorials/kubernetes-pods) tutorial first.
 
@@ -40,7 +40,7 @@ Learn how to create, manage, and explore _Canary Deployment_.
 
 #### Access Meshery Playground
 
-- Log in to the [Meshery Playground](https://play.meshery.io) using your credentials.  
+- Log in to the [Meshery Playground](https://playground.meshery.io) using your credentials.  
 - On successful login, you should be at the dashboard. Close the **Where do you want to start?** popup (if required).  
 - Click **Kanvas** from the left menu to navigate to the [_Kanvas_ design](https://kanvas.new/extension/meshmap) page.
   ![](./kubernetes-deployments/2025-02-27_16-59.png)
@@ -51,13 +51,15 @@ Learn how to create, manage, and explore _Canary Deployment_.
 
 1. In the Kanvas Design mode, from the floating dock below, click the **Kubernetes** icon and search for Deployment. Drag a Deployment onto the canvas and give it a descriptive Name (e.g. `app-primary`). Namespace default is fine.
 2. The Configuration modal will open. In the modal, set the **Replicas** to 1. Under **Selector** and click **MatchLabels**. Set a _matchLabel_ pair. Here we have set `app:primary`.
-3. Next, expand **Templates** and open **Metadata** configuration modal. On the _metadata_ modal, click **+ Add Item** under **Labels** and set the label to the same key-value pair as in the previous step. Here it is `app:primary`.
-4. While still under **Templates** and click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** under **Containers**. This will create a container, **Containers 1**.
+3. Next, expand **Template** and open **Metadata** configuration modal. On the _metadata_ modal, click **+ Add Item** under **Labels** and set the label to the same key-value pair as in the previous step. Here it is `app:primary`.
+4. While still under **Template** and click **Spec** to load the _spec_ configuration modal. Then scroll down and click **+ Add Item** under **Containers**. This will create a container, **Containers 1**.
 5. Expand **Containers-1** and fill in the mandatory details such as _Image_ and _Name_. For this deployment we set:
 - **Image**: `nginx:latest`
 - **Name**: `primary-web`. 
 - **Port->Ports 1->Container Port**: `80`
 Label the deployment.
+    ![](./canary-deployment/12.png)
+
 6. Click on an empty area in the canvas to close the configuration modals. The canvas now has the primary _Deployment_.
 
     ![](./canary-deployment/01.png)
@@ -67,14 +69,14 @@ Label the deployment.
 1. From the Kubernetes icon, drag a **Service** component onto the canvas and name it (e.g. `service-primary`).
 2. In the Service’s configuration modal, find **Ports**, click on **+ Add Item** option under it and expand **Ports 1**, set **Port** to 80 and **TargetPort** to 80.
 3. Under Selector, enter the same label used by the deployment: `app:primary`. Also, Give a Label to the Service.
-4. Exit the panel. Our `service-primary` Service should be connected to the Deployment. If its not, you can drag a Network arrow from the Service to the Deployment. This ensures traffic to the service is routed to the pods. 
+4. Exit the panel. Our `service-primary` Service should be connected to the Deployment. If it's not, you can drag a Network arrow from the Service to the Deployment. This ensures traffic to the service is routed to the pods. 
 5. Our primary app design is now finished and it should look similar to the screenshot below.
 
     ![](./canary-deployment/02.png)
 
 #### Create the Canary Deployment
 
-1. Still in Design mode, drag another Deployment onto the canvas. Name it `app-canary`.
+1. Still in Design mode, drag another Deployment onto the canvas. Rename it `app-canary`.
 2. Configure it similarly: set **Replicas** to 1. Under Selector, MatchLabels, use a different label, `app:canary`, and apply the same label under **Template** > **Metadata** > **Labels**.
 3. Under **Template > Spec**, add a container: click **+ Add Item** under Containers, expand **Containers 1** set Image to the same image (`nginx:latest`), Name to `canary-web` and Container Port to `80`. (You could also pick a different Image version if desired.)
 4. Label the Deployment with `app:canary`.
@@ -84,7 +86,7 @@ Label the deployment.
 
 #### Add a Service for the Canary Deployment
 
-1. Drag a new Service onto the canvas, name it (e.g. `service-canary`).
+1. Drag a new Service onto the canvas, rename it (e.g. `service-canary`).
 2. In its configuration modal: Under **Ports** > **Ports 1**, set **Port** to 80 and **TargetPort** to 80. Under **Selector**, use the canary pod’s label `app:canary`. Give a Label to the Service.
 3. Close the modal. Connect `service-canary` to the canary Deployment with a Network arrow.
 
@@ -142,13 +144,15 @@ Create a Network link between the ingress components and their respective servic
 
 
 
-> **_NOTE:_** Ingress objects won’t work by themselves. You must have an Ingress Controller running in your cluster (e.g., NGINX Ingress Controller). If you don’t, install it before continuing.
+> **_NOTE:_** Ingress objects won’t work by themselves. You must have an Ingress Controller running in your cluster (e.g., an NGINX Ingress Controller). If you don’t, install it before continuing.
 
-For this tutorial, we have used:
+For this tutorial, I have used:
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 ```
+> **_NOTE:_** This command installs the NGINX Ingress Controller specifically for kind (Kubernetes in Docker).
+If you are using a different Kubernetes environment (such as Minikube, cloud-managed clusters, or bare metal), you should follow the official installation instructions for your platform.
 
 #### Deploy the Design
 
