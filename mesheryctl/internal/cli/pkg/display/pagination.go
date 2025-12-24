@@ -36,7 +36,9 @@ func HandlePaginationAsync[T any](
 
 	for {
 		// Clear the terminal screen
-		utils.ClearLine()
+		if currentPage > 0 {
+			utils.ClearLine()
+		}
 
 		// Fetch data for the current page
 		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
