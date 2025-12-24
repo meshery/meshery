@@ -11,6 +11,7 @@ import {
   Box,
   IconButton,
   Typography,
+  TextField,
   Table,
   Grid2,
   Button,
@@ -99,6 +100,7 @@ const ACTION_TYPES = {
 };
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
+  const [editId, setEditId] = React.useState(null);
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -318,6 +320,24 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           details: err.toString(),
         });
       });
+  };
+
+  const handleUpdateConnection = async (id, newName) => {
+    if (!id || !newName) return false;
+    try {
+      await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
+      notify({ message: `Connection name updated`, event_type: EVENT_TYPES.SUCCESS });
+      getConnections();
+      return true;
+    } catch (err) {
+      console.error('Error updating name:', err);
+      notify({
+        message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error || err.data?.message || err.toString()}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: err.toString(),
+      });
+      return false;
+    }
   };
 
   const handleDeleteConnection = async (connectionId, connectionKind) => {
@@ -642,13 +662,49 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           );
         },
         customBodyRender: (value, tableMeta) => {
+          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
+          const saveChangedName = async (newName) => {
+            const trimmedName = newName.trim();
+            if (!trimmedName) {
+              notify({ message: 'Name cannot be empty', event_type: EVENT_TYPES.ERROR });
+              return;
+            }
+            if (trimmedName === value) {
+              setEditId(null);
+              return;
+            }
+            const success = await handleUpdateConnection(connectionId, trimmedName);
+            if (success) {
+              setEditId(null);
+            }
+          };
           return (
-            <>
+            <Box display="flex" flexDirection="column">
+              {editId === connectionId ? (
+                <TextField
+                  defaultValue={value}
+                  autoFocus
+                  onClick={(e) => e.stopPropagation()}
+                  onBlur={(e) => saveChangedName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && saveChangedName(e.target.value)}
+                />
+              ) : (
+                <Typography
+                  variant="body2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditId(connectionId);
+                  }}
+                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                >
+                  {value}
+                </Typography>
+              )}
               <TooltipWrappedConnectionChip
                 tooltip={server && 'Server: ' + server}
                 title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
@@ -693,7 +749,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                   </div>
                 </CustomTextTooltip>
               )}
-            </>
+            </Box>
           );
         },
       },
