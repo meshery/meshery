@@ -11,7 +11,7 @@ list: include
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
 
-Meshery UI is built on React and Next.js. In nearly all cases, while contributing to Meshery UI, you will need to build and run Meshery Server as well. Meshery Server is written in `Go` (Golang) and leverages Go Modules. To make building of each component easier a `Makefile` is included in the main repository folder. Use `make` to build any and all components.
+Meshery UI is built on React and Next.js (using SWC for compilation). In nearly all cases, while contributing to Meshery UI, you will need to build and run Meshery Server as well. Meshery Server is written in `Go` (Golang) and leverages Go Modules. To make building of each component easier a `Makefile` is included in the main repository folder. Use `make` to build any and all components.
 
 ## Architecture
 
