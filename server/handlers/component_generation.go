@@ -9,7 +9,7 @@ import (
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/generators/artifacthub"
+	"github.com/meshery/meshkit/generators/artifacthub" 
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
