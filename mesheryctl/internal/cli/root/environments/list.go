@@ -39,7 +39,10 @@ https://docs.meshery.io/reference/mesheryctl/environment/list`,
 mesheryctl environment list --orgID <org-id>
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		orgID, _ := cmd.Flags().GetString("orgID")
+        orgID, err := cmd.Flags().GetString("orgID")
+        if err != nil {
+            return err
+        }
 		if orgID == "" {
 			return utils.ErrInvalidArgument(
 				errors.New(
