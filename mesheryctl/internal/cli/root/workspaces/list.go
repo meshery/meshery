@@ -16,7 +16,6 @@ package workspaces
 import (
 	"fmt"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -24,6 +23,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type workspaceListFlags struct {
+	OrganizationID string
+	Count          bool
+	Page           int
+	PageSize       int
+}
+
+var workspaceListFlagsProvided workspaceListFlags
 var listUsageErrorMessage = "Usage: mesheryctl exp workspace list --orgId [Organization ID]\nRun 'mesheryctl exp workspace list --help' to see detailed help message"
 
 var listWorkspaceCmd = &cobra.Command{
@@ -43,48 +50,42 @@ mesheryctl exp workspace list --orgId [orgId] --count
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
-		// Check if the orgID is provided
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
-		if orgIdFlag == "" {
+		if workspaceListFlagsProvided.OrganizationID == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
 		}
-
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		orgID, _ := cmd.Flags().GetString("orgId")
+		orgID := workspaceListFlagsProvided.OrganizationID
 
-		workspaceResponse, err := api.Fetch[workspace.WorkspacePage](fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID))
-		if err != nil {
-			return err
-		}
-
-		header := []string{"ID", "Name", "Description", "Created At", "Updated At"}
-		rows := make([][]string, len(workspaceResponse.Workspaces))
-		for i, workspace := range workspaceResponse.Workspaces {
-			rows[i] = []string{workspace.ID.String(), workspace.Name, workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()}
-		}
-
-		count, _ := cmd.Flags().GetBool("count")
-		dataToDisplay := display.DisplayedData{
-			DataType:         "workspaces",
-			Header:           header,
-			Rows:             rows,
-			Count:            int64(workspaceResponse.TotalCount),
-			DisplayCountOnly: count,
+		modelData := display.DisplayDataAsync{
+			UrlPath:          workspacesApiPath + "?orgID=" + orgID,
+			DataType:         "workspace",
+			Header:           []string{"ID", "Name", "Description", "Created At", "Updated At"},
+			Page:             workspaceListFlagsProvided.Page,
+			PageSize:         workspaceListFlagsProvided.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 
-		return nil
 	},
 }
 
+func generateModelDataToDisplay(workspacePage *workspace.WorkspacePage) ([][]string, int64) {
+	rows := [][]string{}
+
+	for _, workspace := range workspacePage.Workspaces {
+		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+	}
+
+	return rows, int64(workspacePage.TotalCount)
+}
+
 func init() {
-	listWorkspaceCmd.Flags().BoolP("count", "", false, "total number of registered workspaces")
-	listWorkspaceCmd.Flags().StringP("orgId", "o", "", "Organization ID")
+	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlagsProvided.Count, "count", "c", false, "[optional] count total of registered workspaces")
+	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlagsProvided.OrganizationID, "orgId", "o", "", "Organization ID")
+	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlagsProvided.Page, "page", "p", 0, "[optional] page number for paginated results")
+	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlagsProvided.PageSize, "pagesize", "s", 0, "[optional] number of workspaces per page for paginated results")
 }
