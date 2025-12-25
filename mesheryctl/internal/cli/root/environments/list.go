@@ -35,7 +35,7 @@ var listEnvironmentCmd = &cobra.Command{
 Documentation:
 https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
-# List all registered environments for an organization
+// List all registered environments for an organization
 mesheryctl environment list --orgID <org-id>
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
