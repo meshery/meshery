@@ -67,14 +67,8 @@ mesheryctl environment list --orgID <org-id>
 			return utils.ErrFetchEnvironments(err)
 		}
 
-		header := []string{
-			"ID",
-			"Name",
-			"Organization ID",
-			"Description",
-			"Created At",
-			"Updated At",
-		}
+		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
+
 
 		rows := [][]string{}
 		for _, env := range environmentResponse.Environments {
