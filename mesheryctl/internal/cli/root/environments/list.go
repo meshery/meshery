@@ -60,7 +60,6 @@ mesheryctl environment list --orgID <org-id>
 			return utils.ErrInvalidOrgID(err)
 		}
 
-		// Fetch environments from API
 		environmentResponse, err := api.Fetch[environments.EnvironmentPage](
 			fmt.Sprintf("api/environments?orgID=%s", orgID),
 		)
