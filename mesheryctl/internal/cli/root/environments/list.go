@@ -68,7 +68,6 @@ mesheryctl environment list --orgID <org-id>
 			return utils.ErrFetchEnvironments(err)
 		}
 
-		// Prepare table output
 		header := []string{
 			"ID",
 			"Name",
