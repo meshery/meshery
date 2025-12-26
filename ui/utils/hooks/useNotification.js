@@ -10,10 +10,9 @@ import { v4 } from 'uuid';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
 import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/NotificationCenter/constants';
-import React from 'react';
+import React, { useCallback } from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
-import { useCallback } from 'react';
 
 /**
  * A React hook to facilitate emitting events from the client.
