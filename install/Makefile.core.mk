@@ -59,7 +59,7 @@ MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
 PORT:=9081
 # OpenTelemetry Config (Ansi-C string format)
-OTEL_CONFIG=$$'service_name: meshery-cloud\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
+OTEL_CONFIG=$$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------
