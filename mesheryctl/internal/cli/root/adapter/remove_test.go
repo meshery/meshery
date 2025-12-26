@@ -39,6 +39,12 @@ func TestRemoveMesh(t *testing.T) {
 			Args: []string{"remove", "linkerd"},
 			URLs: []utils.MockURL{
 				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
@@ -51,8 +57,14 @@ func TestRemoveMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Remove Linkerd with Namespace",
-			Args: []string{"remove", "linkerd", " --namespace", " linkerd-ns"},
+			Args: []string{"remove", "linkerd", "--namespace", "linkerd-ns"},
 			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
@@ -68,6 +80,12 @@ func TestRemoveMesh(t *testing.T) {
 			Name: "Test Remove Cilium ",
 			Args: []string{"remove", "cilium"},
 			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",

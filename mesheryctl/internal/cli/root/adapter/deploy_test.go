@@ -42,6 +42,12 @@ func TestDeployMesh(t *testing.T) {
 			Args: []string{"deploy", "istio"},
 			URLs: []utils.MockURL{
 				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
@@ -56,6 +62,12 @@ func TestDeployMesh(t *testing.T) {
 			Name: "Test Deploy App Mesh",
 			Args: []string{"deploy", "app-mesh"},
 			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
@@ -72,6 +84,12 @@ func TestDeployMesh(t *testing.T) {
 			Args: []string{"deploy", "nginx-sm"},
 			URLs: []utils.MockURL{
 				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
@@ -84,8 +102,14 @@ func TestDeployMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Deploy Linkerd with namespace",
-			Args: []string{"deploy", "linkerd", " --namespace", " linkerd-ns"},
+			Args: []string{"deploy", "linkerd", "--namespace", "linkerd-ns"},
 			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/system/sync",
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/system/adapter/operation",
