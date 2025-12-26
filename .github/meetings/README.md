@@ -27,7 +27,7 @@ The meeting minutes are updated automatically through the GitHub Actions workflo
 ### Required Secrets
 
 The workflow requires the following GitHub secrets to be configured:
-- `DISCOURSE_URL`: The base URL of the Discourse forum (e.g., `https://discuss.layer5.io/`)
+- `DISCOURSE_URL`: The base URL of the Discourse forum (e.g., `https://discuss.meshery.io/`)
 - `MESHERY_CI`: GitHub token for committing changes
 
 ## Manual Updates
@@ -42,6 +42,6 @@ bash .github/scripts/fetch_meeting_minutes.sh
 ## Source
 
 Meeting minutes are sourced from:
-- Forum: https://discuss.layer5.io/
+- Forum: https://discuss.meshery.io/
 - Tag: meetings
-- URL: https://discuss.layer5.io/tag/meetings
+- URL: https://discuss.meshery.io/tag/meetings

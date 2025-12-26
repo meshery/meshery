@@ -7,6 +7,7 @@ Filters,View Filters,View all public and published filters of other team members
 Catalog Requests,View Catalog Requests,View the catalog publication request queue,,,,,X,,X,X,Chargeback,30b68d69-d199-48fd-b4ff-54b5282c5c03,X,FALSE
 Catalog Requests,Approve Catalog Request,Approve catalog publication requests,,,,,X,,X,X,Chargeback,66fbc8c0-b08a-494b-8c60-68ee1b607176,X,FALSE
 Catalog Requests,Deny Catalog Request,Deny catalog publication requests,,,,,X,,X,X,Chargeback,b9137717-a20a-44e8-a2f9-94dc3d1a6dcb,X,FALSE
+,,,,,,,,,,,,,,FALSE
 Designs,Create new design,Create new Meshery design,X,X,,,X,,X,X,Catalog Management,14bd933e-83b7-464d-9a4d-d8c8eb9682ab,X,TRUE
 Designs,Import Design,Import a design,X,X,,,X,,X,X,Catalog Management,cc040d21-3160-4a96-8efa-833487a234cd,X,TRUE
 Designs,Publish Design,Publish a design,X,X,,,X,,X,X,Catalog Management,9e66bdec-4177-42f9-8cec-d9eb52a12c38,X,FALSE
