@@ -85,29 +85,17 @@ type AnonymousFlowResponse struct {
 // to support both string UUID and Go array (raw bytes) formats for user_id.
 // This ensures compatibility with different remote provider implementations.
 func (a *AnonymousFlowResponse) UnmarshalJSON(data []byte) error {
-	// Define an alias type to avoid recursion during unmarshaling
-	type Alias AnonymousFlowResponse
-	
-	// First, try to unmarshal as a raw JSON object to check the user_id format
+	// First, try to unmarshal as a raw JSON object to inspect the user_id format
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 	
-	// Create a temporary struct to hold the parsed data
-	aux := &struct {
-		AccessToken string `json:"access_token"`
-		*Alias
-	}{
-		Alias: (*Alias)(a),
-	}
-	
-	// Unmarshal access_token normally
+	// Unmarshal access_token field
 	if accessTokenRaw, ok := raw["access_token"]; ok {
-		if err := json.Unmarshal(accessTokenRaw, &aux.AccessToken); err != nil {
+		if err := json.Unmarshal(accessTokenRaw, &a.AccessToken); err != nil {
 			return err
 		}
-		a.AccessToken = aux.AccessToken
 	}
 	
 	// Handle user_id field - support both string UUID and byte array formats
@@ -136,10 +124,11 @@ func (a *AnonymousFlowResponse) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 		
-		// If both failed, return an error
+		// If both formats failed, return an error
 		return fmt.Errorf("user_id field is neither a valid UUID string nor a byte array")
 	}
 	
+	// user_id is optional (omitempty), so missing field is OK
 	return nil
 }
 
