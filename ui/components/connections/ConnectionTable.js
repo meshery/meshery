@@ -71,7 +71,6 @@ import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { set } from 'lodash';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -331,7 +330,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       try {
         await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
         notify({ message: `Connection name updated`, event_type: EVENT_TYPES.SUCCESS });
-        // getConnections();
         return true;
       } catch (err) {
         console.error('Error updating name:', err);
@@ -670,38 +668,17 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         },
         customBodyRender: (value, tableMeta) => {
           const connectionId = tableMeta.rowData[0];
-
-                    console.log('RENDER CELL', {
-  editId,
-  connectionId,
-  equal: editId === connectionId,
-});
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
-          const saveChangedName = async (newName) => {
-            const trimmedName = newName.trim();
-            if (!trimmedName) {
-              notify({ message: 'Name cannot be empty', event_type: EVENT_TYPES.ERROR });
-              return;
-            }
-            if (trimmedName === editValue.trim()) {
-              setEditId(null);
-              return;
-            }
-            const success = await handleUpdateConnection(connectionId, trimmedName);
-            if (success)setEditId(null);
-            
-          };
           return (
             <Box display="flex" flexDirection="column">
                 <Typography
                   variant="body2"
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('CLICK', { connectionId });
                     setEditAnchorEl(e.currentTarget);
                     setEditValue(value);
                     setEditId(connectionId);
