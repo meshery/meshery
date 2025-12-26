@@ -1,59 +1,24 @@
 {
   "meshAdapters": [
     {
-      "adapter_location": "meshery-istio:10000",
-      "name": "ISTIO",
-      "version": "v0.8.0",
-      "git_commit_sha": "abc1234",
-      "ops": [
-        {"key": "istio", "value": "Istio Service Mesh"},
-        {"key": "bookinfo", "value": "Istio Book Info Application", "category": 1},
-        {"key": "smi_conformance", "value": "SMI Conformance", "category": 3}
-      ]
+      "adapter_location": "localhost:10000",
+      "name": "ISTIO"
     },
     {
-      "adapter_location": "meshery-linkerd:10001",
-      "name": "LINKERD",
-      "version": "v0.8.1",
-      "git_commit_sha": "def5678",
-      "ops": [
-        {"key": "linkerd", "value": "Linkerd Service Mesh"},
-        {"key": "emojivoto", "value": "EmojiVoto Application", "category": 1},
-        {"key": "smi_conformance", "value": "SMI Conformance", "category": 3}
-      ]
+      "adapter_location": "localhost:10001",
+      "name": "LINKERD"
     },
     {
-      "adapter_location": "meshery-app-mesh:10005",
-      "name": "APP_MESH",
-      "version": "v0.8.0",
-      "git_commit_sha": "ghi9012",
-      "ops": [
-        {"key": "app_mesh", "value": "AWS App Mesh"},
-        {"key": "custom", "value": "Custom YAML", "category": 4}
-      ]
+      "adapter_location": "localhost:10005",
+      "name": "APP_MESH"
     },
     {
-      "adapter_location": "meshery-nginx-sm:10010",
-      "name": "NGINX_SERVICE_MESH",
-      "version": "v0.8.0",
-      "git_commit_sha": "jkl3456",
-      "ops": [
-        {"key": "nginx_service_mesh", "value": "Nginx Service Mesh"},
-        {"key": "custom", "value": "Custom YAML", "category": 4}
-      ]
+      "adapter_location": "localhost:10010",
+      "name": "NGINX_SERVICE_MESH"
     },
     {
-      "adapter_location": "meshery-cilium:10012",
-      "name": "CILIUM_SERVICE_MESH",
-      "version": "v0.8.0",
-      "git_commit_sha": "mno7890",
-      "ops": [
-        {"key": "cilium_service_mesh", "value": "Cilium Service Mesh"},
-        {"key": "custom", "value": "Custom YAML", "category": 4}
-      ]
+      "adapter_location": "localhost:10012",
+      "name": "CILIUM_SERVICE_MESH"
     }
-  ],
-  "anonymousUsageStats": true,
-  "anonymousPerfResults": true,
-  "updated_at": "2025-12-26T12:53:03.729062529+05:30"
+  ]
 }

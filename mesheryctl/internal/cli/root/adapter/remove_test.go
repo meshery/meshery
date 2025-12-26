@@ -78,7 +78,7 @@ func TestRemoveMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Remove Cilium ",
-			Args: []string{"remove", "cilium"},
+			Args: []string{"remove", "cilium", "service", "mesh"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",

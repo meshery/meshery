@@ -81,7 +81,7 @@ func TestDeployMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Deploy Nginx",
-			Args: []string{"deploy", "nginx-sm"},
+			Args: []string{"deploy", "nginx", "service", "mesh"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -166,5 +166,4 @@ func TestDeployMesh(t *testing.T) {
 		t.Log("Mesh Deploy test Passed")
 	}
 	utils.StopMockery(t)
-
 }
