@@ -71,6 +71,7 @@ import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { set } from 'lodash';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -101,6 +102,8 @@ const ACTION_TYPES = {
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const [editId, setEditId] = React.useState(null);
+  const [editValue, setEditValue] = React.useState('');
+  const [editAnchorEl, setEditAnchorEl] = React.useState(null);
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -322,23 +325,27 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       });
   };
 
-  const handleUpdateConnection = React.useCallback(async (id, newName) => {
-    if (!id || !newName) return false;
-    try {
-      await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
-      notify({ message: `Connection name updated`, event_type: EVENT_TYPES.SUCCESS });
-      getConnections();
-      return true;
-    } catch (err) {
-      console.error('Error updating name:', err);
-      notify({
-        message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${err.error || err.data?.message || err.toString()}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: err.toString(),
-      });
-      return false;
-    }
-  }, [getConnections, notify, updateConnectionByIdMutator]);
+  const handleUpdateConnection = React.useCallback(
+    async (id, newName) => {
+      if (!id || !newName) return false;
+      try {
+        await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
+        notify({ message: `Connection name updated`, event_type: EVENT_TYPES.SUCCESS });
+        // getConnections();
+        return true;
+      } catch (err) {
+        console.error('Error updating name:', err);
+        const msg = err?.data?.message || err?.data || err?.error || err?.message || 'Failed to update connection';
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${msg}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+        return false;
+      }
+    },
+    [notify, updateConnectionByIdMutator],
+  );
 
   const handleDeleteConnection = async (connectionId, connectionKind) => {
     if (connectionId) {
@@ -662,7 +669,13 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           );
         },
         customBodyRender: (value, tableMeta) => {
-          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+          const connectionId = tableMeta.rowData[0];
+
+                    console.log('RENDER CELL', {
+  editId,
+  connectionId,
+  equal: editId === connectionId,
+});
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
@@ -674,40 +687,29 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
               notify({ message: 'Name cannot be empty', event_type: EVENT_TYPES.ERROR });
               return;
             }
-            if (trimmedName === value) {
+            if (trimmedName === editValue.trim()) {
               setEditId(null);
               return;
             }
             const success = await handleUpdateConnection(connectionId, trimmedName);
-            if (success) {
-              setEditId(null);
-            }
+            if (success)setEditId(null);
+            
           };
           return (
             <Box display="flex" flexDirection="column">
-              {editId === connectionId ? (
-                <TextField
-                  defaultValue={value}
-                  autoFocus
-                  onClick={(e) => e.stopPropagation()}
-                  onBlur={(e) => saveChangedName(e.target.value)}
-                  onKeyDown={(e) => { 
-                    if (e.key === 'Enter') saveChangedName(e.target.value); 
-                    else if (e.key === 'Escape') setEditId(null); 
-                  }}              
-                />
-              ) : (
                 <Typography
                   variant="body2"
                   onClick={(e) => {
                     e.stopPropagation();
+                    console.log('CLICK', { connectionId });
+                    setEditAnchorEl(e.currentTarget);
+                    setEditValue(value);
                     setEditId(connectionId);
                   }}
                   sx={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
                 >
                   {value}
                 </Typography>
-              )}
               <TooltipWrappedConnectionChip
                 tooltip={server && 'Server: ' + server}
                 title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
@@ -1351,6 +1353,39 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           </Button>
         </ActionListItem>
       </Popover>
+
+      <Popover
+  open={Boolean(editAnchorEl)}
+  anchorEl={editAnchorEl}
+  onClose={() => setEditAnchorEl(null)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <Box p={1}>
+    <TextField
+  value={editValue}
+  autoFocus
+  onChange={(e) => setEditValue(e.target.value)}
+  onKeyDown={async (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      const success = await handleUpdateConnection(editId, editValue);
+
+      if (success) {
+        setEditAnchorEl(null);
+        setEditId(null);
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setEditAnchorEl(null);
+      setEditId(null);
+    }
+  }}
+/>
+  </Box>
+</Popover>
+
     </>
   );
 };
