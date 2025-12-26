@@ -81,6 +81,68 @@ type AnonymousFlowResponse struct {
 	UserID      uuid.UUID `json:"user_id,omitempty"`
 }
 
+// UnmarshalJSON implements custom unmarshaling for AnonymousFlowResponse
+// to support both string UUID and Go array (raw bytes) formats for user_id.
+// This ensures compatibility with different remote provider implementations.
+func (a *AnonymousFlowResponse) UnmarshalJSON(data []byte) error {
+	// Define an alias type to avoid recursion during unmarshaling
+	type Alias AnonymousFlowResponse
+	
+	// First, try to unmarshal as a raw JSON object to check the user_id format
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	
+	// Create a temporary struct to hold the parsed data
+	aux := &struct {
+		AccessToken string `json:"access_token"`
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+	
+	// Unmarshal access_token normally
+	if accessTokenRaw, ok := raw["access_token"]; ok {
+		if err := json.Unmarshal(accessTokenRaw, &aux.AccessToken); err != nil {
+			return err
+		}
+		a.AccessToken = aux.AccessToken
+	}
+	
+	// Handle user_id field - support both string UUID and byte array formats
+	if userIDRaw, ok := raw["user_id"]; ok {
+		// Try to unmarshal as string UUID first
+		var userIDStr string
+		if err := json.Unmarshal(userIDRaw, &userIDStr); err == nil {
+			// Successfully parsed as string, convert to UUID
+			parsedUUID, err := uuid.FromString(userIDStr)
+			if err != nil {
+				return fmt.Errorf("failed to parse user_id string as UUID: %w", err)
+			}
+			a.UserID = parsedUUID
+			return nil
+		}
+		
+		// If string parsing failed, try to unmarshal as byte array [16]uint8
+		var userIDBytes [16]uint8
+		if err := json.Unmarshal(userIDRaw, &userIDBytes); err == nil {
+			// Successfully parsed as byte array, convert to UUID
+			parsedUUID, err := uuid.FromBytes(userIDBytes[:])
+			if err != nil {
+				return fmt.Errorf("failed to parse user_id bytes as UUID: %w", err)
+			}
+			a.UserID = parsedUUID
+			return nil
+		}
+		
+		// If both failed, return an error
+		return fmt.Errorf("user_id field is neither a valid UUID string nor a byte array")
+	}
+	
+	return nil
+}
+
 type userSession struct {
 	token   string
 	session *Preference
