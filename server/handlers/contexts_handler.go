@@ -78,7 +78,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 }
 
 func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	contextID := mux.Vars(req)["id"]
 
 	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
