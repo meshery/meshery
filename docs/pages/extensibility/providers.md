@@ -35,8 +35,8 @@ Some examples include:
   - Examples: Local event storage in database
   - Examples: Remote event synchronization (Remote providers only)
 
-<a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png">
-<img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/providers/providers.png">
+<img src="{{ site.baseurl }}/assets/img/providers/providers.png" width="50%" /></a>
 
   <figcaption>Figure: Selecting a provider in Meshery</figcaption>
 
