@@ -416,10 +416,24 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 	defer resp.Body.Close()
 
+	bodyBytes, readErr := io.ReadAll(resp.Body)
+	if readErr != nil {
+		err = ErrUnmarshal(readErr, "user flow response")
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		err = ErrPost(fmt.Errorf("status code: %d body: %s", resp.StatusCode, string(bodyBytes)), "anonymous user session", resp.StatusCode)
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
 	flowResponse := AnonymousFlowResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
-	if err != nil {
-		err = ErrUnmarshal(err, "user flow response")
+	if err = json.Unmarshal(bodyBytes, &flowResponse); err != nil {
+		err = ErrUnmarshal(fmt.Errorf("%w: body: %s", err, string(bodyBytes)), "user flow response")
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
