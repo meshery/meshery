@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4949a3",
@@ -188,5 +202,7 @@
     "version": "supervisor.appscode.com/v1alpha1",
     "kind": "ClusterMaintenanceWindow",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dates\": {\n     \"items\": {\n      \"properties\": {\n       \"end\": {\n        \"format\": \"date-time\",\n        \"type\": \"string\"\n       },\n       \"start\": {\n        \"format\": \"date-time\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"end\",\n       \"start\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"days\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"properties\": {\n        \"end\": {\n         \"format\": \"time\",\n         \"type\": \"string\"\n        },\n        \"start\": {\n         \"format\": \"time\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"end\",\n        \"start\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": \"array\"\n     },\n     \"type\": \"object\"\n    },\n    \"isDefault\": {\n     \"type\": \"boolean\"\n    },\n    \"timezone\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Maintenance Window\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

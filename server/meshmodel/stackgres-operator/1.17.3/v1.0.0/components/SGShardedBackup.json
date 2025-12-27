@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#426d88",
@@ -188,5 +202,7 @@
     "version": "stackgres.io/v1",
     "kind": "SGShardedBackup",
     "schema": "{\n \"description\": \"A manual or automatically generated sharded backup of an SGCluster configured with an SGBackupConfig.\\n\\nWhen a SGBackup is created a Job will perform a full sharded backup of the database and update the status of the SGBackup\\n with the all the information required to restore it and some stats (or a failure message in case something unexpected\\n happened).\\nAfter an SGBackup is created the same Job performs a reconciliation of the sharded backups by applying the retention window\\n that has been configured in the SGBackupConfig and removing the sharded backups with managed lifecycle and the WAL files older\\n than the ones that fit in the retention window. The reconciliation also removes sharded backups (excluding WAL files) that do\\n not belongs to any SGBackup. If the target storage of the SGBackupConfig is changed deletion of an SGBackup sharded backups\\n with managed lifecycle and the WAL files older than the ones that fit in the retention window and of sharded backups that do\\n not belongs to any SGBackup will not be performed anymore on the previous storage, only on the new target storage.\\n\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"managedLifecycle\": {\n     \"description\": \"Indicate if this sharded backup is permanent and should not be removed by the automated\\n retention policy. Default is `false`.\\n\",\n     \"type\": \"boolean\"\n    },\n    \"maxRetries\": {\n     \"description\": \"The maximum number of retries the backup operation is allowed to do after a failure.\\n\\nA value of `0` (zero) means no retries are made. Defaults to: `3`.\\n\",\n     \"type\": \"integer\"\n    },\n    \"reconciliationTimeout\": {\n     \"default\": 300,\n     \"description\": \"Allow to set a timeout for the reconciliation process that take place after the backup.\\n\\nIf not set defaults to 300 (5 minutes). If set to 0 it will disable timeout.\\n\\nFailure of reconciliation will not make the backup fail and will be re-tried the next time a SGBackup\\n or shecduled backup Job take place.\\n\",\n     \"type\": \"integer\"\n    },\n    \"sgShardedCluster\": {\n     \"description\": \"The name of the `SGShardedCluster` from which this sharded backup is/will be taken.\\n\\nIf this is a copy of an existing completed sharded backup in a different namespace\\n the value must be prefixed with the namespace of the source backup and a\\n dot `.` (e.g. `\\u003csharded cluster namespace\\u003e.\\u003csharded cluster name\\u003e`) or have the same value\\n if the source sharded backup is also a copy.\\n\",\n     \"type\": \"string\"\n    },\n    \"timeout\": {\n     \"description\": \"Allow to set a timeout for the backup creation.\\n\\nIf not set it will be disabled and the backup operation will continue until the backup completes or fail. If set to 0 is the same as not being set.\\n\\nMake sure to set a reasonable high value in order to allow for any unexpected delays during backup creation (network low bandwidth, disk low throughput and so forth).\\n\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"SG Sharded Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

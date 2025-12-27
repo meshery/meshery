@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00c1d5",
@@ -188,5 +202,7 @@
     "version": "crd.antrea.io/v1beta1",
     "kind": "ExternalIPPool",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ipRanges\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"required\": [\n         \"cidr\"\n        ]\n       },\n       {\n        \"required\": [\n         \"start\",\n         \"end\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"cidr\": {\n        \"format\": \"cidr\",\n        \"type\": \"string\"\n       },\n       \"end\": {\n        \"oneOf\": [\n         {\n          \"format\": \"ipv4\"\n         },\n         {\n          \"format\": \"ipv6\"\n         }\n        ],\n        \"type\": \"string\"\n       },\n       \"start\": {\n        \"oneOf\": [\n         {\n          \"format\": \"ipv4\"\n         },\n         {\n          \"format\": \"ipv6\"\n         }\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"nodeSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"enum\": [\n           \"In\",\n           \"NotIn\",\n           \"Exists\",\n           \"DoesNotExist\"\n          ],\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"pattern\": \"^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$\",\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"pattern\": \"^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$\",\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"subnetInfo\": {\n     \"properties\": {\n      \"gateway\": {\n       \"oneOf\": [\n        {\n         \"format\": \"ipv4\"\n        },\n        {\n         \"format\": \"ipv6\"\n        }\n       ],\n       \"type\": \"string\"\n      },\n      \"prefixLength\": {\n       \"maximum\": 127,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"vlan\": {\n       \"maximum\": 4094,\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"gateway\",\n      \"prefixLength\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"ipRanges\",\n    \"nodeSelector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"External IP Pool\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

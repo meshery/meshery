@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "iam.cnrm.cloud.google.com/v1beta1",
     "kind": "IAMWorkforcePool",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A user-specified description of the pool. Cannot exceed 256 characters.\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"Whether the pool is disabled. You cannot use a disabled pool to exchange tokens, or use existing tokens to access resources. If the pool is re-enabled, existing tokens grant access again.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"A user-specified display name of the pool in Google Cloud Console. Cannot exceed 32 characters.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"organizationRef\": {\n     \"description\": \"Immutable. The Organization that this resource belongs to. Only one of [organizationRef] may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The Google Cloud resource name of a Google Cloud Organization (format: `organizations/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"[WARNING] Organization not yet supported in Config Connector, use 'external' field to reference existing resources.\\nName of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"sessionDuration\": {\n     \"description\": \"How long the Google Cloud access tokens, console sign-in sessions, and gcloud sign-in sessions from this pool are valid. Must be greater than 15 minutes (900s) and less than 12 hours (43200s). If `session_duration` is not configured, minted credentials will have a default duration of one hour (3600s).\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"organizationRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"IAM Workforce Pool\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "gravitee.io/v1alpha1",
     "kind": "SharedPolicyGroup",
     "schema": "{\n \"description\": \"SharedPolicyGroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SharedPolicyGroupSpec\",\n   \"properties\": {\n    \"apiType\": {\n     \"description\": \"Specify the SharedPolicyGroup ApiType\",\n     \"enum\": [\n      \"MESSAGE\",\n      \"PROXY\",\n      \"NATIVE\"\n     ],\n     \"type\": \"string\"\n    },\n    \"contextRef\": {\n     \"properties\": {\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"crossId\": {\n     \"description\": \"CrossID to export SharedPolicyGroup into different environments\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"SharedPolicyGroup description\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"SharedPolicyGroup name\",\n     \"type\": \"string\"\n    },\n    \"phase\": {\n     \"description\": \"SharedPolicyGroup phase (REQUEST;RESPONSE;INTERACT;CONNECT;PUBLISH;SUBSCRIBE)\",\n     \"enum\": [\n      \"REQUEST\",\n      \"RESPONSE\",\n      \"INTERACT\",\n      \"CONNECT\",\n      \"PUBLISH\",\n      \"SUBSCRIBE\"\n     ],\n     \"type\": \"string\"\n    },\n    \"prerequisiteMessage\": {\n     \"description\": \"SharedPolicyGroup prerequisite Message\",\n     \"type\": \"string\"\n    },\n    \"steps\": {\n     \"description\": \"SharedPolicyGroup Steps\",\n     \"items\": {\n      \"properties\": {\n       \"condition\": {\n        \"description\": \"FlowStep condition\",\n        \"type\": \"string\"\n       },\n       \"configuration\": {\n        \"description\": \"FlowStep configuration is a map of arbitrary key-values\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"description\": {\n        \"description\": \"FlowStep description\",\n        \"type\": \"string\"\n       },\n       \"enabled\": {\n        \"default\": true,\n        \"description\": \"Indicate if this FlowStep is enabled or not\",\n        \"type\": \"boolean\"\n       },\n       \"name\": {\n        \"description\": \"FlowStep name\",\n        \"type\": \"string\"\n       },\n       \"policy\": {\n        \"description\": \"FlowStep policy\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"enabled\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"apiType\",\n    \"contextRef\",\n    \"name\",\n    \"phase\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Shared Policy Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -27,7 +27,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -92,9 +91,14 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
 		if !running {
-			return errors.New("Meshery Server is not running. Please run `mesheryctl system start` to start Meshery Server.")
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
+			return nil
 		}
 
 		return nil

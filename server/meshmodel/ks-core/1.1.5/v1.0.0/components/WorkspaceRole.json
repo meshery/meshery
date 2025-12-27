@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "iam.kubesphere.io/v1alpha2",
     "kind": "WorkspaceRole",
     "schema": "{\n \"properties\": {\n  \"rules\": {\n   \"description\": \"Rules holds all the PolicyRules for this WorkspaceRole\",\n   \"items\": {\n    \"description\": \"PolicyRule holds information that describes a policy rule, but does not contain information\\nabout who the rule applies to or which namespace the rule applies to.\",\n    \"properties\": {\n     \"apiGroups\": {\n      \"description\": \"APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of\\nthe enumerated resources in any API group will be allowed. \\\"\\\" represents the core API group and \\\"*\\\" represents all API groups.\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\",\n      \"x-kubernetes-list-type\": \"atomic\"\n     },\n     \"nonResourceURLs\": {\n      \"description\": \"NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path\\nSince non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding.\\nRules can either apply to API resources (such as \\\"pods\\\" or \\\"secrets\\\") or non-resource URL paths (such as \\\"/api\\\"),  but not both.\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\",\n      \"x-kubernetes-list-type\": \"atomic\"\n     },\n     \"resourceNames\": {\n      \"description\": \"ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\",\n      \"x-kubernetes-list-type\": \"atomic\"\n     },\n     \"resources\": {\n      \"description\": \"Resources is a list of resources this rule applies to. '*' represents all resources.\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\",\n      \"x-kubernetes-list-type\": \"atomic\"\n     },\n     \"verbs\": {\n      \"description\": \"Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule. '*' represents all verbs.\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\",\n      \"x-kubernetes-list-type\": \"atomic\"\n     }\n    },\n    \"required\": [\n     \"verbs\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  }\n },\n \"title\": \"Workspace Role\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

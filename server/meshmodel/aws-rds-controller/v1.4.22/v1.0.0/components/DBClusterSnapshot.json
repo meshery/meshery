@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#C925D1",
@@ -189,5 +203,7 @@
     "version": "rds.services.k8s.aws/v1alpha1",
     "kind": "DBClusterSnapshot",
     "schema": "{\n \"description\": \"DBClusterSnapshot is the Schema for the DBClusterSnapshots API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DBClusterSnapshotSpec defines the desired state of DBClusterSnapshot.\\n\\n# Contains the details for an Amazon RDS DB cluster snapshot\\n\\nThis data type is used as a response element in the DescribeDBClusterSnapshots\\naction.\",\n   \"properties\": {\n    \"dbClusterIdentifier\": {\n     \"description\": \"The identifier of the DB cluster to create a snapshot for. This parameter\\nisn't case-sensitive.\\n\\nConstraints:\\n\\n  - Must match the identifier of an existing DBCluster.\\n\\nExample: my-cluster1\",\n     \"type\": \"string\"\n    },\n    \"dbClusterIdentifierRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"dbClusterSnapshotIdentifier\": {\n     \"description\": \"The identifier of the DB cluster snapshot. This parameter is stored as a\\nlowercase string.\\n\\nConstraints:\\n\\n  - Must contain from 1 to 63 letters, numbers, or hyphens.\\n\\n  - First character must be a letter.\\n\\n  - Can't end with a hyphen or contain two consecutive hyphens.\\n\\nExample: my-cluster1-snapshot1\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The tags to be assigned to the DB cluster snapshot.\",\n     \"items\": {\n      \"description\": \"Metadata assigned to an Amazon RDS resource consisting of a key-value pair.\\n\\nFor more information, see Tagging Amazon RDS resources (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Tagging.html)\\nin the Amazon RDS User Guide or Tagging Amazon Aurora and Amazon RDS resources\\n(https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_Tagging.html)\\nin the Amazon Aurora User Guide.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"dbClusterSnapshotIdentifier\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DB Cluster Snapshot\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -1,5 +1,6 @@
 import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import _ from 'lodash';
 
 import { dataValidatorMachine } from '@sistent/sistent';
@@ -9,8 +10,36 @@ const ajv = new Ajv({
   strict: false, // allow additional properties like x-kubernetes-attributes ( this is safe the schema is sourced from the component definition and is not ours)
 });
 
+// Add standard formats (date-time, email, etc.)
+addFormats(ajv);
+
+// Add custom format validators for OpenAPI/Kubernetes specific formats
+ajv.addFormat('int32', {
+  type: 'number',
+  validate: (value) => {
+    return Number.isInteger(value) && value >= -2147483648 && value <= 2147483647;
+  },
+});
+
+ajv.addFormat('int64', {
+  type: 'number',
+  validate: (value) => {
+    return (
+      Number.isInteger(value) &&
+      value >= Number.MIN_SAFE_INTEGER &&
+      value <= Number.MAX_SAFE_INTEGER
+    );
+  },
+});
+
+ajv.addFormat('int-or-string', {
+  validate: (value) => {
+    return typeof value === 'string' || Number.isInteger(value);
+  },
+});
+
 // dynamically add schemas to ajv to avoid recompiling the same schema and cache it
-const validateSchema  = (schema, data, id) => {
+const validateSchema = (schema, data, id) => {
   let validate = ajv.getSchema(id);
   if (!validate) {
     ajv.addSchema(schema, id);
@@ -44,7 +73,7 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
 };
 
 export const componentKey = (component) =>
-  `${component.component.kind}-${component.model.name}-${component.component.version}`;
+  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
   const configurableComponents = design.components;

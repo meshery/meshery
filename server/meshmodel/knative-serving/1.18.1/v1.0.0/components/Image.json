@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0865ad",
@@ -188,5 +202,7 @@
     "version": "caching.internal.knative.dev/v1alpha1",
     "kind": "Image",
     "schema": "{\n \"description\": \"Image is a Knative abstraction that encapsulates the interface by which Knative\\ncomponents express a desire to have a particular image cached.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec holds the desired state of the Image (from the client).\",\n   \"properties\": {\n    \"image\": {\n     \"description\": \"Image is the name of the container image url to cache across the cluster.\",\n     \"type\": \"string\"\n    },\n    \"imagePullSecrets\": {\n     \"description\": \"ImagePullSecrets contains the names of the Kubernetes Secrets containing login\\ninformation used by the Pods which will run this container.\",\n     \"items\": {\n      \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n      \"properties\": {\n       \"name\": {\n        \"default\": \"\",\n        \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccountName is the name of the Kubernetes ServiceAccount as which the Pods\\nwill run this container.  This is potentially used to authenticate the image pull\\nif the service account has attached pull secrets.  For more information:\\nhttps://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"image\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Image\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

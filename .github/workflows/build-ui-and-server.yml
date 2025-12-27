@@ -27,11 +27,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20.x"
           cache: "npm"
@@ -40,13 +40,13 @@ jobs:
         run: |
           make ui-build
       - name: Upload meshery-ui artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: meshery-ui
           retention-days: 30
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Upload provider-ui artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: provider-ui
           retention-days: 30
@@ -60,12 +60,12 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - name: Check out meshery-istio code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: meshery-extensions/meshery-istio
           path: ./meshery-istio
@@ -81,7 +81,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin
@@ -95,18 +95,18 @@ jobs:
       #     go run main.go &
       #     sleep 60
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20.x"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Download provider-ui artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
@@ -125,7 +125,6 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.MESHERY_CI  }}
         run: make test-e2e-ci
       - name: Save PR metadata
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
@@ -144,7 +143,7 @@ jobs:
           retention-days: 14
       - name: Upload Test Trace
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report
           path: ui/test-results/
@@ -155,7 +154,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Free disk space
@@ -179,7 +178,7 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
       - name: Docker Hub Description
         if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -190,7 +189,7 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v3
         id: changes
@@ -217,7 +216,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Check if schema was modified

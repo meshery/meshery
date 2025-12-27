@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "identityplatform.cnrm.cloud.google.com/v1beta1",
     "kind": "IdentityPlatformTenant",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowPasswordSignup\": {\n     \"description\": \"Whether to allow email/password user authentication.\",\n     \"type\": \"boolean\"\n    },\n    \"disableAuth\": {\n     \"description\": \"Whether authentication is disabled for the tenant. If true, the users under the disabled tenant are not allowed to sign-in. Admins of the disabled tenant are not able to manage its users.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"Display name of the tenant.\",\n     \"type\": \"string\"\n    },\n    \"enableAnonymousUser\": {\n     \"description\": \"Whether to enable anonymous user authentication.\",\n     \"type\": \"boolean\"\n    },\n    \"enableEmailLinkSignin\": {\n     \"description\": \"Whether to enable email link user authentication.\",\n     \"type\": \"boolean\"\n    },\n    \"mfaConfig\": {\n     \"description\": \"The tenant-level configuration of MFA options.\",\n     \"properties\": {\n      \"enabledProviders\": {\n       \"description\": \"A list of usable second factors for this project.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"state\": {\n       \"description\": \"Whether MultiFactor Authentication has been enabled for this project. Possible values: STATE_UNSPECIFIED, DISABLED, ENABLED, MANDATORY\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"testPhoneNumbers\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A map of \\u003ctest phone number, fake code\\u003e pairs that can be used for MFA. The phone number should be in E.164 format (https://www.itu.int/rec/T-REC-E.164/) and a maximum of 10 pairs can be added (error will be thrown once exceeded).\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Identity Platform Tenant\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

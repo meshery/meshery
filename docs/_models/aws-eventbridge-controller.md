@@ -34,17 +34,21 @@ components:
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
-components-count: 6
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-eventbridge-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 7
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Binding"
-  kind: "Edge"
+- type: "binding"
+  kind: "edge"
   description: "An edge relationship between role and EventBus"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between rule and Endpoint"
+- type: "parent"
+  kind: "hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
 relationship-count: 3
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "sql.cnrm.cloud.google.com/v1beta1",
     "kind": "SQLDatabase",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"charset\": {\n     \"description\": \"The charset value. See MySQL's\\n[Supported Character Sets and Collations](https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html)\\nand Postgres' [Character Set Support](https://www.postgresql.org/docs/9.6/static/multibyte.html)\\nfor more details and supported values. Postgres databases only support\\na value of 'UTF8' at creation time.\",\n     \"type\": \"string\"\n    },\n    \"collation\": {\n     \"description\": \"The collation value. See MySQL's\\n[Supported Character Sets and Collations](https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html)\\nand Postgres' [Collation Support](https://www.postgresql.org/docs/9.6/static/collation.html)\\nfor more details and supported values. Postgres databases only support\\na value of 'en_US.UTF8' at creation time.\",\n     \"type\": \"string\"\n    },\n    \"deletionPolicy\": {\n     \"description\": \"The deletion policy for the database. Setting ABANDON allows the resource\\nto be abandoned rather than deleted. This is useful for Postgres, where databases cannot be\\ndeleted from the API if there are users other than cloudsqlsuperuser with access. Possible\\nvalues are: \\\"ABANDON\\\", \\\"DELETE\\\". Defaults to \\\"DELETE\\\".\",\n     \"type\": \"string\"\n    },\n    \"instanceRef\": {\n     \"description\": \"The Cloud SQL instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `SQLInstance` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"SQL Database\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeSSLCertificate",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"certificate\": {\n     \"description\": \"Immutable. The certificate in PEM format.\\nThe certificate chain must be no greater than 5 certs long.\\nThe chain must include at least one intermediate cert.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"valueFrom\"\n        ]\n       },\n       \"required\": [\n        \"value\"\n       ]\n      },\n      {\n       \"not\": {\n        \"required\": [\n         \"value\"\n        ]\n       },\n       \"required\": [\n        \"valueFrom\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"value\": {\n       \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n       \"type\": \"string\"\n      },\n      \"valueFrom\": {\n       \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key that identifies the value to be extracted.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the Secret to extract a value from.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Location represents the geographical location of the ComputeSSLCertificate. Specify a region name or \\\"global\\\" for global resources. Reference: GCP definition of regions/zones (https://cloud.google.com/compute/docs/regions-zones/)\",\n     \"type\": \"string\"\n    },\n    \"privateKey\": {\n     \"description\": \"Immutable. The write-only private key in PEM format.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"valueFrom\"\n        ]\n       },\n       \"required\": [\n        \"value\"\n       ]\n      },\n      {\n       \"not\": {\n        \"required\": [\n         \"value\"\n        ]\n       },\n       \"required\": [\n        \"valueFrom\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"value\": {\n       \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n       \"type\": \"string\"\n      },\n      \"valueFrom\": {\n       \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key that identifies the value to be extracted.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the Secret to extract a value from.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"certificate\",\n    \"location\",\n    \"privateKey\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute SSL Certificate\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

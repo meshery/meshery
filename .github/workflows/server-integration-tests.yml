@@ -20,7 +20,7 @@ jobs:
     name: Integration test with meshsync
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
         # inspired by .github/workflows/build-ui-and-server.yml
@@ -48,9 +48,9 @@ jobs:
         run: df -h
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster
@@ -65,7 +65,7 @@ jobs:
         run: make server-integration-tests-meshsync-run
 
       - name: Upload sqlite file
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: meshery-integration-test-meshsync-mesherydb-file

@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#326de6",
@@ -190,5 +204,7 @@
     "version": "eventing.keda.sh/v1alpha1",
     "kind": "CloudEventSource",
     "schema": "{\n \"description\": \"CloudEventSource defines how a KEDA event will be sent to event sink\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CloudEventSourceSpec defines the spec of CloudEventSource\",\n   \"properties\": {\n    \"authenticationRef\": {\n     \"description\": \"AuthenticationRef points to the TriggerAuthentication or ClusterTriggerAuthentication object that\\nis used to authenticate the scaler with the environment\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the resource being referred to. Defaults to TriggerAuthentication.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"clusterName\": {\n     \"type\": \"string\"\n    },\n    \"destination\": {\n     \"description\": \"Destination defines the various ways to emit events\",\n     \"properties\": {\n      \"azureEventGridTopic\": {\n       \"properties\": {\n        \"endpoint\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"endpoint\"\n       ],\n       \"type\": \"object\"\n      },\n      \"http\": {\n       \"properties\": {\n        \"uri\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"uri\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"eventSubscription\": {\n     \"description\": \"EventSubscription defines filters for events\",\n     \"properties\": {\n      \"excludedEventTypes\": {\n       \"items\": {\n        \"enum\": [\n         \"keda.scaledobject.ready.v1\",\n         \"keda.scaledobject.failed.v1\",\n         \"keda.scaledobject.removed.v1\",\n         \"keda.scaledjob.ready.v1\",\n         \"keda.scaledjob.failed.v1\",\n         \"keda.scaledjob.removed.v1\",\n         \"keda.authentication.triggerauthentication.created.v1\",\n         \"keda.authentication.triggerauthentication.updated.v1\",\n         \"keda.authentication.triggerauthentication.removed.v1\",\n         \"keda.authentication.clustertriggerauthentication.created.v1\",\n         \"keda.authentication.clustertriggerauthentication.updated.v1\",\n         \"keda.authentication.clustertriggerauthentication.removed.v1\"\n        ],\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"includedEventTypes\": {\n       \"items\": {\n        \"enum\": [\n         \"keda.scaledobject.ready.v1\",\n         \"keda.scaledobject.failed.v1\",\n         \"keda.scaledobject.removed.v1\",\n         \"keda.scaledjob.ready.v1\",\n         \"keda.scaledjob.failed.v1\",\n         \"keda.scaledjob.removed.v1\",\n         \"keda.authentication.triggerauthentication.created.v1\",\n         \"keda.authentication.triggerauthentication.updated.v1\",\n         \"keda.authentication.triggerauthentication.removed.v1\",\n         \"keda.authentication.clustertriggerauthentication.created.v1\",\n         \"keda.authentication.clustertriggerauthentication.updated.v1\",\n         \"keda.authentication.clustertriggerauthentication.removed.v1\"\n        ],\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destination\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Event Source\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#3f51b4",
@@ -190,5 +204,7 @@
     "version": "metallb.io/v1beta1",
     "kind": "ServiceL2Status",
     "schema": "{\n \"description\": \"ServiceL2Status reveals the actual traffic status of loadbalancer services in layer2 mode.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceL2StatusSpec defines the desired state of ServiceL2Status.\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service L2Status\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "kms.cnrm.cloud.google.com/v1beta1",
     "kind": "KMSCryptoKey",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"destroyScheduledDuration\": {\n     \"description\": \"Immutable. The period of time that versions of this key spend in the DESTROY_SCHEDULED state before transitioning to DESTROYED.\\nIf not specified at creation time, the default duration is 24 hours.\",\n     \"type\": \"string\"\n    },\n    \"importOnly\": {\n     \"description\": \"Immutable. Whether this key may contain imported versions only.\",\n     \"type\": \"boolean\"\n    },\n    \"keyRingRef\": {\n     \"description\": \"The KMSKeyRing that this key belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSKeyRing` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"purpose\": {\n     \"description\": \"Immutable. The immutable purpose of this CryptoKey. See the\\n[purpose reference](https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys#CryptoKeyPurpose)\\nfor possible inputs.\\nDefault value is \\\"ENCRYPT_DECRYPT\\\".\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rotationPeriod\": {\n     \"description\": \"Every time this period passes, generate a new CryptoKeyVersion and set it as the primary.\\nThe first rotation will take place after the specified period. The rotation period has\\nthe format of a decimal number with up to 9 fractional digits, followed by the\\nletter 's' (seconds). It must be greater than a day (ie, 86400).\",\n     \"type\": \"string\"\n    },\n    \"skipInitialVersionCreation\": {\n     \"description\": \"Immutable. If set to true, the request will create a CryptoKey without any CryptoKeyVersions.\\nYou must use the 'google_kms_key_ring_import_job' resource to import the CryptoKeyVersion.\",\n     \"type\": \"boolean\"\n    },\n    \"versionTemplate\": {\n     \"description\": \"A template describing settings for new crypto key versions.\",\n     \"properties\": {\n      \"algorithm\": {\n       \"description\": \"The algorithm to use when creating a version based on this template.\\nSee the [algorithm reference](https://cloud.google.com/kms/docs/reference/rest/v1/CryptoKeyVersionAlgorithm) for possible inputs.\",\n       \"type\": \"string\"\n      },\n      \"protectionLevel\": {\n       \"description\": \"Immutable. The protection level to use when creating a version based on this template. Possible values include \\\"SOFTWARE\\\", \\\"HSM\\\", \\\"EXTERNAL\\\", \\\"EXTERNAL_VPC\\\". Defaults to \\\"SOFTWARE\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"algorithm\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"keyRingRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Crypto Key\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

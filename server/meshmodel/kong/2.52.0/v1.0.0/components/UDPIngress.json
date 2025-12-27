@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#003459",
@@ -187,5 +201,7 @@
     "version": "configuration.konghq.com/v1beta1",
     "kind": "UDPIngress",
     "schema": "{\n \"description\": \"UDPIngress is the Schema for the udpingresses API.\\nDeprecated: Use Gateway API instead. See https://developer.konghq.com/kubernetes-ingress-controller/migrate/ingress-to-gateway/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the UDPIngress specification.\",\n   \"properties\": {\n    \"rules\": {\n     \"description\": \"A list of rules used to configure the Ingress.\",\n     \"items\": {\n      \"description\": \"UDPIngressRule represents a rule to apply against incoming requests\\nwherein no Host matching is available for request routing, only the port\\nis used to match requests.\",\n      \"properties\": {\n       \"backend\": {\n        \"description\": \"Backend defines the Kubernetes service which accepts traffic from the\\nlistening Port defined above.\",\n        \"properties\": {\n         \"serviceName\": {\n          \"description\": \"Specifies the name of the referenced service.\",\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"servicePort\": {\n          \"description\": \"Specifies the port of the referenced service.\",\n          \"format\": \"int32\",\n          \"maximum\": 65535,\n          \"minimum\": 1,\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"serviceName\",\n         \"servicePort\"\n        ],\n        \"type\": \"object\"\n       },\n       \"port\": {\n        \"description\": \"Port indicates the port for the Kong proxy to accept incoming traffic\\non, which will then be routed to the service Backend.\",\n        \"format\": \"int32\",\n        \"maximum\": 65535,\n        \"minimum\": 1,\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"backend\",\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"UDP Ingress\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

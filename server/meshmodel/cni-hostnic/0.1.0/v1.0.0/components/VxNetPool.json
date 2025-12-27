@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "network.qingcloud.com/v1alpha1",
     "kind": "VxNetPool",
     "schema": "{\n \"description\": \"VxNetPool is a specification for a VxNetPool resource\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VxNetPoolSpec is the spec for a VxNetPool resource\",\n   \"properties\": {\n    \"blockSize\": {\n     \"description\": \"The block size to use for IP address assignments from this pool. Defaults to 26 for IPv4 and 112 for IPv6.\",\n     \"type\": \"integer\"\n    },\n    \"vxnets\": {\n     \"description\": \"vxnets in VxNetPool\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"blockSize\",\n    \"vxnets\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Vx Net Pool\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

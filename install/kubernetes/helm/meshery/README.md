@@ -107,6 +107,20 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace
 
 ```
 
+## Upgrading the Chart
+
+To upgrade an existing `meshery` deployment:
+
+```console
+# Upgrade with recommended settings for upgrades
+helm upgrade meshery meshery/meshery --namespace meshery -f values-upgrade.yaml --wait --timeout 10m
+
+# Or upgrade with default settings
+helm upgrade meshery meshery/meshery --namespace meshery
+```
+
+See [HEALTHCHECKS.md](HEALTHCHECKS.md) for detailed information about health check configuration during upgrades.
+
 ## Uninstalling the Chart
 
 To uninstall `meshery` helm release:
@@ -122,3 +136,85 @@ Eg: For [Meshery Adapter for Istio](https://github.com/meshery/meshery-istio)
 ```console
 helm install meshery meshery/meshery --set meshery-istio.enabled=true --namespace meshery --create-namespace
 ```
+
+## Health Checks and Probes
+
+Meshery implements Kubernetes-compliant health check endpoints for liveness and readiness probes:
+
+- **Liveness Probe**: `/healthz/live` - Checks if Meshery server is alive and responsive
+- **Readiness Probe**: `/healthz/ready` - Checks if Meshery is ready to accept traffic (includes capability validation)
+
+### Default Probe Configuration
+
+The chart includes pre-configured health checks with sensible defaults:
+
+```yaml
+probe:
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 80
+    periodSeconds: 12
+    failureThreshold: 4
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 4
+    failureThreshold: 4
+```
+
+### Monitoring Health Status
+
+Check detailed health status with verbose output:
+
+```console
+kubectl exec --namespace meshery deployment/meshery -- curl -s "http://localhost:8080/healthz/ready?verbose=1"
+```
+
+Example output:
+```
+[+]capabilities ok
+[i]extension extension package found
+healthz check passed
+```
+
+### Customizing Probes
+
+For specific deployment scenarios, you can customize probe settings in your `values.yaml`:
+
+```yaml
+probe:
+  # Enable startup probe for slow-starting containers (Kubernetes 1.18+)
+  startupProbe:
+    enabled: true
+    periodSeconds: 10
+    failureThreshold: 30  # Allow up to 5 minutes for startup
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120  # Adjust based on your environment
+    periodSeconds: 15
+    failureThreshold: 5
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    failureThreshold: 4
+```
+
+### Documentation
+
+For comprehensive guidance on health check configuration, including:
+- Installation vs upgrade considerations
+- Troubleshooting common issues
+- Advanced configuration options
+- Best practices
+
+See the detailed [HEALTHCHECKS.md](HEALTHCHECKS.md) documentation.
+
+## Additional Resources
+
+- [Meshery Documentation](https://docs.meshery.io/)
+- [Kubernetes Probes Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [GitHub Repository](https://github.com/meshery/meshery)

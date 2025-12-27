@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "apigee.cnrm.cloud.google.com/v1alpha1",
     "kind": "ApigeeEndpointAttachment",
     "schema": "{\n \"description\": \"ApigeeEndpointAttachment is the Schema for the ApigeeEndpointAttachment API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApigeeEndpointAttachmentSpec defines the desired state of ApigeeEndpointAttachment\",\n   \"properties\": {\n    \"location\": {\n     \"description\": \"Required. Location of the endpoint attachment.\",\n     \"type\": \"string\"\n    },\n    \"organizationRef\": {\n     \"description\": \"Reference to parent Apigee Organization.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed ApigeeOrganization resource. Should be in the format \\\"organizations/{{organizationID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a ApigeeOrganization resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a ApigeeOrganization resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The ApigeeEndpointAttachment name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"serviceAttachmentRef\": {\n     \"description\": \"Reference to the ServiceAttachment for the EndpointAttachment.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The ComputeServiceAttachment selflink in the form \\\"projects/{{project}}/regions/{{region}}/serviceAttachments/{{name}}\\\" when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `ComputeServiceAttachment` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `ComputeServiceAttachment` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"organizationRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Apigee Endpoint Attachment\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +203,7 @@
     "version": "configuration.konghq.com/v1beta1",
     "kind": "KongConsumerGroup",
     "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongConsumerGroupSpec defines the desired state of KongConsumerGroup.\",\n   \"properties\": {\n    \"controlPlaneRef\": {\n     \"description\": \"ControlPlaneRef is a reference to a ControlPlane this ConsumerGroup is associated with.\",\n     \"properties\": {\n      \"konnectID\": {\n       \"description\": \"KonnectID is the schema for the KonnectID type.\\nThis field is required when the Type is konnectID.\",\n       \"pattern\": \"^[0-9a-f]{8}(?:\\\\-[0-9a-f]{4}){3}-[0-9a-f]{12}$\",\n       \"type\": \"string\"\n      },\n      \"konnectNamespacedRef\": {\n       \"description\": \"KonnectNamespacedRef is a reference to a Konnect Control Plane entity inside the cluster.\\nIt contains the name of the Konnect Control Plane.\\nThis field is required when the Type is konnectNamespacedRef.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name is the name of the Konnect Control Plane.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace is the namespace where the Konnect Control Plane is in.\\nCurrently only cluster scoped resources (KongVault) are allowed to set `konnectNamespacedRef.namespace`.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"default\": \"kic\",\n       \"description\": \"Type indicates the type of the control plane being referenced. Allowed values:\\n- konnectID\\n- konnectNamespacedRef\\n- kic\\n\\nThe default is kic, which implies that the Control Plane is KIC.\",\n       \"enum\": [\n        \"konnectID\",\n        \"konnectNamespacedRef\",\n        \"kic\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"'konnectID' type is not supported\",\n       \"rule\": \"self.type != 'konnectID'\"\n      },\n      {\n       \"message\": \"when type is konnectNamespacedRef, konnectNamespacedRef must be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectNamespacedRef') ? has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is konnectNamespacedRef, konnectID must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectNamespacedRef') ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is konnectID, konnectID must be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectID') ? has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is konnectID, konnectNamespacedRef must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'konnectID') ? !has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is kic, konnectID must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'kic') ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is kic, konnectNamespacedRef must not be set\",\n       \"rule\": \"(has(self.type) \\u0026\\u0026 self.type == 'kic') ? !has(self.konnectNamespacedRef) : true\"\n      },\n      {\n       \"message\": \"when type is unset, konnectID must not be set\",\n       \"rule\": \"!has(self.type) ? !has(self.konnectID) : true\"\n      },\n      {\n       \"message\": \"when type is unset, konnectNamespacedRef must not be set\",\n       \"rule\": \"!has(self.type) ? !has(self.konnectNamespacedRef) : true\"\n      }\n     ]\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the ConsumerGroup in Kong.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"Tags is an optional set of tags applied to the ConsumerGroup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"maxItems\": 20,\n     \"type\": \"array\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"tags entries must not be longer than 128 characters\",\n       \"rule\": \"self.all(tag, size(tag) \\u003e= 1 \\u0026\\u0026 size(tag) \\u003c= 128)\"\n      }\n     ]\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"controlPlaneRef is required once set\",\n   \"rule\": \"(!has(oldSelf.spec) || !has(oldSelf.spec.controlPlaneRef)) || has(self.spec.controlPlaneRef)\"\n  },\n  {\n   \"message\": \"spec.controlPlaneRef cannot specify namespace for namespaced resource\",\n   \"rule\": \"(!has(self.spec) || !has(self.spec.controlPlaneRef) || !has(self.spec.controlPlaneRef.konnectNamespacedRef)) ? true : !has(self.spec.controlPlaneRef.konnectNamespacedRef.__namespace__)\"\n  },\n  {\n   \"message\": \"spec.controlPlaneRef is immutable when an entity is already Programmed\",\n   \"rule\": \"(!has(oldSelf.spec) || !has(oldSelf.spec.controlPlaneRef)) ? true : (!has(self.status) || !self.status.conditions.exists(c, c.type == 'Programmed' \\u0026\\u0026 c.status == 'True')) ? true : oldSelf.spec.controlPlaneRef == self.spec.controlPlaneRef\"\n  }\n ]\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

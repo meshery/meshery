@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "status.gatekeeper.sh/v1beta1",
     "kind": "ConstraintTemplatePodStatus",
     "schema": "{\n \"description\": \"ConstraintTemplatePodStatus is the Schema for the constrainttemplatepodstatuses API.\",\n \"properties\": {},\n \"title\": \"Constraint Template Pod Status\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

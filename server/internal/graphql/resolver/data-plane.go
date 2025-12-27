@@ -27,6 +27,7 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	return dataPlaneList, nil
 }
 
+//nolint:unused // used by schema.resolvers.go
 func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
 	if r.dataPlaneChannel == nil {
 		r.dataPlaneChannel = make(chan []*model.DataPlane)

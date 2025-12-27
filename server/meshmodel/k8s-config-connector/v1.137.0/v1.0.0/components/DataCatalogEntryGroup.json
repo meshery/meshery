@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "datacatalog.cnrm.cloud.google.com/v1alpha1",
     "kind": "DataCatalogEntryGroup",
     "schema": "{\n \"description\": \"DataCatalogEntryGroup is the Schema for the DataCatalogEntryGroup API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Entry group description. Can consist of several sentences or paragraphs that describe the entry group contents. Default value is an empty string.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"A short name to identify the entry group, for example, \\\"analytics data - jan 2011\\\". Default value is an empty string.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The DataCatalogEntryGroup name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"transferredToDataplex\": {\n     \"description\": \"Optional. When set to [true], it means DataCatalog EntryGroup was transferred to Dataplex Catalog Service. It makes EntryGroup and its Entries to be read-only in DataCatalog. However, new Tags on EntryGroup and its Entries can be created. After setting the flag to [true] it cannot be unset.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\",\n    \"resourceID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Data Catalog Entry Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

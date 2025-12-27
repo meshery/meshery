@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ff9900",
@@ -188,5 +202,7 @@
     "version": "apigatewayv2.services.k8s.aws/v1alpha1",
     "kind": "DomainName",
     "schema": "{\n \"description\": \"DomainName is the Schema for the DomainNames API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DomainNameSpec defines the desired state of DomainName.\\n\\nRepresents a domain name.\",\n   \"properties\": {\n    \"domainName\": {\n     \"description\": \"The domain name.\",\n     \"type\": \"string\"\n    },\n    \"domainNameConfigurations\": {\n     \"description\": \"The domain name configurations.\",\n     \"items\": {\n      \"description\": \"The domain name configuration.\",\n      \"properties\": {\n       \"certificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"certificateName\": {\n        \"description\": \"A string with a length between [1-128].\",\n        \"type\": \"string\"\n       },\n       \"endpointType\": {\n        \"description\": \"Represents an endpoint type.\",\n        \"type\": \"string\"\n       },\n       \"ownershipVerificationCertificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"securityPolicy\": {\n        \"description\": \"The Transport Layer Security (TLS) version of the security policy for this\\ndomain name. The valid values are TLS_1_0 and TLS_1_2.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"mutualTLSAuthentication\": {\n     \"description\": \"The mutual TLS authentication configuration for a custom domain name.\",\n     \"properties\": {\n      \"truststoreURI\": {\n       \"description\": \"A string representation of a URI with a length between [1-2048].\",\n       \"type\": \"string\"\n      },\n      \"truststoreVersion\": {\n       \"description\": \"A string with a length between [1-64].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The collection of tags associated with a domain name.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"domainName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Domain Name\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

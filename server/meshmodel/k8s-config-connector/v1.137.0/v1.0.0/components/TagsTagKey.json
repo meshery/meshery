@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "tags.cnrm.cloud.google.com/v1beta1",
     "kind": "TagsTagKey",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"User-assigned description of the TagKey. Must not exceed 256 characters.\",\n     \"type\": \"string\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. Input only. The resource name of the new TagKey's parent. Must be of the form organizations/{org_id} or projects/{project_id_or_number}.\",\n     \"type\": \"string\"\n    },\n    \"purpose\": {\n     \"description\": \"Immutable. Optional. A purpose cannot be changed once set.\\n\\nA purpose denotes that this Tag is intended for use in policies of a specific policy engine, and will involve that policy engine in management operations involving this Tag. Possible values: [\\\"GCE_FIREWALL\\\"].\",\n     \"type\": \"string\"\n    },\n    \"purposeData\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Immutable. Optional. Purpose data cannot be changed once set.\\n\\nPurpose data corresponds to the policy system that the tag is intended for. For example, the GCE_FIREWALL purpose expects data in the following format: 'network = \\\"\\u003cproject-name\\u003e/\\u003cvpc-name\\u003e\\\"'.\",\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"shortName\": {\n     \"description\": \"Immutable. Input only. The user friendly name for a TagKey. The short name should be unique for TagKeys within the same tag namespace.\\n\\nThe short name must be 1-63 characters, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parent\",\n    \"shortName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Tags Tag Key\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4949a3",
@@ -188,5 +202,7 @@
     "version": "postgres.kubedb.com/v1alpha1",
     "kind": "Publisher",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowedSubscribers\": {\n     \"default\": {\n      \"namespaces\": {\n       \"from\": \"Same\"\n      }\n     },\n     \"properties\": {\n      \"namespaces\": {\n       \"default\": {\n        \"from\": \"Same\"\n       },\n       \"properties\": {\n        \"from\": {\n         \"default\": \"Same\",\n         \"enum\": [\n          \"All\",\n          \"Selector\",\n          \"Same\"\n         ],\n         \"type\": \"string\"\n        },\n        \"selector\": {\n         \"properties\": {\n          \"matchExpressions\": {\n           \"items\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"operator\": {\n              \"type\": \"string\"\n             },\n             \"values\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\",\n              \"x-kubernetes-list-type\": \"atomic\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"operator\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\",\n           \"x-kubernetes-list-type\": \"atomic\"\n          },\n          \"matchLabels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"selector\": {\n       \"properties\": {\n        \"matchExpressions\": {\n         \"items\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"operator\": {\n            \"type\": \"string\"\n           },\n           \"values\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\",\n            \"x-kubernetes-list-type\": \"atomic\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"operator\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"atomic\"\n        },\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"databaseName\": {\n     \"type\": \"string\"\n    },\n    \"databaseRef\": {\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"deletionPolicy\": {\n     \"default\": \"Delete\",\n     \"enum\": [\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    },\n    \"disable\": {\n     \"type\": \"boolean\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parameters\": {\n     \"properties\": {\n      \"operations\": {\n       \"items\": {\n        \"enum\": [\n         \"insert\",\n         \"update\",\n         \"delete\",\n         \"truncate\"\n        ],\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"publishViaPartitionRoot\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"publishAllTables\": {\n     \"type\": \"boolean\"\n    },\n    \"tables\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"databaseName\",\n    \"databaseRef\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Publisher\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

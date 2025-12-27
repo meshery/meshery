@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ED7100",
@@ -187,5 +201,7 @@
     "version": "ec2.services.k8s.aws/v1alpha1",
     "kind": "TransitGatewayVPCAttachment",
     "schema": "{\n \"description\": \"TransitGatewayVPCAttachment is the Schema for the TransitGatewayVPCAttachments API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TransitGatewayVpcAttachmentSpec defines the desired state of TransitGatewayVpcAttachment.\\n\\nDescribes a VPC attachment.\",\n   \"properties\": {\n    \"options\": {\n     \"description\": \"The VPC attachment options.\",\n     \"properties\": {\n      \"applianceModeSupport\": {\n       \"type\": \"string\"\n      },\n      \"dnsSupport\": {\n       \"type\": \"string\"\n      },\n      \"ipv6Support\": {\n       \"type\": \"string\"\n      },\n      \"securityGroupReferencingSupport\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"subnetIDs\": {\n     \"description\": \"The IDs of one or more subnets. You can specify only one subnet per Availability\\nZone. You must specify at least one subnet, but we recommend that you specify\\ntwo subnets for better availability. The transit gateway uses one IP address\\nfrom each specified subnet.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"transitGatewayID\": {\n     \"description\": \"The ID of the transit gateway.\",\n     \"type\": \"string\"\n    },\n    \"transitGatewayRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"vpcID\": {\n     \"description\": \"The ID of the VPC.\",\n     \"type\": \"string\"\n    },\n    \"vpcRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Transit Gateway VPC Attachment\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

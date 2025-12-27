@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "cloudidentity.cnrm.cloud.google.com/v1beta1",
     "kind": "CloudIdentityGroup",
     "schema": "{\n \"description\": \"CloudIdentityGroup is the Schema for the CloudIdentityGroup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CloudIdentityGroupSpec defines the desired state of CloudIdentityGroup\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"An extended description to help users determine the purpose of a `Group`. Must not be longer than 4,096 characters.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The display name of the `Group`.\",\n     \"type\": \"string\"\n    },\n    \"groupKey\": {\n     \"description\": \"Immutable. EntityKey of the Group.\",\n     \"properties\": {\n      \"id\": {\n       \"description\": \"Immutable. The ID of the entity. For Google-managed entities, the `id` must be the email address of an existing group or user. For external-identity-mapped entities, the `id` must be a string conforming to the Identity Source's requirements. Must be unique within a `namespace`.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Immutable. The namespace in which the entity exists. If not specified, the `EntityKey` represents a Google-managed entity such as a Google user or a Google Group. If specified, the `EntityKey` represents an external-identity-mapped group. The namespace must correspond to an identity source created in Admin Console and must be in the form of `identitysources/{identity_source_id}`.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"id\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"GroupKey field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"initialGroupConfig\": {\n     \"description\": \"Immutable. The initial configuration options for creating a Group. See the [API reference](https://cloud.google.com/identity/docs/reference/rest/v1beta1/groups/create#initialgroupconfig) for possible values. Default value: \\\"EMPTY\\\" Possible values: [\\\"INITIAL_GROUP_CONFIG_UNSPECIFIED\\\", \\\"WITH_INITIAL_OWNER\\\", \\\"EMPTY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more label entries that apply to the Group. Currently supported labels contain a key with an empty value. Google Groups are the default type of group and have a label with a key of cloudidentity.googleapis.com/groups.discussion_forum and an empty value. Existing Google Groups can have an additional label with a key of cloudidentity.googleapis.com/groups.security and an empty value added to them. This is an immutable change and the security label cannot be removed once added. Dynamic groups have a label with a key of cloudidentity.googleapis.com/groups.dynamic. Identity-mapped groups for Cloud Search have a label with a key of system/groups/external and an empty value.\",\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The resource name of the entity under which this `Group` resides in the Cloud Identity resource hierarchy. Must be of the form `identitysources/{identity_source}` for external [identity-mapped groups](https://support.google.com/a/answer/9039510) or `customers/{customer_id}` for Google Groups. The `customer_id` must begin with \\\"C\\\" (for example, 'C046psxkn'). [Find your customer ID.] (https://support.google.com/cloudidentity/answer/10070793)\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Parent field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Format: groups/{groupID} or {groupID}. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"groupKey\",\n    \"labels\",\n    \"parent\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Identity Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

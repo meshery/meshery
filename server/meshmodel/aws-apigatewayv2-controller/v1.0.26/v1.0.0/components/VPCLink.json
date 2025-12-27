@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ff9900",
@@ -190,5 +204,7 @@
     "version": "apigatewayv2.services.k8s.aws/v1alpha1",
     "kind": "VPCLink",
     "schema": "{\n \"description\": \"VPCLink is the Schema for the VPCLinks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpcLinkSpec defines the desired state of VpcLink.\\n\\nRepresents a VPC link.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"The name of the VPC link.\",\n     \"type\": \"string\"\n    },\n    \"securityGroupIDs\": {\n     \"description\": \"A list of security group IDs for the VPC link.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetIDs\": {\n     \"description\": \"A list of subnet IDs to include in the VPC link.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A list of tags.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"subnetIDs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VPC Link\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -7,7 +7,7 @@ permalink: extensibility/integrations/rook-ceph-cluster
 docURL: https://docs.meshery.io/extensibility/integrations/rook-ceph-cluster
 description: 
 integrations-category: Provisioning
-integrations-subcategory: Database
+integrations-subcategory: Storage
 registrant: GitHub
 components: 
 components-count: 0

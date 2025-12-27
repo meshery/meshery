@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0090ff",
@@ -188,5 +202,7 @@
     "version": "apps.kruise.io/v1alpha1",
     "kind": "EphemeralJob",
     "schema": "{\n \"description\": \"EphemeralJob is the Schema for the ephemeraljobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EphemeralJobSpec defines the desired state of EphemeralJob\",\n   \"properties\": {\n    \"activeDeadlineSeconds\": {\n     \"description\": \"ActiveDeadlineSeconds specifies the duration in seconds relative to the startTime that the job may be active\\nbefore the system tries to terminate it; value must be positive integer.\\nOnly works for Always type.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"parallelism\": {\n     \"description\": \"Parallelism specifies the maximum desired number of pods which matches running ephemeral containers.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"paused\": {\n     \"description\": \"Paused will pause the ephemeral job.\",\n     \"type\": \"boolean\"\n    },\n    \"replicas\": {\n     \"description\": \"Replicas indicates a part of the quantity from matched pods by selector.\\nUsually it is used for gray scale working.\\nif Replicas exceeded the matched number by selector or not be set, replicas will not work.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster\\nImportant: Run \\\"make\\\" to regenerate code after modifying this file\\nSelector is a label query over pods that should match the pod labels.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"template\": {\n     \"description\": \"Template describes the ephemeral container that will be created.\",\n     \"properties\": {\n      \"ephemeralContainers\": {\n       \"description\": \"EphemeralContainers defines ephemeral container list in match pods.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"ephemeralContainers\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ttlSecondsAfterFinished\": {\n     \"description\": \"ttlSecondsAfterFinished limits the lifetime of a Job that has finished\\nexecution (either Complete or Failed). If this field is set,\\nttlSecondsAfterFinished after the eJob finishes, it is eligible to be\\nautomatically deleted. When the Job is being deleted, its lifecycle\\nguarantees (e.g. finalizers) will be honored.\\nIf this field is unset, default value is 1800\\nIf this field is set to zero,\\nthe Job becomes eligible to be deleted immediately after it finishes.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"selector\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ephemeral Job\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

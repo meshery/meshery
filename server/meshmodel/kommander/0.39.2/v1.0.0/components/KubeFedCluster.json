@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#31006f",
@@ -189,5 +203,7 @@
     "version": "core.kubefed.io/v1beta1",
     "kind": "KubeFedCluster",
     "schema": "{\n \"description\": \"KubeFedCluster configures KubeFed to be aware of a Kubernetes cluster and encapsulates the details necessary to communicate with the cluster.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeFedClusterSpec defines the desired state of KubeFedCluster\",\n   \"properties\": {\n    \"apiEndpoint\": {\n     \"description\": \"The API endpoint of the member cluster. This can be a hostname, hostname:port, IP or IP:port.\",\n     \"type\": \"string\"\n    },\n    \"caBundle\": {\n     \"description\": \"CABundle contains the certificate authority information.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"disabledTLSValidations\": {\n     \"description\": \"DisabledTLSValidations defines a list of checks to ignore when validating the TLS connection to the member cluster.  This can be any of *, SubjectName, or ValidityPeriod. If * is specified, it is expected to be the only option in list.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"proxyURL\": {\n     \"description\": \"ProxyURL allows to set proxy URL for the cluster.\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Name of the secret containing the token required to access the member cluster. The secret needs to exist in the same namespace as the control plane and should have a \\\"token\\\" key.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of a secret within the enclosing namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"apiEndpoint\",\n    \"secretRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kube Fed Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

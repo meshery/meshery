@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "bigqueryanalyticshub.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigQueryAnalyticsHubDataExchange",
     "schema": "{\n \"description\": \"BigQueryAnalyticsHubDataExchange is the Schema for the BigQueryAnalyticsHubDataExchange API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BigQueryAnalyticsHubDataExchangeSpec defines the desired state of BigQueryAnalyticsHubDataExchange\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. Description of the data exchange. The description must not contain Unicode non-characters as well as C0 and C1 control codes except tabs (HT), new lines (LF), carriage returns (CR), and page breaks (FF). Default value is an empty string. Max length: 2000 bytes.\",\n     \"type\": \"string\"\n    },\n    \"discoveryType\": {\n     \"description\": \"Optional. Type of discovery on the discovery page for all the listings under this exchange. Updating this field also updates (overwrites) the discovery_type field for all the listings under this exchange.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"Required. Human-readable display name of the data exchange. The display name must contain only Unicode letters, numbers (0-9), underscores (_), dashes (-), spaces ( ), ampersands (\\u0026) and must not start or end with spaces. Default value is an empty string. Max length: 63 bytes.\",\n     \"type\": \"string\"\n    },\n    \"documentation\": {\n     \"description\": \"Optional. Documentation describing the data exchange.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The name of the location this data exchange.\",\n     \"type\": \"string\"\n    },\n    \"primaryContact\": {\n     \"description\": \"Optional. Email or URL of the primary point of contact of the data exchange. Max Length: 1000 bytes.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. The BigQueryAnalyticsHubDataExchange name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"ResourceID field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Analytics Hub Data Exchange\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

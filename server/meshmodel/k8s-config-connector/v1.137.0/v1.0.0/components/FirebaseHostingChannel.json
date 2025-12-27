@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "firebasehosting.cnrm.cloud.google.com/v1alpha1",
     "kind": "FirebaseHostingChannel",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"expireTime\": {\n     \"description\": \"The time at which the channel will be automatically deleted. If null, the channel\\nwill not be automatically deleted. This field is present in the output whether it's\\nset directly or via the 'ttl' field.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The channelId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retainedReleaseCount\": {\n     \"description\": \"The number of previous releases to retain on the channel for rollback or other\\npurposes. Must be a number between 1-100. Defaults to 10 for new channels.\",\n     \"type\": \"integer\"\n    },\n    \"siteId\": {\n     \"description\": \"Immutable. Required. The ID of the site in which to create this channel.\",\n     \"type\": \"string\"\n    },\n    \"ttl\": {\n     \"description\": \"Immutable. Input only. A time-to-live for this channel. Sets 'expire_time' to the provided\\nduration past the time of the request. A duration in seconds with up to nine fractional\\ndigits, terminated by 's'. Example: \\\"86400s\\\" (one day).\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"siteId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Firebase Hosting Channel\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

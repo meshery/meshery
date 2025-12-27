@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "orgpolicy.cnrm.cloud.google.com/v1alpha1",
     "kind": "OrgPolicyCustomConstraint",
     "schema": "{\n \"description\": \"OrgPolicyCustomConstraint is the Schema for the OrgPolicyCustomConstraint API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OrgPolicyCustomConstraintSpec defines the desired state of OrgPolicyCustomConstraint\",\n   \"properties\": {\n    \"actionType\": {\n     \"description\": \"Allow or deny type.\",\n     \"type\": \"string\"\n    },\n    \"condition\": {\n     \"description\": \"Org policy condition/expression. For example:\\n `resource.instanceName.matches(\\\"[production|test]_.*_(\\\\d)+\\\")` or,\\n `resource.management.auto_upgrade == true`\\n\\n The max length of the condition is 1000 characters.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Detailed information about this custom policy constraint. The max length of the description is 2000 characters.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"One line display name for the UI. The max length of the display_name is 200 characters.\",\n     \"type\": \"string\"\n    },\n    \"methodTypes\": {\n     \"description\": \"All the operations being applied for this constraint.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"organizationRef\": {\n     \"description\": \"The Organization that this resource belongs to.\",\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The 'name' field of an organization, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"external\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The OrgPolicyCustomConstraint name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"resourceTypes\": {\n     \"description\": \"Immutable. The resource instance type on which this policy applies. Format\\n will be of the form : `\\u003ccanonical service name\\u003e/\\u003ctype\\u003e` Example:\\n\\n  * `compute.googleapis.com/Instance`.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"organizationRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Org Policy Custom Constraint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "gkehub.cnrm.cloud.google.com/v1beta1",
     "kind": "GKEHubFeature",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"spec\": {\n     \"description\": \"Optional. Hub-wide Feature configuration. If this Feature does not support any Hub-wide configuration, this field may be unused.\",\n     \"properties\": {\n      \"fleetobservability\": {\n       \"description\": \"Fleet Observability spec.\",\n       \"properties\": {\n        \"loggingConfig\": {\n         \"description\": \"Fleet Observability Logging-specific spec.\",\n         \"properties\": {\n          \"defaultConfig\": {\n           \"description\": \"Specified if applying the default routing config to logs not specified in other configs.\",\n           \"properties\": {\n            \"mode\": {\n             \"description\": \"The logs routing mode Possible values: MODE_UNSPECIFIED, COPY, MOVE\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"fleetScopeLogsConfig\": {\n           \"description\": \"Specified if applying the routing config to all logs for all fleet scopes.\",\n           \"properties\": {\n            \"mode\": {\n             \"description\": \"The logs routing mode Possible values: MODE_UNSPECIFIED, COPY, MOVE\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"multiclusteringress\": {\n       \"description\": \"Multicluster Ingress-specific spec.\",\n       \"properties\": {\n        \"configMembershipRef\": {\n         \"oneOf\": [\n          {\n           \"not\": {\n            \"required\": [\n             \"external\"\n            ]\n           },\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"not\": {\n            \"anyOf\": [\n             {\n              \"required\": [\n               \"name\"\n              ]\n             },\n             {\n              \"required\": [\n               \"namespace\"\n              ]\n             }\n            ]\n           },\n           \"required\": [\n            \"external\"\n           ]\n          }\n         ],\n         \"properties\": {\n          \"external\": {\n           \"description\": \"Fully-qualified Membership name which hosts the MultiClusterIngress CRD. Example: `projects/foo-proj/locations/global/memberships/bar`\\n\\nAllowed value: The Google Cloud resource name of a `GKEHubMembership` resource (format: `projects/{{project}}/locations/{{location}}/memberships/{{name}}`).\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"configMembershipRef\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"GKE Hub Feature\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

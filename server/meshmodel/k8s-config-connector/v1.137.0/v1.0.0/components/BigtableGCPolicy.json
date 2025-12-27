@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "bigtable.cnrm.cloud.google.com/v1beta1",
     "kind": "BigtableGCPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"columnFamily\": {\n     \"description\": \"Immutable. The name of the column family.\",\n     \"type\": \"string\"\n    },\n    \"deletionPolicy\": {\n     \"description\": \"The deletion policy for the GC policy. Setting ABANDON allows the resource\\n\\t\\t\\t\\tto be abandoned rather than deleted. This is useful for GC policy as it cannot be deleted\\n\\t\\t\\t\\tin a replicated instance. Possible values are: \\\"ABANDON\\\".\",\n     \"type\": \"string\"\n    },\n    \"gcRules\": {\n     \"description\": \"Serialized JSON string for garbage collection policy. Conflicts with \\\"mode\\\", \\\"max_age\\\" and \\\"max_version\\\".\",\n     \"type\": \"string\"\n    },\n    \"instanceRef\": {\n     \"description\": \"The name of the Bigtable instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `BigtableInstance` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maxAge\": {\n     \"description\": \"Immutable. NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all cells older than the given age.\",\n     \"items\": {\n      \"properties\": {\n       \"days\": {\n        \"description\": \"DEPRECATED. Deprecated in favor of duration. Immutable. Number of days before applying GC policy.\",\n        \"type\": \"integer\"\n       },\n       \"duration\": {\n        \"description\": \"Immutable. Duration before applying GC policy.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"maxVersion\": {\n     \"description\": \"Immutable. NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. GC policy that applies to all versions of a cell except for the most recent.\",\n     \"items\": {\n      \"properties\": {\n       \"number\": {\n        \"description\": \"Immutable. Number of version before applying the GC policy.\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"number\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"mode\": {\n     \"description\": \"Immutable. NOTE: 'gc_rules' is more flexible, and should be preferred over this field for new resources. This field may be deprecated in the future. If multiple policies are set, you should choose between UNION OR INTERSECTION.\",\n     \"type\": \"string\"\n    },\n    \"tableRef\": {\n     \"description\": \"The name of the table.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `BigtableTable` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"columnFamily\",\n    \"instanceRef\",\n    \"tableRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Bigtable GC Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

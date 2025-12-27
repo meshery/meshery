@@ -44,8 +44,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "background-opacity": 0,
@@ -150,5 +164,7 @@
     "version": "core.meshery.io/v1alpha1",
     "kind": "Comment",
     "schema": "{\"$id\": \"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\", \"$schema\": \"http://json-schema.org/draft-07/schema\", \"properties\": {\"userMessages\": {\"type\": \"array\", \"title\": \"User Messages\", \"x-chat-field\": true, \"items\": {\"type\": \"object\", \"properties\": {\"userid\": {\"type\": \"string\", \"title\": \"User UUID\"}, \"message\": {\"type\": \"string\", \"title\": \"Message\"}, \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\", \"title\": \"Timestamp\"}}}}}, \"title\": \"Comments\", \"type\": \"object\", \"description\": \"This is a component to add your comments\"}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

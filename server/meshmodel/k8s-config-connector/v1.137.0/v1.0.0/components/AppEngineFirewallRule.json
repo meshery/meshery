@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "appengine.cnrm.cloud.google.com/v1alpha1",
     "kind": "AppEngineFirewallRule",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The action to take if this rule matches. Possible values: [\\\"UNSPECIFIED_ACTION\\\", \\\"ALLOW\\\", \\\"DENY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"An optional string description of this rule.\",\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"description\": \"Immutable.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The priority of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"sourceRange\": {\n     \"description\": \"IP address or range, defined using CIDR notation, of requests that this rule applies to.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"action\",\n    \"sourceRange\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Engine Firewall Rule\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

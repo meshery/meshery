@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#C925D1",
@@ -189,5 +203,7 @@
     "version": "memorydb.services.k8s.aws/v1alpha1",
     "kind": "MultiRegionCluster",
     "schema": "{\n \"description\": \"MultiRegionCluster is the Schema for the MultiRegionClusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MultiRegionClusterSpec defines the desired state of MultiRegionCluster.\\n\\nRepresents a multi-Region cluster.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description for the multi-Region cluster.\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"The name of the engine to be used for the multi-Region cluster.\",\n     \"type\": \"string\"\n    },\n    \"engineVersion\": {\n     \"description\": \"The version of the engine to be used for the multi-Region cluster.\",\n     \"type\": \"string\"\n    },\n    \"multiRegionClusterNameSuffix\": {\n     \"description\": \"A suffix to be added to the multi-Region cluster name.\",\n     \"type\": \"string\"\n    },\n    \"multiRegionParameterGroupName\": {\n     \"description\": \"The name of the multi-Region parameter group to be associated with the cluster.\",\n     \"type\": \"string\"\n    },\n    \"nodeType\": {\n     \"description\": \"The node type to be used for the multi-Region cluster.\",\n     \"type\": \"string\"\n    },\n    \"numShards\": {\n     \"description\": \"The number of shards for the multi-Region cluster.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tags\": {\n     \"description\": \"A list of tags to be applied to the multi-Region cluster.\",\n     \"items\": {\n      \"description\": \"A tag that can be added to an MemoryDB resource. Tags are composed of a Key/Value\\npair. You can use tags to categorize and track all your MemoryDB resources.\\nWhen you add or remove tags on clusters, those actions will be replicated\\nto all nodes in the cluster. A tag with a null Value is permitted. For more\\ninformation, see Tagging your MemoryDB resources (https://docs.aws.amazon.com/MemoryDB/latest/devguide/tagging-resources.html)\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tlsEnabled\": {\n     \"description\": \"Whether to enable TLS encryption for the multi-Region cluster.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"multiRegionClusterNameSuffix\",\n    \"nodeType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Multi Region Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

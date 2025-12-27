@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +203,7 @@
     "version": "asdb.aerospike.com/v1beta1",
     "kind": "AerospikeRestore",
     "schema": "{\n \"description\": \"AerospikeRestore is the Schema for the aerospikerestores API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AerospikeRestoreSpec defines the desired state of AerospikeRestore\",\n   \"properties\": {\n    \"backupService\": {\n     \"description\": \"BackupService is the backup service reference i.e. name and namespace.\\nIt is used to communicate to the backup service to trigger restores. This field is immutable\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Backup service name\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Backup service namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"config\": {\n     \"description\": \"Config is the free form configuration for the restore in YAML format.\\nThis config is used to trigger restores. It includes: destination, policy, source, secret-agent, time and routine.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"pollingPeriod\": {\n     \"description\": \"PollingPeriod is the polling period for restore operation status.\\nIt is used to poll the restore service to fetch restore operation status.\\nDefault is 60 seconds.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type is the type of restore. It can of type Full, Incremental, and Timestamp.\\nBased on the restore type, the relevant restore config should be given.\",\n     \"enum\": [\n      \"Full\",\n      \"Incremental\",\n      \"Timestamp\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupService\",\n    \"config\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Aerospike Restore\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

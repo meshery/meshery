@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "mojaloop.io/v1",
     "kind": "MojaloopRole",
     "schema": "{\n \"description\": \"MojaloopRole is the Schema for MojaloopRole API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MojaloopRole.spec describes the desired state of my resource\",\n   \"properties\": {\n    \"permissions\": {\n     \"description\": \"The list of permissions for the role.\",\n     \"items\": {\n      \"description\": \"permission ID.\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"role\": {\n     \"description\": \"The role of our MojaloopRole.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"role\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mojaloop Role\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

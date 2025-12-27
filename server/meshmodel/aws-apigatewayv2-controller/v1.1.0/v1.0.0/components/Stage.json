@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ff9900",
@@ -188,5 +202,7 @@
     "version": "apigatewayv2.services.k8s.aws/v1alpha1",
     "kind": "Stage",
     "schema": "{\n \"description\": \"Stage is the Schema for the Stages API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StageSpec defines the desired state of Stage.\\n\\nRepresents an API stage.\",\n   \"properties\": {\n    \"accessLogSettings\": {\n     \"description\": \"Settings for logging access in this stage.\",\n     \"properties\": {\n      \"destinationARN\": {\n       \"description\": \"Represents an Amazon Resource Name (ARN).\",\n       \"type\": \"string\"\n      },\n      \"format\": {\n       \"description\": \"A string with a length between [1-1024].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"apiID\": {\n     \"description\": \"The API identifier.\",\n     \"type\": \"string\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"autoDeploy\": {\n     \"description\": \"Specifies whether updates to an API automatically trigger a new deployment.\\nThe default value is false.\",\n     \"type\": \"boolean\"\n    },\n    \"clientCertificateID\": {\n     \"description\": \"The identifier of a client certificate for a Stage. Supported only for WebSocket\\nAPIs.\",\n     \"type\": \"string\"\n    },\n    \"defaultRouteSettings\": {\n     \"description\": \"The default route settings for the stage.\",\n     \"properties\": {\n      \"dataTraceEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"detailedMetricsEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"loggingLevel\": {\n       \"description\": \"The logging level.\",\n       \"type\": \"string\"\n      },\n      \"throttlingBurstLimit\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"throttlingRateLimit\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deploymentID\": {\n     \"description\": \"The deployment identifier of the API stage.\",\n     \"type\": \"string\"\n    },\n    \"deploymentRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"The description for the API stage.\",\n     \"type\": \"string\"\n    },\n    \"routeSettings\": {\n     \"additionalProperties\": {\n      \"description\": \"Represents a collection of route settings.\",\n      \"properties\": {\n       \"dataTraceEnabled\": {\n        \"type\": \"boolean\"\n       },\n       \"detailedMetricsEnabled\": {\n        \"type\": \"boolean\"\n       },\n       \"loggingLevel\": {\n        \"description\": \"The logging level.\",\n        \"type\": \"string\"\n       },\n       \"throttlingBurstLimit\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"throttlingRateLimit\": {\n        \"type\": \"number\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Route settings for the stage, by routeKey.\",\n     \"type\": \"object\"\n    },\n    \"stageName\": {\n     \"description\": \"The name of the stage.\",\n     \"type\": \"string\"\n    },\n    \"stageVariables\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A map that defines the stage variables for a Stage. Variable names can have\\nalphanumeric and underscore characters, and the values must match [A-Za-z0-9-._~:/?#\\u0026=,]+.\",\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The collection of tags. Each tag element is associated with a given resource.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"stageName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stage\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

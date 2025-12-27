@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "vertexai.cnrm.cloud.google.com/v1alpha1",
     "kind": "VertexAITensorboard",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of this Tensorboard.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"User provided name of this Tensorboard.\",\n     \"type\": \"string\"\n    },\n    \"encryptionSpec\": {\n     \"description\": \"Immutable. Customer-managed encryption key spec for a Tensorboard. If set, this Tensorboard and all sub-resources of this Tensorboard will be secured by this key.\",\n     \"properties\": {\n      \"kmsKeyName\": {\n       \"description\": \"Immutable. The Cloud KMS resource identifier of the customer managed encryption key used to protect a resource.\\nHas the form: projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key. The key needs to be in the same region as where the resource is created.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kmsKeyName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the tensorboard. eg us-central1.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Vertex AI Tensorboard\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

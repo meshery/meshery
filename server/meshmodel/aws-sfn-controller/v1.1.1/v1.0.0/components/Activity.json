@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#E7157B",
@@ -187,5 +201,7 @@
     "version": "sfn.services.k8s.aws/v1alpha1",
     "kind": "Activity",
     "schema": "{\n \"description\": \"Activity is the Schema for the Activities API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ActivitySpec defines the desired state of Activity.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"The name of the activity to create. This name must be unique for your Amazon\\nWeb Services account and region for 90 days. For more information, see Limits\\nRelated to State Machine Executions (https://docs.aws.amazon.com/step-functions/latest/dg/limits.html#service-limits-state-machine-executions)\\nin the Step Functions Developer Guide.\\n\\nA name must not contain:\\n\\n  - white space\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"tags\": {\n     \"description\": \"The list of tags to add to a resource.\\n\\nAn array of key-value pairs. For more information, see Using Cost Allocation\\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)\\nin the Amazon Web Services Billing and Cost Management User Guide, and Controlling\\nAccess Using IAM Tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).\\n\\nTags may only contain Unicode letters, digits, white space, or these symbols:\\n_ . : / = + - @.\",\n     \"items\": {\n      \"description\": \"Tags are key-value pairs that can be associated with Step Functions state\\nmachines and activities.\\n\\nAn array of key-value pairs. For more information, see Using Cost Allocation\\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)\\nin the Amazon Web Services Billing and Cost Management User Guide, and Controlling\\nAccess Using IAM Tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).\\n\\nTags may only contain Unicode letters, digits, white space, or these symbols:\\n_ . : / = + - @.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Activity\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

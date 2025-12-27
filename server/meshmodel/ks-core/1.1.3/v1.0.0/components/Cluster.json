@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "cluster.kubesphere.io/v1alpha1",
     "kind": "Cluster",
     "schema": "{\n \"description\": \"Cluster is the schema for the clusters API\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"config\": {\n     \"description\": \"Config represents the custom helm chart values used when installing the cluster\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"connection\": {\n     \"description\": \"Connection holds info to connect to the member cluster\",\n     \"properties\": {\n      \"externalKubernetesAPIEndpoint\": {\n       \"description\": \"External Kubernetes API Server endpoint\\nWill be populated by ks-apiserver if connection type is proxy and ExternalKubeAPIEnabled is true.\",\n       \"type\": \"string\"\n      },\n      \"kubeconfig\": {\n       \"description\": \"KubeConfig content used to connect to cluster api server\\nShould provide this field explicitly if connection type is direct.\\nWill be populated by ks-proxy if connection type is proxy.\",\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"kubernetesAPIEndpoint\": {\n       \"description\": \"Kubernetes API Server endpoint. Example: https://10.10.0.1:6443\\nShould provide this field explicitly if connection type is direct.\\nWill be populated by ks-apiserver if connection type is proxy.\",\n       \"type\": \"string\"\n      },\n      \"kubernetesAPIServerPort\": {\n       \"description\": \"KubeAPIServerPort is the port which listens for forwarding kube-apiserver traffic\\nOnly applicable when connection type is proxy.\",\n       \"type\": \"integer\"\n      },\n      \"kubesphereAPIEndpoint\": {\n       \"description\": \"KubeSphere API Server endpoint. Example: http://10.10.0.11:8080\\nShould provide this field explicitly if connection type is direct.\\nWill be populated by ks-apiserver if connection type is proxy.\",\n       \"type\": \"string\"\n      },\n      \"kubesphereAPIServerPort\": {\n       \"description\": \"KubeSphereAPIServerPort is the port which listens for forwarding kubesphere apigateway traffic\\nOnly applicable when connection type is proxy.\",\n       \"type\": \"integer\"\n      },\n      \"token\": {\n       \"description\": \"Token used by agents of member cluster to connect to host cluster proxy.\\nThis field is populated by apiserver only if connection type is proxy.\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"type defines how host cluster will connect to host cluster\\nConnectionTypeDirect means direct connection, this requires\\n  kubeconfig and kubesphere apiserver endpoint provided\\nConnectionTypeProxy means using kubesphere proxy, no kubeconfig\\n  or kubesphere apiserver endpoint required\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"enable\": {\n     \"description\": \"Desired state of the cluster\\nDeprecated: will be removed in the next version.\",\n     \"type\": \"boolean\"\n    },\n    \"externalKubeAPIEnabled\": {\n     \"description\": \"ExternalKubeAPIEnabled export kube-apiserver to public use a lb type service if connection type is proxy\",\n     \"type\": \"boolean\"\n    },\n    \"joinFederation\": {\n     \"description\": \"Join cluster as a kubefed cluster\\nDeprecated: will be removed in the next version.\",\n     \"type\": \"boolean\"\n    },\n    \"provider\": {\n     \"description\": \"Provider of the cluster, this field is just for description\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -12,38 +12,16 @@
     "isAnnotation": false
   },
   "model": {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "",
     "version": "",
     "name": "kubernetes",
     "displayName": "",
-    "status": "",
+    "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": "",
-      "type": "",
-      "sub_type": "",
-      "kind": "",
-      "status": "",
-      "created_at": "0001-01-01T00:00:00Z",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": null,
-      "schemaVersion": ""
+      "kind": ""
     },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "category": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": ""
-    },
-    "subCategory": "",
-    "metadata": null,
     "model": {
       "version": "v1.35.0-alpha.1"
-    },
-    "components_count": 0,
-    "relationships_count": 0,
-    "components": null,
-    "relationships": null
+    }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -68,114 +46,16 @@
               ]
             ],
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "0",
-                  "targetPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "0",
-                  "protocol"
-                ]
-              ]
-            }
-          },
-          {
-            "id": null,
-            "kind": "Service",
-            "match": {},
-            "match_strategy_matrix": [
-              [
-                "to_contains_from",
-                "not_null"
-              ],
-              [
-                "equal_as_strings",
-                "not_null"
-              ],
-              [
-                "equal"
-              ]
-            ],
-            "model": {
               "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
@@ -210,38 +90,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
@@ -276,79 +134,6 @@
                 ]
               ]
             }
-          },
-          {
-            "id": null,
-            "kind": "Deployment",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "kubernetes",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "0",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "0",
-                  "protocol"
-                ]
-              ]
-            }
           }
         ]
       },
@@ -360,38 +145,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": null
           }
@@ -403,38 +166,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": null
           },
@@ -444,38 +185,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "github"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": null
           }

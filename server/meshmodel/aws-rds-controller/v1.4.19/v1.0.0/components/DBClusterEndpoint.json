@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#C925D1",
@@ -189,5 +203,7 @@
     "version": "rds.services.k8s.aws/v1alpha1",
     "kind": "DBClusterEndpoint",
     "schema": "{\n \"description\": \"DBClusterEndpoint is the Schema for the DBClusterEndpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DBClusterEndpointSpec defines the desired state of DBClusterEndpoint.\\n\\nThis data type represents the information you need to connect to an Amazon\\nAurora DB cluster. This data type is used as a response element in the following\\nactions:\\n\\n  - CreateDBClusterEndpoint\\n\\n  - DescribeDBClusterEndpoints\\n\\n  - ModifyDBClusterEndpoint\\n\\n  - DeleteDBClusterEndpoint\\n\\nFor the data structure that represents Amazon RDS DB instance endpoints,\\nsee Endpoint.\",\n   \"properties\": {\n    \"dbClusterEndpointIdentifier\": {\n     \"description\": \"The identifier to use for the new endpoint. This parameter is stored as a\\nlowercase string.\",\n     \"type\": \"string\"\n    },\n    \"dbClusterIdentifier\": {\n     \"description\": \"The DB cluster identifier of the DB cluster associated with the endpoint.\\nThis parameter is stored as a lowercase string.\",\n     \"type\": \"string\"\n    },\n    \"dbClusterIdentifierRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"endpointType\": {\n     \"description\": \"The type of the endpoint, one of: READER, WRITER, ANY.\",\n     \"type\": \"string\"\n    },\n    \"excludedMembers\": {\n     \"description\": \"List of DB instance identifiers that aren't part of the custom endpoint group.\\nAll other eligible instances are reachable through the custom endpoint. This\\nparameter is relevant only if the list of static members is empty.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"staticMembers\": {\n     \"description\": \"List of DB instance identifiers that are part of the custom endpoint group.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags to be assigned to the Amazon RDS resource.\",\n     \"items\": {\n      \"description\": \"Metadata assigned to an Amazon RDS resource consisting of a key-value pair.\\n\\nFor more information, see Tagging Amazon RDS resources (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Tagging.html)\\nin the Amazon RDS User Guide or Tagging Amazon Aurora and Amazon RDS resources\\n(https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_Tagging.html)\\nin the Amazon Aurora User Guide.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"dbClusterEndpointIdentifier\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"DB Cluster Endpoint\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

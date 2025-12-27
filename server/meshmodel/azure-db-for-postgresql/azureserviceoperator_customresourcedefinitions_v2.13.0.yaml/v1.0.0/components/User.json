@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#2384f1",
@@ -190,5 +204,7 @@
     "version": "dbforpostgresql.azure.com/v1",
     "kind": "User",
     "schema": "{\n \"description\": \"User is a postgresql user.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"type\": \"string\"\n    },\n    \"localUser\": {\n     \"description\": \"LocalUser contains details for creating a standard (non-aad) postgresql User.\",\n     \"properties\": {\n      \"password\": {\n       \"description\": \"Password is the password to use for the user\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serverAdminPassword\": {\n       \"description\": \"ServerAdminPassword is a reference to a secret containing the servers administrator password\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serverAdminUsername\": {\n       \"description\": \"ServerAdminUsername is the user name of the Server administrator\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"password\",\n      \"serverAdminPassword\",\n      \"serverAdminUsername\"\n     ],\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a dbforpostgresql.azure.com/FlexibleServer resource\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"roleOptions\": {\n     \"default\": {\n      \"login\": true\n     },\n     \"description\": \"RoleOptions defines additional attributes of the user role. You can read more about these attributes\\nat https://www.postgresql.org/docs/current/role-attributes.html.\",\n     \"properties\": {\n      \"createDb\": {\n       \"default\": false,\n       \"description\": \"WITH CREATEDB or NOCREATEDB\",\n       \"type\": \"boolean\"\n      },\n      \"createRole\": {\n       \"default\": false,\n       \"description\": \"WITH CREATEROLE or NOCREATEROLE\",\n       \"type\": \"boolean\"\n      },\n      \"login\": {\n       \"default\": true,\n       \"description\": \"WITH LOGIN or NOLOGIN\",\n       \"type\": \"boolean\"\n      },\n      \"replication\": {\n       \"default\": false,\n       \"description\": \"WITH REPLICATION or NOREPLICATION\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is the set of roles granted to the user upon creation.\\nThe Azure Database for PostgreSQL server is created with 3 default roles defined: azure_pg_admin, azure_superuser,\\nand your server admin user (this last is a role w/ login permission, commonly called a User).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"localUser\",\n    \"owner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

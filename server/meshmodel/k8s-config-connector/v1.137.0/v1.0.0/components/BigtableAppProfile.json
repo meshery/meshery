@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "bigtable.cnrm.cloud.google.com/v1beta1",
     "kind": "BigtableAppProfile",
     "schema": "{\n \"description\": \"BigtableAppProfile is the Schema for the BigtableAppProfile API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BigtableAppProfileSpec defines the desired state of BigtableAppProfile\",\n   \"properties\": {\n    \"dataBoostIsolationReadOnly\": {\n     \"description\": \"Specifies that this app profile is intended for read-only usage via the Data Boost feature. Please opt-in to this feature by setting the `alpha.cnrm.cloud.google.com/reconciler: direct` annotation.\",\n     \"properties\": {\n      \"computeBillingOwner\": {\n       \"description\": \"The Compute Billing Owner for this Data Boost App Profile.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Long form description of the use case for this AppProfile.\",\n     \"type\": \"string\"\n    },\n    \"instanceRef\": {\n     \"description\": \"InstanceRef defines the resource reference to BigtableInstance, which \\\"External\\\" field holds the GCP identifier for the KRM object.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed BigtableInstance resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"multiClusterRoutingClusterIds\": {\n     \"description\": \"The set of clusters to route to, if using multi cluster routing. The order is ignored; clusters will be tried in order of distance. If left empty, all clusters are eligible.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"multiClusterRoutingUseAny\": {\n     \"description\": \"Use a multi-cluster routing policy.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"The BigtableAppProfile name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"singleClusterRouting\": {\n     \"description\": \"Use a single-cluster routing policy.\",\n     \"properties\": {\n      \"allowTransactionalWrites\": {\n       \"description\": \"Whether or not `CheckAndMutateRow` and `ReadModifyWriteRow` requests are allowed by this app profile. It is unsafe to send these requests to the same table/row/column in multiple clusters.\",\n       \"type\": \"boolean\"\n      },\n      \"clusterId\": {\n       \"description\": \"The cluster to which read/write requests should be routed.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"standardIsolation\": {\n     \"description\": \"The standard options used for isolating this app profile's traffic from other use cases.\",\n     \"properties\": {\n      \"priority\": {\n       \"description\": \"The priority of requests sent using this app profile.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"instanceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Bigtable App Profile\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

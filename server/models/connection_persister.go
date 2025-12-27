@@ -103,18 +103,18 @@ func (cp *ConnectionPersister) DeleteConnection(connection *connections.Connecti
 	}
 	err = cp.DB.Delete(connection).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserId)
 	}
 
 	return connection, err
 }
 
 func (cp *ConnectionPersister) fetchUserDetails() *User {
+
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
 	}
 }
 

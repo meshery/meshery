@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#E7157B",
@@ -189,5 +203,7 @@
     "version": "prometheusservice.services.k8s.aws/v1alpha1",
     "kind": "Workspace",
     "schema": "{\n \"description\": \"Workspace is the Schema for the Workspaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkspaceSpec defines the desired state of Workspace.\",\n   \"properties\": {\n    \"alias\": {\n     \"description\": \"An alias that you assign to this workspace to help you identify it. It does\\nnot need to be unique.\\n\\nBlank spaces at the beginning or end of the alias that you specify will be\\ntrimmed from the value used.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The list of tag keys and values to associate with the workspace.\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workspace\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

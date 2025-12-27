@@ -31,6 +31,8 @@ import (
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
@@ -55,7 +57,7 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
@@ -133,6 +135,11 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	// hydrate pattern before processing to fill in any missing details
+	if errs := patternHelpers.HydratePattern(&patternFile, h.registryManager); errs != nil {
+		h.log.Warnf("failed to hydrate pattern: %v", errs)
+	}
+
 	if patternID == uuid.Nil {
 		patternID = patternFile.Id
 	}
@@ -155,7 +162,7 @@ func (h *Handler) PatternFileHandler(
 		Provider:               provider,
 		Pattern:                patternFile,
 		PrefObj:                prefObj,
-		UserID:                 user.ID,
+		UserID:                 user.ID.String(),
 		IsDelete:               isDelete,
 		Validate:               validate,
 		DryRun:                 isDryRun,

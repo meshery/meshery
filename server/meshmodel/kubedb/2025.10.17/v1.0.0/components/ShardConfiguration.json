@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4949a3",
@@ -188,5 +202,7 @@
     "version": "operator.k8s.appscode.com/v1alpha1",
     "kind": "ShardConfiguration",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"controllers\": {\n     \"items\": {\n      \"properties\": {\n       \"apiGroup\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"resources\": {\n     \"items\": {\n      \"properties\": {\n       \"apiGroup\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Shard Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

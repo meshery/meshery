@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "cloudiot.cnrm.cloud.google.com/v1alpha1",
     "kind": "CloudIOTDeviceRegistry",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"credentials\": {\n     \"description\": \"List of public key certificates to authenticate devices.\",\n     \"items\": {\n      \"properties\": {\n       \"publicKeyCertificate\": {\n        \"description\": \"A public key certificate format and data.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"publicKeyCertificate\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"eventNotificationConfigs\": {\n     \"description\": \"List of configurations for event notifications, such as PubSub topics\\nto publish device events to.\",\n     \"items\": {\n      \"properties\": {\n       \"pubsubTopicName\": {\n        \"description\": \"PubSub topic name to publish device events.\",\n        \"type\": \"string\"\n       },\n       \"subfolderMatches\": {\n        \"description\": \"If the subfolder name matches this string exactly, this\\nconfiguration will be used. The string must not include the\\nleading '/' character. If empty, all strings are matched. Empty\\nvalue can only be used for the last 'event_notification_configs'\\nitem.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"pubsubTopicName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"httpConfig\": {\n     \"description\": \"Activate or deactivate HTTP.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"logLevel\": {\n     \"description\": \"The default logging verbosity for activity from devices in this\\nregistry. Specifies which events should be written to logs. For\\nexample, if the LogLevel is ERROR, only events that terminate in\\nerrors will be logged. LogLevel is inclusive; enabling INFO logging\\nwill also enable ERROR logging. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"ERROR\\\", \\\"INFO\\\", \\\"DEBUG\\\"].\",\n     \"type\": \"string\"\n    },\n    \"mqttConfig\": {\n     \"description\": \"Activate or deactivate MQTT.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"description\": \"Immutable.\",\n     \"type\": \"string\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region in which the created registry should reside.\\nIf it is not provided, the provider region is used.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"stateNotificationConfig\": {\n     \"description\": \"A PubSub topic to publish device state updates.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud IOT Device Registry\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

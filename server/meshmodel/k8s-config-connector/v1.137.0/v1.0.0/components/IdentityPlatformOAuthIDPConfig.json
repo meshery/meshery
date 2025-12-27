@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "identityplatform.cnrm.cloud.google.com/v1beta1",
     "kind": "IdentityPlatformOAuthIDPConfig",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clientId\": {\n     \"description\": \"The client id of an OAuth client.\",\n     \"type\": \"string\"\n    },\n    \"clientSecret\": {\n     \"description\": \"The client secret of the OAuth client, to enable OIDC code flow.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"valueFrom\"\n        ]\n       },\n       \"required\": [\n        \"value\"\n       ]\n      },\n      {\n       \"not\": {\n        \"required\": [\n         \"value\"\n        ]\n       },\n       \"required\": [\n        \"valueFrom\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"value\": {\n       \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n       \"type\": \"string\"\n      },\n      \"valueFrom\": {\n       \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key that identifies the value to be extracted.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the Secret to extract a value from.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"key\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"The config's display name set by developers.\",\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"description\": \"True if allows the user to sign in with the provider.\",\n     \"type\": \"boolean\"\n    },\n    \"issuer\": {\n     \"description\": \"For OIDC Idps, the issuer identifier.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"responseType\": {\n     \"description\": \"The multiple response type to request for in the OAuth authorization flow. This can possibly be a combination of set bits (e.g.: {id\\\\_token, token}).\",\n     \"properties\": {\n      \"code\": {\n       \"description\": \"If true, authorization code is returned from IdP's authorization endpoint.\",\n       \"type\": \"boolean\"\n      },\n      \"idToken\": {\n       \"description\": \"If true, ID token is returned from IdP's authorization endpoint.\",\n       \"type\": \"boolean\"\n      },\n      \"token\": {\n       \"description\": \"If true, access token is returned from IdP's authorization endpoint.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Identity Platform O Auth IDP Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "kms.cnrm.cloud.google.com/v1alpha1",
     "kind": "KMSCryptoKeyVersion",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"cryptoKey\": {\n     \"description\": \"Immutable. The name of the cryptoKey associated with the CryptoKeyVersions.\\nFormat: ''projects/{{project}}/locations/{{location}}/keyRings/{{keyring}}/cryptoKeys/{{cryptoKey}}''.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"state\": {\n     \"description\": \"The current state of the CryptoKeyVersion. Possible values: [\\\"PENDING_GENERATION\\\", \\\"ENABLED\\\", \\\"DISABLED\\\", \\\"DESTROYED\\\", \\\"DESTROY_SCHEDULED\\\", \\\"PENDING_IMPORT\\\", \\\"IMPORT_FAILED\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cryptoKey\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Crypto Key Version\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "datacatalog.cnrm.cloud.google.com/v1beta1",
     "kind": "DataCatalogPolicyTag",
     "schema": "{\n \"description\": \"DataCatalogPolicyTag is the Schema for the DataCatalogPolicyTag API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataCatalogPolicyTagSpec defines the desired state of DataCatalogPolicyTag\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of this policy tag. It must: contain only unicode characters, tabs, newlines, carriage returns and page breaks; and be at most 2000 bytes long when encoded in UTF-8. If not set, defaults to an empty description. If not set, defaults to an empty description.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"User defined name of this policy tag. It must: be unique within the parent taxonomy; contain only unicode letters, numbers, underscores, dashes and spaces; not start or end with spaces; and be at most 200 bytes long when encoded in UTF-8.\",\n     \"type\": \"string\"\n    },\n    \"parentPolicyTagRef\": {\n     \"description\": \"PolicyTagRef defines the resource reference to DataCatalogPolicyTag, which \\\"External\\\" field holds the GCP identifier for the KRM object.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed DataCatalogPolicyTag resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/taxonomies/{{taxonomyID}}/policyTags/{{policytagID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a DataCatalogPolicyTag resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a DataCatalogPolicyTag resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"taxonomyRef\": {\n     \"description\": \"TaxonomyRef defines the resource reference to DataCatalogTaxonomy, which \\\"External\\\" field holds the GCP identifier for the KRM object.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed DataCatalogTaxonomy resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/taxonomies/{{taxonomyID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a DataCatalogTaxonomy resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a DataCatalogTaxonomy resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"taxonomyRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Data Catalog Policy Tag\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

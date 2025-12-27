@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "dialogflow.cnrm.cloud.google.com/v1alpha1",
     "kind": "DialogflowFulfillment",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"The human-readable name of the fulfillment, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"description\": \"Whether fulfillment is enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"features\": {\n     \"description\": \"The field defines whether the fulfillment is enabled for certain features.\",\n     \"items\": {\n      \"properties\": {\n       \"type\": {\n        \"description\": \"The type of the feature that enabled for fulfillment.\\n* SMALLTALK: Fulfillment is enabled for SmallTalk. Possible values: [\\\"SMALLTALK\\\"].\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"genericWebService\": {\n     \"description\": \"Represents configuration for a generic web service. Dialogflow supports two mechanisms for authentications: - Basic authentication with username and password. - Authentication with additional authentication headers.\",\n     \"properties\": {\n      \"password\": {\n       \"description\": \"The password for HTTP Basic authentication.\",\n       \"type\": \"string\"\n      },\n      \"requestHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"The HTTP request headers to send together with fulfillment requests.\",\n       \"type\": \"object\"\n      },\n      \"uri\": {\n       \"description\": \"The fulfillment URI for receiving POST requests. It must use https protocol.\",\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"description\": \"The user name for HTTP Basic authentication.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"uri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Fulfillment\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 27th 2025, 11:50:50 pm
+- Testing started at: December 26th 2025, 11:53:14 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
-- ❌ 0 failed
-- ⚠️ 1 flaked
+- ✅ 0 passed
+- ❌ 2 failed
+- ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 8 minutes and 13 seconds_
+⌛ _Duration: 0 minutes and 1 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,10 +21,13 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
+| 1 | setup | authenticate as Meshery provider |  | ❌ |
+| 2 | setup | authenticate as None provider |  | ❌ |
 
 </div>
 </details>
+
+
 
 
 <!-- To see the full report, please visit our CI/CD pipeline with reporter. -->

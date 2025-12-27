@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#000000",
@@ -189,5 +203,7 @@
     "version": "whereabouts.cni.cncf.io/v1alpha1",
     "kind": "NodeSlicePool",
     "schema": "{\n \"description\": \"NodeSlicePool is the Schema for the nodesliceippools API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeSlicePoolSpec defines the desired state of NodeSlicePool\",\n   \"properties\": {\n    \"range\": {\n     \"description\": \"Range is a RFC 4632/4291-style string that represents an IP address and prefix length in CIDR notation\\nthis refers to the entire range where the node is allocated a subset\",\n     \"type\": \"string\"\n    },\n    \"sliceSize\": {\n     \"description\": \"SliceSize is the size of subnets or slices of the range that each node will be assigned\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"range\",\n    \"sliceSize\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Slice Pool\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

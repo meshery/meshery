@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00ABCD",
@@ -190,5 +204,7 @@
     "version": "v2.edp.epam.com/v1",
     "kind": "GerritGroup",
     "schema": "{\n \"description\": \"GerritGroup is the Schema for the gerrit group API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritGroupSpec defines the desired state of GerritGroup.\",\n   \"properties\": {\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"gerritOwner\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"visibleToAll\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

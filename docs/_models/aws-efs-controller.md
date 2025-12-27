@@ -30,26 +30,30 @@ components:
   colorIcon: assets/img/integrations/aws-efs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-efs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
-components-count: 5
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-efs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-efs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-- type: "Non Binding"
-  kind: "Edge"
-  description: "An edge relationship between accesspoint and filesystem"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "binding"
+  kind: "edge"
   description: "An edge relationship EC2 instances mount EFS file systems for shared storage across instances"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "binding"
+  kind: "edge"
   description: "An edge relationship Lambda can mount EFS for persistent storage and shared data"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "binding"
+  kind: "edge"
   description: "An edge relationship ECS tasks mount EFS volumes for persistent container storage"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "binding"
+  kind: "edge"
   description: "An edge relationship EKS pods use EFS as PersistentVolumes via CSI driver"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between accesspoint and filesystem"
+- type: "parent"
+  kind: "hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
 relationship-count: 6
 featureList: [
   "Scalable and elastic file storage",

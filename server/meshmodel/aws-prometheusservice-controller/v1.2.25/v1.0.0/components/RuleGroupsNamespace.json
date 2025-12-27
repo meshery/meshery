@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#E7157B",
@@ -189,5 +203,7 @@
     "version": "prometheusservice.services.k8s.aws/v1alpha1",
     "kind": "RuleGroupsNamespace",
     "schema": "{\n \"description\": \"RuleGroupsNamespace is the Schema for the RuleGroupsNamespaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RuleGroupsNamespaceSpec defines the desired state of RuleGroupsNamespace.\",\n   \"properties\": {\n    \"configuration\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name for the new rule groups namespace.\\n\\nRegex Pattern: `[0-9A-Za-z][-.0-9A-Z_a-z]*`\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The list of tag keys and values to associate with the rule groups namespace.\",\n     \"type\": \"object\"\n    },\n    \"workspaceID\": {\n     \"description\": \"The ID of the workspace to add the rule groups namespace.\\n\\nRegex Pattern: `[0-9A-Za-z][-.0-9A-Z_a-z]*`\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"workspaceRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"configuration\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rule Groups Namespace\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

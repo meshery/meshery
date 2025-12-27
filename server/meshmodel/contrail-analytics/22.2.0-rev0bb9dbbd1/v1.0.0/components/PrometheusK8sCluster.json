@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "telemetry.juniper.net/v1alpha1",
     "kind": "PrometheusK8sCluster",
     "schema": "{\n \"description\": \"PrometheusK8sCluster is the Schema for the prometheusk8sclusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PrometheusK8sClusterSpec defines the desired state of PrometheusK8sCluster\",\n   \"properties\": {\n    \"certAuthoritySecretName\": {\n     \"type\": \"string\"\n    },\n    \"clientCertSecretName\": {\n     \"type\": \"string\"\n    },\n    \"clientKeySecretName\": {\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"type\": \"string\"\n    },\n    \"server\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Prometheus K8s Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

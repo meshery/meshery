@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0087ac",
@@ -190,5 +204,7 @@
     "version": "bmc.tinkerbell.org/v1alpha1",
     "kind": "Job",
     "schema": "{\n \"description\": \"Job is the Schema for the bmcjobs API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"JobSpec defines the desired state of Job.\",\n   \"properties\": {\n    \"machineRef\": {\n     \"description\": \"MachineRef represents the Machine resource to execute the job.\\nAll the tasks in the job are executed for the same Machine.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the Machine.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace the Machine resides in.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tasks\": {\n     \"description\": \"Tasks represents a list of baseboard management actions to be executed.\\nThe tasks are executed sequentially. Controller waits for one task to complete before executing the next.\\nIf a single task fails, job execution stops and sets condition Failed.\\nCondition Completed is set only if all the tasks were successful.\",\n     \"items\": {\n      \"description\": \"Action represents the action to be performed.\\nA single task can only perform one type of action.\\nFor example either PowerAction or OneTimeBootDeviceAction.\",\n      \"maxProperties\": 1,\n      \"properties\": {\n       \"oneTimeBootDeviceAction\": {\n        \"description\": \"OneTimeBootDeviceAction represents a baseboard management one time set boot device operation.\",\n        \"properties\": {\n         \"device\": {\n          \"description\": \"Devices represents the boot devices, in order for setting one time boot.\\nCurrently only the first device in the slice is used to set one time boot.\",\n          \"items\": {\n           \"description\": \"BootDevice represents boot device of the Machine.\",\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"efiBoot\": {\n          \"description\": \"EFIBoot instructs the machine to use EFI boot.\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"device\"\n        ],\n        \"type\": \"object\"\n       },\n       \"powerAction\": {\n        \"description\": \"PowerAction represents a baseboard management power operation.\",\n        \"enum\": [\n         \"on\",\n         \"off\",\n         \"soft\",\n         \"status\",\n         \"cycle\",\n         \"reset\"\n        ],\n        \"type\": \"string\"\n       },\n       \"virtualMediaAction\": {\n        \"description\": \"VirtualMediaAction represents a baseboard management virtual media insert/eject.\",\n        \"properties\": {\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"mediaURL\": {\n          \"description\": \"mediaURL represents the URL of the image to be inserted into the virtual media, or empty to\\neject media.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"kind\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"machineRef\",\n    \"tasks\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Job\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

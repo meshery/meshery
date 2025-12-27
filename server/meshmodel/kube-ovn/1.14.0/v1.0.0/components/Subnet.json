@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -60,6 +74,78 @@
     "svgWhite": ""
   },
   "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
     {
       "description": "Configure the visual styles for the component",
       "displayName": "Styling",
@@ -118,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "Subnet",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"acls\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"enum\": [\n         \"allow-related\",\n         \"allow-stateless\",\n         \"allow\",\n         \"drop\",\n         \"reject\"\n        ],\n        \"type\": \"string\"\n       },\n       \"direction\": {\n        \"enum\": [\n         \"from-lport\",\n         \"to-lport\"\n        ],\n        \"type\": \"string\"\n       },\n       \"match\": {\n        \"type\": \"string\"\n       },\n       \"priority\": {\n        \"maximum\": 32767,\n        \"minimum\": 0,\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"allowEWTraffic\": {\n     \"type\": \"boolean\"\n    },\n    \"allowSubnets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"cidrBlock\": {\n     \"type\": \"string\"\n    },\n    \"default\": {\n     \"type\": \"boolean\"\n    },\n    \"dhcpV4Options\": {\n     \"type\": \"string\"\n    },\n    \"dhcpV6Options\": {\n     \"type\": \"string\"\n    },\n    \"disableGatewayCheck\": {\n     \"type\": \"boolean\"\n    },\n    \"disableInterConnection\": {\n     \"type\": \"boolean\"\n    },\n    \"enableDHCP\": {\n     \"type\": \"boolean\"\n    },\n    \"enableEcmp\": {\n     \"type\": \"boolean\"\n    },\n    \"enableIPv6RA\": {\n     \"type\": \"boolean\"\n    },\n    \"enableLb\": {\n     \"type\": \"boolean\"\n    },\n    \"enableMulticastSnoop\": {\n     \"type\": \"boolean\"\n    },\n    \"excludeIps\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"externalEgressGateway\": {\n     \"type\": \"string\"\n    },\n    \"gateway\": {\n     \"type\": \"string\"\n    },\n    \"gatewayNode\": {\n     \"type\": \"string\"\n    },\n    \"gatewayType\": {\n     \"type\": \"string\"\n    },\n    \"ipv6RAConfigs\": {\n     \"type\": \"string\"\n    },\n    \"logicalGateway\": {\n     \"type\": \"boolean\"\n    },\n    \"mtu\": {\n     \"maximum\": 65535,\n     \"minimum\": 68,\n     \"type\": \"integer\"\n    },\n    \"namespaceSelectors\": {\n     \"items\": {\n      \"properties\": {\n       \"matchExpressions\": {\n        \"items\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"type\": \"string\"\n          },\n          \"values\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"matchLabels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"namespaces\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"natOutgoing\": {\n     \"type\": \"boolean\"\n    },\n    \"natOutgoingPolicyRules\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"enum\": [\n         \"nat\",\n         \"forward\"\n        ],\n        \"type\": \"string\"\n       },\n       \"match\": {\n        \"properties\": {\n         \"dstIPs\": {\n          \"type\": \"string\"\n         },\n         \"srcIPs\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"policyRoutingPriority\": {\n     \"maximum\": 32765,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"policyRoutingTableID\": {\n     \"maximum\": 2147483647,\n     \"minimum\": 1,\n     \"not\": {\n      \"enum\": [\n       252,\n       253,\n       254,\n       255\n      ]\n     },\n     \"type\": \"integer\"\n    },\n    \"private\": {\n     \"type\": \"boolean\"\n    },\n    \"protocol\": {\n     \"enum\": [\n      \"IPv4\",\n      \"IPv6\",\n      \"Dual\"\n     ],\n     \"type\": \"string\"\n    },\n    \"provider\": {\n     \"type\": \"string\"\n    },\n    \"routeTable\": {\n     \"type\": \"string\"\n    },\n    \"u2oInterconnection\": {\n     \"type\": \"boolean\"\n    },\n    \"u2oInterconnectionIP\": {\n     \"type\": \"string\"\n    },\n    \"vips\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"vlan\": {\n     \"type\": \"string\"\n    },\n    \"vpc\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subnet\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#326CE5",
@@ -188,5 +202,7 @@
     "version": "autoscaling/v1",
     "kind": "Scale",
     "schema": "{\"description\":\"Scale represents a scaling request for a resource.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"ScaleSpec describes the attributes of a scale subresource.\",\"properties\":{\"replicas\":{\"default\":0,\"description\":\"replicas is the desired number of instances for the scaled object.\",\"format\":\"int32\",\"type\":\"integer\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"spec defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"autoscaling\",\"kind\":\"Scale\",\"version\":\"v1\"}]}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

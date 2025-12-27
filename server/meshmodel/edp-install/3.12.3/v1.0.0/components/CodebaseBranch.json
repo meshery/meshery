@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "v2.edp.epam.com/v1",
     "kind": "CodebaseBranch",
     "schema": "{\n \"description\": \"CodebaseBranch is the Schema for the CodebaseBranches API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CodebaseBranchSpec defines the desired state of CodebaseBranch.\",\n   \"properties\": {\n    \"branchName\": {\n     \"description\": \"Name of a branch.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"codebaseName\": {\n     \"description\": \"Name of Codebase associated with.\",\n     \"type\": \"string\"\n    },\n    \"fromCommit\": {\n     \"description\": \"FromCommit is a commit hash or branch name.\\nThe new branch will be created starting from the selected commit hash or branch name.\\nIf a branch name is provided, the new branch will be created from the latest commit of that branch.\",\n     \"type\": \"string\"\n    },\n    \"pipelines\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Pipelines is a map of pipelines related to the branch.\",\n     \"example\": {\n      \"build\": \"build-pipeline\",\n      \"review\": \"review-pipeline\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"release\": {\n     \"description\": \"Flag if branch is used as \\\"release\\\" branch.\",\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"description\": \"Version of the branch. It's required for versioning type \\\"semver\\\".\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"branchName\",\n    \"codebaseName\",\n    \"release\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Codebase Branch\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

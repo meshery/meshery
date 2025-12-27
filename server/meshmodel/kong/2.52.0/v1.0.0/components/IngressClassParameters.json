@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#003459",
@@ -187,5 +201,7 @@
     "version": "configuration.konghq.com/v1alpha1",
     "kind": "IngressClassParameters",
     "schema": "{\n \"description\": \"IngressClassParameters is the Schema for the IngressClassParameters API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the IngressClassParameters specification.\",\n   \"properties\": {\n    \"enableLegacyRegexDetection\": {\n     \"default\": false,\n     \"description\": \"EnableLegacyRegexDetection automatically detects if ImplementationSpecific Ingress paths are regular expression\\npaths using the legacy 2.x heuristic. The controller adds the \\\"~\\\" prefix to those paths if the Kong version is\\n3.0 or higher.\",\n     \"type\": \"boolean\"\n    },\n    \"serviceUpstream\": {\n     \"default\": false,\n     \"description\": \"Offload load-balancing to kube-proxy or sidecar.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress Class Parameters\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

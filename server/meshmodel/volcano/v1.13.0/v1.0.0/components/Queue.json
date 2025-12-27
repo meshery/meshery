@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#eb2318",
@@ -188,5 +202,7 @@
     "version": "scheduling.volcano.sh/v1beta1",
     "kind": "Queue",
     "schema": "{\n \"description\": \"Queue is a queue of PodGroup.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the queue.\\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"affinity\": {\n     \"description\": \"If specified, the pod owned by the queue will be scheduled with constraint\",\n     \"properties\": {\n      \"nodeGroupAffinity\": {\n       \"description\": \"Describes nodegroup affinity scheduling rules for the queue(e.g. putting pods of the queue in the nodes of the nodegroup)\",\n       \"properties\": {\n        \"preferredDuringSchedulingIgnoredDuringExecution\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"requiredDuringSchedulingIgnoredDuringExecution\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"nodeGroupAntiAffinity\": {\n       \"description\": \"Describes nodegroup anti-affinity scheduling rules for the queue(e.g. avoid putting pods of the queue in the nodes of the nodegroup).\",\n       \"properties\": {\n        \"preferredDuringSchedulingIgnoredDuringExecution\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"requiredDuringSchedulingIgnoredDuringExecution\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"capability\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"ResourceList is a set of (resource name, quantity) pairs.\",\n     \"type\": \"object\"\n    },\n    \"deserved\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"The amount of resources configured by the user. This part of resource can be shared with other queues and reclaimed back.\",\n     \"type\": \"object\"\n    },\n    \"extendClusters\": {\n     \"description\": \"extendCluster indicate the jobs in this Queue will be dispatched to these clusters.\",\n     \"items\": {\n      \"description\": \"CluterSpec represents the template of Cluster\",\n      \"properties\": {\n       \"capacity\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"ResourceList is a set of (resource name, quantity) pairs.\",\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"weight\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"guarantee\": {\n     \"description\": \"Guarantee indicate configuration about resource reservation\",\n     \"properties\": {\n      \"resource\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"description\": \"The amount of cluster resource reserved for queue. Just set either `percentage` or `resource`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Parent define the parent of queue\",\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"Priority define the priority of queue. Higher values are prioritized for scheduling and considered later during reclamation.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"reclaimable\": {\n     \"description\": \"Reclaimable indicate whether the queue can be reclaimed by other queue\",\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"description\": \"Type define the type of queue\",\n     \"type\": \"string\"\n    },\n    \"weight\": {\n     \"default\": 1,\n     \"format\": \"int32\",\n     \"maximum\": 65535,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Queue\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

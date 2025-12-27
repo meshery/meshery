@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "pubsublite.cnrm.cloud.google.com/v1alpha1",
     "kind": "PubSubLiteTopic",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"partitionConfig\": {\n     \"description\": \"The settings for this topic's partitions.\",\n     \"properties\": {\n      \"capacity\": {\n       \"description\": \"The capacity configuration.\",\n       \"properties\": {\n        \"publishMibPerSec\": {\n         \"description\": \"Subscribe throughput capacity per partition in MiB/s. Must be \\u003e= 4 and \\u003c= 16.\",\n         \"type\": \"integer\"\n        },\n        \"subscribeMibPerSec\": {\n         \"description\": \"Publish throughput capacity per partition in MiB/s. Must be \\u003e= 4 and \\u003c= 16.\",\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"publishMibPerSec\",\n        \"subscribeMibPerSec\"\n       ],\n       \"type\": \"object\"\n      },\n      \"count\": {\n       \"description\": \"The number of partitions in the topic. Must be at least 1.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"count\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"The region of the pubsub lite topic.\",\n     \"type\": \"string\"\n    },\n    \"reservationConfig\": {\n     \"description\": \"The settings for this topic's Reservation usage.\",\n     \"properties\": {\n      \"throughputReservation\": {\n       \"description\": \"The Reservation to use for this topic's throughput capacity.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retentionConfig\": {\n     \"description\": \"The settings for a topic's message retention.\",\n     \"properties\": {\n      \"perPartitionBytes\": {\n       \"description\": \"The provisioned storage, in bytes, per partition. If the number of bytes stored\\nin any of the topic's partitions grows beyond this value, older messages will be\\ndropped to make room for newer ones, regardless of the value of period.\",\n       \"type\": \"string\"\n      },\n      \"period\": {\n       \"description\": \"How long a published message is retained. If unset, messages will be retained as\\nlong as the bytes retained for each partition is below perPartitionBytes. A\\nduration in seconds with up to nine fractional digits, terminated by 's'.\\nExample: \\\"3.5s\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"perPartitionBytes\"\n     ],\n     \"type\": \"object\"\n    },\n    \"zone\": {\n     \"description\": \"The zone of the pubsub lite topic.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\",\n    \"zone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Pub Sub Lite Topic\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

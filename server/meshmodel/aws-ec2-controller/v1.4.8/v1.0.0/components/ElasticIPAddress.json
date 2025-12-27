@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ED7100",
@@ -189,5 +203,7 @@
     "version": "ec2.services.k8s.aws/v1alpha1",
     "kind": "ElasticIPAddress",
     "schema": "{\n \"description\": \"ElasticIPAddress is the Schema for the ElasticIPAddresses API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ElasticIPAddressSpec defines the desired state of ElasticIPAddress.\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"The Elastic IP address to recover or an IPv4 address from an address pool.\",\n     \"type\": \"string\"\n    },\n    \"customerOwnedIPv4Pool\": {\n     \"description\": \"The ID of a customer-owned address pool. Use this parameter to let Amazon\\nEC2 select an address from the address pool. Alternatively, specify a specific\\naddress from the address pool.\",\n     \"type\": \"string\"\n    },\n    \"networkBorderGroup\": {\n     \"description\": \"A unique set of Availability Zones, Local Zones, or Wavelength Zones from\\nwhich Amazon Web Services advertises IP addresses. Use this parameter to\\nlimit the IP address to this location. IP addresses cannot move between network\\nborder groups.\",\n     \"type\": \"string\"\n    },\n    \"publicIPv4Pool\": {\n     \"description\": \"The ID of an address pool that you own. Use this parameter to let Amazon\\nEC2 select an address from the address pool. To specify a specific address\\nfrom the address pool, use the Address parameter instead.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Elastic IP Address\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

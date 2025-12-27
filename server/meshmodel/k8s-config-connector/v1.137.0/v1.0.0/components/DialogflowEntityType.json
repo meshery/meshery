@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "dialogflow.cnrm.cloud.google.com/v1alpha1",
     "kind": "DialogflowEntityType",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"The name of this entity type to be displayed on the console.\",\n     \"type\": \"string\"\n    },\n    \"enableFuzzyExtraction\": {\n     \"description\": \"Enables fuzzy entity extraction during classification.\",\n     \"type\": \"boolean\"\n    },\n    \"entities\": {\n     \"description\": \"The collection of entity entries associated with the entity type.\",\n     \"items\": {\n      \"properties\": {\n       \"synonyms\": {\n        \"description\": \"A collection of value synonyms. For example, if the entity type is vegetable, and value is scallions, a synonym\\ncould be green onions.\\nFor KIND_LIST entity types:\\n* This collection must contain exactly one synonym equal to value.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"value\": {\n        \"description\": \"The primary value associated with this entity entry. For example, if the entity type is vegetable, the value\\ncould be scallions.\\nFor KIND_MAP entity types:\\n* A reference value to be used in place of synonyms.\\nFor KIND_LIST entity types:\\n* A string that can contain references to other entity types (with or without aliases).\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"synonyms\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"kind\": {\n     \"description\": \"Indicates the kind of entity type.\\n* KIND_MAP: Map entity types allow mapping of a group of synonyms to a reference value.\\n* KIND_LIST: List entity types contain a set of entries that do not map to reference values. However, list entity\\ntypes can contain references to other entity types (with or without aliases).\\n* KIND_REGEXP: Regexp entity types allow to specify regular expressions in entries values. Possible values: [\\\"KIND_MAP\\\", \\\"KIND_LIST\\\", \\\"KIND_REGEXP\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"kind\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Entity Type\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

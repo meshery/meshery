@@ -115,6 +115,7 @@ func main() {
 	viper.SetDefault(constants.ProviderENV, "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
+	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
 	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)

@@ -24,8 +24,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
@@ -38,6 +40,7 @@ import (
 
 const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
+	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
 // RemoteProvider - represents a local provider
@@ -72,6 +75,10 @@ type RemoteProvider struct {
 	Log                logger.Handler
 
 	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
+}
+type AnonymousFlowResponse struct {
+	AccessToken string    `json:"access_token"`
+	UserID      uuid.UUID `json:"user_id,omitempty"`
 }
 
 type userSession struct {
@@ -112,8 +119,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
 
-
-    l.Log.Info("Loading provider capabilities from local file: ", filePath)
+	l.Log.Info("Loading provider capabilities from local file: ", filePath)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -221,6 +227,12 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
+	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
+	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
+		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
+		return
+	}
+
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -369,10 +381,99 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	}
 }
 
+func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http.Request, res http.ResponseWriter) {
+	providerProperties := l.GetProviderProperties()
+	providerURL, _ := url.Parse(l.GetProviderURL())
+	errorUI := "/error"
+	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
+
+	if !exists {
+		err := ErrInvalidCapability("PersistAnonymousUser", l.Name())
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	credential := make(map[string]interface{}, 0)
+	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
+
+	anonnymouseUserEp := providerURL.JoinPath(ep)
+
+	buf, _ := encoding.Marshal(connectionPayload)
+	data := bytes.NewReader(buf)
+
+	client := &http.Client{}
+	newReq, _ := http.NewRequest("POST", anonnymouseUserEp.String(), data)
+
+	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+
+	resp, err := client.Do(newReq)
+	if err != nil {
+		err = ErrUnreachableRemoteProvider(err)
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+	defer resp.Body.Close()
+
+	flowResponse := AnonymousFlowResponse{}
+	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
+	if err != nil {
+		err = ErrUnmarshal(err, "user flow response")
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	l.SetJWTCookie(res, flowResponse.AccessToken)
+
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
+	if err != nil {
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
+	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
+
+	l.Log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
+
+	// if request was directly intercepted from the kanvas page ( /extension ) , then the ref might not be present
+	// so we can directly redirect back to intercepted page
+	if strings.HasPrefix(req.URL.Path, "/extension") {
+		// redirect to the intercepted page with all original query params
+		l.Log.Infof("Redirecting to intercepted page with query params %s", req.URL.RawQuery)
+		http.Redirect(res, req, req.URL.String(), http.StatusFound)
+		return
+	}
+	// Respect the referrer , and the query params
+	// The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
+	// It is used to redirect the user back to that page after a successful login.
+	// if the ref points to some page other than under /extension then skip ref
+	refUrl, err := core.GetRefURLFromRequest(req)
+	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
+	if strings.HasPrefix(refUrl, "/extension") {
+		l.Log.Infof("Redirecting to referrer %s", refUrl)
+		http.Redirect(res, req, refUrl, http.StatusFound)
+		return
+	}
+
+	if redirectURL == "/" {
+		l.Log.Info("No navigator extension found, redirecting to /error")
+		redirectURL = errorUI
+	}
+	l.Log.Infof("No source refs resolved , Redirecting to base kanvas page  %s", redirectURL)
+	http.Redirect(res, req, redirectURL, http.StatusFound)
+}
+
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+
+	_, supportsAnonymousUserSessions := l.GetProviderProperties().Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 
 	// Support for deep-link and redirection to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
@@ -409,11 +510,11 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"ref":              refURL,
 		}
 
-		releaseChannel := NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), l, l.Log)
-		if releaseChannel != nil {
-			releaseChannel.Intercept(r, w)
+		if supportsAnonymousUserSessions {
+			l.InterceptLoginAndInitiateAnonymousUserSession(r, w)
 			return
 		}
+
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
@@ -466,10 +567,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserID)
+	prefLocal, _ := l.ReadFromPersister(up.UserId)
 
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserID, up.Preferences)
+		_ = l.WriteToPersister(up.UserId, up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote

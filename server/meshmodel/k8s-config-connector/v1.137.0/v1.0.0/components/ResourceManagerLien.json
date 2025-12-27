@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "resourcemanager.cnrm.cloud.google.com/v1beta1",
     "kind": "ResourceManagerLien",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"origin\": {\n     \"description\": \"Immutable. A stable, user-visible/meaningful string identifying the origin\\nof the Lien, intended to be inspected programmatically. Maximum length of\\n200 characters.\",\n     \"type\": \"string\"\n    },\n    \"parent\": {\n     \"properties\": {\n      \"projectRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{value}}`, where {{value}} is the `number` field of a `Project` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"reason\": {\n     \"description\": \"Immutable. Concise user-visible strings indicating why an action cannot be performed\\non a resource. Maximum length of 200 characters.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"restrictions\": {\n     \"description\": \"Immutable. The types of operations which should be blocked as a result of this Lien.\\nEach value should correspond to an IAM permission. The server will validate\\nthe permissions against those for which Liens are supported.  An empty\\nlist is meaningless and will be rejected.\\ne.g. ['resourcemanager.projects.delete'].\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"origin\",\n    \"parent\",\n    \"reason\",\n    \"restrictions\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Resource Manager Lien\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

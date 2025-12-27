@@ -22,16 +22,20 @@ components:
   colorIcon: assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and LogGroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between AdoptedResource and LogGroup"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between LogGroup and Instance"
 relationship-count: 3
 featureList: [

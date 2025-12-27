@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "storage.hpe.com/v1",
     "kind": "HPEVolumeInfo",
     "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

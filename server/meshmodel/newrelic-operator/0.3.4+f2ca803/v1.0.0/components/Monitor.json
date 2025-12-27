@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#1CE783",
@@ -189,5 +203,7 @@
     "version": "newrelic.shanestarcher.com/v1alpha1",
     "kind": "Monitor",
     "schema": "{\n \"description\": \"Monitor is the Schema for the monitors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MonitorSpec defines the desired state of Monitor\",\n   \"properties\": {\n    \"conditions\": {\n     \"items\": {\n      \"properties\": {\n       \"policyName\": {\n        \"type\": \"string\"\n       },\n       \"runbookURL\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"frequency\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"locations\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"manageUpdates\": {\n     \"type\": \"boolean\"\n    },\n    \"options\": {\n     \"properties\": {\n      \"bypassHEADRequest\": {\n       \"type\": \"boolean\"\n      },\n      \"treatRedirectAsFailure\": {\n       \"type\": \"boolean\"\n      },\n      \"validationString\": {\n       \"type\": \"string\"\n      },\n      \"verifySSL\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"script\": {\n     \"description\": \"TODO flatten this structure out\",\n     \"properties\": {\n      \"scriptText\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"slaThreshold\": {\n     \"format\": \"float\",\n     \"type\": \"number\"\n    },\n    \"status\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    },\n    \"uri\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Monitor\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

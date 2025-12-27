@@ -12,38 +12,16 @@
     "isAnnotation": false
   },
   "model": {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "",
     "version": "",
     "name": "aws-dynamodb-controller",
     "displayName": "",
-    "status": "",
+    "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": "",
-      "type": "",
-      "sub_type": "",
-      "kind": "",
-      "status": "",
-      "created_at": "0001-01-01T00:00:00Z",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": null,
-      "schemaVersion": ""
+      "kind": ""
     },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "category": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "name": ""
-    },
-    "subCategory": "",
-    "metadata": null,
     "model": {
       "version": "v1.4.10"
-    },
-    "components_count": 0,
-    "relationships_count": 0,
-    "components": null,
-    "relationships": null
+    }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -56,38 +34,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "dynamodb-controller",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "artifacthub",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "artifacthub"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
@@ -113,38 +69,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
               "version": "",
               "name": "lambda-controller",
               "displayName": "",
-              "status": "",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "type": "",
-                "sub_type": "",
-                "kind": "artifacthub",
-                "status": "",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null,
-                "schemaVersion": ""
+                "kind": "artifacthub"
               },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
               "model": {
                 "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
+              }
             },
             "patch": {
               "patchStrategy": "replace",
@@ -164,11 +98,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
   ],
   "subType": "firewall",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

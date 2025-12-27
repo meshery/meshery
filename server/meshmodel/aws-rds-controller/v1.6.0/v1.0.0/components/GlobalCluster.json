@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#C925D1",
@@ -187,5 +201,7 @@
     "version": "rds.services.k8s.aws/v1alpha1",
     "kind": "GlobalCluster",
     "schema": "{\n \"description\": \"GlobalCluster is the Schema for the GlobalClusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalClusterSpec defines the desired state of GlobalCluster.\\n\\nA data type representing an Aurora global database.\",\n   \"properties\": {\n    \"databaseName\": {\n     \"description\": \"The name for your database of up to 64 alphanumeric characters. If you don't\\nspecify a name, Amazon Aurora doesn't create a database in the global database\\ncluster.\\n\\nConstraints:\\n\\n  - Can't be specified if SourceDBClusterIdentifier is specified. In this\\n    case, Amazon Aurora uses the database name from the source DB cluster.\",\n     \"type\": \"string\"\n    },\n    \"deletionProtection\": {\n     \"description\": \"Specifies whether to enable deletion protection for the new global database\\ncluster. The global database can't be deleted when deletion protection is\\nenabled.\",\n     \"type\": \"boolean\"\n    },\n    \"engine\": {\n     \"description\": \"The database engine to use for this global database cluster.\\n\\nValid Values: aurora-mysql | aurora-postgresql\\n\\nConstraints:\\n\\n  - Can't be specified if SourceDBClusterIdentifier is specified. In this\\n    case, Amazon Aurora uses the engine of the source DB cluster.\",\n     \"type\": \"string\"\n    },\n    \"engineVersion\": {\n     \"description\": \"The engine version to use for this global database cluster.\\n\\nConstraints:\\n\\n  - Can't be specified if SourceDBClusterIdentifier is specified. In this\\n    case, Amazon Aurora uses the engine version of the source DB cluster.\",\n     \"type\": \"string\"\n    },\n    \"globalClusterIdentifier\": {\n     \"description\": \"The cluster identifier for this global database cluster. This parameter is\\nstored as a lowercase string.\",\n     \"type\": \"string\"\n    },\n    \"sourceDBClusterIdentifier\": {\n     \"description\": \"The Amazon Resource Name (ARN) to use as the primary cluster of the global\\ndatabase.\\n\\nIf you provide a value for this parameter, don't specify values for the following\\nsettings because Amazon Aurora uses the values from the specified source\\nDB cluster:\\n\\n  - DatabaseName\\n\\n  - Engine\\n\\n  - EngineVersion\\n\\n  - StorageEncrypted\",\n     \"type\": \"string\"\n    },\n    \"storageEncrypted\": {\n     \"description\": \"Specifies whether to enable storage encryption for the new global database\\ncluster.\\n\\nConstraints:\\n\\n  - Can't be specified if SourceDBClusterIdentifier is specified. In this\\n    case, Amazon Aurora uses the setting from the source DB cluster.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

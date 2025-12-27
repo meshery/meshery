@@ -13,13 +13,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/pattern/core"
 
 	// "github.com/meshery/meshkit/errors"
 	// "github.com/meshery/meshkit/errors"
@@ -498,7 +496,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Annotations:  returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -573,7 +571,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -647,7 +645,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -722,7 +720,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Annotations: returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -795,7 +793,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -869,7 +867,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -940,7 +938,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -1012,7 +1010,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 
@@ -1149,7 +1147,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
@@ -1186,18 +1184,20 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+// processComponentDefinitions processes a list of entities and extracts component definitions,
+// it also sets the ModelReference field for each component definition.
+func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Component.Schema = string(b)
+			if comp.Model != nil {
+				comp.ModelReference = comp.Model.ToReference()
+			}
+
 			comps = append(comps, *comp)
 		}
+
 	}
 	return comps
 }
@@ -1220,7 +1220,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	var message string
 
 	//Here the codes handles to decode and store the data from the payload
@@ -1652,7 +1652,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	for _, comp := range components {
 		_ = comp.ReplaceSVGData("../../")
-		comp.Model = *model
+		comp.Model = model
 		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
@@ -1660,7 +1660,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	}
 	for _, rel := range relationships {
-		rel.Model = *model
+		rel.Model = model.ToReference()
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)

@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "pubsub.cnrm.cloud.google.com/v1beta1",
     "kind": "PubSubTopic",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"kmsKeyRef\": {\n     \"description\": \"The KMSCryptoKey to be used to protect access to messages published\\non this topic. Your project's Pub/Sub service account\\n('service-{{PROJECT_NUMBER}}@gcp-sa-pubsub.iam.gserviceaccount.com')\\nmust have 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this\\nfeature.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"messageRetentionDuration\": {\n     \"description\": \"Indicates the minimum duration to retain a message after it is published\\nto the topic. If this field is set, messages published to the topic in\\nthe last messageRetentionDuration are always available to subscribers.\\nFor instance, it allows any attached subscription to seek to a timestamp\\nthat is up to messageRetentionDuration in the past. If this field is not\\nset, message retention is controlled by settings on individual subscriptions.\\nCannot be more than 31 days or less than 10 minutes.\",\n     \"type\": \"string\"\n    },\n    \"messageStoragePolicy\": {\n     \"description\": \"Policy constraining the set of Google Cloud Platform regions where\\nmessages published to the topic may be stored. If not present, then no\\nconstraints are in effect.\",\n     \"properties\": {\n      \"allowedPersistenceRegions\": {\n       \"description\": \"A list of IDs of GCP regions where messages that are published to\\nthe topic may be persisted in storage. Messages published by\\npublishers running in non-allowed GCP regions (or running outside\\nof GCP altogether) will be routed for storage in one of the\\nallowed regions. An empty list means that no regions are allowed,\\nand is not a valid configuration.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"allowedPersistenceRegions\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"schemaSettings\": {\n     \"description\": \"Settings for validating messages published against a schema.\",\n     \"properties\": {\n      \"encoding\": {\n       \"description\": \"The encoding of messages validated against schema. Default value: \\\"ENCODING_UNSPECIFIED\\\" Possible values: [\\\"ENCODING_UNSPECIFIED\\\", \\\"JSON\\\", \\\"BINARY\\\"].\",\n       \"type\": \"string\"\n      },\n      \"schemaRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{project}}/schemas/{{value}}`, where {{value}} is the `name` field of a `PubSubSchema` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"schemaRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pub Sub Topic\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

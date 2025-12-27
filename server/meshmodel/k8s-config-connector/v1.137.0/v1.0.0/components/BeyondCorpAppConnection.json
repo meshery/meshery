@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4285F4",
@@ -187,5 +201,7 @@
     "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1",
     "kind": "BeyondCorpAppConnection",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"applicationEndpoint\": {\n     \"description\": \"Address of the remote application endpoint for the BeyondCorp AppConnection.\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"Hostname or IP address of the remote application endpoint.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"Port of the remote application endpoint.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\"\n     ],\n     \"type\": \"object\"\n    },\n    \"connectors\": {\n     \"description\": \"List of AppConnectors that are authorised to be associated with this AppConnection.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"An arbitrary user-provided name for the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"gateway\": {\n     \"description\": \"Gateway used by the AppConnection.\",\n     \"properties\": {\n      \"appGateway\": {\n       \"description\": \"AppGateway name in following format: projects/{project_id}/locations/{locationId}/appgateways/{gateway_id}.\",\n       \"type\": \"string\"\n      },\n      \"ingressPort\": {\n       \"description\": \"Ingress port reserved on the gateways for this AppConnection, if not specified or zero, the default port is 19443.\",\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"The type of hosting used by the gateway. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#Type_1\\nfor a list of possible values.\",\n       \"type\": \"string\"\n      },\n      \"uri\": {\n       \"description\": \"Server-defined URI for this resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"appGateway\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppConnection. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type\\nfor a list of possible values.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationEndpoint\",\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Connection\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
