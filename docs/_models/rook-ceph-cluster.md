@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Rook Ceph Cluster
 subtitle: Collaborative and visual infrastructure as design for Rook Ceph Cluster
