@@ -18,56 +18,71 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models/environments"
-	"github.com/pkg/errors"
-
-	"github.com/spf13/cobra"
 )
 
 var listEnvironmentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered environments",
-	Long: `List name of all registered environments
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list`,
+	Long: `List the names of all registered environments.
+
+Documentation:
+https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
-// List all registered environment
-mesheryctl environment list --orgID [orgID]
+// List all registered environments for an organization
+mesheryctl environment list --orgID [org-id]
 `,
-
 	Args: func(cmd *cobra.Command, args []string) error {
-		// Check if all flag is set
-		orgIDFlag, _ := cmd.Flags().GetString("orgID")
-
-		if orgIDFlag == "" {
-			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+        orgID, err := cmd.Flags().GetString("orgID")
+        if err != nil {
+            return err
+        }
+		if orgID == "" {
+			return utils.ErrInvalidArgument(
+				errors.New(
+					"[ orgID ] is required\n\nUsage: mesheryctl environment list --orgID <org-id>",
+				),
+			)
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		orgID, _ := cmd.Flags().GetString("orgID")
 
-		// Validate UUID before making API call
+		// Validate orgID is a valid UUID
 		if _, err := uuid.Parse(orgID); err != nil {
 			return utils.ErrInvalidOrgID(err)
 		}
 
-		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
-
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](
+			fmt.Sprintf("api/environments?orgID=%s", orgID),
+		)
 		if err != nil {
 			return utils.ErrFetchEnvironments(err)
 		}
 
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
+
+
 		rows := [][]string{}
-		for _, environment := range environmentResponse.Environments {
-			rows = append(rows, []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()})
+		for _, env := range environmentResponse.Environments {
+			rows = append(rows, []string{
+				env.ID.String(),
+				env.Name,
+				env.OrganizationID.String(),
+				env.Description,
+				env.CreatedAt.String(),
+				env.UpdatedAt.String(),
+			})
 		}
 
-		dataToDisplay := display.DisplayedData{
+		data := display.DisplayedData{
 			DataType:         "environments",
 			Header:           header,
 			Rows:             rows,
@@ -75,15 +90,15 @@ mesheryctl environment list --orgID [orgID]
 			DisplayCountOnly: false,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
 
-		return nil
+		return display.List(data)
 	},
 }
 
 func init() {
-	listEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
+	listEnvironmentCmd.Flags().String(
+		"orgID",
+		"",
+		"Organization ID (required)",
+	)
 }
