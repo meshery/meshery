@@ -9,7 +9,7 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "prepare": "[ -z \"$SKIP_HOOKS\" ] && cd ../ui && husky || true",
+    "prepare": "cd .. && husky ui/.husky",
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
