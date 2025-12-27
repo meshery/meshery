@@ -15,6 +15,6 @@ jobs:
         cd ui && npm i eslint && cd ..
         cd provider-ui && npm i eslint && cd ..
     - name: Run eslint Meshery UI
-      run: make ui-lint 
+      run: make ui-lint NOT_FIX=true
     - name: Run eslint Provider UI
-      run: make ui-provider-lint
+      run: make ui-provider-lint NOT_FIX=true
