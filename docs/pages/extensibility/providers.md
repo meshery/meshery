@@ -35,8 +35,8 @@ Some examples include:
   - Examples: Local event storage in database
   - Examples: Remote event synchronization (Remote providers only)
 
-<a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png">
-<img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png" width="50%" /></a>
+<a href="{{ site.baseurl }}/assets/img/providers/providers.png">
+<img src="{{ site.baseurl }}/assets/img/providers/providers.png" width="50%" /></a>
 
   <figcaption>Figure: Selecting a provider in Meshery</figcaption>
 
@@ -49,11 +49,11 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
 
-Name: **"Meshery"** (default)
+Name: **"Layer5"** (default)
 
 - Enforces user authentication.
 - Long-term term persistence.
@@ -66,7 +66,7 @@ Name: **"Meshery"** (default)
 
 The use of the Local Provider, **"None"**, puts Meshery into a single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
 
-Name: **“None”**
+Name: **"None"**
 
 - No user authentication.
 - Container-local storage of test results. Ephemeral.
