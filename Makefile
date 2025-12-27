@@ -104,6 +104,7 @@ server-local: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
@@ -114,6 +115,7 @@ server-kanvas: dep-check
 	PROVIDER=Layer5 \
 	RELEASE_CHANNEL=kanvas \
 	PLAYGROUND=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
 	PORT=9081 \
 	DEBUG=true \
@@ -179,6 +181,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
