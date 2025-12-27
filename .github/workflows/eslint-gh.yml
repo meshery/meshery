@@ -14,21 +14,7 @@ jobs:
       run: |
         cd ui && npm i eslint && cd ..
         cd provider-ui && npm i eslint && cd ..
-    - name: Run ESLint Meshery-UI
-      run: cd ui && npm i eslint && npx eslint .
-    - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm i eslint && npx eslint .
-
-    # Replace the steps above with the following make targets and autocommit when ready.
-    # - name: Run eslint Meshery UI
-    #   run: make ui-lint 
-    # - name: Run eslint Provider UI
-    #   run: make ui-provider-lint
-    # - name: Commit changes
-    #   uses: stefanzweifel/git-auto-commit-action@v5
-    #   with:
-    #     commit_user_name: mesheryci
-    #     commit_user_email: ci@meshery.io
-    #     commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-    #     commit_options: "--signoff"
-    #     commit_message: "[UI] Chore: eslint fixes"
+    - name: Run eslint Meshery UI
+      run: make ui-lint 
+    - name: Run eslint Provider UI
+      run: make ui-provider-lint
