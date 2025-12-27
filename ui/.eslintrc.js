@@ -6,10 +6,11 @@ module.exports = {
   },
 
   settings: {
-    react: {
-      version: require('./package.json').dependencies.react,
+  react: {
+    version: 'detect',
     },
   },
+
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
@@ -21,7 +22,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
     globalThis: 'readonly',
   },
-  parser: '@babel/eslint-parser',
+
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -29,7 +30,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier', 'unused-imports'],
+  plugins: ['react', 'prettier', 'unused-imports', 'react-hooks'],
   rules: {
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
