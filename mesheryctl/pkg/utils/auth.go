@@ -352,8 +352,12 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	// Pause until we get the response on the channel
 	token := <-tokenChan
 
-	// Shut down the server
-	if err := srv.Shutdown(context.TODO()); err != nil {
+	// Add timeout context for server shutdown
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+	// Shut down the server with timeout
+	if err := srv.Shutdown(ctx); err != nil {
 		return token, err
 	}
 
