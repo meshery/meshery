@@ -1,0 +1,3 @@
+Failed to unmarshal response body.json: cannot unmarshal string into Go struct field PerformanceProfilesAPIResponse.page_size of type uint | Short Description: Error unmarshalling response | Probable Cause: The JSON format from the response body is not valid. | Suggested Remediation: Ensure a valid JSON is provided for processing..
+See https://docs.meshery.io/reference/mesheryctl/perf/profile for usage details
+
