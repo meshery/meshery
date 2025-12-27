@@ -6,11 +6,17 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
+
+// sanitizePaths replaces absolute paths with a placeholder to make golden file comparisons portable
+func sanitizePaths(output, basePath string) string {
+	return strings.ReplaceAll(output, basePath, "<TEST_PATH>")
+}
 
 var update = flag.Bool("update", false, "update golden files")
 
@@ -61,6 +67,9 @@ type tempTestStruct struct {
 	ExpectedResponse string
 	Token            string
 	ExpectError      bool
+	SanitizePath     bool  // set to true if output contains dynamic paths
+	IsOutputGolden   bool  `default:"true"`
+	ExpectedError    error `default:"nil"`
 }
 
 func TestProfileCmd(t *testing.T) {
@@ -80,35 +89,104 @@ func TestProfileCmd(t *testing.T) {
 	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 
 	tests := []tempTestStruct{
-		{"standard profiles output", []string{"profile"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
-		}, profile1001output, testToken, false},
-		{"profiles searching istio", []string{"profile", "istio"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1002, ResponseCode: 200},
-		}, profile1002output, testToken, false},
-		{"profiles searching test 3", []string{"profile", "test", "3"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1003, ResponseCode: 200},
-		}, profile1003output, testToken, false},
-		{"Unmarshal error", []string{"profile"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
-		}, profile1010output, testToken, true},
-		{"failing add authentication test", []string{"profile"}, []utils.MockURL{}, profile1011output, testToken + "invalid-path", true},
-		{"Server Error 400", []string{"profile"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 400},
-		}, profile1009output, testToken, true},
+		{
+			Name: "standard profiles output",
+			Args: []string{"profile"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1001output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name: "profiles searching istio",
+			Args: []string{"profile", "istio"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1002, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1002output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name: "profiles searching test 3",
+			Args: []string{"profile", "test", "3"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1003, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1003output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No profiles found", []string{"profile", "--view"}, []utils.MockURL{{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200}}, profile1005output, testToken, false},
-		{"standard profiles in json output", []string{"profile", "-o", "json"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
-		}, profile1006output, testToken, false},
-		{"standard profiles in yaml output", []string{"profile", "-o", "yaml"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
-		}, profile1007output, testToken, false},
-		{"invalid output format", []string{"profile", "-o", "invalid"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
-		}, profile1008output, testToken, true},
+		{
+			Name: "No profiles found",
+			Args: []string{"profile", "--view"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1005output,
+			Token:            testToken,
+		},
+		{
+			Name: "standard profiles in json output",
+			Args: []string{"profile", "-o", "json"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1006output,
+			Token:            testToken,
+		},
+		{
+			Name: "standard profiles in yaml output",
+			Args: []string{"profile", "-o", "yaml"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1007output,
+			Token:            testToken,
+		},
+		{
+			Name: "invalid output format",
+			Args: []string{"profile", "-o", "invalid"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1008output,
+			Token:            testToken,
+			ExpectError:      true,
+		},
+		{
+			Name: "Unmarshal error",
+			Args: []string{"profile"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
+			},
+			ExpectedResponse: profile1010output,
+			Token:            testToken,
+			ExpectError:      true,
+		},
+		{
+			Name: "Server Error 400",
+			Args: []string{"profile"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 400},
+			},
+			ExpectedResponse: profile1009output,
+			Token:            testToken,
+			ExpectError:      true,
+		},
+		{
+			Name:             "failing add authentication test",
+			Args:             []string{"profile"},
+			ExpectedResponse: profile1011output,
+			Token:            testToken + "invalid-path",
+			ExpectError:      true,
+			SanitizePath:     true,
+		},
 	}
 
 	// Run tests in list format
@@ -144,11 +222,15 @@ func TestProfileCmd(t *testing.T) {
 
 			if err != nil {
 				if tt.ExpectError {
+					errStr := err.Error()
+					if tt.SanitizePath {
+						errStr = sanitizePaths(errStr, currDir)
+					}
 					if *update {
-						golden.Write(err.Error())
+						golden.Write(errStr)
 					}
 					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, err.Error())
+					utils.Equals(t, expectedResponse, errStr)
 					resetVariables()
 					return
 				}
@@ -193,11 +275,15 @@ func TestProfileCmd(t *testing.T) {
 			err := PerfCmd.Execute()
 			if err != nil {
 				if tt.ExpectError {
+					errStr := err.Error()
+					if tt.SanitizePath {
+						errStr = sanitizePaths(errStr, currDir)
+					}
 					if *update {
-						golden.Write(err.Error())
+						golden.Write(errStr)
 					}
 					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, err.Error())
+					utils.Equals(t, expectedResponse, errStr)
 					resetVariables()
 					return
 				}
@@ -206,6 +292,9 @@ func TestProfileCmd(t *testing.T) {
 
 			// response being printed in console
 			actualResponse := b.String()
+			if tt.SanitizePath {
+				actualResponse = sanitizePaths(actualResponse, currDir)
+			}
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)

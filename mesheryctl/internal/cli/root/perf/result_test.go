@@ -64,35 +64,90 @@ func TestResultCmd(t *testing.T) {
 	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	tests := []tempTestStruct{
-		{"standard results output", []string{"result", "abhishek"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
-		}, result1001output, testToken, false},
-		{"Unmarshal error", []string{"result", "abhishek"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
-		}, result1010output, testToken, true},
-		{"failing add authentication test", []string{"result", "abhishek"}, []utils.MockURL{}, result1011output, testToken + "invalid-path", true},
-		{"Server Error 400", []string{"result", "abhishek"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 400},
-		}, result1009output, testToken, true},
-		{"No profile passed", []string{"result"}, []utils.MockURL{}, result1012output, testToken, true},
+		{
+			Name: "standard results output",
+			Args: []string{"result", "abhishek"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+			},
+			ExpectedResponse: result1001output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"standard results in json output", []string{"result", "abhishek", "-o", "json"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
-		}, result1006output, testToken, false},
-		{"standard results in yaml output", []string{"result", "abhishek", "-o", "yaml"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
-		}, result1007output, testToken, false},
-		{"invalid output format", []string{"result", "abhishek", "-o", "invalid"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
-		}, result1008output, testToken, true},
+		{
+			Name: "standard results in json output",
+			Args: []string{"result", "abhishek", "-o", "json"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+			},
+			ExpectedResponse: result1006output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name: "standard results in yaml output",
+			Args: []string{"result", "abhishek", "-o", "yaml"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+			},
+			ExpectedResponse: result1007output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name: "invalid output format",
+			Args: []string{"result", "abhishek", "-o", "invalid"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+			},
+			ExpectedResponse: result1008output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name: "Unmarshal error",
+			Args: []string{"result", "abhishek"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
+			},
+			ExpectedResponse: result1010output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name:             "failing add authentication test",
+			Args:             []string{"result", "abhishek"},
+			ExpectedResponse: result1011output,
+			Token:            testToken + "invalid-path",
+			ExpectError:      false,
+			SanitizePath:     true,
+		},
+		{
+			Name: "Server Error 400",
+			Args: []string{"result", "abhishek"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 400},
+			},
+			ExpectedResponse: result1009output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
+		{
+			Name:             "No profile passed",
+			Args:             []string{"result"},
+			ExpectedResponse: result1012output,
+			Token:            testToken,
+			ExpectError:      false,
+		},
 	}
 
 	// Run tests in list format
@@ -128,11 +183,15 @@ func TestResultCmd(t *testing.T) {
 
 			if err != nil {
 				if tt.ExpectError {
+					errStr := err.Error()
+					if tt.SanitizePath {
+						errStr = sanitizePaths(errStr, currDir)
+					}
 					if *update {
-						golden.Write(err.Error())
+						golden.Write(errStr)
 					}
 					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, err.Error())
+					utils.Equals(t, expectedResponse, errStr)
 					resetVariables()
 					return
 				}
@@ -177,11 +236,15 @@ func TestResultCmd(t *testing.T) {
 			err := PerfCmd.Execute()
 			if err != nil {
 				if tt.ExpectError {
+					errStr := err.Error()
+					if tt.SanitizePath {
+						errStr = sanitizePaths(errStr, currDir)
+					}
 					if *update {
-						golden.Write(err.Error())
+						golden.Write(errStr)
 					}
 					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, err.Error())
+					utils.Equals(t, expectedResponse, errStr)
 					resetVariables()
 					return
 				}
@@ -190,6 +253,9 @@ func TestResultCmd(t *testing.T) {
 
 			// response being printed in console
 			actualResponse := b.String()
+			if tt.SanitizePath {
+				actualResponse = sanitizePaths(actualResponse, currDir)
+			}
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)
