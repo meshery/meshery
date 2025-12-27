@@ -91,6 +91,9 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
 
   useEffect(() => {
     setSelectedFilters(defaultFilters);
+    if (defaultFilters?.length > 0) {
+      handleFilter(transformData(defaultFilters));
+    }
   }, [defaultFilters.length]);
 
   const getOptions = () => {
