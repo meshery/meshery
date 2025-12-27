@@ -120,7 +120,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0o755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -129,7 +129,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = os.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -139,7 +139,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -154,7 +154,7 @@ func SetupContextEnv(t *testing.T) {
 	viper.Reset()
 	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
 	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	//fmt.Println(viper.ConfigFileUsed())
+	// fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -189,7 +189,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
-	//fmt.Println(viper.ConfigFileUsed())
+	// fmt.Println(viper.ConfigFileUsed())
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -352,7 +352,7 @@ func GetToken(t *testing.T) string {
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commandName string) {
 	// setup current context
 	SetupContextEnv(t)
-	//initialize mock server for handling requests
+	// initialize mock server for handling requests
 	StartMockery(t)
 	// create a test helper
 	testContext := NewTestHelper(t)
@@ -362,7 +362,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
 			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			TokenFlag = GetToken(t)
@@ -395,10 +394,11 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			w.Close()
 
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
-					// if we're supposed to get an error
-					if tt.ExpectError {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// Keep this check to see if output is golden file during transition
+					if tt.IsOutputGolden {
+
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -408,16 +408,17 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
+					assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
+					assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
+					assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
+					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
+					assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.ExpectedError))
+					ResetCommandFlags(cmd, t)
+					return
+
 				}
-				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
-				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
-				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
-				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
-				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
-				assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.ExpectedError))
-				ResetCommandFlags(cmd, t)
-				return
+				t.Fatal(err)
 			}
 
 			_, errCopy := io.Copy(&buf, r)
@@ -460,7 +461,7 @@ type MesheryCommandTest struct {
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
 	// setup current context
 	SetupContextEnv(t)
-	//initialize mock server for handling requests
+	// initialize mock server for handling requests
 	StartMockery(t)
 	// create a test helper
 	testContext := NewTestHelper(t)
@@ -501,12 +502,11 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(b)
 			err := cmd.Execute()
-
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
-					// if we're supposed to get an error
-					if tt.ExpectError {
+				if tt.ExpectError {
+					// Keep this check to see if output is golden file during transition
+					if tt.IsOutputGolden {
+						// if we're supposed to get an error
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -516,15 +516,17 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
+					assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
+					assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
+					assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
+					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
+					ResetCommandFlags(cmd, t)
+					return
+
 				}
-				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
-				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
-				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
-				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
-				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
-				ResetCommandFlags(cmd, t)
-				return
+				t.Fatal(err)
+
 			}
 
 			actualResponse := b.String()
