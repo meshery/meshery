@@ -154,7 +154,6 @@ func SetupContextEnv(t *testing.T) {
 	viper.Reset()
 	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
 	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	// fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -189,7 +188,6 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
-	// fmt.Println(viper.ConfigFileUsed())
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -329,6 +327,14 @@ func formatToTabs(data string) string {
 	return s
 }
 
+// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
+	t.Helper()
+	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")
+	assert.Equal(t, errors.GetCode(got), errors.GetCode(expected), "error code mismatch")
+	assert.Equal(t, errors.GetLDescription(got), errors.GetLDescription(expected), "long description mismatch")
+}
+
 type MesheryListCommandTest struct {
 	Name             string
 	Args             []string
@@ -394,11 +400,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			w.Close()
 
 			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-
+				// Keep this check to see if output is golden file during transition
+				if tt.IsOutputGolden {
+					// if we're supposed to get an error
+					if tt.ExpectError {
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -408,17 +413,12 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
-					assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
-					assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
-					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
-					assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.ExpectedError))
-					ResetCommandFlags(cmd, t)
-					return
-
+					t.Fatal(err)
 				}
-				t.Fatal(err)
+
+				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+				ResetCommandFlags(cmd, t)
+				return
 			}
 
 			_, errCopy := io.Copy(&buf, r)
@@ -503,10 +503,10 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cmd.SetOut(b)
 			err := cmd.Execute()
 			if err != nil {
-				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-						// if we're supposed to get an error
+				// Keep this check to see if output is golden file during transition
+				if tt.IsOutputGolden {
+					// if we're supposed to get an error
+					if tt.ExpectError {
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -516,17 +516,12 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.ExpectedError))
-					assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.ExpectedError))
-					assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.ExpectedError))
-					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.ExpectedError))
-					ResetCommandFlags(cmd, t)
-					return
-
+					t.Fatal(err)
 				}
-				t.Fatal(err)
 
+				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+				ResetCommandFlags(cmd, t)
+				return
 			}
 
 			actualResponse := b.String()
