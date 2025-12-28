@@ -190,3 +190,7 @@ One way is to watch the logs: run `kubectl logs -f deployment/app-primary` in on
 Using our 10% canary, you should see around 90% of requests served by app-primary and 10% by app-canary. This demonstrates the traffic shifting: stable handles the majority of traffic while the canary gets its configured share.
 
 Next: Once satisfied, you could adjust the canary-weight up or down (or promote the canary to 100%) by editing the annotations on the canary Ingress on Meshery Playground’s Kanvas to flip traffic weights or roll back changes if needed.
+
+Congratulations! You have successfully completed this exercise.
+
+[Design for this tutorial](https://cloud.layer5.io/catalog/content/catalog/tutorial-canary-deployment-with-meshery-616567e0-937b-46a3-8748-cdaa69f4be7f?source=%257B%2522userid%2522%253A%2522337a7dd1-2d26-48d6-bb28-26922e16d30d%2522%257D)
