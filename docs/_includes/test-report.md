@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 26th 2025, 11:53:14 pm
+- Testing started at: December 28th 2025, 3:06:05 pm
 
 **📦 Test Result Summary**
 
-- ✅ 0 passed
-- ❌ 2 failed
+- ✅ 1 passed
+- ❌ 1 failed
 - ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 0 minutes and 1 seconds_
+⌛ _Duration: 0 minutes and 25 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -22,7 +22,6 @@
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
 | 1 | setup | authenticate as Meshery provider |  | ❌ |
-| 2 | setup | authenticate as None provider |  | ❌ |
 
 </div>
 </details>
