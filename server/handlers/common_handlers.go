@@ -51,7 +51,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		Path:     "/",
 		HttpOnly: true,
 	})
-	_ = p.DeleteCapabilitiesForUser(user.ID)
+	_ = p.DeleteCapabilitiesForUser(user.ID.String())
 	err := p.Logout(w, req)
 	if err != nil {
 		h.log.Error(models.ErrLogout(err))
