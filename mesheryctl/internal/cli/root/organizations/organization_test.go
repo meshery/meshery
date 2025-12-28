@@ -35,7 +35,7 @@ func TestOrganization(t *testing.T) {
 		{
 			Name:             "Launch organization without args",
 			Args:             []string{},
-			ExpectedResponse: "organization.no.args.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("please provide a subcommand with the command")),
@@ -43,7 +43,7 @@ func TestOrganization(t *testing.T) {
 		{
 			Name:             "Launch organization with invalid subcommand name",
 			Args:             []string{"test-invalid-subcommand"},
-			ExpectedResponse: "organization.invalid.subcommand.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("'test-invalid-subcommand' is an invalid command. Use 'mesheryctl organization --help' to display usage guide")),
