@@ -1,6 +1,7 @@
 package model
 
 import (
+	goerrors "errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -28,6 +29,8 @@ func TestSearchModel(t *testing.T) {
 			Fixture:          "empty.golden",
 			ExpectedResponse: "search.model.without.query.output.golden",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("Please provide a model name. Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message")),
 		},
 		{
 			Name:             "Search model with query",

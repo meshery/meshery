@@ -3,10 +3,12 @@ package model
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -72,6 +74,8 @@ func TestModelInit(t *testing.T) {
 		ExpectedDirs       []string
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
+		ExpectedError      error `default:"nil"`
+		IsOutputGolden     bool  `default:"true"`
 	}{
 		// NOTE:
 		// we need this test with full params on the first place,
@@ -208,38 +212,50 @@ func TestModelInit(t *testing.T) {
 				}
 			},
 			ExpectError:        true,
-			ExpectedResponse:   "model.init.folder-exists.output.golden",
+			ExpectedResponse:   "",
 			AfterTestRemoveDir: "./test-case-aws-ec2-controller",
+			IsOutputGolden:     false,
+			ExpectedError:      ErrModelInitFromString("folder test-case-aws-ec2-controller/v1.0.0 exists, please specify different model name or version"),
 		},
 		{
 			Name:             "model init with invalid version format",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "1.2"},
 			ExpectError:      true,
-			ExpectedResponse: "model.init.invalid-version-format.output.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelUnsupportedVersion("version must follow a semver format, f.e. v1.2.3"),
 		},
 		{
 			Name:             "model init with invalid output format",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
 			ExpectError:      true,
-			ExpectedResponse: "model.init.invalid-output-format.output.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelUnsupportedOutputFormat("[ json, yaml ] are the only format supported"),
 		},
 		{
 			Name:             "model init no model name",
 			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
-			ExpectedResponse: "model.init.wrong-number-of-arguments.output.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelInitFromString("must provide only one argument: model name"),
 		},
 		{
 			Name:             "model init too many arguments",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
-			ExpectedResponse: "model.init.wrong-number-of-arguments.output.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelInitFromString("must provide only one argument: model name"),
 		},
 		{
 			Name:             "model init invalid model name (underscore)",
 			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "model.init.invalid-model-name.output.golden",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelInitFromString("invalid model name: name must match pattern ^[a-z0-9-]+$"),
 		},
 	}
 	for _, tc := range tests {
@@ -269,10 +285,18 @@ func TestModelInit(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					expectedResponse := golden.Load()
+					if tc.IsOutputGolden {
 
-					utils.Equals(t, expectedResponse, err.Error())
+						expectedResponse := golden.Load()
+
+						utils.Equals(t, expectedResponse, err.Error())
+						return
+					}
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
+					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
+					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
 					return
+
 				}
 				t.Fatal(err)
 			}

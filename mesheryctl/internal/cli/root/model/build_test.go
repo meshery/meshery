@@ -3,10 +3,12 @@ package model
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -109,6 +111,8 @@ func TestModelBuild(t *testing.T) {
 		ExpectedResponse string
 		ExpectedFiles    []string
 		CleanupHooks     []func()
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
 	}{
 		{
 			Name:             "model build from model name and version",
@@ -168,19 +172,23 @@ func TestModelBuild(t *testing.T) {
 			Name:             "model build no params",
 			Args:             []string{"build"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings("Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"),
 		},
 		{
 			Name:             "model build wrong input param format",
 			Args:             []string{"build", "aws-ec2-controller/v0.1.0/smthelse"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings("Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"),
 		},
 		{
 			Name:             "model build from model name only (no version) not supporting multiple versions",
 			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller-gbxter34"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.not-supporting-multiple-versions-build.golden",
+			ExpectedResponse: "",
 			SetupHooks: []func(){
 				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.0"),
 				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.1"),
@@ -191,12 +199,16 @@ func TestModelBuild(t *testing.T) {
 					"test-case-model-build-aws-dynamodb-controller-gbxter34",
 				),
 			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings("Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message", "\nCommand does not support multiple versions build under one image"),
 		},
 		{
 			Name:             "model build folder does not exist",
 			Args:             []string{"build", "aws-ec2-controller/v0.1.0", "--path", "./not_existing_folder"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.folder-does-not-exist.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings("Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message", "\nfolder not_existing_folder/aws-ec2-controller/v0.1.0 does not exist"),
 		},
 	}
 	for _, tc := range tests {
@@ -226,10 +238,17 @@ func TestModelBuild(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					expectedResponse := golden.Load()
+					if tc.IsOutputGolden {
+						expectedResponse := golden.Load()
 
-					utils.Equals(t, expectedResponse, err.Error())
+						utils.Equals(t, expectedResponse, err.Error())
+						return
+					}
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
+					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
+					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
 					return
+
 				}
 				t.Fatal(err)
 			}
