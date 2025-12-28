@@ -253,7 +253,7 @@ func TestModelInit(t *testing.T) {
 			Name:             "model init invalid model name (underscore)",
 			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
-			ExpectedResponse: "model.init.invalid-model-name.output.golden",
+			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectedError:    ErrModelInitFromString("invalid model name: name must match pattern ^[a-z0-9-]+$"),
 		},

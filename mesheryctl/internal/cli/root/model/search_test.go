@@ -27,7 +27,7 @@ func TestSearchModel(t *testing.T) {
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "empty.golden",
-			ExpectedResponse: "search.model.without.query.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("Please provide a model name. Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message")),
