@@ -350,7 +350,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 ) {
 	evalCtx := r.Context()
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()

@@ -4,6 +4,8 @@ go 1.25.5
 
 replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api v0.0.0-20230704153349-abb98ff04d03
 
+replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose-go/v2 v2.9.1
+
 // The following replaces are used for local development
 
 // replace github.com/meshery/schemas v0.8.92 => ../schemas
@@ -49,7 +51,7 @@ require (
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v0.8.56
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.94
+	github.com/meshery/schemas v0.8.96
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v1.1.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -394,7 +396,6 @@ require (
 	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
 	golang.org/x/crypto v0.46.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20250406160420-959f8f3db0fb // indirect
 	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect

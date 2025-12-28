@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeTargetTCPProxy",
     "schema": "{\n \"description\": \"ComputeTargetTCPProxy is the Schema for the ComputeTargetTCPProxy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ComputeTargetTCPProxySpec defines the desired state of ComputeTargetTCPProxy\",\n   \"properties\": {\n    \"backendServiceRef\": {\n     \"description\": \"A reference to the ComputeBackendService resource.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The value of an externally managed ComputeBackendService resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a ComputeBackendService resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a ComputeBackendService resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Description is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"location\": {\n     \"description\": \"The geographical location of the ComputeTargetTCPProxy. Reference: GCP definition of regions/zones (https://cloud.google.com/compute/docs/regions-zones/)\",\n     \"type\": \"string\"\n    },\n    \"proxyBind\": {\n     \"description\": \"Immutable. This field only applies when the forwarding rule that references this target proxy has a loadBalancingScheme set to INTERNAL_SELF_MANAGED.\",\n     \"type\": \"boolean\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"ProxyBind is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"proxyHeader\": {\n     \"description\": \"Specifies the type of proxy header to append before sending data to the backend. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"PROXY_V1\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"The ComputeTargetTCPProxy name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backendServiceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Target TCP Proxy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

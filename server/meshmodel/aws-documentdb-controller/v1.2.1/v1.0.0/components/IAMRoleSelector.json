@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "services.k8s.aws/v1alpha1",
     "kind": "IAMRoleSelector",
     "schema": "{\n \"description\": \"IAMRoleSelector is the schema for the IAMRoleSelector API.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arn\": {\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"namespaceSelector\": {\n     \"description\": \"IAMRoleSelectorSpec defines the desired state of IAMRoleSelector\",\n     \"properties\": {\n      \"labelSelector\": {\n       \"description\": \"LabelSelector is a label query over a set of resources.\",\n       \"properties\": {\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"matchLabels\"\n       ],\n       \"type\": \"object\"\n      },\n      \"names\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"names\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceLabelSelector\": {\n     \"description\": \"LabelSelector is a label query over a set of resources.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"matchLabels\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceTypeSelector\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"group\",\n       \"kind\",\n       \"version\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"arn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Role Selector\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

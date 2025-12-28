@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "gravitee.io/v1alpha1",
     "kind": "ManagementContext",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ManagementContext represents the configuration for a specific environment\",\n   \"properties\": {\n    \"auth\": {\n     \"description\": \"Auth defines the authentication method used to connect to the API Management.\",\n     \"properties\": {\n      \"bearerToken\": {\n       \"description\": \"The bearer token used to authenticate against the API Management instance\\n(must be generated from...\",\n       \"type\": \"string\"\n      },\n      \"credentials\": {\n       \"description\": \"The Basic credentials used to authenticate against the API Management instance.\",\n       \"properties\": {\n        \"password\": {\n         \"type\": \"string\"\n        },\n        \"username\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"password\",\n        \"username\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secretRef\": {\n       \"description\": \"A secret reference holding either a \\\"bearerToken\\\" key for bearer token authentication\\nor \\\"username\\\"...\",\n       \"properties\": {\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"baseUrl\": {\n     \"description\": \"The URL of a management API instance.\",\n     \"type\": \"string\"\n    },\n    \"cloud\": {\n     \"description\": \"Cloud when set (token or secretRef) this context will target Gravitee Cloud.\",\n     \"properties\": {\n      \"secretRef\": {\n       \"description\": \"SecretRef secret reference holding the Gravitee cloud token in the \\\"cloudToken\\\" key\",\n       \"properties\": {\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"token\": {\n       \"description\": \"Token plain text Gravitee cloud token (JWT)\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"environmentId\": {\n     \"description\": \"An existing environment id targeted by the context within the organization.\",\n     \"type\": \"string\"\n    },\n    \"organizationId\": {\n     \"description\": \"An existing organization id targeted by the context on the management API instance.\",\n     \"type\": \"string\"\n    },\n    \"path\": {\n     \"description\": \"Allows to override the context path that will be appended to the baseURL.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Management Context\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

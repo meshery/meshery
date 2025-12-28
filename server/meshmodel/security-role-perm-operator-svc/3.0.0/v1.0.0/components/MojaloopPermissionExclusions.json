@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "mojaloop.io/v1",
     "kind": "MojaloopPermissionExclusions",
     "schema": "{\n \"description\": \"MojaloopPermissionExclusions is the Schema for MojaloopPermissionExclusions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MojaloopPermissionExclusions.spec describes the desired state of my resource\",\n   \"properties\": {\n    \"permissionsA\": {\n     \"description\": \"List of permissions in set A.\",\n     \"items\": {\n      \"description\": \"permission ID.\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"permissionsB\": {\n     \"description\": \"List of permissions in set B.\",\n     \"items\": {\n      \"description\": \"permission ID.\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"permissionsA\",\n    \"permissionsB\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mojaloop Permission Exclusions\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

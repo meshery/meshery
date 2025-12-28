@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -128,5 +130,7 @@
     "version": "infrastructure.cluster.x-k8s.io/v1alpha1",
     "kind": "OpenStackClusterIdentity",
     "schema": "{\n \"description\": \"OpenStackClusterIdentity is a cluster-scoped identity that centralizes OpenStack credentials.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OpenStackClusterIdentitySpec defines the desired state for an OpenStackClusterIdentity.\",\n   \"properties\": {\n    \"namespaceSelector\": {\n     \"description\": \"NamespaceSelector limits which namespaces may use this identity. If nil, all namespaces are allowed.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"secretRef\": {\n     \"description\": \"SecretRef references the credentials Secret containing a `clouds.yaml` file.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the Secret which contains a `clouds.yaml` key (and optionally `cacert`).\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the Secret resides.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"secretRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Open Stack Cluster Identity\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

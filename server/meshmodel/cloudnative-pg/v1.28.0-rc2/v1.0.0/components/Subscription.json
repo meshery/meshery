@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "postgresql.cnpg.io/v1",
     "kind": "Subscription",
     "schema": "{\n \"description\": \"Subscription is the Schema for the subscriptions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubscriptionSpec defines the desired state of Subscription\",\n   \"properties\": {\n    \"cluster\": {\n     \"description\": \"The name of the PostgreSQL cluster that identifies the \\\"subscriber\\\"\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"dbname\": {\n     \"description\": \"The name of the database where the publication will be installed in\\nthe \\\"subscriber\\\" cluster\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"dbname is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"externalClusterName\": {\n     \"description\": \"The name of the external cluster with the publication (\\\"publisher\\\")\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name of the subscription inside PostgreSQL\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"name is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"parameters\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Subscription parameters included in the `WITH` clause of the PostgreSQL\\n`CREATE SUBSCRIPTION` command. Most parameters cannot be changed\\nafter the subscription is created and will be ignored if modified\\nlater, except for a limited set documented at:\\nhttps://www.postgresql.org/docs/current/sql-altersubscription.html#SQL-ALTERSUBSCRIPTION-PARAMS-SET\",\n     \"type\": \"object\"\n    },\n    \"publicationDBName\": {\n     \"description\": \"The name of the database containing the publication on the external\\ncluster. Defaults to the one in the external cluster definition.\",\n     \"type\": \"string\"\n    },\n    \"publicationName\": {\n     \"description\": \"The name of the publication inside the PostgreSQL database in the\\n\\\"publisher\\\"\",\n     \"type\": \"string\"\n    },\n    \"subscriptionReclaimPolicy\": {\n     \"default\": \"retain\",\n     \"description\": \"The policy for end-of-life maintenance of this subscription\",\n     \"enum\": [\n      \"delete\",\n      \"retain\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cluster\",\n    \"dbname\",\n    \"externalClusterName\",\n    \"name\",\n    \"publicationName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Subscription\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -126,5 +128,7 @@
     "version": "ec2.services.k8s.aws/v1alpha1",
     "kind": "ManagedPrefixList",
     "schema": "{\n \"description\": \"ManagedPrefixList is the Schema for the ManagedPrefixLists API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ManagedPrefixListSpec defines the desired state of ManagedPrefixList.\\n\\nDescribes a managed prefix list.\",\n   \"properties\": {\n    \"addressFamily\": {\n     \"description\": \"The IP address type.\\n\\nValid Values: IPv4 | IPv6\",\n     \"type\": \"string\"\n    },\n    \"entries\": {\n     \"items\": {\n      \"description\": \"An entry for a prefix list.\",\n      \"properties\": {\n       \"cidr\": {\n        \"type\": \"string\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"maxEntries\": {\n     \"description\": \"The maximum number of entries for the prefix list.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"description\": \"A name for the prefix list.\\n\\nConstraints: Up to 255 characters in length. The name cannot start with com.amazonaws.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"addressFamily\",\n    \"maxEntries\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Managed Prefix List\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

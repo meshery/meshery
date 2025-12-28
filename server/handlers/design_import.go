@@ -234,7 +234,7 @@ func (h *Handler) DesignFileImportHandler(
 	}()
 
 	var err error
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
 	var importDesignPayload MesheryDesignImportPayload

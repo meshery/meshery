@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "datadoghq.com/v1alpha1",
     "kind": "DatadogMetric",
     "schema": "{\n \"description\": \"DatadogMetric allows autoscaling on arbitrary Datadog query\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatadogMetricSpec defines the desired state of DatadogMetric\",\n   \"properties\": {\n    \"externalMetricName\": {\n     \"description\": \"ExternalMetricName is reserved for internal use\",\n     \"type\": \"string\"\n    },\n    \"maxAge\": {\n     \"description\": \"MaxAge provides the max age for the metric query (overrides the default setting\\n`external_metrics_provider.max_age`)\",\n     \"type\": \"string\"\n    },\n    \"query\": {\n     \"description\": \"Query is the raw datadog query\",\n     \"type\": \"string\"\n    },\n    \"timeWindow\": {\n     \"description\": \"TimeWindow provides the time window for the metric query, defaults to MaxAge.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Datadog Metric\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

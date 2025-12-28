@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "cue.oam.dev/v1alpha1",
     "kind": "Package",
     "schema": "{\n \"description\": \"Package is an extension for cuex engine\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PackageSpec the spec for Package\",\n   \"properties\": {\n    \"path\": {\n     \"type\": \"string\"\n    },\n    \"provider\": {\n     \"description\": \"Provider the external Provider in Package for cuex to run functions\",\n     \"properties\": {\n      \"endpoint\": {\n       \"type\": \"string\"\n      },\n      \"protocol\": {\n       \"description\": \"ProviderProtocol the protocol type for external Provider\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"endpoint\",\n      \"protocol\"\n     ],\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"path\",\n    \"templates\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Package\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

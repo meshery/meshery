@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "secretgenerator.mittwald.de/v1alpha1",
     "kind": "BasicAuth",
     "schema": "{\n \"description\": \"BasicAuth is the Schema for the basicauths API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BasicAuthSpec defines the desired state of BasicAuth\",\n   \"properties\": {\n    \"data\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"encoding\": {\n     \"type\": \"string\"\n    },\n    \"forceRegenerate\": {\n     \"type\": \"boolean\"\n    },\n    \"length\": {\n     \"type\": \"string\"\n    },\n    \"username\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Basic Auth\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

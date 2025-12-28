@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "datastore.cnrm.cloud.google.com/v1alpha1",
     "kind": "DatastoreIndex",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ancestor\": {\n     \"description\": \"Immutable. Policy for including ancestors in the index. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"ALL_ANCESTORS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"description\": \"Immutable. The entity kind which the index applies to.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"properties\": {\n     \"description\": \"Immutable. An ordered list of properties to index on.\",\n     \"items\": {\n      \"properties\": {\n       \"direction\": {\n        \"description\": \"Immutable. The direction the index should optimize for sorting. Possible values: [\\\"ASCENDING\\\", \\\"DESCENDING\\\"].\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Immutable. The property name to index.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"direction\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated indexId of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"kind\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Datastore Index\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

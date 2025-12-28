@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "SamenessGroup",
     "schema": "{\n \"description\": \"SamenessGroup is the Schema for the samenessgroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SamenessGroupSpec defines the desired state of SamenessGroup.\",\n   \"properties\": {\n    \"defaultForFailover\": {\n     \"description\": \"DefaultForFailover indicates that upstream requests to members of the given sameness group will implicitly failover between members of this sameness group.\\nWhen DefaultForFailover is true, the local partition must be a member of the sameness group or IncludeLocal must be set to true.\",\n     \"type\": \"boolean\"\n    },\n    \"includeLocal\": {\n     \"description\": \"IncludeLocal is used to include the local partition as the first member of the sameness group.\\nThe local partition can only be a member of a single sameness group.\",\n     \"type\": \"boolean\"\n    },\n    \"members\": {\n     \"description\": \"Members are the partitions and peers that are part of the sameness group.\\nIf a member of a sameness group does not exist, it will be ignored.\",\n     \"items\": {\n      \"properties\": {\n       \"partition\": {\n        \"description\": \"The partitions and peers that are part of the sameness group.\\nA sameness group member cannot define both peer and partition at the same time.\",\n        \"type\": \"string\"\n       },\n       \"peer\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sameness Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

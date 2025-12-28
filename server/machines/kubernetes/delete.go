@@ -37,7 +37,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
@@ -64,7 +64,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
 
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID, sysID, log)
+	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
 
 	return machines.NoOp, nil, nil
 }

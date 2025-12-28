@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "discoveryengine.cnrm.cloud.google.com/v1alpha1",
     "kind": "DiscoveryEngineDataStoreTargetSite",
     "schema": "{\n \"description\": \"DiscoveryEngineDataStoreTargetSite is the Schema for the DiscoveryEngineDataStoreTargetSite API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DiscoveryEngineDataStoreTargetSiteSpec defines the desired state of DiscoveryEngineDataStoreTargetSite\",\n   \"properties\": {\n    \"dataStoreRef\": {\n     \"description\": \"The DataStore this target site should be part of.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed DiscoveryEngineDataStore resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/datastores/{{datastoreID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a DiscoveryEngineDataStore resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a DiscoveryEngineDataStore resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"exactMatch\": {\n     \"description\": \"Input only. If set to false, a uri_pattern is generated to include all pages whose address contains the provided_uri_pattern. If set to true, an uri_pattern is generated to try to be an exact match of the provided_uri_pattern or just the specific page if the provided_uri_pattern is a specific one. provided_uri_pattern is always normalized to generate the URI pattern to be used by the search engine.\",\n     \"type\": \"boolean\"\n    },\n    \"providedURIPattern\": {\n     \"description\": \"Required. Input only. The user provided URI pattern from which the `generated_uri_pattern` is generated.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"The type of the target site, e.g., whether the site is to be included or excluded.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Discovery Engine Data Store Target Site\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

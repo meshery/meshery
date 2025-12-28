@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "apisix.apache.org/v2alpha1",
     "kind": "ApisixConsumer",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"authParameter\": {\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"basicAuth\"\n       ]\n      },\n      {\n       \"required\": [\n        \"keyAuth\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"basicAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"password\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"username\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"username\",\n          \"password\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"keyAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"key\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"authParameter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Consumer\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

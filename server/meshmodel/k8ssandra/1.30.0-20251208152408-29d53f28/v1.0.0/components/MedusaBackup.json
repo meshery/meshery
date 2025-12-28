@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaBackup",
     "schema": "{\n \"description\": \"MedusaBackup is the Schema for the medusabackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaBackupSpec defines the desired state of MedusaBackup\",\n   \"properties\": {\n    \"backupType\": {\n     \"default\": \"differential\",\n     \"description\": \"The type of the backup: \\\"full\\\" or \\\"differential\\\"\",\n     \"enum\": [\n      \"differential\",\n      \"full\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to back up\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

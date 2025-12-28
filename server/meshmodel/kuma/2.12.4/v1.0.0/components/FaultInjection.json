@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "kuma.io/v1alpha1",
     "kind": "FaultInjection",
     "schema": "{\n \"properties\": {\n  \"mesh\": {\n   \"description\": \"Mesh is the name of the Kuma mesh this resource belongs to.\\nIt may be omitted for cluster-scoped resources.\",\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma FaultInjection resource.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Fault Injection\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

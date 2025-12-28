@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "traefik.containo.us/v1alpha1",
     "kind": "MiddlewareTCP",
     "schema": "{\n \"description\": \"MiddlewareTCP is a specification for a MiddlewareTCP resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec holds the MiddlewareTCP configuration.\",\n   \"properties\": {\n    \"ipWhiteList\": {\n     \"description\": \"TCPIPWhiteList holds the TCP ip white list configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

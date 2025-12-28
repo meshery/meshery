@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "configuration.konghq.com/v1beta1",
     "kind": "KongConsumerGroup",
     "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

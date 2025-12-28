@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "sagemaker.services.k8s.aws/v1alpha1",
     "kind": "PipelineExecution",
     "schema": "{\n \"description\": \"PipelineExecution is the Schema for the PipelineExecutions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PipelineExecutionSpec defines the desired state of PipelineExecution.\\n\\nAn execution of a pipeline.\",\n   \"properties\": {\n    \"parallelismConfiguration\": {\n     \"description\": \"This configuration, if specified, overrides the parallelism configuration\\nof the parent pipeline for this specific run.\",\n     \"properties\": {\n      \"maxParallelExecutionSteps\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pipelineExecutionDescription\": {\n     \"description\": \"The description of the pipeline execution.\\n\\nRegex Pattern: `.*`\",\n     \"type\": \"string\"\n    },\n    \"pipelineExecutionDisplayName\": {\n     \"description\": \"The display name of the pipeline execution.\\n\\nRegex Pattern: `^[a-zA-Z0-9](-*[a-zA-Z0-9]){0,81}$`\",\n     \"type\": \"string\"\n    },\n    \"pipelineName\": {\n     \"description\": \"The name or Amazon Resource Name (ARN) of the pipeline.\\n\\nRegex Pattern: `^(arn:aws[a-z\\\\-]*:sagemaker:[a-z0-9\\\\-]*:[0-9]{12}:pipeline/.*)?([a-zA-Z0-9](-*[a-zA-Z0-9]){0,255})$`\",\n     \"type\": \"string\"\n    },\n    \"pipelineParameters\": {\n     \"description\": \"Contains a list of pipeline parameters. This list can be empty.\",\n     \"items\": {\n      \"description\": \"Assigns a value to a named Pipeline parameter.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selectiveExecutionConfig\": {\n     \"description\": \"The selective execution configuration applied to the pipeline run.\",\n     \"properties\": {\n      \"selectedSteps\": {\n       \"items\": {\n        \"description\": \"A step selected to run in selective execution mode.\",\n        \"properties\": {\n         \"stepName\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"sourcePipelineExecutionARN\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"pipelineName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pipeline Execution\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
