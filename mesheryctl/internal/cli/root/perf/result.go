@@ -85,8 +85,7 @@ mesheryctl perf result saturday-profile --view
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			utils.Log.Error(ErrNoProfileName())
-			return nil
+			return ErrNoProfileName()
 		}
 
 		// handles spaces in args if quoted args passed
@@ -98,13 +97,11 @@ mesheryctl perf result saturday-profile --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(profiles) == 0 {
-			utils.Log.Info(ErrNoProfileFound())
-			return nil
+			return ErrNoProfileFound()
 		}
 
 		data := profilesToStringArrays(profiles)
@@ -116,8 +113,7 @@ mesheryctl perf result saturday-profile --view
 			// user prompt to select profile
 			selectedProfileIndex, err := userPrompt("profile", "Found multiple profiles with given name, select a profile", data)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			// ids got shifted with 1 in userPrompt()
 			profileID = data[selectedProfileIndex][2]
@@ -125,20 +121,17 @@ mesheryctl perf result saturday-profile --view
 
 		results, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL(), profileID, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(ErrPerformanceProfileResult(err))
-			return nil
+			return ErrPerformanceProfileResult(err)
 		}
 
 		if len(data) == 0 {
-			utils.Log.Info("No Test Results to display")
-			return nil
+			return errors.New("No Test Results to display")
 		}
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
 		if len(expandedData) == 0 {
-			utils.Log.Info("No test results to display")
-			return nil
+			return errors.New("No test results to display")
 		}
 
 		if outputFormatFlag != "" {
@@ -146,8 +139,7 @@ mesheryctl perf result saturday-profile --view
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				utils.Log.Error(ErrInvalidOutputChoice())
-				return nil
+				return ErrInvalidOutputChoice()
 			}
 			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results

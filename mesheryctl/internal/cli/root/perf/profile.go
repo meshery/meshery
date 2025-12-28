@@ -62,7 +62,7 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,13 +74,11 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(profiles) == 0 {
-			utils.Log.Info("No Performance Profiles to display")
-			return nil
+			return errors.New("No Performance Profiles to display")
 		}
 
 		// get profiles as string arrays for printing tabular format profiles
@@ -92,10 +90,10 @@ mesheryctl perf profile test --view
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				utils.Log.Error(ErrInvalidOutputChoice())
-				return nil
+				return ErrInvalidOutputChoice()
 			}
 			utils.Log.Info(string(body))
+
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
@@ -127,7 +125,6 @@ mesheryctl perf profile test --view
 			if _, ok := a.Metadata["additional_options"]; ok {
 				var out bytes.Buffer
 				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
-
 				if err != nil {
 					return err
 				}
@@ -225,7 +222,6 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 	}
 
 	result, err := prompt.Run()
-
 	if err != nil {
 		termbox.Close()
 		return -1, fmt.Errorf("prompt failed %v", err)
