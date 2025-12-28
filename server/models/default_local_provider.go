@@ -144,11 +144,12 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
+	avatarUrl := ""
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
+		AvatarUrl: &avatarUrl,
 	}
 }
 
@@ -437,7 +438,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.UserID)
+	pref, _ := l.ReadFromPersister(user.UserId)
 	if !pref.AnonymousPerfResults {
 		return "", nil
 	}
