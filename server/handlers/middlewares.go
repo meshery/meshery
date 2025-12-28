@@ -191,7 +191,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.UserID)
+		prefObj, err := provider.ReadFromPersister(user.UserId)
 		if err != nil {
 			h.log.Warn(ErrReadSessionPersistor)
 		}
@@ -223,7 +223,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		h.log.Error(err)
 		return nil, err
 	}
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts, err := provider.LoadAllK8sContext(token)
 
@@ -232,7 +232,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	if err != nil || len(connectedK8sContexts) == 0 {
 		h.log.Warn(ErrFailToGetK8SContext)
-		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID, token, provider)
+		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID.String(), token, provider)
 		if err != nil {
 			h.log.Warn(ErrFailToLoadK8sContext(err))
 		}
@@ -312,7 +312,7 @@ type dataHandlerToClusterID struct {
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
