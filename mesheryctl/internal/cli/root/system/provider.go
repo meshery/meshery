@@ -317,7 +317,7 @@ mesheryctl system provider switch [provider]
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset provider to default",
-	Long:  fmt.Sprintf("Reset provider for current context to default (%s)", MesheryProvider),
+	Long:  "Reset provider for current context to default (Layer5)",
 	Example: `
 // Reset provider to default
 mesheryctl system provider reset
