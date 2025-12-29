@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "crd.projectcalico.org/v1",
     "kind": "ClusterInformation",
     "schema": "{\n \"description\": \"ClusterInformation contains the cluster specific information.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterInformationSpec contains the values of describing the cluster.\",\n   \"properties\": {\n    \"calicoVersion\": {\n     \"description\": \"CalicoVersion is the version of Calico that the cluster is running\",\n     \"type\": \"string\"\n    },\n    \"clusterGUID\": {\n     \"description\": \"ClusterGUID is the GUID of the cluster\",\n     \"type\": \"string\"\n    },\n    \"clusterType\": {\n     \"description\": \"ClusterType describes the type of the cluster\",\n     \"type\": \"string\"\n    },\n    \"datastoreReady\": {\n     \"description\": \"DatastoreReady is used during significant datastore migrations to signal to components such as Felix that it should wait before accessing the datastore.\",\n     \"type\": \"boolean\"\n    },\n    \"variant\": {\n     \"description\": \"Variant declares which variant of Calico should be active.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Information\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

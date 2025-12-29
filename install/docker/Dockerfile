@@ -1,4 +1,4 @@
-FROM golang:1.24 AS meshery-server
+FROM golang:1.25.5 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -74,6 +74,18 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
+# Build-time Extension Point: This stage prepares optional .meshery directory from build context.
+# System integrators can place a .meshery directory at the repository root to supply
+# build-time configuration, data, packages, etc., which will be copied into the image.
+FROM alpine:3.21.3 AS build_time_extensions
+WORKDIR /build-ext
+# Copy the entire context from meshery-server stage, then extract .meshery if it exists
+COPY --from=meshery-server /github.com/meshery/meshery /meshery-context
+RUN if [ -d /meshery-context/.meshery ]; then \
+        cp -r /meshery-context/.meshery /build-ext/.meshery; \
+    else \
+        mkdir -p /build-ext/.meshery; \
+    fi
 
 FROM alpine:3.21.3
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
@@ -111,8 +123,15 @@ COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform
 # ensure to update here also https://github.com/meshery/meshery/blob/85a0fd9b9cc03bbc51c4aa1efd1e837db72ef691/install/kubernetes/helm/meshery/values.yaml#L19
 ENV KEYS_PATH="/app/server/permissions/keys.csv"
 
+# Build-time Extension Point: Copy .meshery directory from build context if present.
+# System integrators can place a .meshery directory at the repository root before running
+# docker build to supply build-time configuration, data, packages, etc.
+# The contents will be copied into /home/appuser/.meshery/ and merged with existing content.
+COPY --from=build_time_extensions /build-ext/.meshery /home/appuser/.meshery
+
 RUN addgroup docker
 RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
+# Ensure .meshery and subdirectories exist with proper permissions
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd

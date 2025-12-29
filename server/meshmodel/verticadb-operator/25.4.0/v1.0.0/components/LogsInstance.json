@@ -1,0 +1,208 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Logs Instance",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "verticadb-operator",
+    "displayName": "Verticadb Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.4.0-0/verticadb-operator-25.4.0-0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "25.4.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.4.0-0/verticadb-operator-25.4.0-0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "monitoring.grafana.com/v1alpha1",
+    "kind": "LogsInstance",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"additionalScrapeConfigs\": {\n     \"properties\": {\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"clients\": {\n     \"items\": {\n      \"properties\": {\n       \"backoffConfig\": {\n        \"properties\": {\n         \"maxPeriod\": {\n          \"type\": \"string\"\n         },\n         \"maxRetries\": {\n          \"type\": \"integer\"\n         },\n         \"minPeriod\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"basicAuth\": {\n        \"properties\": {\n         \"password\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"username\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"batchSize\": {\n        \"type\": \"integer\"\n       },\n       \"batchWait\": {\n        \"type\": \"string\"\n       },\n       \"bearerToken\": {\n        \"type\": \"string\"\n       },\n       \"bearerTokenFile\": {\n        \"type\": \"string\"\n       },\n       \"externalLabels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"oauth2\": {\n        \"properties\": {\n         \"clientId\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"clientSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"endpointParams\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"scopes\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"tokenUrl\": {\n          \"minLength\": 1,\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"clientId\",\n         \"clientSecret\",\n         \"tokenUrl\"\n        ],\n        \"type\": \"object\"\n       },\n       \"proxyUrl\": {\n        \"type\": \"string\"\n       },\n       \"tenantId\": {\n        \"type\": \"string\"\n       },\n       \"timeout\": {\n        \"type\": \"string\"\n       },\n       \"tlsConfig\": {\n        \"properties\": {\n         \"ca\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"caFile\": {\n          \"type\": \"string\"\n         },\n         \"cert\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"certFile\": {\n          \"type\": \"string\"\n         },\n         \"insecureSkipVerify\": {\n          \"type\": \"boolean\"\n         },\n         \"keyFile\": {\n          \"type\": \"string\"\n         },\n         \"keySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"serverName\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"url\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"url\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"podLogsNamespaceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"podLogsSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"targetConfig\": {\n     \"properties\": {\n      \"syncPeriod\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Logs Instance\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}

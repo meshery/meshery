@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00105f",
@@ -190,5 +204,7 @@
     "version": "networking.kubeslice.io/v1beta1",
     "kind": "Slice",
     "schema": "{\n \"description\": \"Slice is the Schema for the slices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceSpec defines the desired state of Slice\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

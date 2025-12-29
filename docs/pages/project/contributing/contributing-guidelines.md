@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Meshery CLI Contributing Guidelines"
+title: "Meshery CLI Style Guide"
 abstract: "Design principles and code conventions."
 permalink: project/contributing/contributing-cli-guide
 type: project
@@ -45,8 +45,6 @@ Default behaviour should be optimised for what users will need to do most of the
 These assumed defaults should be easily overridden by the user with flags.
 
 For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overridden with the `--platform` flag.
-
-For example, if `mesheryctl design` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
 ### User Experience: GUI vs CLI
 

@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl component
 
-Manage components
+Manage Meshery components
 
 ## Synopsis
 

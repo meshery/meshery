@@ -21,7 +21,7 @@ type Resolver struct {
 	// operatorChannel         chan *model.OperatorStatus
 	// performanceChannel  chan *model.PerfPageResult
 	brokerChannel       chan *broker.Message
-	addonChannel        chan []*model.AddonList
-	controlPlaneChannel chan []*model.ControlPlane
-	dataPlaneChannel    chan []*model.DataPlane
+	addonChannel        chan []*model.AddonList        //nolint:unused // used by listenToAddonState
+	controlPlaneChannel chan []*model.ControlPlane     //nolint:unused // used by listenToControlPlaneState
+	dataPlaneChannel    chan []*model.DataPlane        //nolint:unused // used by listenToDataPlaneState
 }

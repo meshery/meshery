@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#C925D1",
@@ -189,5 +203,7 @@
     "version": "dynamodb.services.k8s.aws/v1alpha1",
     "kind": "Backup",
     "schema": "{\n \"description\": \"Backup is the Schema for the Backups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupSpec defines the desired state of Backup.\",\n   \"properties\": {\n    \"backupName\": {\n     \"description\": \"Specified name for the backup.\",\n     \"type\": \"string\"\n    },\n    \"tableName\": {\n     \"description\": \"The name of the table. You can also provide the Amazon Resource Name (ARN)\\nof the table in this parameter.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupName\",\n    \"tableName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

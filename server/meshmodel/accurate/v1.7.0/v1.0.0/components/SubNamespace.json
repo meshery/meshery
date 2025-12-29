@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#14191f",
@@ -190,5 +204,7 @@
     "version": "accurate.cybozu.com/v1",
     "kind": "SubNamespace",
     "schema": "{\n \"description\": \"SubNamespace is the Schema for the subnamespaces API\\nDeprecated: This type will be removed in one of the next releases.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the spec of SubNamespace.\",\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Annotations are the annotations to be propagated to the sub-namespace.\",\n     \"type\": \"object\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels are the labels to be propagated to the sub-namespace\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sub Namespace\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

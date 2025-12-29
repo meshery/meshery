@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ffcd3c",
@@ -190,5 +204,7 @@
     "version": "apiextensions.crossplane.io/v1alpha1",
     "kind": "Usage",
     "schema": "{\n \"description\": \"A Usage defines a deletion blocking relationship between two resources.\\n\\nUsages prevent accidental deletion of a single resource or deletion of\\nresources with dependent resources.\\n\\nRead the Crossplane documentation for\\n[more information about Usages](https://docs.crossplane.io/latest/concepts/usages).\\n\\nDeprecated: Use protection.crossplane.io Usage or ClusterUsage.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UsageSpec defines the desired state of Usage.\",\n   \"properties\": {\n    \"by\": {\n     \"description\": \"By is the resource that is \\\"using the other resource\\\".\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"resourceRef\": {\n       \"description\": \"Reference to the resource.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"resourceSelector\": {\n       \"description\": \"Selector to the resource.\\nThis field will be ignored if ResourceRef is set.\",\n       \"properties\": {\n        \"matchControllerRef\": {\n         \"description\": \"MatchControllerRef ensures an object with the same controller reference\\nas the selecting object is selected.\",\n         \"type\": \"boolean\"\n        },\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"MatchLabels ensures an object with matching labels is selected.\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"either a resource reference or a resource selector should be set.\",\n       \"rule\": \"has(self.resourceRef) || has(self.resourceSelector)\"\n      }\n     ]\n    },\n    \"of\": {\n     \"description\": \"Of is the resource that is \\\"being used\\\".\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"resourceRef\": {\n       \"description\": \"Reference to the resource.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"resourceSelector\": {\n       \"description\": \"Selector to the resource.\\nThis field will be ignored if ResourceRef is set.\",\n       \"properties\": {\n        \"matchControllerRef\": {\n         \"description\": \"MatchControllerRef ensures an object with the same controller reference\\nas the selecting object is selected.\",\n         \"type\": \"boolean\"\n        },\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"MatchLabels ensures an object with matching labels is selected.\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"either a resource reference or a resource selector should be set.\",\n       \"rule\": \"has(self.resourceRef) || has(self.resourceSelector)\"\n      }\n     ]\n    },\n    \"reason\": {\n     \"description\": \"Reason is the reason for blocking deletion of the resource.\",\n     \"type\": \"string\"\n    },\n    \"replayDeletion\": {\n     \"description\": \"ReplayDeletion will trigger a deletion on the used resource during the deletion of the usage itself, if it was attempted to be deleted at least once.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"of\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"either \\\"spec.by\\\" or \\\"spec.reason\\\" must be specified.\",\n     \"rule\": \"has(self.by) || has(self.reason)\"\n    }\n   ]\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Usage\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

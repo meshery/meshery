@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#003459",
@@ -189,5 +203,7 @@
     "version": "kuma.io/v1alpha1",
     "kind": "MeshMultiZoneService",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshMultiZoneService resource.\",\n   \"properties\": {\n    \"ports\": {\n     \"description\": \"Ports is a list of ports from selected MeshServices\",\n     \"items\": {\n      \"properties\": {\n       \"appProtocol\": {\n        \"default\": \"tcp\",\n        \"description\": \"Protocol identifies a protocol supported by a service.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"description\": \"Selector is a way to select multiple MeshServices\",\n     \"properties\": {\n      \"meshService\": {\n       \"description\": \"MeshService selects MeshServices\",\n       \"properties\": {\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"MatchLabels matches multiple MeshServices by labels\",\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"matchLabels\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"meshService\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"ports\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Multi Zone Service\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

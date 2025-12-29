@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "capsule.clastix.io/v1beta2",
     "kind": "ResourcePoolClaim",
     "schema": "{\n \"description\": \"ResourcePoolClaim is the Schema for the resourcepoolclaims API.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"claim\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"Amount which should be claimed for the resourcequota\",\n     \"type\": \"object\"\n    },\n    \"pool\": {\n     \"description\": \"If there's the possability to claim from multiple global Quotas\\nYou must be specific about which one you want to claim resources from\\nOnce bound to a ResourcePool, this field is immutable\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"claim\",\n    \"pool\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Pool Claim\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

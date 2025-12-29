@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ED7100",
@@ -189,5 +203,7 @@
     "version": "ec2.services.k8s.aws/v1alpha1",
     "kind": "Subnet",
     "schema": "{\n \"description\": \"Subnet is the Schema for the Subnets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubnetSpec defines the desired state of Subnet.\\n\\nDescribes a subnet.\",\n   \"properties\": {\n    \"assignIPv6AddressOnCreation\": {\n     \"type\": \"boolean\"\n    },\n    \"availabilityZone\": {\n     \"description\": \"The Availability Zone or Local Zone for the subnet.\\n\\nDefault: Amazon Web Services selects one for you. If you create more than\\none subnet in your VPC, we do not necessarily select a different zone for\\neach subnet.\\n\\nTo create a subnet in a Local Zone, set this value to the Local Zone ID,\\nfor example us-west-2-lax-1a. For information about the Regions that support\\nLocal Zones, see Available Local Zones (https://docs.aws.amazon.com/local-zones/latest/ug/available-local-zones.html).\\n\\nTo create a subnet in an Outpost, set this value to the Availability Zone\\nfor the Outpost and specify the Outpost ARN.\",\n     \"type\": \"string\"\n    },\n    \"availabilityZoneID\": {\n     \"description\": \"The AZ ID or the Local Zone ID of the subnet.\",\n     \"type\": \"string\"\n    },\n    \"cidrBlock\": {\n     \"description\": \"The IPv4 network range for the subnet, in CIDR notation. For example, 10.0.0.0/24.\\nWe modify the specified CIDR block to its canonical form; for example, if\\nyou specify 100.68.0.18/18, we modify it to 100.68.0.0/18.\\n\\nThis parameter is not supported for an IPv6 only subnet.\",\n     \"type\": \"string\"\n    },\n    \"customerOwnedIPv4Pool\": {\n     \"type\": \"string\"\n    },\n    \"enableDNS64\": {\n     \"type\": \"boolean\"\n    },\n    \"enableResourceNameDNSAAAARecord\": {\n     \"type\": \"boolean\"\n    },\n    \"enableResourceNameDNSARecord\": {\n     \"type\": \"boolean\"\n    },\n    \"hostnameType\": {\n     \"type\": \"string\"\n    },\n    \"ipv6CIDRBlock\": {\n     \"description\": \"The IPv6 network range for the subnet, in CIDR notation. This parameter is\\nrequired for an IPv6 only subnet.\",\n     \"type\": \"string\"\n    },\n    \"ipv6Native\": {\n     \"description\": \"Indicates whether to create an IPv6 only subnet.\",\n     \"type\": \"boolean\"\n    },\n    \"mapPublicIPOnLaunch\": {\n     \"type\": \"boolean\"\n    },\n    \"outpostARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the Outpost. If you specify an Outpost\\nARN, you must also specify the Availability Zone of the Outpost subnet.\",\n     \"type\": \"string\"\n    },\n    \"routeTableRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"routeTables\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcID\": {\n     \"description\": \"The ID of the VPC.\",\n     \"type\": \"string\"\n    },\n    \"vpcRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subnet\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

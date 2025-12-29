@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "iamauthenticator.k8s.aws/v1alpha1",
     "kind": "IAMIdentityMapping",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arn\": {\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"username\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"arn\",\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Identity Mapping\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

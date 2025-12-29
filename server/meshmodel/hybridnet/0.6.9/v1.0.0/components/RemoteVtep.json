@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#FF6A00",
@@ -190,5 +204,7 @@
     "version": "multicluster.alibaba.com/v1",
     "kind": "RemoteVtep",
     "schema": "{\n \"description\": \"RemoteVtep is the Schema for the remotevteps API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RemoteVtepSpec defines the desired state of RemoteVtep\",\n   \"properties\": {\n    \"clusterName\": {\n     \"description\": \"ClusterName is the name of parent cluster who owns this remote VTEP.\",\n     \"type\": \"string\"\n    },\n    \"endpointIPList\": {\n     \"description\": \"EndpointIPList is the IP list of all local endpoints of this VTEP.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"ip\": {\n     \"description\": \"IP is the gateway IP address of this VTEP.\",\n     \"type\": \"string\"\n    },\n    \"localIPs\": {\n     \"description\": \"localIPs are the usable ip addresses for the VTEP itself.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"mac\": {\n     \"description\": \"MAC is the MAC address of this VTEP.\",\n     \"type\": \"string\"\n    },\n    \"nodeName\": {\n     \"description\": \"NodeName is the name of corresponding node in remote cluster.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Remote Vtep\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

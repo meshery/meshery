@@ -192,7 +192,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	sysID := h.SystemID
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
@@ -224,7 +224,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			return
 		}
 
-		userUUID := uuid.FromStringOrNil(user.ID)
+		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
 			UserID: &userUUID,
 			Type:   "prometheus",
@@ -269,7 +269,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	err := provider.RecordPreferences(req, user.UserID, prefObj)
+	err := provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)

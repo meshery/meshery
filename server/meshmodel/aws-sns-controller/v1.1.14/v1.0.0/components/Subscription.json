@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#E7157B",
@@ -189,5 +203,7 @@
     "version": "sns.services.k8s.aws/v1alpha1",
     "kind": "Subscription",
     "schema": "{\n \"description\": \"Subscription is the Schema for the Subscriptions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubscriptionSpec defines the desired state of Subscription.\\n\\nA wrapper type for the attributes of an Amazon SNS subscription.\",\n   \"properties\": {\n    \"deliveryPolicy\": {\n     \"type\": \"string\"\n    },\n    \"endpoint\": {\n     \"description\": \"The endpoint that you want to receive notifications. Endpoints vary by protocol:\\n\\n  - For the http protocol, the (public) endpoint is a URL beginning with\\n    http://.\\n\\n  - For the https protocol, the (public) endpoint is a URL beginning with\\n    https://.\\n\\n  - For the email protocol, the endpoint is an email address.\\n\\n  - For the email-json protocol, the endpoint is an email address.\\n\\n  - For the sms protocol, the endpoint is a phone number of an SMS-enabled\\n    device.\\n\\n  - For the sqs protocol, the endpoint is the ARN of an Amazon SQS queue.\\n\\n  - For the application protocol, the endpoint is the EndpointArn of a mobile\\n    app and device.\\n\\n  - For the lambda protocol, the endpoint is the ARN of an Lambda function.\\n\\n  - For the firehose protocol, the endpoint is the ARN of an Amazon Kinesis\\n    Data Firehose delivery stream.\",\n     \"type\": \"string\"\n    },\n    \"filterPolicy\": {\n     \"type\": \"string\"\n    },\n    \"filterPolicyScope\": {\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"description\": \"The protocol that you want to use. Supported protocols include:\\n\\n  - http – delivery of JSON-encoded message via HTTP POST\\n\\n  - https – delivery of JSON-encoded message via HTTPS POST\\n\\n  - email – delivery of message via SMTP\\n\\n  - email-json – delivery of JSON-encoded message via SMTP\\n\\n  - sms – delivery of message via SMS\\n\\n  - sqs – delivery of JSON-encoded message to an Amazon SQS queue\\n\\n  - application – delivery of JSON-encoded message to an EndpointArn for\\n    a mobile app and device\\n\\n  - lambda – delivery of JSON-encoded message to an Lambda function\\n\\n  - firehose – delivery of JSON-encoded message to an Amazon Kinesis Data\\n    Firehose delivery stream.\",\n     \"type\": \"string\"\n    },\n    \"rawMessageDelivery\": {\n     \"type\": \"string\"\n    },\n    \"redrivePolicy\": {\n     \"type\": \"string\"\n    },\n    \"subscriptionRoleARN\": {\n     \"type\": \"string\"\n    },\n    \"topicARN\": {\n     \"description\": \"The ARN of the topic you want to subscribe to.\",\n     \"type\": \"string\"\n    },\n    \"topicRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"protocol\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subscription\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00c1d5",
@@ -190,5 +204,7 @@
     "version": "crd.antrea.io/v1alpha2",
     "kind": "ExternalEntity",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"endpoints\": {\n     \"items\": {\n      \"properties\": {\n       \"ip\": {\n        \"oneOf\": [\n         {\n          \"format\": \"ipv4\"\n         },\n         {\n          \"format\": \"ipv6\"\n         }\n        ],\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"externalNode\": {\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"protocol\": {\n        \"enum\": [\n         \"TCP\",\n         \"UDP\",\n         \"SCTP\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"External Entity\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

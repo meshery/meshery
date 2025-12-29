@@ -26,9 +26,28 @@ components:
   colorIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
   whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-route53resolver-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between ResolverEndpoint and SecurityGroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between ResolverEndpoint and Subnet"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between ResolverRule and ResolverEndpoint"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and ResolverEndpoint"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between adoptedresource and ResolverRule"
+relationship-count: 5
 featureList: [
   "Local VPC domain names for EC2 instances (for example, ec2-192-0-2-44.compute-1.amazonaws.com).
 ",

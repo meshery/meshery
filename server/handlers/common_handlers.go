@@ -2,7 +2,6 @@
 package handlers
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -51,7 +51,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		Path:     "/",
 		HttpOnly: true,
 	})
-	_ = p.DeleteCapabilitiesForUser(user.ID)
+	_ = p.DeleteCapabilitiesForUser(user.ID.String())
 	err := p.Logout(w, req)
 	if err != nil {
 		h.log.Error(models.ErrLogout(err))
@@ -157,15 +157,9 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 
 // Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 func GetRefURL(req *http.Request) string {
-	refURL := req.URL.Path + "?" + req.URL.RawQuery
-	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
-	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.
-	if refURL == "?" || refURL == "/?" {
-		return ""
-	}
-	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
-	return refURLB64
+	return core.EncodeRefUrl(*req.URL)
 }
+
 func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 

@@ -1,0 +1,5 @@
+,,"1 Models total
+1 Components total",,,,Instructions:,"1) Fill in any red cells with appropriate data.
+2) Mark yellow any cell that has a formula overwritten. 3) The svgs shouldn't have xml header, they are added programmatically through workflows",,,,,,,,,,,,,
+registrant,model,component,category,subCategory,description,shape,primaryColor,secondaryColor,svgColor,svgWhite,svgComplete,docs,styleOverrides,styles,shapePolygonPoints,defaultData,capabilities,logoURL,genealogy,isAnnotation
+Github,couchbase,CouchbaseCluster,Orchestration & Management,Application Definition & Image Build,Couchbase Cluster component,polygon,#FF0000,#FFFFFF,simple-svg,simple-svg,true,,,,,,,,,"parent",false

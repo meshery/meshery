@@ -45,8 +45,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#8C4FFF",
@@ -187,5 +201,7 @@
     "version": "cloudfront.services.k8s.aws/v1alpha1",
     "kind": "VPCOrigin",
     "schema": "{\n \"description\": \"VPCOrigin is the Schema for the VPCOrigins API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VpcOriginSpec defines the desired state of VpcOrigin.\\n\\nAn Amazon CloudFront VPC origin.\",\n   \"properties\": {\n    \"tags\": {\n     \"description\": \"A complex type that contains Tag elements.\",\n     \"items\": {\n      \"description\": \"A complex type that contains Tag key and Tag value.\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"A string that contains Tag key.\\n\\nThe string length should be between 1 and 128 characters. Valid characters\\ninclude a-z, A-Z, 0-9, space, and the special characters _ - . : / = + @.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcOriginEndpointConfig\": {\n     \"description\": \"The VPC origin endpoint configuration.\",\n     \"properties\": {\n      \"arn\": {\n       \"type\": \"string\"\n      },\n      \"httpPort\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"httpsPort\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"originProtocolPolicy\": {\n       \"type\": \"string\"\n      },\n      \"originSSLProtocols\": {\n       \"description\": \"A complex type that contains information about the SSL/TLS protocols that\\nCloudFront can use when establishing an HTTPS connection with your origin.\",\n       \"properties\": {\n        \"items\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"vpcOriginEndpointConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VPC Origin\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

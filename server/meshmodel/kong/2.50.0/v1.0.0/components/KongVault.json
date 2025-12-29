@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +203,7 @@
     "version": "configuration.konghq.com/v1alpha1",
     "kind": "KongVault",
     "schema": "{\n \"description\": \"KongVault is the schema for kongvaults API which defines a custom Kong vault.\\nA Kong vault is a storage to store sensitive data, where the values can be referenced in configuration of plugins.\\nSee: https://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongVaultSpec defines specification of a custom Kong vault.\",\n   \"properties\": {\n    \"backend\": {\n     \"description\": \"Backend is the type of the backend storing the secrets in the vault.\\nThe supported backends of Kong is listed here:\\nhttps://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/backends/\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"Config is the configuration of the vault. Varies for different backends.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Description is the additional information about the vault.\",\n     \"type\": \"string\"\n    },\n    \"prefix\": {\n     \"description\": \"Prefix is the prefix of vault URI for referencing values in the vault.\\nIt is immutable after created.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backend\",\n    \"prefix\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kong Vault\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"The spec.prefix field is immutable\",\n   \"rule\": \"self.spec.prefix == oldSelf.spec.prefix\"\n  }\n ]\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

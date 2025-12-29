@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#FF6A00",
@@ -190,5 +204,7 @@
     "version": "networking.alibaba.com/v1",
     "kind": "NodeInfo",
     "schema": "{\n \"description\": \"NodeInfo is the Schema for the NodeInfos API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeInfoSpec defines the desired state of NodeInfo\",\n   \"properties\": {\n    \"vtepInfo\": {\n     \"description\": \"vtepInfo is the basic information of this node as a VTEP. Not necessary if no overlay network exist.\",\n     \"properties\": {\n      \"ip\": {\n       \"description\": \"IP is the gateway IP address of this VTEP.\",\n       \"type\": \"string\"\n      },\n      \"localIPs\": {\n       \"description\": \"localIPs are the usable ip addresses for the VTEP itself.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"mac\": {\n       \"description\": \"MAC is the MAC address of this VTEP.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Info\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

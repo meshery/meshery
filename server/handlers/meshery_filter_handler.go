@@ -88,7 +88,7 @@ func (h *Handler) handleFilterPOST(
 	provider models.Provider,
 ) {
 
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
 
 	defer func() {
@@ -343,7 +343,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		return
 	}
 
-	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -379,7 +379,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
-	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -404,7 +404,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 		_ = r.Body.Close()
 	}()
 
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().
 		FromUser(userID).
 		FromSystem(*h.SystemID).
@@ -456,7 +456,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 	_ = provider.PersistEvent(*e, nil)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
@@ -482,7 +482,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		_ = r.Body.Close()
 	}()
 
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().
 		FromUser(userID).
 		FromSystem(*h.SystemID).
@@ -533,7 +533,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 	_ = provider.PersistEvent(*e, nil)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -646,7 +646,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 					Kind:    filterCompDef.Component.Kind,
 					Version: filterCompDef.Component.Version,
 				},
-				Model: model.ModelDefinition{
+				Model: &model.ModelDefinition{
 					Name: filterCompDef.Model.Name,
 					Model: model.Model{
 						Version: filterCompDef.Model.Model.Version,

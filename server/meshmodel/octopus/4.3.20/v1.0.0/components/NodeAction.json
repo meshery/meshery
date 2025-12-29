@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "agent.octopus.openi.org.cn/v1",
     "kind": "NodeAction",
     "schema": "{\n \"description\": \"NodeAction is the Schema for the nodeactions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeActionSpec defines the desired state of NodeAction\",\n   \"properties\": {\n    \"actions\": {\n     \"properties\": {\n      \"docker\": {\n       \"properties\": {\n        \"commit\": {\n         \"properties\": {\n          \"author\": {\n           \"type\": \"string\"\n          },\n          \"changes\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"container\": {\n           \"type\": \"string\"\n          },\n          \"message\": {\n           \"type\": \"string\"\n          },\n          \"repository\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"changes\"\n         ],\n         \"type\": \"object\"\n        },\n        \"commitAndPush\": {\n         \"properties\": {\n          \"author\": {\n           \"type\": \"string\"\n          },\n          \"changes\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"container\": {\n           \"type\": \"string\"\n          },\n          \"message\": {\n           \"type\": \"string\"\n          },\n          \"repository\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"changes\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nodeName\": {\n     \"description\": \"NodeName is where the action will execute\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"actions\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Action\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

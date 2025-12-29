@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl design
 
-Cloud Native Designs Management
+Manage cloud native designs
 
 ## Synopsis
 

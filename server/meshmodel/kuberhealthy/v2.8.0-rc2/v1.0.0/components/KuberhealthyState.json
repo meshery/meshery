@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#39509f",
@@ -190,5 +204,7 @@
     "version": "comcast.github.io/v1",
     "kind": "KuberhealthyState",
     "schema": "{\n \"description\": \"KuberhealthyState represents the data in the CRD for configuring an the state of khjobs or khchecks for Kuberhealthy\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec holds the desired state of the KuberhealthyState (from the client).\",\n   \"properties\": {\n    \"AuthoritativePod\": {\n     \"type\": \"string\"\n    },\n    \"Errors\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"LastRun\": {\n     \"format\": \"date-time\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"Namespace\": {\n     \"type\": \"string\"\n    },\n    \"Node\": {\n     \"type\": \"string\"\n    },\n    \"OK\": {\n     \"type\": \"boolean\"\n    },\n    \"RunDuration\": {\n     \"type\": \"string\"\n    },\n    \"khWorkload\": {\n     \"description\": \"KHWorkload is used to describe the different types of kuberhealthy workloads: KhCheck or KHJob\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"uuid\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"AuthoritativePod\",\n    \"Errors\",\n    \"Namespace\",\n    \"Node\",\n    \"OK\",\n    \"RunDuration\",\n    \"uuid\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kuberhealthy State\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

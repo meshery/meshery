@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#F26F23",
@@ -190,5 +204,7 @@
     "version": "shardingsphere.apache.org/v1alpha1",
     "kind": "StorageNode",
     "schema": "{\n \"description\": \"StorageNode is the Schema for the ShardingSphere storage unit\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StorageNodeSpec defines the desired state of a set of storage units\",\n   \"properties\": {\n    \"replicas\": {\n     \"default\": 1,\n     \"description\": \"Only for aws aurora storage provider right now. And the default value is 1. aws rds instance is always 1. aws rds cluster will auto create 3 instances(1 primary and 2 replicas).\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"schema\": {\n     \"description\": \"the default database name of the storage node. if not set, will NOT create database\",\n     \"type\": \"string\"\n    },\n    \"storageProviderName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"storageProviderName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Storage Node\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

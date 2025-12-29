@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#3f51b4",
@@ -190,5 +204,7 @@
     "version": "metallb.io/v1beta1",
     "kind": "Community",
     "schema": "{\n \"description\": \"Community is a collection of aliases for communities.\\nUsers can define named aliases to be used in the BGPPeer CRD.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CommunitySpec defines the desired state of Community.\",\n   \"properties\": {\n    \"communities\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"description\": \"The name of the alias for the community.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"The BGP community value corresponding to the given name. Can be a standard community of the form 1234:1234\\nor a large community of the form large:1234:1234:1234.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Community\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

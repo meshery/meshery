@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/telepresence
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 components-count: 0
 relationships: 

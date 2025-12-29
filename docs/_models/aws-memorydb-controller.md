@@ -46,9 +46,40 @@ components:
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/color/multi-region-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/white/multi-region-cluster-white.svg
   description: 
-components-count: 9
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Cluster and acl"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Cluster and SecurityGroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between cluster and SecurityGroup "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between subnetgroup and subnet"
+- type: "binding"
+  kind: "edge"
+  description: "An edge relationship between user and acl"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between cluster and parametergroup "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship ECS containers use MemoryDB for durable Redis-compatible data"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between cluster and snapshot"
+- type: "parent"
+  kind: "hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 9
 featureList: [
   "Amazon MemoryDB for Redis enables machine learning (ML) and generative artificial intelligence (AI) models to work with data stored in Amazon MemoryDB in real-time and without moving your data.",
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",

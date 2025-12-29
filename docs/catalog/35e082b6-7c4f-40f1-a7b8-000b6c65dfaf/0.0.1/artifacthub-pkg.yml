@@ -1,0 +1,25 @@
+version: 0.0.1
+name: cluster-istio-18.11.60.tgz
+displayName: cluster-istio-18.11.60.tgz
+createdAt: "2025-10-12T16:57:07Z"
+description: |
+    An umbrella Helm chart for deploying a complete Istio service mesh, including the Istio Operator and related project configurations.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/35e082b6-7c4f-40f1-a7b8-000b6c65dfaf/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a complex umbrella chart that deploys multiple operators. Review and customize the values.yaml file to enable the desired components before deployment.\n\n\n\n\n\n\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/35e082b6-7c4f-40f1-a7b8-000b6c65dfaf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/35e082b6-7c4f-40f1-a7b8-000b6c65dfaf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

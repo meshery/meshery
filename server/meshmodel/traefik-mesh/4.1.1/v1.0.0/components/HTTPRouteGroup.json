@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#9D0FB0",
@@ -190,5 +204,7 @@
     "version": "specs.smi-spec.io/v1alpha4",
     "kind": "HTTPRouteGroup",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"matches\": {\n     \"description\": \"Match conditions of this route group.\",\n     \"items\": {\n      \"properties\": {\n       \"headers\": {\n        \"description\": \"Header match conditions of this route.\",\n        \"items\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Header match condition of this route.\",\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"methods\": {\n        \"description\": \"The HTTP methods of this HTTP route.\",\n        \"items\": {\n         \"description\": \"The HTTP method of this HTTP route.\",\n         \"enum\": [\n          \"*\",\n          \"GET\",\n          \"HEAD\",\n          \"PUT\",\n          \"POST\",\n          \"DELETE\",\n          \"CONNECT\",\n          \"OPTIONS\",\n          \"TRACE\",\n          \"PATCH\"\n         ],\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the HTTP route.\",\n        \"type\": \"string\"\n       },\n       \"pathRegex\": {\n        \"description\": \"URI path regex of the HTTP route.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"matches\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HTTP Route Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ffcd3c",
@@ -188,5 +202,7 @@
     "version": "pkg.crossplane.io/v1",
     "kind": "ConfigurationRevision",
     "schema": "{\n \"description\": \"A ConfigurationRevision represents a revision of a Configuration. Crossplane\\ncreates new revisions when there are changes to a Configuration.\\n\\nCrossplane creates and manages ConfigurationRevision. Don't directly edit\\nConfigurationRevisions.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PackageRevisionSpec specifies the desired state of a PackageRevision.\",\n   \"properties\": {\n    \"commonLabels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Map of string keys and values that can be used to organize and categorize\\n(scope and select) objects. May match selectors of replication controllers\\nand services.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/\",\n     \"type\": \"object\"\n    },\n    \"desiredState\": {\n     \"description\": \"DesiredState of the PackageRevision. Can be either Active or Inactive.\",\n     \"type\": \"string\"\n    },\n    \"ignoreCrossplaneConstraints\": {\n     \"default\": false,\n     \"description\": \"IgnoreCrossplaneConstraints indicates to the package manager whether to\\nhonor Crossplane version constrains specified by the package.\\nDefault is false.\",\n     \"type\": \"boolean\"\n    },\n    \"image\": {\n     \"description\": \"Package image used by install Pod to extract package contents.\",\n     \"type\": \"string\"\n    },\n    \"packagePullPolicy\": {\n     \"default\": \"IfNotPresent\",\n     \"description\": \"PackagePullPolicy defines the pull policy for the package. It is also\\napplied to any images pulled for the package, such as a provider's\\ncontroller image.\\nDefault is IfNotPresent.\",\n     \"type\": \"string\"\n    },\n    \"packagePullSecrets\": {\n     \"description\": \"PackagePullSecrets are named secrets in the same namespace that can be\\nused to fetch packages from private registries. They are also applied to\\nany images pulled for the package, such as a provider's controller image.\",\n     \"items\": {\n      \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n      \"properties\": {\n       \"name\": {\n        \"default\": \"\",\n        \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"revision\": {\n     \"description\": \"Revision number. Indicates when the revision will be garbage collected\\nbased on the parent's RevisionHistoryLimit.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"skipDependencyResolution\": {\n     \"default\": false,\n     \"description\": \"SkipDependencyResolution indicates to the package manager whether to skip\\nresolving dependencies for a package. Setting this value to true may have\\nunintended consequences.\\nDefault is false.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"desiredState\",\n    \"image\",\n    \"revision\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Configuration Revision\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

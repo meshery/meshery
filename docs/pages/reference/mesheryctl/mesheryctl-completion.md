@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl completion
 
-Output shell completion code
+Generate shell completion scripts
 
 ## Synopsis
 

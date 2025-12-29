@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#FFFFFF",
@@ -190,5 +204,7 @@
     "version": "couchbase.com/v2",
     "kind": "CouchbaseAutoscaler",
     "schema": "{\n \"description\": \"CouchbaseAutoscaler provides an interface for the Kubernetes Horizontal Pod Autoscaler to interact with the Couchbase cluster and provide autoscaling.  This resource is not defined by the end user, and is managed by the Operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseAutoscalerSpec allows control over an autoscaling group.\",\n   \"properties\": {\n    \"servers\": {\n     \"description\": \"Servers specifies the server group that this autoscaler belongs to.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"size\": {\n     \"description\": \"Size allows the server group to be dynamically scaled.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"servers\",\n    \"size\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase Autoscaler\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

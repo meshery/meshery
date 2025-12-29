@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "gravitee.io/v1alpha1",
     "kind": "Group",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"contextRef\": {\n     \"properties\": {\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"id\": {\n     \"type\": \"string\"\n    },\n    \"members\": {\n     \"items\": {\n      \"properties\": {\n       \"roles\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"default\": {},\n        \"type\": \"object\"\n       },\n       \"source\": {\n        \"description\": \"Member source\",\n        \"example\": \"gravitee\",\n        \"type\": \"string\"\n       },\n       \"sourceId\": {\n        \"description\": \"Member source ID\",\n        \"example\": \"user@email.com\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"source\",\n       \"sourceId\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"notifyMembers\": {\n     \"default\": true,\n     \"description\": \"If true, new members added to the API spec will\\nbe notified when the API is synced with APIM.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"members\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ff9900",
@@ -190,5 +204,7 @@
     "version": "apigatewayv2.services.k8s.aws/v1alpha1",
     "kind": "Deployment",
     "schema": "{\n \"description\": \"Deployment is the Schema for the Deployments API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DeploymentSpec defines the desired state of Deployment.\\n\\nAn immutable representation of an API that can be called by users. A Deployment\\nmust be associated with a Stage for it to be callable over the internet.\",\n   \"properties\": {\n    \"apiID\": {\n     \"description\": \"The API identifier.\",\n     \"type\": \"string\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"The description for the deployment resource.\",\n     \"type\": \"string\"\n    },\n    \"stageName\": {\n     \"description\": \"The name of the Stage resource for the Deployment resource to create.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Deployment\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

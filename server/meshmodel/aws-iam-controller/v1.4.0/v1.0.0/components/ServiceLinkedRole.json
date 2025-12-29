@@ -47,8 +47,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#DD344C",
@@ -189,5 +203,7 @@
     "version": "FALSE",
     "kind": "ServiceLinkedRole",
     "schema": "{\n \"description\": \"ServiceLinkedRole is the Schema for the ServiceLinkedRoles API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceLinkedRoleSpec defines the desired state of ServiceLinkedRole.\",\n   \"properties\": {\n    \"awsServiceName\": {\n     \"description\": \"The service principal for the Amazon Web Services service to which this role\\nis attached. You use a string similar to a URL but without the http:// in\\nfront. For example: elasticbeanstalk.amazonaws.com.\\n\\nService principals are unique and case-sensitive. To find the exact service\\nprincipal for your service-linked role, see Amazon Web Services services\\nthat work with IAM (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html)\\nin the IAM User Guide. Look for the services that have Yes in the Service-Linked\\nRole column. Choose the Yes link to view the service-linked role documentation\\nfor that service.\\n\\nRegex Pattern: `^[\\\\w+=,.@-]+$`\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"customSuffix\": {\n     \"description\": \"A string that you provide, which is combined with the service-provided prefix\\nto form the complete role name. If you make multiple requests for the same\\nservice, then you must supply a different CustomSuffix for each request.\\nOtherwise the request fails with a duplicate role name error. For example,\\nyou could add -1 or -debug to the suffix.\\n\\nSome services do not support the CustomSuffix parameter. If you provide an\\noptional suffix and the operation fails, try the operation again without\\nthe suffix.\\n\\nRegex Pattern: `^[\\\\w+=,.@-]+$`\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"description\": {\n     \"description\": \"The description of the role.\\n\\nRegex Pattern: `^[\\\\u0009\\\\u000A\\\\u000D\\\\u0020-\\\\u007E\\\\u00A1-\\\\u00FF]*$`\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"awsServiceName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service Linked Role\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

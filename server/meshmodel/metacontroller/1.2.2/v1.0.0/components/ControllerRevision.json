@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "metacontroller.k8s.io/v1alpha1",
     "kind": "ControllerRevision",
     "schema": "{\n \"properties\": {\n  \"children\": {\n   \"items\": {\n    \"properties\": {\n     \"apiGroup\": {\n      \"type\": \"string\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"names\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     }\n    },\n    \"required\": [\n     \"apiGroup\",\n     \"kind\",\n     \"names\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"parentPatch\": {\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"parentPatch\"\n ],\n \"title\": \"Controller Revision\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

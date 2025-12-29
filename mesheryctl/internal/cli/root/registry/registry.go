@@ -39,7 +39,7 @@ var (
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
-	Short: "Model Database",
+	Short: "Manage the capability registry",
 	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
 Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry`,
 	Example: `mesheryctl registry [subcommand]`,

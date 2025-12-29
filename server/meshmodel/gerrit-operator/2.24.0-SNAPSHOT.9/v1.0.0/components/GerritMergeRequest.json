@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00ABCD",
@@ -190,5 +204,7 @@
     "version": "v2.edp.epam.com/v1",
     "kind": "GerritMergeRequest",
     "schema": "{\n \"description\": \"GerritMergeRequest is the Schema for the gerrit merge request API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritMergeRequestSpec defines the desired state of GerritMergeRequest.\",\n   \"properties\": {\n    \"additionalArguments\": {\n     \"description\": \"AdditionalArguments contains merge command additional command line arguments.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"authorEmail\": {\n     \"description\": \"AuthorEmail is the email of the user who creates the merge request.\",\n     \"example\": \"john.foe@mail.com\",\n     \"type\": \"string\"\n    },\n    \"authorName\": {\n     \"description\": \"AuthorName is the name of the user who creates the merge request.\",\n     \"example\": \"John Doe\",\n     \"type\": \"string\"\n    },\n    \"changesConfigMap\": {\n     \"description\": \"ChangesConfigMap is the name of the ConfigMap, which contains files contents that should be merged.\\nConfigMap should contain eny data keys with content in the json\\nformat: {\\\"path\\\": \\\"/controllers/user.go\\\", \\\"contents\\\": \\\"some code here\\\"} - to add file\\nor format: {\\\"path\\\": \\\"/controllers/user.go\\\"} - to remove file.\\nIf files already exist in the project, they will be overwritten.\\nIf empty, sourceBranch should be set.\",\n     \"example\": \"config-map-new-feature\",\n     \"type\": \"string\"\n    },\n    \"commitMessage\": {\n     \"description\": \"CommitMessage is the commit message for the merge request.\\nIf empty, the operator will generate the commit message.\",\n     \"example\": \"merge new-feature to master\",\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"description\": \"OwnerName is the name of Gerrit CR, which should be used to initialize the client.\\nIf empty, the operator will get first Gerrit CR from the namespace.\",\n     \"example\": \"gerrit\",\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"description\": \"ProjectName is gerrit project name.\",\n     \"example\": \"my-project\",\n     \"type\": \"string\"\n    },\n    \"sourceBranch\": {\n     \"description\": \"SourceBranch is the name of the branch from which the changes should be merged.\\nIf empty, changesConfigMap should be set.\",\n     \"example\": \"new-feature\",\n     \"type\": \"string\"\n    },\n    \"targetBranch\": {\n     \"default\": \"master\",\n     \"description\": \"TargetBranch is the name of the branch to which the changes should be merged.\\nIf changesConfigMap is set, the targetBranch can be only the origin HEAD branch.\",\n     \"example\": \"master\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authorEmail\",\n    \"authorName\",\n    \"projectName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Merge Request\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

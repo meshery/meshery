@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#566366",
@@ -190,5 +204,7 @@
     "version": "status.gatekeeper.sh/v1beta1",
     "kind": "MutatorPodStatus",
     "schema": "{\n \"description\": \"MutatorPodStatus is the Schema for the mutationpodstatuses API.\",\n \"properties\": {},\n \"title\": \"Mutator Pod Status\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

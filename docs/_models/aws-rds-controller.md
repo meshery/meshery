@@ -62,9 +62,70 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/color/db-cluster-endpoint-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/white/db-cluster-endpoint-white.svg
   description: 
-components-count: 13
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 14
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBcluster and securitygroup "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBInstance and securitygroup "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBcluster and DBSubnetGroup "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBinstanceand DBsubnetgroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBproxy and DBcluster"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBproxy and DBinstance"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBsubnetgroup and subnet"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBClusterParameterGroup and DBCluster"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBClusterSnapshot andDBcluster"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBInstance and DBParameterGroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBsnapshot and DBinstance"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship EC2 instances connect to RDS databases via VPC networking"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship Lambda functions query RDS databases for data operations"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship ECS containers connect to RDS for application databases"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship EKS pods connect to RDS instances for stateful applications"
+- type: "non-binding"
+  kind: "edge"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "non-binding"
+  kind: "edge"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between DBinstance and subnet"
+- type: "parent"
+  kind: "hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 19
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",

@@ -46,8 +46,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -188,5 +202,7 @@
     "version": "iam.kubesphere.io/v1alpha2",
     "kind": "User",
     "schema": "{\n \"description\": \"User is the Schema for the users API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UserSpec defines the desired state of User\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of the user.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"description\": \"Unique email address(https://www.ietf.org/rfc/rfc5322.txt).\",\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"lang\": {\n     \"description\": \"The preferred written or spoken language for the user.\",\n     \"type\": \"string\"\n    },\n    \"password\": {\n     \"description\": \"password will be encrypted by mutating admission webhook\\nPassword pattern is tricky here.\\nThe rule is simple: length between [6,64], at least one uppercase letter, one lowercase letter, one digit.\\nThe regexp in console(javascript) is quite straightforward: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)[^]{6,64}$\\nBut in Go, we don't have ?= (back tracking) capability in regexp (also in CRD validation pattern)\\nSo we adopted an alternative scheme to achieve.\\nUse 6 different regexp to combine to achieve the same effect.\\nThese six schemes enumerate the arrangement of numbers, uppercase letters, and lowercase letters that appear for the first time.\\n- ^(.*[a-z].*[A-Z].*[0-9].*)$ stands for lowercase letter comes first, then followed by an uppercase letter, then a digit.\\n- ^(.*[a-z].*[0-9].*[A-Z].*)$ stands for lowercase letter comes first, then followed by a digit, then an uppercase leeter.\\n- ^(.*[A-Z].*[a-z].*[0-9].*)$ ...\\n- ^(.*[A-Z].*[0-9].*[a-z].*)$ ...\\n- ^(.*[0-9].*[a-z].*[A-Z].*)$ ...\\n- ^(.*[0-9].*[A-Z].*[a-z].*)$ ...\\nLast but not least, the bcrypt string is also included to match the encrypted password. ^(\\\\$2[ayb]\\\\$.{56})$\",\n     \"maxLength\": 64,\n     \"minLength\": 8,\n     \"pattern\": \"^(.*[a-z].*[A-Z].*[0-9].*)$|^(.*[a-z].*[0-9].*[A-Z].*)$|^(.*[A-Z].*[a-z].*[0-9].*)$|^(.*[A-Z].*[0-9].*[a-z].*)$|^(.*[0-9].*[a-z].*[A-Z].*)$|^(.*[0-9].*[A-Z].*[a-z].*)$|^(\\\\$2[ayb]\\\\$.{56})$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"email\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

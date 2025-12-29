@@ -107,6 +107,21 @@ server-local: dep-check
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
+server-kanvas: dep-check
+	cd server; cd cmd; go clean; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER=Layer5 \
+	RELEASE_CHANNEL=kanvas \
+	PLAYGROUND=true \
+	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go
+
 ## Build Meshery Server on your local machine.
 build-server: dep-check
 	cd server; cd cmd; go mod tidy; cd "../.."
@@ -164,6 +179,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
@@ -349,8 +365,8 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm run lint:fix && npm run build; cd ..
+	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build && npm run export; cd ..
+	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:

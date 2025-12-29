@@ -48,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -190,5 +204,7 @@
     "version": "pso.purestorage.com/v1alpha1",
     "kind": "Intrusion",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"replicas\": {\n     \"items\": {\n      \"properties\": {\n       \"apiToken\": {\n        \"type\": \"string\"\n       },\n       \"backendID\": {\n        \"type\": \"string\"\n       },\n       \"backendType\": {\n        \"enum\": [\n         \"Ephemeral\",\n         \"FlashArray\",\n         \"FlashBlade\",\n         \"PVC\"\n        ],\n        \"type\": \"string\"\n       },\n       \"mgmtEndpoint\": {\n        \"type\": \"string\"\n       },\n       \"volume\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"backendType\",\n       \"volume\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"replicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Intrusion\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

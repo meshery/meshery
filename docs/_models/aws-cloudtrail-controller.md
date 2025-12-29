@@ -26,9 +26,31 @@ components:
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/color/trail-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/white/trail-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Trail and EventDataStore"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Trail and Bucket"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Trail and Topic"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and Trail"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between Trail and LogGroup"
+- type: "non-binding"
+  kind: "edge"
+  description: "An edge relationship between AdoptedResource and EventDataStore"
+relationship-count: 6
 featureList: [
   "Data events that capture data plane actions within a resource, such as reading or writing an Amazon S3 object.",
   "Configuration items from AWS Config that capture resource configuration history and resource compliance history as evaluated by AWS Config rules.",
