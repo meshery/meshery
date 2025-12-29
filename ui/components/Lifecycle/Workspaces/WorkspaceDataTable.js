@@ -9,15 +9,13 @@ import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import { getColumnValue } from '@/utils/utils';
+import { SortableTableCell } from '../../connections/common';
 import {
   AuthorCell,
   Box,
   CustomTooltip,
-  Grid2,
   IconButton,
   ResponsiveDataTable,
-  TableCell,
-  Typography,
   updateVisibleColumns,
   useTheme,
   useWindowDimensions,
@@ -159,39 +157,34 @@ const WorkspaceDataTable = ({
       name: 'environments',
       label: 'Environments',
       options: {
-        sort: false,
+        sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ ...column }) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <>
-              <TableCell>
-                <Grid2 style={{ display: 'flex' }}>
-                  <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography>
-                      <b>{column.label}</b>
-                    </Typography>
-                    <CustomTooltip
-                      title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](https://docs.meshery.io/concepts/logical/environments)`}
-                    >
-                      <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
-                        <IconButton disableRipple={true} disableFocusRipple={true}>
-                          <InfoIcon
-                            style={{
-                              cursor: 'pointer',
-                              height: 20,
-                              width: 20,
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          />
-                        </IconButton>
-                      </Typography>
-                    </CustomTooltip>
-                  </Grid2>
-                </Grid2>
-              </TableCell>
-            </>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+              icon={
+                <CustomTooltip
+                  title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](https://docs.meshery.io/concepts/logical/environments)`}
+                >
+                  <IconButton disableRipple={true} disableFocusRipple={true}>
+                    <InfoIcon
+                      style={{
+                        cursor: 'pointer',
+                        height: 20,
+                        width: 20,
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </IconButton>
+                </CustomTooltip>
+              }
+            />
           );
         },
         customBodyRender: (value, tableMeta) => {
