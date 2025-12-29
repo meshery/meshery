@@ -6,8 +6,10 @@ import (
 )
 
 const (
-	Create = "create"
-	Update = "update"
+	Create     = "create"
+	Update     = "update"
+	Register   = "register"
+	Unregister = "unregister"
 )
 
 type EventTypesResponse struct {
