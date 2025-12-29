@@ -79,6 +79,18 @@ func LoadProject(ctx context.Context, composefile string) (*types.Project, error
 		return nil, fmt.Errorf("failed to load project: %w", err)
 	}
 
+	for name, s := range project.Services {
+		s.CustomLabels = map[string]string{
+			api.ProjectLabel:     project.Name,
+			api.ServiceLabel:     name,
+			api.VersionLabel:     api.ComposeVersion,
+			api.WorkingDirLabel:  project.WorkingDir,
+			api.ConfigFilesLabel: strings.Join(project.ComposeFiles, ","),
+			api.OneoffLabel:      "False",
+		}
+		project.Services[name] = s
+	}
+
 	return project, nil
 }
 
