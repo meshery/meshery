@@ -1,6 +1,8 @@
 package perf
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 )
 
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
@@ -33,16 +36,6 @@ var (
 	result1006output = "1006.golden"
 	// mesheryctl response of 25 performance result in yaml output
 	result1007output = "1007.golden"
-	// mesheryctl response for invalid output format
-	result1008output = "1008.golden"
-	// mesheryctl response for server response code error
-	result1009output = "1009.golden"
-	// mesheryctl response for unmarshal error
-	result1010output = "1010.golden"
-	// mesheryctl response for failing attach authentication
-	result1011output = "1011.golden"
-	// mesheryctl response for no profile-id passed
-	result1012output = "1012.golden"
 )
 
 func TestResultCmd(t *testing.T) {
@@ -107,9 +100,11 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 			},
-			ExpectedResponse: result1008output,
+			ExpectedResponse: "",
 			Token:            testToken,
-			ExpectError:      false,
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    ErrInvalidOutputChoice(),
 		},
 		{
 			Name: "Unmarshal error",
@@ -118,17 +113,32 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
 			},
-			ExpectedResponse: result1010output,
+			ExpectedResponse: "",
 			Token:            testToken,
-			ExpectError:      false,
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError: func() error {
+				cmdUsed = "result"
+
+				// Replicate the exact JSON unmarshal error
+				var response models.PerformanceResultsAPIResponse
+				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
+
+				return ErrPerformanceProfileResult(ErrFailUnmarshal(innerErr))
+			}(),
 		},
 		{
 			Name:             "failing add authentication test",
 			Args:             []string{"result", "abhishek"},
-			ExpectedResponse: result1011output,
+			ExpectedResponse: "",
 			Token:            testToken + "invalid-path",
-			ExpectError:      false,
-			SanitizePath:     true,
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError: func() error {
+				tokenPath := testToken + "invalid-path"
+				innerErr := fmt.Errorf("%s does not exist", tokenPath)
+				return utils.ErrAttachAuthToken(innerErr)
+			}(),
 		},
 		{
 			Name: "Server Error 400",
@@ -137,16 +147,28 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 400},
 			},
-			ExpectedResponse: result1009output,
+			ExpectedResponse: "",
 			Token:            testToken,
-			ExpectError:      false,
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError: func() error {
+				cmdUsed = "result"
+				body := "{}"
+
+				// The inner error from ErrFailReqStatus
+				innerErr := utils.ErrFailReqStatus(400, body)
+
+				return ErrPerformanceProfileResult(innerErr)
+			}(),
 		},
 		{
 			Name:             "No profile passed",
 			Args:             []string{"result"},
-			ExpectedResponse: result1012output,
+			ExpectedResponse: "",
 			Token:            testToken,
-			ExpectError:      false,
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    ErrNoProfileName(),
 		},
 	}
 
@@ -161,7 +183,11 @@ func TestResultCmd(t *testing.T) {
 					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
 			}
 
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			// Skip golden file creation for error tests that use ExpectedError instead
+			var golden *utils.GoldenFile
+			if tt.ExpectedResponse != "" {
+				golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			}
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
 			// Grab console prints with proper cleanup
@@ -183,15 +209,18 @@ func TestResultCmd(t *testing.T) {
 
 			if err != nil {
 				if tt.ExpectError {
-					errStr := err.Error()
-					if tt.SanitizePath {
-						errStr = sanitizePaths(errStr, currDir)
+					if tt.IsOutputGolden {
+
+						if *update {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
+						utils.Equals(t, expectedResponse, err.Error())
+						resetVariables()
+						return
 					}
-					if *update {
-						golden.Write(errStr)
-					}
-					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, errStr)
+
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					resetVariables()
 					return
 				}
@@ -227,7 +256,11 @@ func TestResultCmd(t *testing.T) {
 					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
 			}
 
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			// Skip golden file creation for error tests that use ExpectedError instead
+			var golden *utils.GoldenFile
+			if tt.ExpectedResponse != "" {
+				golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			}
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
@@ -236,15 +269,18 @@ func TestResultCmd(t *testing.T) {
 			err := PerfCmd.Execute()
 			if err != nil {
 				if tt.ExpectError {
-					errStr := err.Error()
-					if tt.SanitizePath {
-						errStr = sanitizePaths(errStr, currDir)
+					if tt.IsOutputGolden {
+
+						if *update {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
+						utils.Equals(t, expectedResponse, err.Error())
+						resetVariables()
+						return
 					}
-					if *update {
-						golden.Write(errStr)
-					}
-					expectedResponse := golden.Load()
-					utils.Equals(t, expectedResponse, errStr)
+
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					resetVariables()
 					return
 				}
@@ -253,9 +289,6 @@ func TestResultCmd(t *testing.T) {
 
 			// response being printed in console
 			actualResponse := b.String()
-			if tt.SanitizePath {
-				actualResponse = sanitizePaths(actualResponse, currDir)
-			}
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)
