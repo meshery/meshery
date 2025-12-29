@@ -1,3 +1,0 @@
-Output format choice is invalid, use [json|yaml] | Short Description: Invalid output format choice | Probable Cause: Invalid JSON or YAML content | Suggested Remediation: Check the JSON or YAML structure..
-See https://docs.meshery.io/reference/mesheryctl/perf/result for usage details
-
