@@ -906,6 +906,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="td-content">
           
           <h1>Contributing to Model Relationships</h1>
+          <div class="alert alert-warning" role="alert">
+            <strong>Important:</strong> Each component must have <strong>exactly one Hierarchical-Inventory parent</strong>.  
+            Adding more than one will create <strong>cyclical relationships</strong>, causing:
+            <ul>
+              <li>Broken or inconsistent relationship graphs</li>
+              <li>Errors when rendering designs</li>
+              <li>Unusable or invalid component structures</li>
+            </ul>
+            Avoid cycles by ensuring every component has only one hierarchical parent.
+          </div>
            <p><a href="/concepts/logical/relationships">Relationships</a> within <a href="/concepts/logical/models">Models</a> play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected <a href="/concepts/logical/components">Components</a>.</p>
 
 <h2 id="overview-of-steps-to-create-relationships">Overview of Steps to Create Relationships</h2>

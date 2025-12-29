@@ -80,3 +80,4 @@ wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
 install/docker-extension/vm/vm
+server/cmd/meshery

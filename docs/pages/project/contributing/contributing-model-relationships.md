@@ -12,6 +12,8 @@ list: include
 
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 
+> **Note:** To ensure correctness and proper rendering of relationship diagrams, all relationship schema changes should be typed and visually tested using the MeshMap Designer. Please verify that your relationship definitions appear as intended before submitting a pull request.
+
 ## Overview of Steps to Create Relationships
 
 **Prework:**
