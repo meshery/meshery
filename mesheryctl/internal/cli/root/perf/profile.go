@@ -78,7 +78,8 @@ mesheryctl perf profile test --view
 		}
 
 		if len(profiles) == 0 {
-			return errors.New("No Performance Profiles to display")
+			utils.Log.Info("No Performance Profiles to display")
+			return nil
 		}
 
 		// get profiles as string arrays for printing tabular format profiles
@@ -102,7 +103,7 @@ mesheryctl perf profile test --view
 			if len(profiles) > 1 {
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					return err
+					return ErrUserPrompt(err)
 				}
 			}
 
@@ -126,7 +127,7 @@ mesheryctl perf profile test --view
 				var out bytes.Buffer
 				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
 				if err != nil {
-					return err
+					return ErrFailMarshal(err)
 				}
 				fmt.Printf("Load generator options:\n%s\n", out.String())
 			}
@@ -162,7 +163,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, utils.ErrReadResponseBody(err)
 	}
 
 	err = json.Unmarshal(body, &response)

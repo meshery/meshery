@@ -319,7 +319,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		defer utils.SafeClose(resp.Body)
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+			return utils.ErrReadResponseBody(err)
 		}
 		log.Debug(string(data))
 
@@ -394,11 +394,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	convReq, err := strconv.Atoi(concurrentRequests)
 	if err != nil {
-		return "", "", errors.New("failed to convert concurrent-request")
+		return "", "", ErrConvertConcurrentRequest()
 	}
 	convQPS, err := strconv.Atoi(qps)
 	if err != nil {
-		return "", "", errors.New("failed to convert qps")
+		return "", "", ErrConvertQPS()
 	}
 	values := map[string]interface{}{
 		"concurrent_request": convReq,
@@ -437,7 +437,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if fileInfo, err := os.Stat(certPath); err == nil {
 		certFile, err := os.ReadFile(certPath)
 		if err != nil {
-			return "", "", errors.New("unable to read certificate file. " + err.Error())
+			return "", "", ErrReadFilepath(errors.New("Unable to read certificate file. " + err.Error()))
 		}
 		certData := string(certFile)
 		certName := fileInfo.Name()
@@ -472,7 +472,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return "", "", utils.ErrReadResponseBody(err)
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {

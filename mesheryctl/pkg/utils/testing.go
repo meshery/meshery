@@ -120,7 +120,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0o755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -129,7 +129,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = os.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -139,7 +139,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -416,7 +416,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 					t.Fatal(err)
 				}
 
-				// compares  relevant fields of two meshkit errors
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 				ResetCommandFlags(cmd, t)
 				return
@@ -520,7 +519,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 					t.Fatal(err)
 				}
 
-				// compares  relevant fields of two meshkit errors
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 				ResetCommandFlags(cmd, t)
 				return

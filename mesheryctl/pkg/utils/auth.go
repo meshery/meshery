@@ -41,7 +41,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if tokenPath == "" { // token was not passed with the flag
 		tokenPath, err = GetCurrentAuthToken()
 		if err != nil {
-			return nil, err
+			return nil, ErrAttachAuthToken(err)
 		}
 		// set TokenFlag value equals tokenPath
 		TokenFlag = tokenPath

@@ -27,7 +27,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -113,7 +112,7 @@ mesheryctl perf result saturday-profile --view
 			// user prompt to select profile
 			selectedProfileIndex, err := userPrompt("profile", "Found multiple profiles with given name, select a profile", data)
 			if err != nil {
-				return err
+				return ErrUserPrompt(err)
 			}
 			// ids got shifted with 1 in userPrompt()
 			profileID = data[selectedProfileIndex][2]
@@ -125,13 +124,15 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if len(data) == 0 {
-			return errors.New("No Test Results to display")
+			utils.Log.Info("No Test Results to display")
+			return nil
 		}
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
 		if len(expandedData) == 0 {
-			return errors.New("No test results to display")
+			utils.Log.Info("No test results to display")
+			return nil
 		}
 
 		if outputFormatFlag != "" {
@@ -189,7 +190,7 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, utils.ErrReadResponseBody(err)
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {

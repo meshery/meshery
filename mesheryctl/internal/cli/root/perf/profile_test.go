@@ -42,6 +42,8 @@ var (
 	profile1002output = "1002.golden"
 	// mesheryctl response of performance profile with searched term "test 3"
 	profile1003output = "1003.golden"
+	// mesheryctl response when no profiles found
+	profile1005output = "1005.golden"
 	// mesheryctl response of 25 performance profile in json output
 	profile1006output = "1006.golden"
 	// mesheryctl response of 25 performance profile in yaml output
@@ -116,9 +118,9 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200},
 			},
-			ExpectedResponse: "",
+			ExpectedResponse: profile1005output,
 			Token:            testToken,
-			ExpectError:      true,
+			ExpectError:      false,
 			IsOutputGolden:   false,
 			ExpectedError:    errors.New("No Performance Profiles to display"),
 		},
