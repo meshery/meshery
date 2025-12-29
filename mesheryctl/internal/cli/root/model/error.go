@@ -17,18 +17,18 @@ const (
 	ErrModelBuildCode                   = "mesheryctl-1151"
 
 	// Error Constants
-	ErrBuildUsage = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
-	ErrBuildFolderNotFound = "\nfolder %s does not exist"
-	ErrBuildMultiVersionNotSupported = "\nCommand does not support multiple versions build under one image"
-	
-	ErrInitOneArg = "must provide only one argument: model name"
-	ErrInitUnsupportedFormat = "[ %s ] are the only format supported"
-	ErrInitInvalidVersion = "version must follow a semver format, f.e. v1.2.3"
-	ErrInitFolderExists = "folder %s exists, please specify different model name or version"
-	ErrInitInvalidModelName = "invalid model name: name must match pattern ^[a-z0-9-]+$"
+	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
+	errBuildFolderNotFound           = "\nfolder %s does not exist"
+	errBuildMultiVersionNotSupported = "\nCommand does not support multiple versions build under one image"
 
-	ErrSearchUsage = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
-	ErrSearchModelName = "Please provide a model name. " + ErrSearchUsage
+	errInitOneArg            = "must provide only one argument: model name"
+	errInitUnsupportedFormat = "[ %s ] are the only format supported"
+	errInitInvalidVersion    = "version must follow a semver format, f.e. v1.2.3"
+	errInitFolderExists      = "folder %s exists, please specify different model name or version"
+	errInitInvalidModelName  = "invalid model name: name must contains alphanumeric characters or hyphens"
+
+	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
+	errSearchModelName = "Please provide a model name. " + errSearchUsage
 )
 
 func ErrExportModel(err error, name string) error {

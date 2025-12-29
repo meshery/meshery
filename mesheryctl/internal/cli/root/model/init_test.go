@@ -49,10 +49,10 @@ func TestModelInit(t *testing.T) {
 
 	// Test constants
 	const (
-		initTestEC2Controller = "test-case-aws-ec2-controller"
+		initTestEC2Controller    = "test-case-aws-ec2-controller"
 		initTestDynamoController = "test-case-aws-dynamodb-controller"
-		initTestVersion = "v0.1.0"
-		initTestInvalidVersion = "v1.0.0"
+		initTestVersion          = "v0.1.0"
+		initTestInvalidVersion   = "v1.0.0"
 	)
 
 	// Clean up any existing test directories before running tests
@@ -224,7 +224,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedResponse:   "",
 			AfterTestRemoveDir: "./" + initTestEC2Controller,
 			IsOutputGolden:     false,
-			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(ErrInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
+			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
 			Name:             "model init with invalid version format",
@@ -232,7 +232,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedVersion(ErrInitInvalidVersion),
+			ExpectedError:    ErrModelUnsupportedVersion(errInitInvalidVersion),
 		},
 		{
 			Name:             "model init with invalid output format",
@@ -240,7 +240,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(ErrInitUnsupportedFormat, "json, yaml")),
+			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(errInitUnsupportedFormat, "json, yaml")),
 		},
 		{
 			Name:             "model init no model name",
@@ -248,7 +248,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(ErrInitOneArg),
+			ExpectedError:    ErrModelInitFromString(errInitOneArg),
 		},
 		{
 			Name:             "model init too many arguments",
@@ -256,7 +256,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(ErrInitOneArg),
+			ExpectedError:    ErrModelInitFromString(errInitOneArg),
 		},
 		{
 			Name:             "model init invalid model name (underscore)",
@@ -264,7 +264,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(ErrInitInvalidModelName),
+			ExpectedError:    ErrModelInitFromString(errInitInvalidModelName),
 		},
 	}
 	for _, tc := range tests {

@@ -26,11 +26,11 @@ func TestModelBuild(t *testing.T) {
 
 	// Test constants
 	const (
-		buildTestDynamoController = "test-case-model-build-aws-dynamodb-controller"
+		buildTestDynamoController    = "test-case-model-build-aws-dynamodb-controller"
 		buildTestDynamoControllerGbx = "test-case-model-build-aws-dynamodb-controller-gbxter34"
-		buildTestEC2Controller = "aws-ec2-controller"
-		buildTestVersion = "v0.1.0"
-		buildTestNonExistentFolder = "not_existing_folder"
+		buildTestEC2Controller       = "aws-ec2-controller"
+		buildTestVersion             = "v0.1.0"
+		buildTestNonExistentFolder   = "not_existing_folder"
 	)
 
 	// Clean up any existing test directories before running tests
@@ -156,7 +156,7 @@ func TestModelBuild(t *testing.T) {
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
 					buildTestDynamoController,
-					buildTestDynamoController + ".tar",
+					buildTestDynamoController+".tar",
 				),
 			},
 		},
@@ -174,7 +174,7 @@ func TestModelBuild(t *testing.T) {
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
 					buildTestDynamoController,
-					buildTestDynamoController + ".tar",
+					buildTestDynamoController+".tar",
 				),
 			},
 		},
@@ -184,7 +184,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelBuildFromStrings(ErrBuildUsage),
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
 			Name:             "model build wrong input param format",
@@ -192,7 +192,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelBuildFromStrings(ErrBuildUsage),
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
 			Name:             "model build from model name only (no version) not supporting multiple versions",
@@ -210,7 +210,7 @@ func TestModelBuild(t *testing.T) {
 				),
 			},
 			IsOutputGolden: false,
-			ExpectedError:  ErrModelBuildFromStrings(ErrBuildUsage, ErrBuildMultiVersionNotSupported),
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
 			Name:             "model build folder does not exist",
@@ -218,7 +218,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelBuildFromStrings(ErrBuildUsage, fmt.Sprintf(ErrBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
 		},
 	}
 	for _, tc := range tests {

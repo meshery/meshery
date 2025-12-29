@@ -27,7 +27,7 @@ mesheryctl model build [model-name]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return ErrModelBuildFromStrings(ErrBuildUsage)
+			return ErrModelBuildFromStrings(errBuildUsage)
 		}
 
 		inputParam := args[0]
@@ -40,7 +40,7 @@ mesheryctl model build [model-name]/[model-version]
 			// input param is supposed to be [model-name] or [model-name]/[model-version]
 			// since len(args) is validated to be 1 then parts will have at least one element
 			if len(parts) > 2 {
-				return ErrModelBuildFromStrings(ErrBuildUsage)
+				return ErrModelBuildFromStrings(errBuildUsage)
 			}
 			name, version = buildModelParseModelInput(inputParam)
 		}
@@ -51,7 +51,7 @@ mesheryctl model build [model-name]/[model-version]
 
 		// validate name is not empty, version could be empty
 		if name == "" {
-			return ErrModelBuildFromStrings(ErrBuildUsage)
+			return ErrModelBuildFromStrings(errBuildUsage)
 		}
 
 		folder := buildModelCompileFolderName(path, name, version)
@@ -61,9 +61,9 @@ mesheryctl model build [model-name]/[model-version]
 			_, err := os.Stat(folder)
 			if os.IsNotExist(err) {
 				return ErrModelBuildFromStrings(
-					ErrBuildUsage,
+					errBuildUsage,
 					fmt.Sprintf(
-						ErrBuildFolderNotFound,
+						errBuildFolderNotFound,
 						folder,
 					),
 				)
@@ -93,8 +93,8 @@ mesheryctl model build [model-name]/[model-version]
 
 			if !buildModelHasExactlyOneSubfolder(folder) {
 				return ErrModelBuildFromStrings(
-					ErrBuildUsage,
-					ErrBuildMultiVersionNotSupported,
+					errBuildUsage,
+					errBuildMultiVersionNotSupported,
 				)
 			}
 		}

@@ -30,7 +30,7 @@ func TestSearchModel(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(ErrSearchModelName)),
+			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(errSearchModelName)),
 		},
 		{
 			Name:             "Search model with query",

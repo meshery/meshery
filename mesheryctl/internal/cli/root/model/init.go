@@ -18,8 +18,6 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-
-
 var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
@@ -42,7 +40,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		{
 			// validate model name
 			if len(args) != 1 {
-				return ErrModelInitFromString(ErrInitOneArg)
+				return ErrModelInitFromString(errInitOneArg)
 			}
 			modelName := args[0]
 			input := map[string]any{"name": modelName}
@@ -65,7 +63,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				validFormatsString := strings.Join(initModelGetValidOutputFormat(), ", ")
 				return ErrModelUnsupportedOutputFormat(
 					fmt.Sprintf(
-						ErrInitUnsupportedFormat,
+						errInitUnsupportedFormat,
 						validFormatsString,
 					),
 				)
@@ -77,13 +75,12 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			version, _ := cmd.Flags().GetString("version")
 			if !semver.IsValid(version) {
 				return ErrModelUnsupportedVersion(
-					ErrInitInvalidVersion,
+					errInitInvalidVersion,
 				)
 			}
 		}
 
 		return nil
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
@@ -113,7 +110,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			if !os.IsNotExist(err) && info.IsDir() {
 				return ErrModelInitFromString(
 					fmt.Sprintf(
-						ErrInitFolderExists,
+						errInitFolderExists,
 						modelVersionFolder,
 					),
 				)
@@ -187,7 +184,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			)
 			return nil
 		}()
-
 		if err != nil {
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
@@ -219,11 +215,13 @@ func initModelGetValidOutputFormat() []string {
 	// return []string{"json", "yaml", "csv"}
 }
 
-const initModelDirPerm = 0755
-const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
-const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
-const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+const (
+	initModelDirPerm                   = 0o755
+	initModelModelSchema               = "schemas/constructs/v1beta1/model/model.json"
+	initModelTemplatePathModel         = "schemas/constructs/v1beta1/model/model_template"
+	initModelTemplatePathComponent     = "schemas/constructs/v1beta1/component/component_template"
+	initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+)
 
 // TODO: Connection templates are temporarily disabled.
 // This constant is not currently in use.

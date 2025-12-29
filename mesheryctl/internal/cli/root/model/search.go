@@ -22,7 +22,7 @@ mesheryctl model search [query-text]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New(ErrSearchModelName))
+			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
 		}
 		return nil
 	},
