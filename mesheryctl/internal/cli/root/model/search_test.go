@@ -30,7 +30,7 @@ func TestSearchModel(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(goerrors.New("Please provide a model name. Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(ErrSearchModelName)),
 		},
 		{
 			Name:             "Search model with query",

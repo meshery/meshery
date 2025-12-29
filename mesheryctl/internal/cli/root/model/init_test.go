@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -46,10 +47,18 @@ func TestModelInit(t *testing.T) {
 		return cmd
 	}
 
+	// Test constants
+	const (
+		initTestEC2Controller = "test-case-aws-ec2-controller"
+		initTestDynamoController = "test-case-aws-dynamodb-controller"
+		initTestVersion = "v0.1.0"
+		initTestInvalidVersion = "v1.0.0"
+	)
+
 	// Clean up any existing test directories before running tests
 	cleanupDirs := []string{
-		"test-case-aws-ec2-controller",
-		"test-case-aws-dynamodb-controller",
+		initTestEC2Controller,
+		initTestDynamoController,
 		"test_case_some_other_custom_dir",
 	}
 	cleanupTestArtifacts(cleanupDirs)
@@ -84,63 +93,63 @@ func TestModelInit(t *testing.T) {
 		// TODO: think about how to fix this.
 		{
 			Name:             "model init with all default params",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "v0.1.0", "--path", ".", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
-				"test-case-aws-ec2-controller",
-				"test-case-aws-ec2-controller/v0.1.0",
-				"test-case-aws-ec2-controller/v0.1.0/components",
-				"test-case-aws-ec2-controller/v0.1.0/connections",
-				"test-case-aws-ec2-controller/v0.1.0/credentials",
-				"test-case-aws-ec2-controller/v0.1.0/relationships",
+				initTestEC2Controller,
+				filepath.Join(initTestEC2Controller, initTestVersion),
+				filepath.Join(initTestEC2Controller, initTestVersion, "components"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "connections"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "credentials"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "relationships"),
 			},
 			ExpectedFiles: []string{
-				"test-case-aws-ec2-controller/v0.1.0/model.json",
-				"test-case-aws-ec2-controller/v0.1.0/components/component.json",
-				"test-case-aws-ec2-controller/v0.1.0/relationships/relationship.json",
+				filepath.Join(initTestEC2Controller, initTestVersion, "model.json"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "components/component.json"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "relationships/relationship.json"),
 			},
-			AfterTestRemoveDir: "test-case-aws-ec2-controller",
+			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
 			Name:             "model init with default params",
-			Args:             []string{"init", "test-case-aws-ec2-controller"},
+			Args:             []string{"init", initTestEC2Controller},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
-				"test-case-aws-ec2-controller",
-				"test-case-aws-ec2-controller/v0.1.0",
-				"test-case-aws-ec2-controller/v0.1.0/components",
-				"test-case-aws-ec2-controller/v0.1.0/connections",
-				"test-case-aws-ec2-controller/v0.1.0/credentials",
-				"test-case-aws-ec2-controller/v0.1.0/relationships",
+				initTestEC2Controller,
+				filepath.Join(initTestEC2Controller, initTestVersion),
+				filepath.Join(initTestEC2Controller, initTestVersion, "components"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "connections"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "credentials"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "relationships"),
 			},
 			ExpectedFiles: []string{
-				"test-case-aws-ec2-controller/v0.1.0/model.json",
-				"test-case-aws-ec2-controller/v0.1.0/components/component.json",
-				"test-case-aws-ec2-controller/v0.1.0/relationships/relationship.json",
+				filepath.Join(initTestEC2Controller, initTestVersion, "model.json"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "components/component.json"),
+				filepath.Join(initTestEC2Controller, initTestVersion, "relationships/relationship.json"),
 			},
-			AfterTestRemoveDir: "test-case-aws-ec2-controller",
+			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
 			Name:             "model init with yaml output format",
-			Args:             []string{"init", "test-case-aws-dynamodb-controller", "--output-format", "yaml"},
+			Args:             []string{"init", initTestDynamoController, "--output-format", "yaml"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-dynamodb-controller-in-yaml.output.golden",
 			ExpectedDirs: []string{
-				"test-case-aws-dynamodb-controller",
-				"test-case-aws-dynamodb-controller/v0.1.0",
-				"test-case-aws-dynamodb-controller/v0.1.0/components",
-				"test-case-aws-dynamodb-controller/v0.1.0/connections",
-				"test-case-aws-dynamodb-controller/v0.1.0/credentials",
-				"test-case-aws-dynamodb-controller/v0.1.0/relationships",
+				initTestDynamoController,
+				filepath.Join(initTestDynamoController, initTestVersion),
+				filepath.Join(initTestDynamoController, initTestVersion, "components"),
+				filepath.Join(initTestDynamoController, initTestVersion, "connections"),
+				filepath.Join(initTestDynamoController, initTestVersion, "credentials"),
+				filepath.Join(initTestDynamoController, initTestVersion, "relationships"),
 			},
 			ExpectedFiles: []string{
-				"test-case-aws-dynamodb-controller/v0.1.0/model.yaml",
-				"test-case-aws-dynamodb-controller/v0.1.0/components/component.yaml",
-				"test-case-aws-dynamodb-controller/v0.1.0/relationships/relationship.yaml",
+				filepath.Join(initTestDynamoController, initTestVersion, "model.yaml"),
+				filepath.Join(initTestDynamoController, initTestVersion, "components/component.yaml"),
+				filepath.Join(initTestDynamoController, initTestVersion, "relationships/relationship.yaml"),
 			},
-			AfterTestRemoveDir: "test-case-aws-dynamodb-controller",
+			AfterTestRemoveDir: initTestDynamoController,
 		},
 		// Added --output-format json in this test because somehow
 		// the --output-format yaml from the previous test case is propagated to this test case
@@ -148,82 +157,82 @@ func TestModelInit(t *testing.T) {
 		// TODO think about how to reset the flags between the test cases.
 		{
 			Name:             "model init with custom path and version",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/components",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/connections",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/credentials",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/relationships",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/components",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/connections",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/credentials",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/relationships",
 			},
 			ExpectedFiles: []string{
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/model.json",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/components/component.json",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/relationships/relationship.json",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/model.json",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/components/component.json",
+				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3/relationships/relationship.json",
 			},
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
 			Name:             "model init with custom relative to current directory path",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
-				"./test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+				"./test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
 			},
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
 		},
 		{
 			Name:             "model init with custom relative to parent directory path",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
-				"../test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+				"../test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
 			},
 			AfterTestRemoveDir: "../test_case_some_custom_dir",
 		},
 		{
 			Name:             "model init with trailing folder separator in the path",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir-2.aws-ec2-controller.output.golden",
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
-				"test_case_some_other_custom_dir/with/trailing/separator/test-case-aws-ec2-controller",
+				"test_case_some_other_custom_dir/with/trailing/separator/" + initTestEC2Controller,
 			},
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
 		},
 		{
 			Name: "model init fail if model/version folder esists",
-			Args: []string{"init", "test-case-aws-ec2-controller", "--path", ".", "--version", "v1.0.0"},
+			Args: []string{"init", initTestEC2Controller, "--path", ".", "--version", initTestInvalidVersion},
 			SetupHook: func() {
-				err := os.MkdirAll("./test-case-aws-ec2-controller/v1.0.0", initModelDirPerm)
+				err := os.MkdirAll(filepath.Join(initTestEC2Controller, initTestInvalidVersion), initModelDirPerm)
 				if err != nil {
 					t.Fatal("error in SetupHook when creating folder", err)
 				}
 			},
 			ExpectError:        true,
 			ExpectedResponse:   "",
-			AfterTestRemoveDir: "./test-case-aws-ec2-controller",
+			AfterTestRemoveDir: "./" + initTestEC2Controller,
 			IsOutputGolden:     false,
-			ExpectedError:      ErrModelInitFromString("folder test-case-aws-ec2-controller/v1.0.0 exists, please specify different model name or version"),
+			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(ErrInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
 			Name:             "model init with invalid version format",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "1.2"},
+			Args:             []string{"init", initTestEC2Controller, "--version", "1.2"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedVersion("version must follow a semver format, f.e. v1.2.3"),
+			ExpectedError:    ErrModelUnsupportedVersion(ErrInitInvalidVersion),
 		},
 		{
 			Name:             "model init with invalid output format",
@@ -231,7 +240,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedOutputFormat("[ json, yaml ] are the only format supported"),
+			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(ErrInitUnsupportedFormat, "json, yaml")),
 		},
 		{
 			Name:             "model init no model name",
@@ -239,7 +248,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString("must provide only one argument: model name"),
+			ExpectedError:    ErrModelInitFromString(ErrInitOneArg),
 		},
 		{
 			Name:             "model init too many arguments",
@@ -247,7 +256,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString("must provide only one argument: model name"),
+			ExpectedError:    ErrModelInitFromString(ErrInitOneArg),
 		},
 		{
 			Name:             "model init invalid model name (underscore)",
@@ -255,7 +264,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString("invalid model name: name must match pattern ^[a-z0-9-]+$"),
+			ExpectedError:    ErrModelInitFromString(ErrInitInvalidModelName),
 		},
 	}
 	for _, tc := range tests {
