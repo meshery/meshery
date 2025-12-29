@@ -238,3 +238,12 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+
+  # Run Rego policy tests
+  rego-tests:
+    name: Rego Policy Tests
+    if: github.repository == 'meshery/meshery'
+    uses: ./.github/workflows/rego-lint-and-test.yml
+    permissions:
+      contents: write
+      pull-requests: write
