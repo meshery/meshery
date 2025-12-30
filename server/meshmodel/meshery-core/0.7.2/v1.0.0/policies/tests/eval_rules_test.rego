@@ -122,7 +122,7 @@ test_match_values_equal_as_strings_number if {
 eval_rules.match_values(123, "123", "equal_as_strings")
 }
 
-test_match_values_not_null_true if {
+test_match_values_not_null_both_non_null if {
 eval_rules.match_values("value1", "value2", "not_null")
 }
 

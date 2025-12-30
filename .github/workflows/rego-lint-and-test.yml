@@ -37,7 +37,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.25"
+          go-version: "1.25.5"
 
       - name: Setup OPA
         uses: open-policy-agent/setup-opa@v2
@@ -78,19 +78,25 @@ jobs:
       - name: Run Rego unit tests with OPA
         id: opa-test
         run: |
-          set +e
           echo "Running OPA tests..."
           POLICIES_DIR="./server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"
           
+          # Ensure that failures in any part of a pipeline are detected
+          set -o pipefail
+          
           # Run OPA tests and capture output
-          opa test $POLICIES_DIR -v 2>&1 | tee opa-test-results.txt
-          OPA_EXIT_CODE=${PIPESTATUS[0]}
+          if ! opa test "$POLICIES_DIR" -v 2>&1 | tee opa-test-results.txt; then
+            OPA_EXIT_CODE=${PIPESTATUS[0]}
+            echo "OPA tests reported failures (exit code: $OPA_EXIT_CODE), continuing to collect results."
+          else
+            OPA_EXIT_CODE=0
+          fi
           
           echo "opa-exit-code=$OPA_EXIT_CODE" >> $GITHUB_OUTPUT
           
           # Parse results
-          PASSED=$(grep -c "^.*PASS" opa-test-results.txt || echo "0")
-          FAILED=$(grep -c "^.*FAIL" opa-test-results.txt || echo "0")
+          PASSED=$(grep -c "PASS" opa-test-results.txt || echo "0")
+          FAILED=$(grep -c "FAIL" opa-test-results.txt || echo "0")
           TOTAL=$((PASSED + FAILED))
           
           echo "passed=$PASSED" >> $GITHUB_OUTPUT
@@ -173,7 +179,21 @@ jobs:
           </details>
           EOFSUM
           
-          cat test-summary.md >> $GITHUB_STEP_SUMMARY
+          # Validate that the summary file was created and is not empty.
+          if [ ! -s test-summary.md ]; then
+            echo "### REGO POLICY TESTS" > test-summary.md
+            echo "" >> test-summary.md
+            echo "Test summary could not be generated from test outputs." >> test-summary.md
+          fi
+          
+          # Safely append the summary to the GitHub step summary with a fallback.
+          if [ -f test-summary.md ]; then
+            cat test-summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### REGO POLICY TESTS" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Test summary could not be generated from test outputs." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Comment on PR
         if: github.event_name == 'pull_request'

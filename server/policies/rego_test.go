@@ -71,20 +71,19 @@ t.Fatalf("Failed to run tests: %v", err)
 // Report test results
 var passed, failed int
 for result := range ch {
-testName := strings.TrimPrefix(result.Name, "data.")
-if result.Fail {
-failed++
-t.Errorf("FAIL: %s", testName)
-if result.Error != nil {
-t.Errorf("  Error: %v", result.Error)
-}
-} else if result.Error != nil {
-failed++
-t.Errorf("ERROR: %s - %v", testName, result.Error)
-} else {
-passed++
-t.Logf("PASS: %s", testName)
-}
+	testName := strings.TrimPrefix(result.Name, "data.")
+	if result.Fail {
+	failed++
+	t.Errorf("FAIL: %s", testName)
+	if result.Error != nil {
+		t.Errorf("  Error: %v", result.Error)
+	}
+	} else if result.Error != nil {
+	failed++
+	t.Errorf("ERROR: %s - %v", testName, result.Error)
+	} else {
+	passed++
+	}
 }
 
 t.Logf("\nTest Summary: %d passed, %d failed", passed, failed)
@@ -95,7 +94,7 @@ t.Fail()
 }
 
 // TestRegoPolicyRules tests specific policy rules with sample inputs.
-// This provides integration-style testing for complex policy evaluation scenarios.
+// These are sanity checks that verify policy rule definitions and basic evaluation behavior.
 func TestRegoPolicyRules(t *testing.T) {
 ctx := context.Background()
 
@@ -193,23 +192,23 @@ if err != nil {
 t.Fatalf("Failed to collect policy files: %v", err)
 }
 
-// Build module contents
-var modules []func(*rego.Rego)
-for _, file := range policyFiles {
-// Skip template files
-if strings.HasSuffix(file, ".template") {
-continue
-}
-// Skip test files for this test
-if strings.Contains(file, "/tests/") {
-continue
-}
-content, err := os.ReadFile(file)
-if err != nil {
-t.Fatalf("Failed to read file %s: %v", file, err)
-}
-modules = append(modules, rego.Module(file, string(content)))
-}
+	// Build module contents
+	var modules []func(*rego.Rego)
+	for _, file := range policyFiles {
+	// Skip Rego template sources; these are not executable policy modules.
+	if strings.HasSuffix(file, ".template") {
+		continue
+	}
+	// Skip Rego test modules; this scenario test should load only non-test policies.
+	if strings.Contains(file, "/tests/") {
+		continue
+	}
+	content, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatalf("Failed to read file %s: %v", file, err)
+	}
+	modules = append(modules, rego.Module(file, string(content)))
+	}
 
 // Test scenarios with sample design inputs
 testCases := []struct {
@@ -233,7 +232,7 @@ input: map[string]interface{}{},
 },
 {
 name:  "eval_rules_match_values_equal",
-query: `x := data.eval_rules.match_values("test", "test", "equal")`,
+query: `data.eval_rules.match_values("test", "test", "equal")`,
 input: map[string]interface{}{},
 },
 }
@@ -248,8 +247,7 @@ rego.Input(tc.input),
 r := rego.New(opts...)
 rs, err := r.Eval(ctx)
 if err != nil {
-t.Logf("Query evaluation error (may be expected): %v", err)
-return
+t.Fatalf("Query evaluation error for %q: %v", tc.name, err)
 }
 
 if len(rs) > 0 && len(rs[0].Expressions) > 0 {
