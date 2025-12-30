@@ -7,15 +7,15 @@ import (
 )
 
 var (
-	ErrGenerateModelCode         = "mesheryctl-1055"
-	ErrGenerateComponentCode     = "mesheryctl-1056"
-	ErrUpdateModelCode           = "mesheryctl-1057"
-	ErrUpdateComponentCode       = "mesheryctl-1058"
-	ErrUpdateRegistryCode        = "mesheryctl-1059"
-	ErrParsingSheetCode          = "mesheryctl-1128"
-	ErrFindImageRefRequiredCode  = "mesheryctl-1129"
-	ErrFindInvalidOutputCode     = "mesheryctl-1130"
-	ErrFindScanImageCode         = "mesheryctl-1131"
+	ErrGenerateModelCode        = "mesheryctl-1055"
+	ErrGenerateComponentCode    = "mesheryctl-1056"
+	ErrUpdateModelCode          = "mesheryctl-1057"
+	ErrUpdateComponentCode      = "mesheryctl-1058"
+	ErrUpdateRegistryCode       = "mesheryctl-1059"
+	ErrParsingSheetCode         = "mesheryctl-1128"
+	ErrFindImageRefRequiredCode = "mesheryctl-1129"
+	ErrFindInvalidOutputCode    = "mesheryctl-1130"
+	ErrFindScanImageCode        = "mesheryctl-1131"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
