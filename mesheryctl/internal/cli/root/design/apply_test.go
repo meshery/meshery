@@ -1,12 +1,18 @@
 package design
 
 import (
+	"encoding/json"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	meshkiterr "github.com/meshery/meshkit/errors"
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestApplyCmd(t *testing.T) {
@@ -35,6 +41,8 @@ func TestApplyCmd(t *testing.T) {
 		URLs             []utils.MockURL
 		Token            string
 		ExpectError      bool
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
 	}{
 		{
 			Name:             "Apply Designs",
@@ -72,6 +80,39 @@ func TestApplyCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name:             "Apply design with invalid file path",
+			Args:             []string{"apply", "-f", "/invalid/path/design.yaml"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path", "/invalid/path/design.yaml")),
+		},
+		{
+			Name:             "Apply design with invalid server response",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.invalidJSON.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: func() error {
+				// Replicate the exact JSON unmarshal error
+				var response []*models.MesheryPattern
+				innerErr := json.Unmarshal([]byte(`{ "patterns": [ { "id": "123", "name": "incomplete-json"`), &response)
+
+				return utils.ErrUnmarshal(innerErr)
+			}(),
+		},
 	}
 
 	// Run tests
@@ -89,9 +130,13 @@ func TestApplyCmd(t *testing.T) {
 			// set token
 			utils.TokenFlag = tt.Token
 
-			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			// Skip golden file creation for error tests that use ExpectedError instead
+			var golden *utils.GoldenFile
+			if tt.ExpectedResponse != "" {
+				golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			}
 
 			// setting up log to grab logs
 			b := utils.SetupMeshkitLoggerTesting(t, false)
@@ -101,14 +146,24 @@ func TestApplyCmd(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
+					if tt.IsOutputGolden {
 
-					utils.Equals(t, expectedResponse, err.Error())
+						// write it in file
+						if *update {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
+
+						utils.Equals(t, expectedResponse, err.Error())
+						resetVariables()
+						return
+					}
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError), "error type mismatch")
+					assert.Equal(t, meshkiterr.GetCode(err), meshkiterr.GetCode(tt.ExpectedError), "error code mismatch")
+					assert.Equal(t, meshkiterr.GetLDescription(err), meshkiterr.GetLDescription(tt.ExpectedError), "long description mismatch")
+					resetVariables()
 					return
+
 				}
 				t.Error(err)
 			}
@@ -118,9 +173,12 @@ func TestApplyCmd(t *testing.T) {
 
 			// write it in file
 			if *update {
-				golden.Write(actualResponse)
+				if golden != nil {
+					golden.Write(actualResponse)
+				}
 			}
-			expectedResponse := golden.Load()
+			var expectedResponse string
+			expectedResponse = golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
@@ -129,4 +187,10 @@ func TestApplyCmd(t *testing.T) {
 
 	// stop mock server
 	utils.StopMockery(t)
+}
+
+// reset other flags if needed
+func resetVariables() {
+	skipSave = false
+	patternFile = ""
 }

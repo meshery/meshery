@@ -18,28 +18,29 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
 )
 
 const (
-	ErrImportDesignCode           = "mesheryctl-1001"
-	ErrInValidSourceCode          = "mesheryctl-1002"
-	ErrOnboardDesignCode          = "mesheryctl-1003"
-	ErrOffboardDesignCode         = "mesheryctl-1005"
-	ErrDesignFlagCode             = "mesheryctl-1006"
-	ErrDesignManifestCode         = "mesheryctl-1007"
-	ErrDesignFileNotProvidedCode  = "mesheryctl-1140"
-	ErrDesignsNotFoundCode        = "mesheryctl-1037"
-	ErrInvalidDesignFileCode      = "mesheryctl-1038"
-	ErrDesignInvalidNameOrIDCode  = "mesheryctl-1039"
-	ErrPatternSourceTypeCode      = "mesheryctl-1121"
-	ErrCopyDataCode               = "mesheryctl-1122"
-	ErrCreateFileCode             = "mesheryctl-1123"
-	ErrRetrieveHomeDirCode        = "mesheryctl-1124"
-	ErrReadFromBodyCode           = "mesheryctl-1125"
-	ErrMarkFlagRequireCode        = "mesheryctl-1126"
-	ErrParseDesignFileCode        = "mesheryctl-1127"
-	ErrDesignReadResponseBodyCode = "mesheryctl-1128"
+	ErrImportDesignCode          = "mesheryctl-1001"
+	ErrInValidSourceCode         = "mesheryctl-1002"
+	ErrOnboardDesignCode         = "mesheryctl-1003"
+	ErrOffboardDesignCode        = "mesheryctl-1005"
+	ErrDesignFlagCode            = "mesheryctl-1006"
+	ErrDesignManifestCode        = "mesheryctl-1007"
+	ErrDesignFileNotProvidedCode = "mesheryctl-1140"
+	ErrDesignsNotFoundCode       = "mesheryctl-1037"
+	ErrInvalidDesignFileCode     = "mesheryctl-1038"
+	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
+	ErrPatternSourceTypeCode     = "mesheryctl-1121"
+	ErrCopyDataCode              = "mesheryctl-1122"
+	ErrCreateFileCode            = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode       = "mesheryctl-1124"
+	ErrReadFromBodyCode          = "mesheryctl-1125"
+	ErrMarkFlagRequireCode       = "mesheryctl-1126"
+	ErrParseDesignFileCode       = "mesheryctl-1127"
+	ErrDeleteDesignCode          = "mesheryctl-1128"
 )
 
 const (
@@ -182,10 +183,10 @@ func ErrParseDesignFile(err error) error {
 		[]string{"Ensure the design file is a valid Meshery design format", "Check for YAML/JSON syntax errors", "Validate the design file structure"})
 }
 
-func ErrDesignReadResponseBody(err error) error {
-	return errors.New(ErrDesignReadResponseBodyCode, errors.Alert,
-		[]string{"Failed to read response body"},
-		[]string{err.Error()},
-		[]string{"Network connection issue", "Meshery server not reachable"},
-		[]string{"Check your network connection", "Check Meshery server status via `mesheryctl system status`", "See " + designUsageURL + " for more information"})
+func ErrDeleteDesign(err error, designName string) error {
+	return errors.New(ErrDeleteDesignCode, errors.Alert,
+		[]string{"Unable to delete design"},
+		[]string{fmt.Sprintf("%s: %s", utils.DesignError(fmt.Sprintf("failed to delete design %s", designName)), err.Error())},
+		[]string{"Design may not exist", "Network connection issue", "Meshery server unreachable"},
+		[]string{"Verify the design exists using 'mesheryctl design list'", "Check your network connection and Meshery server status"})
 }
