@@ -61,7 +61,7 @@ fmt:
 	gofmt -l -s -w .
 
 ## Build mesheryctl for macOS (Darwin).
-cli-build-darwin:
+build-darwin:
 	@mkdir -p $(OUTDIR)
 	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=darwin GO111MODULE=on go build -ldflags=$(LDFLAGS) -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_DARWIN) ./cmd/mesheryctl/main.go
 
