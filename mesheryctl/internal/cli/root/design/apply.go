@@ -62,8 +62,7 @@ mesheryctl design apply [design-name]
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -79,26 +78,23 @@ mesheryctl design apply [design-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			var response *models.PatternsAPIResponse
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.DesignError("failed to read response body"))
+				return ErrDesignReadResponseBody(err)
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return utils.ErrInvalidAPIResponse(err)
 			}
 
 			index := 0
@@ -131,18 +127,16 @@ mesheryctl design apply [design-name]
 						"save": true,
 					})
 					if err != nil {
-						return err
+						return utils.ErrMarshal(err)
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						utils.Log.Error(err)
-						return nil
+						return err
 					}
 
 					resp, err := utils.MakeRequest(req)
 					if err != nil {
-						utils.Log.Error(err)
-						return nil
+						return err
 					}
 
 					var response []*models.MesheryPattern
@@ -150,12 +144,11 @@ mesheryctl design apply [design-name]
 
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {
-						return errors.Wrap(err, utils.DesignError("failed to read response body"))
+						return ErrDesignReadResponseBody(err)
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {
-						utils.Log.Error(utils.ErrUnmarshal(err))
-						return nil
+						return utils.ErrUnmarshal(err)
 					}
 				}
 
@@ -165,8 +158,7 @@ mesheryctl design apply [design-name]
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					utils.Log.Error(utils.ErrParseGithubFile(err, file))
-					return nil
+					return utils.ErrParseGithubFile(err, file)
 				}
 
 				utils.Log.Debug(url)
@@ -202,14 +194,12 @@ mesheryctl design apply [design-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 
 				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
@@ -217,13 +207,11 @@ mesheryctl design apply [design-name]
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
-					return nil
+					return ErrDesignReadResponseBody(err)
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
-					return nil
+					return utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 				}
 
 				// setup pattern file here
@@ -238,36 +226,31 @@ mesheryctl design apply [design-name]
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrMarshal(err)
 		}
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrParseDesignFile(err)
 		}
 
 		s := utils.CreateDefaultSpinner("Applying design "+pf.Name, "")
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		s.Stop()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return ErrDesignReadResponseBody(err)
 		}
 
 		if res.StatusCode == 200 {

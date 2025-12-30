@@ -22,22 +22,24 @@ import (
 )
 
 const (
-	ErrImportDesignCode          = "mesheryctl-1001"
-	ErrInValidSourceCode         = "mesheryctl-1002"
-	ErrOnboardDesignCode         = "mesheryctl-1003"
-	ErrOffboardDesignCode        = "mesheryctl-1005"
-	ErrDesignFlagCode            = "mesheryctl-1006"
-	ErrDesignManifestCode        = "mesheryctl-1007"
-	ErrDesignFileNotProvidedCode = "mesheryctl-1140"
-	ErrDesignsNotFoundCode       = "mesheryctl-1037"
-	ErrInvalidDesignFileCode     = "mesheryctl-1038"
-	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
-	ErrPatternSourceTypeCode     = "mesheryctl-1121"
-	ErrCopyDataCode              = "mesheryctl-1122"
-	ErrCreateFileCode            = "mesheryctl-1123"
-	ErrRetrieveHomeDirCode       = "mesheryctl-1124"
-	ErrReadFromBodyCode          = "mesheryctl-1125"
-	ErrMarkFlagRequireCode       = "mesheryctl-1126"
+	ErrImportDesignCode           = "mesheryctl-1001"
+	ErrInValidSourceCode          = "mesheryctl-1002"
+	ErrOnboardDesignCode          = "mesheryctl-1003"
+	ErrOffboardDesignCode         = "mesheryctl-1005"
+	ErrDesignFlagCode             = "mesheryctl-1006"
+	ErrDesignManifestCode         = "mesheryctl-1007"
+	ErrDesignFileNotProvidedCode  = "mesheryctl-1140"
+	ErrDesignsNotFoundCode        = "mesheryctl-1037"
+	ErrInvalidDesignFileCode      = "mesheryctl-1038"
+	ErrDesignInvalidNameOrIDCode  = "mesheryctl-1039"
+	ErrPatternSourceTypeCode      = "mesheryctl-1121"
+	ErrCopyDataCode               = "mesheryctl-1122"
+	ErrCreateFileCode             = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode        = "mesheryctl-1124"
+	ErrReadFromBodyCode           = "mesheryctl-1125"
+	ErrMarkFlagRequireCode        = "mesheryctl-1126"
+	ErrParseDesignFileCode        = "mesheryctl-1127"
+	ErrDesignReadResponseBodyCode = "mesheryctl-1128"
 )
 
 const (
@@ -47,6 +49,7 @@ Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
 Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 Description: Onboard pattern`
+	designUsageURL = "https://docs.meshery.io/reference/mesheryctl/design"
 )
 
 func ErrDesignNotFound() error {
@@ -130,6 +133,7 @@ func ErrOffboardDesign(err error) error {
 		[]string{"File path or design name not provided."},
 		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
 }
+
 func ErrCopyData(filepath string, err error) error {
 	return errors.New(ErrCopyDataCode, errors.Alert,
 		[]string{"Error copying data to file"},
@@ -137,6 +141,7 @@ func ErrCopyData(filepath string, err error) error {
 		[]string{"Insufficient disk space, or file system errors."},
 		[]string{"Check for sufficient disk space, and verify the integrity of the file system."})
 }
+
 func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
@@ -144,6 +149,7 @@ func ErrCreateFile(filepath string, err error) error {
 		[]string{"Insufficient disk page, filepath could be invalid."},
 		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
 }
+
 func ErrRetrieveHomeDir(err error) error {
 	return errors.New(ErrRetrieveHomeDirCode, errors.Alert,
 		[]string{"Error retrieving user home/root directory"},
@@ -151,6 +157,7 @@ func ErrRetrieveHomeDir(err error) error {
 		[]string{"Operating system environment issue or insufficient permissions."},
 		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
 }
+
 func ErrMarkFlagRequire(flagName string, err error) error {
 	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
 		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
@@ -158,10 +165,27 @@ func ErrMarkFlagRequire(flagName string, err error) error {
 		[]string{"The flag may not exist or there was some error while specifying the flag."},
 		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
 }
+
 func ErrReadFromBody(err error) error {
 	return errors.New(ErrReadFromBodyCode, errors.Alert,
 		[]string{"Unable to read data from the response body"},
 		[]string{err.Error()},
 		[]string{"The data for the pattern (design) file might be corrupted."},
 		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
+}
+
+func ErrParseDesignFile(err error) error {
+	return errors.New(ErrParseDesignFileCode, errors.Alert,
+		[]string{"Failed to parse design file"},
+		[]string{err.Error()},
+		[]string{"The design file format is invalid or corrupted", "The YAML/JSON syntax may be incorrect"},
+		[]string{"Ensure the design file is a valid Meshery design format", "Check for YAML/JSON syntax errors", "Validate the design file structure"})
+}
+
+func ErrDesignReadResponseBody(err error) error {
+	return errors.New(ErrDesignReadResponseBodyCode, errors.Alert,
+		[]string{"Failed to read response body"},
+		[]string{err.Error()},
+		[]string{"Network connection issue", "Meshery server not reachable"},
+		[]string{"Check your network connection", "Check Meshery server status via `mesheryctl system status`", "See " + designUsageURL + " for more information"})
 }
