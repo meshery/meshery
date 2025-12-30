@@ -7,6 +7,7 @@ identify_relationship(
 	relationship,
 ) := evaluation_results if {
 	applicable_on_rels := [{"kind": "hierarchical", "type": "parent"}]
+
 	#		{"kind": "edge", "type": "non-binding"},
 
 	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
