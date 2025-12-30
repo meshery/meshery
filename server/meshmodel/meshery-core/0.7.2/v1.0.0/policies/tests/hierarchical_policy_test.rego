@@ -97,12 +97,32 @@ relationship := {
 eval.relationship_is_implicated_by_policy(relationship, "alias_relationships_policy")
 }
 
-# Test case insensitivity for alias relationship
-test_is_alias_relationship_case_insensitive if {
+# Test case insensitivity for alias relationship - title case
+test_is_alias_relationship_case_insensitive_title if {
 relationship := {
 "kind": "Hierarchical",
 "type": "Parent",
 "subType": "Alias",
+}
+eval.is_alias_relationship(relationship)
+}
+
+# Test case insensitivity for alias relationship - mixed case
+test_is_alias_relationship_case_insensitive_mixed if {
+relationship := {
+"kind": "hIeRaRcHiCaL",
+"type": "pArEnT",
+"subType": "aLiAs",
+}
+eval.is_alias_relationship(relationship)
+}
+
+# Test case insensitivity for alias relationship - all uppercase
+test_is_alias_relationship_case_insensitive_upper if {
+relationship := {
+"kind": "HIERARCHICAL",
+"type": "PARENT",
+"subType": "ALIAS",
 }
 eval.is_alias_relationship(relationship)
 }

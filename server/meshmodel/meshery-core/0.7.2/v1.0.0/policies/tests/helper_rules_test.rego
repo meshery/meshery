@@ -126,3 +126,15 @@ test_array_index_to_patch_non_empty if {
 result := relationship_evaluation_policy.array_index_to_patch(3)
 result == "2"
 }
+
+# Test array_index_to_patch with single element array
+test_array_index_to_patch_single if {
+result := relationship_evaluation_policy.array_index_to_patch(1)
+result == "0"
+}
+
+# Test array_index_to_patch with large index
+test_array_index_to_patch_large if {
+result := relationship_evaluation_policy.array_index_to_patch(100)
+result == "99"
+}

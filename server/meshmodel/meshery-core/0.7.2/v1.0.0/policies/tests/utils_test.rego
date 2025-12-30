@@ -121,6 +121,12 @@ test_component_declaration_by_id_not_found if {
 	not core_utils.component_declaration_by_id(design, "comp-999")
 }
 
+# Test component_declaration_by_id with empty components array
+test_component_declaration_by_id_empty_components if {
+	design := {"components": []}
+	not core_utils.component_declaration_by_id(design, "comp-1")
+}
+
 # Test from_component_id
 test_from_component_id if {
 relationship := {

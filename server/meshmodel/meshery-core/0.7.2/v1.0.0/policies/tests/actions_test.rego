@@ -106,3 +106,18 @@ updates := [
 result := actions.apply_updates_to_item(original, updates, "update_component")
 result.status == "pending"
 }
+
+# Test apply_updates_to_item with mismatched operation type
+test_apply_updates_to_item_wrong_op_type if {
+original := {"id": "comp-1", "status": "pending"}
+updates := [
+{
+"op": "update_relationship",
+"value": {"id": "comp-1", "path": "/status", "value": "approved"},
+},
+]
+# Using "update_component" but the update has "update_relationship" op
+result := actions.apply_updates_to_item(original, updates, "update_component")
+# Should not apply update since operation types don't match
+result.status == "pending"
+}

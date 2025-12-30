@@ -84,13 +84,15 @@ jobs:
           # Ensure that failures in any part of a pipeline are detected
           set -o pipefail
           
-          # Run OPA tests and capture output
-          if ! opa test "$POLICIES_DIR" -v 2>&1 | tee opa-test-results.txt; then
-            OPA_EXIT_CODE=${PIPESTATUS[0]}
+          # Run OPA tests and capture output, handle tee failures separately
+          OPA_EXIT_CODE=0
+          if ! opa test "$POLICIES_DIR" -v > opa-test-results.txt 2>&1; then
+            OPA_EXIT_CODE=$?
             echo "OPA tests reported failures (exit code: $OPA_EXIT_CODE), continuing to collect results."
-          else
-            OPA_EXIT_CODE=0
           fi
+          
+          # Display results (tee failure here is non-critical)
+          cat opa-test-results.txt || echo "Warning: Could not display OPA test results"
           
           echo "opa-exit-code=$OPA_EXIT_CODE" >> $GITHUB_OUTPUT
           
@@ -247,9 +249,16 @@ jobs:
         run: |
           FAILED="${{ steps.test-results.outputs.failed }}"
           LINT_EXIT="${{ steps.lint.outputs.lint-exit-code }}"
+          GO_EXIT="${{ steps.go-test.outputs.go-exit-code }}"
           
           if [ "$FAILED" -gt 0 ]; then
             echo "::error::$FAILED Rego tests failed"
+            exit 1
+          fi
+          
+          # Check Go test exit code
+          if [ "$GO_EXIT" -ne 0 ]; then
+            echo "::error::Go-based Rego tests failed"
             exit 1
           fi
           
