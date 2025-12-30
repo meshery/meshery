@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -18,26 +19,26 @@ func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
 	return append([]byte(entry.Message), '\n'), nil
 }
 
-// Call this function to setup logrus
+// SetupLogrusFormatter sets up the logrus formatter for improved UX
+// This is kept for backwards compatibility
 func SetupLogrusFormatter() {
-	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 }
 
-// Initialize Meshkit Logger instance
+// SetupMeshkitLogger initializes and returns a MeshKit Logger instance
 func SetupMeshkitLogger(name string, debugLevel bool, output io.Writer) logger.Handler {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if !debugLevel {
 		logLevel = int(log.DebugLevel)
 	}
-	logger, err := logger.New(name, logger.Options{
+	meshkitLogger, err := logger.New(name, logger.Options{
 		Format:   logger.TerminalLogFormat,
 		LogLevel: logLevel,
 		Output:   output,
 	})
 	if err != nil {
-		log.Error(err)
+		fmt.Fprintf(os.Stderr, "Error initializing logger: %v\n", err)
 		os.Exit(1)
 	}
-	return logger
+	return meshkitLogger
 }
