@@ -25,6 +25,7 @@ func TestList(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.relationship.empty.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "List registered relationships",
@@ -33,6 +34,7 @@ func TestList(t *testing.T) {
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.relationship.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships empty result",
@@ -41,6 +43,7 @@ func TestList(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.count.relationship.empty.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships",
@@ -49,6 +52,7 @@ func TestList(t *testing.T) {
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 
