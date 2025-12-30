@@ -61,7 +61,7 @@ When logic is complex (e.g., processing JSON, querying API), do not write multi-
 **Preferred Pattern:**
 ```yaml
 - name: Complex Logic via Script
-  uses: actions/github-script@v7
+  uses: actions/github-script@v8
   with:
     script: |
       const { owner, repo } = context.repo;
