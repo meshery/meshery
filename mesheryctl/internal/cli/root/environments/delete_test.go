@@ -21,7 +21,7 @@ func TestDeleteEnvironment(t *testing.T) {
 	environmentId := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
 
 	// Test scenarios for environment deletion
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
 			Name:             "Delete environment without arguments",
 			Args:             []string{"delete"},
