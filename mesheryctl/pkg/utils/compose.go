@@ -32,7 +32,7 @@ import (
 
 // ComposeClient is a wrapper around the docker compose library
 type ComposeClient struct {
-	service api.Compose
+	service api.Service
 	cli     *dockerCmd.DockerCli
 }
 

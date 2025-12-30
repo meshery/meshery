@@ -18,7 +18,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
@@ -325,15 +324,15 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 	if err != nil {
 		return []Manifest{}, ErrGetChannelVersion(err)
 	}
-	log.Infof("Retrieved version information: %s", version)
+	Log.Info(fmt.Sprintf("Retrieved version information: %s", version))
 
-	log.Debug("Fetching required Kubernetes manifest files...")
+	Log.Debug("Fetching required Kubernetes manifest files...")
 
 	// Create manifests folder first
 	if err := CreateManifestsFolder(); err != nil {
 		return nil, ErrCreateManifestsFolder(err)
 	}
-	log.Debug("Successfully created manifests folder")
+	Log.Debug("Successfully created manifests folder")
 
 	// Store downloaded manifest information
 	var downloadedManifests []Manifest
@@ -345,16 +344,16 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 		Branch(version).
 		Root("install/deployment_yamls/k8s/**")
 
-	log.Debugf("Initialized GitHub walker with org: %s, repo: %s, branch: %s",
+	Log.Debug(fmt.Sprintf("Initialized GitHub walker with org: %s, repo: %s, branch: %s",
 		constants.GetMesheryGitHubOrg(),
 		constants.GetMesheryGitHubRepo(),
-		version)
+		version))
 
 	// Register file interceptor to handle manifest files
 	gitWalker.RegisterFileInterceptor(func(content walker.GithubContentAPI) error {
 		// Create the local file path
 		localPath := filepath.Join(MesheryFolder, ManifestsFolder, content.Name)
-		log.Debugf("Attempting to download manifest to: %s", localPath)
+		Log.Debug(fmt.Sprintf("Attempting to download manifest to: %s", localPath))
 
 		if err := meshkitutils.DownloadFile(localPath, content.DownloadURL); err != nil {
 			return ErrDownloadFile(err, content.Name)
@@ -367,7 +366,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 			SHA:  content.SHA,
 			URL:  content.URL,
 		})
-		log.Debugf("Downloaded manifest: %s (size: %d bytes)", content.Name, content.Size)
+		Log.Debug(fmt.Sprintf("Downloaded manifest: %s (size: %d bytes)", content.Name, content.Size))
 		return nil
 	})
 
@@ -376,7 +375,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 		constants.GetMesheryGitHubOrg(),
 		constants.GetMesheryGitHubRepo(),
 		version)
-	log.Info("Downloading manifest files from ", gitHubFolder)
+	Log.Info("Downloading manifest files from " + gitHubFolder)
 
 	// Start the walking process
 	if err := gitWalker.Walk(); err != nil {
@@ -387,7 +386,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 		return nil, ErrNoManifestFilesFound(gitHubFolder)
 	}
 
-	log.Infof("Total manifest files: %d", len(downloadedManifests))
+	Log.Info(fmt.Sprintf("Total manifest files: %d", len(downloadedManifests)))
 	return downloadedManifests, nil
 }
 
@@ -492,7 +491,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}), nil
 	}, "spec", "template", "spec", "containers", "0", "env")
 	if err != nil {
-		log.Error(err)
+		Log.Error(err)
 		return errors.Wrap(err, "failed to transform manifest")
 	}
 
@@ -537,7 +536,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 	}
 
-	log.Debug("applied manifests to the Kubernetes cluster.")
+	Log.Debug("applied manifests to the Kubernetes cluster.")
 
 	return nil
 }
@@ -581,7 +580,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 		}
 	}
 
-	log.Debug("applied operator manifest.")
+	Log.Debug("applied operator manifest.")
 
 	return nil
 }
@@ -619,7 +618,7 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 	spliter := strings.Split(image, ":")
 	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], channel, version)
 
-	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
+	Log.Debug(image + " changed to " + compose.Spec.Template.Spec.Containers[0].Image)
 
 	ViperCompose.Set("apiVersion", compose.APIVersion)
 	ViperCompose.Set("kind", compose.Kind)
@@ -642,17 +641,17 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("Deleting " + ManifestsFolder + " folder...")
+	Log.Debug("Deleting " + ManifestsFolder + " folder...")
 	// delete manifests folder if it already exists
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Debug("Creating " + ManifestsFolder + " folder...")
+	Log.Debug("Creating " + ManifestsFolder + " folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "failed to make %s directory", ManifestsFolder)
 	}
-	log.Debug("Created manifests folder.")
+	Log.Debug("Created manifests folder.")
 
 	return nil
 }
@@ -717,7 +716,7 @@ func Startdockerdaemon(subcommand string) error {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 
-	log.Info("Attempting to start Docker...")
+	Log.Info("Attempting to start Docker...")
 	// once user gaves permission, start docker daemon on linux/macOS
 	if runtime.GOOS == "linux" {
 		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
@@ -740,12 +739,12 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	}
-	log.Info("Prerequisite Docker started.")
+	Log.Info("Prerequisite Docker started.")
 	return nil
 }
 
 func InstallprereqDocker() error {
-	log.Info("Attempting Docker-Compose installation...")
+	Log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
 	if err != nil {
 		return errors.Wrap(err, "failed to get prerequisites")
@@ -777,7 +776,7 @@ func InstallprereqDocker() error {
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
 		return errors.Wrap(err, "failed to execute command")
 	}
-	log.Info("Prerequisite Docker Compose is installed.")
+	Log.Info("Prerequisite Docker Compose is installed.")
 	return nil
 }
 
@@ -825,7 +824,7 @@ func ForceCleanupCluster() error {
 		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -839,7 +838,7 @@ func ForceCleanupCluster() error {
 		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -853,7 +852,7 @@ func ForceCleanupCluster() error {
 		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -870,7 +869,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				log.Debug(err)
+				Log.Debug(err)
 			}
 		}
 	}
@@ -888,7 +887,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				log.Debug(err)
+				Log.Debug(err)
 			}
 		}
 	}
@@ -903,7 +902,7 @@ func ForceCleanupCluster() error {
 		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -917,7 +916,7 @@ func ForceCleanupCluster() error {
 		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -931,7 +930,7 @@ func ForceCleanupCluster() error {
 		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -945,7 +944,7 @@ func ForceCleanupCluster() error {
 		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -959,7 +958,7 @@ func ForceCleanupCluster() error {
 		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			log.Debug(err)
+			Log.Debug(err)
 		}
 	}
 
