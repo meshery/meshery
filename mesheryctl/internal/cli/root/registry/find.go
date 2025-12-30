@@ -81,19 +81,20 @@ func FindCRDsInImage(imageRef string) ([]CRD, error) {
 		if err != nil {
 			return nil, fmt.Errorf("getting layer compressed reader: %w", err)
 		}
-		defer rc.Close()
-
-		gr, err := gzip.NewReader(rc)
-		if err != nil && err != gzip.ErrHeader {
-			return nil, fmt.Errorf("creating gzip reader: %w", err)
+		data, err := io.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			return nil, fmt.Errorf("reading layer data: %w", err)
 		}
+
+		reader := bytes.NewReader(data)
+		gr, err := gzip.NewReader(reader)
 		var tr *tar.Reader
 		if err == gzip.ErrHeader {
-			// Not gzipped, reset and use raw
-			if _, err := rc.Seek(0, io.SeekStart); err != nil {
-				return nil, err
-			}
-			tr = tar.NewReader(rc)
+			reader = bytes.NewReader(data)
+			tr = tar.NewReader(reader)
+		} else if err != nil {
+			return nil, fmt.Errorf("creating gzip reader: %w", err)
 		} else {
 			defer gr.Close()
 			tr = tar.NewReader(gr)
