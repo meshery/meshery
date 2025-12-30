@@ -47,7 +47,7 @@ BATS_TEMP_DATA_DIR ?= $(shell mktemp -d --suffix="-bats")
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------
-.PHONY: build cli-build-darwin build-linux build-windows build-all fmt clean forwin
+.PHONY: build build-darwin build-linux build-windows build-all fmt clean forwin
 
 ## Format and build mesheryctl for the host platform.
 # Default target: build mesheryctl for the host platform.
