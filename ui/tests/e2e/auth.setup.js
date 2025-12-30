@@ -9,6 +9,8 @@ const PROVIDERS = {
 };
 
 setup('authenticate as Meshery provider', async ({ page }) => {
+  //set test timeout to 2 minutes
+  setup.setTimeout(2 * 60 * 1000);
   // Perform authentication steps. Replace these actions with your own.
   const providerSelectionPage = new ProviderSelectionPage(page);
   await providerSelectionPage.navigateToProviderSelection();
@@ -17,8 +19,6 @@ setup('authenticate as Meshery provider', async ({ page }) => {
   console.log('Selected Meshery Provider');
 
   const loginPage = new LoginPage(page);
-  // wait for 5 seconds to allow redirection to login page
-  await page.waitForTimeout(50000);
 
   await loginPage.login(ENV.REMOTE_PROVIDER_USER.email, ENV.REMOTE_PROVIDER_USER.password);
 

@@ -32,6 +32,7 @@ export class LoginPage {
   }
 
   async waitForRedirection() {
+    // await this.page.waitForLoadState('networkidle');
     await waitForAuthRedirection(this.page);
   }
 }
