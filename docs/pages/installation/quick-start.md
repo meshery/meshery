@@ -57,6 +57,8 @@ Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) 
 
 ## 4. Configure Connections to your Kubernetes Clusters
 
+{% include alert.html type="info" title="Kubeconfig Permissions" content="Ensure your kubeconfig has the necessary permissions for Meshery to connect and manage your cluster. At minimum, Meshery requires read access to the <code>kube-system</code> namespace. See the <a href='/guides/infrastructure-management/kubernetes-cluster-permissions'>Kubernetes Cluster Permissions</a> guide for complete details." %}
+
 **Out-of-Cluster Deployments**
 If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator](/concepts/architecture/operator), [MeshSync](/concepts/architecture/meshsync), and Broker into the `meshery` namespace (by default).
 
