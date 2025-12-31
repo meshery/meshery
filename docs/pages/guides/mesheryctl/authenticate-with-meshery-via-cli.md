@@ -34,7 +34,7 @@ Use the arrow keys to navigate: ↓ ↑ → ←
 
   **_The need for authentication to `Layer5` [provider](https://docs.meshery.io/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
-- Selecting _None_ will create create an empty `auth.json` file. All your work remains local and ephemeral. 
+- Selecting _None_ will create an empty `auth.json` file. All your work remains local and ephemeral. 
 
 If `mesheryctl` is running in a system that does not have a browser, you can download an auth token file from your Layer5 cloud account and copy it into the `.meshery` folder in your home directory. The following steps show how you can generate and download a token:
 
