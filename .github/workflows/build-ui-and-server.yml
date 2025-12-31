@@ -75,7 +75,7 @@ jobs:
       #     repository: meshery-extensions/meshery-consul
       #     path: ./meshery-consul
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@v1.13.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
