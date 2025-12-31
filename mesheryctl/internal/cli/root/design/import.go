@@ -69,8 +69,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"

@@ -50,7 +50,7 @@ Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
 Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 Description: Onboard pattern`
-	designUsageURL = "https://docs.meshery.io/reference/mesheryctl/design"
+	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
 func ErrDesignNotFound() error {

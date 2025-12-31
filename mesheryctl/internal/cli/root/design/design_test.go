@@ -35,6 +35,8 @@ func TestDesignCmd(t *testing.T) {
 		URLs             []utils.MockURL
 		Token            string
 		ExpectError      bool
+		ExpectedError    error `default:"nil"`
+		IsOutputGolden   bool  `default:"true"`
 	}{
 		{
 			Name:             "design apply",
@@ -139,8 +141,10 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  ErrDesignNotFound(),
 		},
 	}
 	for _, test := range testcase {

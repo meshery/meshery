@@ -1,12 +1,21 @@
 package design
 
 import (
+	"fmt"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterr "github.com/meshery/meshkit/errors"
+	"github.com/stretchr/testify/assert"
+)
+
+const (
+	invalidFilePath = "/invalid/path/design.yaml"
+	nonExistentID   = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
 )
 
 func TestDeleteCmd(t *testing.T) {
@@ -35,6 +44,8 @@ func TestDeleteCmd(t *testing.T) {
 		URLs             []utils.MockURL
 		Token            string
 		ExpectError      bool
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
 	}{
 		{
 			Name:             "Delete Design",
@@ -50,6 +61,43 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
+		},
+		{
+			Name:             "Delete design with invalid file path",
+			Args:             []string{"delete", "-f", invalidFilePath},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
+		},
+		{
+			Name:             "Delete design by ID with API error",
+			Args:             []string{"delete", nonExistentID},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/" + nonExistentID,
+					Response:     "delete.error.response.golden",
+					ResponseCode: 404,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: func() error {
+				body := "{\"error\": \"design not found\"}\n"
+				innerErr := utils.ErrFailReqStatus(404, body)
+				return ErrDeleteDesign(innerErr, nonExistentID)
+			}(),
 		},
 	}
 
@@ -79,16 +127,26 @@ func TestDeleteCmd(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
+					if tt.IsOutputGolden {
 
-					utils.Equals(t, expectedResponse, err.Error())
+						// write it in file
+						if *update {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
+
+						utils.Equals(t, expectedResponse, err.Error())
+						resetVariables()
+						return
+					}
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.ExpectedError), "error type mismatch")
+					assert.Equal(t, meshkiterr.GetCode(err), meshkiterr.GetCode(tt.ExpectedError), "error code mismatch")
+					assert.Equal(t, meshkiterr.GetLDescription(err), meshkiterr.GetLDescription(tt.ExpectedError), "long description mismatch")
+					resetVariables()
 					return
 				}
 				t.Error(err)
+
 			}
 
 			// response being printed in console

@@ -62,8 +62,7 @@ mesheryctl design apply [design-name]
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -115,7 +114,7 @@ mesheryctl design apply [design-name]
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path", file))
+					return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
 				}
 
 				// if --skip-save is not passed we save the pattern first

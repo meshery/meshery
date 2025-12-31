@@ -88,7 +88,7 @@ func TestApplyCmd(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path", "/invalid/path/design.yaml")),
+			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, "/invalid/path/design.yaml")),
 		},
 		{
 			Name:             "Apply design with invalid server response",
@@ -193,4 +193,5 @@ func TestApplyCmd(t *testing.T) {
 func resetVariables() {
 	skipSave = false
 	patternFile = ""
+	file = ""
 }
