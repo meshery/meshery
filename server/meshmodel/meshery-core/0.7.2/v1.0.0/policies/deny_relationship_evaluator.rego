@@ -60,3 +60,8 @@ is_selector_and_declaration_model_registrant_matches(selector, declaration) if {
 is_selector_and_declaration_model_registrant_matches(selector, declaration) if {
 	selector.model.registrant == declaration.model.registrant
 }
+
+# Matches registrant.kind when selector has nested registrant object with kind field
+is_selector_and_declaration_model_registrant_matches(selector, declaration) if {
+	selector.model.registrant.kind == declaration.model.registrant.kind
+}

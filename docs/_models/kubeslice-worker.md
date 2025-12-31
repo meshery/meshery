@@ -42,7 +42,51 @@ components:
   colorIcon: assets/img/integrations/kubeslice-worker/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
   whiteIcon: assets/img/integrations/kubeslice-worker/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
   description: 
-components-count: 8
+- name: cluster
+  colorIcon: assets/img/integrations/kubeslice-worker/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/cluster/icons/white/cluster-white.svg
+  description: 
+- name: project
+  colorIcon: assets/img/integrations/kubeslice-worker/components/project/icons/color/project-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/project/icons/white/project-white.svg
+  description: 
+- name: service-export-config
+  colorIcon: assets/img/integrations/kubeslice-worker/components/service-export-config/icons/color/service-export-config-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/service-export-config/icons/white/service-export-config-white.svg
+  description: 
+- name: slice-config
+  colorIcon: assets/img/integrations/kubeslice-worker/components/slice-config/icons/color/slice-config-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/slice-config/icons/white/slice-config-white.svg
+  description: 
+- name: slice-ipam
+  colorIcon: assets/img/integrations/kubeslice-worker/components/slice-ipam/icons/color/slice-ipam-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/slice-ipam/icons/white/slice-ipam-white.svg
+  description: 
+- name: slice-qo-s-config
+  colorIcon: assets/img/integrations/kubeslice-worker/components/slice-qo-s-config/icons/color/slice-qo-s-config-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/slice-qo-s-config/icons/white/slice-qo-s-config-white.svg
+  description: 
+- name: vpn-key-rotation
+  colorIcon: assets/img/integrations/kubeslice-worker/components/vpn-key-rotation/icons/color/vpn-key-rotation-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/vpn-key-rotation/icons/white/vpn-key-rotation-white.svg
+  description: 
+- name: worker-service-import
+  colorIcon: assets/img/integrations/kubeslice-worker/components/worker-service-import/icons/color/worker-service-import-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/worker-service-import/icons/white/worker-service-import-white.svg
+  description: 
+- name: worker-slice-config
+  colorIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-config/icons/color/worker-slice-config-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-config/icons/white/worker-slice-config-white.svg
+  description: 
+- name: worker-slice-gateway
+  colorIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-gateway/icons/color/worker-slice-gateway-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-gateway/icons/white/worker-slice-gateway-white.svg
+  description: 
+- name: worker-slice-gw-recycler
+  colorIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-gw-recycler/icons/color/worker-slice-gw-recycler-color.svg
+  whiteIcon: assets/img/integrations/kubeslice-worker/components/worker-slice-gw-recycler/icons/white/worker-slice-gw-recycler-white.svg
+  description: 
+components-count: 19
 relationships: 
 relationship-count: 0
 featureList: [
