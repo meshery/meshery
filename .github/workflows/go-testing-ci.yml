@@ -13,7 +13,7 @@ on:
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/go-testing-ci.yml"
+      - ".github/go-testing-ci.yml"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -39,7 +39,7 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.7
-          args: --config=.golangci.yml --timeout=10m
+          args: --config=.github/.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-24.04
