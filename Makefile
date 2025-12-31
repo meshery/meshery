@@ -339,9 +339,9 @@ ui-setup:
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci:
-	cd ui && npm ci && cd ..
-	cd provider-ui && npm ci && cd ..
+ui-setup-ci:ui-setup
+	cd ui; npx playwright install chrome; cd ..
+	cd provider-ui; npx playwright install chrome; cd ..
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
