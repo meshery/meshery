@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
+    "go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
