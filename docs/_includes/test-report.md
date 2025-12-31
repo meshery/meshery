@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 31st 2025, 2:40:00 pm
+- Testing started at: December 31st 2025, 3:00:03 pm
 
 **📦 Test Result Summary**
 
@@ -36,7 +36,7 @@ The following tests failed. Click on each to see the failure reason:
 
 
 &lt;details&gt;
-&lt;summary&gt;❌ authenticate as Meshery provider (None - remote-setup)&lt;/summary&gt;
+&lt;summary&gt;❌ authenticate as None provider (None - local-setup)&lt;/summary&gt;
 
 **File Location:** `Not Found`
 
@@ -58,7 +58,7 @@ Error: browserType.launch: Executable doesn&#39;t exist at /home/runner/.cache/m
 &lt;/details&gt;
 
 &lt;details&gt;
-&lt;summary&gt;❌ authenticate as None provider (None - local-setup)&lt;/summary&gt;
+&lt;summary&gt;❌ authenticate as Meshery provider (None - remote-setup)&lt;/summary&gt;
 
 **File Location:** `Not Found`
 
