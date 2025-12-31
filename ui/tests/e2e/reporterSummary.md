@@ -31,7 +31,7 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-<%- failedTestDetails %>
+<%= failedTestDetails %>
 
 <% } %>
 
