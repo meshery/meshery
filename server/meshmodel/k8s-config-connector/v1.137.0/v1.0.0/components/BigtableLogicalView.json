@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "bigtable.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigtableLogicalView",
     "schema": "{\n \"description\": \"BigtableLogicalView is the Schema for the BigtableLogicalView API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BigtableLogicalViewSpec defines a state of BigtableLogicalView\",\n   \"properties\": {\n    \"instanceRef\": {\n     \"description\": \"InstanceRef defines the resource reference to BigtableInstance, which \\\"External\\\" field holds the GCP identifier for the KRM object.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed BigtableInstance resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a BigtableInstance resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"query\": {\n     \"description\": \"The BigtableLogicalView's select query.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"The BigtableLogicalView ID. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Bigtable Logical View\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

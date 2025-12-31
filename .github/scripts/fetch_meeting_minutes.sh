@@ -6,7 +6,7 @@
 set -e
 
 # DISCOURSE_URL should be provided as an environment variable
-DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io}"
+DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io/}"
 TAG="meetings"
 ARCHIVE_DIR=".github/meetings/archive"
 

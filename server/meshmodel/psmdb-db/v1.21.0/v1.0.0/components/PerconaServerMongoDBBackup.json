@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "psmdb.percona.com/v1",
     "kind": "PerconaServerMongoDBBackup",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clusterName\": {\n     \"type\": \"string\"\n    },\n    \"compressionLevel\": {\n     \"type\": \"integer\"\n    },\n    \"compressionType\": {\n     \"type\": \"string\"\n    },\n    \"startingDeadlineSeconds\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"storageName\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"logical\",\n      \"physical\",\n      \"incremental\",\n      \"incremental-base\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Percona Server Mongo DB Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

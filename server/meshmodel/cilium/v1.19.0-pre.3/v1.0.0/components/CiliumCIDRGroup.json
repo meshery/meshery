@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "cilium.io/v2",
     "kind": "CiliumCIDRGroup",
     "schema": "{\n \"description\": \"CiliumCIDRGroup is a list of external CIDRs (i.e: CIDRs selecting peers\\noutside the clusters) that can be referenced as a single entity from\\nCiliumNetworkPolicies.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"externalCIDRs\": {\n     \"description\": \"ExternalCIDRs is a list of CIDRs selecting peers outside the clusters.\",\n     \"items\": {\n      \"description\": \"CIDR specifies a block of IP addresses.\\nExample: 192.0.2.1/32\",\n      \"format\": \"cidr\",\n      \"type\": \"string\"\n     },\n     \"minItems\": 0,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"externalCIDRs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cilium CIDR Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

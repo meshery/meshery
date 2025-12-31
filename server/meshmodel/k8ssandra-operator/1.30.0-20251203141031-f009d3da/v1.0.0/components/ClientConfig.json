@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "config.k8ssandra.io/v1beta1",
     "kind": "ClientConfig",
     "schema": "{\n \"description\": \"ClientConfig is the Schema for the kubeconfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClientConfigSpec defines the desired state of KubeConfig\",\n   \"properties\": {\n    \"contextName\": {\n     \"description\": \"ContextName allows to override the object name for context-name. If not set, the ClientConfig.Name is used as context name\",\n     \"type\": \"string\"\n    },\n    \"kubeConfigSecret\": {\n     \"description\": \"KubeConfigSecret should reference an existing secret; the actual configuration will be read from\\nthis secret's \\\"kubeconfig\\\" key.\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Client Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

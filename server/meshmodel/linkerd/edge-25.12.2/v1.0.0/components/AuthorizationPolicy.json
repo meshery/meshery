@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "policy.linkerd.io/v1alpha1",
     "kind": "AuthorizationPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Authorizes clients to communicate with Linkerd-proxied server resources.\",\n   \"properties\": {\n    \"requiredAuthenticationRefs\": {\n     \"description\": \"RequiredAuthenticationRefs enumerates a set of required authentications. ALL authentications must be satisfied for the authorization to apply. If any of the referred objects cannot be found, the authorization will be ignored.\",\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"description\": \"Group is the group of the referent. When empty, the Kubernetes core API group is inferred.\\\"\",\n        \"maxLength\": 253,\n        \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the kind of the referent.\",\n        \"maxLength\": 63,\n        \"minLength\": 1,\n        \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of the referent.\",\n        \"maxLength\": 253,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Name is the name of the referent. When unspecified, this authentication refers to the local namespace.\",\n        \"maxLength\": 253,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef references a resource to which the authorization policy applies.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group is the group of the referent. When empty, the Kubernetes core API group is inferred.\",\n       \"maxLength\": 253,\n       \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the kind of the referent.\",\n       \"maxLength\": 63,\n       \"minLength\": 1,\n       \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the referent.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"targetRef\",\n    \"requiredAuthenticationRefs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Authorization Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

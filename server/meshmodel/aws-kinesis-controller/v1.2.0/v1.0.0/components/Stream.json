@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "kinesis.services.k8s.aws/v1alpha1",
     "kind": "Stream",
     "schema": "{\n \"description\": \"Stream is the Schema for the Streams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StreamSpec defines the desired state of Stream.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"A name to identify the stream. The stream name is scoped to the Amazon Web\\nServices account used by the application that creates the stream. It is also\\nscoped by Amazon Web Services Region. That is, two streams in two different\\nAmazon Web Services accounts can have the same name. Two streams in the same\\nAmazon Web Services account but in two different Regions can also have the\\nsame name.\\n\\nRegex Pattern: `^[a-zA-Z0-9_.-]+$`\",\n     \"type\": \"string\"\n    },\n    \"shardCount\": {\n     \"description\": \"The number of shards that the stream will use. The throughput of the stream\\nis a function of the number of shards; more shards are required for greater\\nprovisioned throughput.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"streamModeDetails\": {\n     \"description\": \"Indicates the capacity mode of the data stream. Currently, in Kinesis Data\\nStreams, you can choose between an on-demand capacity mode and a provisioned\\ncapacity mode for your data streams.\",\n     \"properties\": {\n      \"streamMode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A set of up to 10 key-value pairs to use to create the tags.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stream\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

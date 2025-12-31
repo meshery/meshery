@@ -30,6 +30,7 @@ fortio_chart.js
 ui/.next/
 ui/out/
 ui/node_modules/
+ui/tests/e2e/.env
 
 provider-ui/out/
 provider-ui/.next/

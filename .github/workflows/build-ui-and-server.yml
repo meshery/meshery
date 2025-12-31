@@ -81,7 +81,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin
@@ -238,3 +238,12 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+
+  # Run Rego policy tests
+  rego-tests:
+    name: Rego Policy Tests
+    if: github.repository == 'meshery/meshery'
+    uses: ./.github/workflows/rego-lint-and-test.yml
+    permissions:
+      contents: write
+      pull-requests: write

@@ -68,7 +68,7 @@ Use `mesheryctl connection list` to find the connection ID.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection delete 4f3a2c9e
+mesheryctl connection delete [connection_id]
 </div>
 </pre>
 

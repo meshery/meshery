@@ -147,7 +147,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:

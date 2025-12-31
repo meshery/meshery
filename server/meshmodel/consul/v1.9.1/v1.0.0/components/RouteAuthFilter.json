@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "consul.hashicorp.com/v1alpha1",
     "kind": "RouteAuthFilter",
     "schema": "{\n \"description\": \"RouteAuthFilter is the Schema for the routeauthfilters API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RouteAuthFilterSpec defines the desired state of RouteAuthFilter.\",\n   \"properties\": {\n    \"jwt\": {\n     \"description\": \"This re-uses the JWT requirement type from Gateway Policy Types.\",\n     \"properties\": {\n      \"providers\": {\n       \"description\": \"Providers is a list of providers to consider when verifying a JWT.\",\n       \"items\": {\n        \"description\": \"GatewayJWTProvider holds the provider and claim verification information.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name is the name of the JWT provider. There MUST be a corresponding\\n\\\"jwt-provider\\\" config entry with this name.\",\n          \"type\": \"string\"\n         },\n         \"verifyClaims\": {\n          \"description\": \"VerifyClaims is a list of additional claims to verify in a JWT's payload.\",\n          \"items\": {\n           \"description\": \"GatewayJWTClaimVerification holds the actual claim information to be verified.\",\n           \"properties\": {\n            \"path\": {\n             \"description\": \"Path is the path to the claim in the token JSON.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"value\": {\n             \"description\": \"Value is the expected value at the given path:\\n- If the type at the path is a list then we verify\\n  that this value is contained in the list.\\n\\n\\n- If the type at the path is a string then we verify\\n  that this value matches.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"path\",\n            \"value\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"providers\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Route Auth Filter\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

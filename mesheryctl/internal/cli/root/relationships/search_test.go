@@ -104,7 +104,7 @@ func TestSearch_WithFlags(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Search registered relationships matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
@@ -112,6 +112,7 @@ func TestSearch_WithFlags(t *testing.T) {
 			Fixture:          "search.relationship.api.response.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.matching.result.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Search registered relationships no matching result(s) found",
@@ -120,6 +121,7 @@ func TestSearch_WithFlags(t *testing.T) {
 			Fixture:          "search.relationship.api.response.no.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.no.matching.result.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 

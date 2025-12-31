@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "edp.epam.com/v1alpha1",
     "kind": "SonarGroup",
     "schema": "{\n \"description\": \"SonarGroup is the Schema for the sonar group API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SonarGroupSpec defines the desired state of SonarGroup.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of sonar group.\",\n     \"example\": \"Default group for new users\",\n     \"maxLength\": 200,\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is a group name.\\nName should be unique across all groups.\\nDo not edit this field after creation. Otherwise, the group will be recreated.\",\n     \"example\": \"sonar-users\",\n     \"maxLength\": 255,\n     \"type\": \"string\"\n    },\n    \"permissions\": {\n     \"description\": \"Permissions is a list of permissions assigned to group.\",\n     \"example\": [\n      \"admin\",\n      \"provisioning\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"sonarRef\": {\n     \"description\": \"SonarRef is a reference to Sonar custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Sonar\",\n       \"description\": \"Kind specifies the kind of the Sonar resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Sonar resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"sonarRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sonar Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

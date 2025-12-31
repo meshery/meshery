@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "metastore.cnrm.cloud.google.com/v1beta1",
     "kind": "MetastoreBackup",
     "schema": "{\n \"description\": \"MetastoreBackup is the Schema for the MetastoreBackup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetastoreBackupSpec defines the desired state of MetastoreBackup\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The description of the backup.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"The MetastoreBackup name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"serviceRef\": {\n     \"description\": \"The MetastoreService that the backup belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed MetastoreService resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/services/{{serviceID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a MetastoreService resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a MetastoreService resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"serviceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Metastore Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

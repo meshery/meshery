@@ -2,7 +2,7 @@
   "id": "397e88c7-38d9-4499-85b2-73696f0b195a",
   "name": "Edge-Firewall-relationship",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.246",
+  "version": "0.0.252",
   "metadata": {
     "resolvedAliases": {
       "00a15419-566b-4a55-be3a-58dc20a83949": {
@@ -98,7 +98,9 @@
         "version": "v1",
         "kind": "Namespace",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
@@ -181,7 +183,9 @@
         "version": "networking.k8s.io/v1",
         "kind": "NetworkPolicy",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
@@ -246,7 +250,9 @@
         "version": "networking.k8s.io/v1",
         "kind": "NetworkPolicy",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
@@ -318,7 +324,9 @@
         "version": "v1",
         "kind": "Pod",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
@@ -393,7 +401,9 @@
         "version": "v1",
         "kind": "Pod",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "d8a3806e-488b-4527-b451-47272230bb35",
@@ -438,7 +448,9 @@
         "version": "core.meshery.io/v1alpha1",
         "kind": "Container",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     },
     {
       "id": "00a15419-566b-4a55-be3a-58dc20a83949",
@@ -483,7 +495,9 @@
         "version": "core.meshery.io/v1alpha1",
         "kind": "Container",
         "schema": ""
-      }
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
     }
   ],
   "preferences": {

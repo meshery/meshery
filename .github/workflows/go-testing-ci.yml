@@ -13,7 +13,7 @@ on:
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/go-testing-ci.yml"
+      - ".github/go-testing-ci.yml"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -25,7 +25,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.24]
+        go: [1.25]
         os: [ubuntu-24.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
@@ -39,7 +39,7 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.7
-          args: --config=.golangci.yml --timeout=10m
+          args: --config=.github/.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-24.04
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -75,7 +75,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Verify Docker Details
         run: |
           docker version

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "autoscaling.internal.knative.dev/v1alpha1",
     "kind": "PodAutoscaler",
     "schema": "{\n \"description\": \"PodAutoscaler is a Knative abstraction that encapsulates the interface by which Knative\\ncomponents instantiate autoscalers.  This definition is an abstraction that may be backed\\nby multiple definitions.  For more information, see the Knative Pluggability presentation:\\nhttps://docs.google.com/presentation/d/19vW9HFZ6Puxt31biNZF3uLRejDmu82rxJIk1cWmxF7w/edit\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec holds the desired state of the PodAutoscaler (from the client).\",\n   \"properties\": {\n    \"containerConcurrency\": {\n     \"description\": \"ContainerConcurrency specifies the maximum allowed\\nin-flight (concurrent) requests per container of the Revision.\\nDefaults to `0` which means unlimited concurrency.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"protocolType\": {\n     \"description\": \"The application-layer protocol. Matches `ProtocolType` inferred from the revision spec.\",\n     \"type\": \"string\"\n    },\n    \"reachability\": {\n     \"description\": \"Reachability specifies whether or not the `ScaleTargetRef` can be reached (ie. has a route).\\nDefaults to `ReachabilityUnknown`\",\n     \"type\": \"string\"\n    },\n    \"scaleTargetRef\": {\n     \"description\": \"ScaleTargetRef defines the /scale-able resource that this PodAutoscaler\\nis responsible for quickly right-sizing.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"protocolType\",\n    \"scaleTargetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Autoscaler\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

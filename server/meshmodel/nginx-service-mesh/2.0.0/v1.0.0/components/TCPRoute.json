@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "specs.smi-spec.io/v1alpha3",
     "kind": "TCPRoute",
     "schema": "{\n \"description\": \"TCPRoute is the Schema for the tcproutes API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TCPRouteSpec defines the desired state of TCPRoute\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"TCP Route\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

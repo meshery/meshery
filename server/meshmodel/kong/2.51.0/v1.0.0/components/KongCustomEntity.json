@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "configuration.konghq.com/v1alpha1",
     "kind": "KongCustomEntity",
     "schema": "{\n \"description\": \"KongCustomEntity defines a \\\"custom\\\" Kong entity that KIC cannot support the entity type directly.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongCustomEntitySpec defines the specification of the KongCustomEntity.\",\n   \"properties\": {\n    \"controllerName\": {\n     \"description\": \"ControllerName specifies the controller that should reconcile it, like ingress class.\",\n     \"type\": \"string\"\n    },\n    \"fields\": {\n     \"description\": \"Fields defines the fields of the Kong entity itself.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"parentRef\": {\n     \"description\": \"ParentRef references the kubernetes resource it attached to when its scope is \\\"attached\\\".\\nCurrently only KongPlugin/KongClusterPlugin allowed. This will make the custom entity to be attached\\nto the entity(service/route/consumer) where the plugin is attached.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group defines the API group of the referred object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind defines the kind of the referred object.\",\n       \"enum\": [\n        \"KongPlugin\",\n        \"KongClusterPlugin\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name defines the name of the referred object.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Empty namespace means the same namespace of the owning object.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"EntityType is the type of the Kong entity. The type is used in generating declarative configuration.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"controllerName\",\n    \"fields\",\n    \"type\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"The type field cannot be one of the known Kong entity types\",\n     \"rule\": \"!(self.type in ['services','routes','upstreams','targets','plugins','consumers','consumer_groups'])\"\n    }\n   ]\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kong Custom Entity\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"The spec.type field is immutable\",\n   \"rule\": \"self.spec.type == oldSelf.spec.type\"\n  }\n ]\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

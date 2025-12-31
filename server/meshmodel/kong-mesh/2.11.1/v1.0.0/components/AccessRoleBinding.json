@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "kuma.io/v1alpha1",
     "kind": "AccessRoleBinding",
     "schema": "{\n \"description\": \"AccessRoleBinding is the Schema for the accessrolebinding API\",\n \"properties\": {\n  \"mesh\": {\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Access Role Binding\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
