@@ -342,7 +342,9 @@ ui-setup:
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci:ui-setup
+ui-setup-ci:
+	cd ui; npm ci; cd ..
+	cd provider-ui; npm ci; cd ..
 
 
 ## Run Meshery UI on your local machine. Listen for changes.
