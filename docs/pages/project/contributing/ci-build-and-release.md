@@ -90,12 +90,9 @@ Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](ht
 - **Built-in**: Default in Next.js 12+ (no additional configuration needed)
 - **Optimized**: Includes minification and Fast Refresh out of the box
 
-The Provider UI migrated from Babel to SWC to improve CI/CD build times and align with modern Next.js best practices. The migration removed Babel dependencies and configuration files (`.babelrc`), allowing Next.js to use its default SWC compiler.
-
 **Build Commands**:
 - `make ui-build` - Builds both Meshery UI and Provider UI
 - `make ui-provider-build` - Builds Provider UI only
-- `make ui-meshery-build` - Builds Meshery UI only
 
 ## Tests for adapters
 
