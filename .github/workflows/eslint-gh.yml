@@ -4,6 +4,9 @@ on:
     paths-ignore:
       - 'docs/**'
       - '*.md'
+    paths:
+      - 'ui/**'
+      - 'provider-ui/**'
 jobs:
   eslint:
     name: runner / eslint
