@@ -27,13 +27,6 @@ The following is a list of top-level frameworks, libraries, design system used i
 
 Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) for fast builds and optimal performance.
 
-**SWC Compiler**: Since Next.js 12+, SWC is the default compiler, replacing Babel. SWC is written in Rust and provides:
-- **20-70x faster** compilation compared to Babel
-- **Built-in minification** and optimization
-- **Fast Refresh** for rapid development iterations
-
-The Provider UI (`/provider-ui` directory) migrated from Babel to SWC to improve build performance and align with modern Next.js best practices. No additional configuration is required as Next.js uses SWC by default.
-
 ## Schema-Driven UI Development
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
