@@ -47,7 +47,7 @@ func init() {
 // GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	sysID := h.SystemID
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
@@ -84,7 +84,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			return
 		}
 
-		userUUID := uuid.FromStringOrNil(user.ID)
+		userUUID := user.ID
 		credential, err := p.SaveUserCredential(token, &models.Credential{
 			UserID: &userUUID,
 			Type:   "grafana",
