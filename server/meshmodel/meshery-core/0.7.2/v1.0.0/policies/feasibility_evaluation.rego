@@ -38,3 +38,22 @@ is_relationship_feasible_from(component, relationship) := from if {
 	# print("is_relationship_feasible_from", is_relationship_feasible(from, component))
 	is_relationship_feasible(from, component)
 }
+
+feasible_relationship_selector_between(from_component, to_component, relationship) := feasible_selector if {
+	some selector in relationship.selectors
+	not is_selector_set_feasible_between(to_component, from_component, selector.deny.to, selector.deny.from)
+	feasible_selector := is_selector_set_feasible_between(to_component, from_component, selector.allow.to, selector.allow.from)
+}
+
+is_selector_set_feasible_between(to_component, from_component, to_selectors, from_selectors) := feasible_selector if {
+	some to_selector in to_selectors
+	is_relationship_feasible(to_selector, to_component)
+
+	some from_selector in from_selectors
+	is_relationship_feasible(from_selector, from_component)
+
+	feasible_selector := {
+		"from": from_selector,
+		"to": to_selector,
+	}
+}

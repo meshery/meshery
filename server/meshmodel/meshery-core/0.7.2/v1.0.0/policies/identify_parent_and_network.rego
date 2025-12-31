@@ -1,5 +1,6 @@
 package relationship_evaluation_policy
 
+import data.feasibility_evaluation_utils
 import rego.v1
 
 identify_relationship(
@@ -49,6 +50,16 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 	some to_decl in filtered_to_decls
 
 	from_decl.id != to_decl.id
+
+	print("Checking valid relationship: ", from_decl.component.kind, "->", to_decl.component.kind)
+
+	# ensure the mutated component is feasible for the relationship.
+	s := feasibility_evaluation_utils.feasible_relationship_selector_between(
+		from_decl,
+		to_decl,
+		relationship,
+	)
+	print("Feasible relationship found: ", from_decl.component.kind, "->", to_decl.component.kind, s)
 
 	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
