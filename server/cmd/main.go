@@ -135,8 +135,10 @@ func main() {
 	}
 	// Defer shutdown of tracer provider
 	defer func() {
-		if err := tracingProvider.Shutdown(context.Background()); err != nil {
-			log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+		if tracingProvider != nil {
+			if err := tracingProvider.Shutdown(context.Background()); err != nil {
+				log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+			}
 		}
 	}()
 
