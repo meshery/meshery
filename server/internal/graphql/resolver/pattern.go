@@ -46,7 +46,7 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	// mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserID)
+	// mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserId)
 	// err = mc.AddMetadataForPatterns(ctx, &resp)
 
 	patterns := &model.PatternPageResult{}

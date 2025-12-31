@@ -75,7 +75,7 @@ jobs:
       #     repository: meshery-extensions/meshery-consul
       #     path: ./meshery-consul
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@v1.13.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
@@ -238,3 +238,12 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+
+  # Run Rego policy tests
+  rego-tests:
+    name: Rego Policy Tests
+    if: github.repository == 'meshery/meshery'
+    uses: ./.github/workflows/rego-lint-and-test.yml
+    permissions:
+      contents: write
+      pull-requests: write
