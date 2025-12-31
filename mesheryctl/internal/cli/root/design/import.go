@@ -96,8 +96,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))

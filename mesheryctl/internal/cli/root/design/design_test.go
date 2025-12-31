@@ -2,11 +2,14 @@ package design
 
 import (
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterr "github.com/meshery/meshkit/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDesignCmd(t *testing.T) {
@@ -122,11 +125,10 @@ func TestDesignCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
-		// Invalid or Non-Existing
 		{
 			Name:             "design invalid view",
 			Args:             []string{"view", "test-view"},
-			ExpectedResponse: "design.view.invalid.output.golden",
+			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -169,14 +171,24 @@ func TestDesignCmd(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if test.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
+					if test.IsOutputGolden {
 
-					utils.Equals(t, expectedResponse, err.Error())
+						// write it in file
+						if *update {
+							golden.Write(err.Error())
+						}
+						expectedResponse := golden.Load()
+
+						utils.Equals(t, expectedResponse, err.Error())
+						resetVariables()
+						return
+					}
+					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(test.ExpectedError), "error type mismatch")
+					assert.Equal(t, meshkiterr.GetCode(err), meshkiterr.GetCode(test.ExpectedError), "error code mismatch")
+					assert.Equal(t, meshkiterr.GetLDescription(err), meshkiterr.GetLDescription(test.ExpectedError), "long description mismatch")
+					resetVariables()
 					return
+
 				}
 				t.Error(err)
 			}

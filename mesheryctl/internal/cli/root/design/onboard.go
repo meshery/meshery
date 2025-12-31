@@ -36,9 +36,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
-	sourceType string // pattern file type (manifest / compose)
-)
+var sourceType string // pattern file type (manifest / compose)
 
 var linkDocpatternOnboard = map[string]string{
 	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
@@ -56,7 +54,6 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocpatternOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
-
 		if file == "" && len(args) == 0 {
 			return ErrOnboardDesign()
 		}
@@ -71,8 +68,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		var patternFile *pattern.PatternFile
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -88,35 +84,29 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			var response *models.PatternsAPIResponse
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				utils.Log.Error(utils.ErrReadResponseBody(err))
-				return nil
+				return ErrReadFromBody(err)
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				utils.Log.Error(utils.ErrUnmarshal(err))
-				return nil
+				return utils.ErrUnmarshal(err)
 			}
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(utils.ErrNotFound(errors.New("no design found with the given name")))
-				return nil
+				return ErrDesignNotFound()
 			} else if len(response.Patterns) == 1 {
-
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
 				// Multiple patterns with same name
@@ -130,8 +120,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			}
 			pattern, err := importPattern(sourceType, file, patternURL+"/import", !skipSave)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			patternFile, _ = patterns.GetPatternFormat(pattern.PatternFile)
@@ -144,27 +133,23 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrMarshal(err)
 		}
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrReadFromBody(err)
 		}
 
 		if res.StatusCode == 200 {

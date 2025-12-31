@@ -17,7 +17,6 @@ package design
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -54,8 +53,7 @@ mesheryctl design offboard -f [filepath]
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		pattern := ""
@@ -63,8 +61,7 @@ mesheryctl design offboard -f [filepath]
 		if len(args) > 0 {
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 		}
 
@@ -73,7 +70,7 @@ mesheryctl design offboard -f [filepath]
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				// utils.Log.Error(err)
-				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
+				return ErrDeleteDesign(err, args[0])
 			}
 			utils.Log.Info("pattern ", args[0], " deleted")
 			return nil
@@ -86,7 +83,6 @@ mesheryctl design offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				// utils.Log.Error(utils.ErrFileRead(err))
 				return utils.ErrFileRead(err)
 			}
 
@@ -102,14 +98,12 @@ mesheryctl design offboard -f [filepath]
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		defer func() { _ = resp.Body.Close() }()
 
@@ -117,14 +111,12 @@ mesheryctl design offboard -f [filepath]
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return ErrReadFromBody(err)
 		}
 
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 
 		if len(response) == 0 {
@@ -135,28 +127,24 @@ mesheryctl design offboard -f [filepath]
 
 		patternFile := response[0].PatternFile
 		patternFileByt, err := yaml.Marshal(patternFile)
-
 		if err != nil {
 			return models.ErrMarshallingDesignIntoYAML(err)
 		}
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		defer func() { _ = res.Body.Close() }()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return ErrReadFromBody(err)
 		}
 
 		if res.StatusCode == 200 {

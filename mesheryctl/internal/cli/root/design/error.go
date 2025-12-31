@@ -23,24 +23,26 @@ import (
 )
 
 const (
-	ErrImportDesignCode          = "mesheryctl-1001"
-	ErrInValidSourceCode         = "mesheryctl-1002"
-	ErrOnboardDesignCode         = "mesheryctl-1003"
-	ErrOffboardDesignCode        = "mesheryctl-1005"
-	ErrDesignFlagCode            = "mesheryctl-1006"
-	ErrDesignManifestCode        = "mesheryctl-1007"
-	ErrDesignFileNotProvidedCode = "mesheryctl-1140"
-	ErrDesignsNotFoundCode       = "mesheryctl-1037"
-	ErrInvalidDesignFileCode     = "mesheryctl-1038"
-	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
-	ErrPatternSourceTypeCode     = "mesheryctl-1121"
-	ErrCopyDataCode              = "mesheryctl-1122"
-	ErrCreateFileCode            = "mesheryctl-1123"
-	ErrRetrieveHomeDirCode       = "mesheryctl-1124"
-	ErrReadFromBodyCode          = "mesheryctl-1125"
-	ErrMarkFlagRequireCode       = "mesheryctl-1126"
-	ErrParseDesignFileCode       = "mesheryctl-1127"
-	ErrDeleteDesignCode          = "mesheryctl-1128"
+	ErrImportDesignCode               = "mesheryctl-1001"
+	ErrInValidSourceCode              = "mesheryctl-1002"
+	ErrOnboardDesignCode              = "mesheryctl-1003"
+	ErrOffboardDesignCode             = "mesheryctl-1005"
+	ErrDesignFlagCode                 = "mesheryctl-1006"
+	ErrDesignManifestCode             = "mesheryctl-1007"
+	ErrDesignFileNotProvidedCode      = "mesheryctl-1140"
+	ErrDesignsNotFoundCode            = "mesheryctl-1037"
+	ErrInvalidDesignFileCode          = "mesheryctl-1038"
+	ErrDesignInvalidNameOrIDCode      = "mesheryctl-1039"
+	ErrPatternSourceTypeCode          = "mesheryctl-1121"
+	ErrCopyDataCode                   = "mesheryctl-1122"
+	ErrCreateFileCode                 = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode            = "mesheryctl-1124"
+	ErrReadFromBodyCode               = "mesheryctl-1125"
+	ErrMarkFlagRequireCode            = "mesheryctl-1126"
+	ErrParseDesignFileCode            = "mesheryctl-1127"
+	ErrDeleteDesignCode               = "mesheryctl-1128"
+	ErrInvalidCMDCode                 = "mesheryctl-1129"
+	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1130"
 )
 
 const (
@@ -189,4 +191,28 @@ func ErrDeleteDesign(err error, designName string) error {
 		[]string{fmt.Sprintf("%s: %s", utils.DesignError(fmt.Sprintf("failed to delete design %s", designName)), err.Error())},
 		[]string{"Design may not exist", "Network connection issue", "Meshery server unreachable"},
 		[]string{"Verify the design exists using 'mesheryctl design list'", "Check your network connection and Meshery server status"})
+}
+
+func ErrInvalidCMD(cmd string, suggestions []string) error {
+	var longDesc string
+	if len(suggestions) > 0 {
+		longDesc = fmt.Sprintf("'%s' is an invalid command. Did you mean one of these?\n\t%s", cmd, strings.Join(suggestions, "\n\t"))
+	} else {
+		longDesc = fmt.Sprintf("'%s' is an invalid command", cmd)
+	}
+
+	return errors.New(ErrInvalidCMDCode, errors.Alert,
+		[]string{"Invalid command"},
+		[]string{longDesc},
+		[]string{"The provided command is not recognized"},
+		[]string{"Run 'mesheryctl design --help' to see available commands"},
+	)
+}
+
+func ErrDesignNameOrIDNotSpecified() error {
+	return errors.New(ErrDesignNameOrIDNotSpecifiedCode, errors.Alert,
+		[]string{"Design name or ID not specified"},
+		[]string{"No design name or ID was provided"},
+		[]string{"Command requires a design name or ID as argument"},
+		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
 }
