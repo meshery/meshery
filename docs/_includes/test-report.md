@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 31st 2025, 9:23:14 pm
+- Testing started at: December 31st 2025, 9:48:55 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
+- ✅ 87 passed
 - ❌ 10 failed
 - ⚠️ 0 flaked
-- ⏩ 10 skipped
+- ⏩ 9 skipped
 
-⌛ _Duration: 8 minutes and 10 seconds_
+⌛ _Duration: 7 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -22,7 +22,7 @@
 | Test | Provider | Browser | Test Case | Tags | Result |
 | :---: | :---: | :---: | :--- | :---: | :---: |
 | 1 | Meshery | chromium-meshery-provider | Action buttons on adapters tab |  | ✅ |
-| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
+| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ✅ |
 | 3 | Meshery | chromium-meshery-provider | Add performance profile with load generator fortio |  | ❌ |
 | 4 | Meshery | chromium-meshery-provider | Aggregation Charts are displayed |  | ✅ |
 | 5 | Meshery | chromium-meshery-provider | All settings tabs |  | ✅ |
@@ -63,7 +63,7 @@
 | 40 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 42 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 43 | Meshery | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
+| 43 | Meshery | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
 | 44 | Meshery | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
 | 45 | Meshery | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
 | 46 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
@@ -143,8 +143,8 @@
 The following tests failed. Click on each to see the failure reason:
 
 
-&lt;details&gt;
-&lt;summary&gt;❌ Add a cluster connection by uploading kubeconfig file (Meshery - chromium-meshery-provider)&lt;/summary&gt;
+<details>
+<summary>❌ Transition to disconnected state and then back to connected state (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -155,10 +155,10 @@ The following tests failed. Click on each to see the failure reason:
 
 
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ imports design via File (Meshery - chromium-meshery-provider)&lt;/summary&gt;
+<details>
+<summary>❌ imports design via File (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -169,10 +169,10 @@ The following tests failed. Click on each to see the failure reason:
 
 
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ should identify relationships for All Relationships (Meshery - chromium-meshery-provider)&lt;/summary&gt;
+<details>
+<summary>❌ should identify relationships for All Relationships (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
 
@@ -188,54 +188,40 @@ Received: [31m2[39m
 ```
 [0m [90m 120 |[39m
  [90m 121 |[39m       [90m// assert number of relationships[39m
-[31m[1m&gt;[22m[39m[90m 122 |[39m       expect(failures)[33m.[39mtoBe([35m0[39m)[33m;[39m
+[31m[1m>[22m[39m[90m 122 |[39m       expect(failures)[33m.[39mtoBe([35m0[39m)[33m;[39m
  [90m     |[39m                        [31m[1m^[22m[39m
  [90m 123 |[39m     })[33m;[39m
  [90m 124 |[39m   }
  [90m 125 |[39m })[33m;[39m[0m
 ```
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (Meshery - chromium-meshery-provider)&lt;/summary&gt;
+<details>
+<summary>❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
 
 **Error Message:**
 ```
-SyntaxError: &quot;undefined&quot; is not valid JSON
+SyntaxError: "undefined" is not valid JSON
 ```
 
 **Code Snippet:**
 ```
 [0m [90m 45 |[39m       )[33m;[39m
  [90m 46 |[39m       [36mconst[39m responseJson [33m=[39m [36mawait[39m designResponse[33m.[39mjson()[33m;[39m
-[31m[1m&gt;[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
+[31m[1m>[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
  [90m    |[39m                           [31m[1m^[22m[39m
  [90m 48 |[39m
  [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
  [90m 50 |[39m[0m
 ```
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ Add performance profile with load generator fortio (Meshery - chromium-meshery-provider)&lt;/summary&gt;
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-&lt;/details&gt;
-
-&lt;details&gt;
-&lt;summary&gt;❌ Transition to disconnected state and then back to connected state (None - chromium-local-provider)&lt;/summary&gt;
+<details>
+<summary>❌ Add performance profile with load generator fortio (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -246,10 +232,10 @@ SyntaxError: &quot;undefined&quot; is not valid JSON
 
 
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ imports design via File (None - chromium-local-provider)&lt;/summary&gt;
+<details>
+<summary>❌ Transition to disconnected state and then back to connected state (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -260,10 +246,24 @@ SyntaxError: &quot;undefined&quot; is not valid JSON
 
 
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ should identify relationships for All Relationships (None - chromium-local-provider)&lt;/summary&gt;
+<details>
+<summary>❌ imports design via File (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ should identify relationships for All Relationships (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
 
@@ -279,40 +279,40 @@ Received: [31m2[39m
 ```
 [0m [90m 120 |[39m
  [90m 121 |[39m       [90m// assert number of relationships[39m
-[31m[1m&gt;[22m[39m[90m 122 |[39m       expect(failures)[33m.[39mtoBe([35m0[39m)[33m;[39m
+[31m[1m>[22m[39m[90m 122 |[39m       expect(failures)[33m.[39mtoBe([35m0[39m)[33m;[39m
  [90m     |[39m                        [31m[1m^[22m[39m
  [90m 123 |[39m     })[33m;[39m
  [90m 124 |[39m   }
  [90m 125 |[39m })[33m;[39m[0m
 ```
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (None - chromium-local-provider)&lt;/summary&gt;
+<details>
+<summary>❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
 
 **Error Message:**
 ```
-SyntaxError: &quot;undefined&quot; is not valid JSON
+SyntaxError: "undefined" is not valid JSON
 ```
 
 **Code Snippet:**
 ```
 [0m [90m 45 |[39m       )[33m;[39m
  [90m 46 |[39m       [36mconst[39m responseJson [33m=[39m [36mawait[39m designResponse[33m.[39mjson()[33m;[39m
-[31m[1m&gt;[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
+[31m[1m>[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
  [90m    |[39m                           [31m[1m^[22m[39m
  [90m 48 |[39m
  [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
  [90m 50 |[39m[0m
 ```
 
-&lt;/details&gt;
+</details>
 
-&lt;details&gt;
-&lt;summary&gt;❌ Add performance profile with load generator fortio (None - chromium-local-provider)&lt;/summary&gt;
+<details>
+<summary>❌ Add performance profile with load generator fortio (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -323,7 +323,7 @@ SyntaxError: &quot;undefined&quot; is not valid JSON
 
 
 
-&lt;/details&gt;
+</details>
 
 
 
