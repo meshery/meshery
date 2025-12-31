@@ -41,7 +41,7 @@ import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   selectEventById,
   selectIsEventVisible,
@@ -54,7 +54,6 @@ import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
-import { useDispatch } from 'react-redux';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();

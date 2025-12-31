@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
 import moment from 'moment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -17,6 +16,7 @@ import {
   Box,
   styled,
   LinearProgress,
+  NoSsr,
 } from '@sistent/sistent';
 import grafanaDateRangeToDate from './helper';
 import { updateProgress } from '@/store/slices/mesheryUi';

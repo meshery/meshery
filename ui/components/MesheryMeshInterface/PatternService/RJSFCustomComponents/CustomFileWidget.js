@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import BaseInput from './CustomBaseInput';
-import { useRef } from 'react';
 import { Colors } from '@/themes/app';
 
 const CustomFileWidget = (props) => {
