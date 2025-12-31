@@ -51,24 +51,22 @@ namespace_hierarchical_relationship := {
 
 # Test 1: Deployment can have Namespace as parent (should be allowed)
 test_deployment_can_have_namespace_as_parent if {
-	design_file := {
-		"components": [
-			{
-				"id": "namespace-1",
-				"displayName": "test-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "test-namespace"}},
-			},
-			{
-				"id": "deployment-1",
-				"displayName": "test-deployment",
-				"component": {"kind": "Deployment"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "test-deployment", "namespace": "test-namespace"}},
-			},
-		],
-	}
+	design_file := {"components": [
+		{
+			"id": "namespace-1",
+			"displayName": "test-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "test-namespace"}},
+		},
+		{
+			"id": "deployment-1",
+			"displayName": "test-deployment",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "test-deployment", "namespace": "test-namespace"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 	count(results) == 1
@@ -76,24 +74,22 @@ test_deployment_can_have_namespace_as_parent if {
 
 # Test 2: Namespace cannot have Namespace as parent (should be denied)
 test_namespace_cannot_have_namespace_as_parent if {
-	design_file := {
-		"components": [
-			{
-				"id": "namespace-1",
-				"displayName": "parent-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "parent-namespace"}},
-			},
-			{
-				"id": "namespace-2",
-				"displayName": "child-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "child-namespace", "namespace": "parent-namespace"}},
-			},
-		],
-	}
+	design_file := {"components": [
+		{
+			"id": "namespace-1",
+			"displayName": "parent-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "parent-namespace"}},
+		},
+		{
+			"id": "namespace-2",
+			"displayName": "child-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "child-namespace", "namespace": "parent-namespace"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 	count(results) == 0
@@ -101,31 +97,29 @@ test_namespace_cannot_have_namespace_as_parent if {
 
 # Test 3: Multiple Namespaces - no parent relationships between them
 test_multiple_namespaces_no_relationships if {
-	design_file := {
-		"components": [
-			{
-				"id": "ns-1",
-				"displayName": "namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-1"}},
-			},
-			{
-				"id": "ns-2",
-				"displayName": "namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-2"}},
-			},
-			{
-				"id": "ns-3",
-				"displayName": "namespace-3",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-3"}},
-			},
-		],
-	}
+	design_file := {"components": [
+		{
+			"id": "ns-1",
+			"displayName": "namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-1"}},
+		},
+		{
+			"id": "ns-2",
+			"displayName": "namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-2"}},
+		},
+		{
+			"id": "ns-3",
+			"displayName": "namespace-3",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-3"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 	count(results) == 0
@@ -133,31 +127,29 @@ test_multiple_namespaces_no_relationships if {
 
 # Test 4: Mixed scenario - only Deployment-to-Namespace relationship should be created
 test_mixed_components_only_valid_relationships if {
-	design_file := {
-		"components": [
-			{
-				"id": "ns-1",
-				"displayName": "namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-1"}},
-			},
-			{
-				"id": "ns-2",
-				"displayName": "namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-2"}},
-			},
-			{
-				"id": "deploy-1",
-				"displayName": "deployment-1",
-				"component": {"kind": "Deployment"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "deployment-1", "namespace": "namespace-1"}},
-			},
-		],
-	}
+	design_file := {"components": [
+		{
+			"id": "ns-1",
+			"displayName": "namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-1"}},
+		},
+		{
+			"id": "ns-2",
+			"displayName": "namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-2"}},
+		},
+		{
+			"id": "deploy-1",
+			"displayName": "deployment-1",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "deployment-1", "namespace": "namespace-1"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 	count(results) == 1
@@ -173,42 +165,40 @@ test_mixed_components_only_valid_relationships if {
 
 # Test 5: Namespace deny with extended registrant objects (real-world scenario)
 test_namespace_deny_with_extended_registrant_objects if {
-	design_file := {
-		"components": [
-			{
-				"id": "ns-1",
-				"displayName": "namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000001",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-						"type": "registry",
-					},
+	design_file := {"components": [
+		{
+			"id": "ns-1",
+			"displayName": "namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000001",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
+					"type": "registry",
 				},
-				"configuration": {"metadata": {"name": "namespace-1"}},
 			},
-			{
-				"id": "ns-2",
-				"displayName": "namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000002",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-						"type": "registry",
-					},
+			"configuration": {"metadata": {"name": "namespace-1"}},
+		},
+		{
+			"id": "ns-2",
+			"displayName": "namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000002",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
+					"type": "registry",
 				},
-				"configuration": {"metadata": {"name": "namespace-2", "namespace": "namespace-1"}},
 			},
-		],
-	}
+			"configuration": {"metadata": {"name": "namespace-2", "namespace": "namespace-1"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 
@@ -219,70 +209,68 @@ test_namespace_deny_with_extended_registrant_objects if {
 # Test 6: Four Namespaces with extended registrant - sample design fixture test
 # This test represents the exact scenario from the sample design fixture
 test_four_namespaces_sample_design_no_relationships if {
-	design_file := {
-		"components": [
-			{
-				"id": "11111111-1111-1111-1111-111111111111",
-				"displayName": "parent-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000001",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-					},
+	design_file := {"components": [
+		{
+			"id": "11111111-1111-1111-1111-111111111111",
+			"displayName": "parent-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000001",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "parent-namespace"}},
 			},
-			{
-				"id": "22222222-2222-2222-2222-222222222222",
-				"displayName": "child-namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000002",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "parent-namespace"}},
+		},
+		{
+			"id": "22222222-2222-2222-2222-222222222222",
+			"displayName": "child-namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000002",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "child-namespace-1", "namespace": "parent-namespace"}},
 			},
-			{
-				"id": "33333333-3333-3333-3333-333333333333",
-				"displayName": "child-namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000003",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "child-namespace-1", "namespace": "parent-namespace"}},
+		},
+		{
+			"id": "33333333-3333-3333-3333-333333333333",
+			"displayName": "child-namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000003",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "child-namespace-2", "namespace": "parent-namespace"}},
 			},
-			{
-				"id": "44444444-4444-4444-4444-444444444444",
-				"displayName": "sibling-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000004",
-						"kind": "github",
-						"name": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "child-namespace-2", "namespace": "parent-namespace"}},
+		},
+		{
+			"id": "44444444-4444-4444-4444-444444444444",
+			"displayName": "sibling-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000004",
+					"kind": "github",
+					"name": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "sibling-namespace"}},
 			},
-		],
-	}
+			"configuration": {"metadata": {"name": "sibling-namespace"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 
@@ -293,80 +281,78 @@ test_four_namespaces_sample_design_no_relationships if {
 # Test 7: Sample design fixture - four namespaces + one deployment
 # Only the Deployment-to-Namespace relationship should be created
 test_sample_design_fixture_deployment_to_namespace_only if {
-	design_file := {
-		"components": [
-			{
-				"id": "11111111-1111-1111-1111-111111111111",
-				"displayName": "parent-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000001",
-						"kind": "github",
-						"status": "discovered",
-					},
+	design_file := {"components": [
+		{
+			"id": "11111111-1111-1111-1111-111111111111",
+			"displayName": "parent-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000001",
+					"kind": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "parent-namespace"}},
 			},
-			{
-				"id": "22222222-2222-2222-2222-222222222222",
-				"displayName": "child-namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000002",
-						"kind": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "parent-namespace"}},
+		},
+		{
+			"id": "22222222-2222-2222-2222-222222222222",
+			"displayName": "child-namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000002",
+					"kind": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "child-namespace-1", "namespace": "parent-namespace"}},
 			},
-			{
-				"id": "33333333-3333-3333-3333-333333333333",
-				"displayName": "child-namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000003",
-						"kind": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "child-namespace-1", "namespace": "parent-namespace"}},
+		},
+		{
+			"id": "33333333-3333-3333-3333-333333333333",
+			"displayName": "child-namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000003",
+					"kind": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "child-namespace-2", "namespace": "parent-namespace"}},
 			},
-			{
-				"id": "44444444-4444-4444-4444-444444444444",
-				"displayName": "sibling-namespace",
-				"component": {"kind": "Namespace"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000004",
-						"kind": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "child-namespace-2", "namespace": "parent-namespace"}},
+		},
+		{
+			"id": "44444444-4444-4444-4444-444444444444",
+			"displayName": "sibling-namespace",
+			"component": {"kind": "Namespace"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000004",
+					"kind": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "sibling-namespace"}},
 			},
-			{
-				"id": "55555555-5555-5555-5555-555555555555",
-				"displayName": "test-deployment",
-				"component": {"kind": "Deployment"},
-				"model": {
-					"name": "kubernetes",
-					"registrant": {
-						"id": "00000000-0000-0000-0000-000000000005",
-						"kind": "github",
-						"status": "discovered",
-					},
+			"configuration": {"metadata": {"name": "sibling-namespace"}},
+		},
+		{
+			"id": "55555555-5555-5555-5555-555555555555",
+			"displayName": "test-deployment",
+			"component": {"kind": "Deployment"},
+			"model": {
+				"name": "kubernetes",
+				"registrant": {
+					"id": "00000000-0000-0000-0000-000000000005",
+					"kind": "github",
+					"status": "discovered",
 				},
-				"configuration": {"metadata": {"name": "test-deployment", "namespace": "parent-namespace"}},
 			},
-		],
-	}
+			"configuration": {"metadata": {"name": "test-deployment", "namespace": "parent-namespace"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 
@@ -496,38 +482,36 @@ test_is_relationship_not_denied_different_kinds if {
 
 # Test 10: Multiple deployments in different namespaces - all should have relationships
 test_multiple_deployments_in_namespaces if {
-	design_file := {
-		"components": [
-			{
-				"id": "ns-1",
-				"displayName": "namespace-1",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-1"}},
-			},
-			{
-				"id": "ns-2",
-				"displayName": "namespace-2",
-				"component": {"kind": "Namespace"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "namespace-2"}},
-			},
-			{
-				"id": "deploy-1",
-				"displayName": "deployment-1",
-				"component": {"kind": "Deployment"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "deployment-1", "namespace": "namespace-1"}},
-			},
-			{
-				"id": "deploy-2",
-				"displayName": "deployment-2",
-				"component": {"kind": "Deployment"},
-				"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
-				"configuration": {"metadata": {"name": "deployment-2", "namespace": "namespace-2"}},
-			},
-		],
-	}
+	design_file := {"components": [
+		{
+			"id": "ns-1",
+			"displayName": "namespace-1",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-1"}},
+		},
+		{
+			"id": "ns-2",
+			"displayName": "namespace-2",
+			"component": {"kind": "Namespace"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "namespace-2"}},
+		},
+		{
+			"id": "deploy-1",
+			"displayName": "deployment-1",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "deployment-1", "namespace": "namespace-1"}},
+		},
+		{
+			"id": "deploy-2",
+			"displayName": "deployment-2",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes", "registrant": {"kind": "github"}},
+			"configuration": {"metadata": {"name": "deployment-2", "namespace": "namespace-2"}},
+		},
+	]}
 
 	results := relationship_evaluation_policy.identify_relationship(design_file, namespace_hierarchical_relationship)
 
