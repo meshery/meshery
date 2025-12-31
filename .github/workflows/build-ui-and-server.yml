@@ -64,16 +64,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
-      - name: Check out meshery-istio code
-        uses: actions/checkout@v6
-        with:
-          repository: meshery-extensions/meshery-istio
-          path: ./meshery-istio
-      # - name: Check out meshery-consul code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: meshery-extensions/meshery-consul
-      #     path: ./meshery-consul
+
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.13.0
         with:
@@ -82,18 +73,6 @@ jobs:
         uses: actions/setup-go@master
         with:
           go-version: "1.25"
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          make run &
-          sleep 60
-      # - name: Run meshery-consul
-      #   run: |
-      #     mkdir -p /home/runner/.meshery/bin
-      #     cd ./meshery-consul
-      #     go run main.go &
-      #     sleep 60
       - name: Setup node
         uses: actions/setup-node@v6
         with:
