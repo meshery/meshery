@@ -31,7 +31,7 @@ import (
 
 var (
 	modelsApiPath = "api/meshmodels/models"
-	// Available model subcommads
+	// Available model subcommands
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 

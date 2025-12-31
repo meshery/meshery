@@ -1,0 +1,270 @@
+name: Rego Lint and Test
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "**.rego"
+      - "server/policies/**"
+      - ".github/workflows/rego-lint-and-test.yml"
+  push:
+    branches:
+      - "master"
+    paths:
+      - "**.rego"
+      - "server/policies/**"
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  lint-and-test-rego:
+    name: Lint and Test Rego Policies
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      test-passed: ${{ steps.test-results.outputs.passed }}
+      test-failed: ${{ steps.test-results.outputs.failed }}
+      test-total: ${{ steps.test-results.outputs.total }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.25.5"
+
+      - name: Setup OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: 1.0.1
+
+      - name: Auto-format Rego files
+        run: opa fmt --write .
+
+      - name: Commit formatted Rego files
+        if: github.event_name == 'pull_request'
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          file_pattern: "**/*.rego"
+          commit_user_name: "GitHub Actions"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_message: "chore: auto-format Rego files"
+          commit_options: "--no-verify"
+          branch: ${{ github.head_ref || github.ref_name }}
+
+      - name: Setup Regal
+        uses: StyraInc/setup-regal@v1
+        with:
+          version: 0.25.0
+
+      - name: Lint Rego files
+        id: lint
+        run: |
+          set +e
+          regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel 2>&1 | tee lint-results.txt
+          LINT_EXIT_CODE=${PIPESTATUS[0]}
+          echo "lint-exit-code=$LINT_EXIT_CODE" >> $GITHUB_OUTPUT
+          if [ $LINT_EXIT_CODE -ne 0 ]; then
+            echo "::warning::Regal lint found issues"
+          fi
+
+      - name: Run Rego unit tests with OPA
+        id: opa-test
+        run: |
+          echo "Running OPA tests..."
+          POLICIES_DIR="./server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+          
+          # Ensure that failures in any part of a pipeline are detected
+          set -o pipefail
+          
+          # Run OPA tests and capture output, handle tee failures separately
+          OPA_EXIT_CODE=0
+          if ! opa test "$POLICIES_DIR" -v > opa-test-results.txt 2>&1; then
+            OPA_EXIT_CODE=$?
+            echo "OPA tests reported failures (exit code: $OPA_EXIT_CODE), continuing to collect results."
+          fi
+          
+          # Display results (tee failure here is non-critical)
+          cat opa-test-results.txt || echo "Warning: Could not display OPA test results"
+          
+          echo "opa-exit-code=$OPA_EXIT_CODE" >> $GITHUB_OUTPUT
+          
+          # Parse results
+          PASSED=$(grep -c "PASS" opa-test-results.txt 2>/dev/null)
+          PASSED=${PASSED:-0}
+          FAILED=$(grep -c "FAIL" opa-test-results.txt 2>/dev/null)
+          FAILED=${FAILED:-0}
+          TOTAL=$((PASSED + FAILED))
+          
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+
+      - name: Run Go-based Rego tests
+        id: go-test
+        run: |
+          set +e
+          cd server/policies
+          go test -v ./... 2>&1 | tee go-test-results.txt
+          GO_EXIT_CODE=${PIPESTATUS[0]}
+          echo "go-exit-code=$GO_EXIT_CODE" >> $GITHUB_OUTPUT
+
+      - name: Generate test results
+        id: test-results
+        run: |
+          OPA_PASSED="${{ steps.opa-test.outputs.passed }}"
+          OPA_FAILED="${{ steps.opa-test.outputs.failed }}"
+          OPA_TOTAL="${{ steps.opa-test.outputs.total }}"
+          
+          echo "passed=$OPA_PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$OPA_FAILED" >> $GITHUB_OUTPUT
+          echo "total=$OPA_TOTAL" >> $GITHUB_OUTPUT
+
+      - name: Create test summary
+        id: summary
+        run: |
+          PASSED="${{ steps.test-results.outputs.passed }}"
+          FAILED="${{ steps.test-results.outputs.failed }}"
+          TOTAL="${{ steps.test-results.outputs.total }}"
+          LINT_EXIT="${{ steps.lint.outputs.lint-exit-code }}"
+          OPA_EXIT="${{ steps.opa-test.outputs.opa-exit-code }}"
+          GO_EXIT="${{ steps.go-test.outputs.go-exit-code }}"
+          
+          # Create summary markdown
+          cat > test-summary.md << EOFSUM
+          ### REGO POLICY TESTS
+          
+          **📦 Test Result Summary**
+          
+          - ✅ $PASSED passed
+          - ❌ $FAILED failed
+          - 📝 Lint exit code: $LINT_EXIT
+          
+          **Overall Result**: $([ "$FAILED" -eq 0 ] && [ "$LINT_EXIT" -eq 0 ] && echo "👍 All tests passed." || echo "👎 Some tests failed.")
+          
+          <details>
+              <summary>[Show/Hide] OPA Test Details</summary>
+              <div markdown="1">
+          
+          \`\`\`
+          $(cat opa-test-results.txt 2>/dev/null || echo "No OPA test results available")
+          \`\`\`
+          
+          </div>
+          </details>
+          
+          <details>
+              <summary>[Show/Hide] Go Test Details</summary>
+              <div markdown="1">
+          
+          \`\`\`
+          $(cat server/policies/go-test-results.txt 2>/dev/null || echo "No Go test results available")
+          \`\`\`
+          
+          </div>
+          </details>
+          
+          <details>
+              <summary>[Show/Hide] Lint Results</summary>
+              <div markdown="1">
+          
+          \`\`\`
+          $(cat lint-results.txt 2>/dev/null || echo "No lint results available")
+          \`\`\`
+          
+          </div>
+          </details>
+          EOFSUM
+          
+          # Validate that the summary file was created and is not empty.
+          if [ ! -s test-summary.md ]; then
+            echo "### REGO POLICY TESTS" > test-summary.md
+            echo "" >> test-summary.md
+            echo "Test summary could not be generated from test outputs." >> test-summary.md
+          fi
+          
+          # Safely append the summary to the GitHub step summary with a fallback.
+          if [ -f test-summary.md ]; then
+            cat test-summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### REGO POLICY TESTS" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Test summary could not be generated from test outputs." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('### REGO POLICY TESTS')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: summary
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: rego-test-results
+          path: |
+            opa-test-results.txt
+            lint-results.txt
+            server/policies/go-test-results.txt
+            test-summary.md
+          retention-days: 14
+
+      - name: Check for failures
+        run: |
+          FAILED="${{ steps.test-results.outputs.failed }}"
+          LINT_EXIT="${{ steps.lint.outputs.lint-exit-code }}"
+          GO_EXIT="${{ steps.go-test.outputs.go-exit-code }}"
+          
+          if [ "$FAILED" -gt 0 ]; then
+            echo "::error::$FAILED Rego tests failed"
+            exit 1
+          fi
+          
+          # Check Go test exit code
+          if [ "$GO_EXIT" -ne 0 ]; then
+            echo "::error::Go-based Rego tests failed"
+            exit 1
+          fi
+          
+          # Lint warnings are non-blocking but reported
+          if [ "$LINT_EXIT" -ne 0 ]; then
+            echo "::warning::Regal lint reported issues"
+          fi

@@ -270,7 +270,7 @@ func DesignError(msg string) string {
 	return formatError(msg, cmdDesign)
 }
 
-// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+// DesignViewError returns a formatted error message with a link to the 'design view' command usage page in addition to the error message
 func DesignViewError(msg string) string {
 	return formatError(msg, cmdDesignView)
 }

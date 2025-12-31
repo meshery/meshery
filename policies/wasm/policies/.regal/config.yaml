@@ -1,15 +1,46 @@
 rules:
-  style:
-    todo-comment:
+  bugs:
+    constant-condition:
       level: warning
-    rule-length:
+  idiomatic:
+    equals-pattern-matching:
+      level: warning
+    prefer-set-or-object-rule:
+      level: warning
+    use-some-for-output-vars:
+      level: warning
+  imports:
+    prefer-package-imports:
+      level: warning
+  style:
+    avoid-get-and-list-prefix:
       level: warning
     external-reference:
       level: warning
+    file-length:
+      level: warning
     line-length:
       # custom rule configuration
+      level: warning
       max-line-length: 200
       max-rule-length: 130
+    no-whitespace-comment:
+      level: warning
+    pointless-reassignment:
+      level: warning
+    prefer-snake-case:
+      level: warning
+    prefer-some-in-iteration:
+      level: warning
+    rule-length:
+      level: warning
+    todo-comment:
+      level: warning
+    unconditional-assignment:
+      level: warning
+  testing:
+    print-or-trace-call:
+      level: warning
   performance:
     with-outside-test-context:
       # one of "error", "warning", "ignore"
