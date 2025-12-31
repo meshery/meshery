@@ -30,11 +30,16 @@ mesheryctl connection [flags]
 ### Count all available connections
 
 Use this command to display the total number of connections configured in Meshery.
-This is useful for quick verification or scripting.
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection --count
+</div>
+</pre>
+
+Example output:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+2
 </div>
 </pre>
 
