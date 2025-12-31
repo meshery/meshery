@@ -1,7 +1,7 @@
 package relationship_evaluation_policy
 
-import rego.v1
 import data.feasibility_evaluation_utils
+import rego.v1
 
 # The rule is responsible to perform following evaluations:
 # 1. Assess the Design File: Determine if the current components in the design file partially satisfy the defined relationship constraints.
@@ -39,7 +39,6 @@ identify_additions(
 
 		some mutated_component in mutated_components
 
-
 		mutated_values := extract_values(mutated_component, mutated_selector.patch.mutatedRef)
 
 		# For all paths specifed in the ref, ensure the values exists.
@@ -52,7 +51,7 @@ identify_additions(
 		# eg for namespace and other namespaced resource, and second example of configmap - deployment.
 		some mutator_selector in mutator_selector_set
 
-		result := process_comps_to_add(design_file,relationship,mutated_component, mutated_values, mutator_selector)
+		result := process_comps_to_add(design_file, relationship, mutated_component, mutated_values, mutator_selector)
 	}
 
 	unique_comp_ids := {result.id |
@@ -73,11 +72,10 @@ find_in_comp_array(comps, id) := comp if {
 
 process_comps_to_add(
 	design_file,
-	 relationship,
+	relationship,
 	mutated_component,
 	mutated_values, mutator_selector,
 ) := declaration_with_id if {
-
 	mutator_components := extract_components_by_type(design_file.components, mutator_selector)
 	every mutator_component in mutator_components {
 		mutator_values := extract_values(mutator_component, mutator_selector.patch.mutatorRef)
@@ -104,15 +102,15 @@ process_comps_to_add(
 		"model": mutator_selector.model,
 	}
 
+	print("Process Checking valid relationship: ", mutated_component.component.kind, "->", component.component.kind)
 
-    print("Process Checking valid relationship: ", mutated_component.component.kind,"->",component.component.kind)
 	# ensure the mutated component is feasible for the relationship.
-	s:= feasibility_evaluation_utils.feasible_relationship_selector_between(
-        mutated_component,
-        component,
-        relationship,
-    )
-    print("Process Feasible relationship found: ", mutated_component.component.kind,"->",component.component.kind,s)
+	s := feasibility_evaluation_utils.feasible_relationship_selector_between(
+		mutated_component,
+		component,
+		relationship,
+	)
+	print("Process Feasible relationship found: ", mutated_component.component.kind, "->", component.component.kind, s)
 
 	resultant_patches_to_apply := ensure_parent_paths_exist(intermediate_patches, component)
 
