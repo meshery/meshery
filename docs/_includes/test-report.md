@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: December 30th 2025, 4:50:11 am
+- Testing started at: December 30th 2025, 7:02:17 pm
 
 **📦 Test Result Summary**
 
@@ -21,8 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | setup | authenticate as Meshery provider |  | ❌ |
-| 2 | setup | authenticate as None provider |  | ❌ |
+| 1 | remote-setup | authenticate as Meshery provider |  | ❌ |
+| 2 | local-setup | authenticate as None provider |  | ❌ |
 
 </div>
 </details>
