@@ -78,14 +78,6 @@ flags:
     carryforward: true
     after_n_builds: 1
 
-  # Go integration tests
-  gointegrationtests:
-    paths:
-      - server/**
-      - mesheryctl/**
-    carryforward: true
-    after_n_builds: 1
-
 # Comment configuration for Pull Requests
 comment:
   layout: "header, diff, flags, components, tree, footer"

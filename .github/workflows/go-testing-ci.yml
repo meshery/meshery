@@ -54,14 +54,22 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: "1.25"
-      - name: Run coverage
-        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
-      - name: Upload coverage to Codecov
+      - name: Run server coverage
+        run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
+      - name: Run mesheryctl coverage
+        run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
+      - name: Upload server coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v4.3.0
+        uses: codecov/codecov-action@v5
         with:
-          files: ./coverage.txt
+          files: ./server-coverage.txt
           flags: unittests
+      - name: Upload mesheryctl coverage to Codecov
+        if: github.repository == 'meshery/meshery'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./mesheryctl-coverage.txt
+          flags: mesheryctl
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-24.04
@@ -86,7 +94,7 @@ jobs:
         uses: helm/kind-action@v1.10.0
         with:
           cluster_name: "kind-cluster"
-      - name: Run coverage
+      - name: Run mesheryctl integration tests
         run: |
           cd mesheryctl;
           make; 
@@ -104,11 +112,4 @@ jobs:
           ./mesheryctl system restart -y;
           ./mesheryctl system check --preflight;
           ./mesheryctl system stop -y;
-          echo "Running Mesheryctl with Kubernetes completed."
-          
-      - name: Upload coverage to Codecov
-        if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./coverage.txt
-          flags: gointegrationtests     
+          echo "Running Mesheryctl with Kubernetes completed."     
