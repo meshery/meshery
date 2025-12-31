@@ -474,7 +474,7 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install chrome --with-deps; cd ..
+	cd ui; npx playwright install chromium --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..
