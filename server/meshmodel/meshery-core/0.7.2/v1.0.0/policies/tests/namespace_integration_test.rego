@@ -38,6 +38,10 @@ namespace_hierarchical_relationship := {
 				"patch": {"patchStrategy": "replace", "mutatorRef": [["displayName"]]},
 			}],
 		},
+		# Deny selector: Prevents Kubernetes Namespace components from having
+		# hierarchical parent-child relationships with other Namespace components.
+		# This is semantically correct because Namespaces in Kubernetes are flat
+		# and do not support nesting - one Namespace cannot be inside another.
 		"deny": {
 			"from": [{"kind": "Namespace", "model": {"name": "kubernetes", "registrant": {"kind": "github"}}}],
 			"to": [{"kind": "Namespace", "model": {"name": "kubernetes", "registrant": {"kind": "github"}}}],
@@ -369,10 +373,23 @@ test_sample_design_fixture_deployment_to_namespace_only if {
 	# Only ONE relationship should be created: Deployment -> Namespace
 	count(results) == 1
 
-	# Verify the relationship is from Deployment to Namespace
+	# Verify the relationship connects a non-Namespace component to a Namespace
+	# The 'from' selector will keep the original wildcard kind "*" from the relationship definition
+	# while 'to' will have kind "Namespace". We verify by checking the IDs reference
+	# components from our design (deployment and namespace)
 	some result in results
-	result.selectors[0].allow.from[0].id == "55555555-5555-5555-5555-555555555555"
-	result.selectors[0].allow.to[0].id == "11111111-1111-1111-1111-111111111111"
+	from_id := result.selectors[0].allow.from[0].id
+	to_id := result.selectors[0].allow.to[0].id
+
+	# Verify from component is the deployment (not a namespace)
+	some from_comp in design_file.components
+	from_comp.id == from_id
+	from_comp.component.kind == "Deployment"
+
+	# Verify to component is a namespace
+	some to_comp in design_file.components
+	to_comp.id == to_id
+	to_comp.component.kind == "Namespace"
 }
 
 # Test 8: Verify is_relationship_denied with extended registrant structure
