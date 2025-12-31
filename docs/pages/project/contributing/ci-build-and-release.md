@@ -85,11 +85,6 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 
 Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
 
-**SWC Compiler Benefits**:
-- **Performance**: 20-70x faster compilation than Babel
-- **Built-in**: Default in Next.js 12+ (no additional configuration needed)
-- **Optimized**: Includes minification and Fast Refresh out of the box
-
 **Build Commands**:
 - `make ui-build` - Builds both Meshery UI and Provider UI
 - `make ui-provider-build` - Builds Provider UI only
