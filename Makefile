@@ -340,8 +340,7 @@ ui-setup:
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:ui-setup
-	cd ui; npx playwright install chrome; cd ..
-	cd provider-ui; npx playwright install chrome; cd ..
+
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
@@ -470,7 +469,7 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install chrome --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..
