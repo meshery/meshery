@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "shardingsphere.apache.org/v1alpha1",
     "kind": "StorageProvider",
     "schema": "{\n \"description\": \"StorageProvider is the Schema for the storageproviders API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StorageProviderSpec defines the desired state of StorageProvider\",\n   \"properties\": {\n    \"parameters\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"provisioner\": {\n     \"type\": \"string\"\n    },\n    \"reclaimPolicy\": {\n     \"default\": \"Retain\",\n     \"description\": \"StorageReclaimPolicy defines the reclaim policy for storage\",\n     \"enum\": [\n      \"DeleteWithFinalSnapshot\",\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"parameters\",\n    \"provisioner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Storage Provider\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

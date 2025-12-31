@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "networking.internal.knative.dev/v1alpha1",
     "kind": "Certificate",
     "schema": "{\n \"description\": \"Certificate is responsible for provisioning a SSL certificate for the\\ngiven hosts. It is a Knative abstraction for various SSL certificate\\nprovisioning solutions (such as cert-manager or self-signed SSL certificate).\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the desired state of the Certificate.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"dnsNames\": {\n     \"description\": \"DNSNames is a list of DNS names the Certificate could support.\\nThe wildcard format of DNSNames (e.g. *.default.example.com) is supported.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"domain\": {\n     \"description\": \"Domain is the top level domain of the values for DNSNames.\",\n     \"type\": \"string\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName is the name of the secret resource to store the SSL certificate in.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dnsNames\",\n    \"secretName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Certificate\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

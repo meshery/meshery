@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "source.toolkit.fluxcd.io/v1",
     "kind": "ExternalArtifact",
     "schema": "{\n \"description\": \"ExternalArtifact is the Schema for the external artifacts API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ExternalArtifactSpec defines the desired state of ExternalArtifact\",\n   \"properties\": {\n    \"sourceRef\": {\n     \"description\": \"SourceRef points to the Kubernetes custom resource for\\nwhich the artifact is generated.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent, if not specified the Kubernetes preferred version will be used.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent, when not specified it acts as LocalObjectReference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"External Artifact\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

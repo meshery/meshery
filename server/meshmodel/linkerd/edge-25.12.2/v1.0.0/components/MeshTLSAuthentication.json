@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "policy.linkerd.io/v1alpha1",
     "kind": "MeshTLSAuthentication",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MeshTLSAuthentication defines a list of authenticated client IDs to be referenced by an `AuthorizationPolicy`. If a client connection has the mutually-authenticated identity that matches ANY of the of the provided identities, the connection is considered authenticated.\",\n   \"oneOf\": [\n    {\n     \"required\": [\n      \"identities\"\n     ]\n    },\n    {\n     \"required\": [\n      \"identityRefs\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"identities\": {\n     \"description\": \"Authorizes clients with the provided proxy identity strings (as provided via MTLS)\\nThe `*` prefix can be used to match all identities in a domain. An identity string of `*` indicates that all authentication clients are authorized.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"identityRefs\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"description\": \"Group is the group of the referent. When empty, the Kubernetes core API group is inferred.\\\"\",\n        \"maxLength\": 253,\n        \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the kind of the referent.\",\n        \"maxLength\": 63,\n        \"minLength\": 1,\n        \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of the referent. When unspecified, this refers to all resources of the specified Group and Kind in the specified namespace.\",\n        \"maxLength\": 253,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Name is the name of the referent. When unspecified, this authentication refers to the local namespace.\",\n        \"maxLength\": 253,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Mesh TLS Authentication\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

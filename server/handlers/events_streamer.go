@@ -49,7 +49,7 @@ type statusIDs struct {
 // 	200: eventsResponseWrapper
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
 	fmt.Println(page)
@@ -108,7 +108,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // responses:
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
 
@@ -338,7 +338,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
+				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String())
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -494,7 +494,7 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 // 200:
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	defer func() {
 		_ = req.Body.Close()

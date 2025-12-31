@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "appprotectdos.f5.com/v1beta1",
     "kind": "APDosPolicy",
     "schema": "{\n \"description\": \"APDosPolicy is the Schema for the APDosPolicy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APDosPolicySpec defines the desired state of APDosPolicy\",\n   \"properties\": {\n    \"automation_tools_detection\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"bad_actors\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"mitigation_mode\": {\n     \"default\": \"standard\",\n     \"enum\": [\n      \"standard\",\n      \"conservative\",\n      \"none\"\n     ],\n     \"type\": \"string\"\n    },\n    \"signatures\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"tls_fingerprint\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP Dos Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

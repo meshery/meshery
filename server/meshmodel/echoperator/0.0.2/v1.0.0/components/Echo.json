@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "mmontes.io/v1alpha1",
     "kind": "Echo",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"message\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"message\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Echo\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

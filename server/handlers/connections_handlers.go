@@ -30,7 +30,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	}
 
 	connectionRegisterPayload := connections.ConnectionPayload{}
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
 		http.Error(w, models.ErrUnmarshal(err, "connection registration payload").Error(), http.StatusInternalServerError)
@@ -132,7 +132,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 // 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -151,7 +151,14 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	_, err = provider.SaveConnection(&connection, "", false)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	if token == "" {
+		if ck, err := req.Cookie(models.TokenCookieName); err == nil {
+			token = ck.Value
+		}
+	}
+
+	_, err = provider.SaveConnection(&connection, token, false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -254,7 +261,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind)
+	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind)
 	obj := "connections"
 
 	if err != nil {
@@ -305,7 +312,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	connectionsPage, err := provider.GetConnectionsByKind(req, user.ID, page, pageSize, search, order, connectionKind)
+	connectionsPage, err := provider.GetConnectionsByKind(req, user.ID.String(), page, pageSize, search, order, connectionKind)
 	obj := "connections"
 
 	if err != nil {
@@ -328,7 +335,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 // responses:
 // 200: mesheryConnectionsStatusPage
 func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID)
+	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID.String())
 	obj := "connections status"
 
 	if err != nil {
@@ -350,7 +357,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		_ = req.Body.Close()
 	}()
 
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
 
 	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
@@ -484,7 +491,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	connection := &connections.Connection{}
 	err = json.Unmarshal(bd, connection)
@@ -531,7 +538,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 // 200: mesheryConnectionResponseWrapper
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -631,7 +638,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 // 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)

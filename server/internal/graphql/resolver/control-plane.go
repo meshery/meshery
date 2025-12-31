@@ -27,6 +27,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 	return controlplanelist, nil
 }
 
+//nolint:unused // used by schema.resolvers.go
 func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)

@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "entra.azure.com/v1",
     "kind": "SecurityGroup",
     "schema": "{\n \"description\": \"SecurityGroup is an Entra Security Group.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description: The description of the group.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"DisplayName: The display name of the group.\",\n     \"type\": \"string\"\n    },\n    \"isAssignableToRole\": {\n     \"description\": \"IsAssignableToRole: Indicates whether the group can be assigned to a role.\",\n     \"type\": \"boolean\"\n    },\n    \"mailNickname\": {\n     \"description\": \"MailNickname: The email address of the group, specified either as a mail nickname (`mygroup`)\\nor as a full email address (`mygroup@mydomain.com`).\",\n     \"type\": \"string\"\n    },\n    \"membershipType\": {\n     \"description\": \"MembershipType: The membership type of the group.\",\n     \"enum\": [\n      \"assigned\",\n      \"enabled\",\n      \"assignedm365\",\n      \"enabledm365\"\n     ],\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The operator specific configuration for the resource.\",\n     \"properties\": {\n      \"configmaps\": {\n       \"description\": \"ConfigMaps specifies any config maps that should be created by the operator.\",\n       \"properties\": {\n        \"entraID\": {\n         \"description\": \"EntraID: The Entra ID of the group.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key is the key in the ConfigMap being referenced\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is the name of the Kubernetes ConfigMap to write to.\\nThe ConfigMap will be created in the same namespace as the resource.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"creationMode\": {\n       \"description\": \"CreationMode: Specifies how ASO will try to create the resource.\\nSpecify \\\"AlwaysCreate\\\" to always create a new security group when first reconciled.\\nOr specify \\\"AdoptOrCreate\\\" to first try to adopt an existing security group with the same display name.\\nIf multiple security groups with the same display name are found, the resource condition will show an error.\\nIf not specified, defaults to \\\"AdoptOrCreate\\\".\",\n       \"enum\": [\n        \"AdoptOrCreate\",\n        \"AlwaysCreate\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"mailNickname\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Security Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

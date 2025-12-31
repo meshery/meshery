@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "kuma.io/v1alpha1",
     "kind": "MeshTrust",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshTrust resource.\",\n   \"properties\": {\n    \"caBundles\": {\n     \"description\": \"CABundles contains a list of CA bundles supported by this TrustDomain.\\nAt least one CA bundle must be specified.\",\n     \"items\": {\n      \"properties\": {\n       \"pem\": {\n        \"description\": \"Pem contains the PEM-encoded CA bundle if the Type is set to a PEM-based format.\",\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value holds the PEM-encoded CA bundle as a string.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type specifies the format or source type of the CA bundle.\",\n        \"enum\": [\n         \"Pem\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"origin\": {\n     \"description\": \"Origin specifies whether the resource was created from a MeshIdentity.\",\n     \"properties\": {\n      \"kri\": {\n       \"description\": \"Resource identifier\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"trustDomain\": {\n     \"description\": \"TrustDomain is the trust domain associated with this resource.\",\n     \"maxLength\": 253,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"caBundles\",\n    \"trustDomain\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Trust\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

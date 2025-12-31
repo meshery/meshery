@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "datastream.cnrm.cloud.google.com/v1alpha1",
     "kind": "DatastreamRoute",
     "schema": "{\n \"description\": \"DatastreamRoute is the Schema for the DatastreamRoute API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatastreamRouteSpec defines the desired state of DatastreamRoute\",\n   \"properties\": {\n    \"destinationAddress\": {\n     \"description\": \"Required. Destination address for connection\",\n     \"type\": \"string\"\n    },\n    \"destinationPort\": {\n     \"description\": \"Destination port for connection\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"displayName\": {\n     \"description\": \"Required. Display name.\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels.\",\n     \"type\": \"object\"\n    },\n    \"privateConnectionRef\": {\n     \"description\": \"Required. The parent that owns the collection of Routes.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed DatastreamPrivateConnection resource. Should be in the format \\\"projects/{{projectID}}/locations/{{location}}/privateConnections/{{privateconnectionID}}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a DatastreamPrivateConnection resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a DatastreamPrivateConnection resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The DatastreamRoute name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"privateConnectionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Datastream Route\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

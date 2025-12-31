@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "trickstercache.org/v1alpha1",
     "kind": "TricksterRequestRewriter",
     "schema": "{\n \"description\": \"TricksterRequestRewriter is the Schema for the tricksterrequestrewriters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TricksterRequestRewriterSpec defines the desired state of TricksterRequestRewriter\",\n   \"properties\": {\n    \"instructions\": {\n     \"description\": \"RewriteList is a list of Rewrite Instructions\",\n     \"items\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Trickster Request Rewriter\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

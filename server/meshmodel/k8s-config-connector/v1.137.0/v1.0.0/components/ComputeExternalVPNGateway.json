@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeExternalVPNGateway",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"interface\": {\n     \"description\": \"Immutable. A list of interfaces on this external VPN gateway.\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"description\": \"Immutable. The numeric ID for this interface. Allowed values are based on the redundancy type\\nof this external VPN gateway\\n* '0 - SINGLE_IP_INTERNALLY_REDUNDANT'\\n* '0, 1 - TWO_IPS_REDUNDANCY'\\n* '0, 1, 2, 3 - FOUR_IPS_REDUNDANCY'.\",\n        \"type\": \"integer\"\n       },\n       \"ipAddress\": {\n        \"description\": \"Immutable. IP address of the interface in the external VPN gateway.\\nOnly IPv4 is supported. This IP address can be either from\\nyour on-premise gateway or another Cloud provider's VPN gateway,\\nit cannot be an IP address from Google Compute Engine.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"redundancyType\": {\n     \"description\": \"Immutable. Indicates the redundancy type of this external VPN gateway Possible values: [\\\"FOUR_IPS_REDUNDANCY\\\", \\\"SINGLE_IP_INTERNALLY_REDUNDANT\\\", \\\"TWO_IPS_REDUNDANCY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Compute External VPN Gateway\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

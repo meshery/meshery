@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "storage.hpe.com/v1",
     "kind": "VolumeGroupClass",
     "schema": "{\n \"description\": \"VolumeGroupClass specifies parameters that a underlying storage system uses when creating a volumegroup. A specific VolumeGroupClass is used by specifying its name in a VolumeGroup object. VolumeGroupClasses are non-namespaced\",\n \"properties\": {\n  \"deletionPolicy\": {\n   \"description\": \"deletionPolicy determines whether a VolumeGroupContent created through the VolumeGroupClass should be deleted when its bound VolumeGroup is deleted. Supported values are \\\"Retain\\\" and \\\"Delete\\\". \\\"Retain\\\" means that the VolumeGroupContent and its physical volumeGroup on underlying storage system are kept. \\\"Delete\\\" means that the VolumeGroupContent and its physical volumeGroup on underlying storage system are deleted. Required.\",\n   \"enum\": [\n    \"Delete\",\n    \"Retain\"\n   ],\n   \"type\": \"string\"\n  },\n  \"parameters\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"description\": \"parameters is a key-value map with storage driver specific parameters for creating volumeGroups. These values are opaque to Kubernetes.\",\n   \"type\": \"object\"\n  },\n  \"provisioner\": {\n   \"description\": \"provisioner is the name of the storage driver that handles this VolumeGroupClass. Required.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"deletionPolicy\",\n  \"provisioner\"\n ],\n \"title\": \"Volume Group Class\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

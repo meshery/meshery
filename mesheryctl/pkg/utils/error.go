@@ -11,50 +11,51 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode            = "mesheryctl-1090"
-	ErrInvalidTokenCode           = "mesheryctl-1091"
-	ErrFailReqStatusCode          = "mesheryctl-1092"
-	ErrAttachAuthTokenCode        = "mesheryctl-1093"
-	ErrUnmarshalCode              = "mesheryctl-1094"
-	ErrFileReadCode               = "mesheryctl-1095"
-	ErrCreatingRequestCode        = "mesheryctl-1096"
-	ErrMarshalCode                = "mesheryctl-1097"
-	ErrReadResponseBodyCode       = "mesheryctl-1098"
-	ErrParsingUrlCode             = "mesheryctl-1099"
-	ErrNotFoundCode               = "mesheryctl-1100"
-	ErrUnauthenticatedCode        = "mesheryctl-1101"
-	ErrInvalidFileCode            = "mesheryctl-1102"
-	ErrInvalidNameOrIDCode        = "mesheryctl-1103"
-	ErrInvalidAPIResponseCode     = "mesheryctl-1104"
-	ErrReadConfigFileCode         = "mesheryctl-1105"
-	ErrMarshalIndentCode          = "mesheryctl-1106"
-	ErrLoadConfigCode             = "mesheryctl-1107"
-	ErrResponseStatusBodyCode     = "mesheryctl-1108"
-	ErrResponseStatusCode         = "mesheryctl-1109"
-	ErrJSONToYAMLCode             = "mesheryctl-1110"
-	ErrOutFormatFlagCode          = "mesheryctl-1111"
-	ErrParseGithubFileCode        = "mesheryctl-1112"
-	ErrReadTokenCode              = "mesheryctl-1113"
-	ErrRequestResponseCode        = "mesheryctl-1114"
-	ErrBadRequestCode             = "mesheryctl-1117"
-	ErrInvalidArgumentCode        = "mesheryctl-1118"
-	ErrGeneratingIconsCode        = "mesheryctl-1119"
-	ErrClearLineCode              = "mesheryctl-1120"
-	ErrGeneratesModelCode         = "mesheryctl-1132"
-	ErrUpdateComponentsCode       = "mesheryctl-1134"
-	ErrMissingCommandsCode        = "mesheryctl-1137"
-	ErrKubernetesConnectivityCode = "mesheryctl-1138"
-	ErrKubernetesQueryCode        = "mesheryctl-1139"
-	ErrCreateManifestsFolderCode  = "mesheryctl-1141"
-	ErrDownloadFileCode           = "mesheryctl-1142"
-	ErrNoManifestFilesFoundCode   = "mesheryctl-1143"
-	ErrWalkManifestsCode          = "mesheryctl-1144"
-	ErrGetChannelVersionCode      = "mesheryctl-1145"
-	ErrInvalidModelCode           = "mesheryctl-1150"
-	ErrInvalidOrgIDCode           = "mesheryctl-1152"
-	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
-	ErrTableRenderCode            = "mesheryctl-1154"
-	ErrFlagsInvalidCode           = "mesheryctl-1155"
+	ErrFailRequestCode             = "mesheryctl-1090"
+	ErrInvalidTokenCode            = "mesheryctl-1091"
+	ErrFailReqStatusCode           = "mesheryctl-1092"
+	ErrAttachAuthTokenCode         = "mesheryctl-1093"
+	ErrUnmarshalCode               = "mesheryctl-1094"
+	ErrFileReadCode                = "mesheryctl-1095"
+	ErrCreatingRequestCode         = "mesheryctl-1096"
+	ErrMarshalCode                 = "mesheryctl-1097"
+	ErrReadResponseBodyCode        = "mesheryctl-1098"
+	ErrParsingUrlCode              = "mesheryctl-1099"
+	ErrNotFoundCode                = "mesheryctl-1100"
+	ErrUnauthenticatedCode         = "mesheryctl-1101"
+	ErrInvalidFileCode             = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode         = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode      = "mesheryctl-1104"
+	ErrReadConfigFileCode          = "mesheryctl-1105"
+	ErrMarshalIndentCode           = "mesheryctl-1106"
+	ErrLoadConfigCode              = "mesheryctl-1107"
+	ErrResponseStatusBodyCode      = "mesheryctl-1108"
+	ErrResponseStatusCode          = "mesheryctl-1109"
+	ErrJSONToYAMLCode              = "mesheryctl-1110"
+	ErrOutFormatFlagCode           = "mesheryctl-1111"
+	ErrParseGithubFileCode         = "mesheryctl-1112"
+	ErrReadTokenCode               = "mesheryctl-1113"
+	ErrRequestResponseCode         = "mesheryctl-1114"
+	ErrBadRequestCode              = "mesheryctl-1117"
+	ErrInvalidArgumentCode         = "mesheryctl-1118"
+	ErrGeneratingIconsCode         = "mesheryctl-1119"
+	ErrClearLineCode               = "mesheryctl-1120"
+	ErrGeneratesModelCode          = "mesheryctl-1132"
+	ErrUpdateComponentsCode        = "mesheryctl-1134"
+	ErrMissingCommandsCode         = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode  = "mesheryctl-1138"
+	ErrKubernetesQueryCode         = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode   = "mesheryctl-1141"
+	ErrDownloadFileCode            = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode    = "mesheryctl-1143"
+	ErrWalkManifestsCode           = "mesheryctl-1144"
+	ErrGetChannelVersionCode       = "mesheryctl-1145"
+	ErrInvalidModelCode            = "mesheryctl-1150"
+	ErrInvalidOrgIDCode            = "mesheryctl-1152"
+	ErrFetchEnvironmentsCode       = "mesheryctl-1153"
+	ErrTableRenderCode             = "mesheryctl-1154"
+	ErrFlagsInvalidCode            = "mesheryctl-1155"
+	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -269,7 +270,7 @@ func DesignError(msg string) string {
 	return formatError(msg, cmdDesign)
 }
 
-// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+// DesignViewError returns a formatted error message with a link to the 'design view' command usage page in addition to the error message
 func DesignViewError(msg string) string {
 	return formatError(msg, cmdDesignView)
 }
@@ -417,7 +418,7 @@ func ErrFailRequest(err error) error {
 		[]string{"Failed to make a request"},
 		[]string{err.Error()},
 		[]string{"Meshery server is not reachable."},
-		[]string{"Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."})
+		[]string{"Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."})
 }
 
 func ErrUnauthenticated() error {
@@ -733,4 +734,12 @@ func ErrFlagsInvalid(msg string) error {
 		[]string{msg},
 		[]string{"The flag provided is invalid."},
 		[]string{"Provide a valid flag"})
+}
+
+func ErrMesheryServerNotRunning(platform string) error {
+	return errors.New(ErrMesheryServerNotRunningCode, errors.Alert,
+		[]string{"Meshery Server is not running"},
+		[]string{fmt.Sprintf("Meshery Server is not available on platform: %s", platform)},
+		[]string{"Meshery Server is not running or is unreachable", "Docker or Kubernetes environment is not ready", "Network connectivity issues"},
+		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
 }
