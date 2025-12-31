@@ -25,6 +25,16 @@
 </details>
 <% } %>
 
+<% if (failedTestCount > 0) { %>
+
+**❌ Failed Test Details**
+
+The following tests failed. Click on each to see the failure reason:
+
+<%- failedTestDetails %>
+
+<% } %>
+
 <% if (relationshipTestCount > 0) { %>
 
 **🔗 Relationship Tests**
