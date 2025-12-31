@@ -125,7 +125,7 @@ func main() {
 
 	// initialize tracing
 	otelConfigString := viper.GetString("OTEL_CONFIG")
-	log.Info("Initializing OpenTelemetry tracing with config:" + otelConfigString)
+log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
 
 	if err != nil {
