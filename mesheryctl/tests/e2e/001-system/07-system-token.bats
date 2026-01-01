@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
 setup() {
-   load "$E2E_HELPERS_PATH/bats_libraries"
-	_load_bats_libraries
+    load "$E2E_HELPERS_PATH/bats_libraries"
+    _load_bats_libraries
 }
 
 # bats test_tags=system:token
@@ -21,7 +21,7 @@ setup() {
     assert_line --partial "default"
 }
 
-# bats test_tags=system:token  
+# bats test_tags=system:token
 @test "mesheryctl system token list --help displays help" {
     run $MESHERYCTL_BIN system token list --help
     assert_success
