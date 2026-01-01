@@ -1126,7 +1126,15 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, pa
 }
 
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	connection := &connections.Connection{}
+	err := l.ConnectionPersister.DB.Where("id = ?", connectionID).First(connection).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, err
+		}
+		return nil, http.StatusInternalServerError, err
+	}
+	return connection, http.StatusOK, nil
 }
 
 func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
@@ -1161,20 +1169,38 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
-	connection := connections.Connection{
-		ID:           conn.ID,
-		Name:         conn.Name,
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-		CredentialID: conn.CredentialID,
+func (l *DefaultLocalProvider) UpdateConnectionById(
+	req *http.Request,
+	conn *connections.ConnectionPayload,
+	connId string,
+) (*connections.Connection, error) {
+
+	id, err := uuid.FromString(connId)
+	if err != nil {
+		return nil, err
 	}
-	return l.UpdateConnection(req, &connection)
+
+	existingConnection, _, err := l.GetConnectionByID("", id)
+	if err != nil {
+		return nil, err
+	}
+
+	if conn.Name != "" {
+		existingConnection.Name = conn.Name
+	}
+
+	if conn.MetaData != nil {
+		if existingConnection.Metadata == nil {
+			existingConnection.Metadata = make(map[string]interface{})
+		}
+		for k, v := range conn.MetaData {
+			existingConnection.Metadata[k] = v
+		}
+	}
+
+	existingConnection.UpdatedAt = time.Now()
+
+	return l.ConnectionPersister.UpdateConnectionByID(existingConnection)
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {

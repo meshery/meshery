@@ -98,11 +98,43 @@ const ACTION_TYPES = {
     error_msg: 'Failed to create environment',
   },
 };
+const InlineInput = ({ value, onSave, onCancel }) => {
+  const [tempValue, setTempValue] = React.useState(value);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      onSave(tempValue);
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      onCancel();
+    }
+  };
+
+  return (
+    <TextField
+      value={tempValue}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={() => onSave(tempValue)}
+      onKeyDown={handleKeyDown}
+      autoFocus
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()} // Crucial for preventing row selection bugs
+      variant="standard"
+      fullWidth={false}
+      InputProps={{
+        disableUnderline: false,
+        style: { fontSize: '0.875rem', padding: 0, height: '20px' },
+      }}
+    />
+  );
+};
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const [editId, setEditId] = React.useState(null);
-  const [editValue, setEditValue] = React.useState('');
-  const [editAnchorEl, setEditAnchorEl] = React.useState(null);
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -323,27 +355,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         });
       });
   };
-
-  const handleUpdateConnection = React.useCallback(
-    async (id, newName) => {
-      if (!id || !newName) return false;
-      try {
-        await updateConnectionByIdMutator({ connectionId: id, body: { name: newName } }).unwrap();
-        notify({ message: `Connection name updated`, event_type: EVENT_TYPES.SUCCESS });
-        return true;
-      } catch (err) {
-        console.error('Error updating name:', err);
-        const msg = err?.data?.message || err?.data || err?.error || err?.message || 'Failed to update connection';
-        notify({
-          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${msg}`,
-          event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
-        });
-        return false;
-      }
-    },
-    [notify, updateConnectionByIdMutator],
-  );
 
   const handleDeleteConnection = async (connectionId, connectionKind) => {
     if (connectionId) {
@@ -667,70 +678,111 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           );
         },
         customBodyRender: (value, tableMeta) => {
-          const connectionId = tableMeta.rowData[0];
+          const connection = filteredConnections[tableMeta.rowIndex];
+          if (!connection) return null;
+          const connectionId = connection.id;
+          const isEditing = editId === connectionId;
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
+
+          const handleSave = async (newName) => {
+            if (newName.trim() !== '' && newName !== value) {
+              try {
+                await updateConnectionByIdMutator({
+                  connectionId: connectionId,
+                  body: {
+                    ...connection, // Keep existing fields
+                    name: newName, // Update Name
+                    metadata: { ...connection.metadata, name: newName }, // Update Metadata Name
+                  },
+                }).unwrap();
+
+                notify({ message: `Renamed to ${newName}`, event_type: EVENT_TYPES.SUCCESS });
+              } catch (err) {
+                notify({
+                  message: `Update Failed: ${err.data || 'Unable to update'}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            }
+            setEditId(null);
+          };
           return (
-            <Box display="flex" flexDirection="column">
+            <Box
+              display="flex"
+              flexDirection="column"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              {isEditing ? (
+                <InlineInput value={value} onSave={handleSave} onCancel={() => setEditId(null)} />
+              ) : (
                 <Typography
                   variant="body2"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setEditAnchorEl(e.currentTarget);
-                    setEditValue(value);
                     setEditId(connectionId);
                   }}
-                  sx={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  sx={{
+                    cursor: 'text',
+                    marginBottom: '0.25rem',
+                    width: 'fit-content',
+                    minHeight: '20px',
+                    '&:hover': { textDecoration: 'underline dotted' },
+                  }}
                 >
                   {value}
                 </Typography>
-              <TooltipWrappedConnectionChip
-                tooltip={server && 'Server: ' + server}
-                title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
-                status={getColumnValue(tableMeta.rowData, 'status', columns)}
-                onDelete={() =>
-                  handleDeleteConnection(
-                    getColumnValue(tableMeta.rowData, 'id', columns),
-                    getColumnValue(tableMeta.rowData, 'kind', columns),
-                  )
-                }
-                handlePing={() => {
-                  // e.stopPropagation();
-                  if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
-                    ping(
-                      getColumnValue(tableMeta.rowData, 'metadata.name', columns),
-                      getColumnValue(tableMeta.rowData, 'metadata.server', columns),
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                    );
-                  }
-                }}
-                iconSrc={`/${
-                  getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
-                  getFallbackImageBasedOnKind(kind)
-                }`}
-                width="12rem"
-              />
-              {kind == 'kubernetes' && (
-                <CustomTextTooltip
-                  placement="top"
-                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                >
-                  <div style={{ display: 'inline-block' }}>
-                    <IconButton
-                      color="default"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                      }}
-                    >
-                      <InfoOutlinedIcon height={20} width={20} />
-                    </IconButton>
-                  </div>
-                </CustomTextTooltip>
               )}
+              <div onClick={(e) => e.stopPropagation()}>
+                <TooltipWrappedConnectionChip
+                  tooltip={server && 'Server: ' + server}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  status={getColumnValue(tableMeta.rowData, 'status', columns)}
+                  onDelete={() =>
+                    handleDeleteConnection(
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                    )
+                  }
+                  handlePing={() => {
+                    // e.stopPropagation();
+                    if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                      ping(
+                        getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                        getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                        getColumnValue(tableMeta.rowData, 'id', columns),
+                      );
+                    }
+                  }}
+                  iconSrc={`/${
+                    getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
+                    getFallbackImageBasedOnKind(kind)
+                  }`}
+                  width="12rem"
+                />
+                {kind == 'kubernetes' && (
+                  <CustomTextTooltip
+                    placement="top"
+                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                  >
+                    <div style={{ display: 'inline-block' }}>
+                      <IconButton
+                        color="default"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <InfoOutlinedIcon height={20} width={20} />
+                      </IconButton>
+                    </div>
+                  </CustomTextTooltip>
+                )}
+              </div>
             </Box>
           );
         },
@@ -1207,6 +1259,9 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   };
 
   const [tableCols, updateCols] = useState(columns);
+  useEffect(() => {
+    updateCols(columns);
+  }, [editId, organization?.id, environments?.length, width]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(colViews, width);
@@ -1330,39 +1385,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           </Button>
         </ActionListItem>
       </Popover>
-
-      <Popover
-  open={Boolean(editAnchorEl)}
-  anchorEl={editAnchorEl}
-  onClose={() => setEditAnchorEl(null)}
-  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
->
-  <Box p={1}>
-    <TextField
-  value={editValue}
-  autoFocus
-  onChange={(e) => setEditValue(e.target.value)}
-  onKeyDown={async (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-
-      const success = await handleUpdateConnection(editId, editValue);
-
-      if (success) {
-        setEditAnchorEl(null);
-        setEditId(null);
-      }
-    }
-
-    if (e.key === 'Escape') {
-      setEditAnchorEl(null);
-      setEditId(null);
-    }
-  }}
-/>
-  </Box>
-</Popover>
-
     </>
   );
 };
