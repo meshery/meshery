@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,12 +71,14 @@ func RemoveFileAndDirectory() {
 	// from the directory
 	removeMesheryYaml := os.Remove("meshery.yaml")
 	if removeMesheryYaml != nil {
-		log.Fatal(removeMesheryYaml)
+		utils.LogError.Error(removeMesheryYaml)
+		os.Exit(1)
 	}
 
 	// Removing the .meshery directory
 	removeMesheryHiddenDirectory := os.RemoveAll(".meshery")
 	if removeMesheryHiddenDirectory != nil {
-		log.Fatal(removeMesheryHiddenDirectory)
+		utils.LogError.Error(removeMesheryHiddenDirectory)
+		os.Exit(1)
 	}
 }

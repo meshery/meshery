@@ -32,7 +32,6 @@ import (
 
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -86,17 +85,17 @@ mesheryctl system start --provider Meshery
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			utils.LogError.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		return nil
@@ -204,7 +203,8 @@ func start() error {
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if utils.Services[v].Image == "" {
-				log.Fatalf("Invalid component specified %s", v)
+				utils.Log.Warnf("Invalid component specified %s", v)
+				os.Exit(1)
 			}
 
 			temp, ok := utils.Services[v]
@@ -274,14 +274,15 @@ func start() error {
 			if err := utils.ViperCompose.WriteConfig(); err != nil {
 				// failure while adding a service to docker compose file is not a fatal error
 				// mesheryctl will continue deploying with required services (meshery, watchtower)
-				log.Errorf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)
+				utils.Log.Warnf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)
+				utils.LogError.Error(err)
 			}
 		}
 
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
 		if skipUpdateFlag {
-			log.Info("Skipping Meshery update...")
+			utils.Log.Info("Skipping Meshery update...")
 		} else {
 			err := utils.UpdateMesheryContainers()
 			if err != nil {
@@ -381,7 +382,7 @@ func start() error {
 			// Provide progress feedback every 30 seconds
 			if i > 0 && i%6 == 0 {
 				spinner.Stop()
-				log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
+				utils.Log.Infof("Still waiting for Meshery to start... (%d seconds elapsed)", i*5)
 				spinner = utils.CreateDefaultSpinner("Waiting for Meshery containers to be ready...", "\nMeshery containers are ready.")
 				spinner.Start()
 			}
@@ -390,19 +391,19 @@ func start() error {
 		spinner.Stop()
 
 		if !mesheryRunning {
-			log.Info("Timeout waiting for Meshery container to start. Checking container status...")
+			utils.Log.Info("Timeout waiting for Meshery container to start. Checking container status...")
 			containers, err := composeClient.Ps(context.Background(), utils.DockerComposeFile)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
 			}
 
 			// Show container status for debugging
-			log.Info("Container status:")
+			utils.Log.Info("Container status:")
 			for _, c := range containers {
-				log.Infof("  %s: %s", c.Service, c.State)
+				utils.Log.Infof("  %s: %s", c.Service, c.State)
 			}
 
-			log.Info("\nShowing Meshery logs:")
+			utils.Log.Info("\nShowing Meshery logs:")
 			err = composeClient.Logs(context.Background(), utils.DockerComposeFile, false, os.Stdout)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get logs"))
@@ -433,10 +434,10 @@ func start() error {
 		spinner.Stop()
 
 		if !endpointReady {
-			log.Warn("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
-			log.Info("You can check the status later with: mesheryctl system status")
+			utils.Log.Info("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
+			utils.Log.Info("You can check the status later with: mesheryctl system status")
 		} else {
-			log.Info("Meshery is now running!")
+			utils.Log.Info("Meshery is now running!")
 		}
 
 	case "kubernetes":
@@ -451,7 +452,7 @@ func start() error {
 		spinner.Start()
 
 		if err := utils.CreateManifestsFolder(); err != nil {
-			utils.Log.Error(utils.ErrCreateManifestsFolder(err))
+			utils.LogError.Error(utils.ErrCreateManifestsFolder(err))
 			return err
 		}
 
@@ -464,16 +465,16 @@ func start() error {
 		time.Sleep(20 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
 		ready, err := mesheryReadinessHealthCheck()
 		if err != nil {
-			log.Info(err)
+			utils.LogError.Error(err)
 		}
 
 		spinner.Stop()
 
 		if !ready {
-			log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
+			utils.Log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
 			return nil
 		}
-		log.Info("Meshery is starting...")
+		utils.Log.Info("Meshery is starting...")
 
 		// switch to default case if the platform specified is not supported
 	default:

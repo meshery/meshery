@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -60,7 +59,7 @@ mesheryctl system status --verbose
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
+			utils.LogError.Error(ErrHealthCheckFailed(err))
 			return nil
 		}
 		// execute healthchecks
@@ -78,7 +77,7 @@ mesheryctl system status --verbose
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -86,14 +85,14 @@ mesheryctl system status --verbose
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
+				utils.LogError.Error(ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context")))
 				return nil
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
+			utils.LogError.Error(ErrGetCurrentContext(err))
 			return nil
 		}
 
@@ -101,11 +100,11 @@ mesheryctl system status --verbose
 
 		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		if !ok {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
+			utils.LogError.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 			return nil
 		}
 
@@ -123,7 +122,7 @@ mesheryctl system status --verbose
 			}
 
 			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+				utils.Log.Info(outputString)
 			}
 
 			hcOptions := &HealthCheckOptions{
@@ -134,7 +133,7 @@ mesheryctl system status --verbose
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				utils.Log.Error(ErrHealthCheckFailed(err))
+				utils.LogError.Error(ErrHealthCheckFailed(err))
 				return nil
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
@@ -208,7 +207,7 @@ mesheryctl system status --verbose
 			// Print the data to a table for readability
 			utils.PrintToTable(columnNames, data, nil)
 
-			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
+			utils.Log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}
 		return nil
 	},

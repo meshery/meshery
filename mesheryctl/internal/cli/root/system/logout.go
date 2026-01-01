@@ -22,8 +22,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var logoutCmd = &cobra.Command{
@@ -41,23 +39,24 @@ mesheryctl system logout
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context")))
+			utils.LogError.Error(ErrGetCurrentContext(errors.Wrap(err, "failed to find token path for the current context")))
 			return nil
 		}
 
 		// Replace the content of the token file with empty content
 		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
-			log.Error("logout failed: ", err)
+			utils.Log.Info("logout failed: ")
+			utils.LogError.Error(err)
 			return nil
 		}
 
-		log.Println("logged out")
+		cmd.Println("logged out")
 		return nil
 	},
 }

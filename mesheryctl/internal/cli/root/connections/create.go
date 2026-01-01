@@ -25,7 +25,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -85,32 +84,36 @@ func createAKSConnection() error {
 	aksCheck.Stderr = os.Stderr
 	err := aksCheck.Run()
 	if err != nil {
-		log.Fatalf("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+		utils.Log.Debug("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+		utils.LogError.Error(err)
+		os.Exit(1)
 	}
-	log.Info("Configuring Meshery to access AKS...")
+	utils.Log.Info("Configuring Meshery to access AKS...")
 	var resourceGroup, aksName string
 
 	// Prompt user for Azure resource name
-	log.Info("Please enter the Azure resource group name:")
+	utils.Log.Info("Please enter the Azure resource group name:")
 	_, err = fmt.Scanf("%s", &resourceGroup)
 	if err != nil {
-		log.Warnf("Error reading Azure resource group name: %s", err.Error())
-		log.Info("Let's try again. Please enter the Azure resource group name:")
+		utils.Log.Warnf("Error reading Azure resource group name: %s", err.Error())
+		utils.Log.Info("Let's try again. Please enter the Azure resource group name:")
 		_, err = fmt.Scanf("%s", &resourceGroup)
 		if err != nil {
-			log.Fatalf("Error reading Azure resource group name: %s", err.Error())
+			utils.Log.Warnf("Error reading Azure resource group name: %s", err.Error())
+			os.Exit(1)
 		}
 	}
 
 	// Prompt user for AKS cluster name
-	log.Info("Please enter the AKS cluster name:")
+	utils.Log.Info("Please enter the AKS cluster name:")
 	_, err = fmt.Scanf("%s", &aksName)
 	if err != nil {
-		log.Warnf("Error reading AKS cluster name: %s", err.Error())
-		log.Info("Let's try again. Please enter the AKS cluster name:")
+		utils.Log.Warnf("Error reading AKS cluster name: %s", err.Error())
+		utils.Log.Info("Let's try again. Please enter the AKS cluster name:")
 		_, err = fmt.Scanf("%s", &aksName)
 		if err != nil {
-			log.Fatalf("Error reading AKS cluster name: %s", err.Error())
+			utils.Log.Warnf("Error reading AKS cluster name: %s", err.Error())
+			os.Exit(1)
 		}
 	}
 
@@ -121,10 +124,10 @@ func createAKSConnection() error {
 	// Write AKS compatible config to the filesystem
 	err = aksCmd.Run()
 	if err != nil {
-		log.Fatalf("Error generating kubeconfig: %s", err.Error())
+		utils.Log.Warnf("Error reading AKS cluster name: %s", err.Error())
 		return err
 	}
-	log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
+	utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
 	setToken()
@@ -137,32 +140,35 @@ func createEKSConnection() error {
 	eksCheck.Stderr = os.Stderr
 	err := eksCheck.Run()
 	if err != nil {
-		log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
+		utils.Log.Warnf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ : %s", err.Error())
+		os.Exit(1)
 	}
-	log.Info("Configuring Meshery to access EKS...")
+	utils.Log.Info("Configuring Meshery to access EKS...")
 	var regionName, clusterName string
 
 	// Prompt user for AWS region name
-	log.Info("Please enter the AWS region name:")
+	utils.Log.Info("Please enter the AWS region name:")
 	_, err = fmt.Scanf("%s", &regionName)
 	if err != nil {
-		log.Warnf("Error reading AWS region name: %s", err.Error())
-		log.Info("Let's try again. Please enter the AWS region name:")
+		utils.Log.Warnf("Error reading AWS region name: %s", err.Error())
+		utils.Log.Info("Let's try again. Please enter the AWS region name:")
 		_, err = fmt.Scanf("%s", &regionName)
 		if err != nil {
-			log.Fatalf("Error reading AWS region name: %s", err.Error())
+			utils.Log.Warnf("Error reading AWS region name: %s", err.Error())
+			os.Exit(1)
 		}
 	}
 
 	// Prompt user for AWS cluster name
-	log.Info("Please enter the AWS cluster name:")
+	utils.Log.Info("Please enter the AWS cluster name:")
 	_, err = fmt.Scanf("%s", &clusterName)
 	if err != nil {
-		log.Warnf("Error reading AWS cluster name: %s", err.Error())
-		log.Info("Let's try again. Please enter the AWS cluster name:")
+		utils.Log.Warnf("Error reading AWS cluster name: %s", err.Error())
+		utils.Log.Info("Let's try again. Please enter the AWS cluster name:")
 		_, err = fmt.Scanf("%s", &clusterName)
 		if err != nil {
-			log.Fatalf("Error reading AWS cluster name: %s", err.Error())
+			utils.Log.Warnf("Error reading AWS cluster name: %s", err.Error())
+			os.Exit(1)
 		}
 	}
 
@@ -173,10 +179,10 @@ func createEKSConnection() error {
 	// Write EKS compatible config to the filesystem
 	err = eksCmd.Run()
 	if err != nil {
-		log.Fatalf("Error generating kubeconfig: %s", err.Error())
+		utils.Log.Warnf("Error generating kubeconfig: %s", err.Error())
 		return err
 	}
-	log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
+	utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
 	setToken()
@@ -185,13 +191,13 @@ func createEKSConnection() error {
 
 func createGKEConnection() error {
 	// TODO: move the GenerateConfigGKE logic to meshkit/client-go
-	log.Info("Configuring Meshery to access GKE...")
+	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
-		log.Errorf("Error generating config: %v", err)
+		utils.Log.Warnf("Error generating config: %v", err.Error())
 		return err
 	}
-	log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
+	utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
 	setToken()
@@ -199,30 +205,30 @@ func createGKEConnection() error {
 }
 
 func createMinikubeConnection() error {
-	log.Info("Configuring Meshery to access Minikube...")
+	utils.Log.Info("Configuring Meshery to access Minikube...")
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
-		log.Fatal("Could not find the default kube config:", err)
+		utils.Log.Warnf("Could not find the default kube config: %s", err)
 		return err
 	}
 	kubeConfig, err := clientcmd.LoadFromFile(utils.KubeConfig)
 	if kubeConfig == nil || err != nil {
-		log.Fatal("Error reading the default kube config:", err)
+		utils.Log.Warnf("Error reading the default kube config: %s", err)
 		return err
 	}
 	// Flatten the config file
 	err = clientcmdapi.FlattenConfig(kubeConfig)
 	if err != nil {
-		log.Fatal("Error flattening config:", err)
+		utils.Log.Warnf("Error flattening config: %s", err)
 		return err
 	}
 	// write the flattened config to kubeconfig.yaml file
 	err = clientcmd.WriteToFile(*kubeConfig, utils.ConfigPath)
 	if err != nil {
-		log.Fatal("Error writing config to file:", err)
+		utils.Log.Warnf("Error writing config to file: %s", err)
 		return err
 	}
-	log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
+	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
 	setToken()
@@ -234,7 +240,7 @@ func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil, err
 	}
 
@@ -262,7 +268,7 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, utils.ErrReadResponseBody(err)
 	}
 
-	log.Debugf("Get context API response: %s", string(body))
+	utils.Log.Debugf("Get context API response: %s", string(body))
 	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
@@ -283,7 +289,7 @@ func getContexts(configFile string) ([]string, error) {
 		}
 		contextNames = append(contextNames, ctxname)
 	}
-	log.Debugf("Available contexts: %s", contextNames)
+	utils.Log.Debugf("Available contexts: %s", contextNames)
 	return contextNames, nil
 }
 
@@ -294,7 +300,7 @@ func setContext(configFile, cname string) error {
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return err
 	}
 
@@ -315,19 +321,19 @@ func setContext(configFile, cname string) error {
 		return utils.ErrReadResponseBody(err)
 	}
 	// TODO: Pretty print the output
-	log.Debugf("Set context API response: %s", string(body))
+	utils.Log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
 
 // Given the token path, get the context and set the token in the chosen context
 func setToken() {
-	log.Debugf("Token path: %s", utils.TokenFlag)
+	utils.Log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 	}
 	if len(contexts) < 1 {
-		log.Errorf("Error getting context: %s", fmt.Errorf("no contexts found"))
+		utils.LogError.Errorf("Error getting context: %v", fmt.Errorf("no contexts found"))
 	}
 	chosenCtx := contexts[0]
 	if len(contexts) > 1 {
@@ -339,18 +345,21 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			log.Fatalf("Error reading input:  %s", err.Error())
+			utils.Log.Warnf("Error reading input:  %s", err.Error())
+			os.Exit(1)
 		}
 		if choice < 1 || choice > len(contexts) {
-			log.Fatalf("Invalid choice: %d. Please select a number between 1 and %d.", choice, len(contexts))
+			utils.Log.Warnf("Invalid choice: %d. Please select a number between 1 and %d.", choice, len(contexts))
+			os.Exit(1)
 		}
 		chosenCtx = contexts[choice-1]
 	}
 
-	log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
+	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, chosenCtx)
 	if err != nil {
-		log.Fatalf("Error setting context: %s", err.Error())
+		utils.Log.Warnf("Error setting context: %s", err.Error())
+		os.Exit(1)
 	}
 }
 

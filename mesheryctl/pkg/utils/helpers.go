@@ -33,8 +33,6 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
-	log "github.com/sirupsen/logrus"
-
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
@@ -366,11 +364,13 @@ func BackupConfigFile(cfgFile string) {
 	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
 	err := os.Rename(cfgFile, bakLocation)
 	if err != nil {
-		log.Fatal(err)
+		LogError.Error(err)
+		os.Exit(1)
 	}
 	_, err = os.Create(cfgFile)
 	if err != nil {
-		log.Fatal(err)
+		LogError.Error(err)
+		os.Exit(1)
 	}
 }
 
@@ -394,7 +394,7 @@ func StringWithCharset(length int) string {
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer) {
 	if cerr := co.Close(); cerr != nil {
-		log.Error(cerr)
+		LogError.Error(cerr)
 	}
 }
 
@@ -501,7 +501,7 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 
 // UpdateMesheryContainers runs the update command for meshery client
 func UpdateMesheryContainers() error {
-	log.Info("Updating Meshery now...")
+	Log.Info("Updating Meshery now...")
 
 	// Use compose library instead of exec.Command
 	composeClient, err := NewComposeClient()
@@ -523,7 +523,8 @@ func AskForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			LogError.Error(err)
+			os.Exit(1)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
@@ -578,7 +579,7 @@ func ClearLine() {
 	clearCmd.Stdout = os.Stdout
 	err := clearCmd.Run()
 	if err != nil {
-		Log.Error(ErrClearLine(err))
+		LogError.Error(ErrClearLine(err))
 		return
 	}
 }
@@ -747,7 +748,8 @@ func AskForInput(prompt string, allowed []string) string {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			LogError.Error(err)
+			os.Exit(1)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
@@ -755,7 +757,9 @@ func AskForInput(prompt string, allowed []string) string {
 		if StringInSlice(response, allowed) {
 			return response
 		}
-		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
+		Log.Infof("Invalid respose %s. Allowed responses %s", response, allowed)
+		LogError.Error(err)
+		os.Exit(1)
 	}
 }
 
@@ -1237,7 +1241,7 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 		event := <-keysEvents
 		if event.Err != nil {
-			Log.Error(fmt.Errorf("unable to capture keyboard events"))
+			LogError.Error(fmt.Errorf("unable to capture keyboard events"))
 			break
 		}
 

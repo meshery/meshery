@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -76,8 +75,8 @@ func TestRootCmdIntegration(t *testing.T) {
 			viper.Reset()
 
 			b := bytes.NewBufferString("")
-			logrus.SetOutput(b)
-			utils.SetupLogrusFormatter()
+			utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, b)
+			utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, b)
 			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 

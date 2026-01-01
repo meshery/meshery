@@ -22,7 +22,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -92,7 +91,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 			if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
 				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 			}
-			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
+			utils.Log.Infof(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
 		}
 		return nil
 	},
@@ -111,7 +110,7 @@ mesheryctl system token delete [token-name]
 		if err = config.DeleteTokenFromConfig(tokenName, utils.DefaultConfigPath); err != nil {
 			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
 		}
-		log.Printf("Token %s deleted.", tokenName)
+		utils.Log.Infof("Token %s deleted.", tokenName)
 		return nil
 	},
 }
@@ -133,7 +132,7 @@ mesheryctl system token set [token-name]
 			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
 		}
-		log.Printf("Token %s set for context %s", tokenName, ctx)
+		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
 		return nil
 	},
 }
@@ -153,18 +152,18 @@ mesheryctl system token list
 		viper.SetConfigFile(utils.DefaultConfigPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
+			utils.LogError.Error(utils.ErrReadConfigFile(err))
 			return nil
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
-		log.Print("Available tokens: ")
+		utils.Log.Info("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
-			log.Info(t.Name)
+			utils.Log.Info(t.Name)
 		}
 		return nil
 	},
@@ -185,20 +184,20 @@ mesheryctl system token view (show token of current context)
 		viper.SetConfigFile(utils.DefaultConfigPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			utils.Log.Error(utils.ErrReadConfigFile(err))
+			utils.LogError.Error(utils.ErrReadConfigFile(err))
 			return nil
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		if viewAllTokens {
-			log.Info("Listing all available tokens...\n")
+			utils.Log.Info("Listing all available tokens...\n")
 			for _, t := range *mctlCfg.GetTokens() {
-				log.Info("- token: ", t.Name)
-				log.Info("  location: ", t.Location)
+				utils.Log.Infof("- token: %s", t.Name)
+				utils.Log.Infof("  location: %s", t.Location)
 			}
 			return nil
 		}
@@ -206,27 +205,27 @@ mesheryctl system token view (show token of current context)
 		if len(args) == 0 {
 			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
-				utils.Log.Error(ErrTokenContext(err))
+				utils.LogError.Error(ErrTokenContext(err))
 				return nil
 			}
-			log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
-			log.Info("token: ", token.Name)
-			log.Info("location: ", token.Location)
+			utils.Log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
+			utils.Log.Infof("token: %s", token.Name)
+			utils.Log.Infof("location: %s", token.Location)
 			return nil
 		}
 		tokenName = args[0]
 		var tokenNames []string
 		for _, t := range mctlCfg.Tokens {
 			if t.Name == tokenName {
-				log.Info("token: ", t.Name)
-				log.Info("location: ", t.Location)
+				utils.Log.Infof("token: %s", t.Name)
+				utils.Log.Infof("location: %s", t.Location)
 				return nil
 			}
 			// Collecting token names in case the provided token name is invalid and a prompt is to be shown.
 			tokenNames = append(tokenNames, t.Name)
 		}
 
-		log.Info("Invalid token name. Select from available tokens-")
+		utils.Log.Info("Invalid token name. Select from available tokens-")
 		prompt := promptui.Select{
 			Label: "Select a token from the list",
 			Items: tokenNames,
@@ -235,8 +234,8 @@ mesheryctl system token view (show token of current context)
 		if err != nil {
 			return err
 		}
-		log.Info("token: ", mctlCfg.Tokens[i].Name)
-		log.Info("location: ", mctlCfg.Tokens[i].Location)
+		utils.Log.Infof("token: %s", mctlCfg.Tokens[i].Name)
+		utils.Log.Infof("location: %s", mctlCfg.Tokens[i].Location)
 		return nil
 	},
 }

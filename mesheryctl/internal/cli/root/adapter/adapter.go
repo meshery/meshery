@@ -27,7 +27,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -55,7 +54,7 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 				return nil
 			}
 
@@ -78,12 +77,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 			}
 			return nil
 		},
@@ -253,10 +252,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "Error") {
 				eventChan <- "error"
-				log.Infof("%s\n", i.Data.Summary)
+				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
 	}()
@@ -301,10 +300,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
-				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "error") {
 				eventChan <- "error"
-				log.Infof("%s", i.Data.Summary)
+				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
 	}()
