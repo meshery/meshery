@@ -43,7 +43,7 @@ For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf1
 
 A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/config.go` file. These are updated and should be used for getting the Meshery configuration.
 
-For logs, `mesheryctl` uses an abstraction of [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
+For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
 
 `mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
 
