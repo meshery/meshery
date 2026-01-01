@@ -181,6 +181,8 @@
       children:
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
+        - title: Exploring Kubernetes Services
+          url: guides/tutorials/kubernetes-services
         - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
         - title: Exploring Kubernetes Pods
