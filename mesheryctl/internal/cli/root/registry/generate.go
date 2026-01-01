@@ -100,6 +100,13 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		if checkFlag {
+			if checkFormat != "json" && checkFormat != "yaml" && checkFormat != "table" {
+				return ErrFindInvalidOutputFormat(checkFormat)
+			}
+			if len(args) == 0 {
+				return ErrFindImageRefRequired()
+			}
+
 			return nil
 		}
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
@@ -128,16 +135,7 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if checkFlag {
-			// 1. Validation
-			if len(args) == 0 {
-				return errors.New("required argument 'image-reference' not provided.\n\nUsage: mesheryctl registry generate --check <oci-image-reference> [--format json|yaml|table] [--count]\n\nRun 'mesheryctl registry generate --help' for more information.")
-			}
 			imageRef := args[0]
-
-			// 2. Validate Format
-			if checkFormat != "json" && checkFormat != "yaml" && checkFormat != "table" {
-				return fmt.Errorf("invalid format '%s'. Allowed: json, yaml, table", checkFormat)
-			}
 
 			utils.Log.Info(fmt.Sprintf("Scanning OCI image: %s", imageRef))
 
@@ -146,7 +144,6 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 				return fmt.Errorf("failed to scan image: %w", err)
 			}
 
-			// 4. Handle "Count Only" Mode
 			if checkCount {
 				utils.Log.Info(fmt.Sprintf("Found %d CRD(s) in image %s", len(crds), imageRef))
 				return nil
@@ -157,15 +154,12 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 				return nil
 			}
 
-			// 5. Build Result Struct
-			// (Ensure FindResult struct is defined in this file!)
 			result := FindResult{
 				ImageRef: imageRef,
 				CRDs:     crds,
 				Count:    len(crds),
 			}
 
-			// 6. Output Formatting (JSON / YAML / Table)
 			switch checkFormat {
 			case "json":
 				output, err := json.MarshalIndent(result, "", "  ")
@@ -196,7 +190,6 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 				utils.PrintToTable(header, rows, nil)
 			}
 
-			// 7. STOP. Do not run the generation logic below.
 			return nil
 		}
 		var wg sync.WaitGroup
