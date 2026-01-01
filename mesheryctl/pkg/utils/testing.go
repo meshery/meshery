@@ -368,6 +368,8 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			defer ResetCommandFlags(cmd, t)
+
 			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			TokenFlag = GetToken(t)
@@ -417,7 +419,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				}
 
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				ResetCommandFlags(cmd, t)
 				return
 			}
 
@@ -437,7 +438,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
-			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("List %s test", commandName)
 	}
@@ -471,6 +471,8 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			defer ResetCommandFlags(cmd, t)
+
 			if tt.Fixture != "" {
 				apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
@@ -520,7 +522,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 				}
 
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				ResetCommandFlags(cmd, t)
 				return
 			}
 
@@ -536,8 +537,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
-
-			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("Test '%s' executed", tt.Name)
 	}
@@ -555,7 +554,7 @@ type MesheryMultiURLCommamdTest struct {
 	ExpectedError    error `default:"nil"`
 }
 
-func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVaribale func()) {
+func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
 	// setup current context
 	SetupContextEnv(t)
 	// initialize mock server for handling requests
@@ -566,6 +565,9 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			defer resetVariables()
+			defer ResetCommandFlags(cmd, t)
+
 			if tt.Token != "" {
 				TokenFlag = tt.Token
 			} else {
@@ -601,15 +603,12 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 						expectedResponse := golden.Load()
 
 						Equals(t, expectedResponse, err.Error())
-						resetVaribale()
 						return
 					}
 					t.Fatal(err)
 				}
 
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				resetVaribale()
-				ResetCommandFlags(cmd, t)
 				return
 			}
 
@@ -625,15 +624,13 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
-
-			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("Test '%s' executed", tt.Name)
 	}
 	StopMockery(t)
 }
 
-func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVaribale func()) {
+func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
 	// setup current context
 	SetupContextEnv(t)
 	// initialize mock server for handling requests
@@ -644,6 +641,9 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			defer resetVariables()
+			defer ResetCommandFlags(cmd, t)
+
 			if tt.Token != "" {
 				TokenFlag = tt.Token
 			} else {
@@ -698,7 +698,6 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 				}
 
 				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				ResetCommandFlags(cmd, t)
 				return
 			}
 
@@ -718,7 +717,6 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
-			ResetCommandFlags(cmd, t)
 		})
 		t.Logf("List %s test", commandName)
 	}

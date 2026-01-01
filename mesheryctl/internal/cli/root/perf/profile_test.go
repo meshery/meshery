@@ -15,20 +15,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-type tempTestStruct struct {
-	Name             string
-	Args             []string
-	URLs             []utils.MockURL
-	ExpectedResponse string
-	Token            string
-	ExpectError      bool
-	IsOutputGolden   bool  `default:"true"`
-	ExpectedError    error `default:"nil"`
-}
-
 func TestProfileCmd(t *testing.T) {
-	utils.SetupContextEnv(t)
-	utils.StartMockery(t)
 	testContext := utils.NewTestHelper(t)
 
 	// get current directory

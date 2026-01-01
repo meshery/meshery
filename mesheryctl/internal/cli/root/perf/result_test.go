@@ -36,7 +36,6 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "result.list.output.golden",
-			Token:            testToken,
 			ExpectError:      false,
 		},
 	}
@@ -50,7 +49,6 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "result.json.output.golden",
-			Token:            testToken,
 			ExpectError:      false,
 		},
 		{
