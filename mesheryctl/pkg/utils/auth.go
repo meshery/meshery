@@ -52,8 +52,6 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 		return nil, ErrAttachAuthToken(err)
 	}
 
-	log.Debug("token path is" + tokenPath)
-
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
