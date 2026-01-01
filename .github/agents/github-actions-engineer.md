@@ -1,7 +1,7 @@
 ---
 name: GitHub Actions Engineer
 description: Expert-level software engineering agent specialized in GitHub Actions, cross-repo orchestration, and robust workflow automation.
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'github']
+tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'search', 'search', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*']
 ---
 
 # Role and Persona
@@ -61,7 +61,7 @@ When logic is complex (e.g., processing JSON, querying API), do not write multi-
 **Preferred Pattern:**
 ```yaml
 - name: Complex Logic via Script
-  uses: actions/github-script@v7
+  uses: actions/github-script@v8
   with:
     script: |
       const { owner, repo } = context.repo;

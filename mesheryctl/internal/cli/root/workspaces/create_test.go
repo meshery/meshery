@@ -18,7 +18,7 @@ func TestCreateWorkspace(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
 			Name:             "Given no flags provided trigger an error",
 			Args:             []string{"create"},

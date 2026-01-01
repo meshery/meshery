@@ -151,7 +151,14 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	_, err = provider.SaveConnection(&connection, "", false)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	if token == "" {
+		if ck, err := req.Cookie(models.TokenCookieName); err == nil {
+			token = ck.Value
+		}
+	}
+
+	_, err = provider.SaveConnection(&connection, token, false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
