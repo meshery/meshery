@@ -25,6 +25,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -129,12 +130,12 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 		if checkFlag {
 			// 1. Validation
 			if len(args) == 0 {
-				return errors.New("please provide an image to scan.\nUsage: mesheryctl registry generate --check <image> [--format json|yaml]")
+				return errors.New("required argument 'image-reference' not provided.\n\nUsage: mesheryctl registry generate --check <oci-image-reference> [--format json|yaml|table] [--count]\n\nRun 'mesheryctl registry generate --help' for more information.")
 			}
 			imageRef := args[0]
 
 			// 2. Validate Format
-			if checkFormat != "" && checkFormat != "json" && checkFormat != "yaml" && checkFormat != "table" {
+			if checkFormat != "json" && checkFormat != "yaml" && checkFormat != "table" {
 				return fmt.Errorf("invalid format '%s'. Allowed: json, yaml, table", checkFormat)
 			}
 
@@ -328,10 +329,9 @@ func scanTarForCRDs(tr *tar.Reader, crds []CRD) ([]CRD, error) {
 
 			fileContent := buf.String()
 
-			if !strings.Contains(fileContent, "kind: CustomResourceDefinition") {
+			if matched, _ := regexp.MatchString(`kind:\s*CustomResourceDefinition`, fileContent); !matched {
 				continue
 			}
-
 			// Parse YAML - handle multi-document YAML files
 			decoder := yaml.NewDecoder(bytes.NewReader(buf.Bytes()))
 			for {
