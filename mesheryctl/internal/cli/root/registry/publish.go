@@ -16,12 +16,12 @@ package registry
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -116,34 +116,34 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			case "Models":
 				modelCSVHelper, err = meshkitRegistryUtils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 				err := modelCSVHelper.ParseModelsSheet(true, modelName)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 			case "Components":
 				componentCSVHelper, err = meshkitRegistryUtils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 				err := componentCSVHelper.ParseComponentsSheet(modelName)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 			case "Relationships":
 				relationshipCSVHelper, err = meshkitRegistryUtils.NewRelationshipCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 			}
@@ -168,19 +168,19 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
@@ -203,14 +203,16 @@ func remoteProviderSystem() error {
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
-			utils.Log.Debug("no components found for ", model.Model)
+			utils.Log.Debugf("no components found for %s", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
 			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
+			utils.Log.Infof("Error generating icons for model %s: \n", model.Model)
+			utils.LogError.Error(err)
+			os.Exit(1)
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
@@ -247,17 +249,23 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating remote provider docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Infof("Error generating remote provider docs for model %s \n", model.Model)
+				utils.LogError.Error(err)
+				os.Exit(1)
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Infof("Error generating meshery docs for model %s \n", model.Model)
+				utils.LogError.Error(err)
+				os.Exit(1)
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Infof("Error generating mesheryio docs for model %s \n", model.Model)
+				utils.LogError.Error(err)
+				os.Exit(1)
 			}
 		}
 
@@ -268,7 +276,7 @@ func websiteSystem() error {
 		docsJSON += "]; export default data"
 		mOut, _ := filepath.Abs(filepath.Join(modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 	}

@@ -22,8 +22,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -58,12 +56,12 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
 		if !isRunning {
-			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
+			utils.LogError.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
 			return nil
 		}
 
@@ -79,7 +77,7 @@ mesheryctl system login -p Meshery
 			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
 
-		log.Println("authenticated")
+		cmd.Println("authenticated")
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
@@ -88,13 +86,15 @@ mesheryctl system login -p Meshery
 
 			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				log.Error("failed to find token path for the current context")
+				utils.Log.Debug("failed to find token path for the current context")
+				utils.LogError.Error(err)
 				return nil
 			}
 		}
 
 		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
-			log.Error("failed to write the token to the filesystem: ", err)
+			utils.Log.Debug("failed to write the token to the filesystem: ")
+			utils.LogError.Error(err)
 		}
 
 		return nil

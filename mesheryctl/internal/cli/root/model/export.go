@@ -10,7 +10,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,7 +52,8 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Warnf("error processing config: %v", err)
+			os.Exit(1)
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
@@ -84,7 +84,7 @@ func export(modelName string, url string, output *outputDetail) error {
 	// Find the entity with the model name
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 
@@ -98,7 +98,7 @@ func export(modelName string, url string, output *outputDetail) error {
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 

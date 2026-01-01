@@ -29,7 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -113,7 +112,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
@@ -123,7 +122,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			// Read the test configuration file
 			smpConfig, err := os.ReadFile(filePath)
 			if err != nil {
-				utils.Log.Error(ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n")))
+				utils.LogError.Error(ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n")))
 				return nil
 			}
 
@@ -131,12 +130,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
-				utils.Log.Error(ErrFailUnmarshalFile(err))
+				utils.LogError.Error(ErrFailUnmarshalFile(err))
 				return nil
 			}
 
 			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
-				utils.Log.Error(ErrInvalidTestConfigFile())
+				utils.LogError.Error(ErrInvalidTestConfigFile())
 				return nil
 			}
 
@@ -178,20 +177,20 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		// Run test based on flags
 		if testName == "" {
-			log.Debug("Test Name not provided")
+			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			log.Debug("Using random test name: ", testName)
+			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			utils.Log.Error(ErrNoProfileName())
+			utils.LogError.Error(ErrNoProfileName())
 			return nil
 		}
 
 		// Invalid number of arguments
 		if len(args) > 1 {
-			utils.Log.Error(ErrorArgumentOverflow())
+			utils.LogError.Error(ErrorArgumentOverflow())
 			return nil
 		}
 
@@ -203,10 +202,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		profileName = strings.Join(args, "%20")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
-		log.Debug("Fetching performance profile")
+		utils.Log.Debug("Fetching performance profile")
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		index := 0
@@ -224,11 +223,11 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			if userResponse {
 				profileID, profileName, err = createPerformanceProfile(mctlCfg)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 			} else {
-				utils.Log.Error(ErrNoProfileFound())
+				utils.LogError.Error(ErrNoProfileFound())
 				return nil
 			}
 		} else {
@@ -238,7 +237,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				data := profilesToStringArrays(profiles)
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 					return nil
 				}
 				profileID = profiles[index].ID.String()
@@ -281,22 +280,22 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 
 		if testURL == "" {
-			utils.Log.Error(ErrNoTestURL())
+			utils.LogError.Error(ErrNoTestURL())
 			return nil
 		}
 
-		log.Debugf("performance profile is: %s", profileName)
-		log.Debugf("test-url set to %s", testURL)
+		utils.Log.Debugf("performance profile is: %s", profileName)
+		utils.Log.Debugf("test-url set to %s", testURL)
 
 		// Method to check if the entered Test URL is valid or not
 		if validURL := govalidator.IsURL(testURL); !validURL {
-			utils.Log.Error(ErrNotValidURL())
+			utils.LogError.Error(ErrNotValidURL())
 			return nil
 		}
 
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
+			utils.LogError.Error(utils.ErrCreatingRequest(err))
 			return nil
 		}
 
@@ -322,12 +321,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 		req.URL.RawQuery = q.Encode()
 
-		log.Info("Initiating Performance test ...")
+		utils.Log.Info("Initiating Performance test ...")
 
 		resp, err := utils.MakeRequest(req)
 
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
@@ -336,9 +335,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		log.Debug(string(data))
+		utils.Log.Debug(string(data))
 
-		log.Info("Test Completed!")
+		utils.Log.Info("Test Completed!")
 		return nil
 	},
 }
@@ -359,7 +358,7 @@ func init() {
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	log.Debug("Creating new performance profile inside function")
+	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -398,7 +397,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if loadTestBody != "" {
 		// Check if the loadTestBody is a filepath or a string
 		if _, err := os.Stat(loadTestBody); err == nil {
-			log.Info("Reading test body from file")
+			utils.Log.Info("Reading test body from file")
 			bodyFile, err := os.ReadFile(loadTestBody)
 			if err != nil {
 				return "", "", ErrReadFilepath(err)
@@ -498,6 +497,6 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	log.Debug("New profile created")
+	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
 }
