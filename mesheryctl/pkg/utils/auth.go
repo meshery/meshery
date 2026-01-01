@@ -120,8 +120,7 @@ func GetCurrentAuthToken() (string, error) {
 	// get config.yaml struct
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		log.Error(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	// Get token of current-context
 	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
