@@ -57,7 +57,6 @@ type tempTestStruct struct {
 	ExpectedResponse string
 	Token            string
 	ExpectError      bool
-	SanitizePath     bool  // set to true if output contains dynamic paths
 	IsOutputGolden   bool  `default:"true"`
 	ExpectedError    error `default:"nil"`
 }
