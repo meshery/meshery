@@ -202,8 +202,8 @@ func initConfig() {
 				os.Exit(1)
 			}
 
-			fmt.Printf(
-				fmt.Sprintf("Default config file created at %s",
+			fmt.Print(
+				fmt.Printf("Default config file created at %s",
 					utils.DefaultConfigPath,
 				))
 		}
