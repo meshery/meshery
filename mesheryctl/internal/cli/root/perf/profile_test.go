@@ -4,51 +4,16 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
-
-// golden file responses
-var (
-	// standard api response of 25 performance profile
-	profile1001 = "1001.golden"
-	// api response of performance profile with searched term "istio"
-	profile1002 = "1002.golden"
-	// api response of performance profile with searched term "test 3"
-	profile1003 = "1003.golden"
-	// api response of zero performance profile
-	profile1004 = "1004.golden"
-	// unable marshal response
-	profile1005 = "1005.golden"
-	// empty response
-	profile1006 = "1006.golden"
-)
-
-// golden file mesheryctl outputs
-var (
-	// mesheryctl response of 25 performance profile
-	profile1001output = "1001.golden"
-	// mesheryctl response of performance profile with searched term "istio"
-	profile1002output = "1002.golden"
-	// mesheryctl response of performance profile with searched term "test 3"
-	profile1003output = "1003.golden"
-	// mesheryctl response when no profiles found
-	profile1005output = "1005.golden"
-	// mesheryctl response of 25 performance profile in json output
-	profile1006output = "1006.golden"
-	// mesheryctl response of 25 performance profile in yaml output
-	profile1007output = "1007.golden"
-)
 
 type tempTestStruct struct {
 	Name             string
@@ -72,53 +37,47 @@ func TestProfileCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures", "profile")
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
-	testdataDir := filepath.Join(currDir, "testdata", "profile")
 	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 
-	tests := []tempTestStruct{
+	listTests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name: "standard profiles output",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1001output,
-			Token:            testToken,
+			ExpectedResponse: "profile.list.output.golden",
 			ExpectError:      false,
 		},
 		{
 			Name: "profiles searching istio",
 			Args: []string{"profile", "istio"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1002, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.searchIstio.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1002output,
-			Token:            testToken,
+			ExpectedResponse: "profile.searchIstio.output.golden",
 			ExpectError:      false,
 		},
 		{
 			Name: "profiles searching test 3",
 			Args: []string{"profile", "test", "3"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1003, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.searchTest3.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1003output,
-			Token:            testToken,
+			ExpectedResponse: "profile.searchTest3.output.golden",
 			ExpectError:      false,
 		},
 	}
 
-	testsforLogrusOutputs := []tempTestStruct{
+	loggerTests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name: "No profiles found",
 			Args: []string{"profile", "--view"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1005output,
-			Token:            testToken,
+			ExpectedResponse: "profile.noProfiles.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   false,
 			ExpectedError:    errors.New("No Performance Profiles to display"),
@@ -127,30 +86,27 @@ func TestProfileCmd(t *testing.T) {
 			Name: "standard profiles in json output",
 			Args: []string{"profile", "-o", "json"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1006output,
-			Token:            testToken,
+			ExpectedResponse: "profile.json.output.golden",
 			ExpectError:      false,
 		},
 		{
 			Name: "standard profiles in yaml output",
 			Args: []string{"profile", "-o", "yaml"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: profile1007output,
-			Token:            testToken,
+			ExpectedResponse: "profile.yaml.output.golden",
 			ExpectError:      false,
 		},
 		{
 			Name: "invalid output format",
 			Args: []string{"profile", "-o", "invalid"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "",
-			Token:            testToken,
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    ErrInvalidOutputChoice(),
@@ -159,10 +115,9 @@ func TestProfileCmd(t *testing.T) {
 			Name: "Unmarshal error",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
+				{Method: "GET", URL: profileURL, Response: "profile.invalidJSON.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "",
-			Token:            testToken,
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError: func() error {
@@ -179,10 +134,9 @@ func TestProfileCmd(t *testing.T) {
 			Name: "Server Error 400",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 400},
+				{Method: "GET", URL: profileURL, Response: "profile.error.response.golden", ResponseCode: 400},
 			},
 			ExpectedResponse: "",
-			Token:            testToken,
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError: func() error {
@@ -208,135 +162,8 @@ func TestProfileCmd(t *testing.T) {
 	}
 
 	// Run tests in list format
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			utils.TokenFlag = tt.Token
+	utils.RunMesheryctlMultiURLListTests(t, update, PerfCmd, listTests, currDir, "perf", resetVariables)
 
-			for _, mock := range tt.URLs {
-				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
-				httpmock.RegisterResponder(mock.Method, mock.URL,
-					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
-			}
-
-			// Skip golden file creation for error tests that use ExpectedError instead
-			var golden *utils.GoldenFile
-			if tt.ExpectedResponse != "" {
-				golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			}
-
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
-
-			// Grab console prints with proper cleanup
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			PerfCmd.SetArgs(tt.Args)
-			PerfCmd.SetOut(originalStdout)
-			err := PerfCmd.Execute()
-
-			// Close write end before reading
-			w.Close()
-
-			if err != nil {
-				if tt.ExpectError {
-					if tt.IsOutputGolden {
-
-						if *update {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-						utils.Equals(t, expectedResponse, err.Error())
-						resetVariables()
-						return
-					}
-
-					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-					resetVariables()
-					return
-				}
-				t.Error(err)
-			}
-
-			out, _ := io.ReadAll(r)
-
-			// response being printed in console
-			actualResponse := string(out)
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedexpectedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedexpectedResponse, cleanedActualResponse)
-			resetVariables()
-		})
-	}
-
-	// Run tests in list format
-	for _, tt := range testsforLogrusOutputs {
-		t.Run(tt.Name, func(t *testing.T) {
-			utils.TokenFlag = tt.Token
-
-			for _, mock := range tt.URLs {
-				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
-				httpmock.RegisterResponder(mock.Method, mock.URL,
-					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
-			}
-
-			// Skip golden file creation for error tests that use ExpectedError instead
-			var golden *utils.GoldenFile
-			if tt.ExpectedResponse != "" {
-				golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			}
-
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-
-			PerfCmd.SetArgs(tt.Args)
-			PerfCmd.SetOut(b)
-			err := PerfCmd.Execute()
-			if err != nil {
-				if tt.ExpectError {
-					if tt.IsOutputGolden {
-
-						if *update {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-						utils.Equals(t, expectedResponse, err.Error())
-						resetVariables()
-						return
-					}
-
-					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-					resetVariables()
-					return
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-			utils.Equals(t, expectedResponse, actualResponse)
-			resetVariables()
-		})
-		t.Log("Profile Perf test Passed")
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+	// Run tests in logger format
+	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
 }
