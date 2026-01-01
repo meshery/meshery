@@ -361,7 +361,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		utils.Log.Info("Provider reset to %s", MesheryProvider)
+		utils.Log.Infof("Provider reset to %s", MesheryProvider)
 		return nil
 	},
 }
