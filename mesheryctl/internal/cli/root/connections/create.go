@@ -124,7 +124,7 @@ func createAKSConnection() error {
 	// Write AKS compatible config to the filesystem
 	err = aksCmd.Run()
 	if err != nil {
-		utils.Log.Warnf("Error reading AKS cluster name: %s", err.Error())
+		utils.Log.Warnf("Error generating kubeconfig: %s", err.Error())
 		return err
 	}
 	utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
