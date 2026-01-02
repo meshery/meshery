@@ -26,6 +26,7 @@ It also supports a collaborative environment, where DevOps engineers can share t
 3. Verify that your design has the appropriate technologies, description, and any cavaets or other considerations of its purpose of use listed.
 4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
 
+![Publish to Catalog]()
 <a href="{{ site.baseurl }}/assets/img/configuration-management/publish-to-catalog-screenshot.png" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/configuration-management/publish-to-catalog-screenshot.png" width="70%" /></a>
 <figure>
