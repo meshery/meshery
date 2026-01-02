@@ -426,6 +426,11 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				t.Fatal(errCopy)
 			}
 
+			// Check if an error was expected but none occurred
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
 			actualResponse := buf.String()
 
 			if *updateGoldenFile {
@@ -526,6 +531,11 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 			}
 
+			// Check if an error was expected but none occurred
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
 			actualResponse := b.String()
 
 			if *updateGoldenFile {
@@ -593,9 +603,9 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			cmd.SetOut(b)
 			err := cmd.Execute()
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
+				// if we're supposed to get an error
 				if tt.ExpectError {
-					// if we're supposed to get an error
+					// Keep this check to see if output is golden file during transition
 					if tt.IsOutputGolden {
 						// write it in file
 						if *updateGoldenFile {
@@ -609,8 +619,13 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
-				t.Fatal(err)
+				// Unexpected error - fail immediately
+				t.Fatalf("unexpected error: %v", err)
+			}
 
+			// Check if an error was expected but none occurred
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
 			}
 
 			actualResponse := b.String()
@@ -698,8 +713,13 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
-				t.Fatal(err)
+				// Unexpected error - fail immediately
+				t.Fatalf("unexpected error: %v", err)
+			}
 
+			// Check if an error was expected but none occurred
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
 			}
 
 			_, errCopy := io.Copy(&buf, r)
