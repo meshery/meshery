@@ -18,7 +18,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -120,7 +119,7 @@ func GetCurrentAuthToken() (string, error) {
 	// get config.yaml struct
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		log.Error(err)
+		LogError.Error(err)
 		os.Exit(1)
 	}
 	// Get token of current-context
@@ -241,7 +240,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 	go func() {
 		if err := srv.Serve(listener); err != nil {
 			if err != http.ErrServerClosed {
-				log.Println("error creating temporary server")
+				fmt.Println("error creating temporary server")
 			}
 		}
 	}()
@@ -273,7 +272,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 
 	var token string
 
-	log.Println("Initiating login...")
+	fmt.Println("Initiating login...")
 
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {

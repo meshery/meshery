@@ -10,7 +10,6 @@ import (
 	"os"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
@@ -18,6 +17,7 @@ import (
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 )
+
 
 // PortForward provides a port-forward connection into a Kubernetes cluster.
 type PortForward struct {
@@ -146,7 +146,7 @@ func (pf *PortForward) run() error {
 // This function blocks until the connection is established, in which case it returns nil.
 // It's the caller's responsibility to call Stop() to finish the connection.
 func (pf *PortForward) Init() error {
-	log.Debugf("Starting port forward to %s %d:%d", pf.url, pf.localPort, pf.remotePort)
+	Log.Debugf("Starting port forward to %s %d:%d", pf.url, pf.localPort, pf.remotePort)
 
 	failure := make(chan error)
 
@@ -161,9 +161,9 @@ func (pf *PortForward) Init() error {
 	// 2) Return an err, causing a receive `<-failure`
 	select {
 	case <-pf.readyCh:
-		log.Debug("Port forward initialized")
+		Log.Debug("Port forward initialized")
 	case err := <-failure:
-		log.Debugf("Port forward failed: %v", err)
+		Log.Debugf("Port forward failed: %v", err)
 		return err
 	}
 
