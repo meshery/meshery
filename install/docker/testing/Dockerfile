@@ -52,7 +52,7 @@ COPY provider-ui .
 RUN npm run build
 
 # This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.15.3 AS base-alpine
+FROM alpine:3.23.2 AS base-alpine
 
 FROM base-alpine AS wrk2
 RUN apk update \
