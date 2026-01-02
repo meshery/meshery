@@ -97,10 +97,12 @@ jobs:
           echo "opa-exit-code=$OPA_EXIT_CODE" >> $GITHUB_OUTPUT
           
           # Parse results
-          PASSED=$(grep -c "PASS" opa-test-results.txt 2>/dev/null)
-          PASSED=${PASSED:-0}
-          FAILED=$(grep -c "FAIL" opa-test-results.txt 2>/dev/null)
-          FAILED=${FAILED:-0}
+          PASSED=0
+          FAILED=0
+          if [ -f opa-test-results.txt ]; then
+            PASSED=$(grep -c "PASS" opa-test-results.txt 2>/dev/null || true)
+            FAILED=$(grep -c "FAIL" opa-test-results.txt 2>/dev/null || true)
+          fi
           TOTAL=$((PASSED + FAILED))
           
           echo "passed=$PASSED" >> $GITHUB_OUTPUT
