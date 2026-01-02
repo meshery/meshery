@@ -27,63 +27,29 @@ mesheryctl connection [flags]
 
 ## Examples
 
-### Count all available connections
-
-Use this command to display the total number of connections configured in Meshery.
+Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection --count
-</div>
-</pre>
+mesheryctl exp connection --count
 
-Example output:
+</div>
+</pre> 
+
+List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-2
+mesheryctl exp connection list
+
 </div>
-</pre>
+</pre> 
 
----
-
-### List all connections
-
-Lists all available connections along with their ID, name, type, and status.
-
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list
+mesheryctl exp connection delete [connection_id]
+
 </div>
-</pre>
-
-Example output:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-ID          NAME               TYPE          STATUS
-4f3a2c9e    local-k8s          kubernetes    connected
-9b7d1a22    prod-cluster       kubernetes    disconnected
-</div>
-</pre>
-
----
-
-### Delete a connection using connection ID
-
-Deletes a specific connection using its unique connection ID.
-Use `mesheryctl connection list` to find the connection ID.
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl connection delete [connection_id]
-</div>
-</pre>
-
-Successful deletion confirmation:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-Connection deleted successfully
-</div>
-</pre>
-
+</pre> 
 
 ## Options
 
