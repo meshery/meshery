@@ -19,7 +19,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -172,18 +171,10 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-// setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
-	b := bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	SetupLogrusFormatter()
-	return b
-}
-
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	SetupMeshkitLogger("mesheryctl", verbose, b)
 	return b
 }
 
