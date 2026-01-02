@@ -120,7 +120,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0o755)
+			err := os.WriteFile(path, []byte(content), 0755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -129,7 +129,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = os.WriteFile(path, []byte(content), 0o644)
+	err = os.WriteFile(path, []byte(content), 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -139,7 +139,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0o644)
+	err := os.WriteFile(path, content, 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -402,10 +402,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			w.Close()
 
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
-					// if we're supposed to get an error
-					if tt.ExpectError {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// Keep this check to see if output is golden file during transition
+					if tt.IsOutputGolden {
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -415,11 +415,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
+					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
 				}
-
-				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				return
+				t.Fatal(err)
 			}
 
 			_, errCopy := io.Copy(&buf, r)
@@ -505,10 +504,11 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cmd.SetOut(b)
 			err := cmd.Execute()
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
-					// if we're supposed to get an error
-					if tt.ExpectError {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// Keep this check to see if output is golden file during transition
+					if tt.IsOutputGolden {
+
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -518,11 +518,12 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
-				}
+					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
 
-				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				return
+				}
+				t.Fatal(err)
+
 			}
 
 			actualResponse := b.String()
@@ -593,9 +594,9 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			err := cmd.Execute()
 			if err != nil {
 				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
+				if tt.ExpectError {
 					// if we're supposed to get an error
-					if tt.ExpectError {
+					if tt.IsOutputGolden {
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -605,11 +606,11 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
+					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
 				}
+				t.Fatal(err)
 
-				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				return
 			}
 
 			actualResponse := b.String()
@@ -681,10 +682,10 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 			w.Close()
 
 			if err != nil {
-				// Keep this check to see if output is golden file during transition
-				if tt.IsOutputGolden {
-					// if we're supposed to get an error
-					if tt.ExpectError {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// Keep this check to see if output is golden file during transition
+					if tt.IsOutputGolden {
 						// write it in file
 						if *updateGoldenFile {
 							golden.Write(err.Error())
@@ -694,11 +695,11 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 						Equals(t, expectedResponse, err.Error())
 						return
 					}
-					t.Fatal(err)
+					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
 				}
+				t.Fatal(err)
 
-				AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				return
 			}
 
 			_, errCopy := io.Copy(&buf, r)

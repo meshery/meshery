@@ -10,7 +10,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -66,8 +65,6 @@ func TestProfileCmd(t *testing.T) {
 			},
 			ExpectedResponse: "profile.noProfiles.output.golden",
 			ExpectError:      false,
-			IsOutputGolden:   false,
-			ExpectedError:    errors.New("No Performance Profiles to display"),
 		},
 		{
 			Name: "standard profiles in json output",
