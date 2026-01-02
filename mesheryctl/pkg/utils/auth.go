@@ -351,8 +351,8 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	token := <-tokenChan
 
 	// Add timeout context for server shutdown
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Shut down the server with timeout
 	if err := srv.Shutdown(ctx); err != nil {
