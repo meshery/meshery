@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<359e3faf308f403ed9207a13856d700b>>
+ * @generated SignedSource<<56c44d77d934736ff49c3bb96b344e0f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -86,4 +86,4 @@ return {
 
 node.hash = "ec7907a52eb8925b7e063038d08beb85";
 
-module.exports = node;
+export default node;
