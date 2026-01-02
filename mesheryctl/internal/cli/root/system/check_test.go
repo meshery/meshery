@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,8 +37,7 @@ func TestPreflightCmdIntegration(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
 			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
+			utils.SetupMeshkitLogger("mesheryctl", true, b)
 
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()

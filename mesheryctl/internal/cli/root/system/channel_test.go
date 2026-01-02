@@ -7,7 +7,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -37,8 +36,7 @@ func SetupContextEnv(t *testing.T) {
 func SetupFunc() {
 	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	utils.SetupLogrusFormatter()
+	utils.SetupMeshkitLogger("mesheryctl", true, b)
 	SystemCmd.SetOut(b)
 }
 
