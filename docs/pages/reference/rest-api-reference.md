@@ -11,7 +11,7 @@ language: en
 
 ## Meshery's APIs
 
-Each of Meshery's APIs is subject to the following authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
+Each of Meshery's APIs are subject to the following authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
 
 <details>
   <summary>Authentication</summary>
@@ -83,6 +83,6 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 ## Endpoints
 
-Self-generated documentation based on Meshery's OpenAPI specification for its REST API.
+This section contains self-generated documentation derived from Meshery’s OpenAPI specification for its REST APIs.
 
 {% include alert.html type="info" title="An alternative overview" content="See the <a href='https://docs.google.com/spreadsheets/d/1ABJCbfQRi0uN_YoP2kmHZ-lTI4S4QuvRk1_unomKNRE/edit'>Meshery API Endpoints spreadsheet</a> for an alternative overview of these endpoints." %}
