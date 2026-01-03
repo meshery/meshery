@@ -166,7 +166,7 @@ func createEKSConnection() error {
 		utils.Log.Info("Let's try again. Please enter the AWS cluster name:")
 		_, err = fmt.Scanf("%s", &clusterName)
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "Error reading AWS cluster name: %s", err.Error()))
+			utils.LogError.Error(errors.Wrap(err, "Error reading AWS cluster name"))
 			os.Exit(1)
 		}
 	}
@@ -178,7 +178,7 @@ func createEKSConnection() error {
 	// Write EKS compatible config to the filesystem
 	err = eksCmd.Run()
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error generating kubeconfig: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error generating kubeconfig"))
 		return err
 	}
 	utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
@@ -193,7 +193,7 @@ func createGKEConnection() error {
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error generating config: %v", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error generating config"))
 		return err
 	}
 	utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
@@ -207,24 +207,24 @@ func createMinikubeConnection() error {
 	utils.Log.Info("Configuring Meshery to access Minikube...")
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Could not find the default kube config: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Could not find the default kube config"))
 		return err
 	}
 	kubeConfig, err := clientcmd.LoadFromFile(utils.KubeConfig)
 	if kubeConfig == nil || err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error reading the default kube config: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error reading the default kube config"))
 		return err
 	}
 	// Flatten the config file
 	err = clientcmdapi.FlattenConfig(kubeConfig)
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error flattening config: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error flattening config"))
 		return err
 	}
 	// write the flattened config to kubeconfig.yaml file
 	err = clientcmd.WriteToFile(*kubeConfig, utils.ConfigPath)
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error writing config to file: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error writing config to file"))
 		return err
 	}
 	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
@@ -344,7 +344,7 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "Error reading input:  %s", err.Error()))
+			utils.LogError.Error(errors.Wrap(err, "Error reading input"))
 			os.Exit(1)
 		}
 		if choice < 1 || choice > len(contexts) {
@@ -357,7 +357,7 @@ func setToken() {
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, chosenCtx)
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error setting context: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error setting context"))
 		os.Exit(1)
 	}
 }

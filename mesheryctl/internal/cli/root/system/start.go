@@ -203,7 +203,7 @@ func start() error {
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if utils.Services[v].Image == "" {
-				utils.LogError.Error(errors.New(fmt.Sprintf("Invalid component specified %s", v)))
+				utils.LogError.Error(errors.New("Invalid component specified"))
 				os.Exit(1)
 			}
 
@@ -274,8 +274,7 @@ func start() error {
 			if err := utils.ViperCompose.WriteConfig(); err != nil {
 				// failure while adding a service to docker compose file is not a fatal error
 				// mesheryctl will continue deploying with required services (meshery, watchtower)
-				utils.LogError.Error(errors.New(fmt.Sprintf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)))
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrapf(err, "Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k))
 			}
 		}
 

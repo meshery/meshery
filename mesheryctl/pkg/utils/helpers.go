@@ -1240,7 +1240,7 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 		event := <-keysEvents
 		if event.Err != nil {
-			LogError.Error(fmt.Errorf("unable to capture keyboard events"))
+			LogError.Error(errors.New("unable to capture keyboard events"))
 			break
 		}
 

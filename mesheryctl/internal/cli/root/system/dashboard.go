@@ -177,7 +177,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				utils.Log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
 				if err != nil {
-					utils.Log.Warn(errors.Wrapf(err, "Opening Meshery UI in browser at "+currCtx.GetEndpoint()+"."))
+					utils.Log.Warn(errors.Wrapf(err, "Opening Meshery UI in browser at %v.", currCtx.GetEndpoint()))
 				}
 
 				<-portforward.GetStop()
@@ -234,7 +234,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
-				utils.Log.Warn(errors.Wrap(err, "Failed to open Meshery UI in your browser, please point your browser to "+currCtx.GetEndpoint()+" to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding."))
+				utils.Log.Warn(errors.Wrap(err, "Failed to open Meshery UI in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding."))
 			}
 		} else {
 			utils.Log.Info("Meshery UI available at: ", currCtx.GetEndpoint())

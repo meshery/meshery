@@ -161,7 +161,7 @@ mesheryctl system config aks
 			utils.Log.Info("Let's try again. Please enter the Azure resource group name:")
 			_, err = fmt.Scanf("%s", &resourceGroup)
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error reading Azure resource group name: %s", err.Error()))
+				utils.LogError.Error(errors.Wrap(err, "Error reading Azure resource group name"))
 				os.Exit(1)
 			}
 		}
@@ -174,7 +174,7 @@ mesheryctl system config aks
 			utils.Log.Info("Let's try again. Please enter the AKS cluster name:")
 			_, err = fmt.Scanf("%s", &aksName)
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error reading AKS cluster name: %s", err.Error()))
+				utils.LogError.Error(errors.Wrap(err, "Error reading AKS cluster name"))
 				os.Exit(1)
 			}
 		}
@@ -186,7 +186,7 @@ mesheryctl system config aks
 		// Write AKS compatible config to the filesystem
 		err = aksCmd.Run()
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "Error generating kubeconfig: %s", err.Error()))
+			utils.LogError.Error(errors.Wrap(err, "Error generating kubeconfig"))
 			return err
 		}
 		utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
@@ -234,7 +234,7 @@ mesheryctl system config eks
 			utils.Log.Info("Let's try again. Please enter the AWS region name:")
 			_, err = fmt.Scanf("%s", &regionName)
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error reading AWS region name: %s", err.Error()))
+				utils.LogError.Error(errors.Wrap(err, "Error reading AWS region name"))
 				os.Exit(1)
 			}
 		}
@@ -247,7 +247,7 @@ mesheryctl system config eks
 			utils.Log.Info("Let's try again. Please enter the AWS cluster name:")
 			_, err = fmt.Scanf("%s", &clusterName)
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error reading AWS cluster name: %s", err.Error()))
+				utils.LogError.Error(errors.Wrap(err, "Error reading AWS cluster name"))
 				os.Exit(1)
 			}
 		}
@@ -259,7 +259,7 @@ mesheryctl system config eks
 		// Write EKS compatible config to the filesystem
 		err = eksCmd.Run()
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "Error generating kubeconfig: %s", err.Error()))
+			utils.LogError.Error(errors.Wrap(err, "Error generating kubeconfig"))
 			return err
 		}
 		utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
@@ -418,7 +418,7 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "Error reading input: %s", err.Error()))
+			utils.LogError.Error(errors.Wrap(err, "Error reading input"))
 			os.Exit(1)
 		}
 		choosenCtx = contexts[choice-1]
@@ -427,7 +427,7 @@ func setToken() {
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, choosenCtx)
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "Error setting context: %s", err.Error()))
+		utils.LogError.Error(errors.Wrap(err, "Error setting context"))
 		os.Exit(1)
 	}
 }
