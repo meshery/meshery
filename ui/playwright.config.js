@@ -33,6 +33,7 @@ module.exports = defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: process.env.CI ? "./tests/e2e/custom-playwright-reporter.js" : "list",
   reporter: [
+    ['allure-playwright'],
     ['./tests/e2e/custom-playwright-reporter.js'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
   ],

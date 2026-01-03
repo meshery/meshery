@@ -81,3 +81,7 @@ wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
 install/docker-extension/vm/vm
+.env
+ui/.env
+*.env
+*/.env
