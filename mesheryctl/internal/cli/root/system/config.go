@@ -147,7 +147,7 @@ mesheryctl system config aks
 		aksCheck.Stderr = os.Stderr
 		err := aksCheck.Run()
 		if err != nil {
-			utils.Log.Info("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+			utils.LogError.Error(errors.New("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli "))
 			os.Exit(1)
 		}
 		utils.Log.Info("Configuring Meshery to access AKS...")
@@ -161,8 +161,7 @@ mesheryctl system config aks
 			utils.Log.Info("Let's try again. Please enter the Azure resource group name:")
 			_, err = fmt.Scanf("%s", &resourceGroup)
 			if err != nil {
-				utils.Log.Warnf("Error reading Azure resource group name: %s", err.Error())
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrapf(err, "Error reading Azure resource group name: %s", err.Error()))
 				os.Exit(1)
 			}
 		}
@@ -175,8 +174,7 @@ mesheryctl system config aks
 			utils.Log.Info("Let's try again. Please enter the AKS cluster name:")
 			_, err = fmt.Scanf("%s", &aksName)
 			if err != nil {
-				utils.Log.Warnf("Error reading AKS cluster name: %s", err.Error())
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrapf(err, "Error reading AKS cluster name: %s", err.Error()))
 				os.Exit(1)
 			}
 		}
@@ -188,7 +186,7 @@ mesheryctl system config aks
 		// Write AKS compatible config to the filesystem
 		err = aksCmd.Run()
 		if err != nil {
-			utils.Log.Warnf("Error generating kubeconfig: %s", err.Error())
+			utils.LogError.Error(errors.Wrapf(err, "Error generating kubeconfig: %s", err.Error()))
 			return err
 		}
 		utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
@@ -222,10 +220,8 @@ mesheryctl system config eks
 		eksCheck.Stderr = os.Stderr
 		err := eksCheck.Run()
 		if err != nil {
-			utils.Log.Infof("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
-			utils.LogError.Error(err)
-			os.Exit(1)
-		}
+			utils.LogError.Error(errors.Wrap(err, "AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ "))
+			os.Exit(1) }
 		utils.Log.Info("Configuring Meshery to access EKS...")
 		var regionName, clusterName string
 
@@ -237,8 +233,7 @@ mesheryctl system config eks
 			utils.Log.Info("Let's try again. Please enter the AWS region name:")
 			_, err = fmt.Scanf("%s", &regionName)
 			if err != nil {
-				utils.Log.Warnf("Error reading AWS region name: %s", err.Error())
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrapf(err, "Error reading AWS region name: %s", err.Error()))
 				os.Exit(1)
 			}
 		}
@@ -251,8 +246,7 @@ mesheryctl system config eks
 			utils.Log.Info("Let's try again. Please enter the AWS cluster name:")
 			_, err = fmt.Scanf("%s", &clusterName)
 			if err != nil {
-				utils.Log.Warnf("Error reading AWS cluster name: %s", err.Error())
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrapf(err, "Error reading AWS cluster name: %s", err.Error()))
 				os.Exit(1)
 			}
 		}
@@ -264,7 +258,7 @@ mesheryctl system config eks
 		// Write EKS compatible config to the filesystem
 		err = eksCmd.Run()
 		if err != nil {
-			utils.Log.Warnf("Error generating kubeconfig: %s", err.Error())
+			utils.LogError.Error(errors.Wrapf(err, "Error generating kubeconfig: %s", err.Error()))
 			return err
 		}
 		utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
@@ -297,7 +291,7 @@ mesheryctl system config gke
 		utils.Log.Info("Configuring Meshery to access GKE...")
 		SAName := "sa-meshery-" + utils.StringWithCharset(8)
 		if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
-			utils.Log.Warnf("Error generating config: ", err.Error())
+			utils.LogError.Error(errors.Wrap(err, "Error generating config: "))
 			return err
 		}
 		utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
@@ -329,14 +323,14 @@ mesheryctl system config minikube
 		utils.Log.Info("Configuring Meshery to access Minikube...")
 		// Get the config from the default config path
 		if _, err = os.Stat(utils.KubeConfig); err != nil {
-			utils.Log.Warnf("Could not find the default kube config:", err.Error())
+			utils.LogError.Error(errors.Wrap(err, "Could not find the default kube config:"))
 			return err
 		}
 
 		// Minifies and flattens kubeconfig and writes it to kubeconfig.yaml
 		_, _, err := meshkitkube.ProcessConfig(utils.KubeConfig, utils.ConfigPath)
 		if err != nil {
-			utils.Log.Warnf("Error writing config to file: ", err.Error())
+			utils.LogError.Error(errors.Wrap(err, "Error writing config to file: "))
 			return err
 		}
 
@@ -410,7 +404,7 @@ func setToken() {
 		os.Exit(1)
 	}
 	if len(contexts) < 1 {
-		utils.Log.Warnf("Error getting context: %s", fmt.Errorf("no contexts found"))
+		utils.LogError.Error(errors.Wrap(fmt.Errorf("no contexts found"), "Error getting context: "))
 		os.Exit(1)
 	}
 	choosenCtx := contexts[0]
@@ -423,8 +417,7 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			utils.Log.Info("Error reading input: ")
-			utils.LogError.Error(err)
+			utils.LogError.Error(errors.Wrapf(err, "Error reading input: %s", err.Error()))
 			os.Exit(1)
 		}
 		choosenCtx = contexts[choice-1]
@@ -433,8 +426,7 @@ func setToken() {
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, choosenCtx)
 	if err != nil {
-		utils.Log.Info("Error setting context: ")
-		utils.LogError.Error(err)
+		utils.LogError.Error(errors.Wrapf(err, "Error setting context: %s", err.Error()))
 		os.Exit(1)
 	}
 }

@@ -18,7 +18,6 @@ import (
 	"k8s.io/client-go/transport/spdy"
 )
 
-
 // PortForward provides a port-forward connection into a Kubernetes cluster.
 type PortForward struct {
 	method     string

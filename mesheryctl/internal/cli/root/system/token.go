@@ -110,7 +110,7 @@ mesheryctl system token delete [token-name]
 		if err = config.DeleteTokenFromConfig(tokenName, utils.DefaultConfigPath); err != nil {
 			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
 		}
-		utils.Log.Infof("Token %s deleted.", tokenName)
+		cmd.Printf("Token %s deleted.", tokenName)
 		return nil
 	},
 }
@@ -132,7 +132,7 @@ mesheryctl system token set [token-name]
 			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
 		}
-		utils.Log.Infof("Token %s set for context %s", tokenName, ctx)
+		cmd.Printf("Token %s set for context %s", tokenName, ctx)
 		return nil
 	},
 }
@@ -161,7 +161,7 @@ mesheryctl system token list
 			utils.LogError.Error(err)
 			return nil
 		}
-		utils.Log.Info("Available tokens: ")
+		cmd.Print("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
 			utils.Log.Info(t.Name)
 		}

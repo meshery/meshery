@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/tools/clientcmd/api"
+	//"github.com/sirupsen/logrus/hooks/test"
 )
 
 type mockCloser struct {
@@ -26,7 +27,11 @@ func (m mockCloser) Close() error {
 
 func TestSafeClose(t *testing.T) {
 
-	buf := SetupMeshkitLoggerTesting(t, true)
+	log := SetupMeshkitLoggerTesting(t, true)
+	// TODO: use the hook to test log entries 
+	// BUT using meshkit logger
+	// hook := test.NewGlobal()
+	// log.AddHook(hook)
 
 	// testcases for SafeClose(co io.Closer)
 	t.Run("SafeClose", func(t *testing.T) {
@@ -39,7 +44,7 @@ func TestSafeClose(t *testing.T) {
 		}
 		SafeClose(mc)
 
-        output := buf.String()
+        output := log.String()
         if output == "" {
             t.Fatal("expected log entry")
         }

@@ -134,7 +134,7 @@ mesheryctl system logs meshery-istio
 			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				utils.Log.Warnf("%s does not exist", utils.DockerComposeFile)
+				utils.LogError.Error(errors.Wrapf(err, "%s does not exist", utils.DockerComposeFile))
 				utils.Log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
 			}

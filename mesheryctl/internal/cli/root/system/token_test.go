@@ -151,7 +151,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t, false)
+			b = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -251,7 +251,7 @@ func TestTokenSetCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t, false)
+			b = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -339,7 +339,7 @@ func TestTokenViewCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t, false)
+			b = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -401,7 +401,7 @@ func TestTokenListCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t, false)
+			b = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()

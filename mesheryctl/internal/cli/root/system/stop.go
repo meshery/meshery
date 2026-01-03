@@ -241,7 +241,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 			return err
 		}
 
-		utils.LogError.Error(err)
+		utils.Log.Debug(err)
 	}
 
 	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
@@ -250,7 +250,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 			return err
 		}
 
-		utils.LogError.Error(err)
+		utils.Log.Debug(err)
 	}
 
 	return nil
@@ -280,7 +280,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		utils.LogError.Error(err)
+		utils.Log.Debug(err)
 	}
 
 	if err = deleteCRD(brokerCRDName, client); err != nil {
@@ -289,7 +289,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		utils.LogError.Error(err)
+		utils.Log.Debug(err)
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
@@ -298,7 +298,7 @@ func invokeDeleteCRDs() error {
 			return err
 		}
 
-		utils.LogError.Error(err)
+		utils.Log.Debug(err)
 	}
 
 	return nil

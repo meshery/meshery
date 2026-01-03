@@ -51,8 +51,7 @@ mesheryctl system logout
 
 		// Replace the content of the token file with empty content
 		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
-			utils.Log.Info("logout failed: ")
-			utils.LogError.Error(err)
+			utils.LogError.Error(errors.Wrap(err, "logout failed"))
 			return nil
 		}
 

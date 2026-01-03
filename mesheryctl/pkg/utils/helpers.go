@@ -757,8 +757,7 @@ func AskForInput(prompt string, allowed []string) string {
 		if StringInSlice(response, allowed) {
 			return response
 		}
-		Log.Infof("Invalid respose %s. Allowed responses %s", response, allowed)
-		LogError.Error(err)
+		Log.Error(errors.Wrapf(err, "Invalid respose %s. Allowed responses %s", response, allowed))
 		os.Exit(1)
 	}
 }
