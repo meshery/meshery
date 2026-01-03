@@ -15,9 +15,8 @@
 package registry
 
 import (
-	"fmt"
-
 	"errors"
+	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -25,7 +24,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, findCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd}
 
 	spreadsheeetID          string
 	spreadsheeetCred        string

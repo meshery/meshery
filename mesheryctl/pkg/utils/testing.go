@@ -19,7 +19,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -120,7 +119,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0o755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -129,7 +128,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = os.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -139,7 +138,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -154,7 +153,7 @@ func SetupContextEnv(t *testing.T) {
 	viper.Reset()
 	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
 	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	//fmt.Println(viper.ConfigFileUsed())
+	// fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -164,14 +163,6 @@ func SetupContextEnv(t *testing.T) {
 	if err != nil {
 		t.Error("error processing config", err)
 	}
-}
-
-// setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
-	b := bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	SetupLogrusFormatter()
-	return b
 }
 
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
@@ -189,7 +180,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
-	//fmt.Println(viper.ConfigFileUsed())
+	// fmt.Println(viper.ConfigFileUsed())
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -352,7 +343,7 @@ func GetToken(t *testing.T) string {
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
-	//initialize mock server for handling requests
+	// initialize mock server for handling requests
 	StartMockery(t)
 	// create a test helper
 	testContext := NewTestHelper(t)
@@ -362,7 +353,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
 			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			TokenFlag = GetToken(t)
@@ -460,7 +450,7 @@ type MesheryCommamdTest struct {
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
-	//initialize mock server for handling requests
+	// initialize mock server for handling requests
 	StartMockery(t)
 	// create a test helper
 	testContext := NewTestHelper(t)
@@ -501,7 +491,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(b)
 			err := cmd.Execute()
-
 			if err != nil {
 				// Keep this check to see if output is golden file during transition
 				if tt.IsOutputGolden {

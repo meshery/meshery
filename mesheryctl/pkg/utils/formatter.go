@@ -6,31 +6,32 @@ import (
 	"os"
 
 	"github.com/meshery/meshkit/logger"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
-
-// TerminalFormatter is exported
-type TerminalFormatter struct{}
-
-// Format defined the format of output for Logrus logs
-// Format is exported
-func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
-	return append([]byte(entry.Message), '\n'), nil
-}
-
-// SetupLogrusFormatter sets up the logrus formatter for improved UX
-// This is kept for backwards compatibility
-func SetupLogrusFormatter() {
-	log.SetFormatter(new(TerminalFormatter))
-}
 
 // SetupMeshkitLogger initializes and returns a MeshKit Logger instance
 func SetupMeshkitLogger(name string, debugLevel bool, output io.Writer) logger.Handler {
 	logLevel := viper.GetInt("LOG_LEVEL")
-	if !debugLevel {
-		logLevel = int(log.DebugLevel)
+
+	// Logrus Level constants (Hardcoded to avoid direct import)
+	// 4 = InfoLevel
+	// 5 = DebugLevel
+	const (
+		infoLevel  = 4
+		debugConst = 5
+	)
+
+	// If the debug flag is explicitly set, force the log level to Debug (5)
+	if debugLevel {
+		logLevel = debugConst
+	} else {
+		// If debug is off, we check if Viper had a value.
+		// If Viper returned 0 (not set), default to Info (4).
+		if logLevel == 0 {
+			logLevel = infoLevel
+		}
 	}
+
 	meshkitLogger, err := logger.New(name, logger.Options{
 		Format:   logger.TerminalLogFormat,
 		LogLevel: logLevel,

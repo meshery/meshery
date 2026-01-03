@@ -43,9 +43,7 @@ var (
 	verbose = false
 )
 
-var (
-	availableSubcommands = []*cobra.Command{}
-)
+var availableSubcommands = []*cobra.Command{}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -64,6 +62,9 @@ mesheryctl system start --help
 // For viewing verbose output:
 mesheryctl -v [or] --verbose
 `,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -80,8 +81,6 @@ mesheryctl -v [or] --verbose
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() error {
-	//log formatter for improved UX
-	utils.SetupLogrusFormatter()
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
 	err := RootCmd.Execute()
@@ -171,7 +170,7 @@ func initConfig() {
 			// Check for Meshery existence and permission of application folder
 			if _, err := os.Stat(utils.MesheryFolder); err != nil {
 				if os.IsNotExist(err) {
-					err = os.MkdirAll(utils.MesheryFolder, 0775)
+					err = os.MkdirAll(utils.MesheryFolder, 0o775)
 					if err != nil {
 						log.Fatal(err)
 					}

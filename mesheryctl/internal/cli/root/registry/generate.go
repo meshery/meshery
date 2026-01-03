@@ -15,19 +15,49 @@
 package registry
 
 import (
+	"archive/tar"
+	"bufio"
+	"bytes"
+	"compress/gzip"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"regexp"
+	"slices"
+	"strings"
 	"sync"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
+	"gopkg.in/yaml.v3"
 
+	"github.com/google/go-containerregistry/pkg/authn"
+	"github.com/google/go-containerregistry/pkg/name"
+	v1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 )
+
+type CRD struct {
+	Path     string `json:"path" yaml:"path"`
+	Group    string `json:"group" yaml:"group"`
+	Version  string `json:"version" yaml:"version"`
+	Kind     string `json:"kind" yaml:"kind"`
+	Plural   string `json:"plural" yaml:"plural"`
+	Singular string `json:"singular" yaml:"singular"`
+}
+
+// FindResult represents the complete output of a find operation
+type FindResult struct {
+	ImageRef string `json:"imageRef" yaml:"imageRef"`
+	CRDs     []CRD  `json:"crds" yaml:"crds"`
+	Count    int    `json:"count" yaml:"count"`
+}
 
 var (
 	componentSpredsheetGID         int64
@@ -44,7 +74,12 @@ var (
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
+	checkFlag           bool   // Triggers the check mode
+	checkFormat         string // Holds "json", "yaml", or "table"
+	checkCount          bool   // Triggers "count only" mode
+	validFormats        = []string{"json", "yaml", "table"}
 )
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -66,6 +101,16 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		if checkFlag {
+			if !slices.Contains(validFormats, checkFormat) {
+				return ErrFindInvalidOutputFormat(checkFormat)
+			}
+			if len(args) == 0 {
+				return ErrFindImageRefRequired()
+			}
+
+			return nil
+		}
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
@@ -91,6 +136,64 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if checkFlag {
+			imageRef := args[0]
+
+			utils.Log.Info(fmt.Sprintf("Scanning OCI image: %s", imageRef))
+
+			crds, err := FindCRDsInImage(imageRef)
+			if err != nil {
+				return fmt.Errorf("failed to scan image: %w", err)
+			}
+
+			if checkCount {
+				utils.Log.Info(fmt.Sprintf("Found %d CRD(s) in image %s", len(crds), imageRef))
+				return nil
+			}
+
+			if len(crds) == 0 {
+				utils.Log.Info("No CRDs found in the image.")
+				return nil
+			}
+
+			result := FindResult{
+				ImageRef: imageRef,
+				CRDs:     crds,
+				Count:    len(crds),
+			}
+
+			switch checkFormat {
+			case "json":
+				output, err := json.MarshalIndent(result, "", "  ")
+				if err != nil {
+					return fmt.Errorf("failed to marshal JSON: %w", err)
+				}
+				fmt.Println(string(output))
+			case "yaml":
+				output, err := yaml.Marshal(result)
+				if err != nil {
+					return fmt.Errorf("failed to marshal YAML: %w", err)
+				}
+				fmt.Println(string(output))
+			default: // "table"
+				utils.Log.Info(fmt.Sprintf("Discovered %d CRD(s):", len(crds)))
+				fmt.Println()
+				header := []string{"KIND", "GROUP", "VERSION", "PLURAL", "PATH"}
+				rows := [][]string{}
+				for _, crd := range crds {
+					rows = append(rows, []string{
+						crd.Kind,
+						crd.Group,
+						crd.Version,
+						crd.Plural,
+						crd.Path,
+					})
+				}
+				utils.PrintToTable(header, rows, nil)
+			}
+
+			return nil
+		}
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
@@ -142,6 +245,139 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 	},
 }
 
+// FindCRDsInImage scans the OCI image for YAML files and parses them to detect CRDs.
+func FindCRDsInImage(imageRef string) ([]CRD, error) {
+	ref, err := name.ParseReference(imageRef)
+	if err != nil {
+		return nil, ErrParseImageRef(err, imageRef)
+	}
+
+	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain))
+	if err != nil {
+		return nil, ErrFetchImage(err, imageRef)
+	}
+
+	layers, err := img.Layers()
+	if err != nil {
+		return nil, ErrGetImageLayers(err, imageRef)
+	}
+
+	var crds []CRD
+	for _, layer := range layers {
+		crds, err = processLayer(layer, crds)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return crds, nil
+}
+
+func processLayer(layer v1.Layer, existingCRDs []CRD) ([]CRD, error) {
+	rc, err := layer.Compressed()
+	if err != nil {
+		return nil, ErrProcessLayer(err)
+	}
+	defer rc.Close()
+
+	// 1. Use bufio to peek at the bytes without reading everything into memory
+	br := bufio.NewReader(rc)
+	peek, _ := br.Peek(2)
+
+	var tr *tar.Reader
+
+	// 2. Check for GZIP Magic Bytes (0x1f, 0x8b)
+	if len(peek) >= 2 && peek[0] == 0x1f && peek[1] == 0x8b {
+		gr, err := gzip.NewReader(br)
+		if err != nil {
+			return nil, ErrProcessLayer(err)
+		}
+		defer gr.Close()
+		tr = tar.NewReader(gr)
+	} else {
+		// Not gzipped, treat as standard tar
+		tr = tar.NewReader(br)
+	}
+
+	return scanTarForCRDs(tr, existingCRDs)
+}
+
+// scanTarForCRDs scans the tar for .yaml/.yml files, reads content, and checks if it's a CRD.
+func scanTarForCRDs(tr *tar.Reader, crds []CRD) ([]CRD, error) {
+	crdRegex := regexp.MustCompile(`kind:\s*CustomResourceDefinition`)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("reading tar header: %w", err)
+		}
+
+		// Check for YAML files
+		isYAML := strings.HasSuffix(hdr.Name, ".yaml") || strings.HasSuffix(hdr.Name, ".yml")
+		if hdr.Typeflag == tar.TypeReg && isYAML {
+			// Read file content
+			buf := new(bytes.Buffer)
+			if _, err := io.Copy(buf, tr); err != nil {
+				return nil, ErrReadTarArchive(err, hdr.Name)
+			}
+
+			fileContent := buf.String()
+
+			if !crdRegex.MatchString(fileContent) {
+				continue
+			}
+
+			// Parse YAML - handle multi-document YAML files
+			decoder := yaml.NewDecoder(bytes.NewReader(buf.Bytes()))
+			for {
+				var doc struct {
+					Kind       string `yaml:"kind"`
+					APIVersion string `yaml:"apiVersion"`
+					Metadata   struct {
+						Name string `yaml:"name"`
+					} `yaml:"metadata"`
+					Spec struct {
+						Group    string `yaml:"group"`
+						Versions []struct {
+							Name string `yaml:"name"`
+						} `yaml:"versions"`
+						Names struct {
+							Plural   string `yaml:"plural"`
+							Singular string `yaml:"singular"`
+							Kind     string `yaml:"kind"`
+						} `yaml:"names"`
+					} `yaml:"spec"`
+				}
+
+				if err := decoder.Decode(&doc); err != nil {
+					if err == io.EOF {
+						break
+					}
+					continue // Skip invalid YAML documents
+				}
+
+				if doc.Kind == "CustomResourceDefinition" {
+					version := ""
+					if len(doc.Spec.Versions) > 0 {
+						version = doc.Spec.Versions[0].Name
+					}
+					crds = append(crds, CRD{
+						Path:     filepath.Clean("/" + hdr.Name),
+						Group:    doc.Spec.Group,
+						Version:  version,
+						Kind:     doc.Spec.Names.Kind,
+						Plural:   doc.Spec.Names.Plural,
+						Singular: doc.Spec.Names.Singular,
+					})
+				}
+			}
+		}
+	}
+	return crds, nil
+}
+
 func init() {
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
@@ -159,5 +395,7 @@ func init() {
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
-
+	generateCmd.Flags().BoolVarP(&checkFlag, "check", "c", false, "Scan image for CRDs without generating")
+	generateCmd.Flags().StringVar(&checkFormat, "format", "table", "Output format (json|yaml|table)")
+	generateCmd.Flags().BoolVar(&checkCount, "count", false, "Only output the number of CRDs found")
 }
