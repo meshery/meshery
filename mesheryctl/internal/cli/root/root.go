@@ -82,7 +82,6 @@ mesheryctl -v [or] --verbose
 func Execute() error {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
-	setupLogger()
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
 	err := RootCmd.Execute()

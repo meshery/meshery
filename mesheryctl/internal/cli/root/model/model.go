@@ -99,7 +99,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Warnf("error processing config: %v", err)
+			utils.LogError.Error(errors.Wrapf(err, "error processing config: %v", err.Error()))
 			os.Exit(1)
 		}
 

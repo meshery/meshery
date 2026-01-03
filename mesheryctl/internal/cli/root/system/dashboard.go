@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -117,7 +118,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if runPortForward {
-				utils.Log.Warnf("--port-forward is not supported using Docker as Meshery's deployment platform. %v", runPortForward)
+				utils.Log.Warnf("--port-forward is not supported using Docker as Meshery's deployment platform.")
 			}
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
@@ -176,8 +177,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				utils.Log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
 				if err != nil {
-					utils.Log.Infof("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
-					utils.LogError.Error(err)
+					utils.Log.Warn(errors.Wrapf(err, "Opening Meshery UI in browser at "+currCtx.GetEndpoint()+"."))
 				}
 
 				<-portforward.GetStop()
@@ -234,8 +234,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
-				utils.Log.Infof("Failed to open Meshery UI in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.")
-				utils.LogError.Error(err)
+				utils.Log.Warn(errors.Wrap(err, "Failed to open Meshery UI in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding."))
 			}
 		} else {
 			utils.Log.Info("Meshery UI available at: ", currCtx.GetEndpoint())

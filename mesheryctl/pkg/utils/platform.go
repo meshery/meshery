@@ -824,7 +824,7 @@ func ForceCleanupCluster() error {
 		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -838,7 +838,7 @@ func ForceCleanupCluster() error {
 		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -852,7 +852,7 @@ func ForceCleanupCluster() error {
 		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -869,7 +869,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				LogError.Error(err)
+				Log.Debug(err)
 			}
 		}
 	}
@@ -887,7 +887,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				LogError.Error(err)
+				Log.Debug(err)
 			}
 		}
 	}
@@ -902,7 +902,7 @@ func ForceCleanupCluster() error {
 		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -916,7 +916,7 @@ func ForceCleanupCluster() error {
 		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -930,7 +930,7 @@ func ForceCleanupCluster() error {
 		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -944,7 +944,7 @@ func ForceCleanupCluster() error {
 		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 
@@ -958,7 +958,7 @@ func ForceCleanupCluster() error {
 		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
-			LogError.Error(err)
+			Log.Debug(err)
 		}
 	}
 

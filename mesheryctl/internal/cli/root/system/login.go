@@ -86,15 +86,13 @@ mesheryctl system login -p Meshery
 
 			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				utils.Log.Debug("failed to find token path for the current context")
-				utils.LogError.Error(err)
+				utils.LogError.Error(errors.Wrap(err, "failed to find token path for the current context"))
 				return nil
 			}
 		}
 
 		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
-			utils.Log.Debug("failed to write the token to the filesystem: ")
-			utils.LogError.Error(err)
+			utils.LogError.Error(errors.Wrap(err, "failed to write the token to the filesystem"))
 		}
 
 		return nil

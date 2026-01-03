@@ -269,7 +269,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
 		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-			utils.Log.Info("!! Docker is not running")
+			utils.Log.Warn(errors.New("!! Docker is not running"))
 			//If preRunExecution and the current platform is docker then we trigger docker installation
 			//No auto installation of docker for windows
 			if runtime.GOOS == "windows" {
@@ -280,7 +280,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 				return errors.Wrapf(err, "failed to start Docker ")
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
-			utils.Log.Info("!! Docker is not running")
+			utils.Log.Warn(errors.New("!! Docker is not running"))
 		} else { // else we're supposed to grab errors
 			return err
 		}
@@ -295,7 +295,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 				return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
 			}
 			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-				utils.Log.Info("!! Docker is not running")
+				utils.Log.Warn(errors.New("!! Docker is not running"))
 				if runtime.GOOS == "windows" {
 					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
 				}
@@ -304,7 +304,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 					return errors.Wrapf(err, "failed to start Docker ")
 				}
 			} else if hc.Options.PrintLogs { // warn incase of printing logs
-				utils.Log.Info("!! Docker is not running")
+				utils.Log.Warn(errors.New("!! Docker is not running"))
 			} else { // else we're supposed to grab errors
 				return err
 			}
@@ -340,8 +340,8 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			failure++
 		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
-			utils.Log.Info("!! cannot initialize Kubernetes client")
-			utils.Log.Info("!! cannot query the Kubernetes API")
+			utils.Log.Warn(errors.New("!! cannot initialize Kubernetes client"))
+			utils.Log.Warn(errors.New("!! cannot query the Kubernetes API"))
 			return nil
 		}
 		// else we're supposed to grab the error
@@ -362,7 +362,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			failure++
 		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
-			utils.Log.Info("!! cannot query the Kubernetes API")
+			utils.Log.Warn(errors.New("!! cannot query the Kubernetes API"))
 			return nil
 		}
 		return ErrK8SQuery(err)
@@ -390,7 +390,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		}
 		// probably kubernetes isn't running
 		if hc.Options.PrintLogs { // log if we're supposed to
-			utils.Log.Info("!! cannot check Kubernetes version")
+			utils.Log.Warn(errors.New("!! cannot check Kubernetes version"))
 		} else { // else we're supposed to catch the error
 			return err
 		}

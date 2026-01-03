@@ -203,7 +203,7 @@ func start() error {
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if utils.Services[v].Image == "" {
-				utils.Log.Warnf("Invalid component specified %s", v)
+				utils.LogError.Error(errors.New(fmt.Sprintf("Invalid component specified %s", v)))
 				os.Exit(1)
 			}
 
@@ -274,7 +274,7 @@ func start() error {
 			if err := utils.ViperCompose.WriteConfig(); err != nil {
 				// failure while adding a service to docker compose file is not a fatal error
 				// mesheryctl will continue deploying with required services (meshery, watchtower)
-				utils.Log.Warnf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)
+				utils.LogError.Error(errors.New(fmt.Sprintf("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", k)))
 				utils.LogError.Error(err)
 			}
 		}
@@ -434,7 +434,7 @@ func start() error {
 		spinner.Stop()
 
 		if !endpointReady {
-			utils.Log.Info("Warning: Meshery endpoint is not yet accessible. The server may still be initializing.")
+			utils.Log.Warn(errors.New("Warning: Meshery endpoint is not yet accessible. The server may still be initializing."))
 			utils.Log.Info("You can check the status later with: mesheryctl system status")
 		} else {
 			utils.Log.Info("Meshery is now running!")
@@ -465,7 +465,7 @@ func start() error {
 		time.Sleep(20 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
 		ready, err := mesheryReadinessHealthCheck()
 		if err != nil {
-			utils.LogError.Error(err)
+			utils.Log.Info(err)
 		}
 
 		spinner.Stop()

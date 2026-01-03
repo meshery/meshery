@@ -152,8 +152,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		Log.Warnf("Error: %v", err.Error())
-
+		Log.Error(err)
 	}
 
 	return err
@@ -265,12 +264,12 @@ func (ctx *Context) ValidateVersion() error {
 	}()
 
 	if resp.StatusCode == 404 {
-		Log.Warnf("version '%v' is not a valid Meshery release.", ctx.Version)
+		Log.Error(errors.New("version '" + ctx.Version + "' is not a valid Meshery release"))
 		os.Exit(1)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		Log.Warnf("failed to validate Meshery release version: %v. Received non-200 response code: %v", ctx.Version, resp.StatusCode)
+		Log.Error(errors.New("failed to validate Meshery release version: " + ctx.Version + ". Response code: " + fmt.Sprint(resp.StatusCode)))
 		os.Exit(1)
 	}
 
