@@ -26,6 +26,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 
@@ -76,6 +77,7 @@ var (
 	checkFlag           bool   // Triggers the check mode
 	checkFormat         string // Holds "json", "yaml", or "table"
 	checkCount          bool   // Triggers "count only" mode
+	validFormats        = []string{"json", "yaml", "table"}
 )
 
 var generateCmd = &cobra.Command{
@@ -100,7 +102,7 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		if checkFlag {
-			if checkFormat != "json" && checkFormat != "yaml" && checkFormat != "table" {
+			if !slices.Contains(validFormats, checkFormat) {
 				return ErrFindInvalidOutputFormat(checkFormat)
 			}
 			if len(args) == 0 {
@@ -247,17 +249,17 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 func FindCRDsInImage(imageRef string) ([]CRD, error) {
 	ref, err := name.ParseReference(imageRef)
 	if err != nil {
-		return nil, fmt.Errorf("parsing reference: %w", err)
+		return nil, ErrParseImageRef(err, imageRef)
 	}
 
 	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 	if err != nil {
-		return nil, fmt.Errorf("fetching image: %w", err)
+		return nil, ErrFetchImage(err, imageRef)
 	}
 
 	layers, err := img.Layers()
 	if err != nil {
-		return nil, fmt.Errorf("getting layers: %w", err)
+		return nil, ErrGetImageLayers(err, imageRef)
 	}
 
 	var crds []CRD
@@ -274,7 +276,7 @@ func FindCRDsInImage(imageRef string) ([]CRD, error) {
 func processLayer(layer v1.Layer, existingCRDs []CRD) ([]CRD, error) {
 	rc, err := layer.Compressed()
 	if err != nil {
-		return nil, fmt.Errorf("getting layer compressed reader: %w", err)
+		return nil, ErrProcessLayer(err)
 	}
 	defer rc.Close()
 
@@ -288,7 +290,7 @@ func processLayer(layer v1.Layer, existingCRDs []CRD) ([]CRD, error) {
 	if len(peek) >= 2 && peek[0] == 0x1f && peek[1] == 0x8b {
 		gr, err := gzip.NewReader(br)
 		if err != nil {
-			return nil, fmt.Errorf("creating gzip reader: %w", err)
+			return nil, ErrProcessLayer(err)
 		}
 		defer gr.Close()
 		tr = tar.NewReader(gr)
@@ -302,6 +304,7 @@ func processLayer(layer v1.Layer, existingCRDs []CRD) ([]CRD, error) {
 
 // scanTarForCRDs scans the tar for .yaml/.yml files, reads content, and checks if it's a CRD.
 func scanTarForCRDs(tr *tar.Reader, crds []CRD) ([]CRD, error) {
+	crdRegex := regexp.MustCompile(`kind:\s*CustomResourceDefinition`)
 	for {
 		hdr, err := tr.Next()
 		if err == io.EOF {
@@ -317,14 +320,15 @@ func scanTarForCRDs(tr *tar.Reader, crds []CRD) ([]CRD, error) {
 			// Read file content
 			buf := new(bytes.Buffer)
 			if _, err := io.Copy(buf, tr); err != nil {
-				return nil, fmt.Errorf("reading file %s: %w", hdr.Name, err)
+				return nil, ErrReadTarArchive(err, hdr.Name)
 			}
 
 			fileContent := buf.String()
 
-			if matched, _ := regexp.MatchString(`kind:\s*CustomResourceDefinition`, fileContent); !matched {
+			if !crdRegex.MatchString(fileContent) {
 				continue
 			}
+
 			// Parse YAML - handle multi-document YAML files
 			decoder := yaml.NewDecoder(bytes.NewReader(buf.Bytes()))
 			for {

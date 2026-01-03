@@ -15,7 +15,14 @@ var (
 	ErrParsingSheetCode         = "mesheryctl-1128"
 	ErrFindImageRefRequiredCode = "mesheryctl-1129"
 	ErrFindInvalidOutputCode    = "mesheryctl-1130"
-	ErrFindScanImageCode        = "mesheryctl-1131"
+	ErrFindScanImageCode        = "mesheryctl-1161"
+	ErrParseImageRefCode        = "mesheryctl-1159"
+	ErrFetchImageCode           = "mesheryctl-1160"
+	ErrFormatOutputCode         = "mesheryctl-1162"
+	ErrGetImageLayersCode       = "mesheryctl-1163"
+	ErrProcessLayerCode         = "mesheryctl-1164"
+	ErrReadTarArchiveCode       = "mesheryctl-1165"
+	ErrParseYAMLCode            = "mesheryctl-1166"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -37,6 +44,7 @@ func ErrUpdateModel(err error, modelName string) error {
 func ErrUpdateComponent(err error, modelName, compName string) error {
 	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
 }
+
 func ErrParsingSheet(err error, obj string) error {
 	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provied sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
 }
@@ -63,4 +71,52 @@ func ErrFindScanImage(err error, imageRef string) error {
 		[]string{err.Error()},
 		[]string{"The image reference may be invalid or inaccessible", "Authentication may be required to access the registry", "Network connectivity issues"},
 		[]string{"Verify the image reference is correct", "Ensure you have access to the container registry", "Check your network connection"})
+}
+
+func ErrParseImageRef(err error, imageRef string) error {
+	return errors.New(ErrParseImageRefCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to parse image reference: %s", imageRef)},
+		[]string{err.Error()},
+		[]string{"Invalid image reference format", "Image reference may contain unsupported characters or format"},
+		[]string{"Ensure the image reference follows the format: [registry/]repository[:tag|@digest]", "Example: docker.io/crossplane/crossplane:v1.14.0"})
+}
+
+func ErrFetchImage(err error, imageRef string) error {
+	return errors.New(ErrFetchImageCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to fetch image: %s", imageRef)},
+		[]string{err.Error()},
+		[]string{"Image does not exist in the registry", "Authentication credentials may be missing or invalid", "Network connectivity issues", "Registry may be unavailable"},
+		[]string{"Verify the image exists in the specified registry", "Ensure you are authenticated to the registry (docker login)", "Check your network connection", "Verify the registry URL is correct"})
+}
+
+func ErrGetImageLayers(err error, imageRef string) error {
+	return errors.New(ErrGetImageLayersCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to extract layers from image: %s", imageRef)},
+		[]string{err.Error()},
+		[]string{"Image may be corrupted", "Unsupported image format", "Incomplete image download"},
+		[]string{"Try pulling the image again", "Verify the image integrity", "Ensure the image is a valid OCI/Docker image"})
+}
+
+func ErrProcessLayer(err error) error {
+	return errors.New(ErrProcessLayerCode, errors.Alert,
+		[]string{"Failed to process image layer"},
+		[]string{err.Error()},
+		[]string{"Layer compression format may be unsupported", "Layer data may be corrupted", "Insufficient memory to decompress layer"},
+		[]string{"Ensure the image uses standard compression formats (gzip)", "Try with a different image", "Ensure sufficient system resources are available"})
+}
+
+func ErrReadTarArchive(err error, fileName string) error {
+	return errors.New(ErrReadTarArchiveCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to read tar archive: %s", fileName)},
+		[]string{err.Error()},
+		[]string{"Tar archive may be corrupted", "Unexpected tar format", "File permissions issue"},
+		[]string{"Verify the tar archive integrity", "Ensure proper file permissions", "Try re-pulling the image"})
+}
+
+func ErrParseYAML(err error, fileName string) error {
+	return errors.New(ErrParseYAMLCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to parse YAML file: %s", fileName)},
+		[]string{err.Error()},
+		[]string{"YAML file contains syntax errors", "File encoding may be incorrect", "YAML structure does not match expected format"},
+		[]string{"Validate the YAML syntax", "Ensure the file is UTF-8 encoded", "Check that the YAML follows Kubernetes CRD format"})
 }
