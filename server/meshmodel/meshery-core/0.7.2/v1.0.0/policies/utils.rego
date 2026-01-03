@@ -147,11 +147,10 @@ configuration_for_component_at_path(path, component, design) := result if {
 }
 
 configuration_for_component_at_path(path, component, design) := result if {
-    # if path does not start with configuration, then we are looking for a direct reference
-    not path[0] == "configuration"
-    result := object_get_nested(component, path, null)
+	# if path does not start with configuration, then we are looking for a direct reference
+	not path[0] == "configuration"
+	result := object_get_nested(component, path, null)
 }
-
 
 # get_array_aware_configuration_for_component_at_path returns the configuration for a component at a given path. If the path is an array reference, it returns the configuration for each element in the array. Otherwise, it returns the configuration for the path.
 get_array_aware_configuration_for_component_at_path(ref, component, design) := result if {
