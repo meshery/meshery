@@ -203,13 +203,13 @@ func remoteProviderSystem() error {
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
-			utils.Log.Debugf("no components found for %s", model.Model)
+			utils.Log.Debugf("No components found for %s", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
-			utils.LogError.Error(errors.Wrapf(err, "error generating icons for model %s: \n", model.Model))
+			utils.LogError.Error(errors.Wrap(err, "Error generating icons for model \n"))
 			os.Exit(1)
 		}
 
@@ -234,32 +234,32 @@ func websiteSystem() error {
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
-			utils.Log.Debug("no components found for ", model.Model)
+			utils.Log.Debug("No components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
 		relnships, ok := relationshipMap[model.Model]
 		if !ok || len(relnships) == 0 {
-			utils.Log.Debug("no relationships found for ", model.Model)
+			utils.Log.Debug("No relationships found for ", model.Model)
 			relnships = []meshkitRegistryUtils.RelationshipCSV{}
 		}
 		switch outputFormat {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error generating remote provider docs for model %s \n", model.Model))
+				utils.LogError.Error(errors.Wrap(err, "Error generating remote provider docs for model \n"))
 				os.Exit(1)
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error generating meshery docs for model %s \n", model.Model))
+				utils.LogError.Error(errors.Wrap(err, "Error generating meshery docs for model \n"))
 				os.Exit(1)
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				utils.LogError.Error(errors.Wrapf(err, "Error generating mesheryio docs for model %s \n", model.Model))
+				utils.LogError.Error(errors.Wrap(err, "Error generating mesheryio docs for model \n"))
 				os.Exit(1)
 			}
 		}
