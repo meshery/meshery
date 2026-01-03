@@ -426,7 +426,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				t.Fatal(errCopy)
 			}
 
-			// Check if an error was expected but none occurred
 			if tt.ExpectError {
 				t.Fatalf("expected an error but command succeeded")
 			}
@@ -531,7 +530,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 			}
 
-			// Check if an error was expected but none occurred
 			if tt.ExpectError {
 				t.Fatalf("expected an error but command succeeded")
 			}
@@ -623,7 +621,6 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check if an error was expected but none occurred
 			if tt.ExpectError {
 				t.Fatalf("expected an error but command succeeded")
 			}
@@ -646,7 +643,7 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 	StopMockery(t)
 }
 
-func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
+func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
 	// setup current context
 	SetupContextEnv(t)
 	// initialize mock server for handling requests
@@ -717,7 +714,6 @@ func RunMesheryctlMultiURLListTests(t *testing.T, updateGoldenFile *bool, cmd *c
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check if an error was expected but none occurred
 			if tt.ExpectError {
 				t.Fatalf("expected an error but command succeeded")
 			}
