@@ -112,6 +112,35 @@ jobs:
           mkdir -p ./pr
           echo "${{ github.event.number }}" > ./pr/number
           echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        # run only for pushes to master
+        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        with:
+          repository: meshery-extensions/qa
+          path: ./qa
+          file_pattern: meshery-results
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        working-directory: qa
+        run: |
+          make sync-meshery-results MESHERY_RESULTS_PATH=../meshery/ui/allure-results
+
+      - name: Commit & push academy to qa
+        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
       - name: Upload Test Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
@@ -135,6 +164,7 @@ jobs:
           name: playwright-report
           path: ui/playwright-report/
           retention-days: 14
+
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
