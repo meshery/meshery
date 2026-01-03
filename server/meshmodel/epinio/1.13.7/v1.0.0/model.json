@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "cosmo-controller-manager",
-  "displayName": "Cosmo Controller Manager",
+  "name": "epinio",
+  "displayName": "Epinio",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -20,9 +20,9 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "App Definition and Development"
+    "name": "Uncategorized"
   },
-  "subCategory": "Tools",
+  "subCategory": "Uncategorized",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
@@ -35,7 +35,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "0.9.0"
+    "version": "1.13.7"
   },
   "components_count": 0,
   "relationships_count": 0,
