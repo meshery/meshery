@@ -23,7 +23,7 @@ setup() {
 }
 
 # bats test_tags=system:token
-@test "mesheryctl system token list rejects invalid arguments" {
+@test "mesheryctl system token list with one argument failed" {
     run $MESHERYCTL_BIN system token list invalid-arg
     assert_failure
 
