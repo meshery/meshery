@@ -20,8 +20,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/meshery/meshkit/logger"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"

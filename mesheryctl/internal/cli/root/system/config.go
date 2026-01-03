@@ -221,7 +221,8 @@ mesheryctl system config eks
 		err := eksCheck.Run()
 		if err != nil {
 			utils.LogError.Error(errors.Wrap(err, "AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ "))
-			os.Exit(1) }
+			os.Exit(1)
+		}
 		utils.Log.Info("Configuring Meshery to access EKS...")
 		var regionName, clusterName string
 

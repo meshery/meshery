@@ -28,7 +28,7 @@ func (m mockCloser) Close() error {
 func TestSafeClose(t *testing.T) {
 
 	log := SetupMeshkitLoggerTesting(t, true)
-	// TODO: use the hook to test log entries 
+	// TODO: use the hook to test log entries
 	// BUT using meshkit logger
 	// hook := test.NewGlobal()
 	// log.AddHook(hook)
@@ -44,10 +44,10 @@ func TestSafeClose(t *testing.T) {
 		}
 		SafeClose(mc)
 
-        output := log.String()
-        if output == "" {
-            t.Fatal("expected log entry")
-        }
+		output := log.String()
+		if output == "" {
+			t.Fatal("expected log entry")
+		}
 	})
 }
 
