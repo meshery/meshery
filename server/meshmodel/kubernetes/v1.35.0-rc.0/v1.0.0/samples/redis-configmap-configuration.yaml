@@ -13,7 +13,7 @@ services:
     settings:
       data:
         redis.conf: |
-          maxmemory 2mb
+          maxmemory 96mb
           maxmemory-policy allkeys-lru
   redis-server:
     type: Deployment
@@ -33,6 +33,7 @@ services:
           securityContext:
             runAsNonRoot: true
             runAsUser: 999
+            fsGroup: 999
           containers:
             - name: redis
               image: redis:7.0-alpine
@@ -41,6 +42,9 @@ services:
                 - "/redis-master/redis.conf"
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               resources:
                 requests:
                   memory: "64Mi"
