@@ -477,10 +477,12 @@ test-setup-ui:
 	cd ui; npx playwright install chromium --with-deps; cd ..
 
 test-ui:
-	cd ui; npm run test:e2e; cd ..
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 test-e2e-ci:
-	cd ui; npm run test:e2e:ci; cd ..
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies
