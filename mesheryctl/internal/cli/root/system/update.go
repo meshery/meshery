@@ -23,7 +23,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -55,7 +54,7 @@ mesheryctl system update --skip-reset
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		return hc.RunPreflightHealthChecks()
@@ -68,7 +67,7 @@ mesheryctl system update --skip-reset
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		// get the platform, channel and the version of the current context
@@ -76,13 +75,13 @@ mesheryctl system update --skip-reset
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(err))
+				utils.LogError.Error(ErrSetCurrentContext(err))
 				return nil
 			}
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		err = currCtx.ValidateVersion()
@@ -91,7 +90,7 @@ mesheryctl system update --skip-reset
 		}
 		if currCtx.GetVersion() != "latest" {
 			// ask confirmation if user has pinned the version in config
-			log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
+			utils.Log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true
@@ -100,17 +99,17 @@ mesheryctl system update --skip-reset
 			}
 
 			if !userResponse {
-				log.Info("Update aborted.")
+				utils.Log.Info("Update aborted.")
 				return nil
 			}
 			currCtx.SetVersion("latest")
 		}
 
-		log.Info("Updating Meshery...")
+		utils.Log.Info("Updating Meshery...")
 
 		switch currCtx.GetPlatform() {
 		case "docker":
-			log.Info("Updating Meshery containers")
+			utils.Log.Info("Updating Meshery containers")
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
@@ -148,7 +147,7 @@ mesheryctl system update --skip-reset
 			}
 			hc, err := NewHealthChecker(hcOptions)
 			if err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 				return nil
 			}
 			// If k8s is available in case of platform docker than we deploy operator
@@ -158,7 +157,7 @@ mesheryctl system update --skip-reset
 
 			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 				return nil
 			}
 			if !running {
@@ -174,10 +173,10 @@ mesheryctl system update --skip-reset
 				return err
 			}
 
-			log.Info("... updated Meshery in the Kubernetes Cluster.")
+			utils.Log.Info("... updated Meshery in the Kubernetes Cluster.")
 		}
 
-		log.Info("Meshery is now up-to-date")
+		utils.Log.Info("Meshery is now up-to-date")
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {

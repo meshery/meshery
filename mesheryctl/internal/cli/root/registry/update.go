@@ -75,12 +75,12 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
+			utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+			utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
 			return err
 		}
 
@@ -88,7 +88,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		err = InvokeCompUpdate()
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
@@ -131,7 +131,7 @@ func InvokeCompUpdate() error {
 	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 
@@ -156,7 +156,7 @@ func InvokeCompUpdate() error {
 			modelContents, err := os.ReadDir(modelPath)
 			if err != nil {
 				err = ErrUpdateModel(err, modelName)
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 				continue
 			}
 
@@ -182,19 +182,19 @@ func InvokeCompUpdate() error {
 						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
 						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							utils.LogError.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
 						componentDef := comp.ComponentDefinition{}
 						err = json.Unmarshal(componentByte, &componentDef)
 						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							utils.LogError.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
 
 						err = component.UpdateCompDefinition(&componentDef)
 						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							utils.LogError.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
 
@@ -204,13 +204,13 @@ func InvokeCompUpdate() error {
 						_, err = os.Stat(compPath)
 
 						if err != nil {
-							utils.Log.Error(err)
+							utils.LogError.Error(err)
 							continue
 						}
 
 						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
 						if err != nil {
-							utils.Log.Error(err)
+							utils.LogError.Error(err)
 							continue
 						}
 						totalCompsUpdatedPerModelPerVersion++
