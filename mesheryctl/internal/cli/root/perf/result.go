@@ -78,8 +78,7 @@ mesheryctl perf result saturday-profile --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// Throw error if a profile name is not provided
