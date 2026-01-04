@@ -68,6 +68,13 @@ func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
 	return &GoldenFile{t: t, name: name, dir: directory}
 }
 
+func InitTestEnvironment(t *testing.T) *TestHelper {
+	SetupContextEnv(t)
+	StartMockery(t)
+	testContext := NewTestHelper(t)
+	return testContext
+}
+
 // equals fails the test if exp is not equal to act.
 func Equals(tb testing.TB, exp, act interface{}) {
 	if !reflect.DeepEqual(exp, act) {
@@ -356,12 +363,7 @@ func GetToken(t *testing.T) string {
 }
 
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commandName string) {
-	// setup current context
-	SetupContextEnv(t)
-	// initialize mock server for handling requests
-	StartMockery(t)
-	// create a test helper
-	testContext := NewTestHelper(t)
+	testContext := InitTestEnvironment(t)
 
 	fixturesDir := filepath.Join(commandDir, "fixtures")
 
@@ -462,12 +464,7 @@ type MesheryCommandTest struct {
 }
 
 func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
-	// setup current context
-	SetupContextEnv(t)
-	// initialize mock server for handling requests
-	StartMockery(t)
-	// create a test helper
-	testContext := NewTestHelper(t)
+	testContext := InitTestEnvironment(t)
 
 	fixturesDir := filepath.Join(commandDir, "fixtures")
 
@@ -564,10 +561,7 @@ type MesheryMultiURLCommamdTest struct {
 }
 
 func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
-	// setup current context
-	SetupContextEnv(t)
-	// initialize mock server for handling requests
-	StartMockery(t)
+	_ = InitTestEnvironment(t)
 
 	fixturesDir := filepath.Join(commandDir, "fixtures")
 
@@ -644,10 +638,7 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 }
 
 func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryMultiURLCommamdTest, commandDir string, commandName string, resetVariables func()) {
-	// setup current context
-	SetupContextEnv(t)
-	// initialize mock server for handling requests
-	StartMockery(t)
+	_ = InitTestEnvironment(t)
 
 	fixturesDir := filepath.Join(commandDir, "fixtures")
 
