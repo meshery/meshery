@@ -9,8 +9,12 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 )
+
+// PerformanceProfilesAPIResponse is a local struct for testing unmarshal errors.
+type PerformanceProfilesAPIResponse struct {
+	PageSize uint `json:"page_size"`
+}
 
 var update = flag.Bool("update", false, "update golden files")
 
@@ -107,8 +111,8 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error
-				var response models.PerformanceProfilesAPIResponse
+				// Replicate the exact JSON unmarshal error using local struct
+				var response PerformanceProfilesAPIResponse
 				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
 
 				return ErrFailUnmarshal(innerErr)
