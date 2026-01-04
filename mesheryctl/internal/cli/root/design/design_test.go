@@ -2,23 +2,13 @@ package design
 
 import (
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkiterr "github.com/meshery/meshkit/errors"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDesignCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -31,16 +21,7 @@ func TestDesignCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
-	testcase := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-		ExpectedError    error `default:"nil"`
-		IsOutputGolden   bool  `default:"true"`
-	}{
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "design apply",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "design.golden")},
@@ -149,62 +130,6 @@ func TestDesignCmd(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound(),
 		},
 	}
-	for _, test := range testcase {
-		t.Run(test.Name, func(t *testing.T) {
-			for _, url := range test.URLs {
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
-			// set token
-			utils.TokenFlag = test.Token
 
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, test.ExpectedResponse, testdataDir)
-
-			// setting up log to grab logs
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			DesignCmd.SetOut(b)
-			DesignCmd.SetArgs(test.Args)
-			err := DesignCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if test.ExpectError {
-					if test.IsOutputGolden {
-
-						// write it in file
-						if *update {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-
-						utils.Equals(t, expectedResponse, err.Error())
-						resetVariables()
-						return
-					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(test.ExpectedError), "error type mismatch")
-					assert.Equal(t, meshkiterr.GetCode(err), meshkiterr.GetCode(test.ExpectedError), "error code mismatch")
-					assert.Equal(t, meshkiterr.GetLDescription(err), meshkiterr.GetLDescription(test.ExpectedError), "long description mismatch")
-					resetVariables()
-					return
-
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-	}
-	utils.StopMockery(t)
-	t.Log("Design tests Passed")
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
