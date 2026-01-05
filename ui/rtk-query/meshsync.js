@@ -24,9 +24,10 @@ const meshSyncApi = api
             ...(queryArg.namespace ? { namespace: queryArg.namespace } : {}),
             clusterIds: queryArg.clusterIds,
             label: queryArg.label,
-            status: queryArg.status,
-            annotation: queryArg.annotation,
-            spec: queryArg.spec,
+            status: queryArg.status ?? false,
+            annotations: queryArg.annotations ?? false,
+            spec: queryArg.spec ?? false,
+            labels: queryArg.labels ?? false,
             apiVersion: queryArg.apiVersion,
           },
           method: 'GET',
@@ -47,6 +48,44 @@ const meshSyncApi = api
 
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
+      getMeshSyncResourceDetails: builder.query({
+        query: ({ resourceId, status = true, spec = true, annotations = true, labels = true }) => ({
+          url: `system/meshsync/resources/${resourceId}`,
+          params: {
+            status,
+            spec,
+            annotations,
+            labels,
+          },
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.MESH_SYNC }],
+      }),
+
+      getMeshSyncResourcesWithDetails: builder.query({
+        query: (queryArg) => ({
+          url: `system/meshsync/resources`,
+          params: {
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search,
+            order: queryArg.order,
+            ...(queryArg.kind ? { kind: queryArg.kind } : {}),
+            ...(queryArg.model ? { model: queryArg.model } : {}),
+            ...(queryArg.namespace ? { namespace: queryArg.namespace } : {}),
+            clusterIds: queryArg.clusterIds,
+            label: queryArg.label,
+            status: queryArg.status !== undefined ? queryArg.status : true,
+            annotations: queryArg.annotations !== undefined ? queryArg.annotations : true,
+            spec: queryArg.spec !== undefined ? queryArg.spec : true,
+            labels: queryArg.labels !== undefined ? queryArg.labels : true,
+            apiVersion: queryArg.apiVersion,
+          },
+          method: 'GET',
+        }),
+        providesTags: () => [{ type: TAGS.MESH_SYNC }],
+      }),
+
       deleteMeshsyncResource: builder.mutation({
         query: (resourceId) => ({
           url: `system/meshsync/resources/${resourceId}`,
@@ -61,5 +100,7 @@ const meshSyncApi = api
 export const {
   useGetMeshSyncResourcesQuery,
   useGetMeshSyncResourceKindsQuery,
+  useGetMeshSyncResourceDetailsQuery,
+  useGetMeshSyncResourcesWithDetailsQuery,
   useDeleteMeshsyncResourceMutation,
 } = meshSyncApi;
