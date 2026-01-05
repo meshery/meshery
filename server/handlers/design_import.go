@@ -104,6 +104,12 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 	}
 }
 
+func looksLikeKubernetesManifestRaw(data []byte) bool {
+	s := string(data)
+	return strings.Contains(s, "apiVersion:") &&
+		strings.Contains(s, "kind:")
+}
+
 // returns the design file , the type of file that was identified during converion , and any error
 func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, coreV1.IaCFileTypes, error) {
 
@@ -127,6 +133,14 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	if err != nil {
 		return emptyDesign, "", fmt.Errorf("Failed to create tmp directory %w", err)
+	}
+
+	if looksLikeKubernetesManifestRaw(fileToImport.Data) {
+		return emptyDesign, coreV1.K8sManifest,
+			fmt.Errorf(
+				"this file is a Kubernetes manifest. " +
+					"Importing raw or multi-resource Kubernetes YAML as a Meshery Design is not supported",
+			)
 	}
 
 	now := time.Now()
@@ -164,10 +178,10 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	utils.TrackTime(logger, now, "ConvertManifestToDesign")
 
 	if err != nil {
-		return emptyDesign, "", err
+		return emptyDesign, identifiedFile.Type, err
 	}
 
-	return design, identifiedFile.Type, err
+	return design, identifiedFile.Type, nil
 }
 
 func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
