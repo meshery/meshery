@@ -1,5 +1,15 @@
 import React from 'react';
-import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
+import {
+  Grid2,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  styled,
+  useTheme,
+  CustomTooltip,
+  IconButton,
+} from '@sistent/sistent';
 
 import {
   FormatId,
@@ -9,6 +19,7 @@ import {
   Link,
   createColumnUiSchema,
 } from '../DataFormatter';
+import InfoOutlinedIcon from '../../assets/icons/InfoOutlined';
 import useKubernetesHook, {
   useControllerStatus,
   useMesheryOperator,
@@ -24,6 +35,29 @@ import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } fr
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
+
+const formatDeploymentType = (deploymentType) => {
+  if (!deploymentType || deploymentType === '') {
+    return 'Manual (Kubeconfig)';
+  }
+  return formatToTitleCase(deploymentType.replace(/_/g, ' '));
+};
+
+const InfoButton = ({ tooltip }) => {
+  return (
+    <CustomTooltip title={tooltip} placement="top">
+      <IconButton
+        color="default"
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
+        <InfoOutlinedIcon height={20} width={20} />
+      </IconButton>
+    </CustomTooltip>
+  );
+};
 
 const customIdFormatter = (title, id) => (
   <FormatterWrapper>
@@ -149,63 +183,22 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
         <ColumnWrapper>
-          {!isEmbeddedMode && (
-            <Grid2 container spacing={1} size="grow">
-              <OperationButton size={{ xs: 12, md: 4 }}>
-                <List>
-                  <ListItem>
-                    <TooltipWrappedConnectionChip
-                      tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
-                      title={'Operator'}
-                      disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
-                      status={operatorState}
-                      handlePing={handleOperatorClick}
-                      iconSrc="/static/img/meshery-operator.svg"
-                      width="9rem"
-                    />
-                  </ListItem>
-                </List>
-              </OperationButton>
-
-              {(meshSyncState || natsState) && (
-                <>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <List>
-                      <ListItem>
-                        <TooltipWrappedConnectionChip
-                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
-                          title={'MeshSync'}
-                          status={meshSyncState}
-                          handlePing={handleMeshSyncClick}
-                          iconSrc="/static/img/meshsync.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <List>
-                      <ListItem>
-                        <TooltipWrappedConnectionChip
-                          tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
-                          title={'BROKER'}
-                          status={natsState}
-                          handlePing={() => handleNATSClick()}
-                          iconSrc="/static/img/nats-icon-color.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid2>
-                </>
-              )}
-            </Grid2>
-          )}
-          <ContentContainer container spacing={1} size="grow">
+          <ContentContainer container spacing={2} size="grow">
             {!isEmbeddedMode && (
               <>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    <ListItem>
+                      <TooltipWrappedConnectionChip
+                        tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
+                        title={'Operator'}
+                        disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
+                        status={operatorState}
+                        handlePing={handleOperatorClick}
+                        iconSrc="/static/img/meshery-operator.svg"
+                        width="7rem"
+                      />
+                    </ListItem>
                     <ListItem>
                       <StyledListItemText
                         primary="Operator State"
@@ -217,8 +210,20 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    {(meshSyncState || natsState) && (
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
+                          title={'MeshSync'}
+                          status={meshSyncState}
+                          handlePing={handleMeshSyncClick}
+                          iconSrc="/static/img/meshsync.svg"
+                          width="7rem"
+                        />
+                      </ListItem>
+                    )}
                     <ListItem>
                       <StyledListItemText
                         primary="MeshSync State"
@@ -230,8 +235,22 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    {(meshSyncState || natsState) && (
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={
+                            natsState === 'Not Active' ? 'Not Available' : `Reconnect BROKER`
+                          }
+                          title={'BROKER'}
+                          status={natsState}
+                          handlePing={() => handleNATSClick()}
+                          iconSrc="/static/img/nats-icon-color.svg"
+                          width="7rem"
+                        />
+                      </ListItem>
+                    )}
                     <ListItem>
                       <StyledListItemText
                         primary="Broker State"
@@ -245,17 +264,35 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 </Grid2>
               </>
             )}
-            <Grid2 size={{ xs: 12, md: 8 }}>
-              <List>
-                <ListItem>
-                  <StyledListItemText
-                    primary="Deployment Mode"
-                    secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
-                  />
-                </ListItem>
-              </List>
-            </Grid2>
           </ContentContainer>
+          <Grid2 container size={{ xs: 12 }} direction={{ xs: 'column', lg: 'row' }}>
+            <Grid2>
+              <ListItem>
+                <StyledListItemText
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Deployment Mode
+                      <InfoButton tooltip="MeshSync supports two modes: operator mode (managed by Meshery Operator in cluster) and embedded mode (runs inside Meshery Server without extra deployments). [Learn more](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)" />
+                    </Box>
+                  }
+                  secondary={formatToTitleCase(metadata?.meshsync_deployment_mode || 'N/A')}
+                />
+              </ListItem>
+            </Grid2>
+            <Grid2>
+              <ListItem>
+                <StyledListItemText
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Deployment Type
+                      <InfoButton tooltip="Deployment Type refers to whether Meshery Server and Operator run in-cluster together or out-of-cluster across separate environments. [Learn more](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync#meshery-operator-deployment-scenarios)" />
+                    </Box>
+                  }
+                  secondary={formatDeploymentType(metadata?.deployment_type)}
+                />
+              </ListItem>
+            </Grid2>
+          </Grid2>
         </ColumnWrapper>
       </Grid2>
     </Grid2>
