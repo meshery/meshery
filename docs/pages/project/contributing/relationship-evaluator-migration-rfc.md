@@ -633,8 +633,8 @@ If custom user policies become a requirement in the future:
                               ▼
                     ┌─────────────────┐
                     │   Go Server     │
-                    │ (via C FFI or   │
-                    │  IPC/gRPC)      │
+                    │ (via wazero     │
+                    │  WASM runtime)  │
                     └─────────────────┘
 ```
 
