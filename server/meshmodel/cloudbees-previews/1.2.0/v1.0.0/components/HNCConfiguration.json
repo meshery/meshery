@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "hnc.x-k8s.io/v1alpha2",
     "kind": "HNCConfiguration",
     "schema": "{\n \"description\": \"HNCConfiguration is a cluster-wide configuration for HNC as a whole. See details in http://bit.ly/hnc-type-configuration\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HNCConfigurationSpec defines the desired state of HNC configuration.\",\n   \"properties\": {\n    \"resources\": {\n     \"description\": \"Resources defines the cluster-wide settings for resource synchronization. Note that 'roles' and 'rolebindings' are pre-configured by HNC with 'Propagate' mode and are omitted in the spec. Any configuration of 'roles' or 'rolebindings' are not allowed. To learn more, see https://github.com/kubernetes-sigs/hierarchical-namespaces/blob/master/docs/user-guide/how-to.md#admin-types\",\n     \"items\": {\n      \"description\": \"ResourceSpec defines the desired synchronization state of a specific resource.\",\n      \"properties\": {\n       \"group\": {\n        \"description\": \"Group of the resource defined below. This is used to unambiguously identify the resource. It may be omitted for core resources (e.g. \\\"secrets\\\").\",\n        \"type\": \"string\"\n       },\n       \"mode\": {\n        \"description\": \"Synchronization mode of the kind. If the field is empty, it will be treated as \\\"Propagate\\\".\",\n        \"enum\": [\n         \"Propagate\",\n         \"Ignore\",\n         \"Remove\"\n        ],\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"description\": \"Resource to be configured.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HNC Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

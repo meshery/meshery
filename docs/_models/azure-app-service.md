@@ -28,8 +28,8 @@ components:
   description: 
 components-count: 4
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ContainerApp and ManagedEnvironment(azure-app-service)"
 relationship-count: 1
 featureList: [

@@ -1,15 +1,16 @@
 package relationship_evaluation_policy
 
+import data.feasibility_evaluation_utils
 import rego.v1
 
 identify_relationship(
 	design_file,
 	relationship,
 ) := evaluation_results if {
-	applicable_on_rels := [
-		{"kind": "hierarchical", "type": "parent"},
-#		{"kind": "edge", "type": "non-binding"},
-	]
+	applicable_on_rels := [{"kind": "hierarchical", "type": "parent"}]
+
+	#		{"kind": "edge", "type": "non-binding"},
+
 	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
 	# annotation edges have all selectors as wildcard,
@@ -50,6 +51,16 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 
 	from_decl.id != to_decl.id
 
+	print("Checking valid relationship: ", from_decl.component.kind, "->", to_decl.component.kind)
+
+	# ensure the mutated component is feasible for the relationship.
+	s := feasibility_evaluation_utils.feasible_relationship_selector_between(
+		from_decl,
+		to_decl,
+		relationship,
+	)
+	print("Feasible relationship found: ", from_decl.component.kind, "->", to_decl.component.kind, s)
+
 	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
@@ -82,10 +93,8 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 	result := object.union_n([relationship, cloned_selectors, {"status": "approved"}])
 }
 
-
-
 is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector) if {
-#    print("validating hierarchy",from_selector,to_selector)
+	#    print("validating hierarchy",from_selector,to_selector)
 	mutator_selector := identify_mutator(from_selector, to_selector, from_declaration, to_declaration)
 
 	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)

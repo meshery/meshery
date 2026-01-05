@@ -23,7 +23,7 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 REMOTE_PROVIDER="Layer5"
 
 LOCAL_PROVIDER="None"
-GOVERSION = 1.24
+GOVERSION = 1.25
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
@@ -58,8 +58,10 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
 PORT:=9081
-
+# OpenTelemetry Config (Ansi-C string format)
+OTEL_CONFIG=$$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------
 RELEASE_CHANNEL="edge"
+

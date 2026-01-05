@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "cloudfront.services.k8s.aws/v1alpha1",
     "kind": "Function",
     "schema": "{\n \"description\": \"Function is the Schema for the Functions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FunctionSpec defines the desired state of Function.\",\n   \"properties\": {\n    \"functionCode\": {\n     \"description\": \"The function code. For more information about writing a CloudFront function,\\nsee Writing function code for CloudFront Functions (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/writing-function-code.html)\\nin the Amazon CloudFront Developer Guide.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"functionConfig\": {\n     \"description\": \"Configuration information about the function, including an optional comment\\nand the function's runtime.\",\n     \"properties\": {\n      \"comment\": {\n       \"type\": \"string\"\n      },\n      \"runtime\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"A name to identify the function.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"functionCode\",\n    \"functionConfig\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Function\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

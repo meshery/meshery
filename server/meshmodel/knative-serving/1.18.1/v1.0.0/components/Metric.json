@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "autoscaling.internal.knative.dev/v1alpha1",
     "kind": "Metric",
     "schema": "{\n \"description\": \"Metric represents a resource to configure the metric collector with.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec holds the desired state of the Metric (from the client).\",\n   \"properties\": {\n    \"panicWindow\": {\n     \"description\": \"PanicWindow is the aggregation window for metrics where quick reactions are needed.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"scrapeTarget\": {\n     \"description\": \"ScrapeTarget is the K8s service that publishes the metric endpoint.\",\n     \"type\": \"string\"\n    },\n    \"stableWindow\": {\n     \"description\": \"StableWindow is the aggregation window for metrics in a stable state.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"panicWindow\",\n    \"scrapeTarget\",\n    \"stableWindow\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metric\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

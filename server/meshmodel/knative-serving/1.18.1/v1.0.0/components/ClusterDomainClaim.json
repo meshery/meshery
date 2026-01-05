@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "networking.internal.knative.dev/v1alpha1",
     "kind": "ClusterDomainClaim",
     "schema": "{\n \"description\": \"ClusterDomainClaim is a cluster-wide reservation for a particular domain name.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the desired state of the ClusterDomainClaim.\\nMore info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"namespace\": {\n     \"description\": \"Namespace is the namespace which is allowed to create a DomainMapping\\nusing this ClusterDomainClaim's name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"namespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Domain Claim\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

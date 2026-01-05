@@ -67,7 +67,7 @@ export const CheckBoxField = ({
   checked,
   onChange,
   disabled = false,
-  helpText = 'Open in Operator',
+  helpText = '',
   'data-testid': testId = 'checkbox-field',
 }) => {
   const theme = useTheme();

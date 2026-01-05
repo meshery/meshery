@@ -1020,15 +1020,6 @@
         "probable_cause": "Since the Docker Compose specification does not mandate the version field from version 3 onwards, most sources do not provide them.",
         "suggested_remediation": "Make sure that the compose file has version specified,\nAdd any version less than or equal to 3.3 if you cannot get the exact version from the source"
       },
-      "11233": {
-        "name": "ErrGetCrdNamesCode",
-        "code": "11233",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting crd names",
-        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
-        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
-      },
       "11234": {
         "name": "ErrGetSchemasCode",
         "code": "11234",
@@ -1586,15 +1577,6 @@
         "short_description": "File read error",
         "probable_cause": "The provided file is not present or has an invalid path.",
         "suggested_remediation": "To proceed, provide a valid file path with a valid file."
-      },
-      "11305": {
-        "name": "ErrGeneratesModelCode",
-        "code": "11305",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
-        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
       },
       "11306": {
         "name": "ErrReadCSVRowCode",

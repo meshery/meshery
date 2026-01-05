@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "gateway.kubesphere.io/v1alpha2",
     "kind": "IngressClassScope",
     "schema": "{\n \"description\": \"IngressClassScope is a special resource used to\\nconnect other gateways to the KubeSphere platform.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"ingressClass\": {\n     \"properties\": {\n      \"default\": {\n       \"type\": \"boolean\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"scope\": {\n     \"description\": \"Watching scope, when both are empty, watching all namespaces,\\nwhen neither is empty, namespaces is preferred.\",\n     \"properties\": {\n      \"namespaceSelector\": {\n       \"type\": \"string\"\n      },\n      \"namespaces\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress Class Scope\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

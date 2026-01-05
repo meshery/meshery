@@ -26,16 +26,20 @@ components:
   colorIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/color/state-machine-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/white/state-machine-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sfn-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sfn-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between StateMachine and Activity "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and Activity "
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and StateMachine "
 relationship-count: 3
 featureList: [

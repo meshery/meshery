@@ -26,22 +26,26 @@ components:
   colorIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
   whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-route53resolver-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverEndpoint and SecurityGroup"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverEndpoint and Subnet"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between ResolverRule and ResolverEndpoint"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and ResolverEndpoint"
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: "An edge relationship between adoptedresource and ResolverRule"
 relationship-count: 5
 featureList: [

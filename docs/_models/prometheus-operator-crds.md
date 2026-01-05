@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/prometheus-operator-c
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: Artifact Hub
+registrant: Github
 components: 
 components-count: 0
 relationships: 

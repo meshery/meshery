@@ -52,8 +52,6 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 		return nil, ErrAttachAuthToken(err)
 	}
 
-	log.Debug("token path is" + tokenPath)
-
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
@@ -176,7 +174,6 @@ func UpdateAuthDetails(filepath string) error {
 		return ErrLoadConfig(err)
 	}
 
-	// TODO: get this from the global config
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request: ")
@@ -353,8 +350,12 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	// Pause until we get the response on the channel
 	token := <-tokenChan
 
-	// Shut down the server
-	if err := srv.Shutdown(context.TODO()); err != nil {
+	// Add timeout context for server shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Shut down the server with timeout
+	if err := srv.Shutdown(ctx); err != nil {
 		return token, err
 	}
 

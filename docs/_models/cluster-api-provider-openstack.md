@@ -38,7 +38,11 @@ components:
   colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/color/open-stack-server-color.svg
   whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/white/open-stack-server-white.svg
   description: 
-components-count: 7
+- name: open-stack-cluster-identity
+  colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-cluster-identity/icons/color/open-stack-cluster-identity-color.svg
+  whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-cluster-identity/icons/white/open-stack-cluster-identity-white.svg
+  description: 
+components-count: 8
 relationships: 
 relationship-count: 0
 featureList: [

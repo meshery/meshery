@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
@@ -28,7 +28,7 @@ jobs:
           echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
 
       - name: Download Google Sheets CSV
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -68,7 +68,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Added permissions keys.
           branch: master
@@ -79,7 +79,7 @@ jobs:
 
       - name: Send Email on Generate permission keys failure
         if: ${{ failure() }}
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v6
         env:
           msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
         with:

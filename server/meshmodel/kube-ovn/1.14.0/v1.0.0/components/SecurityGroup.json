@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -72,6 +74,78 @@
     "svgWhite": ""
   },
   "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
     {
       "description": "Configure the visual styles for the component",
       "displayName": "Styling",
@@ -130,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "SecurityGroup",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowSameGroupTraffic\": {\n     \"type\": \"boolean\"\n    },\n    \"egressRules\": {\n     \"items\": {\n      \"properties\": {\n       \"ipVersion\": {\n        \"type\": \"string\"\n       },\n       \"policy\": {\n        \"type\": \"string\"\n       },\n       \"portRangeMax\": {\n        \"type\": \"integer\"\n       },\n       \"portRangeMin\": {\n        \"type\": \"integer\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"remoteAddress\": {\n        \"type\": \"string\"\n       },\n       \"remoteSecurityGroup\": {\n        \"type\": \"string\"\n       },\n       \"remoteType\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"ingressRules\": {\n     \"items\": {\n      \"properties\": {\n       \"ipVersion\": {\n        \"type\": \"string\"\n       },\n       \"policy\": {\n        \"type\": \"string\"\n       },\n       \"portRangeMax\": {\n        \"type\": \"integer\"\n       },\n       \"portRangeMin\": {\n        \"type\": \"integer\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"remoteAddress\": {\n        \"type\": \"string\"\n       },\n       \"remoteSecurityGroup\": {\n        \"type\": \"string\"\n       },\n       \"remoteType\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Security Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

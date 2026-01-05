@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 ENV CGO_ENABLED=0
 RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend

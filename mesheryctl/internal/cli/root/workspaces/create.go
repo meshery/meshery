@@ -18,17 +18,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var workspacePayload workspace.WorkspacePayload
+var createMissingArgumentsErrorMessage = "[ %s ] not specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
 
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
@@ -39,13 +40,19 @@ Documentation for models can be found at https://docs.meshery.io/reference/meshe
 // Create a new workspace in an organization
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 `,
-
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errorMsg = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl exp workspace create --orgId [Organization ID] --name [name] --description [description]\nmesheryctl exp workspace create --help' to see detailed help message"
-
-		if workspacePayload.OrganizationID == "" || workspacePayload.Name == "" || workspacePayload.Description == "" {
-
-			return utils.ErrInvalidArgument(errors.New(errorMsg))
+		missingArgs := []string{}
+		if workspacePayload.OrganizationID == "" {
+			missingArgs = append(missingArgs, "orgId")
+		}
+		if workspacePayload.Name == "" {
+			missingArgs = append(missingArgs, "name")
+		}
+		if workspacePayload.Description == "" {
+			missingArgs = append(missingArgs, "description")
+		}
+		if len(missingArgs) > 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf(createMissingArgumentsErrorMessage, strings.Join(missingArgs, " | ")))
 		}
 
 		return nil
@@ -58,16 +65,11 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 			return utils.ErrUnmarshal(err)
 		}
 
-		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes))
+		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if meshkitErr, ok := err.(*mErrors.Error); ok {
-				if meshkitErr.Code == utils.ErrFailRequestCode {
-					errMsg := utils.WorkspaceSubError("Request failed.\nEnsure meshery server is available.", "create")
-					return utils.ErrFailRequest(errors.New(errMsg))
-				}
 				if meshkitErr.Code == utils.ErrFailReqStatusCode {
-					errMsg := utils.WorkspaceSubError(fmt.Sprintf("Failed to create \"%s\" workspace in \"%s\" organization.\nEnsure you provide a valid organization ID.\n", workspacePayload.Name, workspacePayload.OrganizationID), "create")
-					return utils.ErrNotFound(fmt.Errorf("%s", errMsg))
+					return returnFailedCreateWorkspaceError(workspacePayload.Name, workspacePayload.OrganizationID)
 				}
 			}
 			return err
@@ -82,4 +84,9 @@ func init() {
 	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.OrganizationID, "orgId", "o", "", "Organization ID")
 	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.Name, "name", "n", "", "Name of the workspace")
 	createWorkspaceCmd.Flags().StringVarP(&workspacePayload.Description, "description", "d", "", "Description of the workspace")
+}
+
+func returnFailedCreateWorkspaceError(name, organizationID string) error {
+	errMsg := utils.WorkspaceSubError(fmt.Sprintf("Failed to create \"%s\" workspace in \"%s\" organization.\nEnsure you provide a valid organization ID.\n", name, organizationID), "create")
+	return utils.ErrNotFound(fmt.Errorf("%s", errMsg))
 }

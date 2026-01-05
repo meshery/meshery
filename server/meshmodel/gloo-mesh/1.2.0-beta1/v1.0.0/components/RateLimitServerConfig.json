@@ -15,15 +15,13 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
       "sub_type": "",
       "kind": "artifacthub",
       "status": "discovered",
-      "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
       "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
@@ -48,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +202,7 @@
     "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1",
     "kind": "RateLimitServerConfig",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A `RateLimitConfig` describes the ratelimit server policy.\",\n   \"oneOf\": [\n    {\n     \"not\": {\n      \"anyOf\": [\n       {\n        \"required\": [\n         \"raw\"\n        ]\n       }\n      ]\n     }\n    },\n    {\n     \"required\": [\n      \"raw\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"raw\": {\n     \"description\": \"Define a policy using the raw configuration format used by the server and the client (Envoy).\",\n     \"properties\": {\n      \"descriptors\": {\n       \"description\": \"The descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"setDescriptors\": {\n       \"description\": \"The set descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit Server Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
