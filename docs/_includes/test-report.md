@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 4th 2026, 3:16:59 pm
+- Testing started at: January 4th 2026, 11:50:19 pm
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
-- ❌ 10 failed
+- ✅ 86 passed
+- ❌ 11 failed
 - ⚠️ 0 flaked
 - ⏩ 9 skipped
 
-⌛ _Duration: 7 minutes and 47 seconds_
+⌛ _Duration: 8 minutes and 12 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -88,7 +88,7 @@
 | 65 | None | chromium-local-provider | Delete a performance profile with load generator fortio |  | ✅ |
 | 66 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 67 | None | chromium-local-provider | deletes a published design from the list |  | ✅ |
-| 68 | None | chromium-local-provider | deploys a published design to a connected cluster |  | ✅ |
+| 68 | None | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
 | 69 | None | chromium-local-provider | displays public design card correctly |  | ➖ |
 | 70 | None | chromium-local-provider | displays published design card correctly |  | ✅ |
 | 71 | None | chromium-local-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
@@ -313,6 +313,20 @@ SyntaxError: "undefined" is not valid JSON
 
 <details>
 <summary>❌ Add performance profile with load generator fortio (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ deploys a published design to a connected cluster (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
