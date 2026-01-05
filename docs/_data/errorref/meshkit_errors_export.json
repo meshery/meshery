@@ -1020,15 +1020,6 @@
         "probable_cause": "Since the Docker Compose specification does not mandate the version field from version 3 onwards, most sources do not provide them.",
         "suggested_remediation": "Make sure that the compose file has version specified,\nAdd any version less than or equal to 3.3 if you cannot get the exact version from the source"
       },
-      "11233": {
-        "name": "ErrGetCrdNamesCode",
-        "code": "11233",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting crd names",
-        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
-        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
-      },
       "11234": {
         "name": "ErrGetSchemasCode",
         "code": "11234",
