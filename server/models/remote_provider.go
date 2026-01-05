@@ -1585,7 +1585,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(bdr), resp.StatusCode)
+		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(string(bdr)), resp.StatusCode)
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -1653,7 +1653,7 @@ func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uui
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(bdr), resp.StatusCode)
+		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(string(bdr)), resp.StatusCode)
 		l.Log.Error(err)
 		return eventTypes, err
 	}
