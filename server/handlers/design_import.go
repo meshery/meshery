@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -137,9 +138,8 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	if looksLikeKubernetesManifestRaw(fileToImport.Data) {
 		return emptyDesign, coreV1.K8sManifest,
-			fmt.Errorf(
-				"this file is a Kubernetes manifest. " +
-					"Importing raw or multi-resource Kubernetes YAML as a Meshery Design is not supported",
+			errors.New(
+				"this file is a Kubernetes manifest. Importing raw or multi-resource Kubernetes YAML as a Meshery Design is not supported",
 			)
 	}
 
