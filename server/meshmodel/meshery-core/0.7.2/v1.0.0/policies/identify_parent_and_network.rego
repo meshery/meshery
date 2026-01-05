@@ -59,12 +59,6 @@ evaluate_hierarchy(
 
 	from_decl.id != to_decl.id
 
-	print(
-		"Checking valid relationship: ",
-		from_decl.component.kind,
-		"->",
-		to_decl.component.kind,
-	)
 
 	# Ensure the relationship is feasible
 	s := feasibility_evaluation_utils.feasible_relationship_selector_between(
@@ -73,13 +67,7 @@ evaluate_hierarchy(
 		relationship,
 	)
 
-	print(
-		"Feasible relationship found: ",
-		from_decl.component.kind,
-		"->",
-		to_decl.component.kind,
-		s,
-	)
+	
 
 	is_valid_hierarchy(
 		from_decl,
