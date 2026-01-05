@@ -88,7 +88,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						return
 					}
 
-					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID.String()})
+					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID})
 					ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
 					ctx = context.WithValue(ctx, models.TokenCtxKey, data.MeshsyncDataHandler.Token)
 

@@ -6,6 +6,7 @@ import mesheryDesignFixture from './meshery-design-fixture.json';
 import pvPvcReferenceFixture from './pv-pvc-edge-non-binding-reference-fixture.json';
 import secretDeploymentReferenceFixture from './secret-deployment-edge-non-binding-reference-fixture.json';
 import roleRolebindingPermissionFixture from './role-rolebinding-serviceaccount-edge-binding-permission-fixture.json';
+import namespaceNamespaceDenyFixture from './namespace-namespace-deny-hierarchical-parent-inventory-fixture.json';
 
 export const RelationshipTestFixtures = [
   serviceDeploymentNetworkFixture,
@@ -16,4 +17,5 @@ export const RelationshipTestFixtures = [
   pvPvcReferenceFixture,
   secretDeploymentReferenceFixture,
   roleRolebindingPermissionFixture,
+  namespaceNamespaceDenyFixture,
 ];

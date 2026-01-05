@@ -1,45 +1,134 @@
+# Meshery Codecov Configuration
+# Documentation: https://docs.codecov.com/docs/codecovyml-reference
+# This configuration covers:
+# - Backend (Go): Meshery Server & mesheryctl CLI
+# - Frontend (JS/TS): Meshery UI (Next.js/React) & Provider UI
+
 codecov:
   require_ci_to_pass: yes
+  notify:
+    after_n_builds: 1  # Wait for at least 1 build before sending notifications
+    wait_for_ci: yes
 
+# GitHub integration settings
 github_checks:
-    annotations: true #Annotations for Pull Request
+  annotations: true  # Enable inline annotations for Pull Requests
+
+# Coverage reporting settings
 coverage:
   precision: 2
   round: down
-  range: "0...30"
+  range: "0...100"  # Full range for accurate coverage visualization
   status:
-    patch: true #GitHub Checks and annotations for the patch status are enabled by default for all GitHub users.
+    # Patch coverage - tracks coverage of new/modified code in PRs
+    patch:
+      default:
+        target: auto  # Use the coverage of the base commit as the target
+        threshold: 1%  # Allow 1% decrease without failing
+        if_ci_failed: error
+    # Project coverage - tracks overall repository coverage
     project:
-      # These flags should match with those in the Github Action ci.yml
-      front-end-integration-tests:
-        flags:
-          - integrationtests
-      front-end-e2e-tests:
-        flags:
-          - e2etests
-      backend:
+      default:
+        target: auto  # Compare against base commit
+        threshold: 1%  # Allow 1% decrease without failing
+        if_ci_failed: error
+      # Backend (Meshery Server) coverage status
+      server:
         flags:
           - unittests
+        target: auto
+        threshold: 1%
+      # CLI (mesheryctl) coverage status
+      mesheryctl:
+        flags:
+          - mesheryctl
+        target: auto
+        threshold: 1%
 
+# Flag definitions - organize coverage by component
+# These flags correspond to the flags used in GitHub Actions workflows
 flags:
-  # Filter the folders to be measured by each flag
-  # front-end-integration-tests:
-  #   paths:
-  #      - ui/cypress/integration/integration
-  #   carryforward: true
-  # front-end-e2e-tests:
-  #   paths:
-  #      - ui/cypress/integration/e2e
-  #   carryforward: true
-  backend:
+  # Meshery Server (Go) unit tests
+  unittests:
     paths:
-    # Accepts only glob patterns, not regex
-      - "*/cmd/**"
-      - "*/handlers/**"
-      - "*/helpers/**"
-      - "*/internal/**"
-      - "*/mesheryctl/**" 
-      - "*/meshes/**"
-      - "*/models/**"
-      - "*/router/**"
+      # Server core components
+      - server/cmd/**
+      - server/core/**
+      - server/handlers/**
+      - server/helpers/**
+      - server/internal/**
+      - server/meshes/**
+      - server/meshmodel/**
+      - server/models/**
+      - server/router/**
+      - server/policies/**
+      - server/extensions/**
+      - server/machines/**
+      - server/permissions/**
     carryforward: true
+    after_n_builds: 1
+
+  # mesheryctl CLI (Go) unit tests
+  mesheryctl:
+    paths:
+      - mesheryctl/cmd/**
+      - mesheryctl/internal/**
+      - mesheryctl/pkg/**
+      - mesheryctl/helpers/**
+    carryforward: true
+    after_n_builds: 1
+
+# Comment configuration for Pull Requests
+comment:
+  layout: "header, diff, flags, components, tree, footer"
+  behavior: default
+  require_changes: true  # Only comment when coverage changes
+  require_base: false
+  require_head: true
+
+# Ignore patterns - exclude from coverage reports
+ignore:
+  # Generated code
+  - "**/*.pb.go"
+  - "**/*_gen.go"
+  - "**/generated/**"
+  # Test files (coverage of tests themselves is not meaningful)
+  - "**/*_test.go"
+  # Documentation
+  - "docs/**"
+  # Build and CI configuration
+  - ".github/**"
+  # UI build artifacts (not source code)
+  - "ui/.next/**"
+  - "ui/out/**"
+  - "ui/node_modules/**"
+  - "provider-ui/.next/**"
+  - "provider-ui/out/**"
+  - "provider-ui/node_modules/**"
+  # Vendor directories
+  - "**/vendor/**"
+
+# Component management - group related files for reporting
+component_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        threshold: 1%
+  individual_components:
+    - component_id: server
+      name: Meshery Server
+      paths:
+        - server/**
+    - component_id: mesheryctl
+      name: mesheryctl CLI
+      paths:
+        - mesheryctl/**
+    - component_id: ui
+      name: Meshery UI
+      paths:
+        - ui/**
+    - component_id: provider-ui
+      name: Provider UI
+      paths:
+        - provider-ui/**

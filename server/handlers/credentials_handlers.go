@@ -21,7 +21,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	credential := models.Credential{
 		UserID: &userUUID,
 		Secret: map[string]interface{}{},
@@ -85,7 +85,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	credentialsPage, err := provider.GetUserCredentials(req, user.ID, page, pageSize, order, search)
+	credentialsPage, err := provider.GetUserCredentials(req, user.ID.String(), page, pageSize, search, order)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
@@ -107,7 +107,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	credential := &models.Credential{
 		UserID: &userUUID,
 		Secret: map[string]interface{}{},
