@@ -71,6 +71,20 @@ Visit <i class="fas fa-cog"></i> Settings:
 
 If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See Managing Kubernetes Clusters for more information.
 
+<details>
+<summary>Note: Out-of-Cluster Meshery Server to Cluster Connectivity</summary>
+
+<p>If you encounter a warning like the one below when uploading your kubeconfig file: </p>
+
+{% include alert.html type="warning" title="WARNING" content="⚠️ No reachable contexts found in the uploaded kubeconfig `file_name`." %}
+
+Make sure that the Kubernetes cluster API server referenced in the kubeconfig (usually in `~/.kube/config` for the context) is accessible from the <code>Out-of-Cluster Meshery Server</code>.
+
+<p>If the server cannot reach the cluster API, you will see the above warning. Ensure that proper <code>network connectivity</code> exists between the Meshery Server UI (running out-of-cluster) and the cluster API server URL. <a href="{{ site.baseurl }}/guides/troubleshooting/out-of-cluster-connectivity">See the full troubleshooting guide.</a>
+</p>
+
+</details>
+
 ## 5. Verify Deployment
 
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters)) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
