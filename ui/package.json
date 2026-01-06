@@ -94,8 +94,8 @@
     "styled-jsx": "^5.1.6",
     "universal-cookie": "^8.0.1",
     "uuid": "^11.1.0",
-    "xstate": "^5.19.3",
-    "yjs": "^13.6.27"
+    "xstate": "^5.25.0",
+    "yjs": "^13.6.29"
   },
   "devDependencies": {
     "@actions/core": "^1.11.1",
