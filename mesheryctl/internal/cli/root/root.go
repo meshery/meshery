@@ -32,7 +32,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -161,10 +160,10 @@ func initConfig() {
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
 		if !os.IsNotExist(err) && stat.Size() == 0 {
-			fmt.Println("Empty meshconfig. Please populate it before running a command")
+			utils.Log.Info("Empty meshconfig. Please populate it before running a command")
 		}
 		if os.IsNotExist(err) {
-			fmt.Printf("Missing Meshery config file.")
+			utils.Log.Info("Missing Meshery config file.")
 		}
 
 		// Create a default meshconfig in each of the above two scenarios.
@@ -201,7 +200,7 @@ func initConfig() {
 				os.Exit(1)
 			}
 
-			fmt.Printf("Default config file created at %s", utils.DefaultConfigPath)
+			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)
 		}
 		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
