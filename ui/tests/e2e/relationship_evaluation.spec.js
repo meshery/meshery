@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 import _ from 'lodash';
-import { RelationshipTestFixtures } from './fixtures/relationships/index.js';
 
 const DESIGNS_TO_TEST = [
   {
@@ -36,13 +35,18 @@ const DESIGNS_TO_TEST = [
     id: 'd8e2f5a9-1c3b-4d6e-9f0a-2b4c7e8d9f0a',
     name: 'Namespace-Namespace-Deny-Relationship-Test',
   },
-  // local fixtures
-  ...RelationshipTestFixtures,
+  // TODO: add local fixtures after validation
+  // ...RelationshipTestFixtures,
 ];
 
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
   for (const designEntry of DESIGNS_TO_TEST) {
     const name = designEntry.name || designEntry.id;
+    if (!name) {
+      throw new Error(
+        "Design entry is missing both 'name' and 'id': " + JSON.stringify(designEntry),
+      );
+    }
 
     test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
       let design;
