@@ -16,6 +16,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/tracing"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
@@ -106,7 +107,9 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
-	c := &http.Client{}
+	c := &http.Client{
+		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
+	}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	// if token == models.GlobalTokenForAnonymousResults { // disabling because of import cycle
 	req.Header.Set("X-API-Key", token) // adds the token as special passphrase incase the token is a special passphrase

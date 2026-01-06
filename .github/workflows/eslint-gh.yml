@@ -1,9 +1,9 @@
 name: eslint-check
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
+    paths:
+      - 'ui/**'
+      - 'provider-ui/**'
 jobs:
   eslint:
     name: runner / eslint
