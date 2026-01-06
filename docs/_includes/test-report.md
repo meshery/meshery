@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 6th 2026, 8:52:29 pm
+- Testing started at: January 6th 2026, 10:57:15 pm
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
-- ❌ 10 failed
+- ✅ 85 passed
+- ❌ 11 failed
 - ⚠️ 0 flaked
-- ⏩ 9 skipped
+- ⏩ 10 skipped
 
-⌛ _Duration: 7 minutes and 36 seconds_
+⌛ _Duration: 7 minutes and 44 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -22,7 +22,7 @@
 | Test | Provider | Browser | Test Case | Tags | Result |
 | :---: | :---: | :---: | :--- | :---: | :---: |
 | 1 | Meshery | chromium-meshery-provider | Action buttons on adapters tab |  | ✅ |
-| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ✅ |
+| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
 | 3 | Meshery | chromium-meshery-provider | Add performance profile with load generator fortio |  | ❌ |
 | 4 | Meshery | chromium-meshery-provider | Aggregation Charts are displayed |  | ✅ |
 | 5 | Meshery | chromium-meshery-provider | All settings tabs |  | ✅ |
@@ -39,7 +39,7 @@
 | 16 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
 | 18 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 19 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
+| 19 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ❌ |
 | 20 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
 | 21 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 22 | Meshery | chromium-meshery-provider | imports design via File |  | ❌ |
@@ -63,7 +63,7 @@
 | 40 | Meshery | chromium-meshery-provider | Test if Profile button is displayed |  | ✅ |
 | 41 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 42 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 43 | Meshery | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ❌ |
+| 43 | Meshery | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
 | 44 | Meshery | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
 | 45 | Meshery | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
 | 46 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ✅ |
@@ -144,7 +144,7 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Transition to disconnected state and then back to connected state (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Add a cluster connection by uploading kubeconfig file (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -222,6 +222,20 @@ SyntaxError: "undefined" is not valid JSON
 
 <details>
 <summary>❌ Add performance profile with load generator fortio (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via CSV Import (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
