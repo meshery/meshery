@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 6th 2026, 5:55:28 pm
+- Testing started at: January 6th 2026, 5:58:23 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 10 skipped
 
-⌛ _Duration: 7 minutes and 37 seconds_
+⌛ _Duration: 7 minutes and 38 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -39,7 +39,7 @@
 | 16 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
 | 18 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 19 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ❌ |
+| 19 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 20 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
 | 21 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 22 | Meshery | chromium-meshery-provider | imports design via File |  | ❌ |
@@ -93,7 +93,7 @@
 | 70 | None | chromium-local-provider | displays published design card correctly |  | ✅ |
 | 71 | None | chromium-local-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
 | 72 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 73 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 73 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
 | 74 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
 | 75 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 76 | None | chromium-local-provider | imports design via File |  | ❌ |
@@ -235,20 +235,6 @@ SyntaxError: "undefined" is not valid JSON
 </details>
 
 <details>
-<summary>❌ Import a Model via CSV Import (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Transition to disconnected state and then back to connected state (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
@@ -327,6 +313,20 @@ SyntaxError: "undefined" is not valid JSON
 
 <details>
 <summary>❌ Add performance profile with load generator fortio (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
