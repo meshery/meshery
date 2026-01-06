@@ -85,7 +85,7 @@ To generate Go structs from schemas, use:
 ```bash
 make golang-generate
 ```
-This also generates a merged_openapi.yml file which can be used to generate the redoc documentation and for rtk-api
+This also generates a merged-openapi.json file which can be used to generate the redoc documentation and for rtk-api
 
 ### Generating TypeScript Models, JSON and YAML templates
 To generate
