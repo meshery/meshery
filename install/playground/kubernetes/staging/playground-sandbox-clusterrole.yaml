@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # Name of the Role resource
+  name: playground-sandbox-clusterrole
+rules:
+- apiGroups: ["*"] # Grants access to all API groups (e.g., "", "apps", "batch")
+  resources: ["*"] # Grants access to all resource types within those groups (e.g., "pods", "services", "deployments")
+  verbs: ["*"]     # Grants all possible actions (get, list, watch, create, update, patch, delete, etc.)
