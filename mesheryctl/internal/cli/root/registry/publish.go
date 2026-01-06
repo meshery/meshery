@@ -16,7 +16,6 @@ package registry
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
