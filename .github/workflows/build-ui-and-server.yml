@@ -128,7 +128,7 @@ jobs:
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
-          make sync-meshery-results MESHERY_RESULTS_PATH=../meshery/ui/allure-results
+          make meshery-results-sync MESHERY_RESULTS_PATH=../meshery/ui/allure-results
 
       - name: Commit & push academy to qa
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
