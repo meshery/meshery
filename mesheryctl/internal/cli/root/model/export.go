@@ -52,8 +52,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "error processing config"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "error processing config"))
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]

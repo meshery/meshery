@@ -33,6 +33,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -90,8 +91,7 @@ func Execute() error {
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
-		utils.LogError.Error(err)
-		os.Exit(1)
+		utils.LogError.Fatal(err)
 	}
 
 	cobra.OnInitialize(setVerbose)
@@ -173,8 +173,7 @@ func initConfig() {
 				if os.IsNotExist(err) {
 					err = os.MkdirAll(utils.MesheryFolder, 0775)
 					if err != nil {
-						utils.LogError.Error(err)
-						os.Exit(1)
+						utils.LogError.Fatal(err)
 					}
 				}
 			}
@@ -182,22 +181,19 @@ func initConfig() {
 			// Create config file if not present in meshery folder
 			err = utils.CreateConfigFile()
 			if err != nil {
-				utils.LogError.Error(err)
-				os.Exit(1)
+				utils.LogError.Fatal(err)
 			}
 
 			// Add Token to context file
 			err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 			if err != nil {
-				utils.LogError.Error(err)
-				os.Exit(1)
+				utils.LogError.Fatal(err)
 			}
 
 			// Add Context to context file
 			err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 			if err != nil {
-				utils.LogError.Error(err)
-				os.Exit(1)
+				utils.LogError.Fatal(err)
 			}
 
 			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)

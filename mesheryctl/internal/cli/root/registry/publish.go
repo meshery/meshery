@@ -209,8 +209,7 @@ func remoteProviderSystem() error {
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error generating icons for model \n"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error generating icons for model \n"))
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
@@ -247,20 +246,17 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				utils.LogError.Error(errors.Wrap(err, "Error generating remote provider docs for model \n"))
-				os.Exit(1)
+				utils.LogError.Fatal(errors.Wrap(err, "Error generating remote provider docs for model \n"))
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				utils.LogError.Error(errors.Wrap(err, "Error generating meshery docs for model \n"))
-				os.Exit(1)
+				utils.LogError.Fatal(errors.Wrap(err, "Error generating meshery docs for model \n"))
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				utils.LogError.Error(errors.Wrap(err, "Error generating mesheryio docs for model \n"))
-				os.Exit(1)
+				utils.LogError.Fatal(errors.Wrap(err, "Error generating mesheryio docs for model \n"))
 			}
 		}
 

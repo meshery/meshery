@@ -112,8 +112,7 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		Log.Error(err)
-		os.Exit(1)
+		Log.Fatal(err)
 	}
 
 	return currentContext.Endpoint
@@ -127,8 +126,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		Log.Error(err)
-		os.Exit(1)
+		Log.Fatal(err)
 	}
 
 	return currentContext, err
@@ -138,8 +136,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		Log.Error(err)
-		os.Exit(1)
+		Log.Fatal(err)
 	}
 
 	return context, err
@@ -264,13 +261,11 @@ func (ctx *Context) ValidateVersion() error {
 	}()
 
 	if resp.StatusCode == 404 {
-		Log.Error(errors.New("version '" + ctx.Version + "' is not a valid Meshery release"))
-		os.Exit(1)
+		Log.Fatal(errors.New("version '" + ctx.Version + "' is not a valid Meshery release"))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		Log.Error(errors.New("failed to validate Meshery release version: " + ctx.Version + ". Response code: " + fmt.Sprint(resp.StatusCode)))
-		os.Exit(1)
+		Log.Fatal(errors.New("failed to validate Meshery release version: " + ctx.Version + ". Response code: " + fmt.Sprint(resp.StatusCode)))
 	}
 
 	return nil

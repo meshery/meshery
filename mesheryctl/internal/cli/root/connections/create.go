@@ -84,8 +84,7 @@ func createAKSConnection() error {
 	aksCheck.Stderr = os.Stderr
 	err := aksCheck.Run()
 	if err != nil {
-		utils.Log.Error(errors.Wrap(err, "Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli "))
-		os.Exit(1)
+		utils.LogError.Fatal(errors.Wrap(err, "Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli "))
 	}
 	utils.Log.Info("Configuring Meshery to access AKS...")
 	var resourceGroup, aksName string
@@ -98,8 +97,7 @@ func createAKSConnection() error {
 		utils.Log.Info("Let's try again. Please enter the Azure resource group name:")
 		_, err = fmt.Scanf("%s", &resourceGroup)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error reading Azure resource group name"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error reading Azure resource group name"))
 		}
 	}
 
@@ -111,8 +109,7 @@ func createAKSConnection() error {
 		utils.Log.Info("Let's try again. Please enter the AKS cluster name:")
 		_, err = fmt.Scanf("%s", &aksName)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error reading AKS cluster name"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error reading AKS cluster name"))
 		}
 	}
 
@@ -123,7 +120,7 @@ func createAKSConnection() error {
 	// Write AKS compatible config to the filesystem
 	err = aksCmd.Run()
 	if err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error generating kubeconfig: "))
+		utils.LogError.Fatal(errors.Wrap(err, "Error generating kubeconfig: "))
 		return err
 	}
 	utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
@@ -139,8 +136,7 @@ func createEKSConnection() error {
 	eksCheck.Stderr = os.Stderr
 	err := eksCheck.Run()
 	if err != nil {
-		utils.LogError.Error(errors.Wrapf(err, "AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/: "))
-		os.Exit(1)
+		utils.LogError.Fatal(errors.Wrapf(err, "AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/: "))
 	}
 	utils.Log.Info("Configuring Meshery to access EKS...")
 	var regionName, clusterName string
@@ -153,8 +149,7 @@ func createEKSConnection() error {
 		utils.Log.Info("Let's try again. Please enter the AWS region name:")
 		_, err = fmt.Scanf("%s", &regionName)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error reading AWS region name: "))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error reading AWS region name"))
 		}
 	}
 
@@ -166,8 +161,7 @@ func createEKSConnection() error {
 		utils.Log.Info("Let's try again. Please enter the AWS cluster name:")
 		_, err = fmt.Scanf("%s", &clusterName)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error reading AWS cluster name"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error reading AWS cluster name"))
 		}
 	}
 
@@ -178,7 +172,7 @@ func createEKSConnection() error {
 	// Write EKS compatible config to the filesystem
 	err = eksCmd.Run()
 	if err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error generating kubeconfig"))
+		utils.LogError.Fatal(errors.Wrap(err, "Error generating kubeconfig"))
 		return err
 	}
 	utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
@@ -193,7 +187,7 @@ func createGKEConnection() error {
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error generating config"))
+		utils.LogError.Fatal(errors.Wrap(err, "Error generating config"))
 		return err
 	}
 	utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
@@ -207,24 +201,24 @@ func createMinikubeConnection() error {
 	utils.Log.Info("Configuring Meshery to access Minikube...")
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Could not find the default kube config"))
+		utils.LogError.Fatal(errors.Wrap(err, "Could not find the default kube config"))
 		return err
 	}
 	kubeConfig, err := clientcmd.LoadFromFile(utils.KubeConfig)
 	if kubeConfig == nil || err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error reading the default kube config"))
+		utils.LogError.Fatal(errors.Wrap(err, "Error reading the default kube config"))
 		return err
 	}
 	// Flatten the config file
 	err = clientcmdapi.FlattenConfig(kubeConfig)
 	if err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error flattening config"))
+		utils.LogError.Fatal(errors.Wrap(err, "Error flattening config"))
 		return err
 	}
 	// write the flattened config to kubeconfig.yaml file
 	err = clientcmd.WriteToFile(*kubeConfig, utils.ConfigPath)
 	if err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error writing config to file"))
+		utils.LogError.Fatal(errors.Wrap(err, "Error writing config to file"))
 		return err
 	}
 	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
@@ -344,12 +338,10 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			utils.LogError.Error(errors.Wrap(err, "Error reading input"))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrap(err, "Error reading input"))
 		}
 		if choice < 1 || choice > len(contexts) {
-			utils.LogError.Error(errors.Wrapf(err, "Invalid choice: %d. Please select a number between 1 and %d.", choice, len(contexts)))
-			os.Exit(1)
+			utils.LogError.Fatal(errors.Wrapf(err, "Invalid choice: %d. Please select a number between 1 and %d.", choice, len(contexts)))
 		}
 		chosenCtx = contexts[choice-1]
 	}
@@ -357,8 +349,7 @@ func setToken() {
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, chosenCtx)
 	if err != nil {
-		utils.LogError.Error(errors.Wrap(err, "Error setting context"))
-		os.Exit(1)
+		utils.LogError.Fatal(errors.Wrap(err, "Error setting context"))
 	}
 }
 

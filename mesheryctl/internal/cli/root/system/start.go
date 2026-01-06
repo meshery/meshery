@@ -203,8 +203,7 @@ func start() error {
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if utils.Services[v].Image == "" {
-				utils.LogError.Error(errors.New("Invalid component specified"))
-				os.Exit(1)
+				utils.LogError.Fatal(errors.New("Invalid component specified"))
 			}
 
 			temp, ok := utils.Services[v]

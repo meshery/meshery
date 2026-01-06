@@ -364,13 +364,11 @@ func BackupConfigFile(cfgFile string) {
 	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
 	err := os.Rename(cfgFile, bakLocation)
 	if err != nil {
-		LogError.Error(err)
-		os.Exit(1)
+		LogError.Fatal(err)
 	}
 	_, err = os.Create(cfgFile)
 	if err != nil {
-		LogError.Error(err)
-		os.Exit(1)
+		LogError.Fatal(err)
 	}
 }
 
@@ -523,8 +521,7 @@ func AskForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			LogError.Error(err)
-			os.Exit(1)
+			LogError.Fatal(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
@@ -748,8 +745,7 @@ func AskForInput(prompt string, allowed []string) string {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			LogError.Error(err)
-			os.Exit(1)
+			LogError.Fatal(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
@@ -757,8 +753,7 @@ func AskForInput(prompt string, allowed []string) string {
 		if StringInSlice(response, allowed) {
 			return response
 		}
-		Log.Error(errors.Wrapf(err, "Invalid respose %s. Allowed responses %s", response, allowed))
-		os.Exit(1)
+		Log.Fatal(errors.Wrapf(err, "Invalid respose %s. Allowed responses %s", response, allowed))
 	}
 }
 
