@@ -15,11 +15,13 @@
 package registry
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -44,6 +46,14 @@ var (
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
+
+	// Individual CSV file paths (new flags)
+	modelCSVFlag        string
+	componentCSVFlag    string
+	relationshipCSVFlag string
+
+	// Generation timeout duration (10 minutes)
+	generationTimeout = 10 * time.Minute
 )
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -62,17 +72,25 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 // Generate Meshery Models and Component from csv files in a local directory.
 mesheryctl registry generate --directory [DIRECTORY_PATH]
+
+// Generate Meshery Models from individual CSV files.
+mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
-		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
+		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
+		modelCSV, _ := cmd.Flags().GetString("model-csv")
+		componentCSV, _ := cmd.Flags().GetString("component-csv")
 
-		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" {
+		// Check if individual CSV flags are provided
+		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
+
+		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
 			return errors.New(utils.RegistryError(errorMsg, "generate"))
 		}
 
@@ -85,6 +103,22 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 
 		if registrantDefFlag != "" && registrantCredFlag == "" {
 			return errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate"))
+		}
+
+		// Validate individual CSV files if provided
+		if hasIndividualCSVs {
+			if _, err := os.Stat(modelCSV); os.IsNotExist(err) {
+				return errors.New(utils.RegistryError(fmt.Sprintf("Model CSV file not found: %s", modelCSV), "generate"))
+			}
+			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
+				return errors.New(utils.RegistryError(fmt.Sprintf("Component CSV file not found: %s", componentCSV), "generate"))
+			}
+			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
+			if relationshipCSV != "" {
+				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
+					return errors.New(utils.RegistryError(fmt.Sprintf("Relationship CSV file not found: %s", relationshipCSV), "generate"))
+				}
+			}
 		}
 
 		return nil
@@ -101,43 +135,141 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 		}
 		var err error
 
-		if csvDirectory == "" {
-			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
-			if err != nil {
-				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
+		// Print start message with timestamp
+		startTime := time.Now()
+		fmt.Printf("\n🚀 Starting model generation at %s\n", startTime.Format("15:04:05"))
+		fmt.Printf("   Output directory: %s\n", registryLocation)
+		fmt.Printf("   Logs directory: %s\n", logDirPath)
+		if modelName != "" {
+			fmt.Printf("   Target model: %s\n", modelName)
+		}
+		fmt.Println()
+
+		// Create context with timeout (10 minutes)
+		ctx, cancel := context.WithTimeout(context.Background(), generationTimeout)
+		defer cancel()
+
+		// Channel to receive generation result
+		done := make(chan error, 1)
+
+		// Start a progress ticker to show elapsed time every 30 seconds
+		progressTicker := time.NewTicker(30 * time.Second)
+		defer progressTicker.Stop()
+
+		go func() {
+			for {
+				select {
+				case <-progressTicker.C:
+					elapsed := time.Since(startTime).Round(time.Second)
+					remaining := generationTimeout - elapsed
+					fmt.Printf("\n⏱️  Progress: %v elapsed, %v remaining until timeout\n", elapsed, remaining.Round(time.Second))
+				case <-ctx.Done():
+					return
+				case <-done:
+					return
+				}
+			}
+		}()
+
+		go func() {
+			defer close(done)
+
+			// Handle individual CSV files (new feature)
+			if modelCSVFlag != "" && componentCSVFlag != "" {
+				modelCSVFilePath = modelCSVFlag
+				componentCSVFilePath = componentCSVFlag
+				relationshipCSVFilePath = relationshipCSVFlag
+				fmt.Println("📁 Using individual CSV files for generation:")
+				fmt.Printf("   Model CSV: %s\n", modelCSVFilePath)
+				fmt.Printf("   Component CSV: %s\n", componentCSVFilePath)
+				if relationshipCSVFilePath != "" {
+					fmt.Printf("   Relationship CSV: %s\n", relationshipCSVFilePath)
+				}
+				fmt.Println()
+			} else if csvDirectory == "" {
+				// Using Google Spreadsheet
+				fmt.Println("📊 Connecting to Google Spreadsheet...")
+				srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+				if err != nil {
+					done <- errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
+					return
+				}
+
+				resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+				if err != nil || resp.HTTPStatusCode != 200 {
+					utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+					done <- err
+					return
+				}
+				fmt.Println("✅ Connected to spreadsheet successfully")
+
+				sheetGID = GetSheetIDFromTitle(resp, "Models")
+				componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+				relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
+				fmt.Println()
+			} else {
+				// Using directory with CSV files
+				fmt.Printf("📁 Reading CSV files from directory: %s\n", csvDirectory)
+				modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
+				if err != nil {
+					done <- fmt.Errorf("error reading the directory: %v", err)
+					return
+				}
+				if modelCSVFilePath == "" || componentCSVFilePath == "" {
+					done <- fmt.Errorf("ModelCSV and ComponentCSV files must be present in the directory")
+					return
+				}
+				fmt.Println("✅ CSV files found successfully")
+				fmt.Println()
 			}
 
-			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+			fmt.Println("🔄 Generating models and components...")
+			fmt.Println("   (This may take several minutes for large registries)")
+			fmt.Println()
+
+			err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
+			done <- err
+		}()
+
+		// Wait for generation to complete or timeout
+		select {
+		case err = <-done:
+			elapsed := time.Since(startTime).Round(time.Second)
+			fmt.Println()
+			if err != nil {
+				fmt.Printf("❌ Model generation failed after %v\n", elapsed)
+				utils.LogError.Error(err)
+				fmt.Printf("   Check error logs at: %s\n", filepath.Join(logDirPath, "registry-errors.log"))
 				return nil
 			}
-
-			sheetGID = GetSheetIDFromTitle(resp, "Models")
-			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-			// Collect list of corresponding relationship by name from spreadsheet
-			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
-		} else {
-			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
-			if err != nil {
-				return fmt.Errorf("error reading the directory: %v", err)
-			}
-			if modelCSVFilePath == "" || componentCSVFilePath == "" || relationshipCSVFilePath == "" {
-				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
-			}
-		}
-
-		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
-		if err != nil {
-			// meshkit
-			utils.LogError.Error(err)
+			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
+		case <-ctx.Done():
+			elapsed := time.Since(startTime).Round(time.Second)
+			fmt.Println()
+			fmt.Printf("⏰ Model generation timed out after %v\n", elapsed)
+			utils.LogError.Error(ErrGenerationTimeout(generationTimeout))
+			fmt.Printf("   The process exceeded the maximum allowed time of %v\n", generationTimeout)
+			fmt.Printf("   Try generating a specific model using --model flag\n")
+			fmt.Printf("   Check logs at: %s\n", logDirPath)
 			return nil
 		}
-		_ = logFile.Close()
-		_ = errorLogFile.Close()
+
+		if logFile != nil {
+			_ = logFile.Close()
+		}
+		if errorLogFile != nil {
+			_ = errorLogFile.Close()
+		}
 
 		utils.Log.UpdateLogOutput(os.Stdout)
 		utils.LogError.UpdateLogOutput(os.Stdout)
+
+		// Print final summary
+		fmt.Printf("\n📋 Generation Summary:\n")
+		fmt.Printf("   Output: %s\n", registryLocation)
+		fmt.Printf("   Logs: %s\n", logDirPath)
+		fmt.Println()
+
 		return err
 	},
 }
@@ -160,4 +292,14 @@ func init() {
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 
+	// New flags for individual CSV files
+	generateCmd.PersistentFlags().StringVar(&modelCSVFlag, "model-csv", "", "path to the model CSV file")
+	generateCmd.PersistentFlags().StringVar(&componentCSVFlag, "component-csv", "", "path to the component CSV file")
+	generateCmd.PersistentFlags().StringVar(&relationshipCSVFlag, "relationship-csv", "", "path to the relationship CSV file (optional)")
+
+	// Mark individual CSV flags as required together (model and component are required, relationship is optional)
+	generateCmd.MarkFlagsRequiredTogether("model-csv", "component-csv")
+
+	// Mark mutual exclusivity between different input methods
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "directory", "model-csv")
 }
