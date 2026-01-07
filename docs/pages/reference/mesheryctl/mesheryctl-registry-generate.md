@@ -59,18 +59,47 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 </div>
 </pre> 
 
+Generate Meshery Models from individual CSV files.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
+
+</div>
+</pre> 
+
+Generate models with a custom per-model timeout (e.g., 10 minutes per model).
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m
+
+</div>
+</pre> 
+
+Generate only the latest version of each model.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+      --component-csv string      path to the component CSV file
   -d, --directory string          Directory containing the Model and Component CSV files
   -h, --help                      help for generate
+      --latest-only               generate only the latest version of each model
   -m, --model string              specific model name to be generated
+      --model-csv string          path to the model CSV file
   -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")
       --registrant-cred string    path pointing to the registrant credential definition
       --registrant-def string     path pointing to the registrant connection definition
+      --relationship-csv string   path to the relationship CSV file (optional)
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
       --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
+      --timeout duration          timeout duration for generating each model (e.g., 5m, 10m, 1h), default: 5m (default 5m0s)
 
 </div>
 </pre>
