@@ -40,7 +40,7 @@ func ErrUpdateComponent(err error, modelName, compName string) error {
 }
 
 func ErrParsingSheet(err error, obj string) error {
-	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provied sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
+return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provided sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
 }
 
 func ErrGenerationTimeout(duration time.Duration) error {
