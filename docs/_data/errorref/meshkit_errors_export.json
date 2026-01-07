@@ -1623,6 +1623,15 @@
         "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
         "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
       },
+      "11311": {
+        "name": "ErrModelTimeoutCode",
+        "code": "11311",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate for this model",
+        "suggested_remediation": "Try increasing the per-model timeout using --timeout flag\nCheck network connectivity\nReview the source URL for the model"
+      },
       "11315": {
         "name": "ErrLoadPatternCode",
         "code": "11315",
