@@ -160,7 +160,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					if err != nil {
 						return ErrModelInit(err)
 					}
-					defer file.Close() // Ensure the file is closed when the function exits
+					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
 
 					_, err = file.Write(content)
 					if err != nil {
@@ -191,11 +191,11 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			if !isModelFolderAlreadyExists {
 				// if model folder didn'tv exist before -> delete it
 				utils.Log.Infof("Removing %s", modelFolder)
-				os.RemoveAll(modelFolder)
+				_ = os.RemoveAll(modelFolder)
 			} else {
 				// otherwise remove only version folder
 				utils.Log.Infof("Removing %s", modelVersionFolder)
-				os.RemoveAll(modelVersionFolder)
+				_ = os.RemoveAll(modelVersionFolder)
 			}
 			return err
 		}
