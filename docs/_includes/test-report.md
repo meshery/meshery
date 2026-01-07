@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 6th 2026, 11:38:53 pm
+- Testing started at: January 7th 2026, 3:15:14 am
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
-- ❌ 11 failed
+- ✅ 87 passed
+- ❌ 10 failed
 - ⚠️ 0 flaked
 - ⏩ 9 skipped
 
-⌛ _Duration: 8 minutes and 46 seconds_
+⌛ _Duration: 7 minutes and 42 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -71,7 +71,7 @@
 | 48 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 49 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 50 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
-| 51 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ❌ |
+| 51 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 52 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
 | 53 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ✅ |
 | 54 | Meshery | chromium-meshery-provider | View detailed result of a performance profile (Graph Visualiser) with load generator fortio |  | ✅ |
@@ -142,20 +142,6 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-
-<details>
-<summary>❌ Verify Meshery Docker Extension Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
 
 <details>
 <summary>❌ Transition to disconnected state and then back to connected state (Meshery - chromium-meshery-provider)</summary>
