@@ -15,7 +15,6 @@
 package registry
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -52,8 +51,10 @@ var (
 	componentCSVFlag    string
 	relationshipCSVFlag string
 
-	// Generation timeout duration (10 minutes)
-	generationTimeout = 10 * time.Minute
+	// Per-model timeout duration (default 5 minutes)
+	modelTimeout time.Duration
+	// Whether to generate only the latest version of each model
+	latestVersionOnly bool
 )
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -75,6 +76,12 @@ mesheryctl registry generate --directory [DIRECTORY_PATH]
 
 // Generate Meshery Models from individual CSV files.
 mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
+
+// Generate models with a custom per-model timeout (e.g., 10 minutes per model).
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m
+
+// Generate only the latest version of each model.
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -140,118 +147,84 @@ mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [p
 		fmt.Printf("\n🚀 Starting model generation at %s\n", startTime.Format("15:04:05"))
 		fmt.Printf("   Output directory: %s\n", registryLocation)
 		fmt.Printf("   Logs directory: %s\n", logDirPath)
+		fmt.Printf("   Per-model timeout: %v\n", modelTimeout)
+		if latestVersionOnly {
+			fmt.Printf("   Mode: Latest version only\n")
+		}
 		if modelName != "" {
 			fmt.Printf("   Target model: %s\n", modelName)
 		}
 		fmt.Println()
 
-		// Create context with timeout (10 minutes)
-		ctx, cancel := context.WithTimeout(context.Background(), generationTimeout)
-		defer cancel()
+		// Configure generation options
+		genOpts := meshkitRegistryUtils.GenerationOptions{
+			ModelTimeout:      modelTimeout,
+			LatestVersionOnly: latestVersionOnly,
+			ProgressCallback: func(modelName string, current, total int) {
+				remaining := total - current
+				fmt.Printf("📦 [%d/%d] Processing: %s (remaining: %d)\n", current, total, modelName, remaining)
+			},
+		}
 
-		// Channel to receive generation result
-		done := make(chan error, 1)
-
-		// Start a progress ticker to show elapsed time every 30 seconds
-		progressTicker := time.NewTicker(30 * time.Second)
-		defer progressTicker.Stop()
-
-		go func() {
-			for {
-				select {
-				case <-progressTicker.C:
-					elapsed := time.Since(startTime).Round(time.Second)
-					remaining := generationTimeout - elapsed
-					fmt.Printf("\n⏱️  Progress: %v elapsed, %v remaining until timeout\n", elapsed, remaining.Round(time.Second))
-				case <-ctx.Done():
-					return
-				case <-done:
-					return
-				}
+		// Handle individual CSV files (new feature)
+		if modelCSVFlag != "" && componentCSVFlag != "" {
+			modelCSVFilePath = modelCSVFlag
+			componentCSVFilePath = componentCSVFlag
+			relationshipCSVFilePath = relationshipCSVFlag
+			fmt.Println("📁 Using individual CSV files for generation:")
+			fmt.Printf("   Model CSV: %s\n", modelCSVFilePath)
+			fmt.Printf("   Component CSV: %s\n", componentCSVFilePath)
+			if relationshipCSVFilePath != "" {
+				fmt.Printf("   Relationship CSV: %s\n", relationshipCSVFilePath)
 			}
-		}()
-
-		go func() {
-			defer close(done)
-
-			// Handle individual CSV files (new feature)
-			if modelCSVFlag != "" && componentCSVFlag != "" {
-				modelCSVFilePath = modelCSVFlag
-				componentCSVFilePath = componentCSVFlag
-				relationshipCSVFilePath = relationshipCSVFlag
-				fmt.Println("📁 Using individual CSV files for generation:")
-				fmt.Printf("   Model CSV: %s\n", modelCSVFilePath)
-				fmt.Printf("   Component CSV: %s\n", componentCSVFilePath)
-				if relationshipCSVFilePath != "" {
-					fmt.Printf("   Relationship CSV: %s\n", relationshipCSVFilePath)
-				}
-				fmt.Println()
-			} else if csvDirectory == "" {
-				// Using Google Spreadsheet
-				fmt.Println("📊 Connecting to Google Spreadsheet...")
-				srv, err = mutils.NewSheetSRV(spreadsheeetCred)
-				if err != nil {
-					done <- errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
-					return
-				}
-
-				resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-				if err != nil || resp.HTTPStatusCode != 200 {
-					utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
-					done <- err
-					return
-				}
-				fmt.Println("✅ Connected to spreadsheet successfully")
-
-				sheetGID = GetSheetIDFromTitle(resp, "Models")
-				componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-				relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
-				fmt.Println()
-			} else {
-				// Using directory with CSV files
-				fmt.Printf("📁 Reading CSV files from directory: %s\n", csvDirectory)
-				modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
-				if err != nil {
-					done <- fmt.Errorf("error reading the directory: %v", err)
-					return
-				}
-				if modelCSVFilePath == "" || componentCSVFilePath == "" {
-					done <- fmt.Errorf("ModelCSV and ComponentCSV files must be present in the directory")
-					return
-				}
-				fmt.Println("✅ CSV files found successfully")
-				fmt.Println()
-			}
-
-			fmt.Println("🔄 Generating models and components...")
-			fmt.Println("   (This may take several minutes for large registries)")
 			fmt.Println()
-
-			err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
-			done <- err
-		}()
-
-		// Wait for generation to complete or timeout
-		select {
-		case err = <-done:
-			elapsed := time.Since(startTime).Round(time.Second)
-			fmt.Println()
+		} else if csvDirectory == "" {
+			// Using Google Spreadsheet
+			fmt.Println("📊 Connecting to Google Spreadsheet...")
+			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
-				fmt.Printf("❌ Model generation failed after %v\n", elapsed)
-				utils.LogError.Error(err)
-				fmt.Printf("   Check error logs at: %s\n", filepath.Join(logDirPath, "registry-errors.log"))
-				return nil
+				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
 			}
-			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
-		case <-ctx.Done():
-			elapsed := time.Since(startTime).Round(time.Second)
+
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
+			fmt.Println("✅ Connected to spreadsheet successfully")
+
+			sheetGID = GetSheetIDFromTitle(resp, "Models")
+			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 			fmt.Println()
-			fmt.Printf("⏰ Model generation timed out after %v\n", elapsed)
-			utils.LogError.Error(ErrGenerationTimeout(generationTimeout))
-			fmt.Printf("   The process exceeded the maximum allowed time of %v\n", generationTimeout)
-			fmt.Printf("   Try generating a specific model using --model flag\n")
-			fmt.Printf("   Check logs at: %s\n", logDirPath)
-			return nil
+		} else {
+			// Using directory with CSV files
+			fmt.Printf("📁 Reading CSV files from directory: %s\n", csvDirectory)
+			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
+			if err != nil {
+				return fmt.Errorf("error reading the directory: %v", err)
+			}
+			if modelCSVFilePath == "" || componentCSVFilePath == "" {
+				return fmt.Errorf("ModelCSV and ComponentCSV files must be present in the directory")
+			}
+			fmt.Println("✅ CSV files found successfully")
+			fmt.Println()
+		}
+
+		fmt.Println("🔄 Generating models and components...")
+		fmt.Println("   (Each model has a timeout of", modelTimeout, ")")
+		fmt.Println()
+
+		err = meshkitRegistryUtils.InvokeGenerationFromSheetWithOptions(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv, genOpts)
+
+		elapsed := time.Since(startTime).Round(time.Second)
+		fmt.Println()
+		if err != nil {
+			fmt.Printf("❌ Model generation completed with errors after %v\n", elapsed)
+			utils.LogError.Error(err)
+			fmt.Printf("   Check error logs at: %s\n", filepath.Join(logDirPath, "registry-errors.log"))
+		} else {
+			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
 		}
 
 		if logFile != nil {
@@ -268,6 +241,7 @@ mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [p
 		fmt.Printf("\n📋 Generation Summary:\n")
 		fmt.Printf("   Output: %s\n", registryLocation)
 		fmt.Printf("   Logs: %s\n", logDirPath)
+		fmt.Printf("   Total time: %v\n", elapsed)
 		fmt.Println()
 
 		return err
@@ -302,4 +276,8 @@ func init() {
 
 	// Mark mutual exclusivity between different input methods
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "directory", "model-csv")
+
+	// New flags for per-model timeout and latest version only
+	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h)")
+	generateCmd.PersistentFlags().BoolVar(&latestVersionOnly, "latest-only", false, "generate only the latest version of each model")
 }
