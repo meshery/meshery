@@ -188,7 +188,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
 				return err
 			}
 			fmt.Println("✅ Connected to spreadsheet successfully")
@@ -221,7 +221,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		fmt.Println()
 		if err != nil {
 			fmt.Printf("❌ Model generation completed with errors after %v\n", elapsed)
-			utils.LogError.Error(err)
+			utils.Log.Error(err)
 			fmt.Printf("   Check error logs at: %s\n", filepath.Join(logDirPath, "registry-errors.log"))
 		} else {
 			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
