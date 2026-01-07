@@ -132,9 +132,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Ensure log files are closed when function returns
-		defer meshkitRegistryUtils.CloseLogger()
-
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
