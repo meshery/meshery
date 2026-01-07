@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Policy firewalls any Pod — zero-trust traffic rules, no name needed.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

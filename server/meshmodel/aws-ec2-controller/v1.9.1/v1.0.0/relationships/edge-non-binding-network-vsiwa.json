@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between VPCPeeringConnection and VPC",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where TokenRequest can bind a token to a Pod ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

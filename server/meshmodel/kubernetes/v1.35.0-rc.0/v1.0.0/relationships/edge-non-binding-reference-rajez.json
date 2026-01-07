@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a StatefulSet guarantees stable identity, ordered rollout, and persistent storage to every Pod",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

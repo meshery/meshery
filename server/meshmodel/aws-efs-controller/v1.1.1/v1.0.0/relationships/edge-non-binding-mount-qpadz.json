@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EC2 instances mount EFS file systems for shared storage across instances",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

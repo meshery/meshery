@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which PodTemplate envelopes the Pod definition it replicates, forming a wallet-style parent relationship",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

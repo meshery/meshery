@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between BackupVaultsBackupInstance and ManagedCluster(azure-container-service)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
