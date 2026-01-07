@@ -227,16 +227,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
 		}
 
-		if logFile != nil {
-			_ = logFile.Close()
-		}
-		if errorLogFile != nil {
-			_ = errorLogFile.Close()
-		}
-
-		utils.Log.UpdateLogOutput(os.Stdout)
-		utils.LogError.UpdateLogOutput(os.Stdout)
-
 		// Print final summary
 		fmt.Printf("\n📋 Generation Summary:\n")
 		fmt.Printf("   Output: %s\n", registryLocation)
