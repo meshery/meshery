@@ -49,7 +49,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.59
+	github.com/meshery/meshkit v0.8.61
 	github.com/meshery/meshsync v0.8.26
 	github.com/meshery/schemas v0.8.96
 	github.com/nsf/termbox-go v1.1.1
@@ -67,6 +67,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/vmihailenco/taskq/v3 v3.2.9
+	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
 	golang.org/x/mod v0.31.0
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/text v0.32.0

@@ -1,0 +1,208 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Mongo DB",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "mongodb-operator",
+    "displayName": "Mongodb Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://eightynine01.github.io/mongodb-operator/mongodb-operator-0.0.5.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.0.5"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://eightynine01.github.io/mongodb-operator/mongodb-operator-0.0.5.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "mongodb.keiailab.com/v1alpha1",
+    "kind": "MongoDB",
+    "schema": "{\n \"description\": \"MongoDB is the Schema for the mongodbs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MongoDBSpec defines the desired state of MongoDB ReplicaSet\",\n   \"properties\": {\n    \"additionalConfig\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"arbiter\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"resources\": {\n       \"properties\": {\n        \"limits\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"type\": \"object\"\n        },\n        \"requests\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"auth\": {\n     \"properties\": {\n      \"adminCredentialsSecretRef\": {\n       \"properties\": {\n        \"name\": {\n         \"default\": \"\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"mechanism\": {\n       \"default\": \"SCRAM-SHA-256\",\n       \"enum\": [\n        \"SCRAM-SHA-256\",\n        \"SCRAM-SHA-1\",\n        \"X509\"\n       ],\n       \"type\": \"string\"\n      },\n      \"users\": {\n       \"items\": {\n        \"properties\": {\n         \"db\": {\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"passwordSecretRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"default\": \"\",\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"roles\": {\n          \"items\": {\n           \"properties\": {\n            \"db\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"db\",\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"db\",\n         \"name\",\n         \"passwordSecretRef\",\n         \"roles\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"adminCredentialsSecretRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"autoScaling\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"maxReplicas\": {\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"metrics\": {\n       \"items\": {\n        \"properties\": {\n         \"customMetric\": {\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"query\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"target\": {\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"type\": {\n          \"enum\": [\n           \"cpu\",\n           \"memory\",\n           \"custom\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"target\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"minReplicas\": {\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"enabled\",\n      \"maxReplicas\"\n     ],\n     \"type\": \"object\"\n    },\n    \"backup\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"oplogRetentionHours\": {\n       \"default\": 24,\n       \"type\": \"integer\"\n      },\n      \"pitrEnabled\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"retention\": {\n       \"properties\": {\n        \"count\": {\n         \"type\": \"integer\"\n        },\n        \"days\": {\n         \"default\": 7,\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"schedule\": {\n       \"type\": \"string\"\n      },\n      \"storage\": {\n       \"properties\": {\n        \"pvc\": {\n         \"properties\": {\n          \"size\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"storageClassName\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"size\"\n         ],\n         \"type\": \"object\"\n        },\n        \"s3\": {\n         \"properties\": {\n          \"bucket\": {\n           \"type\": \"string\"\n          },\n          \"credentialsRef\": {\n           \"properties\": {\n            \"name\": {\n             \"default\": \"\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"endpoint\": {\n           \"type\": \"string\"\n          },\n          \"insecureSkipTLS\": {\n           \"default\": false,\n           \"type\": \"boolean\"\n          },\n          \"prefix\": {\n           \"type\": \"string\"\n          },\n          \"region\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"bucket\",\n          \"credentialsRef\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"enum\": [\n          \"s3\",\n          \"pvc\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"type\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"enabled\",\n      \"storage\"\n     ],\n     \"type\": \"object\"\n    },\n    \"members\": {\n     \"default\": 3,\n     \"format\": \"int32\",\n     \"maximum\": 50,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"monitoring\": {\n     \"properties\": {\n      \"enabled\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"exporter\": {\n       \"properties\": {\n        \"image\": {\n         \"default\": \"percona/mongodb_exporter:0.40\",\n         \"type\": \"string\"\n        },\n        \"resources\": {\n         \"properties\": {\n          \"limits\": {\n           \"additionalProperties\": {\n            \"anyOf\": [\n             {\n              \"type\": \"integer\"\n             },\n             {\n              \"type\": \"string\"\n             }\n            ],\n            \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n            \"x-kubernetes-int-or-string\": true\n           },\n           \"type\": \"object\"\n          },\n          \"requests\": {\n           \"additionalProperties\": {\n            \"anyOf\": [\n             {\n              \"type\": \"integer\"\n             },\n             {\n              \"type\": \"string\"\n             }\n            ],\n            \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n            \"x-kubernetes-int-or-string\": true\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"prometheusRules\": {\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serviceMonitor\": {\n       \"properties\": {\n        \"interval\": {\n         \"default\": \"30s\",\n         \"type\": \"string\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"pod\": {\n     \"properties\": {\n      \"affinity\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"containerSecurityContext\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"nodeSelector\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"priorityClassName\": {\n       \"type\": \"string\"\n      },\n      \"securityContext\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"serviceAccountName\": {\n       \"type\": \"string\"\n      },\n      \"tolerations\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"topologySpreadConstraints\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"replicaSetName\": {\n     \"default\": \"rs0\",\n     \"type\": \"string\"\n    },\n    \"resources\": {\n     \"properties\": {\n      \"limits\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      },\n      \"requests\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"storage\": {\n     \"properties\": {\n      \"dataDirPath\": {\n       \"default\": \"/data/db\",\n       \"type\": \"string\"\n      },\n      \"size\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"default\": \"10Gi\",\n       \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"storageClassName\": {\n       \"default\": \"ceph-block\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"certManager\": {\n       \"properties\": {\n        \"duration\": {\n         \"default\": \"2160h\",\n         \"type\": \"string\"\n        },\n        \"issuerRef\": {\n         \"properties\": {\n          \"kind\": {\n           \"default\": \"ClusterIssuer\",\n           \"enum\": [\n            \"Issuer\",\n            \"ClusterIssuer\"\n           ],\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"renewBefore\": {\n         \"default\": \"360h\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"issuerRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"customCert\": {\n       \"properties\": {\n        \"secretName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"secretName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"enabled\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"pattern\": \"^\\\\d+\\\\.\\\\d+(\\\\.\\\\d+)?$\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"version\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"auth\",\n    \"members\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mongo DB\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}
