@@ -99,7 +99,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			}
 
 			var response *models.PatternsAPIResponse
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				utils.Log.Error(utils.ErrReadResponseBody(err))
@@ -160,7 +160,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			return nil
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(err)
@@ -227,7 +227,7 @@ func getSourceTypes() error {
 		return nil
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var response []*models.PatternSourceTypesAPIResponse
 

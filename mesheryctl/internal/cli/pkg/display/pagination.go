@@ -68,7 +68,7 @@ func HandlePaginationAsync[T any](
 		}
 
 		// Display the current page number to be one-based
-		whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
+		_, _ = whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
 		fmt.Println()
 
 		// Display the data in a table

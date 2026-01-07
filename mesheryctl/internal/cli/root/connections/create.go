@@ -252,10 +252,10 @@ func getContexts(configFile string) ([]string, error) {
 	}
 	if res.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(res.Body)
-		defer res.Body.Close()
+		_ = res.Body.Close()
 		return nil, fmt.Errorf("failed to get contexts: received status code %d with body %s", res.StatusCode, string(body))
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -308,7 +308,7 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrRequestResponse(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -326,7 +326,7 @@ func setToken() {
 	if err != nil {
 		utils.Log.Error(err)
 	}
-	if contexts == nil || len(contexts) < 1 {
+	if len(contexts) < 1 {
 		log.Errorf("Error getting context: %s", fmt.Errorf("no contexts found"))
 	}
 	chosenCtx := contexts[0]

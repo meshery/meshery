@@ -55,7 +55,7 @@ func TestBackupConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(tmpFile.Name())
+	defer func() { _ = os.Remove(tmpFile.Name()) }()
 
 	data, err := os.ReadFile(cfgFile)
 	if err != nil {
@@ -64,7 +64,7 @@ func TestBackupConfigFile(t *testing.T) {
 	if _, err := tmpFile.Write(data); err != nil {
 		t.Fatal(err)
 	}
-	tmpFile.Close()
+	_ = tmpFile.Close()
 
 	// Act
 	BackupConfigFile(tmpFile.Name())
@@ -76,7 +76,7 @@ func TestBackupConfigFile(t *testing.T) {
 		t.Errorf("BackupConfigFile failed: backup file %s does not exist", backupFilePath)
 	} else {
 		// optional cleanup
-		defer os.Remove(backupFilePath)
+		defer func() { _ = os.Remove(backupFilePath) }()
 	}
 }
 func TestStringWithCharset(t *testing.T) {
@@ -198,7 +198,7 @@ func TestAskForConfirmation(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			w.Close()
+			_ = w.Close()
 			stdin := os.Stdin
 			defer func() { os.Stdin = stdin }()
 			os.Stdin = r
@@ -346,7 +346,7 @@ func TestAskForInput(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	w.Close()
+	_ = w.Close()
 	stdin := os.Stdin
 	defer func() { os.Stdin = stdin }()
 	os.Stdin = r
