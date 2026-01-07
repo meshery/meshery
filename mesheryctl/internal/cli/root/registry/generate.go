@@ -144,7 +144,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 		// Print start message with timestamp
 		startTime := time.Now()
-		fmt.Printf("\n🚀 Starting model generation at %s\n", startTime.Format("15:04:05"))
+		fmt.Printf("\n⏱️ Starting model generation at %s\n", startTime.Format("15:04:05"))
 		fmt.Printf("   Output directory: %s\n", registryLocation)
 		fmt.Printf("   Logs directory: %s\n", logDirPath)
 		fmt.Printf("   Per-model timeout: %v\n", modelTimeout)
