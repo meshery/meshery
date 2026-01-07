@@ -158,6 +158,21 @@ e2e: build e2e-libs
 	MESHERYCTL_BIN="../../$(BINARY)" bats --formatter $(BATS_FORMATTER) $(BATS_FOLDER_PATTERN)/$(BATS_FILE_PATTERN).bats; \
 	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"
 
+## Build mesheryctl and run end-to-end tests.
+e2e-ci: build e2e-libs
+	@echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
+	cd tests/e2e; \
+	BATS_LIB_PATH="$(shell pwd)/tests/e2e/$(BATS_LIB_PATH)" \
+	E2E_HELPERS_PATH=$(shell pwd)/tests/e2e/helpers \
+	E2E_TESTDATA_PATH=$(shell pwd)/tests/e2e/testdata \
+	TEMP_DATA_DIR=$(shell mktemp -d) \
+	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
+	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
+	MESHERYCTL_BIN="../../$(BINARY)" bats  $(BATS_FOLDER_PATTERN)/$(BATS_FILE_PATTERN).bats >> bats.tap; cd ..
+	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"  
+
+	ALLURE_LABELS="epic=MesheryCtl,type=e2e,env=ci" node bats-to-allure.js tests/e2e/bats.tap
+
 ## Run end-to-end tests using an existing mesheryctl binary.
 e2e-no-build: e2e-libs
 	@echo "\n\n#### MESHERYCTL END-TO-END TESTING - START ####\n\n"; \
