@@ -121,7 +121,7 @@ docs:
 #-----------------------------------------------------------------------------
 # End-to-End Tests
 #-----------------------------------------------------------------------------
-.PHONY: e2e-libs e2e-clean e2e e2e-no-build e2e-run-all
+.PHONY: e2e-libs e2e-clean e2e e2e-no-build e2e-run-all e2e-ci
 ## Fetch bats helper libraries for e2e tests.
 e2e-libs:
 	@mkdir -p tests/e2e/$(BATS_LIB_PATH) && \
