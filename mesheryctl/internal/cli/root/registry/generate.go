@@ -268,6 +268,6 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "directory", "model-csv")
 
 	// New flags for per-model timeout and latest version only
-	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h)")
+	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h), default: 5m")
 	generateCmd.PersistentFlags().BoolVar(&latestVersionOnly, "latest-only", false, "generate only the latest version of each model")
 }
