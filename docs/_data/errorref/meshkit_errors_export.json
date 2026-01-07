@@ -1632,6 +1632,15 @@
         "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate for this model",
         "suggested_remediation": "Try increasing the per-model timeout using --timeout flag\nCheck network connectivity\nReview the source URL for the model"
       },
+      "11312": {
+        "name": "ErrModelSkippedCode",
+        "code": "11312",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Model already exists and LatestVersionOnly is enabled",
+        "suggested_remediation": "This is expected behavior when LatestVersionOnly option is used"
+      },
       "11315": {
         "name": "ErrLoadPatternCode",
         "code": "11315",
