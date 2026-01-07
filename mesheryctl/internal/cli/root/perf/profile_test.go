@@ -140,7 +140,7 @@ func TestProfileCmd(t *testing.T) {
 			err := PerfCmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			_ = w.Close()
 
 			if err != nil {
 				if tt.ExpectError {

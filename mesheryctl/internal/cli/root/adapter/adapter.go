@@ -219,7 +219,7 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	if err != nil {
 		return "", ErrCreatingDeployRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -241,7 +241,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {

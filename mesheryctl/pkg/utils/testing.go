@@ -248,13 +248,13 @@ func Populate(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 
 	destination, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer destination.Close()
+	defer func() { _ = destination.Close() }()
 	_, err = io.Copy(destination, source)
 	return err
 }
@@ -278,7 +278,7 @@ func StartMockMesheryServer(t *testing.T) error {
 				continue
 			}
 			// Close the connection to verify IsServerRunning() in auth.go
-			conn.Close()
+			_ = conn.Close()
 		}
 	}()
 
@@ -392,7 +392,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			_ = w.Close()
 
 			if err != nil {
 				// Keep this check to see if output is golden file during transition
