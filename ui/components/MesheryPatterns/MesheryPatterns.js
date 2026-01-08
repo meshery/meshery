@@ -1052,8 +1052,15 @@ function MesheryPatterns({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
       },
     },
