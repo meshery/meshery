@@ -50,16 +50,16 @@ components-count: 9
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between DiskEncryptionSet and vault(azure-key-vault)"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Image and Snapshot(azure-compute)"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Virtual Machine Scale Set(parent component) is patched with the configuration of Virtual Machine Scale Set Extension(child component). "
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Virtual Machine(parent component) is patched with the configuration of Virtual Machine Extension(child component). "
+  description: ""
 relationship-count: 4
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
