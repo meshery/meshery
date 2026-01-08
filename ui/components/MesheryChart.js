@@ -1,14 +1,5 @@
-import React, { useState, useRef } from 'react';
-import {
-  Grid2,
-  Typography,
-  IconButton,
-  Paper,
-  ClickAwayListener,
-  Fade,
-  Popper,
-  styled,
-} from '@sistent/sistent';
+import React, { useRef } from 'react';
+import { Grid2, Typography, styled } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
@@ -17,16 +8,6 @@ import {
   makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js';
-import {
-  TwitterShareButton,
-  LinkedinShareButton,
-  FacebookShareButton,
-  TwitterIcon,
-  LinkedinIcon,
-  FacebookIcon,
-} from 'react-share';
-import ReplyIcon from '@mui/icons-material/Reply';
-
 const ChartTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
   fontSize: theme.spacing(1.75),
@@ -92,26 +73,6 @@ function MesheryChart(props) {
   const chart = useRef(null);
   const percentileRef = useRef(null);
   const titleRef = useRef(null);
-
-  const [socialExpand, setSocialExpand] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [socialMessage, setSocialMessage] = useState('');
-
-  const getSocialMessageForPerformanceTest = (rps, percentile) => {
-    return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
-  };
-
-  const handleSocialExpandClick = (e, chartData) => {
-    setAnchorEl(e.currentTarget);
-    setSocialMessage(
-      getSocialMessageForPerformanceTest(
-        chartData.options.metadata.qps.display.value.split(' ')[1],
-        chartData.percentiles[4].Value,
-      ),
-    );
-    e.stopPropagation();
-    setSocialExpand((prevState) => !prevState);
-  };
 
   const singleChart = (rawdata, data) => {
     if (typeof data === 'undefined' || typeof data.StartTime === 'undefined') {
@@ -433,5 +394,4 @@ function MesheryChart(props) {
     </NoSsr>
   );
 }
-
 export default MesheryChart;
