@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ComponentStatus health summaries are connected to Events that report component health changes by name",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

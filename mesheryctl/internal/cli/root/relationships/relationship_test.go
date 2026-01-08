@@ -20,7 +20,7 @@ func TestRelationship(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Display error without any flags or args",
 			Args:             []string{},
@@ -28,6 +28,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "relationship.no.args.no.flag.output.golden",
 			ExpectError:      true,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display error given invalid command",
@@ -36,6 +37,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "relationship.invalid.command.output.golden",
 			ExpectError:      true,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships empty",
@@ -44,6 +46,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.count.relationship.empty.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships",
@@ -52,6 +55,7 @@ func TestRelationship(t *testing.T) {
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 

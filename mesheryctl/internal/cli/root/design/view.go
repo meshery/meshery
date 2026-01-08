@@ -92,7 +92,7 @@ mesheryctl design view [design-name | ID]
 			return nil
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))

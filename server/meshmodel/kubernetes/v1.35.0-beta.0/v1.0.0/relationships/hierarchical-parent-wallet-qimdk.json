@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which EndpointSlice is hosted within a Service, acting as a \"wallet\" that contains the slice's endpoints for that Service",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

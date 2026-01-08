@@ -34,22 +34,22 @@ components-count: 5
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Trail and EventDataStore"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Trail and Bucket"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Trail and Topic"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between AdoptedResource and Trail"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Trail and LogGroup"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between AdoptedResource and EventDataStore"
+  description: ""
 relationship-count: 6
 featureList: [
   "Data events that capture data plane actions within a resource, such as reading or writing an Amazon S3 object.",

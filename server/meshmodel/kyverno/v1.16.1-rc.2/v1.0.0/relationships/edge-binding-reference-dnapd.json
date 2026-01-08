@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno Policy pulls live external truth (HTTP, Vault, AWS Secrets Manager, Git) from any GlobalContextEntry",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

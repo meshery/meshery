@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where Prometheus auto-discovers every ServiceMonitor",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

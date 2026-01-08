@@ -307,7 +307,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	prefObj.MeshAdapters = meshAdapters
-	err = provider.RecordPreferences(req, user.UserID, prefObj)
+	err = provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -492,7 +492,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
-		Username:    user.UserID,
+		Username:    user.UserId,
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),

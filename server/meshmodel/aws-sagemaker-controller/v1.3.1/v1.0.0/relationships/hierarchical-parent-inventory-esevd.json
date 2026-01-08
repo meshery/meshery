@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between HyperParameterTuningJob and TrainingJob ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

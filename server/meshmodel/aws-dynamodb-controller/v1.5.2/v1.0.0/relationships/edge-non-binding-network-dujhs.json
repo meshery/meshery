@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship ECS services use DynamoDB for scalable NoSQL storage",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
