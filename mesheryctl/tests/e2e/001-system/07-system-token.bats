@@ -41,6 +41,10 @@ setup() {
     run $MESHERYCTL_BIN system token list
     assert_success
     assert_output --partial "test-token"
+
+    # Teardown: delete the token to ensure test isolation
+    run $MESHERYCTL_BIN system token delete test-token
+    assert_success
 }
 
 # bats test_tags=system:token
