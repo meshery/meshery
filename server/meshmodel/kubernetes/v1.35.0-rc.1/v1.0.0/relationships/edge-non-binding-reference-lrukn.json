@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where Binding references the Pod it assigns through its object metadata name.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

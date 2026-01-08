@@ -90,7 +90,7 @@ mesheryctl design apply [design-name]
 			}
 
 			var response *models.PatternsAPIResponse
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return errors.Wrap(err, utils.DesignError("failed to read response body"))
@@ -146,7 +146,7 @@ mesheryctl design apply [design-name]
 					}
 
 					var response []*models.MesheryPattern
-					defer resp.Body.Close()
+					defer func() { _ = resp.Body.Close() }()
 
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {
@@ -213,7 +213,7 @@ mesheryctl design apply [design-name]
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
-				defer resp.Body.Close()
+				defer func() { _ = resp.Body.Close() }()
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
@@ -262,7 +262,7 @@ mesheryctl design apply [design-name]
 			return nil
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		s.Stop()
 		if err != nil {

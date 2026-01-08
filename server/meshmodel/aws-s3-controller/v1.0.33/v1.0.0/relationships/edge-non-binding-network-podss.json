@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship ECS containers access S3 for application data and artifacts",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

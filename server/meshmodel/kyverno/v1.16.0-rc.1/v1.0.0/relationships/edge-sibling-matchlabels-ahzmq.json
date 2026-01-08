@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno PolicyException carves a safe-pass for any resource by naming the Policy",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

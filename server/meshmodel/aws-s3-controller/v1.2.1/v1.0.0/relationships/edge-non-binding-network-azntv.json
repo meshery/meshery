@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EKS workloads store/retrieve data from S3 buckets",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

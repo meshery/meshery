@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where PrometheusAgent runs with the exact identity of a ServiceAccount",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
