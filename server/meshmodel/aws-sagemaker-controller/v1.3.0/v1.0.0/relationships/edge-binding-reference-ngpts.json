@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between pipeline and TrainingJob",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

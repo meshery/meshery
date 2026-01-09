@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship HorizontalPodAutoscaler auto-scales a ReplicaSet based on CPU or custom metrics",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

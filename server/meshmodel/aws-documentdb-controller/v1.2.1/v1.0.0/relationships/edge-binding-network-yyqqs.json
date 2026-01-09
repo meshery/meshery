@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between DBSubnetGroup and Subnet",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

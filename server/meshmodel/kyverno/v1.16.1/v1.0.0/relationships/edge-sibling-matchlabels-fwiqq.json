@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno Policy governs every Pod in its namespace",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

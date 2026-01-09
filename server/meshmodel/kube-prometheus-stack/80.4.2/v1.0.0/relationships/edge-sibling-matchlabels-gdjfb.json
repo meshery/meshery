@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where PrometheusAgent auto-discovers every PodMonitor",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

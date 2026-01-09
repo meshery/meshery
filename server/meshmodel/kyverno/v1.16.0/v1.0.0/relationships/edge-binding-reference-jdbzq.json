@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno ClusterPolicy reads live secrets from any Secret",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

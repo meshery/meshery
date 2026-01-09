@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between JobRun and role",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

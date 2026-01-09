@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EC2 applications send/receive messages from SQS queues",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

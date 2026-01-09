@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship RDS stores master credentials in Secrets Manager",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

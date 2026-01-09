@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ScheduledQueryRule and Component(azure-insights)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

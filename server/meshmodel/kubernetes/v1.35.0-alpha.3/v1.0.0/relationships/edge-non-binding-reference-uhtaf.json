@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a ServiceAccount grants identity and RBAC permissions to Pods",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

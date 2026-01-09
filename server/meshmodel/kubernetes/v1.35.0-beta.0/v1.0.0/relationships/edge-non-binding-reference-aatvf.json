@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CertificateSigningRequest references a ServiceAccount via spec.signerName to request a signed certificate for Kubernetes authentication.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

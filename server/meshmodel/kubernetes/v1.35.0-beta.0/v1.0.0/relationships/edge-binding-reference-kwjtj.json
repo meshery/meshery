@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ValidatingAdmissionPolicyBinding references a ValidatingAdmissionPolicy through its policyName field to activate the policy for specific resources.\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

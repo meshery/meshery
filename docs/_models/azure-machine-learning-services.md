@@ -30,19 +30,19 @@ components-count: 4
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Workspace and StorageAccount(azure-storage)"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between Workspace and Vault(azure-key-vault)"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between WorkspacesCompute and virtualMachine(azure-compute)"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 relationship-count: 5
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

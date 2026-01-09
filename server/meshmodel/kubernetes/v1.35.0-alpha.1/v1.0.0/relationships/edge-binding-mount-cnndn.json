@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a StorageClass dynamically provisions a PersistentVolume for every PersistentVolumeClaim",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

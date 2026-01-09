@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship IAM policies control S3 bucket and object access",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

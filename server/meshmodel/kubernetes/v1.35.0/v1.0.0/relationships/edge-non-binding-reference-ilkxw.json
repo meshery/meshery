@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where TokenRequest may bind its issued token to a Secret",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

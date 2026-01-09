@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of Reule Set CDN(parent component) is patched with the configuration of Rule(child component). ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

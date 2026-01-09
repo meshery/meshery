@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Workspace and StorageAccount(azure-storage)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

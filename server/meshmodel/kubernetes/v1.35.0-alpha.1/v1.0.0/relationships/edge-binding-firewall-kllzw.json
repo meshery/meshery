@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

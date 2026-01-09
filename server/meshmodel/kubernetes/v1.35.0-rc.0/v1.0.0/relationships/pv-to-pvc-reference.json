@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A PVC binds to a matching PV either dynamically (via a StorageClass) or statically (by explicitly matching fields like name, storage, and accessModes).\nThe PVC acts as an abstraction layer, allowing workloads to request storage without knowing the underlying volume details.\nOnce bound, the PV becomes \"claimed\" and is dedicated (or shared, depending on accessModes) for that PVC’s use.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

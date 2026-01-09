@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EKS pods use EFS as PersistentVolumes via CSI driver",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

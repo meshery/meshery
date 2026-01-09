@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno Policy reads live secrets (API keys, certs, tokens) from any Secret",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

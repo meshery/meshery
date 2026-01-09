@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship S3 sends object event notifications to SQS",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

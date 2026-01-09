@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between CustomDomain and CustomCertificate(azure-signalr-service)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EC2 instances connect to RDS databases via VPC networking",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

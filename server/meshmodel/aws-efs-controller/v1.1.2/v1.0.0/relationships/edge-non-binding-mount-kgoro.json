@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda can mount EFS for persistent storage and shared data",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

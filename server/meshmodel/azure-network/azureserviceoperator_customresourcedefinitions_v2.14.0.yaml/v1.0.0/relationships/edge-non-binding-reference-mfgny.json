@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between VirtualNetworkGateway and VirtualNetworksSubnet(azure-network)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

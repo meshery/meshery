@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship ECS containers use MemoryDB for durable Redis-compatible data",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

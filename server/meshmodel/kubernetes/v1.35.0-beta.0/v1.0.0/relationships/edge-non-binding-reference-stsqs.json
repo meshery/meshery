@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ClusterTrustBundle aligns with CertificateSigningRequests that share the same signer name.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship ECS tasks mount EFS volumes for persistent container storage",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

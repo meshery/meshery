@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CronJob creates Job instances driving scheduled batch workloads.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

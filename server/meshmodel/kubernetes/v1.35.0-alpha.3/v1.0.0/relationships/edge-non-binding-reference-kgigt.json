@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CSINode references a CSIDriver by name to advertise the storage driver’s capabilities on that node",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

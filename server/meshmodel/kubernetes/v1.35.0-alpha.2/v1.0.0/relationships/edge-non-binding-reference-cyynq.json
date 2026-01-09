@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a StorageVersionMigration upgrades etcd storage for a specific StorageVersion",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

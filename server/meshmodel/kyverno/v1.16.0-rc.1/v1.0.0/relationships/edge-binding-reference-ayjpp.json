@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno UpdateRequest auto-spawns or updates a Pod",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

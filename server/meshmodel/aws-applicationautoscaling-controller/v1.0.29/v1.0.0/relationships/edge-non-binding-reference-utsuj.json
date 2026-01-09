@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ScalingPolicy and ScalableTarget",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

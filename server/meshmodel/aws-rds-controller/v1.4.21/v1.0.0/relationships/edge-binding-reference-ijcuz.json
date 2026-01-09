@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between DBClusterSnapshot andDBcluster",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

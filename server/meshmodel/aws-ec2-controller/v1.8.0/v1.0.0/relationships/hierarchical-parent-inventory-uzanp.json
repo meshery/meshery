@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between VPCEndpoint and VPC. VPCEndpoints reference VPCs through vpcID",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

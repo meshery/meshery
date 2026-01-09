@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Pod inherits scheduling priority \u0026 preemption power",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

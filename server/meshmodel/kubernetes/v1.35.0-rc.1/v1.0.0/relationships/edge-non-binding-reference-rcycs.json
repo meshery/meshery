@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a StatefulSet auto-generates one unique, sticky PersistentVolumeClaim per Pod",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

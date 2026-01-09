@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship IAM roles for service accounts (IRSA) in EKS",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

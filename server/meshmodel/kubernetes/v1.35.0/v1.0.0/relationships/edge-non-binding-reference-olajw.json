@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Deployment creates and owns ReplicaSets, driving rolling updates and rollbacks.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

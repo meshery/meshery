@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between PrometheusRuleGroup and Account(azure-monitor)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda functions cache data in ElastiCache to reduce latency",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between autoscaleSetting and virtualMachineScaleSet(azure-compute)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

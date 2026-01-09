@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between NetworkACL and VPC. NetworkACLs reference VPCs through vpcID",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

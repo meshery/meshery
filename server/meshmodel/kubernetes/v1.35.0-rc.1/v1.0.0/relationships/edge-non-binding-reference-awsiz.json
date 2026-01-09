@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CronJob indirectly creates Pods, scheduling Jobs that own the Pods for timed executions.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

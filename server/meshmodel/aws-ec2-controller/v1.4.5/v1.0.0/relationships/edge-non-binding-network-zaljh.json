@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between VPC and TransitGatewayVPCAttachment",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

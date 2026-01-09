@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CSI driver attaches a CSI volume to a node",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

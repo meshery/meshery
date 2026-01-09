@@ -34,13 +34,13 @@ components-count: 5
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between StateMachine and Activity "
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and Activity "
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and StateMachine "
+  description: ""
 relationship-count: 3
 featureList: [
   "Step Functions is based on state machines and tasks.",

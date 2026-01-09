@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ContainerApp and ManagedEnvironment(azure-app-service)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

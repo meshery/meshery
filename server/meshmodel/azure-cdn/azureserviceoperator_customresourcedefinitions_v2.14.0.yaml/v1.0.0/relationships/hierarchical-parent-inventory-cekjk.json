@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of ProfilesEndpoint(child component). ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

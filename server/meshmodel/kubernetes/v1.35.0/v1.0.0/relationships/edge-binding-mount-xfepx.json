@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship DeviceClass provides device config to ResourceClaim, which Pods mount",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

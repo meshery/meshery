@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda functions query MongoDB-compatible DocumentDB",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

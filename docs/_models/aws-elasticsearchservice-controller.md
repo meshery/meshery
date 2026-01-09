@@ -22,10 +22,10 @@ components-count: 2
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between ElasticsearchDomain and vpc"
+  description: ""
 - type: "binding"
   kind: "edge"
-  description: "An edge relationship between policy and ElasticsearchDomain"
+  description: ""
 relationship-count: 2
 featureList: [
   "Scalable search and analytics",

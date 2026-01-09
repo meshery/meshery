@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ReplicationController references ConfigMaps consumed by Pod template volumes",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

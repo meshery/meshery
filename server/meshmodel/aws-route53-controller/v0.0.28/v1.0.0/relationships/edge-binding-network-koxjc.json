@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between HostedZone and VPC",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

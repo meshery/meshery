@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Image and Snapshot(azure-compute)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

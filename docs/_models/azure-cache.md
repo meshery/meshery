@@ -38,16 +38,16 @@ components-count: 6
 relationships: 
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Redis Cache(parent component) is patched with the configuration of RedisFirewallRule(child component). "
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Redis Cache(parent component) is patched with the configuration of RedisLinkedServer(child component). "
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Redis Enterprise Cache(parent component) is patched with the configuration of RedisEnterpriseDatabase(child component). "
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of Redis Cache(parent component) is patched with the configuration of RedisPatchSchedule(child component). "
+  description: ""
 relationship-count: 4
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship StatefulSet owns ControllerRevision objects to track historical Pod template revisions.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

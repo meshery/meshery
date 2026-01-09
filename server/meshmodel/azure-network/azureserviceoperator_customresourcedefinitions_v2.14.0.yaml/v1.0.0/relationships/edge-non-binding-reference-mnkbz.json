@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ApplicationGateway and Subnet(azure-network)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

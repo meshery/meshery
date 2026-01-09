@@ -38,19 +38,19 @@ components-count: 6
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between HostedZone and VPC"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between recordset and hostedzone"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresources and hostedzone"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and recordset"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 relationship-count: 5
 featureList: [
   "Route end users to your site reliably with globally-dispersed Domain Name System (DNS) servers and automatic scaling.",

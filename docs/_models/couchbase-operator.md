@@ -78,7 +78,11 @@ components:
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-encryption-key/icons/color/couchbase-encryption-key-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-encryption-key/icons/white/couchbase-encryption-key-white.svg
   description: 
-components-count: 17
+- name: couchbase-encryption-key
+  colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-encryption-key/icons/color/couchbase-encryption-key-color.svg
+  whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-encryption-key/icons/white/couchbase-encryption-key-white.svg
+  description: 
+components-count: 18
 relationships: 
 relationship-count: 0
 featureList: [

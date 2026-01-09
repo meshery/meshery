@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Version and Function. Versions reference Functions through functionName",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

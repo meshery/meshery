@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship DeviceTaintRule applies device-specific taints to Nodes, influencing Pod scheduling for device access.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

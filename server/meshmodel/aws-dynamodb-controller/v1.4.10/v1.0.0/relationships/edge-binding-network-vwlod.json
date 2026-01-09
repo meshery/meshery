@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between table and VPCEndpoint",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

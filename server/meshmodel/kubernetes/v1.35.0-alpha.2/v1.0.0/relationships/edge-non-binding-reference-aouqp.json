@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship HorizontalPodAutoscaler automatically scales a Deployment by adjusting replica count based on CPU or custom metrics",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

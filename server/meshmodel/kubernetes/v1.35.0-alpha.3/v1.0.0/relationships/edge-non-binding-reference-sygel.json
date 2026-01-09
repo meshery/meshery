@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Endpoints object is owned by a Service, providing the actual Pod IPs for traffic routing.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

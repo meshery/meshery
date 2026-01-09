@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno ClusterPolicy auto-spawns an UpdateRequest",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

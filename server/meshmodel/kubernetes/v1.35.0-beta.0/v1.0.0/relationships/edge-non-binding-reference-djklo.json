@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Every ResourceSlice is instantly advertising GPUs, FPGAs, or RDMA NICs that only that node can serve.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

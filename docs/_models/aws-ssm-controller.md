@@ -42,16 +42,16 @@ components-count: 7
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between ResourceDataSync and Bucket"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and document"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and PatchBaseline"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and ResourceDataSync"
+  description: ""
 relationship-count: 4
 featureList: [
   "Centralized management of AWS resources",

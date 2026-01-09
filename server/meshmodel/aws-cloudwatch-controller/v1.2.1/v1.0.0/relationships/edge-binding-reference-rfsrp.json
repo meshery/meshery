@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between MetricAlarm and Function",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

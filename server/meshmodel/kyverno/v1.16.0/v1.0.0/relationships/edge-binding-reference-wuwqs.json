@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno Policy reads live config from any ConfigMap",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where CSINode references a Node",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship IAM roles attached to EC2 instances for AWS API permissions",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

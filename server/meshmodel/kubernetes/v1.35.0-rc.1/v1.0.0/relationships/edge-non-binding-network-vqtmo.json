@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a ServiceCIDR supplies the cluster-wide VIP pool that every Service draws its stable ClusterIP from",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

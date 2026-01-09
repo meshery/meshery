@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CSIStorageCapacity reports available capacity for a specific StorageClass",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

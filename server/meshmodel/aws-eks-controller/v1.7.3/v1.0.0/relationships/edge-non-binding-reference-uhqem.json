@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Addon and cluster",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

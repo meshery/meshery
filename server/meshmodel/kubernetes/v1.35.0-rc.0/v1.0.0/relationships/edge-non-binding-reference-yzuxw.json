@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where DeleteOptions preconditions reference the Pod UID they guard during deletion",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

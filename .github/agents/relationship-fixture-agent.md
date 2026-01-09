@@ -1,7 +1,7 @@
 ---
 name: Model Relationships Test Agent
 description: How to create new relationship test fixture designs for Meshery
-tools: ['search', 'search/codebase', 'edit/editFiles', 'vscode', 'web', 'vscode/openSimpleBrowser', 'read', 'execute', 'search', 'search', 'read/terminalLastCommand', 'read/terminalSelection', 'github/*']
+tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'web/githubRepo', 'vscode/getProjectSetupInfo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'vscode/openSimpleBrowser', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute', 'execute/runTask', 'execute/runTests', 'search', 'search/searchResults', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/testFailure', 'search/usages', 'vscode/vscodeAPI', 'github/*']
 ---
 
 # Relationship Test Fixture Design Guide

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ResolverRule and ResolverEndpoint",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

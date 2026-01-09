@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between DnsForwardingRuleSetsVirtualNetworkLink and VirtualNetwork(azure-network)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
