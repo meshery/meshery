@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno Policy governs every Service in its namespace",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between AdoptedResource and DBCluster",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

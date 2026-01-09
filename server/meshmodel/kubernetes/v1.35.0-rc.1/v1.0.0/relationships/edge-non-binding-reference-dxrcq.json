@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where MutatingWebhookConfiguration references a Service to route admission webhook calls to the webhook endpoint",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

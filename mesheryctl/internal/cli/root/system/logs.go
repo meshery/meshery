@@ -231,7 +231,7 @@ mesheryctl system logs meshery-istio
 					if err != nil {
 						return err
 					}
-					defer logs.Close()
+					defer func() { _ = logs.Close() }()
 					var logBuf []byte
 					if !follow {
 						logBuf, err = io.ReadAll(logs)

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship HorizontalPodAutoscaler auto-scales a StatefulSet by adjusting while preserving Pod identity \u0026 PVCs",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

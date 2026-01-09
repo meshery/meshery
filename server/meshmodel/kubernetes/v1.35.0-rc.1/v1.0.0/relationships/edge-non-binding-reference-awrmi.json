@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where VolumeAttachment references a PersistentVolume\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

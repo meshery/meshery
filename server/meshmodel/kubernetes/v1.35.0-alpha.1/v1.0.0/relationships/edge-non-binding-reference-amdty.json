@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where WatchEvent's object kind maps to the APIResource entry describing that resource",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where Event references a Pod through its involvedObject field to record lifecycle events and state changes for the pod.\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
