@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where APIService references a Service that hosts the aggregated API server backing the APIService registration",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

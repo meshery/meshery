@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship IPAddress supplies a real IP to any Service or Ingress, enabling external traffic routing.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda functions query RDS databases for data operations",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

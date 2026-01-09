@@ -104,6 +104,7 @@ server-local: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
@@ -114,6 +115,7 @@ server-kanvas: dep-check
 	PROVIDER=Layer5 \
 	RELEASE_CHANNEL=kanvas \
 	PLAYGROUND=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
 	PORT=9081 \
 	DEBUG=true \
@@ -179,6 +181,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
@@ -340,8 +343,9 @@ ui-setup:
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:
-	cd ui && npm ci && cd ..
-	cd provider-ui && npm ci && cd ..
+	cd ui; npm ci; cd ..
+	cd provider-ui; npm ci; cd ..
+
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
@@ -470,13 +474,15 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install chromium --with-deps; cd ..
 
 test-ui:
-	cd ui; npm run test:e2e; cd ..
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 test-e2e-ci:
-	cd ui; npm run test:e2e:ci; cd ..
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies

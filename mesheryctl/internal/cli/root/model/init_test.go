@@ -19,7 +19,7 @@ func TestModelInit(t *testing.T) {
 	// Shared cleanup function for test directories and artifacts
 	cleanupTestArtifacts := func(dirs []string) {
 		for _, dir := range dirs {
-			os.RemoveAll(dir)
+			_ = os.RemoveAll(dir)
 		}
 	}
 

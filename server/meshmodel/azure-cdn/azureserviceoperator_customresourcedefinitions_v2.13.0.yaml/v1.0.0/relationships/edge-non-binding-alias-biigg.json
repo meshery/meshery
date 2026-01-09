@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Route and AfdOriginGroup(azure-cdn)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
