@@ -2,6 +2,7 @@ package registry
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/meshery/meshkit/errors"
@@ -18,6 +19,7 @@ var (
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
 	ErrInvalidOutputPathCode     = "mesheryctl-1160"
+	ErrCreateOutputDirCode       = "mesheryctl-1161"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -69,5 +71,21 @@ func ErrInvalidOutputPath(path string) error {
 			"Recommended: Use the --output flag to specify your desired destination (e.g., --output ../server/meshmodel).",
 			// The "I want to rely on defaults" Fix
 			"Alternatively: Change directory to 'meshery/mesheryctl' and try again.",
+		})
+}
+
+func ErrCreateOutputDir(err error, path string) error {
+	return errors.New(ErrCreateOutputDirCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to create output directory: %s", path)},
+		[]string{err.Error()},
+		[]string{
+			"Insufficient filesystem permissions to create the directory.",
+			"The parent directory does not exist or is not writable.",
+			"The path points to an existing file, not a directory.",
+		},
+		[]string{
+			fmt.Sprintf("Ensure you have write permissions for the parent directory: %s", filepath.Dir(path)),
+			"Try specifying a different output location using --output.",
+			"Check if a file with the same name already exists.",
 		})
 }

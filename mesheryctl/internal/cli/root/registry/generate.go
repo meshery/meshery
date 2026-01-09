@@ -143,7 +143,16 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
-		registryLocation = filepath.Join(cwd, outputLocation)
+
+		if filepath.IsAbs(outputLocation) {
+			registryLocation = outputLocation
+		} else {
+			registryLocation = filepath.Join(cwd, outputLocation)
+		}
+
+		if err := os.MkdirAll(registryLocation, 0o755); err != nil {
+			return ErrCreateOutputDir(err, registryLocation)
+		}
 
 		if pathToRegistrantConnDefinition != "" {
 			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
