@@ -1,6 +1,7 @@
 package model
 
 import (
+	goerrors "errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -26,8 +27,10 @@ func TestSearchModel(t *testing.T) {
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "empty.golden",
-			ExpectedResponse: "search.model.without.query.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(errSearchModelName)),
 		},
 		{
 			Name:             "Search model with query",
