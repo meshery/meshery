@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship CustomResourceDefinition registers custom objects under a specific APIGroup, extending the Kubernetes API.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

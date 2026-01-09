@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Metric Alert and StorageAccount(azure-storage)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

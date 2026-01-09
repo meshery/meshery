@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Every time a workload references the template, K8s auto-spawns a fresh ResourceClaim",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

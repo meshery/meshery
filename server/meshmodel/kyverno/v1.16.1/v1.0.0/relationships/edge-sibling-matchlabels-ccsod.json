@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno ClusterPolicy pulls live external data (HTTP, Vault, AWS Secrets Manager, Git) from any GlobalContextEntry",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

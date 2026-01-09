@@ -148,7 +148,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		countFlag := cmd.Flag("count")
 		if countFlag != nil && countFlag.Value.String() == "true" {
-			whiteBoardPrinter.Println("Total number of filter: ", len(data))
+			_, _ = whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}
 
@@ -186,7 +186,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 		return nil, utils.ErrRequestResponse(err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

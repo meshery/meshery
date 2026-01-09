@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda processes messages from Amazon MQ brokers",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

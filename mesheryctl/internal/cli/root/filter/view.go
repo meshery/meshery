@@ -111,7 +111,7 @@ mesheryctl filter view "filter name"
 			return nil
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return errors.Wrap(err, utils.FilterViewError("failed to read response body"))
