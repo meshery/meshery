@@ -172,7 +172,7 @@ func exportDesign(baseUrl, design, designType string) error {
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
-	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0o755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0755); err != nil {
 		return models.ErrMakeDir(err, outputFilePath)
 	}
 

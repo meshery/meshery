@@ -62,14 +62,14 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Apply design with invalid json response",
-			Args:             []string{"apply", "-f", "/invalid/path/design.yaml"},
+			Name:             "Apply design with invalid filepath",
+			Args:             []string{"apply", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, "/invalid/path/design.yaml")),
+			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
 			Name:             "Apply design with invalid server response",
@@ -98,11 +98,4 @@ func TestApplyCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
-}
-
-// reset other flags if needed
-func resetVariables() {
-	skipSave = false
-	patternFile = ""
-	file = ""
 }

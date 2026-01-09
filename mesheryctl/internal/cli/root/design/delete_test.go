@@ -9,10 +9,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-const (
-	invalidFilePath = "/invalid/path/design.yaml"
-	nonExistentID   = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
-)
+const nonExistentID = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
 
 func TestDeleteCmd(t *testing.T) {
 	// create a test helper

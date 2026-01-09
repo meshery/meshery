@@ -1,11 +1,17 @@
 package design
 
 import (
+	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+var (
+	update          = flag.Bool("update", false, "update golden files")
+	invalidFilePath = "/invalid/path/design.yaml"
 )
 
 func TestDesignCmd(t *testing.T) {
@@ -132,4 +138,11 @@ func TestDesignCmd(t *testing.T) {
 	}
 
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+// reset other flags if needed
+func resetVariables() {
+	skipSave = false
+	patternFile = ""
+	file = ""
 }
