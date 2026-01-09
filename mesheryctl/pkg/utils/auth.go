@@ -458,7 +458,8 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 
 	// Validate that the response is JSON, not HTML
 	if ContentTypeIsHTML(resp) {
-		bodyBytes, _ := io.ReadAll(resp.Body)
+		// Read and discard the body to properly close the connection
+		_, _ = io.ReadAll(resp.Body)
 		return nil, errors.New("server returned HTML instead of JSON token. This usually indicates an authentication error or server issue")
 	}
 
