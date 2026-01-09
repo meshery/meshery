@@ -14,6 +14,7 @@ import (
 func resetGenerateFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().VisitAll(func(f *pflag.Flag) {
 		_ = f.Value.Set(f.DefValue)
+		f.Changed = false
 	})
 }
 
@@ -292,7 +293,8 @@ func TestGenerationOptionsCreation(t *testing.T) {
 }
 
 func TestPreRunEValidation(t *testing.T) {
-	// Test PreRunE validation for various input scenarios
+	tempDir := t.TempDir()
+
 	tests := []struct {
 		name        string
 		args        []string
@@ -301,9 +303,27 @@ func TestPreRunEValidation(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name:        "No input source specified",
+			name:        "Fails on default output path (Safety Check)",
 			args:        []string{},
 			setup:       func() { resetGenerateFlags(generateCmd) },
+			expectError: true,
+			errorMsg:    "Output path not found",
+		},
+		{
+			name: "Bypasses check when custom output is provided",
+			args: []string{"--output", tempDir},
+			setup: func() {
+				resetGenerateFlags(generateCmd)
+			},
+			expectError: true,
+			errorMsg:    "Spreadsheet ID | Registrant Connection Definition Path",
+		},
+		{
+			name: "Fails when mandatory flags are missing (Logic Flow Check)",
+			args: []string{"--output", tempDir},
+			setup: func() {
+				resetGenerateFlags(generateCmd)
+			},
 			expectError: true,
 			errorMsg:    "isn't specified",
 		},
@@ -315,7 +335,8 @@ func TestPreRunEValidation(t *testing.T) {
 				tt.setup()
 			}
 
-			generateCmd.SetArgs(tt.args)
+			_ = generateCmd.PersistentFlags().Parse(tt.args)
+
 			err := generateCmd.PreRunE(generateCmd, tt.args)
 
 			if tt.expectError {

@@ -56,6 +56,7 @@ var (
 	// Whether to generate only the latest version of each model
 	latestVersionOnly bool
 )
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -84,8 +85,16 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
-		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		outputFlag, _ := cmd.Flags().GetString("output")
+		isDefaultLocation := !cmd.Flags().Changed("output")
+		if isDefaultLocation {
+			if _, err := os.Stat(outputFlag); err != nil {
+				if os.IsNotExist(err) {
+					return ErrInvalidOutputPath(outputFlag)
+				}
+			}
+		}
+
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")

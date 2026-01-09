@@ -17,6 +17,7 @@ var (
 	ErrGenerationTimeoutCode     = "mesheryctl-1129"
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
+	ErrInvalidOutputPathCode     = "mesheryctl-1160"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -53,4 +54,20 @@ func ErrParsingRelationship(err error, modelName string) error {
 
 func ErrModelGenerationFailed(modelName string, err error) error {
 	return errors.New(ErrModelGenerationFailedCode, errors.Alert, []string{fmt.Sprintf("failed to generate model: %s", modelName)}, []string{err.Error()}, []string{"Invalid model source URL", "Unsupported registrant type", "Network issues fetching model data"}, []string{"Verify the model's source URL is accessible", "Check the registrant type is supported", "Review network connectivity"})
+}
+
+func ErrInvalidOutputPath(path string) error {
+	return errors.New(ErrInvalidOutputPathCode, errors.Alert,
+		[]string{fmt.Sprintf("Output path not found: %s", path)},
+		[]string{fmt.Sprintf("The default output path '%s' cannot be found relative to your current location.", path)},
+		[]string{
+			"The default path assumes you are running this command from the 'meshery/mesheryctl' directory.",
+			"You are likely running this command from the repository root or a different location.",
+		},
+		[]string{
+			// The Best Fix
+			"Recommended: Use the --output flag to specify your desired destination (e.g., --output ../server/meshmodel).",
+			// The "I want to rely on defaults" Fix
+			"Alternatively: Change directory to 'meshery/mesheryctl' and try again.",
+		})
 }
