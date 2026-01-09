@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Probe actively pings and scrapes any Pod",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

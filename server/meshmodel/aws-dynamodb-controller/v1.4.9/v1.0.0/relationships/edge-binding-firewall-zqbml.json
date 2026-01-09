@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda triggered by DynamoDB Streams for real-time processing",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

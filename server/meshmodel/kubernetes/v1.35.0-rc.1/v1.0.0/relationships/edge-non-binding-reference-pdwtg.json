@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Pod runs in a sandboxed runtime",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

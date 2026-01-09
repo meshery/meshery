@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship ECS services publish notifications to SNS topics",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

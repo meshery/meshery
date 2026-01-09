@@ -192,14 +192,14 @@ type LogConsumer struct {
 func (l *LogConsumer) Log(containerName, message string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
+	_, _ = fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
 }
 
 // Err implements api.LogConsumer
 func (l *LogConsumer) Err(containerName, message string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
+	_, _ = fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
 }
 
 // Status implements api.LogConsumer

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of Virtual Machine Scale Set(parent component) is patched with the configuration of Virtual Machine Scale Set Extension(child component). ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

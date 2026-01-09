@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where MutatingAdmissionPolicy is referenced by MutatingAdmissionPolicyBinding\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

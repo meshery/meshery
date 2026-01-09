@@ -53,12 +53,13 @@ mesheryctl model view [model-name]
 
 		var selectedModel model.ModelDefinition
 
-		if modelsResponse.Count == 0 {
+		switch modelsResponse.Count {
+		case 0:
 			fmt.Println("No model(s) found for the given name ", modelDefinition)
 			return nil
-		} else if modelsResponse.Count == 1 {
+		case 1:
 			selectedModel = modelsResponse.Models[0]
-		} else {
+		default:
 			selectedModel = selectModelPrompt(modelsResponse.Models)
 		}
 
