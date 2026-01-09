@@ -1,6 +1,7 @@
 package design
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -42,6 +43,33 @@ func TestOffboardCmd(t *testing.T) {
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
+		},
+		{
+			Name:             "Offboard design with invalid file path",
+			Args:             []string{"offboard", "-f", invalidFilePath},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
+		},
+		{
+			Name:             "Offboard design not found",
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "offboard.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound(),
 		},
 	}
 
