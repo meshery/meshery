@@ -1,2 +1,2 @@
-Greetings !! I'm Yash Mahakal here : )
-I'm a computer engineering undergrad from Pune...
+# Yash Mahakal
+I'm a computer engineering undergraduate from Pune.
