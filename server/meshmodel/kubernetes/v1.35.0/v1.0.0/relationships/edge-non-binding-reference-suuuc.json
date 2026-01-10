@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where VolumeAttributesClass references the CSI driver that defines its mutable parameters",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

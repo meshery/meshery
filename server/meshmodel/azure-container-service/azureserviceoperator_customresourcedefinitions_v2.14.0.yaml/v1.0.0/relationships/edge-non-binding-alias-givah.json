@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Fleetsmember and mangedCluster(azure-container-service)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

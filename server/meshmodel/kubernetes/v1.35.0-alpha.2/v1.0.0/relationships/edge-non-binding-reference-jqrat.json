@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where KubernetesConnection references the credential record that carries its authentication material",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

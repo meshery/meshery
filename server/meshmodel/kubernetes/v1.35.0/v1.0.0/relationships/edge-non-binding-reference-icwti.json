@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship LeaseCandidate competes for leadership on behalf of a Node",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

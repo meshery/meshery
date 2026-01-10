@@ -49,7 +49,7 @@ RUN npm run build
 # RUN git config --global user.name "meshery"
 # RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.21.3 AS seed_content
+FROM alpine:3.23.2 AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -77,7 +77,7 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 # Build-time Extension Point: This stage prepares optional .meshery directory from build context.
 # System integrators can place a .meshery directory at the repository root to supply
 # build-time configuration, data, packages, etc., which will be copied into the image.
-FROM alpine:3.21.3 AS build_time_extensions
+FROM alpine:3.23.2 AS build_time_extensions
 WORKDIR /build-ext
 # Copy the entire context from meshery-server stage, then extract .meshery if it exists
 COPY --from=meshery-server /github.com/meshery/meshery /meshery-context
@@ -87,7 +87,7 @@ RUN if [ -d /meshery-context/.meshery ]; then \
         mkdir -p /build-ext/.meshery; \
     fi
 
-FROM alpine:3.21.3
+FROM alpine:3.23.2
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where RoleBinding references a Role through its roleRef field to determine which permissions to grant to the bound subjects.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

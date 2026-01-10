@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between cachecluster and CacheSubnetGroup",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
