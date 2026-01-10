@@ -200,7 +200,7 @@ func GetEphemeralPort() (int, error) {
 		return 0, err
 	}
 
-	defer ln.Close()
+	defer func() { _ = ln.Close() }()
 
 	// get port
 	tcpAddr, ok := ln.Addr().(*net.TCPAddr)

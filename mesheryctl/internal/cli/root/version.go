@@ -141,7 +141,7 @@ mesheryctl version
 		}
 
 		// needs multiple defer as Body.Close needs a valid response
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)

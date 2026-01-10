@@ -22,13 +22,13 @@ components-count: 2
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between policyendpoint and securitygroup"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between ENIConfig and Subnet"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between VPCLink and Integration"
+  description: ""
 relationship-count: 3
 featureList: [
   "Keep revision history and audit trail of all configuration changes",

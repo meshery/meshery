@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between ApplicationGateway and WenApplicationFirewallPolicy(azure-network)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ReplicationController references Secrets mounted by Pod template volumes",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

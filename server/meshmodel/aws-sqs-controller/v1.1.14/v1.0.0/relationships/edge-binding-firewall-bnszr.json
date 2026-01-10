@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship SNS topics fan out messages to SQS queues",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
