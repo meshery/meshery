@@ -9,9 +9,6 @@ category: contributing
 list: include
 ---
 
-
-# Contributing to Meshery Schemas
-
 This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows **Schema-Driven Development (SDD)**, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.
 
 ---
@@ -1056,14 +1053,6 @@ make golang-generate
 - Write a guide that's accurate, actionable, and friendly
 
 *Why it matters:* Docs are often the first impression contributors get. Schema-driven clarity starts here.
-
-{% include alert.html type="warning" title="Best Practices" content="
-  <ul>
-    <li>Do not commit the entire output of <code>make build</code> unless you're intentionally updating all the generated schemas.</li>
-    <li><strong>Verify that you're using the correct version</strong> of <code>@openapi-contrib/openapi-schema-to-json-schema</code>.</li>
-    <li>Run <code>make generate-types</code> to validate your changes and check that only the intended files have been updated.</li>
-  </ul>
-  <p>Adhering to these practices keeps the repository clean, reduces noise in code reviews, and helps us maintain the schemas as the single source of truth.</p>" %}
 
 ## Getting Help
 - [GitHub Issues](https://github.com/meshery/schemas/issues) - Report bugs or request features
