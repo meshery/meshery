@@ -38,10 +38,10 @@ components-count: 6
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between service and TaskDefinition"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 relationship-count: 2
 featureList: [
   "Simplifies container deployment and management",

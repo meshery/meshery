@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Injects all secret keys as env vars",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

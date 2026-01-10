@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where APIVersions enumerates legacy API versions that correspond to core APIResource.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

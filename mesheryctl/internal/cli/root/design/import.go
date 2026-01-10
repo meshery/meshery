@@ -148,7 +148,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("design file saved")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -181,7 +181,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("Fetched the design from the remote host")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where VolumeAttachment references a CSIDriver\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
