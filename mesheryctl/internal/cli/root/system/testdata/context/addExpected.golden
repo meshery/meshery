@@ -23,7 +23,7 @@ contexts:
         platform: kubernetes
         channel: stable
         version: latest
-        provider: Meshery
+        provider: Layer5
 current-context: local
 tokens:
     - name: default
