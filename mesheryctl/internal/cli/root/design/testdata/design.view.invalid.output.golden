@@ -1,1 +1,1 @@
-No Design found with the given name or ID
+No Design found with the given name or ID | Short Description: Design Not Found | Probable Cause: Design with the given name or ID is not present | Suggested Remediation: Please check if the given design name or ID is present via 'mesheryctl design list'
