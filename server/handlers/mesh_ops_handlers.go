@@ -12,7 +12,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 )
@@ -117,53 +116,18 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	_, _ = w.Write([]byte("{}"))
 }
 
-// For Configuration category, it further sub-categorizes by prefix (Add-ons, Policies, etc.)
-func categorizeAdapterOps(ops []*meshes.SupportedOperation) map[string]interface{} {
-	categoryNames := map[meshes.OpCategory]string{
-		meshes.OpCategory_INSTALL:            "Service Mesh",
-		meshes.OpCategory_SAMPLE_APPLICATION: "Sample Applications",
-		meshes.OpCategory_CONFIGURE:          "Configuration",
-		meshes.OpCategory_CUSTOM:             "Custom Operations",
-	}
-
+// groupOpsByCategory groups adapter operations by their category
+func groupOpsByCategory(ops []*meshes.SupportedOperation) map[string]interface{} {
 	result := make(map[string]interface{})
-	configSubcategories := make(map[string][]string)
 
 	for _, op := range ops {
-		if op.Category == meshes.OpCategory_VALIDATE {
-			continue
-		}
+		catName := op.Category.String()
 
-		catName, ok := categoryNames[op.Category]
-		if !ok {
-			catName = "Custom Operations"
-		}
-
-		if op.Category == meshes.OpCategory_CONFIGURE {
-			value := op.Value
-			switch {
-			case strings.HasPrefix(value, "Add-on:"):
-				name := strings.TrimSpace(strings.TrimPrefix(value, "Add-on:"))
-				configSubcategories["Add-ons"] = append(configSubcategories["Add-ons"], name)
-			case strings.HasPrefix(value, "Policy:"):
-				name := strings.TrimSpace(strings.TrimPrefix(value, "Policy:"))
-				configSubcategories["Policies"] = append(configSubcategories["Policies"], name)
-			default:
-				configSubcategories["Other"] = append(configSubcategories["Other"], value)
-			}
+		if existing, ok := result[catName].([]string); ok {
+			result[catName] = append(existing, op.Value)
 		} else {
-			// For non-Configuration categories, store as simple string array
-			if existing, ok := result[catName].([]string); ok {
-				result[catName] = append(existing, op.Value)
-			} else {
-				result[catName] = []string{op.Value}
-			}
+			result[catName] = []string{op.Value}
 		}
-	}
-
-	// Add Configuration sub-categories if any exist
-	if len(configSubcategories) > 0 {
-		result["Configuration"] = configSubcategories
 	}
 
 	return result
@@ -193,8 +157,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	var err error
 	var targetAdapter *models.Adapter
 	var event *events.Event
-
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	// Build event object
 	eventBuilder := events.NewEvent().
@@ -219,15 +182,9 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 			h.log.Error(err)
 
-			errDescription := errors.GetSDescription(err)
-			errRemedy := errors.GetRemedy(err)
-			errProbableCause := errors.GetCause(err)
-
 			metadata := map[string]interface{}{
-				"Details":               errDescription,
-				"Suggested_Remediation": errRemedy,
-				"Probable Cause":        errProbableCause,
-				"location":              meshLocationURL,
+				"error":    err,
+				"location": meshLocationURL,
 			}
 
 			event = eventBuilder.
@@ -266,7 +223,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 				"adapter_name": targetAdapter.Name,
 				"version":      targetAdapter.Version,
 				"location":     targetAdapter.Location,
-				"manifest":     categorizeAdapterOps(targetAdapter.Ops),
+				"manifest":     groupOpsByCategory(targetAdapter.Ops),
 			}
 
 			event = eventBuilder.
