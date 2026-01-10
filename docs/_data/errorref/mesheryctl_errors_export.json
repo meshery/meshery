@@ -1107,8 +1107,26 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
-        "probable_cause": "provied sheet id for %s might be incorrect",
+        "probable_cause": "provided sheet id for %s might be incorrect",
         "suggested_remediation": "ensure the sheet id is correct"
+      },
+      "1129": {
+        "name": "ErrGenerationTimeoutCode",
+        "code": "1129",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate",
+        "suggested_remediation": "Try generating a specific model using --model flag\nCheck network connectivity\nReview the generation logs for problematic models"
+      },
+      "1130": {
+        "name": "ErrParsingRelationshipCode",
+        "code": "1130",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid relationship definition format\nMissing required relationship fields\nMalformed selector in relationship",
+        "suggested_remediation": "Verify the relationship CSV format\nCheck that all required fields are present\nValidate the selector JSON syntax"
       },
       "1131": {
         "name": "ErrTemplateFileNotPresentCode",
@@ -1334,6 +1352,15 @@
         "short_description": "Failed to format output in YAML",
         "probable_cause": "The content provided for formatting failed.",
         "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+      },
+      "1159": {
+        "name": "ErrModelGenerationFailedCode",
+        "code": "1159",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid model source URL\nUnsupported registrant type\nNetwork issues fetching model data",
+        "suggested_remediation": "Verify the model's source URL is accessible\nCheck the registrant type is supported\nReview network connectivity"
       }
     }
   }
