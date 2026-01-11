@@ -16,7 +16,6 @@ package model
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
