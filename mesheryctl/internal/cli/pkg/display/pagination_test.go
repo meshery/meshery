@@ -204,7 +204,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
 
-				writer.Close()
+				_ = writer.Close()
 
 				// Read captured output.
 				var buf bytes.Buffer

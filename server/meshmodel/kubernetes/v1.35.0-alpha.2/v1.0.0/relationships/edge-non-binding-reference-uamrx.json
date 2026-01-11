@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship DaemonSet creates and owns Pods ensuring one Pod runs on every (or selected) node.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

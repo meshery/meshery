@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Pod references a ConfigMap to inject its key-value pairs as environment variables into containers",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

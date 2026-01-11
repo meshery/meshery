@@ -48,7 +48,7 @@ mesheryctl connection delete [connection_id]
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {

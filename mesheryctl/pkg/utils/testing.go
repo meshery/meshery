@@ -248,13 +248,13 @@ func Populate(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 
 	destination, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer destination.Close()
+	defer func() { _ = destination.Close() }()
 	_, err = io.Copy(destination, source)
 	return err
 }
@@ -278,7 +278,7 @@ func StartMockMesheryServer(t *testing.T) error {
 				continue
 			}
 			// Close the connection to verify IsServerRunning() in auth.go
-			conn.Close()
+			_ = conn.Close()
 		}
 	}()
 
@@ -349,7 +349,7 @@ func GetToken(t *testing.T) string {
 	return filepath.Join(currDir, "fixtures", "token.golden")
 }
 
-func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commadName string) {
+func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commandName string) {
 	// setup current context
 	SetupContextEnv(t)
 	//initialize mock server for handling requests
@@ -392,7 +392,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			_ = w.Close()
 
 			if err != nil {
 				// Keep this check to see if output is golden file during transition
@@ -438,13 +438,13 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 			ResetCommandFlags(cmd, t)
 		})
-		t.Logf("List %s test", commadName)
+		t.Logf("List %s test", commandName)
 	}
 
 	StopMockery(t)
 }
 
-type MesheryCommamdTest struct {
+type MesheryCommandTest struct {
 	Name             string
 	Args             []string
 	HttpMethod       string
@@ -457,7 +457,7 @@ type MesheryCommamdTest struct {
 	ExpectedError    error `default:"nil"`
 }
 
-func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
+func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commandName string) {
 	// setup current context
 	SetupContextEnv(t)
 	//initialize mock server for handling requests

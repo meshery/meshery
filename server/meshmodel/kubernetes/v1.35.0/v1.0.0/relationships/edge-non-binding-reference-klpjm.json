@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Job creates and owns Pods guaranteeing successful completion of batch tasks",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ThanosRuler auto-discovers every PrometheusRule",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lease acts as a heartbeat lock owned by a Node where the Node is alive for leader election \u0026 coordination.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
