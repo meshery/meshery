@@ -15,15 +15,14 @@
 package filter
 
 import (
-	"fmt"
-
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var (
 	availableSubcommands []*cobra.Command
+	// for formatting errors
+	cmdUsed string
 )
 
 // FilterCmd represents the root command for filter commands
@@ -41,7 +40,7 @@ mesheryctl filter [subcommands]
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.FilterError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl filter --help' to display usage guide.\n", args[0])))
+			return ErrInvalidFilterCommand(args[0])
 		}
 		return nil
 	},

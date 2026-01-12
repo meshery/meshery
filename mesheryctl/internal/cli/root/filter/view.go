@@ -24,7 +24,6 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -51,6 +50,9 @@ mesheryctl filter view "filter name"
         `,
 	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		cmdUsed = "view"
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -62,7 +64,7 @@ mesheryctl filter view "filter name"
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return ErrViewAllWithName()
 			}
 			fullArg := strings.Join(args, " ")
 
@@ -75,7 +77,7 @@ mesheryctl filter view "filter name"
 				filterArg = args[0]
 			} else {
 				// If multiple words without quotes, return an error
-				return errors.New(utils.FilterViewError("multi-word filter names must be enclosed in double quotes\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return ErrMultiWordFilterName()
 			}
 
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
@@ -90,7 +92,7 @@ mesheryctl filter view "filter name"
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return ErrFilterNameOrIDNotSpecified()
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
@@ -114,7 +116,7 @@ mesheryctl filter view "filter name"
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.FilterViewError("failed to read response body"))
+			return ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}

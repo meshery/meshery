@@ -55,11 +55,13 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		cmdUsed = "list"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		var searchString string
 		if len(args) > 0 {
@@ -68,8 +70,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(ErrFetchFilter(err))
-			return nil
+			return ErrFetchFilter(err)
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -82,7 +83,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return errors.New(utils.FilterListError("error reading token\nUse 'mesheryctl filter list --help' to display usage guide\n" + err.Error()))
+			return ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
@@ -117,7 +118,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
 				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 			}
-
 		} else if provider == "None" {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
@@ -203,6 +203,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	}
 	return response, nil
 }
+
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")

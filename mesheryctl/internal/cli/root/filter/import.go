@@ -23,7 +23,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -44,7 +43,7 @@ mesheryctl filter import /path/to/filter.wasm
 // Import a filter file from a remote URI
 mesheryctl filter import https://example.com/myfilter.wasm
 
-// Add WASM configuration 
+// Add WASM configuration
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 // Use quotes if the string contains spaces
 mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
@@ -54,6 +53,9 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		cmdUsed = "import"
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -63,7 +65,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl filter import --help' to display usage guide\n"))
+			return ErrFilterURIRequired()
 		}
 
 		body := models.MesheryFilterRequestBody{
@@ -119,7 +121,6 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		// Convert the request body to JSON
 		marshalledBody, err := json.Marshal(body)
-
 		if err != nil {
 			utils.Log.Error(utils.ErrMarshal(err))
 			return nil
