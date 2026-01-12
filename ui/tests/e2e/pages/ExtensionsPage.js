@@ -23,7 +23,7 @@ export class ExtensionsPage {
 
     this.catalogSectionHeading = page.getByTestId('catalog-section-heading');
     this.catalogToggleSwitch = page.getByTestId('catalog-toggle-switch');
-    this.catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
+    this.catalogLink = page.getByTestId('catalog-link');
 
     this.adapterDocsIstioLink = page.getByTestId('adapter-docs-istio');
   }
