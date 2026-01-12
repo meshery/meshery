@@ -60,7 +60,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		var searchString string
