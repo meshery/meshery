@@ -94,8 +94,8 @@ func init() {
 		utils.LogError.Fatal(err)
 	}
 
-	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(setupLogger)
+	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
