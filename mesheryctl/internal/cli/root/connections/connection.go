@@ -43,15 +43,9 @@ mesheryctl exp connection delete [connection_id]
 	Args: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !countFlag {
-			if err := cmd.Usage(); err != nil {
-				return nil
-			}
 			return utils.ErrInvalidArgument(errors.New("missing a subcommand provided for connection"))
 		}
 		return nil
-	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")

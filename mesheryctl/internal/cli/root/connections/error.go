@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrConnectionTypeCode = "replace_me"
+	ErrConnectionTypeCode = "mesheryctl-1163"
 )
 
 func errInvalidConnectionType(connectionType string) error {
