@@ -174,7 +174,8 @@ func SetupContextEnv(t *testing.T) {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	SetupMeshkitLogger("mesheryctl", verbose, b)
+	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	LogError = SetupMeshkitLogger("mesheryctl-error", verbose, b)
 	return b
 }
 
