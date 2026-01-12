@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"slices"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -34,7 +36,8 @@ import (
 )
 
 var (
-	connectionType string
+	supportedConnectionTypes = []string{"aks", "eks", "gke", "minikube"}
+	connectionType           string
 )
 
 var createConnectionCmd = &cobra.Command{
@@ -53,15 +56,12 @@ mesheryctl connection create --type gke --token auth.json
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if connectionType == "" {
-			return errors.New("connection type is required. Use --type flag to specify the type (aks|eks|gke|minikube)")
+			return utils.ErrInvalidArgument(fmt.Errorf("connection type is required. Use --type flag to specify the type (%s)", strings.Join(supportedConnectionTypes, "|")))
 		}
-		validTypes := []string{"aks", "eks", "gke", "minikube"}
-		for _, t := range validTypes {
-			if connectionType == t {
-				return nil
-			}
+		if !slices.Contains(supportedConnectionTypes, connectionType) {
+			return errInvalidConnectionType(connectionType)
 		}
-		return fmt.Errorf("invalid connection type '%s'. Valid types are: aks, eks, gke, minikube", connectionType)
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		switch connectionType {

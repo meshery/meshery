@@ -6,7 +6,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -16,8 +16,7 @@ const connectionApiPath = "api/integrations/connections"
 
 var (
 	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd, createConnectionCmd}
-
-	pageNumberFlag int
+	pageNumberFlag       int
 )
 
 var ConnectionsCmd = &cobra.Command{
@@ -28,6 +27,12 @@ Documentation for connection can be found at https://docs.meshery.io/reference/m
 	Example: `
 // Display total count of all available connections
 mesheryctl exp connection --count
+
+// Create a new Kubernetes connection using a specific type
+mesheryctl connection create --type aks
+mesheryctl connection create --type eks
+mesheryctl connection create --type gke
+mesheryctl connection create --type minikube
 
 // List all the connection
 mesheryctl exp connection list
@@ -41,15 +46,17 @@ mesheryctl exp connection delete [connection_id]
 			if err := cmd.Usage(); err != nil {
 				return nil
 			}
-			return errors.New("please provide a subcommand")
+			return utils.ErrInvalidArgument(errors.New("missing a subcommand provided for connection"))
 		}
 		return nil
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			connectionsResponse, err := api.Fetch[connections.ConnectionPage](connectionApiPath)
+			connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
 
 			if err != nil {
 				return err
