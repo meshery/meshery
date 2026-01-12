@@ -13,6 +13,7 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { LoadingMessages } from '@/components/LoadingComponents/loadingMessages';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -54,7 +55,6 @@ import {
 } from '@sistent/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
@@ -614,9 +614,15 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
-
+  const [loadingText, setLoadingText] = useState('Loading Meshery...');
+  useEffect(() => {
+    if (LoadingMessages && LoadingMessages.length > 0) {
+      const randomMsg = LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
+      setLoadingText(randomMsg);
+    }
+  }, []);
   return (
-    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
+    <LoadingScreen message={loadingText} isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
           <MesheryThemeProvider>
