@@ -51,7 +51,7 @@ func formatErrorWithReference() string {
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/list")
 
 	}
-	return baseURL
+	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }
 
 func ErrFilterNameOrID(err error) error {
@@ -87,7 +87,7 @@ func ErrDeleteFilter(err error, filterName string) error {
 		[]string{"Failed to delete filter"},
 		[]string{fmt.Sprintf("failed to delete filter %s", filterName), err.Error()},
 		[]string{"Unable to delete the specified filter"},
-		[]string{"Verify the filter exists using 'mesheryctl filter list'", formatErrorWithReference()})
+		[]string{"Verify the filter exists using `mesheryctl filter list`", formatErrorWithReference()})
 }
 
 func ErrFilterNotFound(filterNameOrID string) error {
@@ -95,7 +95,7 @@ func ErrFilterNotFound(filterNameOrID string) error {
 		[]string{"Filter not found"},
 		[]string{fmt.Sprintf("filter with name or ID having prefix %s does not exist", filterNameOrID)},
 		[]string{"The specified filter does not exist"},
-		[]string{"Use 'mesheryctl filter list' to see available filters", formatErrorWithReference()})
+		[]string{"Use `mesheryctl filter list` to see available filters", formatErrorWithReference()})
 }
 
 func ErrFilterURIRequired() error {
@@ -151,5 +151,5 @@ func ErrInvalidFilterCommand(invalidCmd string) error {
 		[]string{"Invalid command"},
 		[]string{fmt.Sprintf("'%s' is an invalid command", invalidCmd)},
 		[]string{"The provided subcommand is not recognized"},
-		[]string{"Run 'mesheryctl filter --help' to see available commands", formatErrorWithReference()})
+		[]string{"Run `mesheryctl filter --help` to see available commands", formatErrorWithReference()})
 }
