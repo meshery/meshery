@@ -119,7 +119,7 @@ jobs:
         # run only for pushes to master
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         with:
-          repository: meshery-extensions/qa
+          repository: meshery/qa
           path: ./qa
           file_pattern: meshery-results
           token: ${{ secrets.GH_ACCESS_TOKEN }}
