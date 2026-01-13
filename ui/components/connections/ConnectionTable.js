@@ -11,6 +11,7 @@ import {
   Box,
   IconButton,
   Typography,
+  TextField,
   Table,
   Grid2,
   Button,
@@ -97,8 +98,43 @@ const ACTION_TYPES = {
     error_msg: 'Failed to create environment',
   },
 };
+const InlineInput = ({ value, onSave, onCancel }) => {
+  const [tempValue, setTempValue] = React.useState(value);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      onSave(tempValue);
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      onCancel();
+    }
+  };
+
+  return (
+    <TextField
+      value={tempValue}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={() => onSave(tempValue)}
+      onKeyDown={handleKeyDown}
+      autoFocus
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()} // Crucial for preventing row selection bugs
+      variant="standard"
+      fullWidth={false}
+      InputProps={{
+        disableUnderline: false,
+        style: { fontSize: '0.875rem', padding: 0, height: '20px' },
+      }}
+    />
+  );
+};
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
+  const [editId, setEditId] = React.useState(null);
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -642,58 +678,112 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           );
         },
         customBodyRender: (value, tableMeta) => {
+          const connection = filteredConnections[tableMeta.rowIndex];
+          if (!connection) return null;
+          const connectionId = connection.id;
+          const isEditing = editId === connectionId;
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
+
+          const handleSave = async (newName) => {
+            if (newName.trim() !== '' && newName !== value) {
+              try {
+                await updateConnectionByIdMutator({
+                  connectionId: connectionId,
+                  body: {
+                    ...connection, // Keep existing fields
+                    name: newName, // Update Name
+                    metadata: { ...connection.metadata, name: newName }, // Update Metadata Name
+                  },
+                }).unwrap();
+
+                notify({ message: `Renamed to ${newName}`, event_type: EVENT_TYPES.SUCCESS });
+              } catch (err) {
+                notify({
+                  message: `Update Failed: ${err.data || 'Unable to update'}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            }
+            setEditId(null);
+          };
           return (
-            <>
-              <TooltipWrappedConnectionChip
-                tooltip={server && 'Server: ' + server}
-                title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
-                status={getColumnValue(tableMeta.rowData, 'status', columns)}
-                onDelete={() =>
-                  handleDeleteConnection(
-                    getColumnValue(tableMeta.rowData, 'id', columns),
-                    getColumnValue(tableMeta.rowData, 'kind', columns),
-                  )
-                }
-                handlePing={() => {
-                  // e.stopPropagation();
-                  if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
-                    ping(
-                      getColumnValue(tableMeta.rowData, 'metadata.name', columns),
-                      getColumnValue(tableMeta.rowData, 'metadata.server', columns),
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                    );
-                  }
-                }}
-                iconSrc={`/${
-                  getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
-                  getFallbackImageBasedOnKind(kind)
-                }`}
-                width="12rem"
-              />
-              {kind == 'kubernetes' && (
-                <CustomTextTooltip
-                  placement="top"
-                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+            <Box
+              display="flex"
+              flexDirection="column"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              {isEditing ? (
+                <InlineInput value={value} onSave={handleSave} onCancel={() => setEditId(null)} />
+              ) : (
+                <Typography
+                  variant="body2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditId(connectionId);
+                  }}
+                  sx={{
+                    cursor: 'text',
+                    marginBottom: '0.25rem',
+                    width: 'fit-content',
+                    minHeight: '20px',
+                    '&:hover': { textDecoration: 'underline dotted' },
+                  }}
                 >
-                  <div style={{ display: 'inline-block' }}>
-                    <IconButton
-                      color="default"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                      }}
-                    >
-                      <InfoOutlinedIcon height={20} width={20} />
-                    </IconButton>
-                  </div>
-                </CustomTextTooltip>
+                  {value}
+                </Typography>
               )}
-            </>
+              <div onClick={(e) => e.stopPropagation()}>
+                <TooltipWrappedConnectionChip
+                  tooltip={server && 'Server: ' + server}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  status={getColumnValue(tableMeta.rowData, 'status', columns)}
+                  onDelete={() =>
+                    handleDeleteConnection(
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                    )
+                  }
+                  handlePing={() => {
+                    // e.stopPropagation();
+                    if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
+                      ping(
+                        getColumnValue(tableMeta.rowData, 'metadata.name', columns),
+                        getColumnValue(tableMeta.rowData, 'metadata.server', columns),
+                        getColumnValue(tableMeta.rowData, 'id', columns),
+                      );
+                    }
+                  }}
+                  iconSrc={`/${
+                    getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
+                    getFallbackImageBasedOnKind(kind)
+                  }`}
+                  width="12rem"
+                />
+                {kind == 'kubernetes' && (
+                  <CustomTextTooltip
+                    placement="top"
+                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                  >
+                    <div style={{ display: 'inline-block' }}>
+                      <IconButton
+                        color="default"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <InfoOutlinedIcon height={20} width={20} />
+                      </IconButton>
+                    </div>
+                  </CustomTextTooltip>
+                )}
+              </div>
+            </Box>
           );
         },
       },
@@ -1169,6 +1259,9 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   };
 
   const [tableCols, updateCols] = useState(columns);
+  useEffect(() => {
+    updateCols(columns);
+  }, [editId, organization?.id, environments?.length, width]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(colViews, width);
