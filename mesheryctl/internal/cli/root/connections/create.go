@@ -15,6 +15,7 @@
 package connections
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -314,8 +315,13 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
-	log.Debugf("Set context API response: %s", string(body))
+
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, body, "", "  "); err == nil {
+		log.Debugf("Set context API response:\n%s", prettyJSON.String())
+	} else {
+		log.Debugf("Set context API response: %s", string(body))
+	}
 	return nil
 }
 
