@@ -52,7 +52,7 @@ mesheryctl design delete [file | URL]
 		if len(args) > 0 {
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				return ErrPatternInvalidNameOrID(err)
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
