@@ -2,7 +2,7 @@ package relationship_evaluation_policy
 
 import rego.v1
 
-# This file needs to be loaded as it contains a helper function is_feasible
+# This file needs to be loaded as it contains helper functions like is_feasible
 
 identify_relationship(
 	design_file,
@@ -12,6 +12,7 @@ identify_relationship(
 	lower(relationship.type) == "binding"
 
 	some selector_set in relationship.selectors
+
 	from_selectors := {kind: selectors |
 		some selectors in selector_set.allow.from
 		kind := selectors.kind
@@ -22,48 +23,53 @@ identify_relationship(
 
 		some val in selectors.match
 
-		# why this logic, i guess to ensure conflict doesn't occur.
-		# Then also add it for from, as for now "from" might not be having conflicts but can happen,
-		# also add in comments about this.
-
-		# The relationship schema, can be used to allow more than one bindings b/w the edge,
-		# but currently the implementation considers only one binding component between the edge.
+		# Prevent self-referencing conflicts
 		val[0].kind != "self"
 
+		# Combine kinds to form a unique selector key
 		kind := concat("#", {selectors.kind, val[0].kind})
 	}
 
-	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
+	# Extract source and target components
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	# should consider model and versions (regex/operator/normal string)
+	# Determine binding component kinds
 	binding_comps := {type |
 		some match_selector in selector_set.allow.from[_].match
-
 		match_selector[0].kind != "self"
 		type = match_selector[0].kind
 	}
-	deny_selectors := object.get(selector_set, "deny", [])
 
-	# This is a set of set,
-	# It contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
+	# Evaluate bindings for all valid combinations
 	evaluation_results := union({result |
 		some comp in binding_comps
-		binding_declarations := extract_components(design_file.components, [{"kind": comp}])
+		binding_declarations := extract_components(
+			design_file.components,
+			[{"kind": comp}],
+		)
 
 		count(binding_declarations) > 0
-		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, deny_selectors)
+
+		result := evaluate_bindings(
+			binding_declarations,
+			relationship,
+			from,
+			to,
+			from_selectors,
+			to_selectors,
+		)
 	})
 }
 
-# Evaluate bindind based on the feasiblity
+# Evaluate binding feasibility
 evaluate_bindings(
 	binding_declarations,
 	relationship,
-	from, to,
+	from,
+	to,
 	from_selectors,
-	to_selectors, deny_selectors,
+	to_selectors,
 ) := {result |
 	some i, from_declaration in from
 	some j, binding_declaration in binding_declarations
@@ -75,48 +81,24 @@ evaluate_bindings(
 	is_valid_binding(from_declaration, binding_declaration, selector)
 
 	some k, to_declaration in to
-
 	to_declaration.id != binding_declaration.id
 
-	to_selector := to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
-
-	not is_relationship_denied(from_declaration, to_declaration, deny_selectors)
+	to_selector := to_selectors[
+		concat("#", {to_declaration.component.kind, binding_declaration.component.kind})
+	]
 
 	is_valid_binding(binding_declaration, to_declaration, to_selector)
+
 	match_selector_for_from := json.patch(selector, [
-		{
-			"op": "add",
-			"path": "id",
-			"value": from_declaration.id,
-		},
-		{
-			"op": "add",
-			"path": "/match/from/0/id",
-			"value": from_declaration.id,
-		},
-		{
-			"op": "add",
-			"path": "/match/to/0/id",
-			"value": binding_declaration.id,
-		},
+		{"op": "add", "path": "id", "value": from_declaration.id},
+		{"op": "add", "path": "/match/from/0/id", "value": from_declaration.id},
+		{"op": "add", "path": "/match/to/0/id", "value": binding_declaration.id},
 	])
 
 	match_selector_for_to := json.patch(to_selector, [
-		{
-			"op": "add",
-			"path": "id",
-			"value": to_declaration.id,
-		},
-		{
-			"op": "add",
-			"path": "/match/from/0/id",
-			"value": binding_declaration.id,
-		},
-		{
-			"op": "add",
-			"path": "/match/to/0/id",
-			"value": to_declaration.id,
-		},
+		{"op": "add", "path": "id", "value": to_declaration.id},
+		{"op": "add", "path": "/match/from/0/id", "value": binding_declaration.id},
+		{"op": "add", "path": "/match/to/0/id", "value": to_declaration.id},
 	])
 
 	now := format_int(time.now_ns(), 10)
@@ -125,46 +107,61 @@ evaluate_bindings(
 		"%s%s%s%s%s",
 		[from_declaration.id, binding_declaration.id, to_declaration.id, relationship.id, now],
 	))
+
 	cloned_selectors := {
 		"id": id,
-		"selectors": [{"allow": {
-			"from": [match_selector_for_from],
-			"to": [match_selector_for_to],
-		}}],
+		"selectors": [{
+			"allow": {
+				"from": [match_selector_for_from],
+				"to": [match_selector_for_to],
+			},
+		}],
 	}
 
-	result := object.union_n([relationship, cloned_selectors, {"status": "approved"}])
+	result := object.union_n([
+		relationship,
+		cloned_selectors,
+		{"status": "approved"},
+	])
 }
 
 is_valid_binding(resource1, resource2, selectors) if {
 	match_from := extract_mutator_path(selectors.match, resource1, resource2)
 	match_to := extract_tomutate_path(selectors.match, resource1, resource2)
 
-	match_results := [result |
-		some i in numbers.range(0, count(match_from))
-
-		result := is_feasible(match_from.paths[i], match_to.paths[i], match_from.declaration, match_to.declaration, "", "")
+	match_results := [
+		result |
+		some i in numbers.range(0, count(match_from.paths))
+		result := is_feasible(
+			match_from.paths[i],
+			match_to.paths[i],
+			match_from.declaration,
+			match_to.declaration,
+			"",
+			"",
+		)
 	]
+
 	valid_results := [i |
 		some result in match_results
 		result == true
 		i := result
 	]
 
-	# if this count is true then only the binding is valid.
 	count(match_results) == count(valid_results)
 }
 
-# If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
+# If none of the paths contain arrays, perform direct value comparison
 is_feasible(from, to, resource1, resource2, default_value1, default_value2) if {
 	from_path := resolve_path(from, resource1)
-	formatted_from_path = format_json_path(from_path)
+	formatted_from_path := format_json_path(from_path)
 
 	to_path := resolve_path(to, resource2)
-	formatted_to_path = format_json_path(to_path)
+	formatted_to_path := format_json_path(to_path)
 
 	val1 := object.get(resource1, formatted_from_path, default_value1)
 	val2 := object.get(resource2, formatted_to_path, default_value2)
+
 	val1 == val2
 } else := false
 

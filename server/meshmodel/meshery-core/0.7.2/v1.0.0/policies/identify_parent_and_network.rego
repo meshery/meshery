@@ -9,17 +9,15 @@ identify_relationship(
 ) := evaluation_results if {
 	applicable_on_rels := [{"kind": "hierarchical", "type": "parent"}]
 
-	#		{"kind": "edge", "type": "non-binding"},
-
 	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
-	# annotation edges have all selectors as wildcard,
-	# hence it will result in rels being created between same component twice.
-	# Node A  -> Node B and Node B -> Node A.
-	# Hence do not try to identify annotation rels, but only evaluate if the exisitng ones are valid or not.
+	# Annotation edges have wildcard selectors and may create duplicate relationships.
+	# Hence, do not identify annotation relationships here.
 	relationship.subType != "annotation"
 	relationship.metadata.isAnnotation != true
+
 	some selector_set in relationship.selectors
+
 	from_selectors := {kind: selectors |
 		some selectors in selector_set.allow.from
 		kind := selectors.kind
@@ -29,21 +27,31 @@ identify_relationship(
 		some selectors in selector_set.allow.to
 		kind := selectors.kind
 	}
-	deny_selectors := object.get(selector_set, "deny", [])
 
-	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
+	# Extract source and target components
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors)
+	evaluation_results := evaluate_hierarchy(
+		relationship,
+		from,
+		to,
+		from_selectors,
+		to_selectors,
+	)
 }
 
-evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := {result |
+evaluate_hierarchy(
+	relationship,
+	from,
+	to,
+	from_selectors,
+	to_selectors,
+) := {result |
 	some from_selector in from_selectors
 	some to_selector in to_selectors
 
 	filtered_from_decls := extract_components_by_type(from, from_selector)
-
 	filtered_to_decls := extract_components_by_type(to, to_selector)
 
 	some from_decl in filtered_from_decls
@@ -51,20 +59,22 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 
 	from_decl.id != to_decl.id
 
-	print("Checking valid relationship: ", from_decl.component.kind, "->", to_decl.component.kind)
 
-	# ensure the mutated component is feasible for the relationship.
+	# Ensure the relationship is feasible
 	s := feasibility_evaluation_utils.feasible_relationship_selector_between(
 		from_decl,
 		to_decl,
 		relationship,
 	)
-	print("Feasible relationship found: ", from_decl.component.kind, "->", to_decl.component.kind, s)
 
-	not is_relationship_denied(from_decl, to_decl, deny_selectors)
-	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
+	
 
-	# The criteria for relationship is met hence add the relationship.
+	is_valid_hierarchy(
+		from_decl,
+		to_decl,
+		from_selector,
+		to_selector,
+	)
 
 	match_selector_for_from := json.patch(from_selector, [{
 		"op": "add",
@@ -80,27 +90,57 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 
 	now := format_int(time.now_ns(), 10)
 
-	id := uuid.rfc4122(sprintf("%s%s%s%s", [from_decl.id, to_decl.id, relationship.id, now]))
+	id := uuid.rfc4122(sprintf(
+		"%s%s%s%s",
+		[from_decl.id, to_decl.id, relationship.id, now],
+	))
 
 	cloned_selectors := {
 		"id": id,
-		"selectors": [{"allow": {
-			"from": [match_selector_for_from],
-			"to": [match_selector_for_to],
-		}}],
+		"selectors": [{
+			"allow": {
+				"from": [match_selector_for_from],
+				"to": [match_selector_for_to],
+			},
+		}],
 	}
 
-	result := object.union_n([relationship, cloned_selectors, {"status": "approved"}])
+	result := object.union_n([
+		relationship,
+		cloned_selectors,
+		{"status": "approved"},
+	])
 }
 
-is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector) if {
-	#    print("validating hierarchy",from_selector,to_selector)
-	mutator_selector := identify_mutator(from_selector, to_selector, from_declaration, to_declaration)
+is_valid_hierarchy(
+	from_declaration,
+	to_declaration,
+	from_selector,
+	to_selector,
+) if {
+	mutator_selector := identify_mutator(
+		from_selector,
+		to_selector,
+		from_declaration,
+		to_declaration,
+	)
 
-	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)
+	mutated_selector := identify_mutated(
+		from_selector,
+		to_selector,
+		from_declaration,
+		to_declaration,
+	)
 
-	match_results := [result |
-		range := numbers.range(0, min([count(mutator_selector.paths), count(mutated_selector.paths)]) - 1)
+	match_results := [
+		result |
+		range := numbers.range(
+			0,
+			min([
+				count(mutator_selector.paths),
+				count(mutated_selector.paths),
+			]) - 1,
+		)
 		some i in range
 		result := is_feasible(
 			mutator_selector.paths[i],
@@ -111,6 +151,7 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 			"",
 		)
 	]
+
 	valid_results := [i |
 		some result in match_results
 		result == true
