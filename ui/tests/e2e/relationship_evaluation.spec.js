@@ -35,16 +35,34 @@ const DESIGNS_TO_TEST = [
     id: 'd8e2f5a9-1c3b-4d6e-9f0a-2b4c7e8d9f0a',
     name: 'Namespace-Namespace-Deny-Relationship-Test',
   },
+  // TODO: add local fixtures after validation
+  // ...RelationshipTestFixtures,
 ];
 
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
-  for (const { id, name } of DESIGNS_TO_TEST) {
-    test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
-      const designResponse = await request.get(
-        `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
+  for (const designEntry of DESIGNS_TO_TEST) {
+    const name = designEntry.name || designEntry.id;
+    if (!name) {
+      throw new Error(
+        "Design entry is missing both 'name' and 'id': " + JSON.stringify(designEntry),
       );
-      const responseJson = await designResponse.json();
-      const design = JSON.parse(responseJson.pattern_file);
+    }
+
+    test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
+      let design;
+
+      // Check if this is a local fixture or needs to be fetched
+      if (designEntry.components && designEntry.relationships) {
+        design = designEntry;
+      } else if (designEntry.id) {
+        const designResponse = await request.get(
+          `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${designEntry.id}`,
+        );
+        const responseJson = await designResponse.json();
+        design = JSON.parse(responseJson.pattern_file);
+      } else {
+        throw new Error(`Invalid design entry: ${JSON.stringify(designEntry)}`);
+      }
 
       const designToTest = { ...design, relationships: [] };
 
