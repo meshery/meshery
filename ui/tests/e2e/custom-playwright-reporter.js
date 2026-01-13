@@ -153,7 +153,7 @@ ${failedTest.snippet ? `**Code Snippet:**\n\`\`\`\n${failedTest.snippet}\n\`\`\`
     try {
       writeFileSync('test-report.md', message);
     } catch (e) {
-      console.log('Cannot write test reporter ', e);
+      console.error('Cannot write test reporter ', e);
     }
   }
 

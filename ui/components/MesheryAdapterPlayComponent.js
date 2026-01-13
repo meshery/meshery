@@ -182,7 +182,7 @@ const MesheryAdapterPlayComponent = (props) => {
       next: (res) => {
         setAddonsState(res);
       },
-      error: (err) => console.log('error at addon fetch: ' + err),
+      error: (err) => console.error('error at addon fetch: ' + err),
     });
 
     // Cleanup function (componentWillUnmount)
@@ -227,7 +227,7 @@ const MesheryAdapterPlayComponent = (props) => {
         namespaces.sort((a, b) => (a.value > b.value ? 1 : -1));
         setNamespaceList(namespaces);
       },
-      error: (err) => console.log('error at namespace fetch: ' + err),
+      error: (err) => console.error('error at namespace fetch: ' + err),
     });
 
     setNamespaceSubscription(subscription);
@@ -499,7 +499,7 @@ const MesheryAdapterPlayComponent = (props) => {
           setSmiResult({ ...result, results: results, total_count: results.length });
         }
       },
-      (error) => console.log('Could not fetch SMI results.', error),
+      (error) => console.error('Could not fetch SMI results.', error),
     );
   };
 

@@ -21,6 +21,6 @@ export default function changeAdapterState(onComplete, variables) {
     mutation: adapterStatusMutation,
     variables: vars,
     onCompleted: onComplete,
-    onError: (error) => console.log(`An error occured:`, error),
+    onError: (error) => console.error(`An error occured:`, error),
   });
 }

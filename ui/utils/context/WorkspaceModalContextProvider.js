@@ -77,7 +77,7 @@ const WorkspaceModalContextProvider = ({ children }) => {
       console.log('onloadResource', workspaceId, orgId, resource);
       setCurrentLoadedResource(resource);
     } catch (e) {
-      console.log('[onLoadResource] failed set orgWorkspace context', e);
+      console.error('[onLoadResource] failed set orgWorkspace context', e);
     }
   };
 

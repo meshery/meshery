@@ -464,7 +464,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
               updateAbility();
             }
           },
-          (err) => console.log('There was an error fetching available orgs:', err),
+          (err) => console.error('There was an error fetching available orgs:', err),
         );
       }
     },
@@ -506,7 +506,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
           setCurrentOrganization(organizationToSet);
         }
       },
-      (err) => console.log('There was an error fetching available orgs:', err),
+      (err) => console.error('There was an error fetching available orgs:', err),
     );
   }, [loadAbility, setCurrentOrganization]);
 
@@ -541,7 +541,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
         }
       },
       (error) => {
-        console.log(`there was an error fetching user config data: ${error}`);
+        console.error(`there was an error fetching user config data: ${error}`);
       },
     );
   }, [dispatch]);
