@@ -131,8 +131,11 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var wg sync.WaitGroup
-		cwd, _ = os.Getwd()
+		var err error
+		cwd, err = os.Getwd()
+		if err != nil {
+			return errors.New(utils.RegistryError("failed to get current working directory", ""))
+		}
 
 		if filepath.IsAbs(outputLocation) {
 			registryLocation = outputLocation
@@ -148,7 +151,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
 			return nil
 		}
-		var err error
 
 		// Print start message with timestamp
 		startTime := time.Now()
@@ -222,6 +224,8 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		fmt.Println("🔄 Generating models and components...")
 		fmt.Println("   (Each model has a timeout of", modelTimeout, ")")
 		fmt.Println()
+
+		var wg sync.WaitGroup
 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheetWithOptions(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv, genOpts)
 

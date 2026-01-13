@@ -127,7 +127,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0o755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -136,7 +136,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = os.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -146,7 +146,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0o644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -682,7 +682,9 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
+			if err := w.Close(); err != nil {
+				t.Fatal(err)
+			}
 
 			if err != nil {
 				// if we're supposed to get an error
