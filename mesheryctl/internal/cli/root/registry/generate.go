@@ -85,16 +85,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		outputFlag, _ := cmd.Flags().GetString("output")
-		isDefaultLocation := !cmd.Flags().Changed("output")
-		if isDefaultLocation {
-			if _, err := os.Stat(outputFlag); err != nil {
-				if os.IsNotExist(err) {
-					return ErrInvalidOutputPath(outputFlag)
-				}
-			}
-		}
-
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
@@ -270,7 +260,7 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
-	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "./", "location to output generated models, defaults to current directory")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 

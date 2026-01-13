@@ -1,0 +1,7 @@
+Spreadsheet Credentials is required
+
+Usage: 
+mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model "[model-name]"
+Run 'mesheryctl registry generate --help'
+See https://docs.meshery.io/reference/mesheryctl/registry/generate for usage details
