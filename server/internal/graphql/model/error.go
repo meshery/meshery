@@ -30,11 +30,11 @@ var (
 )
 
 func ErrMeshSyncEventsSubscription(err error) error {
-	return errors.New(ErrMeshSyncEventsSubscriptionCode, errors.None, []string{"Could not create MeshSync events subcription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
+	return errors.New(ErrMeshSyncEventsSubscriptionCode, errors.None, []string{"Could not create MeshSync events subscription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
 }
 
 func ErrMesheryControllersStatusSubscription(err error) error {
-	return errors.New(ErrMesheryControllersStatusSubscriptionCode, errors.None, []string{"Could not create meshery controllers status subcription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
+	return errors.New(ErrMesheryControllersStatusSubscriptionCode, errors.None, []string{"Could not create meshery controllers status subscription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
 }
 
 func ErrCreateData(err error) error {
