@@ -1610,7 +1610,7 @@
         "code": "1179",
         "severity": "None",
         "long_description": "Meshery controller handlers may not be available",
-        "short_description": "Could not create meshery controllers status subcription",
+        "short_description": "Could not create meshery controllers status subscription",
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
       },
@@ -1619,7 +1619,7 @@
         "code": "1180",
         "severity": "None",
         "long_description": "Meshery controller handlers may not be available",
-        "short_description": "Could not create MeshSync events subcription",
+        "short_description": "Could not create MeshSync events subscription",
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
       },
