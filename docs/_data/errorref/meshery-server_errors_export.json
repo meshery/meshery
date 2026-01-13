@@ -1608,7 +1608,7 @@
       "1179": {
         "name": "ErrMesheryControllersStatusSubscriptionCode",
         "code": "1179",
-        "severity": "Debug",
+        "severity": "None",
         "long_description": "Meshery controller handlers may not be available",
         "short_description": "Could not create meshery controllers status subcription",
         "probable_cause": "",
@@ -1617,7 +1617,7 @@
       "1180": {
         "name": "ErrMeshSyncEventsSubscriptionCode",
         "code": "1180",
-        "severity": "Debug",
+        "severity": "None",
         "long_description": "Meshery controller handlers may not be available",
         "short_description": "Could not create MeshSync events subcription",
         "probable_cause": "",
