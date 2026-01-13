@@ -18,8 +18,8 @@ var (
 	ErrGenerationTimeoutCode     = "mesheryctl-1129"
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
-	ErrInvalidOutputPathCode     = "mesheryctl-1160"
-	ErrCreateOutputDirCode       = "mesheryctl-1161"
+	ErrInvalidOutputPathCode     = "mesheryctl-1163"
+	ErrCreateOutputDirCode       = "mesheryctl-1164"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
