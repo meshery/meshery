@@ -25,7 +25,7 @@ func TestListOrganizations(t *testing.T) {
 			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
 			Fixture:          "list.organization.response.golden",
 			ExpectedResponse: "list.organization.golden",
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 	}
 
