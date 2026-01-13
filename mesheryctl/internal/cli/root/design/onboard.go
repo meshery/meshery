@@ -96,7 +96,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return ErrReadFromBody(err)
+				return utils.ErrReadFromBody(err)
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
@@ -149,7 +149,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadFromBody(err)
+			return utils.ErrReadFromBody(err)
 		}
 
 		if res.StatusCode == 200 {

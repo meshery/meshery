@@ -58,9 +58,9 @@ mesheryctl design list
 				}
 			}
 			if len(suggestions) > 0 {
-				return ErrInvalidCMD(args[0], suggestions)
+				return ErrInvalidCommand(args[0], suggestions)
 			}
-			return ErrInvalidCMD(args[0], []string{})
+			return ErrInvalidCommand(args[0], []string{})
 		}
 		return nil
 	},

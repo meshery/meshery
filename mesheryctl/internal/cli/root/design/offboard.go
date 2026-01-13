@@ -111,7 +111,7 @@ mesheryctl design offboard -f [filepath]
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return ErrReadFromBody(err)
+			return utils.ErrReadFromBody(err)
 		}
 
 		err = json.Unmarshal(body, &response)
@@ -144,7 +144,7 @@ mesheryctl design offboard -f [filepath]
 		defer func() { _ = res.Body.Close() }()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadFromBody(err)
+			return utils.ErrReadFromBody(err)
 		}
 
 		if res.StatusCode == 200 {

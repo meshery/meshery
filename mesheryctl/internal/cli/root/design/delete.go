@@ -119,7 +119,7 @@ mesheryctl design delete [file | URL]
 
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return ErrReadFromBody(err)
+				return utils.ErrReadFromBody(err)
 			}
 
 			err = json.Unmarshal(body, &response)
@@ -150,7 +150,7 @@ mesheryctl design delete [file | URL]
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadFromBody(err)
+			return utils.ErrReadFromBody(err)
 		}
 
 		utils.Log.Info(string(body))

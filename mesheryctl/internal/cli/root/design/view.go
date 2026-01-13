@@ -60,7 +60,7 @@ mesheryctl design view [design-name | ID]
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				return ErrPatternInvalidNameOrID(err)
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -91,7 +91,7 @@ mesheryctl design view [design-name | ID]
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadFromBody(err)
+			return utils.ErrReadFromBody(err)
 		}
 
 		var dat map[string]interface{}

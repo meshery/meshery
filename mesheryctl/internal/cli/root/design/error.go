@@ -41,7 +41,7 @@ const (
 	ErrMarkFlagRequireCode            = "mesheryctl-1126"
 	ErrParseDesignFileCode            = "mesheryctl-1163"
 	ErrDeleteDesignCode               = "mesheryctl-1164"
-	ErrInvalidCMDCode                 = "mesheryctl-1165"
+	ErrInvalidCommandCode             = "mesheryctl-1165"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1166"
 )
 
@@ -193,7 +193,7 @@ func ErrDeleteDesign(err error, designName string) error {
 		[]string{"Verify the design exists using 'mesheryctl design list'", "Check your network connection and Meshery server status"})
 }
 
-func ErrInvalidCMD(cmd string, suggestions []string) error {
+func ErrInvalidCommand(cmd string, suggestions []string) error {
 	var longDesc string
 	if len(suggestions) > 0 {
 		longDesc = fmt.Sprintf("'%s' is an invalid command. Did you mean one of these?\n\t%s", cmd, strings.Join(suggestions, "\n\t"))
@@ -201,7 +201,7 @@ func ErrInvalidCMD(cmd string, suggestions []string) error {
 		longDesc = fmt.Sprintf("'%s' is an invalid command", cmd)
 	}
 
-	return errors.New(ErrInvalidCMDCode, errors.Alert,
+	return errors.New(ErrInvalidCommandCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{longDesc},
 		[]string{"The provided command is not recognized"},

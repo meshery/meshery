@@ -117,7 +117,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 	var response struct {
 		TotalCount int                     `json:"total_count"`
@@ -165,14 +165,14 @@ func exportDesign(baseUrl, design, designType string) error {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return ErrReadFromBody(err)
+		return utils.ErrReadFromBody(err)
 	}
 
 	filename := generateFilename(pattern.Name, design, designType)
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
-	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0o755); err != nil {
 		return models.ErrMakeDir(err, outputFilePath)
 	}
 
@@ -192,7 +192,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return nil, ErrReadFromBody(err)
+		return nil, utils.ErrReadFromBody(err)
 	}
 
 	var pattern models.MesheryPattern
@@ -256,7 +256,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	var userProfile models.User
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 
 	if err := encoding.Unmarshal([]byte(body), &userProfile); err != nil {
