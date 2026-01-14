@@ -85,8 +85,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
-
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
@@ -97,32 +95,32 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
 
 		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
-			return errors.New(utils.RegistryError(errorMsg, "generate"))
+			return ErrNoSourceSpecified()
 		}
 
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
 		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
 
 		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
-			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
+			return ErrSpreadsheetCredRequired()
 		}
 
 		if registrantDefFlag != "" && registrantCredFlag == "" {
-			return errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate"))
+			return ErrRegistrantCredRequired()
 		}
 
 		// Validate individual CSV files if provided
 		if hasIndividualCSVs {
 			if _, err := os.Stat(modelCSV); os.IsNotExist(err) {
-				return errors.New(utils.RegistryError(fmt.Sprintf("Model CSV file not found: %s", modelCSV), "generate"))
+				return ErrCSVFileNotFound(modelCSV, "Model")
 			}
 			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
-				return errors.New(utils.RegistryError(fmt.Sprintf("Component CSV file not found: %s", componentCSV), "generate"))
+				return ErrCSVFileNotFound(componentCSV, "Component")
 			}
 			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
 			if relationshipCSV != "" {
 				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
-					return errors.New(utils.RegistryError(fmt.Sprintf("Relationship CSV file not found: %s", relationshipCSV), "generate"))
+					return ErrCSVFileNotFound(relationshipCSV, "Relationship")
 				}
 			}
 		}
@@ -134,7 +132,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		var err error
 		cwd, err = os.Getwd()
 		if err != nil {
-			return errors.New(utils.RegistryError("failed to get current working directory", ""))
+			return ErrFailedToGetCWD(err)
 		}
 
 		if filepath.IsAbs(outputLocation) {
@@ -148,7 +146,8 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		}
 
 		if pathToRegistrantConnDefinition != "" {
-			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
+			msg := fmt.Sprintf("Model generation from Registrant definition '%s' not yet supported.", pathToRegistrantConnDefinition)
+			utils.Log.Info(msg)
 			return nil
 		}
 

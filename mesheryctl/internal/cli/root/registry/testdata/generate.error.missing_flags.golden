@@ -1,8 +1,0 @@
-[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified
-
-Usage: 
-mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
-mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model "[model-name]"
-mesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]
-Run 'mesheryctl registry generate --help' to see detailed help message
-See https://docs.meshery.io/reference/mesheryctl/registry/generate for usage details

@@ -1,10 +1,12 @@
 package registry
 
 import (
+	goerrors "errors"
 	"fmt"
 	"path/filepath"
 	"time"
 
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -20,6 +22,7 @@ var (
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
 	ErrInvalidOutputPathCode     = "mesheryctl-1163"
 	ErrCreateOutputDirCode       = "mesheryctl-1164"
+	ErrFailedToGetCWDCode        = "mesheryctl-1165"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -88,4 +91,57 @@ func ErrCreateOutputDir(err error, path string) error {
 			"Try specifying a different output location using --output.",
 			"Check if a file with the same name already exists.",
 		})
+}
+
+func ErrCSVFileNotFound(filePath string, fileType string) error {
+	return goerrors.New(utils.RegistryError(
+		fmt.Sprintf("%s CSV file not found: %s", fileType, filePath),
+		"generate"))
+}
+
+func ErrFailedToGetCWD(err error) error {
+	return errors.New(
+		ErrFailedToGetCWDCode,
+		errors.Alert,
+		[]string{"Failed to get current working directory"},
+		[]string{fmt.Sprintf("Unable to determine the current working directory: %v", err)},
+		[]string{
+			"Insufficient permissions to access the directory",
+			"The current directory has been deleted or moved",
+			"File system errors or corruption",
+		},
+		[]string{
+			"Ensure you have read permissions for the current directory",
+			"Navigate to a valid directory and try again",
+			"Check file system health and integrity",
+		})
+}
+
+func ErrNoSourceSpecified() error {
+	return goerrors.New(utils.RegistryError(
+		"[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\n"+
+			"Usage: \n"+
+			"mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\n"+
+			"mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\n"+
+			"mesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\n"+
+			"Run 'mesheryctl registry generate --help' to see detailed help message",
+		"generate"))
+}
+
+func ErrSpreadsheetCredRequired() error {
+	return goerrors.New(utils.RegistryError(
+		"Spreadsheet Credentials is required\n\n"+
+			"Usage: \n"+
+			"mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\n"+
+			"mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\n"+
+			"Run 'mesheryctl registry generate --help'",
+		"generate"))
+}
+
+func ErrRegistrantCredRequired() error {
+	return goerrors.New(utils.RegistryError(
+		"Registrant Credentials is required\n\n"+
+			"Usage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\n"+
+			"Run 'mesheryctl registry generate --help'",
+		"generate"))
 }

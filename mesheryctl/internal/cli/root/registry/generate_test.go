@@ -309,18 +309,18 @@ func TestPreRunEValidation(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "Fails when no source flags are provided",
-			Args:             []string{"--output", "./output"},
-			ExpectError:      true,
-			IsOutputGolden:   true,
-			ExpectedResponse: "generate.error.missing_flags.golden",
+			Name:           "Fails when no source flags are provided",
+			Args:           []string{"--output", "./output"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrNoSourceSpecified(),
 		},
 		{
-			Name:             "Fails when spreadsheet-id provided without spreadsheet-cred",
-			Args:             []string{"--output", "./output", "--spreadsheet-id", "test-id"},
-			ExpectError:      true,
-			IsOutputGolden:   true,
-			ExpectedResponse: "generate.error.spreadsheet_cred_required.golden",
+			Name:           "Fails when spreadsheet-id provided without spreadsheet-cred",
+			Args:           []string{"--output", "./output", "--spreadsheet-id", "test-id"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrSpreadsheetCredRequired(),
 		},
 	}
 
