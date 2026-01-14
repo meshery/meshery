@@ -37,9 +37,9 @@ const (
 	errFilterNameOrIDNotProvided = "Filter Name or ID not provided"
 )
 
-func formatErrorWithReference() string {
+func formatErrorWithReference(subCmdUsed string) string {
 	baseURL := "reference/mesheryctl/filter"
-	switch cmdUsed {
+	switch subCmdUsed {
 	case "import":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/import")
 	case "view":
@@ -63,50 +63,50 @@ func ErrFetchFilter(err error) error {
 		[]string{"Run `mesheryctl filter view -a` to view all available filters."})
 }
 
-func ErrDeleteFilter(err error, filterName string) error {
+func ErrDeleteFilter(err error, filterName string, subCmdUsed string) error {
 	return errors.New(ErrDeleteFilterCode, errors.Alert,
 		[]string{"Failed to delete filter"},
 		[]string{fmt.Sprintf("failed to delete filter %s", filterName), err.Error()},
 		[]string{"Unable to delete the specified filter"},
-		[]string{"Verify the filter exists using `mesheryctl filter list`", formatErrorWithReference()})
+		[]string{"Verify the filter exists using `mesheryctl filter list`", formatErrorWithReference(subCmdUsed)})
 }
 
-func ErrFilterNotFound(filterNameOrID string) error {
+func ErrFilterNotFound(filterNameOrID string, subCmdUsed string) error {
 	return errors.New(ErrFilterNotFoundCode, errors.Alert,
 		[]string{"Filter not found"},
 		[]string{fmt.Sprintf("filter with name or ID having prefix %s does not exist", filterNameOrID)},
 		[]string{"The specified filter does not exist"},
-		[]string{"Use `mesheryctl filter list` to see available filters", formatErrorWithReference()})
+		[]string{"Use `mesheryctl filter list` to see available filters", formatErrorWithReference(subCmdUsed)})
 }
 
-func ErrFilterURIRequired() error {
+func ErrFilterURIRequired(subCmdUsed string) error {
 	return errors.New(ErrFilterURIRequiredCode, errors.Alert,
 		[]string{"URI is required"},
 		[]string{"No URI provided for filter import"},
 		[]string{"Filter import command requires a URI"},
-		[]string{"Provide a valid file path or URL", formatErrorWithReference()})
+		[]string{"Provide a valid file path or URL", formatErrorWithReference(subCmdUsed)})
 }
 
-func ErrViewAllWithName() error {
+func ErrViewAllWithName(subCmdUsed string) error {
 	return errors.New(ErrViewAllWithNameCode, errors.Alert,
 		[]string{"Invalid flag combination"},
 		[]string{"--all cannot be used when filter name or ID is specified"},
 		[]string{"Conflicting options provided"},
-		[]string{"Use either --all flag OR specify a filter name/ID", formatErrorWithReference()})
+		[]string{"Use either --all flag OR specify a filter name/ID", formatErrorWithReference(subCmdUsed)})
 }
 
-func ErrMultiWordFilterName() error {
+func ErrMultiWordFilterName(subCmdUsed string) error {
 	return errors.New(ErrMultiWordFilterNameCode, errors.Alert,
 		[]string{"Invalid filter name format"},
 		[]string{"multi-word filter names must be enclosed in double quotes"},
 		[]string{"Filter name with spaces requires quoting"},
-		[]string{"Enclose multi-word filter names in double quotes", formatErrorWithReference()})
+		[]string{"Enclose multi-word filter names in double quotes", formatErrorWithReference(subCmdUsed)})
 }
 
-func ErrInvalidFilterCommand(invalidCmd string) error {
+func ErrInvalidFilterCommand(invalidCmd string, subCmdUsed string) error {
 	return errors.New(ErrInvalidFilterCommandCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{fmt.Sprintf("'%s' is an invalid command", invalidCmd)},
 		[]string{"The provided subcommand is not recognized"},
-		[]string{"Run `mesheryctl filter --help` to see available commands", formatErrorWithReference()})
+		[]string{"Run `mesheryctl filter --help` to see available commands", formatErrorWithReference(subCmdUsed)})
 }

@@ -55,9 +55,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// for formatting errors
-		cmdUsed = "list"
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err

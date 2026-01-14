@@ -19,11 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	availableSubcommands []*cobra.Command
-	// for formatting errors
-	cmdUsed string
-)
+var availableSubcommands []*cobra.Command
 
 // FilterCmd represents the root command for filter commands
 var FilterCmd = &cobra.Command{
@@ -40,7 +36,7 @@ mesheryctl filter [subcommands]
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return ErrInvalidFilterCommand(args[0])
+			return ErrInvalidFilterCommand(args[0], "")
 		}
 		return nil
 	},

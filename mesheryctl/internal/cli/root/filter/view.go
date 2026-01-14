@@ -52,7 +52,7 @@ mesheryctl filter view "filter name"
 	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
-		cmdUsed = "view"
+		subCmdUsed := "view"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -65,7 +65,7 @@ mesheryctl filter view "filter name"
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return ErrViewAllWithName()
+				return ErrViewAllWithName(subCmdUsed)
 			}
 			fullArg := strings.Join(args, " ")
 
@@ -78,7 +78,7 @@ mesheryctl filter view "filter name"
 				filterArg = args[0]
 			} else {
 				// If multiple words without quotes, return an error
-				return ErrMultiWordFilterName()
+				return ErrMultiWordFilterName(subCmdUsed)
 			}
 
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")

@@ -54,7 +54,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
-		cmdUsed = "import"
+		subCmdUsed := "import"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -64,7 +64,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return ErrFilterURIRequired()
+			return ErrFilterURIRequired(subCmdUsed)
 		}
 
 		body := models.MesheryFilterRequestBody{
