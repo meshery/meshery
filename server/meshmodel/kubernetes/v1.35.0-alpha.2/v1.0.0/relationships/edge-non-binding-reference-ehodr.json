@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship PVC triggers dynamic provisioning by naming its StorageClass",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

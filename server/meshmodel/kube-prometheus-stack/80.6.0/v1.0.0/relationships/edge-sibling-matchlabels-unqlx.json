@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where PrometheusAgent auto-discovers every ScrapeConfig",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

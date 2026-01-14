@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Subnet and NetworkACL",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

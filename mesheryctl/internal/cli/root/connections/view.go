@@ -79,12 +79,12 @@ mesheryctl connection view [connection-name]
 
 		if resp.StatusCode != http.StatusOK {
 			errBody, _ := io.ReadAll(resp.Body)
-			defer resp.Body.Close()
+			_ = resp.Body.Close()
 			return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -101,12 +101,13 @@ mesheryctl connection view [connection-name]
 
 		var selectedConnection *connections.Connection
 
-		if connectionsResponse.TotalCount == 0 {
+		switch connectionsResponse.TotalCount {
+		case 0:
 			fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
 			return nil
-		} else if connectionsResponse.TotalCount == 1 {
+		case 1:
 			selectedConnection = connectionsResponse.Connections[0]
-		} else {
+		default:
 			selectedConnection = selectConnectionPrompt(connectionsResponse.Connections)
 		}
 

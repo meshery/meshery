@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship PV inherits provisioning, reclaim \u0026 parameters from its StorageClass.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

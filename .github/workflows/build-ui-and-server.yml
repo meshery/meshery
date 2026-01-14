@@ -119,7 +119,7 @@ jobs:
         # run only for pushes to master
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         with:
-          repository: meshery-extensions/qa
+          repository: meshery/qa
           path: ./qa
           file_pattern: meshery-results
           token: ${{ secrets.GH_ACCESS_TOKEN }}
@@ -128,7 +128,9 @@ jobs:
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
-          make meshery-results-sync MESHERY_RESULTS_PATH=../meshery/ui/allure-results
+          ls 
+          ls ..
+          make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
 
       - name: Commit & push academy to qa
         if: ${{ !cancelled() &&  github.event_name == 'push' }}

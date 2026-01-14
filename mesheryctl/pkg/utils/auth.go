@@ -41,7 +41,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if tokenPath == "" { // token was not passed with the flag
 		tokenPath, err = GetCurrentAuthToken()
 		if err != nil {
-			return nil, err
+			return nil, ErrAttachAuthToken(err)
 		}
 		// set TokenFlag value equals tokenPath
 		TokenFlag = tokenPath
@@ -325,11 +325,11 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	srv, port, err := CreateTempAuthServer(func(rw http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
 		if token == "" {
-			fmt.Fprintf(rw, "token not found")
+			_, _ = fmt.Fprintf(rw, "token not found")
 			return
 		}
 
-		fmt.Fprint(rw, "you have logged in, you can close this window now")
+		_, _ = fmt.Fprint(rw, "you have logged in, you can close this window now")
 		tokenChan <- token
 	})
 	if err != nil {
@@ -448,7 +448,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	return io.ReadAll(resp.Body)
 }
@@ -461,6 +461,6 @@ func IsServerRunning(serverAddr string) error {
 		// Connection failed, server is not running
 		return errors.WithMessage(err, "Meshery server is not reachable")
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	return nil
 }
