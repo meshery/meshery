@@ -1020,15 +1020,6 @@
         "probable_cause": "Since the Docker Compose specification does not mandate the version field from version 3 onwards, most sources do not provide them.",
         "suggested_remediation": "Make sure that the compose file has version specified,\nAdd any version less than or equal to 3.3 if you cannot get the exact version from the source"
       },
-      "11233": {
-        "name": "ErrGetCrdNamesCode",
-        "code": "11233",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting crd names",
-        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
-        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
-      },
       "11234": {
         "name": "ErrGetSchemasCode",
         "code": "11234",
@@ -1631,6 +1622,24 @@
         "short_description": "error while comparing files",
         "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
         "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
+      },
+      "11311": {
+        "name": "ErrModelTimeoutCode",
+        "code": "11311",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate for this model",
+        "suggested_remediation": "Try increasing the per-model timeout using --timeout flag\nCheck network connectivity\nReview the source URL for the model"
+      },
+      "11312": {
+        "name": "ErrModelSkippedCode",
+        "code": "11312",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Model already exists and LatestVersionOnly is enabled",
+        "suggested_remediation": "This is expected behavior when LatestVersionOnly option is used"
       },
       "11315": {
         "name": "ErrLoadPatternCode",

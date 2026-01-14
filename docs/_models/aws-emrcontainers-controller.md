@@ -34,10 +34,10 @@ components-count: 5
 relationships: 
 - type: "binding"
   kind: "edge"
-  description: "An edge relationship between JobRun and role"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 relationship-count: 2
 featureList: [
   "Runs Spark, Hive, and Presto on Kubernetes",

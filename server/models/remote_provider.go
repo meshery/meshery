@@ -1585,7 +1585,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(bdr), resp.StatusCode)
+		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(string(bdr)), resp.StatusCode)
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -1653,7 +1653,7 @@ func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uui
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(bdr), resp.StatusCode)
+		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(string(bdr)), resp.StatusCode)
 		l.Log.Error(err)
 		return eventTypes, err
 	}
@@ -4357,10 +4357,10 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 		if len(connectionPage.Connections) > 0 {
 			return connectionPage.Connections[0], nil
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
 	}
 
-	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {

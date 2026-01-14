@@ -6,12 +6,12 @@ import { mockEnvironmentsApi, mockConnectionsApi } from './pages/DesignPage/util
 const IMPORT_SOURCES = [
   {
     type: 'File',
-    pathOrUrl: 'tests/e2e/assets/GuestBook App.yml',
-    designName: 'GuestBook App',
+    pathOrUrl: 'tests/e2e/fixtures/meshery-design-fixture.json',
+    designName: 'Meshery Design',
   },
   {
     type: 'URL',
-    pathOrUrl: 'https://example.com/guestbook-app.yml',
+    pathOrUrl: 'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/ui/tests/e2e/fixtures/relationships/meshery-design-fixture.json',
     designName: 'GuestBook App',
   },
 ];

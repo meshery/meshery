@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship IAM policies manage DynamoDB table access",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

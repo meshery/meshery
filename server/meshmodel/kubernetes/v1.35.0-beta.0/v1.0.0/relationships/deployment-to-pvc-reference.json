@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A Deployment references a PVC in its Pod template using the volumes and volumeMounts fields. This tells Kubernetes to mount the claimed persistent storage into the container at a specified path.\nThis relationship is namespaced and allows Pods to access persistent storage through a logical, portable claim.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

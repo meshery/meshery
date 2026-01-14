@@ -18,7 +18,7 @@ components-count: 1
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between OpenShiftCluster and VirtualNetworksSubnet(azure-network)"
+  description: ""
 relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

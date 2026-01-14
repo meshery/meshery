@@ -79,6 +79,19 @@ func LoadProject(ctx context.Context, composefile string) (*types.Project, error
 		return nil, fmt.Errorf("failed to load project: %w", err)
 	}
 
+	for name, s := range project.Services {
+		if s.CustomLabels == nil {
+			s.CustomLabels = make(map[string]string)
+		}
+		s.CustomLabels[api.ProjectLabel] = project.Name
+		s.CustomLabels[api.ServiceLabel] = name
+		s.CustomLabels[api.VersionLabel] = api.ComposeVersion
+		s.CustomLabels[api.WorkingDirLabel] = project.WorkingDir
+		s.CustomLabels[api.ConfigFilesLabel] = strings.Join(project.ComposeFiles, ",")
+		s.CustomLabels[api.OneoffLabel] = "False"
+		project.Services[name] = s
+	}
+
 	return project, nil
 }
 
@@ -179,14 +192,14 @@ type LogConsumer struct {
 func (l *LogConsumer) Log(containerName, message string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
+	_, _ = fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
 }
 
 // Err implements api.LogConsumer
 func (l *LogConsumer) Err(containerName, message string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
+	_, _ = fmt.Fprintf(l.Out, "%s | %s\n", containerName, message)
 }
 
 // Status implements api.LogConsumer

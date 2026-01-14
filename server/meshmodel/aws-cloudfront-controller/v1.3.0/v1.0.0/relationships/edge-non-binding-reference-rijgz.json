@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between Distribution and OriginAccessControl",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

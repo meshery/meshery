@@ -81,6 +81,14 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+### UI Build System
+
+Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
+
+**Build Commands**:
+- `make ui-build` - Builds both Meshery UI and Provider UI
+- `make ui-provider-build` - Builds Provider UI only
+
 ## Tests for adapters
 
 All Meshery adapters use a central workflow that is referenced in each of their test workflows which get triggered every time a pull request is made. These
