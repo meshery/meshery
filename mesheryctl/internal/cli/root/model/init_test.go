@@ -264,7 +264,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitInvalidModelName),
+			ExpectedError:    ErrModelInitFromString("invalid model name: name must match pattern ^[a-z0-9-]+$"),
 		},
 	}
 	for _, tc := range tests {
