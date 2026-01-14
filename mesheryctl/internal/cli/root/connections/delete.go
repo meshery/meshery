@@ -28,7 +28,7 @@ mesheryctl connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("api/integrations/connections/%s", args[0]))
+		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
 			return err
 		}

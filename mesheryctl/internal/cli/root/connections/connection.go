@@ -56,7 +56,7 @@ mesheryctl exp connection delete [connection_id]
 				return err
 			}
 
-			utils.DisplayCount("connections", int64(connectionsResponse.TotalCount))
+			utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
 
 			return nil
 		}

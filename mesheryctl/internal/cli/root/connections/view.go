@@ -17,12 +17,15 @@ package connections
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
@@ -31,24 +34,38 @@ import (
 )
 
 var (
-	outputFormatFlag string
-	saveFlag         bool
+	validOutputFormats = []string{"json", "yaml"}
+	outputFormatFlag   string
+	saveFlag           bool
 )
 
 var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
-	Long:  `View a connection by its ID or name`,
+	Long: `View a connection by its ID or name.
+Documentation for viewing connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/view`,
 	Example: `
-// View details of a specific connection
-mesheryctl connection view [connection-name]
+// View details of a specific connection in default format (yaml)
+mesheryctl connection view [connection-name|connection-id]
+
+// View details of a specific connection in JSON format
+mesheryctl connection view [connection-name|connection-id] --output-format json
+
+// View details of a specific connection in json format and save it to a file
+mesheryctl connection view [connection-name|connection-id] --output-format json --save
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("connection name or ID isn't specified\n\n" + errMsg))
-		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(errors.New("too many arguments\n\n" + errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg))
+		}
+
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+		}
+
+		if !slices.Contains(validOutputFormats, strings.ToLower(outputFormatFlag)) {
+			return utils.ErrInvalidArgument(errors.New(invalidOuptputFormatMsg))
 		}
 		return nil
 	},
@@ -61,16 +78,25 @@ mesheryctl connection view [connection-name]
 		if _, err := uuid.FromString(connectionNameOrID); err == nil {
 			// Fetch connection directly by ID
 			url := fmt.Sprintf("%s/%s", connectionApiPath, connectionNameOrID)
-			conn, err := api.Fetch[connection.Connection](url)
+			connectionsResponse, err := api.Fetch[connection.Connection](url)
 			if err != nil {
 				utils.Log.Error(err)
 				return err
 			}
-			selectedConnection = conn
+			selectedConnection = connectionsResponse
 		} else {
 			// Search by name
-			url := fmt.Sprintf("%s?search=%s&pagesize=all", connectionApiPath, connectionNameOrID)
-			connectionsResponse, err := api.Fetch[connection.ConnectionPage](url)
+			viewUrlValue := url.Values{}
+			viewUrlValue.Add("search", connectionNameOrID)
+			viewUrlValue.Add("pagesize", "all")
+
+			urlPath := fmt.Sprintf("%s?%s", connectionApiPath, viewUrlValue.Encode())
+
+			connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
+			if err != nil {
+				return err
+			}
+
 			if err != nil {
 				utils.Log.Error(err)
 				return err
@@ -115,7 +141,8 @@ mesheryctl connection view [connection-name]
 				}
 				fmt.Println("Output saved as YAML file in ~/.meshery/connection_" + connectionString + ".yaml")
 			} else {
-				fmt.Print(string(output))
+				outputFormatter := display.NewYAMLOutputFormatter(selectedConnection)
+				return outputFormatter.Display()
 			}
 		} else {
 			if saveFlag {
@@ -131,7 +158,8 @@ mesheryctl connection view [connection-name]
 				fmt.Println("Output saved as JSON file in ~/.meshery/connection_" + connectionString + ".json")
 				return nil
 			}
-			return outputConnectionJSON(selectedConnection)
+			outputFormatter := display.NewJSONOutputFormatter(selectedConnection)
+			return outputFormatter.Display()
 		}
 
 		return nil
@@ -160,17 +188,6 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) *connectio
 
 		return connectionsList[i]
 	}
-}
-
-// outputConnectionJSON outputs the connection in JSON format
-func outputConnectionJSON(conn *connection.Connection) error {
-	// Create a new JSON encoder that writes to the standard output (os.Stdout).
-	enc := json.NewEncoder(os.Stdout)
-	// Configure the JSON encoder settings.
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-
-	return enc.Encode(conn)
 }
 
 func init() {

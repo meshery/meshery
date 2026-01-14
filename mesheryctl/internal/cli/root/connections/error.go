@@ -9,6 +9,8 @@ import (
 
 var (
 	ErrConnectionTypeCode = "mesheryctl-1163"
+
+	invalidOuptputFormatMsg = "output-format choice is invalid, use [json|yaml]"
 )
 
 func errInvalidConnectionType(connectionType string) error {

@@ -1,4 +1,4 @@
-package output
+package display
 
 import (
 	"encoding/json"
@@ -8,8 +8,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type OutputFormatter interface {
+type OutputFormatter[T any] interface {
 	Display() error
+	WithOutput(io.Writer) OutputFormatter[T]
 }
 
 type JsonEncoderSettings struct {
@@ -29,7 +30,7 @@ type YAMLOutputFormatter[T any] struct {
 	Out  io.Writer
 }
 
-func NewJSONOutputFormatter[T any](data T) *JSONOutputFormatter[T] {
+func NewJSONOutputFormatter[T any](data T) OutputFormatter[T] {
 	return &JSONOutputFormatter[T]{
 		Data: data,
 		EncoderSettings: JsonEncoderSettings{
@@ -41,19 +42,14 @@ func NewJSONOutputFormatter[T any](data T) *JSONOutputFormatter[T] {
 	}
 }
 
-func (j *JSONOutputFormatter[T]) WithOutput(out io.Writer) *JSONOutputFormatter[T] {
+func (j *JSONOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
 	j.Out = out
 	return j
 }
 
-func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JsonEncoderSettings) *JSONOutputFormatter[T] {
+func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JsonEncoderSettings) OutputFormatter[T] {
 	j.EncoderSettings = settings
 	return j
-}
-
-func (y *YAMLOutputFormatter[T]) WithOutput(out io.Writer) *YAMLOutputFormatter[T] {
-	y.Out = out
-	return y
 }
 
 func (j *JSONOutputFormatter[T]) Display() error {
@@ -70,7 +66,20 @@ func (j *JSONOutputFormatter[T]) Display() error {
 	if err := encoder.Encode(j.Data); err != nil {
 		return ErrEncodingData(err, "json")
 	}
+
 	return nil
+}
+
+func NewYAMLOutputFormatter[T any](data T) OutputFormatter[T] {
+	return &YAMLOutputFormatter[T]{
+		Data: data,
+		Out:  nil,
+	}
+}
+
+func (y *YAMLOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
+	y.Out = out
+	return y
 }
 
 func (y *YAMLOutputFormatter[T]) Display() error {
@@ -84,5 +93,6 @@ func (y *YAMLOutputFormatter[T]) Display() error {
 	if err := encoder.Encode(y.Data); err != nil {
 		return ErrEncodingData(err, "yaml")
 	}
+
 	return nil
 }
