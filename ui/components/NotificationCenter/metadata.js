@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
+import { FormatStructuredData, SectionBody, reorderObjectProperties, KeyValue } from '../DataFormatter';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
@@ -43,6 +43,47 @@ const ShortDescriptionFormatter = ({ value }) => {
   );
 };
 
+/**
+ * Helper function to convert camelCase to Title Case with spaces
+ * Example: "connectionID" -> "Connection ID", "k8sContextName" -> "K8s Context Name"
+ */
+const humanizeFieldName = (fieldName) => {
+  return fieldName
+    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+    .trim();
+};
+
+/**
+ * Formatter for connection-related fields (connectionID, k8sContextID, k8sContextName)
+ * Displays as a clickable chip that links to the connections page with search filter
+ */
+const ConnectionFieldFormatter = ({ value, fieldName }) => {
+  if (!value) {
+    return null;
+  }
+
+  const humanizedName = humanizeFieldName(fieldName);
+  
+  return (
+    <KeyValue
+      Key={humanizedName}
+      Value={
+        <ChipWrapper
+          label={value}
+          clickable
+          component="a"
+          href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
+          target="_self"
+          style={{
+            marginBlock: '0.25rem',
+          }}
+        />
+      }
+    />
+  );
+};
+
 export const PropertyFormatters = {
   trace: (value) => <DataToFileLink data={value} />,
   ShortDescription: (value) => <ShortDescriptionFormatter value={value} />,
@@ -53,11 +94,15 @@ export const PropertyFormatters = {
         label={value}
         clickable
         component="a"
-        href={`/management/connections?tab=connections&searchText=${value}`}
+        href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
         target="_self"
       />
     );
   },
+  // MeshSync event field formatters with humanized labels
+  connectionID: (value) => <ConnectionFieldFormatter value={value} fieldName="connectionID" />,
+  k8sContextID: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextID" />,
+  k8sContextName: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextName" />,
   error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
@@ -124,6 +169,9 @@ export const FormattedMetadata = ({ event }) => {
     'doclink',
     'ShortDescription',
     'connectionName',
+    'connectionID',
+    'k8sContextName',
+    'k8sContextID',
     'LongDescription',
     'Summary',
     'SuggestedRemediation',
