@@ -10,68 +10,38 @@ const HelpCenterWidget = (props) => {
       name: 'Cloud Docs',
       link: 'https://docs.layer5.io/cloud',
       external: true,
-      icon: (
-        <DesignIcon
-          width="15px"
-          height="15px"
-          primaryFill="currentColor"
-          secondaryFill="currentColor"
-        />
-      ),
     },
     {
       name: 'Kanvas Docs',
       link: 'https://docs.layer5.io/kanvas',
       external: true,
-      icon: (
-        <DesignIcon
-          width="15px"
-          height="15px"
-          primaryFill="currentColor"
-          secondaryFill="currentColor"
-        />
-      ),
     },
     {
       name: 'Support Request',
       link: `${MESHERY_CLOUD_PROD}/support`,
       external: true,
-      icon: (
-        <DesignIcon
-          width="15px"
-          height="15px"
-          primaryFill="currentColor"
-          secondaryFill="currentColor"
-        />
-      ),
     },
     {
       name: 'Discussion Forum',
       link: 'https://meshery.io/community/#discussion-forums',
       external: true,
-      icon: (
-        <DesignIcon
-          width="15px"
-          height="15px"
-          primaryFill="currentColor"
-          secondaryFill="currentColor"
-        />
-      ),
     },
     {
       name: 'Slack',
       link: 'https://slack.meshery.io',
       external: true,
-      icon: (
-        <DesignIcon
-          width="15px"
-          height="15px"
-          primaryFill="currentColor"
-          secondaryFill="currentColor"
-        />
-      ),
     },
-  ];
+  ].map((resource) => ({
+    ...resource,
+    icon: (
+      <DesignIcon
+        width="15px"
+        height="15px"
+        primaryFill="currentColor"
+        secondaryFill="currentColor"
+      />
+    ),
+  }));
 
   return (
     <>
