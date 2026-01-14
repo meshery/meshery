@@ -15,6 +15,8 @@
 package filter
 
 import (
+	"errors"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -41,7 +43,7 @@ mesheryctl filter delete [filter-name | ID]
 		}
 
 		if len(args) == 0 {
-			return ErrFilterNameOrIDNotProvided()
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 		}
 
 		var filterID string
@@ -51,13 +53,13 @@ mesheryctl filter delete [filter-name | ID]
 
 		filterID, isValidID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 		if err != nil {
-			return ErrFilterNameOrID(err)
+			return utils.ErrInvalidNameOrID(err)
 		}
 
 		if !isValidID {
 			filterName, filterID, isValidName, err = utils.ValidName(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
-				return ErrFilterNameOrID(err)
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 

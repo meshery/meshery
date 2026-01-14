@@ -16,6 +16,7 @@ package filter
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -82,8 +83,7 @@ mesheryctl filter view "filter name"
 
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
 			if err != nil {
-				utils.Log.Error(ErrFilterNameOrID(err))
-				return nil
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -92,7 +92,7 @@ mesheryctl filter view "filter name"
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return ErrFilterNameOrIDNotSpecified()
+				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
@@ -116,7 +116,7 @@ mesheryctl filter view "filter name"
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadResponseBody(err)
+			return utils.ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}

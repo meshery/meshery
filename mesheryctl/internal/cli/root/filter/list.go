@@ -82,7 +82,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return ErrReadToken(err)
+			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string

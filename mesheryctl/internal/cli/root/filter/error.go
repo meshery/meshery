@@ -24,18 +24,17 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrFilterNameOrIDCode             = "mesheryctl-1018"
-	ErrFetchFilterCode                = "mesheryctl-1019"
-	ErrFilterNameOrIDNotProvidedCode  = "replace_me"
-	ErrDeleteFilterCode               = "replace_me"
-	ErrFilterNotFoundCode             = "replace_me"
-	ErrFilterURIRequiredCode          = "replace_me"
-	ErrViewAllWithNameCode            = "replace_me"
-	ErrMultiWordFilterNameCode        = "replace_me"
-	ErrFilterNameOrIDNotSpecifiedCode = "replace_me"
-	ErrReadResponseBodyCode           = "replace_me"
-	ErrReadTokenCode                  = "replace_me"
-	ErrInvalidFilterCommandCode       = "replace_me"
+	ErrFetchFilterCode          = "mesheryctl-1019"
+	ErrDeleteFilterCode         = "mesheryctl-1018"
+	ErrFilterNotFoundCode       = "replace_me"
+	ErrFilterURIRequiredCode    = "replace_me"
+	ErrViewAllWithNameCode      = "replace_me"
+	ErrMultiWordFilterNameCode  = "replace_me"
+	ErrInvalidFilterCommandCode = "replace_me"
+)
+
+const (
+	errFilterNameOrIDNotProvided = "Filter Name or ID not provided"
 )
 
 func formatErrorWithReference() string {
@@ -54,16 +53,6 @@ func formatErrorWithReference() string {
 	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }
 
-func ErrFilterNameOrID(err error) error {
-	return errors.New(
-		ErrFilterNameOrIDCode,
-		errors.Alert,
-		[]string{"Unable to fetch filter"},
-		[]string{err.Error()},
-		[]string{"Probable invalid filter name or id"},
-		[]string{"Run `mesheryctl filter list` to view all available filters."})
-}
-
 func ErrFetchFilter(err error) error {
 	return errors.New(
 		ErrFetchFilterCode,
@@ -72,14 +61,6 @@ func ErrFetchFilter(err error) error {
 		[]string{err.Error()},
 		[]string{"Filter name or id doesn't exist"},
 		[]string{"Run `mesheryctl filter view -a` to view all available filters."})
-}
-
-func ErrFilterNameOrIDNotProvided() error {
-	return errors.New(ErrFilterNameOrIDNotProvidedCode, errors.Alert,
-		[]string{"Filter name or ID not provided"},
-		[]string{"No filter name or ID provided for deletion"},
-		[]string{"Missing required argument for filter delete command"},
-		[]string{"Provide a filter name or ID", formatErrorWithReference()})
 }
 
 func ErrDeleteFilter(err error, filterName string) error {
@@ -120,30 +101,6 @@ func ErrMultiWordFilterName() error {
 		[]string{"multi-word filter names must be enclosed in double quotes"},
 		[]string{"Filter name with spaces requires quoting"},
 		[]string{"Enclose multi-word filter names in double quotes", formatErrorWithReference()})
-}
-
-func ErrFilterNameOrIDNotSpecified() error {
-	return errors.New(ErrFilterNameOrIDNotSpecifiedCode, errors.Alert,
-		[]string{"Filter name or ID not specified"},
-		[]string{"filter-name or ID not specified, use -a to view all filters"},
-		[]string{"No filter identifier provided"},
-		[]string{"Provide a filter name or ID, or use '-a' to view all", formatErrorWithReference()})
-}
-
-func ErrReadResponseBody(err error) error {
-	return errors.New(ErrReadResponseBodyCode, errors.Alert,
-		[]string{"Failed to read response body"},
-		[]string{"failed to read response body", err.Error()},
-		[]string{"Unable to read server response"},
-		[]string{"Check your network connection and try again", formatErrorWithReference()})
-}
-
-func ErrReadToken(err error) error {
-	return errors.New(ErrReadTokenCode, errors.Alert,
-		[]string{"Error reading token"},
-		[]string{"error reading token", err.Error()},
-		[]string{"Failed to read authentication token"},
-		[]string{"Ensure you are logged in with 'mesheryctl system login'", formatErrorWithReference()})
 }
 
 func ErrInvalidFilterCommand(invalidCmd string) error {
