@@ -56,6 +56,7 @@ var (
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrHandlePaginationCode        = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -515,6 +516,7 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+
 func ErrCreateManifestsFolder(err error) error {
 	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
@@ -526,6 +528,7 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
+
 func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
@@ -555,6 +558,7 @@ func ErrNoManifestFilesFound(path string) error {
 		[]string{"Verify the specified path contains valid manifest files."},
 	)
 }
+
 func ErrGetChannelVersion(err error) error {
 	return errors.New(
 		ErrGetChannelVersionCode,
@@ -565,6 +569,7 @@ func ErrGetChannelVersion(err error) error {
 		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
 	)
 }
+
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
 		[]string{"Error indenting JSON body"},
@@ -742,4 +747,12 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{fmt.Sprintf("Meshery Server is not available on platform: %s", platform)},
 		[]string{"Meshery Server is not running or is unreachable", "Docker or Kubernetes environment is not ready", "Network connectivity issues"},
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
+}
+
+func ErrHandlePagination(err error) error {
+	return errors.New(ErrHandlePaginationCode, errors.Alert,
+		[]string{"Unable to display paginated results"},
+		[]string{err.Error()},
+		[]string{"Interactive pagination requires keyboard input support"},
+		[]string{"Ensure you are running in an interactive terminal"})
 }

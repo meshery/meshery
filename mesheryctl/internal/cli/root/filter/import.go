@@ -58,8 +58,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
@@ -80,14 +79,12 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			content := filterFile
@@ -102,8 +99,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					utils.Log.Error(utils.ErrReadConfigFile(err))
-					return nil
+					return utils.ErrReadConfigFile(err)
 				}
 
 				content := string(cfgFile)
@@ -122,27 +118,23 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		// Convert the request body to JSON
 		marshalledBody, err := json.Marshal(body)
 		if err != nil {
-			utils.Log.Error(utils.ErrMarshal(err))
-			return nil
+			return utils.ErrMarshal(err)
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter imported")
 		} else {
-			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
-			return nil
+			return utils.ErrResponseStatus(resp.StatusCode)
 		}
 
 		return nil

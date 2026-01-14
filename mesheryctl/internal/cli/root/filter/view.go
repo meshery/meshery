@@ -104,13 +104,11 @@ mesheryctl filter view "filter name"
 
 		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		defer func() { _ = res.Body.Close() }()
@@ -121,20 +119,17 @@ mesheryctl filter view "filter name"
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else {
 			// use the first match from the result when searching by filter name
@@ -144,19 +139,16 @@ mesheryctl filter view "filter name"
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				utils.Log.Error(utils.ErrJSONToYAML(err))
-				return nil
+				return utils.ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			utils.Log.Error(utils.ErrOutFormatFlag())
-			return nil
+			return utils.ErrOutFormatFlag()
 		}
 		utils.Log.Info(string(body))
 		return nil
