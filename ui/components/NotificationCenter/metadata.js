@@ -103,6 +103,28 @@ export const PropertyFormatters = {
   connectionID: (value) => <ConnectionFieldFormatter value={value} fieldName="connectionID" />,
   k8sContextID: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextID" />,
   k8sContextName: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextName" />,
+  meshsyncDeploymentMode: (value) => (
+    <KeyValue
+      Key={humanizeFieldName('meshsyncDeploymentMode')}
+      Value={value}
+    />
+  ),
+  operatorStatus: (value) => (
+    <KeyValue
+      Key={humanizeFieldName('operatorStatus')}
+      Value={value}
+    />
+  ),
+  brokerEndpoint: (value) => (
+    <KeyValue
+      Key={humanizeFieldName('brokerEndpoint')}
+      Value={value}
+      style={{
+        fontFamily: 'monospace',
+        fontSize: '0.85rem',
+      }}
+    />
+  ),
   error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
@@ -172,6 +194,9 @@ export const FormattedMetadata = ({ event }) => {
     'connectionID',
     'k8sContextName',
     'k8sContextID',
+    'meshsyncDeploymentMode',
+    'operatorStatus',
+    'brokerEndpoint',
     'LongDescription',
     'Summary',
     'SuggestedRemediation',
