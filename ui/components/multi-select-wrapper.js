@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { Colors } from '../themes/app';
 import { Checkbox, MenuItem, Paper, FormControlLabel } from '@sistent/sistent';
 import { useTheme } from '@sistent/sistent';
@@ -37,32 +38,24 @@ const MultiSelectWrapper = (props) => {
       >
         <FormControlLabel
           control={
-            props.value === '*' && filteredSelectedOptions?.length > 0 ? (
-              <>
-                <Checkbox
-                  key={props.value}
-                  ref={(input) => {
-                    if (input) input.indeterminate = true;
-                  }}
-                  style={{
-                    padding: '0',
-                  }}
-                />
-              </>
+            props.value === '*' ? (
+              <FilterNoneIcon
+                style={{ color: theme.palette.text.primary, marginRight: '0.25rem' }}
+              />
             ) : (
-              <>
-                <Checkbox
-                  key={props.value}
-                  checked={props.isSelected}
-                  onChange={() => {}}
-                  style={{
-                    padding: '0',
-                  }}
-                />
-              </>
+              <Checkbox
+                key={props.value}
+                checked={props.isSelected}
+                onChange={() => {}}
+                style={{ padding: '0' }}
+              />
             )
           }
-          label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
+          label={
+            <span style={{ marginLeft: props.value === '*' ? '0.25rem' : '0.5rem' }}>
+              {props.label}
+            </span>
+          }
         />
       </MenuItem>
     );
