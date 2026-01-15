@@ -1,4 +1,4 @@
-export const LoadingMessages = [
+const LoadingMessages = [
   'Loading... leave your YAML at the door.',
   "I can explain YAML to you, but I can't make you understand it.",
   "I'm not superstitious, but I always sacrifice a YAML file while loading...",
@@ -66,24 +66,80 @@ export const LoadingMessages = [
   'mesheryctl is a powerful CLI tool for interacting with one or more Meshery Servers.',
 ];
 
-export const getRandomLoadingMessage = () => {
+function getRandomLoadingMessage(){
   return LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
 };
 
-/**
- * Get a persisted loading message from the window object, or generate a new one
- * This ensures that the same loading message is used across all loading screens
- * in the app, including UI extensions.
- */
-export const getPersistedLoadingMessage = () => {
-  if (typeof window !== 'undefined') {
-    if (!window.__mesheryLoadingMessage) {
-      window.__mesheryLoadingMessage = getRandomLoadingMessage();
-    }
-    return window.__mesheryLoadingMessage;
-  }
-  // Fallback for server-side rendering
-  return getRandomLoadingMessage();
+
+var _randomLoadingMessage = null;
+function PersistedRandomLoadingMessage(){
+  if (_randomLoadingMessage) return _randomLoadingMessage;
+  _randomLoadingMessage = getRandomLoadingMessage();
+  return _randomLoadingMessage;
 };
 
-export const randomLoadingMessage = getPersistedLoadingMessage(); // random per app load, persisted in window
+// const isMessageExpired = () => {
+//   return false;
+// };
+
+// export const getPersistedRandomMessage = () => {
+//   // check if a randomMessage is in localStorage and it is not expired
+//   const randomLoadingMessageFromStorage = localStorage?.getItem
+//     ? localStorage.getItem('loadingMessage')
+//     : null;
+
+//   if (
+//     randomLoadingMessageFromStorage?.timestamp &&
+//     !isMessageExpired(randomLoadingMessageFromStorage.timestamp)
+//   ) {
+//     return randomLoadingMessageFromStorage.message;
+//   }
+
+//   const newMessage = RandomLoadingMessage();
+
+//   if (!localStorage?.setItem) return newMessage;
+
+//   localStorage.setItem(
+//     'loadingMessage',
+//     JSON.stringify({ message: newMessage, timestamp: Date.now() }),
+//   );
+//   return newMessage;
+// };
+
+// export const randomLoadingMessage = RandomLoadingMessage();
+
+const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader'
+
+// export globals
+
+var _hidingTimeout = null
+
+function show() {
+  if (_hidingTimeout){
+    clearTimeout(_hidingTimeout)
+  }
+  const loader = document.getElementById('PRE_REACT_LOADER');
+  if (loader && loader?.style?.display != 'flex') {
+    loader.style.display = 'flex'
+  }
+}
+
+
+function hide() {
+
+  _hidingTimeout = setTimeout(() => {
+    const loader = document.getElementById('PRE_REACT_LOADER');
+    if (loader) {
+      loader.style.display = 'none'
+    }
+  },1000)
+}
+
+window.Loader = {
+  LOADING_MESSAGES: LoadingMessages,
+  PRE_REACT_NEXTJS_LOADER_ID,
+  PersistedRandomLoadingMessage,
+  RandomLoadingMessage: getRandomLoadingMessage,
+  show,
+  hide
+}

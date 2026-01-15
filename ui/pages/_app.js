@@ -52,9 +52,7 @@ import {
   Hidden,
   NoSsr,
 } from '@sistent/sistent';
-import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
@@ -83,6 +81,7 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
+import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -616,101 +615,105 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const { extensionType } = useSelector((state) => state.ui);
 
   return (
-    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
-      <DynamicComponentProvider>
-        <RelayEnvironmentProvider environment={relayEnvironment}>
-          <MesheryThemeProvider>
-            <NoSsr>
-              <ErrorBoundary customFallback={CustomErrorFallback}>
-                <LoadSessionGuard>
-                  <WorkspaceModalContextProvider>
-                    <RegistryModalContextProvider>
-                      <StyledRoot>
-                        <CssBaseline />
-                        <NavigationBar
-                          isDrawerCollapsed={isDrawerCollapsed}
-                          mobileOpen={state.mobileOpen}
-                          handleDrawerToggle={handleDrawerToggle}
-                          updateExtensionType={updateCurrentExtensionType}
-                          canShowNav={canShowNav}
+    <NoSsr>
+      <DynamicFullScrrenLoader isLoading={state.isLoading}>
+        <DynamicComponentProvider>
+          <RelayEnvironmentProvider environment={relayEnvironment}>
+            <MesheryThemeProvider>
+              <NoSsr>
+                <ErrorBoundary customFallback={CustomErrorFallback}>
+                  <LoadSessionGuard>
+                    <WorkspaceModalContextProvider>
+                      <RegistryModalContextProvider>
+                        <StyledRoot>
+                          <CssBaseline />
+                          <NavigationBar
+                            isDrawerCollapsed={isDrawerCollapsed}
+                            mobileOpen={state.mobileOpen}
+                            handleDrawerToggle={handleDrawerToggle}
+                            updateExtensionType={updateCurrentExtensionType}
+                            canShowNav={canShowNav}
+                          />
+                          <StyledAppContent canShowNav={canShowNav}>
+                            <SnackbarProvider
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                              }}
+                              iconVariant={{
+                                success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                                error: <Error style={{ marginRight: '0.5rem' }} />,
+                                warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                                info: <Info style={{ marginRight: '0.5rem' }} />,
+                              }}
+                              Components={{
+                                info: ThemeResponsiveSnackbar,
+                                success: ThemeResponsiveSnackbar,
+                                error: ThemeResponsiveSnackbar,
+                                warning: ThemeResponsiveSnackbar,
+                                loading: ThemeResponsiveSnackbar,
+                              }}
+                              maxSnack={10}
+                            >
+                              <NotificationCenterProvider>
+                                <MesheryProgressBar />
+                                <KubernetesSubscription setAppState={setAppState} />
+                                {!state.isFullScreenMode && (
+                                  <Header
+                                    onDrawerToggle={handleDrawerToggle}
+                                    onDrawerCollapse={isDrawerCollapsed}
+                                    contexts={state.k8sContexts}
+                                    activeContexts={state.activeK8sContexts}
+                                    setActiveContexts={setActiveContexts}
+                                    searchContexts={searchContexts}
+                                    updateExtensionType={updateCurrentExtensionType}
+                                    abilityUpdated={state.abilityUpdated}
+                                  />
+                                )}
+                                <StyledContentWrapper>
+                                  <StyledMainContent
+                                    style={{
+                                      padding: extensionType === 'navigator' && '0px',
+                                    }}
+                                  >
+                                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                                      <ErrorBoundary customFallback={CustomErrorFallback}>
+                                        <Component
+                                          pageContext={pageContext}
+                                          contexts={state.k8sContexts}
+                                          activeContexts={state.activeK8sContexts}
+                                          setActiveContexts={setActiveContexts}
+                                          searchContexts={searchContexts}
+                                          {...pageProps}
+                                        />
+                                      </ErrorBoundary>
+                                    </LocalizationProvider>
+                                  </StyledMainContent>
+                                  <Footer
+                                    handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                    capabilitiesRegistry={capabilitiesRegistry}
+                                  />
+                                </StyledContentWrapper>
+                              </NotificationCenterProvider>
+                            </SnackbarProvider>
+                          </StyledAppContent>
+                        </StyledRoot>
+                        <PlaygroundMeshDeploy
+                          closeForm={() =>
+                            setState((prevState) => ({ ...prevState, isOpen: false }))
+                          }
+                          isOpen={state.isOpen}
                         />
-                        <StyledAppContent canShowNav={canShowNav}>
-                          <SnackbarProvider
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right',
-                            }}
-                            iconVariant={{
-                              success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                              error: <Error style={{ marginRight: '0.5rem' }} />,
-                              warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                              info: <Info style={{ marginRight: '0.5rem' }} />,
-                            }}
-                            Components={{
-                              info: ThemeResponsiveSnackbar,
-                              success: ThemeResponsiveSnackbar,
-                              error: ThemeResponsiveSnackbar,
-                              warning: ThemeResponsiveSnackbar,
-                              loading: ThemeResponsiveSnackbar,
-                            }}
-                            maxSnack={10}
-                          >
-                            <NotificationCenterProvider>
-                              <MesheryProgressBar />
-                              <KubernetesSubscription setAppState={setAppState} />
-                              {!state.isFullScreenMode && (
-                                <Header
-                                  onDrawerToggle={handleDrawerToggle}
-                                  onDrawerCollapse={isDrawerCollapsed}
-                                  contexts={state.k8sContexts}
-                                  activeContexts={state.activeK8sContexts}
-                                  setActiveContexts={setActiveContexts}
-                                  searchContexts={searchContexts}
-                                  updateExtensionType={updateCurrentExtensionType}
-                                  abilityUpdated={state.abilityUpdated}
-                                />
-                              )}
-                              <StyledContentWrapper>
-                                <StyledMainContent
-                                  style={{
-                                    padding: extensionType === 'navigator' && '0px',
-                                  }}
-                                >
-                                  <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <ErrorBoundary customFallback={CustomErrorFallback}>
-                                      <Component
-                                        pageContext={pageContext}
-                                        contexts={state.k8sContexts}
-                                        activeContexts={state.activeK8sContexts}
-                                        setActiveContexts={setActiveContexts}
-                                        searchContexts={searchContexts}
-                                        {...pageProps}
-                                      />
-                                    </ErrorBoundary>
-                                  </LocalizationProvider>
-                                </StyledMainContent>
-                                <Footer
-                                  handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                  capabilitiesRegistry={capabilitiesRegistry}
-                                />
-                              </StyledContentWrapper>
-                            </NotificationCenterProvider>
-                          </SnackbarProvider>
-                        </StyledAppContent>
-                      </StyledRoot>
-                      <PlaygroundMeshDeploy
-                        closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
-                        isOpen={state.isOpen}
-                      />
-                    </RegistryModalContextProvider>
-                  </WorkspaceModalContextProvider>
-                </LoadSessionGuard>
-              </ErrorBoundary>
-            </NoSsr>
-          </MesheryThemeProvider>
-        </RelayEnvironmentProvider>
-      </DynamicComponentProvider>
-    </LoadingScreen>
+                      </RegistryModalContextProvider>
+                    </WorkspaceModalContextProvider>
+                  </LoadSessionGuard>
+                </ErrorBoundary>
+              </NoSsr>
+            </MesheryThemeProvider>
+          </RelayEnvironmentProvider>
+        </DynamicComponentProvider>
+      </DynamicFullScrrenLoader>
+    </NoSsr>
   );
 };
 

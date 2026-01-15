@@ -3,41 +3,54 @@ import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
 
 function LoadingScreen(props) {
-  const { message, children, isLoading, ...other } = props;
-  const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
+  const { message, children, isLoading, id, ...other } = props;
 
   if (isLoading) {
-    return (
-      <div
-        {...other}
-        style={{
-          display: 'grid',
-          placeItems: 'center',
-          minHeight: '100vh',
-          textAlign: 'center',
-          backgroundColor: '#263238', // color of navigation menu
-          color: '#dedede', // soften the subtitle / message
-          ...(other.style || {}),
-        }}
-      >
-        <div>
-          <AnimatedLogoDark />
-          <h1
-            style={{
-              fontSize: '.9rem',
-              fontWeight: 'normal',
-              marginTop: '1rem',
-            }}
-          >
-            {message}
-          </h1>
-        </div>
-      </div>
-    );
+    return <PureHtmlLoadingScreen message={message} id={id} {...other} />;
   }
 
   return <>{children}</>;
 }
+
+export const PureHtmlLoadingScreen = (props) => {
+  const { message, id, ...other } = props;
+  const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
+
+  return (
+    <div
+      {...other}
+      style={{
+        minHeight: '100vh',
+        position: 'absolute',
+        inset: '0',
+        zIndex: 99999,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        backgroundColor: '#263238', // color of navigation menu
+        color: '#dedede', // soften the subtitle / message
+        ...(other.style || {}),
+      }}
+      id={id}
+    >
+      <div>
+        <AnimatedLogoDark />
+        <h1
+          id={id + '-text-message'}
+          style={{
+            fontFamily: 'QanelasSoftRegular, sans-serif',
+            fontSize: '.9rem',
+            fontWeight: 'normal',
+            marginTop: '1rem',
+          }}
+        >
+          {message}
+        </h1>
+      </div>
+    </div>
+  );
+};
 
 LoadingScreen.propTypes = {
   message: PropTypes.string.isRequired,

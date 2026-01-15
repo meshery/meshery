@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { createStyleRegistry } from 'styled-jsx';
+import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
 const registry = createStyleRegistry();
 const flush = registry.flush();
@@ -23,6 +24,12 @@ class MesheryDocument extends Document {
             as="font"
             type="font/otf"
             crossOrigin="anonymous"
+          />
+          <link
+            href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
+            as="font"
+            type="font/otf"
+            crossorigin="anonymous"
           />
 
           {/* Google Tag Manager */}
@@ -73,9 +80,33 @@ class MesheryDocument extends Document {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
+          {/* Pre-React script */}
+          <script src="/loadingMessages.js"></script>
 
+          <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />
           <NextScript />
+
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                  (function () {
+                    const loaderId = "PRE_REACT_LOADER-text-message"
+                    console.log("Prereact LoaderId",loaderId)
+
+                    try {
+                      var el = document.getElementById(loaderId)
+                      console.log("loaderEl",el)
+                      if (!el) return;
+
+                      el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                    } catch (e) {
+                      console.log("Failed to set loading message",e)
+                    }
+                  })();
+                `,
+            }}
+          />
         </body>
       </Html>
     );
