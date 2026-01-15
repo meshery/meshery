@@ -12,7 +12,7 @@ var (
 	ErrAwsEksGetCredentialsCode   = "mesheryctl-1173"
 	ErrAzureAksGetCredentialsCode = "mesheryctl-1172"
 	ErrAzureCliNotFoundCode       = "mesheryctl-1169"
-	ErrConnectionTypeCode         = "mesheryctl-1163"
+	ErrConnectionTypeCode         = "mesheryctl-1182"
 	ErrGcpGKEGetCredentialsCode   = "mesheryctl-1175"
 	ErrReadKubeConfigCode         = "mesheryctl-1167"
 	ErrWriteKubeConfigCode        = "mesheryctl-1168"
