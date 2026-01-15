@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
+import { ComponentIcon, Loading, processDesign } from './common';
 import {
   designValidatorCommands,
   designValidatorEvents,
@@ -127,7 +127,13 @@ const ValidationResults_ = (props) => {
             {/*  Errors For A Component */}
             <ComponentValidationListItem button onClick={() => handleClick(index)}>
               {/* key can be error id?? */}
-              <ComponentIcon iconSrc={getSvgWhiteForComponent(componentResult.component)} />
+              <ComponentIcon
+                iconSrc={
+                  componentResult.component?.styles?.svgWhite
+                    ? `/${componentResult.component.styles.svgWhite}`
+                    : null
+                }
+              />
               <ListItemText primary={componentResult.component.displayName} disableTypography />(
               {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
             </ComponentValidationListItem>
