@@ -1,11 +1,18 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { Box, Stack, Typography, styled, useTheme } from '@sistent/sistent';
+import {
+  Box,
+  Stack,
+  Typography,
+  styled,
+  useTheme,
+  Button,
+  ExternalLinkIcon,
+  componentIcon,
+} from '@sistent/sistent';
 
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ComponentIcon } from './common';
-import { Button } from '@sistent/sistent';
-import { ExternalLinkIcon, componentIcon } from '@sistent/sistent';
 import { ErrorMetadataFormatter } from '../NotificationCenter/formatters/error';
 
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';

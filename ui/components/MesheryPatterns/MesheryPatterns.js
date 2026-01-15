@@ -21,8 +21,11 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
+  NoSsr,
+  useModal,
+  Modal as SistentModal,
+  ModalBody,
 } from '@sistent/sistent';
-import { NoSsr } from '@sistent/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -34,7 +37,12 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../utils/utils';
+import {
+  encodeDesignFile,
+  getUnit8ArrayDecodedFile,
+  parseDesignFile,
+  modifyRJSFSchema,
+} from '../../utils/utils';
 import ViewSwitch from '../ViewSwitch';
 import MesheryPatternGrid from './MesheryPatternGridView';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
@@ -54,7 +62,6 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
-import { modifyRJSFSchema } from '../../utils/utils';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
@@ -65,7 +72,6 @@ import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from '../ExportModal';
-import { useModal, Modal as SistentModal, ModalBody } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';

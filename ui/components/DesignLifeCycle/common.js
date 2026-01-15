@@ -1,10 +1,18 @@
 import React from 'react';
-import { Box, Checkbox, CircularProgress, Stack, styled, Typography } from '@sistent/sistent';
+import {
+  Box,
+  Checkbox,
+  CircularProgress,
+  Stack,
+  styled,
+  Typography,
+  CustomTooltip,
+  InfoCircleIcon,
+  useTheme,
+  IconButton,
+} from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { processDesign } from '@/utils/utils';
-import { CustomTooltip } from '@sistent/sistent';
-import { InfoCircleIcon, useTheme } from '@sistent/sistent';
-import { IconButton } from '@sistent/sistent';
 
 export const DEPLOYMENT_TYPE = {
   DEPLOY: 'deploy',

@@ -1,13 +1,11 @@
 import { trueRandom } from '../lib/trueRandom';
-import jsYaml from 'js-yaml';
+import { jsyaml, jsYaml, yaml } from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@sistent/sistent';
-import jsyaml from 'js-yaml';
-import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
 import { useSelector } from 'react-redux';

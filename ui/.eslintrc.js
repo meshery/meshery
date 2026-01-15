@@ -30,6 +30,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier', 'unused-imports'],
   rules: {
+    'no-duplicate-imports': 'error',
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
     'react-hooks/exhaustive-deps': 'off',

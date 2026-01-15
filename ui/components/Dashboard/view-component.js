@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { reactJsonTheme } from '../Settings/Registry/helper';
 import dynamic from 'next/dynamic';
-import { SectionBody, ArrayFormatter } from '../DataFormatter';
+import { SectionBody, ArrayFormatter, SectionHeading } from '../DataFormatter';
 import _ from 'lodash';
 import {
   Grid2,
@@ -25,7 +25,6 @@ import {
   splitCamelCaseString,
   KeyValueInRow,
 } from '@sistent/sistent';
-import { SectionHeading } from '../DataFormatter';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({

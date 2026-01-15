@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetUserPrefQuery, useUpdateUserPrefWithContextMutation } from '@/rtk-query/user';
-import { useState } from 'react';
 import _ from 'lodash/fp';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -9,6 +8,12 @@ import {
   UniversalFilter,
   TableCell,
   TableRow,
+  Tooltip,
+  Grid2,
+  FormControl,
+  MenuItem,
+  Table,
+  FormattedTime,
 } from '@sistent/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
