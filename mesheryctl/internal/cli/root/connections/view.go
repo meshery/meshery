@@ -49,9 +49,9 @@ mesheryctl connection view [connection-name]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("connection name or ID isn't specified\n\n" + errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("too many arguments\n\n" + errMsg))
 		}
 		return nil
 	},
@@ -91,7 +91,7 @@ mesheryctl connection view [connection-name]
 					return nil
 				}
 				errBody, _ := io.ReadAll(resp.Body)
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
 			}
 
 			data, err := io.ReadAll(resp.Body)
@@ -123,7 +123,7 @@ mesheryctl connection view [connection-name]
 			if resp.StatusCode != http.StatusOK {
 				errBody, _ := io.ReadAll(resp.Body)
 				_ = resp.Body.Close()
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
 			}
 
 			defer func() { _ = resp.Body.Close() }()
