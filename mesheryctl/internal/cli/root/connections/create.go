@@ -40,8 +40,8 @@ var (
 )
 
 type userPrompt struct {
-	request                  string
-	errorReadingResourcetMsg string
+	request                 string
+	errorReadingResourceMsg string
 }
 
 var createConnectionCmd = &cobra.Command{
@@ -85,10 +85,10 @@ mesheryctl connection create --type gke --token auth.json
 
 func getUserPrompt(userPrompt userPrompt) (string, error) {
 	var prompt string
-	utils.Log.Info(userPrompt)
+	utils.Log.Info(userPrompt.request)
 	_, err := fmt.Scanf("%s", &prompt)
 	if err != nil {
-		utils.Log.Warnf("Error reading %s: %s", userPrompt.errorReadingResourcetMsg, err.Error())
+		utils.Log.Warnf("Error reading %s: %s", userPrompt.errorReadingResourceMsg, err.Error())
 		utils.Log.Info(fmt.Sprintf("Let's try again. %s", userPrompt.request))
 		_, err = fmt.Scanf("%s", &prompt)
 		if err != nil {
@@ -110,12 +110,12 @@ func createAKSConnection() error {
 	utils.Log.Info("Configuring Meshery to access AKS...")
 	var resourceGroup, aksName string
 
-	resourceGroup, err = getUserPrompt(userPrompt{request: "Please enter the Azure resource group name:", errorReadingResourcetMsg: "Azure resource group name"})
+	resourceGroup, err = getUserPrompt(userPrompt{request: "Please enter the Azure resource group name:", errorReadingResourceMsg: "Azure resource group name"})
 	if err != nil {
 		return err
 	}
 
-	aksName, err = getUserPrompt(userPrompt{request: "Please enter the AKS cluster name:", errorReadingResourcetMsg: "AKS cluster name"})
+	aksName, err = getUserPrompt(userPrompt{request: "Please enter the AKS cluster name:", errorReadingResourceMsg: "AKS cluster name"})
 	if err != nil {
 		return err
 	}
@@ -137,7 +137,7 @@ func createAKSConnection() error {
 		return err
 	}
 
-	utils.Log.Info("AKS connection on cluster %s created successfully.", aksName)
+	utils.Log.Infof("AKS connection on cluster %s created successfully.", aksName)
 	return nil
 }
 
@@ -154,12 +154,12 @@ func createEKSConnection() error {
 	utils.Log.Info("Configuring Meshery to access EKS...")
 	var regionName, clusterName string
 
-	regionName, err = getUserPrompt(userPrompt{request: "Please enter the AWS region name:", errorReadingResourcetMsg: "AWS region name"})
+	regionName, err = getUserPrompt(userPrompt{request: "Please enter the AWS region name:", errorReadingResourceMsg: "AWS region name"})
 	if err != nil {
 		return err
 	}
 
-	clusterName, err = getUserPrompt(userPrompt{request: "Please enter the AWS cluster name:", errorReadingResourcetMsg: "AWS cluster name"})
+	clusterName, err = getUserPrompt(userPrompt{request: "Please enter the AWS cluster name:", errorReadingResourceMsg: "AWS cluster name"})
 	if err != nil {
 		return err
 	}
@@ -332,6 +332,7 @@ func setToken() error {
 		return utils.ErrGetKubernetesContexts(err)
 	}
 
+	utils.Log.Debugf("Available contexts: %s", contexts)
 	if len(contexts) < 1 {
 		return utils.ErrGetKubernetesContexts(fmt.Errorf("no contexts found"))
 	}
@@ -352,6 +353,7 @@ func setToken() error {
 			}
 
 			chosenCtx = contexts[i]
+			break
 		}
 
 	}
@@ -362,7 +364,7 @@ func setToken() error {
 		return utils.ErrSetKubernetesContext(err)
 	}
 
-	utils.Log.Info("Token set successfully in the context %s", chosenCtx)
+	utils.Log.Infof("Token set successfully in the context %s", chosenCtx)
 	return nil
 }
 

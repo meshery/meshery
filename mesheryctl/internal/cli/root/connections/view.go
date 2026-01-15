@@ -65,7 +65,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if !slices.Contains(validOutputFormats, strings.ToLower(outputFormatFlag)) {
-			return utils.ErrInvalidArgument(errors.New(invalidOuptputFormatMsg))
+			return utils.ErrInvalidArgument(errors.New(invalidOutputFormatMsg))
 		}
 		return nil
 	},

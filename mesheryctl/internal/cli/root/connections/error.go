@@ -17,7 +17,7 @@ var (
 	ErrReadKubeConfigCode         = "mesheryctl-1167"
 	ErrWriteKubeConfigCode        = "mesheryctl-1168"
 
-	invalidOuptputFormatMsg = "output-format choice is invalid, use [json|yaml]"
+	invalidOutputFormatMsg = "output-format choice is invalid, use [json|yaml]"
 )
 
 func errInvalidConnectionType(connectionType string) error {

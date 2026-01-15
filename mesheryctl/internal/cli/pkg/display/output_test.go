@@ -8,8 +8,8 @@ import (
 )
 
 type testStruct struct {
-	Name    string `json,yaml:"name"`
-	Content string `json,yaml:"content"`
+	Name    string `json:"name" yaml:"name"`
+	Content string `json:"content" yaml:"content"`
 }
 
 func TestOutputFormatter_Display(t *testing.T) {
@@ -50,8 +50,8 @@ func TestOutputFormatter_Display(t *testing.T) {
 			err := formatter.Display()
 			assert.Nil(t, err)
 			output := tc.buf.String()
-			assert.Contains(t, output, data.Name, "Yaml output should contain name")
-			assert.Contains(t, output, data.Content, "Yaml output should contain content")
+			assert.Contains(t, output, data.Name, "Output should contain name")
+			assert.Contains(t, output, data.Content, "Output should contain content")
 			tc.buf.Reset()
 		})
 	}
