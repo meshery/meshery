@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 15th 2026, 6:42:50 am
+- Testing started at: January 15th 2026, 11:29:04 pm
 
 **📦 Test Result Summary**
 
-- ✅ 88 passed
-- ❌ 8 failed
+- ✅ 87 passed
+- ❌ 9 failed
 - ⚠️ 0 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 12 seconds_
+⌛ _Duration: 7 minutes and 34 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -34,7 +34,7 @@
 | 11 | Meshery | chromium-meshery-provider | Delete a performance profile with load generator fortio |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
-| 14 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ✅ |
+| 14 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
 | 15 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
 | 16 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
@@ -194,6 +194,20 @@ SyntaxError: "undefined" is not valid JSON
 
 <details>
 <summary>❌ Add performance profile with load generator fortio (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ deploys a published design to a connected cluster (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
