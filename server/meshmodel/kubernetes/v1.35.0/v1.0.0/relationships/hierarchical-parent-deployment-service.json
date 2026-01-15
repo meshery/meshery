@@ -52,8 +52,8 @@
                   "configuration",
                   "spec",
                   "template",
-                  "spec",
-                  "containers",
+                  "metadata",
+                  "labels",
                   "_"
                 ]
               ]
@@ -84,9 +84,7 @@
                 [
                   "configuration",
                   "spec",
-                  "template",
-                  "spec",
-                  "containers",
+                  "selector",
                   "_"
                 ]
               ]
