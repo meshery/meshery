@@ -66,8 +66,6 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
 
       const actualRelationships = responseBody.design.relationships || [];
 
-      var failures = 0;
-
       for (const expectedRel of design.relationships) {
         if (
           expectedRel.status !== 'approved' ||
@@ -110,10 +108,6 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
           type: 'relationship',
           description: JSON.stringify(relationshipData),
         });
-
-        if (!found) {
-          failures++;
-        }
 
         // expect(found, `Expected relationship ${JSON.stringify(expectedRel)} not found`).toBeDefined();
       }
