@@ -123,7 +123,7 @@ mesheryctl connection view [connection-name]
 			if resp.StatusCode != http.StatusOK {
 				errBody, _ := io.ReadAll(resp.Body)
 				_ = resp.Body.Close()
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
 			}
 
 			defer func() { _ = resp.Body.Close() }()
