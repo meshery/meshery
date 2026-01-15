@@ -224,7 +224,11 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       .filter((conn) => conn.name && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
-        nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
+        nextStatus:
+          connection.nextStatus ||
+          connectionMetadataState[connection.kind]?.transitions ||
+          DEFAULT_CONNECTION_TRANSITIONS[connection.kind] ||
+          DEFAULT_CONNECTION_TRANSITIONS._default,
         kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
       }));
   }, [connectionData, isConnectionLoading, isConnectionFetching, connectionMetadataState]);
@@ -500,6 +504,81 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           details: err.toString(),
         });
       });
+  };
+
+  // Define default state transitions for connection kinds
+  // This serves as a fallback when MeshModel metadata doesn't provide transitions
+  const DEFAULT_CONNECTION_TRANSITIONS = {
+    kubernetes: {
+      connected: {
+        disconnected: 'Perform planned maintenance',
+        ignored: 'Mark for unplanned maintenance',
+        deleted: 'Undeploy and unregister',
+        'not found': 'Connection unavailable',
+      },
+      disconnected: {
+        connected: 'Reconnect and redeploy',
+        deleted: 'Remove completely',
+      },
+      ignored: {
+        deleted: 'Remove completely',
+        registered: 'Reinitiate registration',
+      },
+      registered: {
+        connected: 'Connect to cluster',
+        ignored: 'Ignore connection',
+        deleted: 'Remove completely',
+      },
+      discovered: {
+        registered: 'Register connection',
+        ignored: 'Ignore connection',
+        deleted: 'Remove completely',
+      },
+      'not found': {
+        discovered: 'Re-register cluster',
+        deleted: 'Remove completely',
+      },
+      deleted: {},
+      maintenance: {
+        connected: 'Resume operation',
+        deleted: 'Remove completely',
+      },
+    },
+    // Default transitions for other connection types
+    _default: {
+      discovered: {
+        registered: 'Register connection',
+        ignored: 'Ignore connection',
+        deleted: 'Remove completely',
+      },
+      registered: {
+        connected: 'Connect',
+        ignored: 'Ignore connection',
+        deleted: 'Remove completely',
+      },
+      connected: {
+        disconnected: 'Disconnect',
+        ignored: 'Ignore connection',
+        deleted: 'Remove completely',
+      },
+      disconnected: {
+        connected: 'Reconnect',
+        deleted: 'Remove completely',
+      },
+      ignored: {
+        deleted: 'Remove completely',
+        registered: 'Reinitiate registration',
+      },
+      'not found': {
+        discovered: 'Re-discover',
+        deleted: 'Remove completely',
+      },
+      deleted: {},
+      maintenance: {
+        connected: 'Resume operation',
+        deleted: 'Remove completely',
+      },
+    },
   };
 
   const kubernetesConnectionTransitions = {
