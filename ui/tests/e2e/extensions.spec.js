@@ -23,25 +23,16 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.goto();
   });
 
-  test('Verify Kanvas Snapshot using data-testid', async () => {
-    await expect(extensionsPage.kanvasSnapshotHeading).toBeVisible();
-    await expect(extensionsPage.kanvasSnapshotDescription).toBeVisible();
-    await expect(extensionsPage.kanvasSnapshotEnableBtn).toBeVisible();
-    await expect(extensionsPage.kanvasSnapshotEnableBtn).toBeEnabled();
-    await expect(extensionsPage.kanvasSnapshotImage).toBeVisible();
+  test('Verify Kanvas Snapshot UI elements', async () => {
+    await extensionsPage.verifyKanvasSnapshotDetails();
   });
 
   test('Verify Performance Analysis Details', async () => {
-    await expect(extensionsPage.performanceHeading).toBeVisible();
-    await expect(extensionsPage.performanceEnableBtn).toBeVisible();
-    await expect(extensionsPage.performanceEnableBtn).toBeEnabled();
+    await extensionsPage.verifyPerformanceAnalysisDetails();
   });
 
   test('Verify Kanvas Details', async ({ context }) => {
-    await expect(extensionsPage.kanvasSignupHeading).toBeVisible();
-    await expect(extensionsPage.kanvasSignupBtn).toBeVisible();
-    await expect(extensionsPage.kanvasSignupBtn).toBeEnabled();
-
+    await extensionsPage.verifyKanvasSignupUI();
     await extensionsPage.verifyNewTab(context, extensionsPage.kanvasSignupBtn, URLS.KANVAS.DOCS);
   });
 

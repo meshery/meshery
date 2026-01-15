@@ -34,6 +34,26 @@ export class ExtensionsPage {
     await dashboardPage.navigateToExtensions();
   }
 
+  async verifyKanvasSnapshotDetails() {
+    await expect(this.kanvasSnapshotHeading).toBeVisible();
+    await expect(this.kanvasSnapshotDescription).toBeVisible();
+    await expect(this.kanvasSnapshotEnableBtn).toBeVisible();
+    await expect(this.kanvasSnapshotEnableBtn).toBeEnabled();
+    await expect(this.kanvasSnapshotImage).toBeVisible();
+  }
+
+  async verifyPerformanceAnalysisDetails() {
+    await expect(this.performanceHeading).toBeVisible();
+    await expect(this.performanceEnableBtn).toBeVisible();
+    await expect(this.performanceEnableBtn).toBeEnabled();
+  }
+
+  async verifyKanvasSignupUI() {
+    await expect(this.kanvasSignupHeading).toBeVisible();
+    await expect(this.kanvasSignupBtn).toBeVisible();
+    await expect(this.kanvasSignupBtn).toBeEnabled();
+  }
+
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
   }
