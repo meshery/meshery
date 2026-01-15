@@ -263,7 +263,12 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, utils.ErrReadResponseBody(err)
 	}
 
-	log.Debugf("Get context API response: %s", string(body))
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, body, "", "  "); err == nil {
+		log.Debugf("Get context API response:\n%s", prettyJSON.String())
+	} else {
+		log.Debugf("Get context API response: %s", string(body))
+	}
 	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
