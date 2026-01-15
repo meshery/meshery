@@ -9,6 +9,8 @@ category: contributing
 list: include
 ---
 
+{% include sdd-note.md %}
+
 To automate functional integration and end-to-end testing Meshery uses [Playwright](https://playwright.dev/) as one of the tools to automate browser testing. End-to-end tests run with each pull request to ensure that the changes do not break the existing functionality.
 
 ## Prerequisites:

@@ -10,6 +10,8 @@ category: contributing
 list: include
 ---
 
+{% include sdd-note.md %}
+
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
   <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>

@@ -9,6 +9,8 @@ category: contributing
 list: include
 ---
 
+{% include sdd-note.md %}
+
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.23+. `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarise yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
 
 {% include alert.html
