@@ -11,7 +11,8 @@ const IMPORT_SOURCES = [
   },
   {
     type: 'URL',
-    pathOrUrl: 'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/ui/tests/e2e/fixtures/relationships/meshery-design-fixture.json',
+    pathOrUrl:
+      'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/ui/tests/e2e/fixtures/relationships/meshery-design-fixture.json',
     designName: 'GuestBook App',
   },
 ];
