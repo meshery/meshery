@@ -27,13 +27,25 @@ import (
 var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
-	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Documentation for models import can be found at https://docs.meshery.io/reference/mesheryctl/model/import`,
+	Long: `Import models from various sources including files, directories, URLs, and OCI artifacts.
+
+Use 'import' when:
+- Importing packaged models (tar.gz, directories containing model definitions)
+- Re-importing models exported from Meshery UI
+- Importing from URLs pointing to model packages
+- Importing from OCI registries
+- Importing models from CSV files without needing custom templates
+
+Use 'generate' instead when:
+- Creating new models from scratch using CSV files with custom templates
+- Generating models from URLs with specific template JSON configuration
+- You need to skip registration during development/testing
+
+Documentation: https://docs.meshery.io/reference/mesheryctl/model/import`,
+
 	Example: `
-// Import model
-mesheryctl model import -f [URI]
- 
-// Import model from a URL to a meshery model
+
+// Import model from a URL
 mesheryctl model import -f [URL]
 
 // Import model from an OCI artifact
@@ -42,12 +54,13 @@ mesheryctl model import -f [OCI]
 // Import model from a tar.gz file
 mesheryctl model import -f [path-to-model.tar.gz]
 
-// Import model from a path
-mesheryctl model import -f [path-to-model]
+// Import model from a directory
+mesheryctl model import -f [path-to-model-directory]
 
 // Import model using CSV files
 mesheryctl model import -f [path-to-csv-directory]
-	`,
+
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
 		file, _ := cmd.Flags().GetString("file")
@@ -523,7 +536,8 @@ func init() {
 	importModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-
+	// Common flag shared with 'generate' command - specifies input source
+	// For 'import': Accepts files, directories, URLs, OCI artifacts, or CSV directories
 	importModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
 
 }

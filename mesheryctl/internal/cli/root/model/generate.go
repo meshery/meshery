@@ -31,18 +31,29 @@ type CsvModelGenerator struct {
 var generateModelCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate models from a file",
-	Long: `Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Documentation for models generate can be found at https://docs.meshery.io/reference/mesheryctl/model/generate`,
-	Example: ` 
-// Generate a model from a CSV file(s)
-mesheryctl model generate --f [path-to-csv-drectory]
+	Long: `Generate models from CSV files or URLs with a template JSON file.
 
-// Generate a model from a Uri baesd on a JSON template
-mesheryctl model generate --f [URL] -t [path-to-template.json]
+Use 'generate' when:
+- Creating new models from CSV files (model.csv, component.csv, relationship.csv)
+- Generating models from URLs using a template JSON file for model metadata
+- You need to skip registration during development/testing (-r flag)
 
-// Generate a model from a Uri baesd on a JSON template skipping registration
-mesheryctl model generate --f [URL] -t [path-to-template.json] -r
-	`,
+Use 'import' instead when:
+- Importing pre-existing model packages (tar.gz, directories)
+- Re-importing models exported from Meshery UI
+- Importing from URLs without additional template configuration
+
+Documentation: https://docs.meshery.io/reference/mesheryctl/model/generate`,
+	Example: `
+// Generate a model from a CSV file directory
+mesheryctl model generate -f [path-to-csv-directory]
+
+// Generate a model from a URL using a JSON template
+mesheryctl model generate -f [URL] -t [path-to-template.json]
+
+// Generate a model from a URL, skip registration
+mesheryctl model generate -f [URL] -t [path-to-template.json] -r
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model generate [ file | filePath | URL ]\nRun 'mesheryctl model generate --help' to see detailed help message"
 		file, _ := cmd.Flags().GetString("file")
@@ -107,7 +118,8 @@ func init() {
 	generateModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-
+	// Common flag shared with 'import' command - specifies input source
+	// For 'generate': CSV directory or URL (requires -t template for URLs)
 	generateModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
 	generateModelCmd.Flags().StringP("template", "t", "", "Specify path to the template JSON file")
 	generateModelCmd.Flags().BoolP("register", "r", false, "Skip registration of the model")
