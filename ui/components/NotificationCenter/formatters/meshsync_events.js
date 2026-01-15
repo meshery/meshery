@@ -16,7 +16,7 @@ export const humanizeFieldName = (fieldName) => {
 /**
  * Formatter for connection-related fields (connectionID, k8sContextID, k8sContextName)
  * Displays as a clickable chip that links to the connections page with search filter
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} props.value - The value to display
  * @param {string} props.fieldName - The field name to humanize
@@ -28,7 +28,7 @@ export const ConnectionFieldFormatter = ({ value, fieldName }) => {
   }
 
   const humanizedName = humanizeFieldName(fieldName);
-  
+
   return (
     <KeyValue
       Key={humanizedName}
@@ -57,17 +57,9 @@ export const MeshSyncPropertyFormatters = {
   k8sContextID: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextID" />,
   k8sContextName: (value) => <ConnectionFieldFormatter value={value} fieldName="k8sContextName" />,
   meshsyncDeploymentMode: (value) => (
-    <KeyValue
-      Key={humanizeFieldName('meshsyncDeploymentMode')}
-      Value={value}
-    />
+    <KeyValue Key={humanizeFieldName('meshsyncDeploymentMode')} Value={value} />
   ),
-  operatorStatus: (value) => (
-    <KeyValue
-      Key={humanizeFieldName('operatorStatus')}
-      Value={value}
-    />
-  ),
+  operatorStatus: (value) => <KeyValue Key={humanizeFieldName('operatorStatus')} Value={value} />,
   brokerEndpoint: (value) => (
     <KeyValue
       Key={humanizeFieldName('brokerEndpoint')}
