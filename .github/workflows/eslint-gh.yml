@@ -1,5 +1,6 @@
 name: eslint-check
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'ui/**'
@@ -10,14 +11,18 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
-    - name: Install eslint in Meshery UI and Provider UI
-      run: |
-        cd ui && npm i eslint && cd ..
-        cd provider-ui && npm i eslint && cd ..
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install dependencies for Meshery UI
+      run: cd ui && npm ci
+    - name: Install dependencies for Provider UI
+      run: cd provider-ui && npm ci
     - name: Run ESLint Meshery-UI
-      run: cd ui && npm i eslint && npx eslint .
+      run: cd ui && npx eslint .
     - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm i eslint && npx eslint .
+      run: cd provider-ui && npx eslint .
 
     # Replace the steps above with the following make targets and autocommit when ready.
     # - name: Run eslint Meshery UI
