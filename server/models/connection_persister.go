@@ -9,6 +9,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"gorm.io/gorm"
 )
 
@@ -70,14 +71,44 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 		connectionFetched.Environments = environmentsFetched
 	}
+	statusSummary, err := cp.getConnectionsStatusSummary()
+	if err != nil {
+		return nil, err
+	}
+
 	connectionsPage := &connections.ConnectionPage{
-		Page:        page,
-		PageSize:    pageSize,
-		TotalCount:  int(count),
-		Connections: connectionsFetched,
+		Page:          page,
+		PageSize:      pageSize,
+		TotalCount:    int(count),
+		Connections:   connectionsFetched,
+		StatusSummary: statusSummary,
 	}
 
 	return connectionsPage, nil
+}
+
+// getConnectionsStatusSummary returns a map of connection status to count
+func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatus]int, error) {
+	var statusCounts []struct {
+		Status string `gorm:"column:status"`
+		Count  int    `gorm:"column:count"`
+	}
+
+	err := cp.DB.Model(&connections.Connection{}).
+		Select("status, COUNT(*) as count").
+		Group("status").
+		Scan(&statusCounts).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("error fetching connection status summary: %v", err)
+	}
+
+	summary := make(map[schemasConnection.ConnectionStatus]int)
+	for _, sc := range statusCounts {
+		summary[schemasConnection.ConnectionStatus(sc.Status)] = sc.Count
+	}
+
+	return &summary, nil
 }
 
 func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection) (*connections.Connection, error) {
