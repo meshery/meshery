@@ -91,7 +91,7 @@ mesheryctl connection view [connection-name]
 					return nil
 				}
 				errBody, _ := io.ReadAll(resp.Body)
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
 			}
 
 			data, err := io.ReadAll(resp.Body)
