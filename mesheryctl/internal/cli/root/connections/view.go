@@ -46,9 +46,9 @@ mesheryctl connection view [connection-name]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("connection name or ID isn't specified\n\n" + errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("too many arguments\n\n" + errMsg))
 		}
 		return nil
 	},
@@ -66,11 +66,54 @@ mesheryctl connection view [connection-name]
 				utils.Log.Error(err)
 				return err
 			}
+
+			defer func() { _ = resp.Body.Close() }()
+
+			if resp.StatusCode != http.StatusOK {
+				if resp.StatusCode == http.StatusNotFound {
+					fmt.Println("No connection(s) found for the given ID: ", connectionNameOrID)
+					return nil
+				}
+				errBody, _ := io.ReadAll(resp.Body)
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
+			}
+
+			data, err := io.ReadAll(resp.Body)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
+
+			selectedConnection = &connection.Connection{}
+			if err = json.Unmarshal(data, selectedConnection); err != nil {
+				utils.Log.Error(err)
+				return err
+			}
 		} else {
 			// Search by name
 			url := fmt.Sprintf("%s?search=%s&pagesize=all", connectionApiPath, connectionNameOrID)
 			connectionsResponse, err := api.Fetch[connection.ConnectionPage](url)
 			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
+
+			if resp.StatusCode != http.StatusOK {
+				errBody, _ := io.ReadAll(resp.Body)
+				_ = resp.Body.Close()
+				return utils.ErrResponseStatusBody(resp.StatusCode, string(errBody))
+			}
+
+			defer func() { _ = resp.Body.Close() }()
+
+			data, err := io.ReadAll(resp.Body)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
+
+			connectionsResponse := &connection.ConnectionPage{}
+			if err = json.Unmarshal(data, connectionsResponse); err != nil {
 				utils.Log.Error(err)
 				return err
 			}
