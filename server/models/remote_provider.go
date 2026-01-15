@@ -878,8 +878,8 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	if k8sContext.ConnectionID != "" {
 		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		if connectionID != uuid.Nil {
-			_, status, _ := l.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
-			if status >= http.StatusOK && status < http.StatusMultipleChoices {
+			conn, status, _ := l.GetConnectionByID(token, connectionID)
+			if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
 				return connections.Connection{}, ErrContextAlreadyPersisted
 			}
 		}
@@ -4363,7 +4363,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4379,6 +4379,9 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if filter != "" {
 		q.Set("filter", filter)
 	}
+	if name != "" {
+		q.Set("name", name)
+	}
 
 	if len(status) > 0 {
 		for _, v := range status {
@@ -4388,6 +4391,11 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if len(kind) > 0 {
 		for _, v := range kind {
 			q.Add("kind", v)
+		}
+	}
+	if len(connType) > 0 {
+		for _, v := range connType {
+			q.Add("type", v)
 		}
 	}
 
@@ -4415,96 +4423,6 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	}
 
 	return &cp, nil
-}
-
-// GetConnectionsByKind - to get saved credentials
-func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionKind))
-
-	q := remoteProviderURL.Query()
-	q.Add("page", strconv.Itoa(page))
-	q.Add("pagesize", strconv.Itoa(pageSize))
-	q.Add("search", search)
-	q.Add("order", order)
-
-	remoteProviderURL.RawQuery = q.Encode()
-	l.Log.Debug("Making request to : ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
-	}
-	defer resp.Body.Close()
-
-	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("%s", string(bdr)), "connections", resp.StatusCode)
-	}
-
-	var res map[string]interface{}
-	if err = json.Unmarshal(bdr, &res); err != nil {
-		return nil, err
-	}
-	return &res, nil
-}
-
-func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s", l.RemoteProviderURL, ep, kind, connectionID))
-
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		l.Log.Error(err)
-		statusCode := http.StatusInternalServerError
-		if resp != nil {
-			statusCode = resp.StatusCode
-		}
-		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
-	}
-	if resp.StatusCode == http.StatusOK {
-		connectionPage := &connections.ConnectionPage{}
-		if err = json.Unmarshal(bdr, connectionPage); err != nil {
-			l.Log.Error(ErrUnmarshal(err, "connection"))
-			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
-		}
-
-		if len(connectionPage.Connections) < 1 {
-			l.Log.Error(ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound))
-			return nil, http.StatusNotFound, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound)
-		}
-
-		if len(connectionPage.Connections) > 1 {
-			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one. using the first connection."))
-		}
-		return connectionPage.Connections[0], resp.StatusCode, nil
-	}
-
-	l.Log.Debug(string(bdr))
-	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
@@ -4545,50 +4463,27 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status", l.RemoteProviderURL, ep))
-
-	l.Log.Debug("Making request to : ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		statusCode := http.StatusInternalServerError
-		if resp != nil {
-			statusCode = resp.StatusCode
-		}
-		return nil, ErrFetch(err, "Connections Status Page", statusCode)
-	}
-	defer resp.Body.Close()
-
-	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections status: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
-	}
-
-	var cp connections.ConnectionsStatusPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, err
-	}
-	return &cp, nil
-}
-
+// UpdateConnectionStatusByID updates a connection's status by its ID.
+// Note: The HTTP route for this functionality has been removed, but the method
+// is kept for internal use by state machines and other internal components.
 func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	bf := bytes.NewBuffer([]byte(connectionStatus))
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
+
+	// Use the connection endpoint with PUT to update status
+	// The payload includes just the status field
+	payload := map[string]interface{}{
+		"status": connectionStatus,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	bf := bytes.NewBuffer(payloadBytes)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
 
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 

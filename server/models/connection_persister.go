@@ -19,7 +19,7 @@ type ConnectionPersister struct {
 }
 
 // GetConnections returns all of the connections
-func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
+func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -33,12 +33,21 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		query = query.Where("lower(name) like ?", like)
 	}
 
+	if name != "" {
+		like := "%" + strings.ToLower(name) + "%"
+		query = query.Where("lower(name) like ?", like)
+	}
+
 	if len(status) != 0 {
 		query = query.Where("status IN (?)", status)
 	}
 
 	if len(kind) != 0 {
 		query = query.Where("kind IN (?)", kind)
+	}
+
+	if len(connType) != 0 {
+		query = query.Where("type IN (?)", connType)
 	}
 
 	dynamicKeys := []string{"type", "sub_type"}

@@ -59,7 +59,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
   useGetConnectionsQuery,
-  useUpdateConnectionMutation,
   useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
@@ -118,7 +117,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-  const [updateConnectionMutator] = useUpdateConnectionMutation();
   const [updateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -330,10 +328,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        const requestBody = JSON.stringify({
-          [connectionId]: CONNECTION_STATES.DELETED,
-        });
-        UpdateConnectionStatus(connectionKind, requestBody);
+        UpdateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
       }
     }
   };
@@ -349,10 +344,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       });
       if (response === 'DELETE') {
         selected.data.map(({ index }) => {
-          const requestBody = JSON.stringify({
-            [filteredConnections[index].id]: CONNECTION_STATES.DELETED,
-          });
-          UpdateConnectionStatus(filteredConnections[index].kind, requestBody);
+          UpdateConnectionStatus(filteredConnections[index].id, CONNECTION_STATES.DELETED);
         });
       }
     }
@@ -481,10 +473,10 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     }
   };
 
-  const UpdateConnectionStatus = (connectionKind, requestBody) => {
-    updateConnectionMutator({
-      connectionKind: connectionKind,
-      connectionPayload: requestBody,
+  const UpdateConnectionStatus = (connectionId, newStatus) => {
+    updateConnectionByIdMutator({
+      connectionId: connectionId,
+      body: { status: newStatus },
     })
       .unwrap()
       .then(() => {
@@ -560,10 +552,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       variant: PROMPT_VARIANTS.WARNING,
     });
     if (response === 'Confirm') {
-      const requestBody = JSON.stringify({
-        [connectionId]: e.target.value,
-      });
-      UpdateConnectionStatus(connectionKind, requestBody);
+      UpdateConnectionStatus(connectionId, e.target.value);
     }
   };
 

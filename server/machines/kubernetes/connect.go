@@ -41,16 +41,20 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	}
 	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
-	connection, _, err := provider.GetConnectionByIDAndKind(
+	connection, _, err := provider.GetConnectionByID(
 		token,
 		connectionID,
-		"kubernetes",
 	)
 	if err != nil {
 		errConnection := ErrConnectAction(err)
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
 		return machines.NoOp, eventBuilder.Build(), errConnection
 
+	}
+	if connection.Kind != "kubernetes" {
+		errConnection := ErrConnectAction(fmt.Errorf("connection is not of kind kubernetes"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
 	}
 
 	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
