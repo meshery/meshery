@@ -17,19 +17,16 @@ package connections
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -56,13 +53,6 @@ mesheryctl connection view [connection-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		baseURL := mctlCfg.GetBaseMesheryURL()
 		connectionNameOrID := args[0]
 
 		var selectedConnection *connection.Connection
@@ -70,72 +60,17 @@ mesheryctl connection view [connection-name]
 		// Check if the argument is a valid UUID
 		if _, err := uuid.FromString(connectionNameOrID); err == nil {
 			// Fetch connection directly by ID
-			url := fmt.Sprintf("%s/api/integrations/connections/%s", baseURL, connectionNameOrID)
-			req, err := utils.NewRequest(http.MethodGet, url, nil)
+			url := fmt.Sprintf("%s/%s", connectionApiPath, connectionNameOrID)
+			selectedConnection, err = api.Fetch[connection.Connection](url)
 			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			resp, err := utils.MakeRequest(req)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			defer func() { _ = resp.Body.Close() }()
-
-			if resp.StatusCode != http.StatusOK {
-				if resp.StatusCode == http.StatusNotFound {
-					fmt.Println("No connection(s) found for the given ID: ", connectionNameOrID)
-					return nil
-				}
-				errBody, _ := io.ReadAll(resp.Body)
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
-			}
-
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			selectedConnection = &connection.Connection{}
-			if err = json.Unmarshal(data, selectedConnection); err != nil {
 				utils.Log.Error(err)
 				return err
 			}
 		} else {
 			// Search by name
-			url := fmt.Sprintf("%s/api/integrations/connections?search=%s&pagesize=all", baseURL, connectionNameOrID)
-			req, err := utils.NewRequest(http.MethodGet, url, nil)
+			url := fmt.Sprintf("%s?search=%s&pagesize=all", connectionApiPath, connectionNameOrID)
+			connectionsResponse, err := api.Fetch[connection.ConnectionPage](url)
 			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			resp, err := utils.MakeRequest(req)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			if resp.StatusCode != http.StatusOK {
-				errBody, _ := io.ReadAll(resp.Body)
-				_ = resp.Body.Close()
-				return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
-			}
-
-			defer func() { _ = resp.Body.Close() }()
-
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			connectionsResponse := &connection.ConnectionPage{}
-			if err = json.Unmarshal(data, connectionsResponse); err != nil {
 				utils.Log.Error(err)
 				return err
 			}
