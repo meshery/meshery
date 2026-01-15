@@ -29,7 +29,7 @@ class MesheryDocument extends Document {
             href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
             as="font"
             type="font/otf"
-            crossorigin="anonymous"
+            crossOrigin="anonymous"
           />
 
           {/* Google Tag Manager */}
