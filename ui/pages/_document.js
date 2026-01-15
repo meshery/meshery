@@ -92,11 +92,9 @@ class MesheryDocument extends Document {
               __html: `
                   (function () {
                     const loaderId = "PRE_REACT_LOADER-text-message"
-                    console.log("Prereact LoaderId",loaderId)
 
                     try {
                       var el = document.getElementById(loaderId)
-                      console.log("loaderEl",el)
                       if (!el) return;
 
                       el.textContent = window.Loader.PersistedRandomLoadingMessage()
