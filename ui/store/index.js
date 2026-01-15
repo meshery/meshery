@@ -18,7 +18,12 @@ export const store = configureStore({
     adapter: adapterReducer,
     [api.reducerPath]: api.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['events.ui.icon'],
+      },
+    }).concat(api.middleware),
 });
 
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {
