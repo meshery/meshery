@@ -615,8 +615,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const { extensionType } = useSelector((state) => state.ui);
 
   return (
-    <NoSsr>
-      <DynamicFullScrrenLoader isLoading={state.isLoading}>
+    <DynamicFullScrrenLoader isLoading={state.isLoading}>
+      <NoSsr>
         <DynamicComponentProvider>
           <RelayEnvironmentProvider environment={relayEnvironment}>
             <MesheryThemeProvider>
@@ -712,8 +712,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
             </MesheryThemeProvider>
           </RelayEnvironmentProvider>
         </DynamicComponentProvider>
-      </DynamicFullScrrenLoader>
-    </NoSsr>
+      </NoSsr>
+    </DynamicFullScrrenLoader>
   );
 };
 

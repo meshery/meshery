@@ -34,15 +34,22 @@ export const PureHtmlLoadingScreen = (props) => {
       }}
       id={id}
     >
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1rem',
+        }}
+      >
         <AnimatedLogoDark />
         <h1
           id={id + '-text-message'}
           style={{
-            fontFamily: 'QanelasSoftRegular, sans-serif',
+            fontFamily: 'QanelasSoftRegular, sans-serif', // this is important to have consistent font between prereact render
             fontSize: '.9rem',
             fontWeight: 'normal',
-            marginTop: '1rem',
+            marginTop: '0rem',
           }}
         >
           {message}
