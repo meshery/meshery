@@ -78,39 +78,8 @@ function PersistedRandomLoadingMessage(){
   return _randomLoadingMessage;
 };
 
-// const isMessageExpired = () => {
-//   return false;
-// };
-
-// export const getPersistedRandomMessage = () => {
-//   // check if a randomMessage is in localStorage and it is not expired
-//   const randomLoadingMessageFromStorage = localStorage?.getItem
-//     ? localStorage.getItem('loadingMessage')
-//     : null;
-
-//   if (
-//     randomLoadingMessageFromStorage?.timestamp &&
-//     !isMessageExpired(randomLoadingMessageFromStorage.timestamp)
-//   ) {
-//     return randomLoadingMessageFromStorage.message;
-//   }
-
-//   const newMessage = RandomLoadingMessage();
-
-//   if (!localStorage?.setItem) return newMessage;
-
-//   localStorage.setItem(
-//     'loadingMessage',
-//     JSON.stringify({ message: newMessage, timestamp: Date.now() }),
-//   );
-//   return newMessage;
-// };
-
-// export const randomLoadingMessage = RandomLoadingMessage();
 
 const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader'
-
-// export globals
 
 var _hidingTimeout = null
 
@@ -135,6 +104,7 @@ function hide() {
   },1000)
 }
 
+// export globals
 window.Loader = {
   LOADING_MESSAGES: LoadingMessages,
   PRE_REACT_NEXTJS_LOADER_ID,
