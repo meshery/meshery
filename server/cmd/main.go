@@ -125,7 +125,7 @@ func main() {
 
 	// initialize tracing
 	otelConfigString := viper.GetString("OTEL_CONFIG")
-log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
 
 	if err != nil {
@@ -228,7 +228,6 @@ log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 		&models.MesheryPattern{},
 		&models.MesheryFilter{},
 		&models.PatternResource{},
-		&models.MesheryApplication{},
 		&models.UserPreference{},
 		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
@@ -267,7 +266,6 @@ log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
 		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: dbHandler},
 		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: dbHandler},
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: dbHandler},
-		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},

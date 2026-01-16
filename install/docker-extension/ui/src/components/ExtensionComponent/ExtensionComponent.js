@@ -308,45 +308,48 @@ const ExtensionsComponent = () => {
   //     })
   // }
 
-  const handleImport = () => {
-    const file = document.getElementById("upload-button").files[0];
-    // Create a reader
-    const type = String(file.name);
-    const reader = new FileReader();
-    reader.addEventListener("load", (event) => {
-      let body = { save: true };
-      let name = randomApplicationNameGenerator();
-      body = JSON.stringify({
-        ...body,
-        application_data: { name, application_file: event.target.result },
-      });
-      if (!(type.includes(".yaml") || type.includes(".yml"))) {
-        window.ddClient.desktopUI.toast.error(
-          "Some error occured while uploading the compose file. ",
-        );
-        return;
-      }
 
-      fetch(proxyUrl + "/api/application", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        },
-        body,
-      })
-        .then((res) => {
-          window.ddClient.desktopUI.toast.success(
-            "Compose file has been uploaded with name: " + name,
-          );
-        })
-        .catch(() =>
-          window.ddClient.desktopUI.toast.error(
-            "Some error occured while uploading the compose file.",
-          ),
-        );
-    });
-    reader.readAsText(file);
-  };
+  // DEPRECATED: Application construct has been removed
+  // const handleImport = () => {
+  //   const file = document.getElementById("upload-button").files[0];
+  //   // Create a reader
+  //   const type = String(file.name);
+  //   const reader = new FileReader();
+  //   reader.addEventListener("load", (event) => {
+  //     let body = { save: true };
+  //     let name = randomApplicationNameGenerator();
+  //     body = JSON.stringify({
+  //       ...body,
+  //       application_data: { name, application_file: event.target.result },
+  //     });
+  //     if (!(type.includes(".yaml") || type.includes(".yml"))) {
+  //       window.ddClient.desktopUI.toast.error(
+  //         "Some error occured while uploading the compose file. ",
+  //       );
+  //       return;
+  //     }
+  //
+  //     fetch(proxyUrl + "/api/application", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+  //       },
+  //       body,
+  //     })
+  //       .then((res) => {
+  //         window.ddClient.desktopUI.toast.success(
+  //           "Compose file has been uploaded with name: " + name,
+  //         );
+  //       })
+  //       .catch(() =>
+  //         window.ddClient.desktopUI.toast.error(
+  //           "Some error occured while uploading the compose file.",
+  //         ),
+  //       );
+  //   });
+  //   reader.readAsText(file);
+  // };
+
 
   const OpenDocs = () => {
     window.ddClient.host.openExternal(
@@ -599,8 +602,8 @@ const ExtensionsComponent = () => {
                           .map((pattern, index) => {
                             let patternType =
                               pattern.catalog_data &&
-                              pattern.catalog_data.type &&
-                              pattern.catalog_data.type !== ""
+                                pattern.catalog_data.type &&
+                                pattern.catalog_data.type !== ""
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
