@@ -58,18 +58,6 @@ jobs:
         run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
       - name: Run mesheryctl coverage
         run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
-      - name: Upload server coverage to Codecov
-        if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./server-coverage.txt
-          flags: unittests
-      - name: Upload mesheryctl coverage to Codecov
-        if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./mesheryctl-coverage.txt
-          flags: mesheryctl
   build-mesheryctl:
     name: Build Meshery Binaries
     runs-on: ubuntu-24.04

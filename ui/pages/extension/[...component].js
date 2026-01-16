@@ -10,7 +10,7 @@ import RemoteComponent from '../../components/RemoteComponent';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/General/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
-import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,
@@ -93,7 +93,7 @@ function RemoteExtension() {
       <Head>
         <title>{`${componentTitle} | Meshery`}</title>
       </Head>
-      <DynamicFullScrrenLoader isLoading={isLoading}>
+      <DynamicFullScreenLoader isLoading={isLoading}>
         {capabilitiesRegistry !== null && extensionType ? (
           <NoSsr>
             {extensionType === 'navigator' ? (
@@ -115,7 +115,7 @@ function RemoteExtension() {
         ) : (
           <CircularProgress />
         )}
-      </DynamicFullScrrenLoader>
+      </DynamicFullScreenLoader>
     </NoSsr>
   );
 }
