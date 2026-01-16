@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 16th 2026, 7:51:56 pm
+- Testing started at: January 16th 2026, 8:22:12 pm
 
 **📦 Test Result Summary**
 
-- ✅ 72 passed
+- ✅ 71 passed
 - ❌ 16 failed
 - ⚠️ 0 flaked
-- ⏩ 16 skipped
+- ⏩ 17 skipped
 
-⌛ _Duration: 7 minutes and 31 seconds_
+⌛ _Duration: 7 minutes and 19 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -75,7 +75,7 @@
 | 52 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ✅ |
 | 53 | Meshery | chromium-meshery-provider | View detailed result of a performance profile (Graph Visualiser) with load generator fortio |  | ✅ |
 | 54 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
-| 55 | None | chromium-local-provider | Add a cluster connection by uploading kubeconfig file |  | ✅ |
+| 55 | None | chromium-local-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
 | 56 | None | chromium-local-provider | Add performance profile with load generator fortio |  | ❌ |
 | 57 | None | chromium-local-provider | Aggregation Charts are displayed |  | ❌ |
 | 58 | None | chromium-local-provider | All settings tabs |  | ✅ |
@@ -116,7 +116,7 @@
 | 93 | None | chromium-local-provider | Test if Profile button is displayed |  | ✅ |
 | 94 | None | chromium-local-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 95 | None | chromium-local-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
-| 96 | None | chromium-local-provider | Transition to ignored state and then back to connected state |  | ❌ |
+| 96 | None | chromium-local-provider | Transition to ignored state and then back to connected state |  | ➖ |
 | 97 | None | chromium-local-provider | Transition to not found state and then back to connected state |  | ➖ |
 | 98 | None | chromium-local-provider | Verify Kanvas Details |  | ✅ |
 | 99 | None | chromium-local-provider | Verify Kanvas Snapshot using data-testid |  | ✅ |
@@ -272,7 +272,7 @@ SyntaxError: "undefined" is not valid JSON
 </details>
 
 <details>
-<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
+<summary>❌ Add a cluster connection by uploading kubeconfig file (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -286,7 +286,7 @@ SyntaxError: "undefined" is not valid JSON
 </details>
 
 <details>
-<summary>❌ Transition to ignored state and then back to connected state (None - chromium-local-provider)</summary>
+<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -328,29 +328,6 @@ SyntaxError: "undefined" is not valid JSON
 </details>
 
 <details>
-<summary>❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
-
-**Error Message:**
-```
-SyntaxError: "undefined" is not valid JSON
-```
-
-**Code Snippet:**
-```
-[0m [90m 45 |[39m       )[33m;[39m
- [90m 46 |[39m       [36mconst[39m responseJson [33m=[39m [36mawait[39m designResponse[33m.[39mjson()[33m;[39m
-[31m[1m>[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
- [90m    |[39m                           [31m[1m^[22m[39m
- [90m 48 |[39m
- [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
- [90m 50 |[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Create a Model (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
@@ -369,6 +346,29 @@ SyntaxError: "undefined" is not valid JSON
  [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should identify relationships for Namespace-Namespace-Deny-Relationship-Test (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/relationship_evaluation.spec.js`
+
+**Error Message:**
+```
+SyntaxError: "undefined" is not valid JSON
+```
+
+**Code Snippet:**
+```
+[0m [90m 45 |[39m       )[33m;[39m
+ [90m 46 |[39m       [36mconst[39m responseJson [33m=[39m [36mawait[39m designResponse[33m.[39mjson()[33m;[39m
+[31m[1m>[22m[39m[90m 47 |[39m       [36mconst[39m design [33m=[39m [33mJSON[39m[33m.[39mparse(responseJson[33m.[39mpattern_file)[33m;[39m
+ [90m    |[39m                           [31m[1m^[22m[39m
+ [90m 48 |[39m
+ [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
+ [90m 50 |[39m[0m
 ```
 
 </details>
