@@ -209,7 +209,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			connectionPayload.MetaData = map[string]interface{}{}
 		}
 		connectionPayload.MetaData["token"] = token
-		connection, err := sm.Provider.UpdateConnectionById(nil, connectionPayload, sm.ID.String())
+		connection, err := sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
