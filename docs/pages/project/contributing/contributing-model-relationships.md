@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-{% include sdd-note.md %}
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{site.baseurl}}/project/contributing/contributing-schemas) for details.
 
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 

@@ -10,8 +10,6 @@ list: include
 display-title: false
 ---
 
-{% include sdd-note.md %}
-
 Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.
 
 

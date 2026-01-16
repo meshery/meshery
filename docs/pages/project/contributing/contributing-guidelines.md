@@ -9,8 +9,6 @@ category: contributing
 list: include
 ---
 
-{% include sdd-note.md %}
-
 These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.
 
 ## Design Principles

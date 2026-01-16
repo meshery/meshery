@@ -9,8 +9,6 @@ category: contributing
 list: include
 --- 
 
-{% include sdd-note.md %}
-
 Meshery can be run on the Windows platform in three different modes.
 1. Windows native mode
 2. Under WSL or WSL2

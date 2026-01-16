@@ -10,8 +10,6 @@ category: contributing
 list: include
 ---
 
-{% include sdd-note.md %}
-
 ## Prerequisites
 To start contributing to Meshery Docker Extension, make sure you have [Docker](https://docs.docker.com/get-docker/) installed on your system.
 ### Docker Extension for Meshery
