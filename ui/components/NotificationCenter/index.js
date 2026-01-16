@@ -42,7 +42,7 @@ import {
   loadNextPage,
   selectAreAllEventsChecked,
   selectCheckedEvents,
-  selectEvents,
+  selectVisibleEvents,
   selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
@@ -257,7 +257,7 @@ const Loading = () => {
 
 const BulkActions = () => {
   const checkedEvents = useSelector(selectCheckedEvents);
-  const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
+  const noEventsPresent = useSelector((state) => selectVisibleEvents(state).length === 0);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
   const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
 
@@ -363,7 +363,7 @@ const BulkActions = () => {
 };
 
 const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
-  const events = useSelector(selectEvents);
+  const events = useSelector(selectVisibleEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
   const intersectionObserver = useRef(

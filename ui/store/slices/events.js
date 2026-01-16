@@ -90,12 +90,15 @@ export const eventsSlice = createSlice({
     },
 
     updateCheckAllEvents: (state, { payload }) => {
-      const updates = Object.keys(state.entities).map((id) => ({
-        id,
-        changes: {
-          checked: payload,
-        },
-      }));
+      // Only update non-deleted events
+      const updates = Object.keys(state.entities)
+        .filter((id) => !state.entities[id]?.is_deleted)
+        .map((id) => ({
+          id,
+          changes: {
+            checked: payload,
+          },
+        }));
       eventsEntityAdapter.updateMany(state, updates);
     },
 
@@ -224,13 +227,18 @@ export const deleteEvents =
 
 //selectors
 
-//select all events
+//select all events (including deleted)
 export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
 };
 
+// select only visible (non-deleted) events
+export const selectVisibleEvents = (state) => {
+  return selectEvents(state).filter((e) => !e.is_deleted);
+};
+
 export const selectCheckedEvents = (state) => {
-  return selectEvents(state).filter((e) => e.checked);
+  return selectVisibleEvents(state).filter((e) => e.checked);
 };
 
 export const selectEventById = (state, id) => {
@@ -238,24 +246,26 @@ export const selectEventById = (state, id) => {
 };
 
 export const selectIsEventChecked = (state, id) => {
-  return Boolean(selectEventById(state, id).checked);
+  const event = selectEventById(state, id);
+  return Boolean(event?.checked);
 };
 
 export const selectAreAllEventsChecked = (state) => {
-  if (selectEvents(state).length == 0) {
+  const visibleEvents = selectVisibleEvents(state);
+  if (visibleEvents.length === 0) {
     return false;
   }
-  return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
+  return visibleEvents.every((event) => event.checked);
 };
 
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
+  if (!event || event.is_deleted) return false;
   const currentFilters = state.events.current_view?.filters || {};
   const shouldBeInCurrentFilteredView = currentFilters.status
-    ? currentFilters.status == event.status
+    ? currentFilters.status === event.status
     : true;
-  const isDeleted = event.is_deleted || false;
-  return !isDeleted && shouldBeInCurrentFilteredView;
+  return shouldBeInCurrentFilteredView;
 };
 export const selectSeverity = (state) => {
   const currentSeverityList = state.events?.current_view?.filters?.severity;
