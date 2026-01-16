@@ -3246,6 +3246,48 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
+// GetDesignSourceContent returns design source-content from provider
+func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+		l.Log.Error(ErrOperationNotAvaibale)
+		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, designID)
+	remoteProviderURL, _ := url.Parse(downloadURL)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	l.Log.Info("attempting to fetch design source content from cloud for id: ", designID)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		err = ErrFetch(err, "Design source content", resp.StatusCode)
+		l.Log.Error(err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Error(ErrDataRead(err, "respone body"))
+		return nil, ErrDataRead(err, "Pattern")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		l.Log.Info("design source content retrieved from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(fmt.Errorf("error while fetching designs: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	l.Log.Error(err)
+	return nil, err
+}
+
 func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
 	if !l.Capabilities.IsSupported(ShareDesigns) {
 		l.Log.Error(ErrOperationNotAvaibale)
