@@ -78,9 +78,7 @@ func init() {
 // selectComponentPrompt lets user to select a model if models are more than one
 func selectEnvironmentPrompt(environments []environment.Environment) environment.Environment {
 	environmentNames := []string{}
-	environmentArray := []environment.Environment{}
-
-	environmentArray = append(environmentArray, environments...)
+	environmentArray := environments
 
 	for _, environment := range environmentArray {
 		environmentName := fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
