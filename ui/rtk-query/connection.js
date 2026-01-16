@@ -81,7 +81,10 @@ const connectionsApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `integrations/connections/${queryArg.connectionId}`,
         method: 'PUT',
-        body: queryArg.body,
+        body: {
+          status: queryArg.body?.status,
+          metadata: queryArg.body?.metadata,
+        },
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),

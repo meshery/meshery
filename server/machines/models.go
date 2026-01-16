@@ -204,14 +204,19 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 	if sm.Provider != nil && eventType != Exit {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
-		connection, statusCode, err := sm.Provider.UpdateConnectionStatusByID(token, sm.ID, connections.ConnectionStatus(sm.CurrentState))
+		connectionPayload := &connections.ConnectionPayload{Status: connections.ConnectionStatus(sm.CurrentState)}
+		if connectionPayload.MetaData == nil {
+			connectionPayload.MetaData = map[string]interface{}{}
+		}
+		connectionPayload.MetaData["token"] = token
+		connection, err := sm.Provider.UpdateConnectionById(nil, connectionPayload, sm.ID.String())
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
 			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
-		sm.Log.Debugf("%s: HTTP status: %s updated \"status\" for connection with id: %s to \"%s\"", sm.Name, statusCode, connection.ID, sm.CurrentState)
+		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
 	}
 
 	// The action func only emits event when an error occurs.

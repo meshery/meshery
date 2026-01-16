@@ -41,10 +41,13 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	}
 	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
-	connection, _, err := provider.GetConnectionByID(
-		token,
-		connectionID,
-	)
+	if connectionID == uuid.Nil {
+		errConnection := ErrConnectAction(fmt.Errorf("k8sCtx.ConnectionID is empty or invalid"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
+	}
+
+	connection, _, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		errConnection := ErrConnectAction(err)
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})

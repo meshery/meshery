@@ -57,10 +57,7 @@ import {
 } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import {
-  useGetConnectionsQuery,
-  useUpdateConnectionByIdMutation,
-} from '@/rtk-query/connection';
+import { useGetConnectionsQuery, useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@sistent/sistent';
@@ -318,7 +315,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       });
   };
 
-  const handleDeleteConnection = async (connectionId, connectionKind) => {
+  const handleDeleteConnection = async (connectionId) => {
     if (connectionId) {
       let response = await modalRef.current.show({
         title: `Delete Connection`,
