@@ -963,11 +963,9 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("order", order)
 	}
 	if withStatus != "" {
-		q.Set("status", string(connections.CONNECTED))
+		q.Set("status", withStatus)
 	}
-	if !withCredentials {
-		q.Set("with_credentials", "false")
-	}
+	q.Set("with_credentials", strconv.FormatBool(withCredentials))
 	q.Set("meshery_instance_id", mi)
 	remoteProviderURL.RawQuery = q.Encode()
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
