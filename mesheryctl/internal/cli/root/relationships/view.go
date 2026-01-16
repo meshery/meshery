@@ -56,12 +56,13 @@ mesheryctl exp relationship view [model-name]
 
 		var selectedModel *relationship.RelationshipDefinition
 
-		if relationshipsResponse.Count == 0 {
+		switch relationshipsResponse.Count {
+		case 0:
 			utils.Log.Info("No relationship(s) found for the given name ", model)
 			return nil
-		} else if relationshipsResponse.Count == 1 {
+		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
-		} else {
+		default:
 			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
 		var output []byte
@@ -70,15 +71,16 @@ mesheryctl exp relationship view [model-name]
 		// in order to make it consistent while checking output format
 		outpoutFormat, _ := cmd.Flags().GetString("output-format")
 		outFormatFlag := strings.ToLower(outpoutFormat)
-		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
+		switch outFormatFlag {
+		case "yaml", "yml":
 			if output, err = yaml.Marshal(selectedModel); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
 			utils.Log.Info(string(output))
-		} else if outFormatFlag == "json" {
+		case "json":
 			// return outputRelationshipJson(selectedModel)
 			return format.OutputJson(selectedModel)
-		} else {
+		default:
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 )
 
 func TestListEnvironment(t *testing.T) {
@@ -24,8 +25,10 @@ func TestListEnvironment(t *testing.T) {
 			Args:             []string{"list"},
 			URL:              "/api/environments",
 			Fixture:          "list.environment.without.orgID.golden",
-			ExpectedResponse: "list.environment.without.orgID.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message")),
 		},
 		{
 			Name:             "List environments non available",
@@ -33,7 +36,7 @@ func TestListEnvironment(t *testing.T) {
 			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.empty.response.golden",
 			ExpectedResponse: "list.environment.empty.golden",
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 		{
 			Name:             "List environments available",

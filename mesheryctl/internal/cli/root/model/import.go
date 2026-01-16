@@ -177,14 +177,14 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	url := baseURL + "/api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
-	if dataType == "csv" {
+	switch dataType {
+	case "csv":
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
 		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
-
-	} else if dataType == "file" {
+	case "file":
 		importRequest.ImportBody.ModelFile = data
-	} else {
+	default:
 		if data != nil {
 			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
@@ -211,7 +211,7 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		err = models.ErrDoRequest(err, resp.Request.Method, url)
 		return err
@@ -457,7 +457,8 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 				continue
 			}
 		}
-		if entityType == "unknown" {
+		switch entityType {
+		case "unknown":
 			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), name.(string), longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
@@ -465,9 +466,9 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 			if suggestedRemediation != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), suggestedRemediation)
 			}
-		} else if entityType == "component" {
+		case "component":
 			compCount++
-		} else if entityType == "relationship" {
+		case "relationship":
 			relCount++
 		}
 

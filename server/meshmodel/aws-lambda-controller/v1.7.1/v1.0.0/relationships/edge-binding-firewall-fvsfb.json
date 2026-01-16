@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship SNS topics trigger Lambda functions for pub/sub patterns",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

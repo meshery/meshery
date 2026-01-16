@@ -111,7 +111,7 @@ mesheryctl design offboard -f [filepath]
 			utils.Log.Error(err)
 			return nil
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		var response []*models.MesheryPattern
 
@@ -152,7 +152,7 @@ mesheryctl design offboard -f [filepath]
 			return nil
 		}
 
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))

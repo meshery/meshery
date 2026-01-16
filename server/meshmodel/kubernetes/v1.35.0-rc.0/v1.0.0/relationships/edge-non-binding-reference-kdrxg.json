@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where HorizontalPodAutoscaler references Pods\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

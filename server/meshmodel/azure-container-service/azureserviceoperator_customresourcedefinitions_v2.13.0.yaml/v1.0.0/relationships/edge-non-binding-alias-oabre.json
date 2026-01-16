@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between TrustedAccessRoleBinding and Workspace(azure-machine-learning)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

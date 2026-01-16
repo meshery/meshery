@@ -164,7 +164,7 @@ function NodeDetails(props) {
 
   let server = chartData?.kubernetes?.server_version;
 
-  chartData?.kubernetes?.nodes.map((node) => {
+  chartData?.kubernetes?.nodes?.map((node) => {
     let arr = [];
     let m = node?.allocatable_memory;
     const mem = (String(m).slice(0, String(m).length - 2) * 0.000001024).toPrecision(5);

@@ -42,13 +42,13 @@ components-count: 7
 relationships: 
 - type: "binding"
   kind: "edge"
-  description: "An edge relationship between role and EventBus"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between rule and Endpoint"
+  description: ""
 - type: "parent"
   kind: "hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+  description: ""
 relationship-count: 3
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",

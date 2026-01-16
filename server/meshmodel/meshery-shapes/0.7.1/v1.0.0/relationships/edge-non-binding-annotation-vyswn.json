@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that defines annotation edges between components",
+    "description": "",
     "styles": {
       "line-color": "#00B39F",
       "line-style": "solid",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between BackupVaultsBackupInstance and BackupVaultsBackupPolicy(azure-data-protection)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

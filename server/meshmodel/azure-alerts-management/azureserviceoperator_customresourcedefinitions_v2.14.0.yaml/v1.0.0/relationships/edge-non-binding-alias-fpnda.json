@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between SmartDetectorAlertRule and ActionGroup(azure-insights)",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
