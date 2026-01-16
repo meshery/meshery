@@ -7,7 +7,7 @@ title: Rest API Docs
 
 <!-- 
     This swagger layout dynamically fetches the OpenAPI specification from the published
-    location in the meshery/meshery GitHub repository at build time. This ensures the 
+    location in the meshery/meshery GitHub repository at runtime. This ensures the 
     documentation always reflects the latest published API schema.
     
     Schema source: https://raw.githubusercontent.com/meshery/meshery/master/server/helpers/swagger.yaml
@@ -130,6 +130,7 @@ function renderSwaggerDocs(swagger) {
                         <tbody>`;
                 
                 details.parameters.forEach(param => {
+                    // Use controlled CSS class names (safe, no user input)
                     const paramClass = param.required ? 'swagger-parameter-required' : '';
                     // Escape individual type components before constructing paramType
                     const escapedType = param.type ? escapeHtml(capitalize(param.type)) : '';
