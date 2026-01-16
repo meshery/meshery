@@ -15,10 +15,10 @@
 package connections
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -74,54 +74,26 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 		var selectedConnection *connection.Connection
 
-		// Check if the argument is a valid UUID
-		if _, err := uuid.FromString(connectionNameOrID); err == nil {
-			// Fetch connection directly by ID
-			url := fmt.Sprintf("%s/%s", connectionApiPath, connectionNameOrID)
-			connectionsResponse, err := api.Fetch[connection.Connection](url)
+		if isArgumentUUID(connectionNameOrID) {
+			fetchedConnection, err := fecthConnectionByID(connectionNameOrID)
 			if err != nil {
-				utils.Log.Error(err)
 				return err
 			}
-			selectedConnection = connectionsResponse
+			selectedConnection = fetchedConnection
 		} else {
-			// Search by name
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("search", connectionNameOrID)
-			viewUrlValue.Add("pagesize", "all")
-
-			urlPath := fmt.Sprintf("%s?%s", connectionApiPath, viewUrlValue.Encode())
-
-			connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
+			fetchedConnection, err := fecthConnectionByName(connectionNameOrID)
 			if err != nil {
 				return err
 			}
 
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			switch connectionsResponse.TotalCount {
-			case 0:
+			if fetchedConnection == nil {
 				fmt.Println("No connection(s) found for the given name: ", connectionNameOrID)
 				return nil
-			case 1:
-				selectedConnection = connectionsResponse.Connections[0]
-			default:
-				selectedConnection = selectConnectionPrompt(connectionsResponse.Connections)
 			}
+
+			selectedConnection = fetchedConnection
 		}
 
-		var output []byte
-
-		// user may pass flag in lower or upper case but we have to keep it lower
-		// in order to make it consistent while checking output format
-		outputFormatFlag = strings.ToLower(outputFormatFlag)
-
-		if outputFormatFlag != "json" && outputFormatFlag != "yaml" {
-			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
-		}
 		// Get the home directory of the user to save the output file
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
@@ -129,44 +101,48 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 		connectionString := strings.ReplaceAll(fmt.Sprintf("%v", selectedConnection.Name), " ", "_")
 
-		if outputFormatFlag == "yaml" {
-			if output, err = yaml.Marshal(selectedConnection); err != nil {
-				return errors.Wrap(err, "failed to format output in YAML")
+		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
+		outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, *selectedConnection)
+		if err != nil {
+			return err
+		}
+
+		err = outputFormatter.Display()
+		if err != nil {
+			return err
+		}
+
+		if saveFlag {
+			fmt.Println()
+			err := saveConnectionToFile(selectedConnection, outputFormatFlag, connectionString, homeDir)
+			if err != nil {
+				return err
 			}
-			if saveFlag {
-				fmt.Println("Saving output as YAML file")
-				err = os.WriteFile(homeDir+"/.meshery/connection_"+connectionString+".yaml", output, 0644)
-				if err != nil {
-					return errors.Wrap(err, "failed to save output as YAML file")
-				}
-				fmt.Println("Output saved as YAML file in ~/.meshery/connection_" + connectionString + ".yaml")
-			} else {
-				outputFormatter := display.NewYAMLOutputFormatter(selectedConnection)
-				return outputFormatter.Display()
-			}
-		} else {
-			if saveFlag {
-				fmt.Println("Saving output as JSON file")
-				output, err = json.MarshalIndent(selectedConnection, "", "  ")
-				if err != nil {
-					return errors.Wrap(err, "failed to format output in JSON")
-				}
-				err = os.WriteFile(homeDir+"/.meshery/connection_"+connectionString+".json", output, 0644)
-				if err != nil {
-					return errors.Wrap(err, "failed to save output as JSON file")
-				}
-				fmt.Println("Output saved as JSON file in ~/.meshery/connection_" + connectionString + ".json")
-				return nil
-			}
-			outputFormatter := display.NewJSONOutputFormatter(selectedConnection)
-			return outputFormatter.Display()
 		}
 
 		return nil
 	},
 }
 
-// selectConnectionPrompt lets user to select a connection if connections are more than one
+// TODO: refactor this function using meshkit errors, put it in utils package for reusability
+func saveConnectionToFile(conn *connection.Connection, format, connectionString, homeDir string) error {
+	var output []byte
+	var err error
+
+	fmt.Printf("Saving output as %s file", strings.ToUpper(format))
+	if output, err = yaml.Marshal(conn); err != nil {
+		return errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format)))
+	}
+	fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(format))
+	file := filepath.Join(homeDir, ".meshery", fileName)
+	err = os.WriteFile(file, output, 0644)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format)))
+	}
+	fmt.Println("Output saved as " + strings.ToUpper(format) + " file in " + file)
+	return nil
+}
+
 func selectConnectionPrompt(connectionsList []*connection.Connection) *connection.Connection {
 	connectionNames := []string{}
 
@@ -188,6 +164,45 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) *connectio
 
 		return connectionsList[i]
 	}
+}
+
+func isArgumentUUID(arg string) bool {
+	_, err := uuid.FromString(arg)
+	return err == nil
+}
+
+func fecthConnectionByID(connectionID string) (*connection.Connection, error) {
+	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
+	fetchedConnection, err := api.Fetch[connection.Connection](url)
+	if err != nil {
+		return nil, err
+	}
+	return fetchedConnection, nil
+}
+
+func fecthConnectionByName(connectionName string) (*connection.Connection, error) {
+	viewUrlValue := url.Values{}
+	viewUrlValue.Add("search", connectionName)
+	viewUrlValue.Add("pagesize", "all")
+
+	urlPath := fmt.Sprintf("%s?%s", connectionApiPath, viewUrlValue.Encode())
+
+	connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if connectionsResponse.TotalCount == 0 {
+		fmt.Println("No connection(s) found for the given name: ", connectionName)
+		return nil, nil
+	}
+
+	if connectionsResponse.TotalCount > 1 {
+		return selectConnectionPrompt(connectionsResponse.Connections), nil
+	}
+
+	return connectionsResponse.Connections[0], nil
 }
 
 func init() {

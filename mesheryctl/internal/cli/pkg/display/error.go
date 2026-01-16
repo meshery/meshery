@@ -7,7 +7,8 @@ import (
 )
 
 var ErrListPaginationCode = "mesheryctl-1157"
-var ErrEncodingDataCode = "mesheryctl-1181"
+var ErrEncodingDataCode = "mesheryctl-1164"
+var ErrUnsupportedFormatCode = "replace_me"
 
 func ErrorListPagination(err error, currentPage int) error {
 	return errors.New(ErrListPaginationCode, errors.Alert,
@@ -19,4 +20,8 @@ func ErrorListPagination(err error, currentPage int) error {
 
 func ErrEncodingData(err error, encoder string) error {
 	return errors.New(ErrEncodingDataCode, errors.Alert, []string{fmt.Sprintf("error occurred while trying to encode data in %s", encoder)}, []string{fmt.Sprintf("Encoding the data provided failed in %s format", encoder)}, []string{"Non supported characters in the data"}, []string{"Ensure the content of the data provided does not contain invalid supported characters"})
+}
+
+func ErrUnsupportedFormat(format string) error {
+	return errors.New(ErrUnsupportedFormatCode, errors.Alert, []string{fmt.Sprintf("the output format '%s' is not supported", format)}, []string{fmt.Sprintf("output format '%s' is not supported", format)}, []string{"an unsupported output format was provided"}, []string{"please provide a supported output format such as 'json' or 'yaml'"})
 }

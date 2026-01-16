@@ -13,6 +13,19 @@ type OutputFormatter[T any] interface {
 	WithOutput(io.Writer) OutputFormatter[T]
 }
 
+type OutputFormatterFactory[T any] struct{}
+
+func (o *OutputFormatterFactory[T]) New(format string, data T) (OutputFormatter[T], error) {
+	switch format {
+	case "json":
+		return NewJSONOutputFormatter(data), nil
+	case "yaml":
+		return NewYAMLOutputFormatter(data), nil
+	default:
+		return nil, ErrUnsupportedFormat(format)
+	}
+}
+
 type JsonEncoderSettings struct {
 	SetEscapeHTML bool
 	IndentPrefix  string
