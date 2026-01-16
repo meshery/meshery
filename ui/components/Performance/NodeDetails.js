@@ -1,6 +1,6 @@
 import React from 'react';
 import { NoSsr, TableCell, TableSortLabel } from '@sistent/sistent';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 
 function NodeDetails(props) {
   const chartData = props.result;
