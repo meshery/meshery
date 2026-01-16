@@ -530,6 +530,37 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
+// swagger:route GET /api/integrations/connections/{connectionId} GetConnectionById idGetConnectionById
+// Handle GET request for getting a single connection by its ID
+//
+// Fetches a single connection by its ID
+// responses:
+// 200: mesheryConnectionResponseWrapper
+func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	if connectionID == uuid.Nil {
+		h.log.Error(ErrGetConnections(fmt.Errorf("invalid connection ID")))
+		http.Error(w, "Invalid connection ID", http.StatusBadRequest)
+		return
+	}
+
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	obj := "connection"
+
+	if err != nil {
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), statusCode)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(connection); err != nil {
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
 // Handle PUT request for updating an existing connection by connection ID
 //
