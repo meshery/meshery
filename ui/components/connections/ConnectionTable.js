@@ -969,7 +969,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                     value={status}
                     key={status}
                   >
-                    <ConnectionStateChip status={status} />
+                    <ConnectionStateChip status={status} actionable={status !== value} />
                   </MenuItem>
                 ))}
               </ConnectionStyledSelect>
