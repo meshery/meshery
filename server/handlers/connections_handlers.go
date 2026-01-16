@@ -458,12 +458,93 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	eventBuilder = eventBuilder.WithDescription(description)
 
+	if connection.Status != "" {
+		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		_ = provider.PersistEvent(event, nil)
+	}
+
+	event := eventBuilder.WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID uuid.UUID, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+	connectionID := connection.ID
+
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+
+	if connection.Status != "" {
+		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		// token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		k8scontext, err := provider.GetK8sContext(token, connectionID.String())
+
+		if err != nil {
+			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+
+			return *eventBuilder.Build(), err
+		}
+
+		eventBuilder = eventBuilder.WithSeverity(events.Informational).
+			WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", connection.Status, k8scontext.Name)).
+			WithMetadata(map[string]interface{}{
+				"connectionName": k8scontext.Name,
+			})
+
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext:         k8scontext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
+		}
+
+		inst, err := helpers.InitializeMachineWithContext(
+			machineCtx,
+			context,
+			connectionID,
+			userID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.InitialState,
+			"kubernetes",
+			kubernetes.AssignInitialCtx,
+		)
+
+		if err != nil {
+			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			return *eventBuilder.Build(), err
+		}
+
+		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
+			if err != nil {
+				h.log.Error(err)
+				_ = provider.PersistEvent(*event, nil)
+				h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			if status == connections.DELETED {
+				smInstanceTracker.Remove(inst.ID)
+			}
+
+			_ = provider.PersistEvent(*event, nil)
+			h.config.EventBroadcaster.Publish(userID, event)
+		}(inst, connection.Status)
+	}
+
+	return *eventBuilder.Build(), nil
 }
 
 // swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
