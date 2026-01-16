@@ -233,9 +233,9 @@ export const selectEvents = (state) => {
 };
 
 // select only visible (non-deleted) events
-export const selectVisibleEvents = (state) => {
-  return selectEvents(state).filter((e) => !e.is_deleted);
-};
+export const selectVisibleEvents = createSelector([selectEvents], (events) =>
+  events.filter((e) => !e.is_deleted),
+);
 
 export const selectCheckedEvents = (state) => {
   return selectVisibleEvents(state).filter((e) => e.checked);
