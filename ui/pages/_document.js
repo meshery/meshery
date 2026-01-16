@@ -111,7 +111,7 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = (ctx) => {
+MesheryDocument.getInitialProps = async (ctx) => {
   // resolution order
   //
   // on the server:
@@ -136,26 +136,32 @@ MesheryDocument.getInitialProps = (ctx) => {
 
   // render app and page and get the context of the page with collected side effects.
   let pageContext;
-  const page = ctx.renderPage((Component) => {
-    const WrappedComponent = (props) => {
-      pageContext = props.pageContext;
-      return <Component {...props} />;
-    };
+  const originalRenderPage = ctx.renderPage;
+  ctx.renderPage = () =>
+    originalRenderPage({
+      enhanceComponent: (Component) => {
+        const WrappedComponent = (props) => {
+          pageContext = props.pageContext;
+          return <Component {...props} />;
+        };
 
-    WrappedComponent.propTypes = {
-      pageContext: PropTypes.object.isRequired,
-    };
+        WrappedComponent.propTypes = {
+          pageContext: PropTypes.object.isRequired,
+        };
 
-    return WrappedComponent;
-  });
+        return WrappedComponent;
+      },
+    });
+
+  const initialProps = await Document.getInitialProps(ctx);
 
   let css;
   // it might be undefined, e.g. after an error.
-  if (pageContext) {
+  if (pageContext && pageContext.sheetsRegistry) {
     css = pageContext.sheetsRegistry.toString();
   }
   return {
-    ...page,
+    ...initialProps,
     pageContext,
     // styles fragment is rendered after the app and page rendering finish.
     styles: (
@@ -163,9 +169,10 @@ MesheryDocument.getInitialProps = (ctx) => {
         <style
           id="jss-server-side"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: css }}
+          dangerouslySetInnerHTML={{ __html: css || '' }}
         />
         {flush || null}
+        {initialProps.styles}
       </React.Fragment>
     ),
   };
