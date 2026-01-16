@@ -65,6 +65,10 @@
         const featureIdx = colHeaders.indexOf("Feature");
         const keyIdIdx = colHeaders.indexOf("Key ID");
 
+        if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
+          console.error('One or more required columns are missing in the CSV file.');
+          return;
+        };
 
         // Remove the first two rows
         jsonData.shift();
@@ -72,11 +76,7 @@
 
         // Remove unnecessary columns
 
-        const processedData = [];
-        jsonData.forEach(row => {
-          const trimmedRow = [row[categoryIdx], row[functionIdx], row[featureIdx], row[keyIdIdx]];
-          processedData.push(trimmedRow);
-        });
+        const processedData = jsonData.map(row => [row[categoryIdx], row[functionIdx], row[featureIdx], row[keyIdIdx]]);
 
         // Group rows by category
         const categories = {};
