@@ -26,11 +26,11 @@ import (
 const (
 	ErrFetchFilterCode          = "mesheryctl-1019"
 	ErrDeleteFilterCode         = "mesheryctl-1018"
-	ErrFilterNotFoundCode       = "replace_me"
-	ErrFilterURIRequiredCode    = "replace_me"
-	ErrViewAllWithNameCode      = "replace_me"
-	ErrMultiWordFilterNameCode  = "replace_me"
-	ErrInvalidFilterCommandCode = "replace_me"
+	ErrFilterNotFoundCode       = "mesheryctl-1167"
+	ErrFilterURIRequiredCode    = "mesheryctl-1168"
+	ErrViewAllWithNameCode      = "mesheryctl-1169"
+	ErrMultiWordFilterNameCode  = "mesheryctl-1170"
+	ErrInvalidFilterCommandCode = "mesheryctl-1171"
 )
 
 const (

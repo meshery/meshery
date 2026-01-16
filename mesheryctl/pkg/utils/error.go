@@ -56,7 +56,11 @@ var (
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
-	ErrHandlePaginationCode        = "replace_me"
+	ErrHandlePaginationCode        = "mesheryctl-1172"
+	ErrCreateFileCode              = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
+	ErrReadFromBodyCode            = "mesheryctl-1125"
+	ErrMarkFlagRequireCode         = "mesheryctl-1126"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
