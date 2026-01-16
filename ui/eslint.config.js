@@ -19,6 +19,7 @@ module.exports = [
       'lib/**',
       'tests/samples/**',
       '**/__generated__/**',
+      '../server/**',
     ],
   },
   js.configs.recommended,

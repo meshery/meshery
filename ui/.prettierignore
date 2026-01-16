@@ -13,3 +13,5 @@ next-env.d.ts
 next.config.js
 .eslintrc.js
 **/__generated__/**
+out
+../server/**
