@@ -64,7 +64,8 @@ async function fetchSwaggerSpec() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const yamlText = await response.text();
-        const swagger = jsyaml.load(yamlText);
+        // Use the global jsyaml object exposed by js-yaml 4.x
+        const swagger = (typeof jsyaml !== 'undefined' ? jsyaml : YAML).load(yamlText);
         return swagger;
     } catch (error) {
         if (error.name === 'AbortError') {
@@ -135,7 +136,7 @@ function renderSwaggerDocs(swagger) {
                         <td><span class="${paramClass}">${escapeHtml(param.name)}</span></td>
                         <td>${escapeHtml(param.in)}</td>
                         <td>${escapeHtml(param.description || '')}</td>
-                        <td>${paramType}</td>
+                        <td>${escapeHtml(paramType)}</td>
                     </tr>`;
                 });
                 
