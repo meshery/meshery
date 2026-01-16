@@ -63,7 +63,7 @@
     "jss": "latest",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "mui-datatables": "^4.3.0",
+    "@sistent/mui-datatables": "^5.1.4",
     "next": "^12.3.4",
     "next-remove-imports": "^1.0.12",
     "notistack": "^3.0.2",
