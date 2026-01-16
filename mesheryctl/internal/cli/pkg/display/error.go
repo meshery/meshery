@@ -8,7 +8,7 @@ import (
 
 var ErrListPaginationCode = "mesheryctl-1157"
 var ErrEncodingDataCode = "mesheryctl-1164"
-var ErrUnsupportedFormatCode = "replace_me"
+var ErrUnsupportedFormatCode = "mesheryctl-1178"
 
 func ErrorListPagination(err error, currentPage int) error {
 	return errors.New(ErrListPaginationCode, errors.Alert,
