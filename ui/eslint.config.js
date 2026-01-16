@@ -2,6 +2,7 @@ const js = require('@eslint/js');
 const nextConfig = require('eslint-config-next');
 const unusedImports = require('eslint-plugin-unused-imports');
 const prettier = require('eslint-plugin-prettier');
+const prettierConfig = require('eslint-config-prettier');
 
 module.exports = [
   {
@@ -75,4 +76,5 @@ module.exports = [
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
     },
   },
+  prettierConfig,
 ];
