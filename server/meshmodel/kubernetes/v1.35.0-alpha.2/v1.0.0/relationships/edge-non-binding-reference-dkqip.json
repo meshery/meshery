@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ValidatingWebhookConfiguration references a Service to route admission webhook calls for validation requests.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

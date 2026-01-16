@@ -62,7 +62,7 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,8 +74,7 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(profiles) == 0 {
@@ -92,10 +91,10 @@ mesheryctl perf profile test --view
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				utils.Log.Error(ErrInvalidOutputChoice())
-				return nil
+				return ErrInvalidOutputChoice()
 			}
 			utils.Log.Info(string(body))
+
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
@@ -104,7 +103,7 @@ mesheryctl perf profile test --view
 			if len(profiles) > 1 {
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					return err
+					return ErrUserPrompt(err)
 				}
 			}
 
@@ -127,9 +126,8 @@ mesheryctl perf profile test --view
 			if _, ok := a.Metadata["additional_options"]; ok {
 				var out bytes.Buffer
 				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
-
 				if err != nil {
-					return err
+					return ErrFailMarshal(err)
 				}
 				fmt.Printf("Load generator options:\n%s\n", out.String())
 			}
@@ -162,10 +160,10 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	if err != nil {
 		return nil, nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, utils.ErrReadResponseBody(err)
 	}
 
 	err = json.Unmarshal(body, &response)
@@ -225,7 +223,6 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 	}
 
 	result, err := prompt.Run()
-
 	if err != nil {
 		termbox.Close()
 		return -1, fmt.Errorf("prompt failed %v", err)

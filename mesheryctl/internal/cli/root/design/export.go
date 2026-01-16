@@ -114,7 +114,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", models.ErrDoRequest(err, resp.Request.Method, patternUrl)
@@ -131,9 +131,10 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return "", err
 	}
 
-	if response.TotalCount == 0 {
+	switch response.TotalCount {
+	case 0:
 		return "", ErrDesignNotFound()
-	} else if response.TotalCount == 1 {
+	case 1:
 		return response.Patterns[0].ID.String(), nil
 	}
 
@@ -160,7 +161,7 @@ func exportDesign(baseUrl, design, designType string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return models.ErrDoRequest(err, resp.Request.Method, url)
@@ -187,7 +188,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, models.ErrDoRequest(err, resp.Request.Method, dataURL)
@@ -251,7 +252,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", models.ErrDoRequest(err, resp.Request.Method, url)
 	}

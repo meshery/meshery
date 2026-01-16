@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where an Alertmanager discovers and applies AlertmanagerConfig resources",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

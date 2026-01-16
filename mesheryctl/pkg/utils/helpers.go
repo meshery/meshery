@@ -280,7 +280,7 @@ var TemplateContext = config.Context{
 	Components: ListOfComponents,
 	Channel:    "stable",
 	Version:    "latest",
-	Provider:   "Meshery",
+	Provider:   "Layer5",
 }
 
 var Services = map[string]Service{
@@ -528,9 +528,10 @@ func AskForConfirmation(s string) bool {
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
-		if response == "y" || response == "yes" {
+		switch response {
+		case "y", "yes":
 			return true
-		} else if response == "n" || response == "no" {
+		case "n", "no":
 			return false
 		}
 	}
@@ -622,7 +623,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return idList, ErrReadResponseBody(err)
@@ -658,7 +659,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nameIdMap, ErrReadResponseBody(err)
@@ -769,15 +770,16 @@ func ParseURLGithub(URL string) (string, string, error) {
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
-	path = strings.Replace(path, "/blob/", "/", 1)
+	path = strings.ReplaceAll(path, "/blob/", "/")
 	paths := strings.Split(path, "/")
-	if host == "github.com" {
+	switch host {
+	case "github.com":
 		if len(paths) < 5 {
 			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
-	} else if host == "raw.githubusercontent.com" {
+	case "raw.githubusercontent.com":
 		if len(paths) < 5 {
 			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
@@ -810,7 +812,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	if err != nil {
 		return nil, ErrRequestResponse(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -1208,9 +1210,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		remaining := len(data) - endIndex
 
 		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		_, _ = whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
 		fmt.Println()
-		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
+		_, _ = whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
 		if len(footer) > 0 {
@@ -1279,7 +1281,7 @@ func DisplayCount(component string, count int64) {
 	if count == 0 {
 		display = fmt.Sprintf("No %ss found", strings.TrimSuffix(component, "s"))
 	}
-	whiteBoardPrinter.Fprintln(os.Stdout, display)
+	_, _ = whiteBoardPrinter.Fprintln(os.Stdout, display)
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {

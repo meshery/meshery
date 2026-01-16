@@ -51,7 +51,7 @@ mesheryctl adapter deploy linkerd --watch
 		`,
 		Annotations: linkDocMeshDeploy,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			log.Infof("Verifying prerequisites...")
+			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				utils.Log.Error(err)

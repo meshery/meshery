@@ -60,7 +60,7 @@ func getContexts(configFile string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, utils.ErrReadResponseBody(err)
@@ -114,8 +114,7 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrRequestResponse(err)
 	}
-	defer res.Body.Close()
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {

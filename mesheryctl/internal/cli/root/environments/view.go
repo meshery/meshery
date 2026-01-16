@@ -61,12 +61,13 @@ mesheryctl environment view --orgID [orgID]
 
 		var selectedEnvironment environments.EnvironmentData
 
-		if environmentResponse.TotalCount == 0 {
+		switch environmentResponse.TotalCount {
+		case 0:
 			utils.Log.Info("No environment(s) found for the given ID: ", orgID)
 			return nil
-		} else if environmentResponse.TotalCount == 1 {
+		case 1:
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
-		} else {
+		default:
 			selectedEnvironment = selectEnvironmentPrompt(environmentResponse.Environments)
 		}
 
@@ -83,7 +84,8 @@ mesheryctl environment view --orgID [orgID]
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
-		if outFormat == "yaml" || outFormat == "yml" {
+		switch outFormat {
+		case "yaml", "yml":
 			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
 				return utils.ErrMarshal(errors.Wrap(err, "failed to format output in YAML"))
 			}
@@ -97,7 +99,7 @@ mesheryctl environment view --orgID [orgID]
 			} else {
 				utils.Log.Info(string(output))
 			}
-		} else if outFormat == "json" {
+		case "json":
 			if save {
 				utils.Log.Info("Saving output as JSON file")
 				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
@@ -112,8 +114,6 @@ mesheryctl environment view --orgID [orgID]
 				return nil
 			}
 			return format.OutputJson(selectedEnvironment)
-		} else {
-			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 
 		return nil

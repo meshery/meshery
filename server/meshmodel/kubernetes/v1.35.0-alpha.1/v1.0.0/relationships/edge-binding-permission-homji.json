@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where RoleBinding grants namespace-scoped permissions by binding a Role to a ServiceAccount, creating a three-way relationship where the Role defines permissions, the RoleBinding references the role, and the ServiceAccount is granted those permissions.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

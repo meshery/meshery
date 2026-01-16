@@ -30,19 +30,19 @@ components-count: 4
 relationships: 
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship S3 sends object event notifications to SQS"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship SNS topics fan out messages to SQS queues"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship EventBridge sends events to SQS for queuing"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship EC2 applications send/receive messages from SQS queues"
+  description: ""
 - type: "non-binding"
   kind: "edge"
-  description: "An edge relationship between adoptedresource and queue"
+  description: ""
 relationship-count: 5
 featureList: [
   "Scalable message queuing",

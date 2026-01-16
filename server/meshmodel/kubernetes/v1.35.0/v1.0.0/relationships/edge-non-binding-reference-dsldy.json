@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where Binding names the Node that should host the bound Pod instance",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
