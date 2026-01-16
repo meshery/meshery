@@ -1,4 +1,4 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
 import { BellIcon } from '@sistent/sistent';
 
@@ -237,9 +237,9 @@ export const selectVisibleEvents = createSelector([selectEvents], (events) =>
   events.filter((e) => !e.is_deleted),
 );
 
-export const selectCheckedEvents = (state) => {
-  return selectVisibleEvents(state).filter((e) => e.checked);
-};
+export const selectCheckedEvents = createSelector([selectVisibleEvents], (visibleEvents) =>
+  visibleEvents.filter((e) => e.checked),
+);
 
 export const selectEventById = (state, id) => {
   return eventsEntityAdapter.getSelectors().selectById(state.events, id);
@@ -250,13 +250,12 @@ export const selectIsEventChecked = (state, id) => {
   return Boolean(event?.checked);
 };
 
-export const selectAreAllEventsChecked = (state) => {
-  const visibleEvents = selectVisibleEvents(state);
+export const selectAreAllEventsChecked = createSelector([selectVisibleEvents], (visibleEvents) => {
   if (visibleEvents.length === 0) {
     return false;
   }
   return visibleEvents.every((event) => event.checked);
-};
+});
 
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
