@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 16th 2026, 2:52:08 am
+- Testing started at: January 16th 2026, 8:29:01 am
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
-- ❌ 9 failed
+- ✅ 88 passed
+- ❌ 8 failed
 - ⚠️ 0 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 15 seconds_
+⌛ _Duration: 7 minutes and 14 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -92,7 +92,7 @@
 | 69 | None | chromium-local-provider | displays published design card correctly |  | ✅ |
 | 70 | None | chromium-local-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
 | 71 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 72 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
+| 72 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
 | 73 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
 | 74 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 75 | None | chromium-local-provider | imports design via File |  | ❌ |
@@ -254,20 +254,6 @@ SyntaxError: "undefined" is not valid JSON
  [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
  [90m 50 |[39m[0m
 ```
-
-</details>
-
-<details>
-<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
 
 </details>
 
