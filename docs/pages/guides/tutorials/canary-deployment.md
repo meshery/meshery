@@ -115,7 +115,7 @@ While still under **Paths 1**, Expand **Backend** > **Service**, enter the exact
 At this point, you have an Ingress pointing to your primary service on the given host and path. The host is the same name we will use for the canary Ingress.
     ![](./canary-deployment/10.png)
 
-5. Deploy the design, before continuing.
+**Deploy the design, before continuing.**
 
 #### Create the Ingress for the Canary Service
 
