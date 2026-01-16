@@ -929,6 +929,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	}
 
 	connection, err := l.SaveConnection(conn, token, true)
+
+	l.Log.Infof("Persisting k8s context to remote_provider, %v %v",connection,err)
+
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
 		return connections.Connection{}, err
@@ -948,7 +951,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s?kind=kubernetes", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -989,6 +992,30 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		// Remote provider now returns `connections.ConnectionPage` for kubernetes connections.
+		var cp connections.ConnectionPage
+		if err := json.Unmarshal(bdr, &cp); err == nil && cp.Connections != nil {
+			contexts := make([]*K8sContext, 0, len(cp.Connections))
+			for _, c := range cp.Connections {
+				ctx, err := K8sContextFromConnection(Provider(l), token, c)
+				if err != nil {
+					l.Log.Error(err)
+					continue
+				}
+				contexts = append(contexts, &ctx)
+			}
+
+			page := MesheryK8sContextPage{
+				Page:       uint64(cp.Page),
+				PageSize:   uint64(cp.PageSize),
+				TotalCount: cp.TotalCount,
+				Contexts:   contexts,
+			}
+			out, _ := json.Marshal(page)
+			l.Log.Info("kubernetes contexts retrieved from remote provider")
+			return out, nil
+		}
+
 		l.Log.Info("kubernetes contexts retrieved from remote provider")
 		return bdr, nil
 	}
@@ -1061,51 +1088,32 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 }
 
 func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
-	l.Log.Info("attempting to fetch kubernetes contexts from cloud for connection id: ", connectionID)
+	l.Log.Info("attempting to fetch kubernetes context from cloud for connection id: ", connectionID)
 
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes/%s/context", l.RemoteProviderURL, ep, connectionID))
 
-	l.Log.Debug("constructed kubernetes contexts url: ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	connID := uuid.FromStringOrNil(connectionID)
+	if connID == uuid.Nil {
+		return K8sContext{}, fmt.Errorf("invalid connection id: %s", connectionID)
+	}
 
-	resp, err := l.DoRequest(cReq, token)
+	conn, status, err := l.GetConnectionByID(token, connID)
 	if err != nil {
-		if resp == nil {
-			return K8sContext{}, ErrUnreachableRemoteProvider(err)
-		}
-		return K8sContext{}, ErrFetch(err, "Kubernetes Context", resp.StatusCode)
+		return K8sContext{}, ErrFetch(err, "Kubernetes Context", status)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	if resp.StatusCode == http.StatusOK {
-		var kc MesheryK8sContextPage
-		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-			return K8sContext{}, ErrUnmarshal(err, "Kubernetes context")
-		}
-
-		if len(kc.Contexts) == 0 {
-			return K8sContext{}, fmt.Errorf("no Kubernetes contexts available")
-		}
-
-		l.Log.Info("Retrieved Kubernetes context from remote provider.")
-		// Response will contain single context
-		return *kc.Contexts[0], nil
+	if conn == nil {
+		return K8sContext{}, ErrFetch(fmt.Errorf("connection not found"), "Kubernetes Context", status)
 	}
 
-	bdr, err := io.ReadAll(resp.Body)
+	ctx, err := K8sContextFromConnection(Provider(l), token, conn)
 	if err != nil {
-		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
+		return K8sContext{}, err
 	}
-	err = ErrFetch(fmt.Errorf("Failed to retrieve Kubernetes context."), fmt.Sprint(bdr), resp.StatusCode)
-	l.Log.Error(err)
-	return K8sContext{}, err
+	l.Log.Info("Retrieved Kubernetes context from remote provider.")
+	return ctx, nil
 }
 
 // FetchResults - fetches results for profile id from provider backend
@@ -4431,6 +4439,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+	fmt.Println("\n\n url :", remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -4441,14 +4450,15 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 		return nil, statusCode, ErrFetch(err, "connection", statusCode)
 	}
 
+	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 		defer func() {
 			_ = resp.Body.Close()
 		}()
 
-		bdr, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
+			l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
+			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s, err body %s", connectionID, string(bdr)), "connection", resp.StatusCode)
 		}
 		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
@@ -4458,6 +4468,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 		return &conn, resp.StatusCode, nil
 	}
 
+	l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
