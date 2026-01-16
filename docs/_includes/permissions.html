@@ -58,17 +58,30 @@
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+        const colHeaders = jsonData[1];  
+        
+        const categoryIdx = colHeaders.indexOf("Category");
+        const functionIdx = colHeaders.indexOf("Function");
+        const featureIdx = colHeaders.indexOf("Feature");
+        const keyIdIdx = colHeaders.indexOf("Key ID");
+
+        if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
+            console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
+            return;
+        }
+
+        if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
+          console.error('One or more required columns are missing in the CSV file.');
+          return;
+        };
+
         // Remove the first two rows
         jsonData.shift();
         jsonData.shift();
 
         // Remove unnecessary columns
 
-        const processedData = [];
-        jsonData.forEach(row => {
-          const trimmedRow = [row[0], row[1], row[2], row[12]];
-          processedData.push(trimmedRow);
-        });
+        const processedData = jsonData.map(row => [row[categoryIdx], row[functionIdx], row[featureIdx], row[keyIdIdx]]);
 
         // Group rows by category
         const categories = {};
