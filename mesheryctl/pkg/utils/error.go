@@ -758,7 +758,10 @@ func ErrHandlePagination(err error) error {
 		[]string{"Unable to display paginated results"},
 		[]string{err.Error()},
 		[]string{"Interactive pagination requires keyboard input support"},
-		[]string{"Ensure you are running in an interactive terminal"})
+		[]string{
+			"Ensure you are running in an interactive terminal",
+			"If running in a non-interactive environment, use '--page' flag to skip pagination",
+		})
 }
 
 func ErrCreateFile(filepath string, err error) error {
