@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 15th 2026, 11:29:04 pm
+- Testing started at: January 16th 2026, 2:52:08 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 8 skipped
 
-⌛ _Duration: 7 minutes and 34 seconds_
+⌛ _Duration: 7 minutes and 15 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -34,7 +34,7 @@
 | 11 | Meshery | chromium-meshery-provider | Delete a performance profile with load generator fortio |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 13 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
-| 14 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 14 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ✅ |
 | 15 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
 | 16 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
 | 17 | Meshery | chromium-meshery-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
@@ -92,7 +92,7 @@
 | 69 | None | chromium-local-provider | displays published design card correctly |  | ✅ |
 | 70 | None | chromium-local-provider | Edit the configuration of a performance profile with load generator fortio and service mesh None |  | ✅ |
 | 71 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 72 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 72 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
 | 73 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
 | 74 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 75 | None | chromium-local-provider | imports design via File |  | ❌ |
@@ -207,20 +207,6 @@ SyntaxError: "undefined" is not valid JSON
 </details>
 
 <details>
-<summary>❌ deploys a published design to a connected cluster (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
 <summary>❌ Transition to ignored state and then back to connected state (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
@@ -268,6 +254,20 @@ SyntaxError: "undefined" is not valid JSON
  [90m 49 |[39m       [36mconst[39m designToTest [33m=[39m { [33m...[39mdesign[33m,[39m relationships[33m:[39m [] }[33m;[39m
  [90m 50 |[39m[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
