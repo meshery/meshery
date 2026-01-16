@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -22,15 +21,12 @@ type makeRequestTestCase struct {
 }
 
 func TestMakeRequest_Failures(t *testing.T) {
-	utils.SetupContextEnv(t)
-	//initialize mock server for handling requests
-	utils.StartMockery(t)
-	// create a test helper
-	testContext := utils.NewTestHelper(t)
+
+	testContext := utils.InitTestEnvironment(t)
 
 	tests := []makeRequestTestCase{
 		{
-			name:             "No Token Provided",
+			name:             "Given no token provided when received a GET request then an error is returned",
 			httpMethod:       http.MethodGet,
 			urlPath:          "/",
 			hasToken:         false,
@@ -38,7 +34,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 			expectedError:    utils.ErrAttachAuthToken(fmt.Errorf("Not Set does not exist")),
 		},
 		{
-			name:             "Server Not Reachable",
+			name:             "Given server not reachable when received a GET request then an error is returned",
 			httpMethod:       http.MethodGet,
 			urlPath:          "/",
 			hasToken:         true,
@@ -72,12 +68,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 
 			resp, err := makeRequest(url, tt.httpMethod, nil, nil)
 			if tt.expectedError != nil {
-				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tt.expectedError))
-				assert.Equal(t, errors.GetCode(err), errors.GetCode(tt.expectedError))
-				assert.Equal(t, errors.GetCause(err), errors.GetCause(tt.expectedError))
-				assert.Equal(t, errors.GetSDescription(err), errors.GetSDescription(tt.expectedError))
-				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tt.expectedError))
-				assert.Equal(t, errors.GetRemedy(err), errors.GetRemedy(tt.expectedError))
+				utils.AssertMeshkitErrorsEqual(t, tt.expectedError, err)
 			} else {
 				assert.Equal(t, tt.expectedResponse, resp)
 			}

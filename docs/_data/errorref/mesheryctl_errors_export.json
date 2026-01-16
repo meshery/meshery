@@ -1361,6 +1361,33 @@
         "short_description": "",
         "probable_cause": "Invalid model source URL\nUnsupported registrant type\nNetwork issues fetching model data",
         "suggested_remediation": "Verify the model's source URL is accessible\nCheck the registrant type is supported\nReview network connectivity"
+      },
+      "1160": {
+        "name": "ErrUserPromptCode",
+        "code": "1160",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prompt failed",
+        "probable_cause": "User prompt was interrupted or failed to get input",
+        "suggested_remediation": "Try running the command again and complete the selection"
+      },
+      "1161": {
+        "name": "ErrConvertConcurrentRequestCode",
+        "code": "1161",
+        "severity": "Alert",
+        "long_description": "Invalid concurrent-request value provided",
+        "short_description": "Failed to convert concurrent-request",
+        "probable_cause": "The concurrent-request flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for concurrent-request"
+      },
+      "1162": {
+        "name": "ErrConvertQPSCode",
+        "code": "1162",
+        "severity": "Alert",
+        "long_description": "Invalid qps value provided",
+        "short_description": "Failed to convert qps",
+        "probable_cause": "The qps flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for qps"
       }
     }
   }
