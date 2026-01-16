@@ -52,9 +52,7 @@ import {
   Hidden,
   NoSsr,
 } from '@sistent/sistent';
-import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
@@ -83,6 +81,7 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
+import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -616,7 +615,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const { extensionType } = useSelector((state) => state.ui);
 
   return (
-    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
+    <DynamicFullScreenLoader isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
           <MesheryThemeProvider>
@@ -710,7 +709,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
           </MesheryThemeProvider>
         </RelayEnvironmentProvider>
       </DynamicComponentProvider>
-    </LoadingScreen>
+    </DynamicFullScreenLoader>
   );
 };
 
