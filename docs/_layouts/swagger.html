@@ -39,15 +39,27 @@ title: Rest API Docs
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" 
+        integrity="sha384-+pxiN6T7yvpryuJmE1gM9PX7yQit15auDb+ZwwvJOd/4be2Cie5/IuVXgQb/S9du" 
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
 // Published OpenAPI schema URL from meshery/meshery repository
+// Using 'master' branch - if your default branch changes, update this URL
 const SWAGGER_SCHEMA_URL = 'https://raw.githubusercontent.com/meshery/meshery/master/server/helpers/swagger.yaml';
+const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
 
-// Fetch and parse the OpenAPI schema
+// Fetch and parse the OpenAPI schema with timeout
 async function fetchSwaggerSpec() {
     try {
-        const response = await fetch(SWAGGER_SCHEMA_URL);
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+        
+        const response = await fetch(SWAGGER_SCHEMA_URL, { 
+            signal: controller.signal 
+        });
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -55,6 +67,9 @@ async function fetchSwaggerSpec() {
         const swagger = jsyaml.load(yamlText);
         return swagger;
     } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out after ' + (FETCH_TIMEOUT_MS / 1000) + ' seconds');
+        }
         console.error('Error fetching swagger spec:', error);
         throw error;
     }
@@ -185,10 +200,12 @@ function renderSwaggerDocs(swagger) {
 }
 
 // Helper functions
+// Reusable element for efficient HTML escaping
+const escapeElement = document.createElement('div');
+
 function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    escapeElement.textContent = text;
+    return escapeElement.innerHTML;
 }
 
 function capitalize(str) {
@@ -213,10 +230,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         const swagger = await fetchSwaggerSpec();
         renderSwaggerDocs(swagger);
     } catch (error) {
-        document.getElementById('swagger-loading').innerHTML = `
-            <p style="color: red;">Error loading API documentation: ${error.message}</p>
-            <p>Please ensure you have an internet connection and try refreshing the page.</p>
-        `;
+        console.error('Error:', error);
+        const loadingDiv = document.getElementById('swagger-loading');
+        // Safely display error message without XSS risk
+        const errorPara = document.createElement('p');
+        errorPara.style.color = 'red';
+        errorPara.textContent = 'Error loading API documentation: ' + error.message;
+        
+        const helpPara = document.createElement('p');
+        helpPara.textContent = 'Please ensure you have an internet connection and try refreshing the page.';
+        
+        loadingDiv.innerHTML = '';
+        loadingDiv.appendChild(errorPara);
+        loadingDiv.appendChild(helpPara);
     }
 });
 </script>
