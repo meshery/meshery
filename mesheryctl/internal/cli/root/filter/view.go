@@ -52,7 +52,7 @@ mesheryctl filter view "filter name"
 	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
-		subCmdUsed := "view"
+		subCmdUsed := cmd.Use
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
