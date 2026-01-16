@@ -44,7 +44,7 @@ title: Rest API Docs
         crossorigin="anonymous"></script>
 <script type="text/javascript">
 // Published OpenAPI schema URL from meshery/meshery repository
-// Using 'master' branch - if your default branch changes, update this URL
+// Note: Currently uses 'master' branch - update if default branch changes
 const SWAGGER_SCHEMA_URL = 'https://raw.githubusercontent.com/meshery/meshery/master/server/helpers/swagger.yaml';
 const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
 
@@ -64,8 +64,11 @@ async function fetchSwaggerSpec() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const yamlText = await response.text();
-        // Use the global jsyaml object exposed by js-yaml 4.x
-        const swagger = (typeof jsyaml !== 'undefined' ? jsyaml : YAML).load(yamlText);
+        // js-yaml 4.x exposes jsyaml global - use it to parse YAML
+        if (typeof jsyaml === 'undefined') {
+            throw new Error('js-yaml library not loaded properly');
+        }
+        const swagger = jsyaml.load(yamlText);
         return swagger;
     } catch (error) {
         if (error.name === 'AbortError') {
@@ -128,15 +131,18 @@ function renderSwaggerDocs(swagger) {
                 
                 details.parameters.forEach(param => {
                     const paramClass = param.required ? 'swagger-parameter-required' : '';
-                    const paramType = param.type ? 
-                        (param.items ? `${capitalize(param.type)} of ${capitalize(param.items.type)}` : capitalize(param.type)) : 
+                    // Escape individual type components before constructing paramType
+                    const escapedType = param.type ? escapeHtml(capitalize(param.type)) : '';
+                    const escapedItemsType = param.items && param.items.type ? escapeHtml(capitalize(param.items.type)) : '';
+                    const paramType = escapedType ? 
+                        (escapedItemsType ? `${escapedType} of ${escapedItemsType}` : escapedType) : 
                         'Unknown';
                     
                     html += `<tr>
                         <td><span class="${paramClass}">${escapeHtml(param.name)}</span></td>
                         <td>${escapeHtml(param.in)}</td>
                         <td>${escapeHtml(param.description || '')}</td>
-                        <td>${escapeHtml(paramType)}</td>
+                        <td>${paramType}</td>
                     </tr>`;
                 });
                 
