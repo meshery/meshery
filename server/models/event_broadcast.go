@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -73,9 +72,18 @@ func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 	if !ok {
 		return
 	}
-	for _, client := range clientToPublish.listeners {
-		if !utils.IsClosed(client) {
-			client <- data
+
+	clientToPublish.mu.Lock()
+	listeners := clientToPublish.listeners
+	clientToPublish.mu.Unlock()
+
+	for _, client := range listeners {
+		// Use non-blocking send with select to prevent panic on closed channel
+		// and avoid blocking if the channel buffer is full
+		select {
+		case client <- data:
+		default:
+			// Channel is either closed or full, skip this listener
 		}
 	}
 }
