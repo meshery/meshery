@@ -152,7 +152,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 	
 	// Check if the file contains HTML (common when auth.json is corrupted)
 	if len(file) > 0 && file[0] == '<' {
-		return errors.New("token file contains HTML instead of JSON. This usually means the authentication token is invalid or corrupted. Please log in again with `mesheryctl system login`")
+		return ErrInvalidTokenHTML()
 	}
 	
 	var tokenObj map[string]string
@@ -460,7 +460,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 	if ContentTypeIsHTML(resp) {
 		// Read and discard the body to properly close the connection
 		_, _ = io.ReadAll(resp.Body)
-		return nil, errors.New("server returned HTML instead of JSON token. This usually indicates an authentication error or server issue")
+		return nil, ErrInvalidTokenResponse()
 	}
 
 	// Read the response body
@@ -471,7 +471,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 
 	// Additional check: if body starts with '<', it's likely HTML
 	if len(data) > 0 && data[0] == '<' {
-		return nil, errors.New("server returned HTML instead of JSON token. The response body starts with '<' which indicates HTML content")
+		return nil, ErrInvalidTokenResponse()
 	}
 
 	// Validate that the response body is valid JSON
