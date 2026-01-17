@@ -35,7 +35,7 @@ mesheryctl connection create --type gke
 mesheryctl connection create --type minikube
 
 // List all the connection
-mesheryctl exp connection list
+mesheryctl connection list
 
 // Delete a connection
 mesheryctl exp connection delete [connection_id]
