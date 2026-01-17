@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -74,8 +73,11 @@ func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 		return
 	}
 	for _, client := range clientToPublish.listeners {
-		if !utils.IsClosed(client) {
-			client <- data
+		select {
+		case client <- data:
+			// Successfully sent
+		default:
+			// Channel full or closed, skip to avoid blocking
 		}
 	}
 }
