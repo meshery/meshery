@@ -71,6 +71,7 @@ jobs:
         run: |
           mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-update
         shell: bash
+        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
           bash run_tests.bash
