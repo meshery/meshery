@@ -57,7 +57,7 @@ module.exports = {
     '@mui/icons-material/Edit': require('@mui/icons-material/Edit'),
     '@mui/icons-material/Keyboard': require('@mui/icons-material/Keyboard'),
     '@mui/icons-material/Tune': require('@mui/icons-material/Tune'),
-    'mui-datatables': require('mui-datatables'),
+    '@sistent/mui-datatables': require('@sistent/mui-datatables'),
     notistack: require('notistack'),
     'react-dom/server': require('react-dom/server'),
     'relay-runtime': require('relay-runtime'),
