@@ -39,7 +39,7 @@ const transitionTests = [
   // },
 ];
 
-test.skip().describe.serial('Connection Management Tests', () => {
+test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
