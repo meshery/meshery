@@ -64,8 +64,8 @@ jobs:
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Build mesheryctl and start Meshery
         run: |
-          make
-          mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-update
+          make build && \
+          ./mesheryctl system start -p ${{ matrix.platform }} --skip-checks --skip-update
         shell: bash
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
