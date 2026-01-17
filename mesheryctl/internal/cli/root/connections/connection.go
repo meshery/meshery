@@ -26,7 +26,7 @@ var ConnectionsCmd = &cobra.Command{
 Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection`,
 	Example: `
 // Display total count of all available connections
-mesheryctl exp connection --count
+mesheryctl connection --count
 
 // Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
