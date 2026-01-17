@@ -1,11 +1,11 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 17th 2026, 6:04:22 pm
+- Testing started at: January 17th 2026, 11:28:22 pm
 
 **📦 Test Result Summary**
 
-- ✅ 80 passed
-- ❌ 4 failed
+- ✅ 79 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
@@ -33,7 +33,7 @@
 | 10 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
 | 12 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
-| 13 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
+| 13 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ❌ |
 | 14 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 15 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 16 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
@@ -126,6 +126,20 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
+<summary>❌ displays published design card correctly (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ imports design via File (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
@@ -154,7 +168,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ deploys a published design to a connected cluster (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ imports design via File (None - chromium-local-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -168,7 +182,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ imports design via File (None - chromium-local-provider)</summary>
+<summary>❌ deploys a published design to a connected cluster (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
