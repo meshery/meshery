@@ -17,7 +17,7 @@ abstract: "Explore Kubernetes Services using Meshery using Meshery Playground, a
 
 In this tutorial, we'll learn to implement Kubernetes **Services**, the resources responsible for exposing applications inside and outside the cluster. Using Meshery Playground, an interactive live cluster environment, we'll perform hands-on labs to gain practical experience with the Kubernetes Services, without writing any YAML.
 
-> **_NOTE:_** If this is your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](https://docs.meshery.io/guides/tutorials/kubernetes-pods) tutorial first or [Exploring Kubernetes Deployments with Meshery](https://docs.meshery.io/guides/tutorials/kubernetes-deployments).
+> **_NOTE:_** If this is your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](/guides/tutorials/kubernetes-pods) tutorial first or [Exploring Kubernetes Deployments with Meshery](/guides/tutorials/kubernetes-deployments).
 
 
 ### Prerequisites

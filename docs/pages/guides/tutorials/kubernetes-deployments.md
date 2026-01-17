@@ -16,7 +16,7 @@ abstract: "Explore a Kubernetes Deployment using Meshery Playground, an interact
 
 In this tutorial, we'll learn about Kubernetes **Deployments**. Using Meshery Playground, an interactive live environment, we'll perform hands-on exercises to gain practical experience in deploying, managing, and understanding a Kubernetes _Deployment_ without writing any YAML.
 
-> **_NOTE:_** If this your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](https://docs.meshery.io/guides/tutorials/kubernetes-pods) tutorial first.
+> **_NOTE:_** If this your first time working with Meshery Playground, consider starting with the [Exploring Kubernetes Pods with Meshery Playground](/guides/tutorials/kubernetes-pods) tutorial first.
 
 ### Prerequisites
 
