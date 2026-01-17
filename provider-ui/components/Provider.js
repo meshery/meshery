@@ -141,7 +141,7 @@ export default function Provider() {
         }
       },
       (error) => {
-        console.error(`there was an error fetching providers: ${error}`);
+        console.error('there was an error fetching providers:', error);
       }
     );
   }

@@ -541,7 +541,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
         }
       },
       (error) => {
-        console.error(`there was an error fetching user config data: ${error}`);
+        console.error('there was an error fetching user config data:', error);
       },
     );
   }, [dispatch]);
