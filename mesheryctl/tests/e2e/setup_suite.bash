@@ -47,25 +47,25 @@ config_mesheryctl_port_forwarding_endpoint() {
 
 main() {
     echo -e "### start: Test environment setup ###\n"
-
-    start_mesehry "$MESHERY_PLATFORM"
-    create_meshery_config_folder
-    create_auth_file 
     # port_forwarding
     # config_mesheryctl_port_forwarding_endpoint
     
-    export MESHERYCTL_BIN="mesheryctl"
+    export MESHERYCTL_BIN="../../mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
 	export MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json"
     export E2E_HELPERS_PATH="${E2E_HELPERS_PATH}"
     export BATS_LIB_PATH="${BATS_LIB_PATH}"
-
 
     echo -e "\nCreate temp directory for test data"
     TEMP_DATA_DIR=`mktemp -d`
     # Expose the temp directory to the following tests
     export TEMP_DATA_DIR=$TEMP_DATA_DIR
 
+
+
+    # start_mesehry "$MESHERY_PLATFORM"
+    create_meshery_config_folder
+    create_auth_file 
 
     echo -e "### done: Test environment setup ###\n"
 }
