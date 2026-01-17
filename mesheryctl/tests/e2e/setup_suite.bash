@@ -2,10 +2,10 @@
 
 MESHERYCTL_PORT_FORWARDING=9999
 
-install_mesheryctl() {
-    echo "start: Install mesheryctl"
-    curl -L https://meshery.io/install -s | PLATFORM=$1 bash -
-    echo "done: Install mesheryctl"
+start_mesehry() {
+    echo "start: Start mesehry server"
+    ${MESHERYCTL_BIN} system start -p "$1" --skip-checks --skip-update
+    echo "done: Start mesehry server"
 }
 
 create_meshery_config_folder() {
@@ -48,11 +48,11 @@ config_mesheryctl_port_forwarding_endpoint() {
 main() {
     echo -e "### start: Test environment setup ###\n"
 
-    install_mesheryctl "$MESHERY_PLATFORM"
+    start_mesehry "$MESHERY_PLATFORM"
     create_meshery_config_folder
     create_auth_file 
-    port_forwarding
-    config_mesheryctl_port_forwarding_endpoint
+    # port_forwarding
+    # config_mesheryctl_port_forwarding_endpoint
     
     export MESHERYCTL_BIN="mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
