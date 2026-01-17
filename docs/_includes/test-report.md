@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 16th 2026, 11:27:49 pm
+- Testing started at: January 17th 2026, 3:12:29 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 16 skipped
 
-⌛ _Duration: 7 minutes and 16 seconds_
+⌛ _Duration: 7 minutes and 19 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -186,23 +186,14 @@ The following tests failed. Click on each to see the failure reason:
 <details>
 <summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
 
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+**File Location:** `Not Found`
 
 **Error Message:**
 ```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+[31mTest timeout of 60000ms exceeded.[39m
 ```
 
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
+
 
 </details>
 
