@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 import { Tooltip, TableCell, TableSortLabel } from '@sistent/sistent';
 import debounce from '../utils/debounce';
 import { getDuplicateModels, getDuplicateComponents } from '../api/meshmodel';

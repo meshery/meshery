@@ -84,7 +84,7 @@ The loading message is selected once and stored in the browser's `window` object
 #### Using the Persisted Loading Message in UI Plugins
 
 **No changes needed** for plugins that:
-- Use `DynamicFullScrrenLoader` (already imports `randomLoadingMessage`)
+- Use `DynamicFullScreenLoader` (already imports `randomLoadingMessage`)
 - Are loaded through the main Meshery UI framework
 
 **For standalone loaders**, import the persisted message:
@@ -165,4 +165,3 @@ With both of these props, Remote Providers can customize the wrapper and can als
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
 {% include code.html code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" %}
-

@@ -282,6 +282,9 @@ const PrometheusSelectionComponent = (props) => {
               editorDidMount={(editor) => {
                 cmEditorRef.current = editor;
               }}
+              editorWillUnmount={() => {
+                cmEditorRef.current = null;
+              }}
               value={grafanaBoard}
               options={{
                 theme: 'material',

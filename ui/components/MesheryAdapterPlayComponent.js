@@ -31,7 +31,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';

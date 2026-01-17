@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';

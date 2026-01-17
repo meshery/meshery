@@ -1,7 +1,6 @@
 package design
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -9,10 +8,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-var update = flag.Bool("update", false, "update golden files")
-
 func TestDesignListCmd(t *testing.T) {
-
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")

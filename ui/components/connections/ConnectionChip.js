@@ -9,7 +9,11 @@ import BadgeAvatars from '../CustomAvatar';
 import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
-import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
+import {
+  CONNECTION_STATE_TO_TRANSITION_MAP,
+  CONNECTION_STATES,
+  CONTROLLER_STATES,
+} from '../../utils/Enum';
 import { CustomTooltip } from '@sistent/sistent';
 import {
   ChipWrapper,
@@ -226,29 +230,30 @@ const Default = ({ value }) => {
   );
 };
 
-function getStatusChip(status) {
+function getStatusChip(status, actionable) {
+  const value = actionable ? CONNECTION_STATE_TO_TRANSITION_MAP[status] : status;
   switch (status) {
     case 'ignored':
-      return <IgnoredStateChip value={status} />;
+      return <IgnoredStateChip value={value} />;
     case 'connected':
-      return <ConnectedStateChip value={status} />;
+      return <ConnectedStateChip value={value} />;
     case 'registered':
-      return <RegisteredStateChip value={status} />;
+      return <RegisteredStateChip value={value} />;
     case 'discovered':
-      return <DiscoveredStateChip value={status} />;
+      return <DiscoveredStateChip value={value} />;
     case 'deleted':
-      return <DeletedStateChip value={status} />;
+      return <DeletedStateChip value={value} />;
     case 'maintenance':
-      return <MaintainanceStateChip value={status} />;
+      return <MaintainanceStateChip value={value} />;
     case 'disconnected':
-      return <DisconnectedStateChip value={status} />;
+      return <DisconnectedStateChip value={value} />;
     case 'not found':
-      return <NotFoundStateChip value={status} />;
+      return <NotFoundStateChip value={value} />;
     default:
-      return <Default value={status} />;
+      return <Default value={value} />;
   }
 }
 
-export const ConnectionStateChip = ({ status }) => {
-  return <>{getStatusChip(status)}</>;
+export const ConnectionStateChip = ({ status, actionable }) => {
+  return <>{getStatusChip(status, actionable)}</>;
 };

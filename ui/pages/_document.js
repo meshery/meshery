@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import { createStyleRegistry } from 'styled-jsx';
+import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
 const registry = createStyleRegistry();
 const flush = registry.flush();
@@ -19,6 +20,12 @@ class MesheryDocument extends Document {
           {/* Preload Qanelas Soft font for loading screen */}
           <link
             rel="preload"
+            href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
+            as="font"
+            type="font/otf"
+            crossOrigin="anonymous"
+          />
+          <link
             href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
             as="font"
             type="font/otf"
@@ -73,16 +80,38 @@ class MesheryDocument extends Document {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
+          {/* Pre-React script */}
+          <script src="/loadingMessages.js"></script>
 
+          <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />
           <NextScript />
+
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                  (function () {
+                    const loaderId = "PRE_REACT_LOADER-text-message"
+
+                    try {
+                      var el = document.getElementById(loaderId)
+                      if (!el) return;
+
+                      el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                    } catch (e) {
+                      console.log("Failed to set loading message",e)
+                    }
+                  })();
+                `,
+            }}
+          />
         </body>
       </Html>
     );
   }
 }
 
-MesheryDocument.getInitialProps = (ctx) => {
+MesheryDocument.getInitialProps = async (ctx) => {
   // resolution order
   //
   // on the server:
@@ -107,26 +136,32 @@ MesheryDocument.getInitialProps = (ctx) => {
 
   // render app and page and get the context of the page with collected side effects.
   let pageContext;
-  const page = ctx.renderPage((Component) => {
-    const WrappedComponent = (props) => {
-      pageContext = props.pageContext;
-      return <Component {...props} />;
-    };
+  const originalRenderPage = ctx.renderPage;
+  ctx.renderPage = () =>
+    originalRenderPage({
+      enhanceComponent: (Component) => {
+        const WrappedComponent = (props) => {
+          pageContext = props.pageContext;
+          return <Component {...props} />;
+        };
 
-    WrappedComponent.propTypes = {
-      pageContext: PropTypes.object.isRequired,
-    };
+        WrappedComponent.propTypes = {
+          pageContext: PropTypes.object.isRequired,
+        };
 
-    return WrappedComponent;
-  });
+        return WrappedComponent;
+      },
+    });
+
+  const initialProps = await Document.getInitialProps(ctx);
 
   let css;
   // it might be undefined, e.g. after an error.
-  if (pageContext) {
+  if (pageContext && pageContext.sheetsRegistry) {
     css = pageContext.sheetsRegistry.toString();
   }
   return {
-    ...page,
+    ...initialProps,
     pageContext,
     // styles fragment is rendered after the app and page rendering finish.
     styles: (
@@ -134,9 +169,10 @@ MesheryDocument.getInitialProps = (ctx) => {
         <style
           id="jss-server-side"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: css }}
+          dangerouslySetInnerHTML={{ __html: css || '' }}
         />
         {flush || null}
+        {initialProps.styles}
       </React.Fragment>
     ),
   };

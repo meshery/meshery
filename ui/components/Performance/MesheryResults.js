@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CustomToolbarSelect from '../CustomToolbarSelect';

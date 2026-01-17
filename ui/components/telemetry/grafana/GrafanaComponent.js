@@ -14,7 +14,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { getCredentialByID } from '@/api/credentials';
-import { useUpdateConnectionMutation } from '@/rtk-query/connection';
+import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import {
   useConfigureGrafanaMutation,
   useGetGrafanaConfigQuery,
@@ -69,7 +69,7 @@ const GrafanaComponent = (props) => {
   //RTK Mutations: These does not use cache. why? Because they are mutations, they are not supposed to be cached.
   const [configureGrafana] = useConfigureGrafanaMutation();
   const [updateGrafanaBoards] = useUpdateGrafanaBoardsMutation();
-  const [updateConnection] = useUpdateConnectionMutation();
+  const [updateConnectionById] = useUpdateConnectionByIdMutation();
 
   const updateState = (newState) => {
     setState((prev) => ({ ...prev, ...newState }));
@@ -216,13 +216,17 @@ const GrafanaComponent = (props) => {
   };
 
   const handleGrafanaChipDelete = async () => {
+    const { connectionID } = state;
+    if (!connectionID) {
+      console.error('No connection ID available to delete');
+      return;
+    }
     updateProgress({ showProgress: true });
     try {
-      // Here we use a mutation to update the connection status.
-      // No payload is needed to reset; adjust as required by your API.
-      const result = await updateConnection({
-        connectionKind: CONNECTION_KINDS.GRAFANA,
-        connectionPayload: {},
+      // Update the connection status to deleted
+      const result = await updateConnectionById({
+        connectionId: connectionID,
+        body: { status: 'deleted' },
       }).unwrap();
       updateProgress({ showProgress: false });
       if (result !== undefined) {
@@ -235,6 +239,7 @@ const GrafanaComponent = (props) => {
           grafanaBoardSearch: '',
           grafanaBoards: [],
           selectedBoardsConfigs: [],
+          connectionID: '',
         }));
         dispatch(
           updateGrafanaConfig({

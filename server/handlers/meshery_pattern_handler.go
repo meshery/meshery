@@ -1862,7 +1862,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 
 		comp.Model = wc.Model
 		if wc.Model.Registrant.Status == "" {
-			comp.Model.Registrant.Status = connection.Registered
+			comp.Model.Registrant.Status = connection.ConnectionStatusRegistered
 		}
 		comp.Format = wc.Format
 		comp.Version = wc.Version

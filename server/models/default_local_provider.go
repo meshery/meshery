@@ -1117,8 +1117,8 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	return connectionCreated, nil
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
-	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind)
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
+	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind, connType, name)
 	if err != nil {
 		return nil, err
 	}
@@ -1126,11 +1126,7 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, pa
 }
 
 func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
-}
-
-func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	connection, err := l.ConnectionPersister.GetConnection(connectionID, kind)
+	connection, err := l.ConnectionPersister.GetConnection(connectionID, "")
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, http.StatusNotFound, err
@@ -1140,14 +1136,6 @@ func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connection
 	return connection, http.StatusOK, err
 }
 
-func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
-	return nil, ErrLocalProviderSupport
-}
-
-func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*connections.ConnectionsStatusPage, error) {
-	return nil, ErrLocalProviderSupport
-}
-
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	return l.ConnectionPersister.UpdateConnectionByID(connection)
 }
@@ -1155,13 +1143,12 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, connection *con
 func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusByID(connectionID, connectionStatus)
 	if err != nil {
-		fmt.Println("on update connection error", err)
 		return nil, http.StatusInternalServerError, err
 	}
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
@@ -1174,7 +1161,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		UpdatedAt:    time.Now(),
 		CredentialID: conn.CredentialID,
 	}
-	return l.UpdateConnection(req, &connection)
+	return l.UpdateConnection(nil, &connection)
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {

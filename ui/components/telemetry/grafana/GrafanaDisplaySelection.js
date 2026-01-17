@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { Chip, Box, styled } from '@sistent/sistent';
-import MUIDataTable from 'mui-datatables';
+import MUIDataTable from '@sistent/mui-datatables';
 
 const Root = styled(Box)(({ theme }) => ({
   padding: theme.spacing(5),

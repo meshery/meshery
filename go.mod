@@ -10,7 +10,7 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // replace github.com/meshery/schemas v0.8.92 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.54 => ../meshkit
+// replace github.com/meshery/meshkit => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
@@ -49,9 +49,9 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v0.8.63
+	github.com/meshery/meshkit v0.8.64
 	github.com/meshery/meshsync v0.8.26
-	github.com/meshery/schemas v0.8.96
+	github.com/meshery/schemas v0.8.116
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v1.1.0
 	github.com/open-policy-agent/opa v1.11.0

@@ -15,6 +15,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils/kubernetes"
@@ -38,6 +39,41 @@ type K8sContext struct {
 	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
 	ConnectionID       string     `json:"connection_id,omitempty" yaml:"connection_id,omitempty"`
+}
+
+// K8sContextFromConnection converts a kubernetes connection into a K8sContext.
+// Remote providers now return connections directly, but Meshery still expects K8sContext shapes in a few APIs.
+// token is the user auth token
+func K8sContextFromConnection(provider Provider, token string, connection *connections.Connection) (K8sContext, error) {
+	ctx := K8sContext{}
+	if connection == nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: connection is nil")
+	}
+
+	if connection.CredentialID == nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: missing credential_id")
+	}
+
+	credential, _, err := provider.GetCredentialByID(token, *connection.CredentialID)
+	if err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: failed to fetch credential: %w", err)
+	}
+
+	data, err := json.Marshal(connection.Metadata)
+	if err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: %w", err)
+	}
+	if err := json.Unmarshal(data, &ctx); err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: %w", err)
+	}
+
+	ctx.ConnectionID = connection.ID.String()
+	ctx.Auth, _ = credential.Secret["auth"].(map[string]interface{})
+	ctx.Cluster, _ = credential.Secret["cluster"].(map[string]interface{})
+	ctx.CreatedAt = &connection.CreatedAt
+	ctx.UpdatedAt = &connection.UpdatedAt
+
+	return ctx, nil
 }
 
 type InternalKubeConfig struct {

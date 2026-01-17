@@ -20,14 +20,14 @@ type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handl
 // Caps lock values are left for compatibility for now,
 // update later on to Pascal case everywhere
 const (
-	DISCOVERED   ConnectionStatus = schemasConnection.Discovered
-	REGISTERED   ConnectionStatus = schemasConnection.Registered
-	CONNECTED    ConnectionStatus = schemasConnection.Connected
-	IGNORED      ConnectionStatus = schemasConnection.Ignored
-	MAINTENANCE  ConnectionStatus = schemasConnection.Maintenance
-	DISCONNECTED ConnectionStatus = schemasConnection.Disconnected
-	DELETED      ConnectionStatus = schemasConnection.Deleted
-	NOTFOUND     ConnectionStatus = schemasConnection.NotFound
+	DISCOVERED   ConnectionStatus = schemasConnection.ConnectionStatusDiscovered
+	REGISTERED   ConnectionStatus = schemasConnection.ConnectionStatusRegistered
+	CONNECTED    ConnectionStatus = schemasConnection.ConnectionStatusConnected
+	IGNORED      ConnectionStatus = schemasConnection.ConnectionStatusIgnored
+	MAINTENANCE  ConnectionStatus = schemasConnection.ConnectionStatusMaintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.ConnectionStatusDisconnected
+	DELETED      ConnectionStatus = schemasConnection.ConnectionStatusDeleted
+	NOTFOUND     ConnectionStatus = schemasConnection.ConnectionStatusNotFound
 )
 
 type ConnectionRegisterPayload struct {
