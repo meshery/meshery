@@ -525,6 +525,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 # Testing - UI
 #-----------------------------------------------------------------------------
+.PHONY: ui-test-setup ui-test ui-test-e2e-ci
 ## Install Playwright dependencies for UI tests
 ui-test-setup:
 	cd ui; npx playwright install chromium --with-deps; cd ..
@@ -542,6 +543,7 @@ ui-test-e2e-ci:
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI 
 #-----------------------------------------------------------------------------
+.PHONY: mesheryctl-tests
 ### Run all Mesheryctl integration tests (Golang)
 mesheryctl-tests-int:
 	cd mesheryctl && go test ./...
