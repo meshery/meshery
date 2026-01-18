@@ -65,7 +65,7 @@ jobs:
       - name: Build mesheryctl and start Meshery
         run: |
           make build && \
-          ./mesheryctl system start --provider ${{ matrix.platform }} --skip-browser --skip-update
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
         shell: bash
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
