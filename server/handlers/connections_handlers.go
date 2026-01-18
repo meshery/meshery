@@ -455,7 +455,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
-			}(inst, status, *k8scontext)
+			}(inst, status, k8scontext)
 		}
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
