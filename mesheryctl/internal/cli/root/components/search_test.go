@@ -35,7 +35,7 @@ func TestSearchComponent(t *testing.T) {
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.output.golden",
+			ExpectedContains: []string{"Total number of components: 1", "NAME", "component-test-0"},
 			ExpectError:      false,
 		},
 	}

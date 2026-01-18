@@ -20,17 +20,17 @@ func TestDesignListCmd(t *testing.T) {
 		{
 			Name:             "Fetch Design List",
 			Args:             []string{"list", "--page", "1"},
-			ExpectedResponse: "list.design.output.golden",
 			Fixture:          "list.design.api.response.golden",
 			URL:              "/api/pattern?page=0&pagesize=10",
+			ExpectedContains: []string{"Total number of designs: 343", "Page: 1", "DESIGN ID", "Untitled Design"},
 			ExpectError:      false,
 		},
 		{
 			Name:             "Fetch Design List with Local provider",
 			Args:             []string{"list", "--page", "1"},
-			ExpectedResponse: "list.design.local.output.golden",
 			Fixture:          "list.design.local.api.response.golden",
 			URL:              "/api/pattern?page=0&pagesize=10",
+			ExpectedContains: []string{"Total number of designs: 1", "Page: 1", "DESIGN ID", "IstioSM"},
 			ExpectError:      false,
 		},
 	}

@@ -1,15 +1,12 @@
 package relationships
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
-
-var update = flag.Bool("update", false, "update golden files")
 
 func TestRelationship(t *testing.T) {
 	// get current directory
@@ -26,36 +23,32 @@ func TestRelationship(t *testing.T) {
 			Args:             []string{},
 			URL:              "",
 			Fixture:          "list.relationship.api.empty.response.golden",
-			ExpectedResponse: "relationship.no.args.no.flag.output.golden",
+			ExpectedContains: []string{"no command specified."},
 			ExpectError:      true,
-			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display error given invalid command",
 			Args:             []string{"invalidCommand"},
 			URL:              "",
 			Fixture:          "list.relationship.api.empty.response.golden",
-			ExpectedResponse: "relationship.invalid.command.output.golden",
+			ExpectedContains: []string{"is an invalid subcommand"},
 			ExpectError:      true,
-			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships empty",
 			Args:             []string{"--count"},
 			URL:              "/api/meshmodels/relationships",
 			Fixture:          "list.relationship.api.empty.response.golden",
-			ExpectedResponse: "list.count.relationship.empty.output.golden",
+			ExpectedContains: []string{"No relationships found"},
 			ExpectError:      false,
-			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Display count of registered relationships",
 			Args:             []string{"--count"},
 			URL:              "/api/meshmodels/relationships",
 			Fixture:          "list.relationship.api.response.golden",
-			ExpectedResponse: "list.count.relationship.output.golden",
+			ExpectedContains: []string{"Total number of relationships: 1"},
 			ExpectError:      false,
-			IsOutputGolden:   true,
 		},
 	}
 

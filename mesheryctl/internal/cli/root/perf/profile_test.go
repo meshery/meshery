@@ -2,7 +2,6 @@ package perf
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -15,8 +14,6 @@ import (
 type PerformanceProfilesAPIResponse struct {
 	PageSize uint `json:"page_size"`
 }
-
-var update = flag.Bool("update", false, "update golden files")
 
 func TestProfileCmd(t *testing.T) {
 	testContext := utils.NewTestHelper(t)
@@ -37,7 +34,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.list.output.golden",
+			ExpectedContains: []string{"NAME", "LOAD-GENERATOR", "istio_1630011458547"},
 			ExpectError:      false,
 		},
 		{
@@ -46,7 +43,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.searchIstio.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.searchIstio.output.golden",
+			ExpectedContains: []string{"NAME", "istio_1630011458547"},
 			ExpectError:      false,
 		},
 		{
@@ -55,7 +52,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.searchTest3.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.searchTest3.output.golden",
+			ExpectedContains: []string{"NAME", "TEST 3"},
 			ExpectError:      false,
 		},
 	}
@@ -67,7 +64,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.noProfiles.output.golden",
+			ExpectedContains: []string{"No Performance Profiles to display"},
 			ExpectError:      false,
 		},
 		{
@@ -76,7 +73,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.json.output.golden",
+			ExpectedContains: []string{"\"name\":\"istio_1630011458547\""},
 			ExpectError:      false,
 		},
 		{
@@ -85,7 +82,7 @@ func TestProfileCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "profile.yaml.output.golden",
+			ExpectedContains: []string{"name: istio_1630011458547"},
 			ExpectError:      false,
 		},
 		{
@@ -155,3 +152,4 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
 }
+

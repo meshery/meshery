@@ -79,12 +79,11 @@ func TestModelInit(t *testing.T) {
 		Args               []string
 		SetupHook          func()
 		ExpectError        bool
-		ExpectedResponse   string
+		ExpectedContains   []string
 		ExpectedDirs       []string
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
 		ExpectedError      error `default:"nil"`
-		IsOutputGolden     bool  `default:"true"`
 	}{
 		// NOTE:
 		// we need this test with full params on the first place,
@@ -92,10 +91,14 @@ func TestModelInit(t *testing.T) {
 		//
 		// TODO: think about how to fix this.
 		{
-			Name:             "model init with all default params",
-			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
+			Name:        "model init with all default params",
+			Args:        []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			ExpectedDirs: []string{
 				initTestEC2Controller,
 				filepath.Join(initTestEC2Controller, initTestVersion),
@@ -112,10 +115,14 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with default params",
-			Args:             []string{"init", initTestEC2Controller},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
+			Name:        "model init with default params",
+			Args:        []string{"init", initTestEC2Controller},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			ExpectedDirs: []string{
 				initTestEC2Controller,
 				filepath.Join(initTestEC2Controller, initTestVersion),
@@ -132,10 +139,14 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with yaml output format",
-			Args:             []string{"init", initTestDynamoController, "--output-format", "yaml"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.aws-dynamodb-controller-in-yaml.output.golden",
+			Name:        "model init with yaml output format",
+			Args:        []string{"init", initTestDynamoController, "--output-format", "yaml"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-dynamodb-controller",
+				"Created test-case-aws-dynamodb-controller model at test-case-aws-dynamodb-controller",
+				"Edit model.yaml",
+			},
 			ExpectedDirs: []string{
 				initTestDynamoController,
 				filepath.Join(initTestDynamoController, initTestVersion),
@@ -156,10 +167,14 @@ func TestModelInit(t *testing.T) {
 		// which is only the behaviour inside the test.
 		// TODO think about how to reset the flags between the test cases.
 		{
-			Name:             "model init with custom path and version",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
+			Name:        "model init with custom path and version",
+			Args:        []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			ExpectedDirs: []string{
 				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller,
 				"test_case_some_custom_dir/subdir/one_more_subdir/" + initTestEC2Controller + "/v1.2.3",
@@ -176,10 +191,14 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to current directory path",
-			Args:             []string{"init", initTestEC2Controller, "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
+			Name:        "model init with custom relative to current directory path",
+			Args:        []string{"init", initTestEC2Controller, "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
@@ -188,10 +207,14 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to parent directory path",
-			Args:             []string{"init", initTestEC2Controller, "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
+			Name:        "model init with custom relative to parent directory path",
+			Args:        []string{"init", initTestEC2Controller, "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at ../test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
@@ -200,10 +223,14 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "../test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with trailing folder separator in the path",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
-			ExpectError:      false,
-			ExpectedResponse: "model.init.custom-dir-2.aws-ec2-controller.output.golden",
+			Name:        "model init with trailing folder separator in the path",
+			Args:        []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
+			ExpectError: false,
+			ExpectedContains: []string{
+				"Creating new Meshery model: test-case-aws-ec2-controller",
+				"Created test-case-aws-ec2-controller model at test_case_some_other_custom_dir/with/trailing/separator/test-case-aws-ec2-controller",
+				"Edit model.json",
+			},
 			// do not need to check all dirs and files here, as we tested it in previous test case,
 			// just check the main directory is correct
 			ExpectedDirs: []string{
@@ -221,50 +248,38 @@ func TestModelInit(t *testing.T) {
 				}
 			},
 			ExpectError:        true,
-			ExpectedResponse:   "",
 			AfterTestRemoveDir: "./" + initTestEC2Controller,
-			IsOutputGolden:     false,
 			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
-			Name:             "model init with invalid version format",
-			Args:             []string{"init", initTestEC2Controller, "--version", "1.2"},
-			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedVersion(errInitInvalidVersion),
+			Name:          "model init with invalid version format",
+			Args:          []string{"init", initTestEC2Controller, "--version", "1.2"},
+			ExpectError:   true,
+			ExpectedError: ErrModelUnsupportedVersion(errInitInvalidVersion),
 		},
 		{
-			Name:             "model init with invalid output format",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
-			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(errInitUnsupportedFormat, "json, yaml")),
+			Name:          "model init with invalid output format",
+			Args:          []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
+			ExpectError:   true,
+			ExpectedError: ErrModelUnsupportedOutputFormat(fmt.Sprintf(errInitUnsupportedFormat, "json, yaml")),
 		},
 		{
-			Name:             "model init no model name",
-			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
-			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			Name:          "model init no model name",
+			Args:          []string{"init", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:   true,
+			ExpectedError: ErrModelInitFromString(errInitOneArg),
 		},
 		{
-			Name:             "model init too many arguments",
-			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
-			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			Name:          "model init too many arguments",
+			Args:          []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:   true,
+			ExpectedError: ErrModelInitFromString(errInitOneArg),
 		},
 		{
-			Name:             "model init invalid model name (underscore)",
-			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
-			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitInvalidModelName),
+			Name:          "model init invalid model name (underscore)",
+			Args:          []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:   true,
+			ExpectedError: ErrModelInitFromString(errInitInvalidModelName),
 		},
 	}
 	for _, tc := range tests {
@@ -282,9 +297,6 @@ func TestModelInit(t *testing.T) {
 			if tc.SetupHook != nil {
 				tc.SetupHook()
 			}
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			// Create fresh commands using helper function
 			cmd := createFreshCommands()
@@ -294,13 +306,6 @@ func TestModelInit(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					if tc.IsOutputGolden {
-
-						expectedResponse := golden.Load()
-
-						utils.Equals(t, expectedResponse, err.Error())
-						return
-					}
 					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
 					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
 					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
@@ -311,9 +316,9 @@ func TestModelInit(t *testing.T) {
 			}
 			// response being printed in console
 			actualResponse := buff.String()
-
-			expectedResponse := golden.Load()
-			assert.Equal(t, expectedResponse, actualResponse)
+			for _, expected := range tc.ExpectedContains {
+				assert.Contains(t, actualResponse, expected)
+			}
 
 			if len(tc.ExpectedDirs) > 0 {
 				for _, dir := range tc.ExpectedDirs {

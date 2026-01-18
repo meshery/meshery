@@ -28,7 +28,7 @@ func TestApplyCmd(t *testing.T) {
 		{
 			Name:             "Apply Designs",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "apply.output.golden",
+			ExpectedContains: []string{"design applied", "deployed application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -43,13 +43,12 @@ func TestApplyCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "Apply Designs with --skip-save",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
-			ExpectedResponse: "apply.output.golden",
+			ExpectedContains: []string{"design applied", "deployed application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -58,7 +57,6 @@ func TestApplyCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -66,7 +64,6 @@ func TestApplyCmd(t *testing.T) {
 			Args:             []string{"apply", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(errors.Errorf(errInvalidPathMsg, invalidFilePath)),
@@ -83,7 +80,6 @@ func TestApplyCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError: func() error {

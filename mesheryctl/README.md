@@ -16,6 +16,10 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
 
+## Running tests
+
+See [mesheryctl/TESTING.md](TESTING.md) for how to run unit tests, targeted package tests, and coverage.
+
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
 Refer the [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.

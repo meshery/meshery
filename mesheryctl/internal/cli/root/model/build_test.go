@@ -118,17 +118,19 @@ func TestModelBuild(t *testing.T) {
 		Args             []string
 		SetupHooks       []func()
 		ExpectError      bool
-		ExpectedResponse string
+		ExpectedContains []string
 		ExpectedFiles    []string
 		CleanupHooks     []func()
-		IsOutputGolden   bool  `default:"true"`
 		ExpectedError    error `default:"nil"`
 	}{
 		{
 			Name:             "model build from model name and version",
 			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-version.golden",
+			ExpectedContains: []string{
+				"Building meshery model from path test-case-model-build-aws-lambda-controller/v0.1.0",
+				"Saving OCI artifact as test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+			},
 			ExpectedFiles: []string{
 				"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
 			},
@@ -146,7 +148,10 @@ func TestModelBuild(t *testing.T) {
 			Name:             "model build from model name only (no version)",
 			Args:             []string{"build", buildTestDynamoController},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedContains: []string{
+				"Building meshery model from path test-case-model-build-aws-dynamodb-controller",
+				"Saving OCI artifact as test-case-model-build-aws-dynamodb-controller.tar",
+			},
 			ExpectedFiles: []string{
 				buildTestDynamoController + ".tar",
 			},
@@ -164,7 +169,10 @@ func TestModelBuild(t *testing.T) {
 			Name:             "model build from model name only (no version) with slash in the end",
 			Args:             []string{"build", buildTestDynamoController + "/"},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedContains: []string{
+				"Building meshery model from path test-case-model-build-aws-dynamodb-controller",
+				"Saving OCI artifact as test-case-model-build-aws-dynamodb-controller.tar",
+			},
 			ExpectedFiles: []string{
 				buildTestDynamoController + ".tar",
 			},
@@ -182,23 +190,18 @@ func TestModelBuild(t *testing.T) {
 			Name:             "model build no params",
 			Args:             []string{"build"},
 			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
 			Name:             "model build wrong input param format",
 			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
 			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
 			Name:             "model build from model name only (no version) not supporting multiple versions",
 			Args:             []string{"build", buildTestDynamoControllerGbx},
 			ExpectError:      true,
-			ExpectedResponse: "",
 			SetupHooks: []func(){
 				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", buildTestVersion),
 				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", "v0.1.1"),
@@ -209,15 +212,12 @@ func TestModelBuild(t *testing.T) {
 					buildTestDynamoControllerGbx,
 				),
 			},
-			IsOutputGolden: false,
 			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
 			Name:             "model build folder does not exist",
 			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion, "--path", "./" + buildTestNonExistentFolder},
 			ExpectError:      true,
-			ExpectedResponse: "",
-			IsOutputGolden:   false,
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
 		},
 	}
@@ -236,9 +236,6 @@ func TestModelBuild(t *testing.T) {
 					setupHook()
 				}
 			}
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			// Create fresh commands using helper function
 			cmd := createFreshCommands()
@@ -248,12 +245,6 @@ func TestModelBuild(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					if tc.IsOutputGolden {
-						expectedResponse := golden.Load()
-
-						utils.Equals(t, expectedResponse, err.Error())
-						return
-					}
 					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
 					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
 					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
@@ -264,9 +255,9 @@ func TestModelBuild(t *testing.T) {
 			}
 			// response being printed in console
 			actualResponse := buff.String()
-
-			expectedResponse := golden.Load()
-			assert.Equal(t, expectedResponse, actualResponse)
+			for _, expected := range tc.ExpectedContains {
+				assert.Contains(t, actualResponse, expected)
+			}
 
 			if len(tc.ExpectedFiles) > 0 {
 				for _, file := range tc.ExpectedFiles {

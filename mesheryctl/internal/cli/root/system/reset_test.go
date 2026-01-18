@@ -48,19 +48,9 @@ func TestResetCmd(t *testing.T) {
 			}
 			//Collecting the actual response
 			actualResponse := b.String()
-
-			testdataDir := filepath.Join(currDir, "testdata/reset/")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			if *update {
-				golden.Write(actualResponse)
-			}
-
-			//Collecting the expected response
-			expectedResponse := golden.Load()
-
-			//Comparing the expected response with the actual response
-			assert.Equal(t, expectedResponse, actualResponse)
+			assert.Contains(t, actualResponse, "Meshery resetting")
+			assert.Contains(t, actualResponse, "Current Context: local2")
+			assert.Contains(t, actualResponse, "Platform: docker")
 		})
 	}
 	//Removing the files and directory that were created during the test

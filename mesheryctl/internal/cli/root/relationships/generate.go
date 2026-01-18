@@ -54,12 +54,23 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		srv, err := meshkit.NewSheetSRV(spreadsheeetCred)
-		if err != nil {
+		if err != nil || srv == nil {
+			if err == nil {
+				err = errors.New("failed to initialize Google Sheets service")
+			}
 			utils.Log.Error(err)
 			return nil
 		}
+		if srv.Spreadsheets == nil {
+			utils.Log.Error(errors.New("failed to initialize Google Sheets Spreadsheets API"))
+			return nil
+		}
+		if srv.Spreadsheets.Values == nil {
+			utils.Log.Error(errors.New("failed to initialize Google Sheets Values API"))
+			return nil
+		}
 		resp, err := srv.Spreadsheets.Values.Get(spreadsheeetID, "Relationships").Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
+		if err != nil || resp == nil || resp.HTTPStatusCode != 200 {
 			utils.Log.Error(err)
 			return nil
 		}

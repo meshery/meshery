@@ -12,6 +12,11 @@ display-title: false
 
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{site.baseurl}}/extensibility/api). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
+{% include alert.html
+  type="info"
+  title="Types of Meshery CLI Tests"
+  content='Meshery CLI testing is split between integration tests and end-to-end tests. Integration tests focus on testing individual components of `mesheryctl` in isolation using Go testing as the framework, while end-to-end tests focus on testing the entire `mesheryctl` workflow from start to finish using BATS as the framework.' %}
+
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
 
 The end-to-end tests for `mesheryctl` are designed to ensure that the CLI is working as expected and that it is compatible with the various cloud native infrastructure and public cloud services that Meshery supports. These tests are run automatically on every pull request to ensure that any changes made to the code do not break the existing functionality of the CLI.

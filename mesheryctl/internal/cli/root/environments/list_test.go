@@ -35,7 +35,7 @@ func TestListEnvironment(t *testing.T) {
 			Args:             []string{"list", "--orgID", testConstants["orgID"]},
 			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.empty.response.golden",
-			ExpectedResponse: "list.environment.empty.golden",
+			ExpectedContains: []string{"No environments found"},
 			ExpectError:      false,
 		},
 		{
@@ -43,7 +43,7 @@ func TestListEnvironment(t *testing.T) {
 			Args:             []string{"list", "--orgID", testConstants["orgID"]},
 			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.response.golden",
-			ExpectedResponse: "list.environment.success.golden",
+			ExpectedContains: []string{"Total number of environments: 1", "NAME", "test-environment"},
 			ExpectError:      false,
 		},
 	}

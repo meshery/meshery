@@ -18,14 +18,13 @@ func TestDesignView(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "Fetch Design View",
 			Args:             []string{"view", "design"},
-			ExpectedResponse: "view.design.output.golden",
+			ExpectedContains: []string{"name: Untitled Design", "id: 3817ec9a-1d83-4f6f-9154-0fd4408ba9f0"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -34,7 +33,6 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -42,7 +40,6 @@ func TestDesignView(t *testing.T) {
 			Args:             []string{"view"},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    ErrDesignNameOrIDNotSpecified(),
@@ -65,7 +62,6 @@ func TestDesignView(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(),

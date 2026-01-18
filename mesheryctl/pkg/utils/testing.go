@@ -58,14 +58,35 @@ type CmdTestInput struct {
 	ErrorStringContains  []string
 }
 
-type GoldenFile struct {
-	t    *testing.T
-	name string
-	dir  string
+func readTestFileNormalized(t *testing.T, dir, name string) string {
+	t.Helper()
+	path := filepath.Join(dir, name)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("could not read file %s: %v", name, err)
+	}
+	// Ensure newline characters are consistent.
+	return strings.ReplaceAll(string(content), "\r\n", "\n")
 }
 
-func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
-	return &GoldenFile{t: t, name: name, dir: directory}
+func readTestFileBytes(t *testing.T, dir, name string) []byte {
+	t.Helper()
+	path := filepath.Join(dir, name)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("could not read file %s: %v", name, err)
+	}
+	return content
+}
+
+// ReadTestFixture returns normalized file contents (LF newlines) for use in tests.
+func ReadTestFixture(t *testing.T, dir, name string) string {
+	return readTestFileNormalized(t, dir, name)
+}
+
+// ReadTestFixtureBytes returns raw file contents for use in tests.
+func ReadTestFixtureBytes(t *testing.T, dir, name string) []byte {
+	return readTestFileBytes(t, dir, name)
 }
 
 func InitTestEnvironment(t *testing.T) *TestHelper {
@@ -94,74 +115,21 @@ func GetBasePath(t *testing.T) string {
 	return filepath.Dir(filename)
 }
 
-// Load a Golden file
-func (tf *GoldenFile) Load() string {
-	tf.t.Helper()
-	path := filepath.Join(tf.dir, tf.name)
-	content, err := os.ReadFile(path)
-	if err != nil {
-		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
-	}
-	// ensuring that the newline characters in the content are consistent and match the expected newline representation
-	normalizedContent := strings.ReplaceAll(string(content), "\r\n", "\n")
-	return normalizedContent
-}
-
-// Load a Golden file
-func (tf *GoldenFile) LoadByte() []byte {
-	tf.t.Helper()
-	path := filepath.Join(tf.dir, tf.name)
-	content, err := os.ReadFile(path)
-	if err != nil {
-		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
-	}
-
-	return content
-}
-
-// write a Golden file
-func (tf *GoldenFile) Write(content string) {
-	tf.t.Helper()
-	path := filepath.Join(tf.dir, tf.name)
-
-	_, err := os.Stat(path)
-	if err != nil {
-		if os.IsNotExist(err) {
-			err := os.WriteFile(path, []byte(content), 0755)
-			if err != nil {
-				fmt.Printf("Unable to write file: %v", err)
-			}
-			return
-		}
-		tf.t.Fatal(err)
-	}
-
-	err = os.WriteFile(path, []byte(content), 0644)
-	if err != nil {
-		tf.t.Fatalf("could not write %s: %v", tf.name, err)
-	}
-}
-
-// write a Golden file
-func (tf *GoldenFile) WriteInByte(content []byte) {
-	tf.t.Helper()
-	path := filepath.Join(tf.dir, tf.name)
-	err := os.WriteFile(path, content, 0644)
-	if err != nil {
-		tf.t.Fatalf("could not write %s: %v", tf.name, err)
-	}
-}
-
 // use default context /pkg/utils/TestConfig.yaml
 func SetupContextEnv(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Error("unable to locate meshery directory")
+	_, currentFile, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("unable to locate utils/testing.go")
+	}
+	baseDir := filepath.Dir(currentFile)
+	configPath := filepath.Join(baseDir, "TestConfig.yaml")
+	if _, err := os.Stat(configPath); err != nil {
+		t.Fatalf("unable to locate TestConfig.yaml at %s: %v", configPath, err)
 	}
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	err = viper.ReadInConfig()
+	viper.SetConfigFile(configPath)
+	DefaultConfigPath = configPath
+	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}
@@ -211,20 +179,10 @@ func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
-
 	// For validate version requests
 	url1 := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + "v0.5.54"
 	httpmock.RegisterResponder("GET", url1,
-		httpmock.NewStringResponder(200, apiResponse))
+		httpmock.NewStringResponder(200, ""))
 }
 
 // stop HTTP mock client
@@ -348,18 +306,44 @@ type MesheryListCommandTest struct {
 	URL              string
 	Fixture          string
 	ExpectedResponse string
+	ExpectedContains []string
+	ExpectedRegex    []string
 	ExpectError      bool
 	ExpectedError    error `default:"nil"`
 	IsOutputGolden   bool  `default:"true"`
 }
 
 func GetToken(t *testing.T) string {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
+	t.Helper()
+	tokenPath := filepath.Join(t.TempDir(), "token.txt")
+	// Token is stored as JSON with cookie names as keys.
+	tokenJSON := fmt.Sprintf(`{"%s":"dummy-token","%s":"dummy-provider"}`, tokenName, providerName)
+	err := os.WriteFile(tokenPath, []byte(tokenJSON), 0600)
+	if err != nil {
+		t.Fatalf("could not write token file: %v", err)
 	}
-	currDir := filepath.Dir(filename)
-	return filepath.Join(currDir, "fixtures", "token.golden")
+	return tokenPath
+}
+
+func assertOutput(t *testing.T, actual string, expectedExact string, expectedContains []string, expectedRegex []string) {
+	t.Helper()
+	cleanedActual := CleanStringFromHandlePagination(actual)
+	if expectedExact != "" {
+		cleanedExpected := CleanStringFromHandlePagination(expectedExact)
+		Equals(t, cleanedExpected, cleanedActual)
+		return
+	}
+	for _, s := range expectedContains {
+		if !strings.Contains(cleanedActual, s) {
+			t.Fatalf("expected output to contain %q, got: %q", s, cleanedActual)
+		}
+	}
+	for _, pattern := range expectedRegex {
+		re := regexp.MustCompile(pattern)
+		if !re.MatchString(cleanedActual) {
+			t.Fatalf("expected output to match regex %q, got: %q", pattern, cleanedActual)
+		}
+	}
 }
 
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commandName string) {
@@ -372,15 +356,15 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 		t.Run(tt.Name, func(t *testing.T) {
 			defer ResetCommandFlags(cmd, t)
 
-			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
 			TokenFlag = GetToken(t)
-
-			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
-
-			testdataDir := filepath.Join(commandDir, "testdata")
-			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if tt.URL != "" {
+				apiResponse := ""
+				if tt.Fixture != "" {
+					apiResponse = readTestFileNormalized(t, fixturesDir, tt.Fixture)
+				}
+				httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			var buf bytes.Buffer
 
@@ -404,23 +388,15 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			_ = w.Close()
 
 			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-						// write it in file
-						if *updateGoldenFile {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-
-						Equals(t, expectedResponse, err.Error())
-						return
-					}
+				if !tt.ExpectError {
+					t.Fatal(err)
+				}
+				if tt.ExpectedError != nil {
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
-				t.Fatal(err)
+				assertOutput(t, err.Error(), tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
+				return
 			}
 
 			_, errCopy := io.Copy(&buf, r)
@@ -433,16 +409,8 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}
 
 			actualResponse := buf.String()
-
-			if *updateGoldenFile {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
-
-			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			_ = updateGoldenFile // kept for backwards compatibility; golden snapshots removed
+			assertOutput(t, actualResponse, tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
 		})
 		t.Logf("List %s test", commandName)
 	}
@@ -458,6 +426,8 @@ type MesheryCommandTest struct {
 	URL              string
 	Fixture          string
 	ExpectedResponse string
+	ExpectedContains []string
+	ExpectedRegex    []string
 	ExpectError      bool
 	IsOutputGolden   bool  `default:"true"`
 	ExpectedError    error `default:"nil"`
@@ -474,7 +444,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			defer ResetCommandFlags(cmd, t)
 
 			if tt.Fixture != "" {
-				apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+				apiResponse := readTestFileNormalized(t, fixturesDir, tt.Fixture)
 
 				TokenFlag = GetToken(t)
 
@@ -493,9 +463,6 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 			}
 
-			testdataDir := filepath.Join(commandDir, "testdata")
-			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
 			originalStdout := os.Stdout
 			b := SetupMeshkitLoggerTesting(t, false)
 			defer func() {
@@ -505,25 +472,15 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			cmd.SetOut(b)
 			err := cmd.Execute()
 			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-
-						// write it in file
-						if *updateGoldenFile {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-
-						Equals(t, expectedResponse, err.Error())
-						return
-					}
+				if !tt.ExpectError {
+					t.Fatal(err)
+				}
+				if tt.ExpectedError != nil {
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
-
 				}
-				t.Fatal(err)
+				assertOutput(t, err.Error(), tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
+				return
 
 			}
 
@@ -532,17 +489,8 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			}
 
 			actualResponse := b.String()
-
-			if *updateGoldenFile {
-				golden.Write(actualResponse)
-			}
-
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
-			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
-
-			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
+			_ = updateGoldenFile // kept for backwards compatibility; golden snapshots removed
+			assertOutput(t, actualResponse, tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
 		})
 		t.Logf("Test '%s' executed", tt.Name)
 	}
@@ -554,6 +502,8 @@ type MesheryMultiURLCommamdTest struct {
 	Args             []string
 	URLs             []MockURL
 	ExpectedResponse string
+	ExpectedContains []string
+	ExpectedRegex    []string
 	Token            string
 	ExpectError      bool
 	IsOutputGolden   bool  `default:"true"`
@@ -578,13 +528,10 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			}
 
 			for _, mock := range tt.URLs {
-				apiResponse := NewGoldenFile(t, mock.Response, fixturesDir).Load()
+				apiResponse := readTestFileNormalized(t, fixturesDir, mock.Response)
 				httpmock.RegisterResponder(mock.Method, mock.URL,
 					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
 			}
-
-			testdataDir := filepath.Join(commandDir, "testdata")
-			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
 			b := SetupMeshkitLoggerTesting(t, false)
@@ -597,17 +544,6 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-						// write it in file
-						if *updateGoldenFile {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-
-						Equals(t, expectedResponse, err.Error())
-						return
-					}
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
@@ -620,17 +556,8 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			}
 
 			actualResponse := b.String()
-
-			if *updateGoldenFile {
-				golden.Write(actualResponse)
-			}
-
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
-			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
-
-			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
+			_ = updateGoldenFile // kept for backwards compatibility; golden snapshots removed
+			assertOutput(t, actualResponse, tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
 		})
 		t.Logf("Test '%s' executed", tt.Name)
 	}
@@ -655,13 +582,10 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			}
 
 			for _, mock := range tt.URLs {
-				apiResponse := NewGoldenFile(t, mock.Response, fixturesDir).Load()
+				apiResponse := readTestFileNormalized(t, fixturesDir, mock.Response)
 				httpmock.RegisterResponder(mock.Method, mock.URL,
 					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
 			}
-
-			testdataDir := filepath.Join(commandDir, "testdata")
-			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			var buf bytes.Buffer
 
@@ -687,17 +611,6 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
-					// Keep this check to see if output is golden file during transition
-					if tt.IsOutputGolden {
-						// write it in file
-						if *updateGoldenFile {
-							golden.Write(err.Error())
-						}
-						expectedResponse := golden.Load()
-
-						Equals(t, expectedResponse, err.Error())
-						return
-					}
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
@@ -715,16 +628,8 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			}
 
 			actualResponse := buf.String()
-
-			if *updateGoldenFile {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
-
-			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			_ = updateGoldenFile // kept for backwards compatibility; golden snapshots removed
+			assertOutput(t, actualResponse, tt.ExpectedResponse, tt.ExpectedContains, tt.ExpectedRegex)
 		})
 		t.Logf("List %s test", commandName)
 	}

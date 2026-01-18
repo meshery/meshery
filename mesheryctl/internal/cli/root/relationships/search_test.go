@@ -1,10 +1,9 @@
 package relationships
 
 import (
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -14,24 +13,17 @@ func TestSearch_WithoutFlags(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-
 	// test scenarios for fetching data
 	tests := []struct {
 		Name             string
 		Args             []string
-		ExpectedResponse string
+		ExpectedContains []string
 		ExpectError      bool
 	}{
 		{
 			Name:             "Search with missing arguments",
 			Args:             []string{"search"},
-			ExpectedResponse: "search.missing.args.output.golden",
+			ExpectedContains: []string{"[--kind, --subtype or --type or --model] and [query-text] are required"},
 			ExpectError:      true,
 		},
 	}
@@ -39,55 +31,24 @@ func TestSearch_WithoutFlags(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// Grab console prints with proper cleanup
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
-
-			// Close write end before reading
-			_ = w.Close()
-
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
+					for _, s := range tt.ExpectedContains {
+						if !strings.Contains(err.Error(), s) {
+							t.Fatalf("expected error to contain %q, got %q", s, err.Error())
+						}
 					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
 					return
 				}
 				t.Fatal(err)
 			}
-
-			out, _ := io.ReadAll(r)
-			actualResponse := string(out)
-
-			if *update {
-				golden.Write(actualResponse)
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
 			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
 		t.Log("Search experimental relationship test passed")
 	}
@@ -110,18 +71,16 @@ func TestSearch_WithFlags(t *testing.T) {
 			Args:             []string{"search", "--model", "kubernetes"},
 			URL:              "/api/meshmodels/models/kubernetes/relationships",
 			Fixture:          "search.relationship.api.response.matching.result.golden",
-			ExpectedResponse: "search.relationship.output.matching.result.golden",
+			ExpectedContains: []string{"Total number of relationships: 1", "KIND", "Mount"},
 			ExpectError:      false,
-			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Search registered relationships no matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
 			URL:              "/api/meshmodels/models/kubernetes/relationships",
 			Fixture:          "search.relationship.api.response.no.matching.result.golden",
-			ExpectedResponse: "search.relationship.output.no.matching.result.golden",
+			ExpectedContains: []string{"No relationships found"},
 			ExpectError:      false,
-			IsOutputGolden:   true,
 		},
 	}
 

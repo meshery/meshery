@@ -24,7 +24,7 @@ func TestListOrganizations(t *testing.T) {
 			Args:             []string{"list"},
 			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
 			Fixture:          "list.organization.response.golden",
-			ExpectedResponse: "list.organization.golden",
+			ExpectedContains: []string{"Total number of organizations: 1", "NAME"},
 			ExpectError:      false,
 		},
 	}

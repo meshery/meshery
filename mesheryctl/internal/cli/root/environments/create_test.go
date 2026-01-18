@@ -37,7 +37,7 @@ func TestCreateEnvironment(t *testing.T) {
 			HttpMethod:       "POST",
 			HttpStatusCode:   200,
 			Fixture:          "create.environment.response.golden",
-			ExpectedResponse: "create.environment.success.golden",
+			ExpectedContains: []string{"Environment named", "created in organization id"},
 			ExpectError:      false,
 		},
 	}

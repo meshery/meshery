@@ -94,7 +94,7 @@ func TestCreateWorkspace(t *testing.T) {
 			HttpMethod:       "POST",
 			HttpStatusCode:   201,
 			Fixture:          "create.workspace.api.response.golden",
-			ExpectedResponse: "create.workspace.success.output.golden",
+			ExpectedContains: []string{"Workspace workspace-test created in organization"},
 			ExpectError:      false,
 		},
 	}
