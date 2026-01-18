@@ -487,7 +487,7 @@ policy-test:
 
 
 #-----------------------------------------------------------------------------
-# Testing
+# Testing - MeshSync Integration Tests (Go)
 #-----------------------------------------------------------------------------
 
 ## Runs MeshSync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
@@ -522,6 +522,9 @@ server-integration-tests-meshsync-run:
 ## Runs MeshSync integration tests full cycle (docker build, setup, run, cleanup)
 server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
 
+#-----------------------------------------------------------------------------
+# Testing - UI
+#-----------------------------------------------------------------------------
 ## Install Playwright dependencies for UI tests
 ui-test-setup:
 	cd ui; npx playwright install chromium --with-deps; cd ..
@@ -536,8 +539,11 @@ ui-test-e2e-ci:
 	 touch .env
 	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
-### Run all Mesheryctl tests
-mesheryctl-tests:
+#-----------------------------------------------------------------------------
+# Testing - Meshery CLI 
+#-----------------------------------------------------------------------------
+### Run all Mesheryctl integration tests (Golang)
+mesheryctl-tests-int:
 	cd mesheryctl && go test ./...
 #-----------------------------------------------------------------------------
 # Dependencies

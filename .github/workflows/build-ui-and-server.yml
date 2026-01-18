@@ -98,7 +98,7 @@ jobs:
       - name: Install Playwright
         run: make ui-setup-ci
       - name: Install Playwright Browsers
-        run: make test-setup-ui
+        run: make ui-test-setup
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
