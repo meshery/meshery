@@ -334,10 +334,18 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 	newAdaptersChan := make(chan *meshes.MeshClient)
 
+	// WaitGroup to track all writer goroutines to prevent panic on channel close
+	var writerWg sync.WaitGroup
+
+	// Track adapter listener goroutines
+	writerWg.Add(1)
 	go func() {
+		defer writerWg.Done()
 		for mClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
+			writerWg.Add(1)
 			go func(mClient *meshes.MeshClient) {
+				defer writerWg.Done()
 				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String())
 				_ = mClient.Close()
 			}(mClient)
@@ -345,7 +353,14 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 		h.log.Debug("new adapters channel closed")
 	}()
-	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
+
+	// Track core events listener goroutine
+	writerWg.Add(1)
+	go func() {
+		defer writerWg.Done()
+		listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
+	}()
+
 	go func(flusher http.Flusher) {
 		for data := range respChan {
 			h.log.Debug("received new data on response channel")
@@ -402,6 +417,10 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
+
+	// Wait for all writer goroutines to finish before closing respChan
+	// This prevents "panic: send on closed channel"
+	writerWg.Wait()
 	close(respChan)
 	defer h.log.Debug("events handler closed")
 }
@@ -420,7 +439,12 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
-			resp <- data
+			// Use select to prevent blocking send and check context before sending
+			select {
+			case resp <- data:
+			case <-ctx.Done():
+				return
+			}
 
 		case <-ctx.Done():
 			return
@@ -439,6 +463,13 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 	}
 
 	for {
+		// Check context before blocking on Recv
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		log.Debug("Waiting to receive events.")
 		event, err := streamClient.Recv()
 		if err != nil {
@@ -474,7 +505,13 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
-		respChan <- data
+
+		// Use select to prevent blocking send and check context before sending
+		select {
+		case respChan <- data:
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
