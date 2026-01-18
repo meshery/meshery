@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-MESHERYCTL_PORT_FORWARDING=9999
-
-start_mesehry() {
-    echo "start: Start mesehry server"
-    ${MESHERYCTL_BIN} system start -p "$1" --skip-checks --skip-update
-    echo "done: Start mesehry server"
-}
-
 create_meshery_config_folder() {
     echo "start: Create meshery config folder"
     if [ ! -d "$HOME/.meshery" ]
@@ -24,31 +16,8 @@ create_auth_file() {
     echo "done: authentication configuration"
 }
 
-port_forwarding() {
-    echo "start: Port forwarding"
-
-    nohup kubectl -n meshery port-forward svc/meshery ${MESHERYCTL_PORT_FORWARDING}:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
-    export MESHERY_SERVER_PORT_FORWARD_PID="$!"
-    
-    echo "done: Port forwarding"
-}
-
-config_mesheryctl_port_forwarding_endpoint() {
-    echo "start: meshery Config file endpoint"
-    echo "retrieving current context"
-    context="$(yq '.current-context' "${HOME}/.meshery/config.yaml")"
-    if [[ -z "${context}" ]]; then
-        echo "Error: Failed to retrieve current context from meshery config." >&2
-        exit 1
-    fi
-    yq -i ".contexts.\"${context}\".endpoint = \"http://localhost:${MESHERYCTL_PORT_FORWARDING}\"" "${HOME}/.meshery/config.yaml"
-    echo "done: meshery Config file endpoint"
-}
-
 main() {
     echo -e "### start: Test environment setup ###\n"
-    # port_forwarding
-    # config_mesheryctl_port_forwarding_endpoint
     
     export MESHERYCTL_BIN="../../mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
@@ -61,9 +30,6 @@ main() {
     # Expose the temp directory to the following tests
     export TEMP_DATA_DIR=$TEMP_DATA_DIR
 
-
-
-    # start_mesehry "$MESHERY_PLATFORM"
     create_meshery_config_folder
     create_auth_file 
 
