@@ -432,7 +432,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				continue
 			}
 
-			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+			go func(inst *machines.StateMachine, status connections.ConnectionStatus, ctx models.K8sContext) {
 				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
@@ -440,6 +440,14 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					h.config.EventBroadcaster.Publish(userID, event)
 					return
 				}
+				if event.Metadata == nil {
+					event.Metadata = map[string]interface{}{}
+				}
+				event.Metadata["connectionName"] = ctx.Name
+				event.Metadata["connectionID"] = ctx.ConnectionID
+				event.Metadata["connectionKind"] = connKind
+				event.Metadata["k8sContextName"] = ctx.Name
+				event.Metadata["k8sContextID"] = ctx.ID
 
 				if status == connections.DELETED {
 					smInstanceTracker.Remove(inst.ID)
@@ -447,7 +455,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
-			}(inst, status)
+			}(inst, status, *k8scontext)
 		}
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
@@ -466,7 +474,11 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			if status == connections.DELETED {
 				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
-			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
+			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).WithMetadata(map[string]interface{}{
+				"connectionName": connection.Name,
+				"connectionID":   connection.ID.String(),
+				"connectionKind": connection.Kind,
+			}).Build()
 			_ = provider.PersistEvent(*event, nil)
 			h.config.EventBroadcaster.Publish(userID, event)
 
