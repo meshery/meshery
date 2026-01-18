@@ -278,9 +278,9 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 
 - **Location**: `ui/` (Playwright tests).
 - **Framework**: Playwright.
-- **Setup**: `make test-setup-ui` (installs Playwright browsers with dependencies).
+- **Setup**: `make ui-test-setup` (installs Playwright browsers with dependencies).
 - **Run**: `make ui-integration-tests` or `npm run test:e2e` in `ui/`.
-- **CI**: `make test-e2e-ci` runs in non-interactive mode.
+- **CI**: `make ui-test-e2e-ci` runs in non-interactive mode.
 
 ### CI/CD Testing
 
