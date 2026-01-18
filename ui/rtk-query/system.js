@@ -15,6 +15,7 @@ const systemApi = api.injectEndpoints({
           pagesize: queryArg.pagesize,
           search: queryArg.search,
           order: queryArg.order,
+          sort: queryArg.sort,
         },
         method: 'GET',
       }),
