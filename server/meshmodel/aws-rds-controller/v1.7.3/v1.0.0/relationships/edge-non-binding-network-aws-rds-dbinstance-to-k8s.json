@@ -1,0 +1,112 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "evaluationQuery": "edge_network_relationship",
+  "status": "enabled",
+  "metadata": {
+    "description": "Network relationship from AWS RDS DBInstance to generic Kubernetes workloads (Pod, Service, Deployment). Supports cross-cloud connectivity for EKS, AKS, GKE, OpenShift, and self-managed Kubernetes clusters via database endpoint configuration.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-rds-controller",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "category": {
+      "name": "Provisioning"
+    },
+    "displayName": "AWS RDS Controller"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "DBInstance",
+            "model": {
+              "name": "aws-rds-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ],
+              "description": "DBInstance endpoint configuration can reference Kubernetes resources for connection details."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "containers", "_", "env", "_", "value"]
+              ],
+              "description": "Pod environment variables can contain DBInstance endpoint for database connection."
+            }
+          },
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "externalName"]
+              ],
+              "description": "Kubernetes ExternalName Service can point to RDS DBInstance endpoint."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "template", "spec", "containers", "_", "env", "_", "value"]
+              ],
+              "description": "Deployment pods can connect to DBInstance via environment variables containing connection strings."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
