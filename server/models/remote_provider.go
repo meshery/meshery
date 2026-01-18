@@ -181,32 +181,47 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 	// If not token is provided then make a simple GET request
 	if token == "" {
 		c := &http.Client{}
+		var lastErr error
 
 		for i := 0; i < 10; i++ {
-			resp, err = c.Do(req)
-			if err == nil && resp != nil {
-				break // Successfully fetched response
-
+			r, e := c.Do(req)
+			if e == nil && r != nil {
+				resp = r
+				break
 			}
-			l.Log.Warnf("Attempt %d: Failed to fetch capabilities. Retrying in 3 seconds...", i+1)
-			time.Sleep(3 * time.Second)
 
+			lastErr = e
+			if i == 0 {
+				l.Log.Warnf("Failed to fetch capabilities. Retrying...")
+			} else {
+				l.Log.Debugf("Retry %d failed while fetching capabilities every 3 sec", i+1)
+			}
+
+			time.Sleep(3 * time.Second)
+		}
+
+		if lastErr != nil && resp == nil {
+			err = lastErr
+			l.Log.Warnf("Failed to fetch capabilities after 10 retries")
 		}
 
 	} else {
-		// Proceed to make a request with the token
 		resp, err = l.DoRequest(req, token)
 	}
+
 	if err != nil && resp == nil {
 		l.Log.Error(ErrUnreachableRemoteProvider(err))
 		return providerProperties, ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
-		if err == nil {
-			err = ErrStatusCode(resp.StatusCode)
+		fetchErr := err
+		if fetchErr == nil {
+			fetchErr = ErrStatusCode(resp.StatusCode)
 		}
-		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
-		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
+
+		wrappedErr := ErrFetch(fetchErr, "Capabilities", http.StatusInternalServerError)
+		l.Log.Error(wrappedErr)
+		return providerProperties, wrappedErr
 	}
 	defer func() {
 		err := resp.Body.Close()
@@ -930,7 +945,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	connection, err := l.SaveConnection(conn, token, true)
 
-	l.Log.Infof("Persisting k8s context to remote_provider, %v %v",connection,err)
+	l.Log.Infof("Persisting k8s context to remote_provider, %v %v", connection, err)
 
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
