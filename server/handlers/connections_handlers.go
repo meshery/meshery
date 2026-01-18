@@ -441,6 +441,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	}
 
 	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
