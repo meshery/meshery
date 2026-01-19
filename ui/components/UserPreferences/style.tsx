@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Card, FormControl, Paper, styled, Select, FormGroup, Grid2 } from '@sistent/sistent';
+import { Card, FormControl, FormGroup, Paper, styled, Select, Grid2 } from '@sistent/sistent';
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {

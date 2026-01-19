@@ -57,8 +57,55 @@ import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
-const ThemeToggler = ({ handleUpdateUserPref }) => {
-  const Component = ({ mode, toggleTheme }) => {
+interface ThemeTogglerProps {
+  handleUpdateUserPref: (theme: string) => void;
+}
+
+interface ThemeComponentProps {
+  mode: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+interface UserPreferenceProps {
+  anonymousStats?: boolean;
+  perfResultStats?: boolean;
+  classes?: Record<string, string>;
+}
+
+interface ProviderCapability {
+  feature: string;
+  endpoint: string;
+}
+
+interface ProviderExtension {
+  component: string;
+  type: string;
+}
+
+interface ProviderInfo {
+  provider_name?: string;
+  provider_type?: string;
+  provider_url?: string;
+  provider_description?: string[];
+  capabilities?: ProviderCapability[];
+  extensions?: Record<string, ProviderExtension[]>;
+  [key: string]: unknown;
+}
+
+interface ExtensionPreferences {
+  catalogContent?: boolean;
+  [key: string]: unknown;
+}
+
+interface UserData {
+  usersExtensionPreferences?: ExtensionPreferences;
+  remoteProviderPreferences?: {
+    theme?: string;
+  };
+}
+
+const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => {
+  const Component: React.FC<ThemeComponentProps> = ({ mode, toggleTheme }) => {
     return (
       <div>
         <Switch
@@ -77,7 +124,7 @@ const ThemeToggler = ({ handleUpdateUserPref }) => {
   return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
 };
 
-const UserPreference = (props) => {
+const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);

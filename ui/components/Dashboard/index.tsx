@@ -6,7 +6,7 @@ import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
-import MesheryIcon from './images/meshery-icon.js';
+import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
