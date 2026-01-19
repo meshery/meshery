@@ -32,7 +32,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from '../CodeMirror';
 import Moment from 'react-moment';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../utils/utils';
 import ViewSwitch from '../ViewSwitch';
@@ -183,7 +183,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
 
   const FullScreenCodeMirrorWrapper = styled('div')(() => ({
     height: '100%',
-    '& .CodeMirror': {
+    '& .cm-editor': {
       minHeight: '300px',
       height: fullScreen ? '80vh' : '30vh',
     },
