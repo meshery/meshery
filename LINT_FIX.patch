@@ -40,11 +40,11 @@ index c4e2d77aa0f..76d40b6699b 100644
 @@ -1,5 +1,5 @@
  // @ts-nocheck
 -import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
-+import React, { useState, useRef, useEffect } from 'react';
++ import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
  import {
    Box,
    Card,
-@@ -66,7 +66,7 @@ interface Adapter {
+ @@ -66,7 +66,7 @@ interface Adapter {
    ops?: AdapterOperation[];
  }
  
