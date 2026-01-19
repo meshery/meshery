@@ -1,0 +1,107 @@
+name: Hacktoberfest Badge Awards
+
+on:
+  schedule:
+    # Run daily at midnight UTC during Hacktoberfest (October)
+    - cron: '0 0 * 10 *'
+  workflow_dispatch:
+    inputs:
+      issues:
+        description: 'Comma-separated issue numbers (e.g., 16100,16101)'
+        required: false
+        type: string
+      label:
+        description: 'GitHub label to filter issues (e.g., hacktoberfest)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Run without posting to Slack'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  award-badges:
+    name: Award Hacktoberfest Badges
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        working-directory: .github/scripts
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run automation (scheduled - by label)
+        if: github.event_name == 'schedule'
+        working-directory: .github/scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+        run: |
+          python hacktoberfest-badge-automation.py \
+            --label hacktoberfest \
+            --log-level INFO
+      
+      - name: Run automation (manual - by issues)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.issues != ''
+        working-directory: .github/scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          python hacktoberfest-badge-automation.py \
+            --issues "${{ github.event.inputs.issues }}" \
+            --log-level INFO \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      
+      - name: Run automation (manual - by label)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.label != ''
+        working-directory: .github/scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          python hacktoberfest-badge-automation.py \
+            --label "${{ github.event.inputs.label }}" \
+            --log-level INFO \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-logs-${{ github.run_id }}
+          path: |
+            .github/scripts/*.log
+            .github/scripts/awarded_emails.json
+          retention-days: 30
+      
+      - name: Comment on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            if (issue_number) {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: '⚠️ Hacktoberfest badge automation failed. Check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+              });
+            }
