@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, ModalBody } from '@sistent/sistent';
-import CustomizedSteppers from './Stepper/index.js';
+import CustomizedSteppers from './Stepper';
 
 import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection.js';
 import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync.js';

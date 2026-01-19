@@ -55,7 +55,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 function PerformanceProfile({ handleDelete }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
-    ('grid'),
+    'grid',
   );
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);

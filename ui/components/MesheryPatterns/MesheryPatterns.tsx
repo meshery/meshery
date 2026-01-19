@@ -60,7 +60,7 @@ import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { DefaultTableCell, SortableTableCell } from '../connections/common/index.js';
+import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
