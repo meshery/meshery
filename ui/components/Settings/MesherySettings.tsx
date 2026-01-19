@@ -97,31 +97,31 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
   const selectedSettingsCategory = query.settingsCategory;
   const selectedTab = query.tab;
 
-  const handleChangeSettingsCategory = (settingsCategory?: string) => {
-    if (query.settingsCategory === settingsCategory) {
+  const handleChangeSettingsCategory = (_settingsCategory) => {
+    if (query.settingsCategory === _settingsCategory) {
       return;
     }
     pushRoute(
-      `${route}?settingsCategory=${settingsCategory || query.settingsCategory}`,
+      `${route}?settingsCategory=${_settingsCategory || query.settingsCategory}`,
       undefined,
       { shallow: true },
     );
   };
 
-  const handleChangeSelectedTab = (tab: string) => {
-    if (query.tab === tab) {
+  const handleChangeSelectedTab = (_tab) => {
+    if (query.tab === _tab) {
       return;
     }
-    pushRoute(`${route}?settingsCategory=${selectedSettingsCategory}&tab=${tab}`, undefined, {
+    pushRoute(`${route}?settingsCategory=${selectedSettingsCategory}&tab=${_tab}`, undefined, {
       shallow: true,
     });
   };
 
-  const handleChangeSelectedTabCustomCategory = (settingsCategory: string, tab: string) => {
-    if (query.tab === tab) {
+  const handleChangeSelectedTabCustomCategory = (_settingsCategory, _tab) => {
+    if (query.tab === _tab) {
       return;
     }
-    pushRoute(`${route}?settingsCategory=${settingsCategory}&tab=${tab}`, undefined, {
+    pushRoute(`${route}?settingsCategory=${_settingsCategory}&tab=${_tab}`, undefined, {
       shallow: true,
     });
   };
@@ -205,7 +205,7 @@ const MesherySettings = () => {
       handleChangeSelectedTabCustomCategory,
     } = settingsRouter(router);
 
-    return (event, newVal) => {
+    return (_event, newVal, ..._args) => {
       if (val === 'tabVal') {
         if (newVal === METRICS) {
           handleChangeSelectedTabCustomCategory(newVal, GRAFANA);

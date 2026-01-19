@@ -1,71 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@sistent/sistent';
+import React, { useEffect, useState } from 'react';
+import { Box, CircularProgress, NoSsr, Typography } from '@sistent/sistent';
 
-type CountdownClockComponent = React.ComponentType<{
-  seconds: number;
-  color: string;
-  alpha: number;
-  size: number;
-  onComplete: () => void;
-}>;
+const parseDuration = (value) => {
+  if (!value) {
+    return 0;
+  }
 
-type LoadTestTimerDialogProps = {
-  countDownComplete: () => void;
-  t: string;
-  open: boolean;
+  const tNum = parseInt(value.substring(0, value.length - 1), 10);
+
+  if (Number.isNaN(tNum)) {
+    console.error(`Failed to parse duration value: ${value}`);
+    return 0;
+  }
+
+  switch (value.substring(value.length - 1, value.length).toLowerCase()) {
+    case 'h':
+      return tNum * 60 * 60;
+    case 'm':
+      return tNum * 60;
+    default:
+      return tNum;
+  }
 };
 
-let ReactCountdownClock: CountdownClockComponent | null = null;
-if (typeof window !== 'undefined') {
-  ReactCountdownClock = require('react-countdown-clock');
-}
-
-const LoadTestTimerDialog = ({ countDownComplete, t, open }: LoadTestTimerDialogProps) => {
-  const [dur, setDur] = useState(0);
+const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
+  const [dur, setDur] = useState(() => parseDuration(t));
+  const [timeLeft, setTimeLeft] = useState(() => parseDuration(t));
 
   useEffect(() => {
-    let tNum = 0;
-    try {
-      tNum = parseInt(t.substring(0, t.length - 1));
-    } catch {
-      console.error('Unexpected Error');
-    }
-
-    switch (t.substring(t.length - 1, t.length).toLowerCase()) {
-      case 'h':
-        setDur(tNum * 60 * 60);
-        break;
-      case 'm':
-        setDur(tNum * 60);
-        break;
-      default:
-        setDur(tNum);
-    }
+    setDur(parseDuration(t));
   }, [t]);
 
-  if (!open || !ReactCountdownClock) {
+  useEffect(() => {
+    if (!open) {
+      setTimeLeft(0);
+      return;
+    }
+
+    setTimeLeft(dur);
+  }, [dur, open]);
+
+  useEffect(() => {
+    if (!open || dur <= 0) {
+      return undefined;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          if (countDownComplete) {
+            countDownComplete();
+          }
+          return 0;
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countDownComplete, dur, open]);
+
+  const formatTime = (seconds) => {
+    const totalSeconds = Math.max(0, seconds);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const secs = Math.floor(totalSeconds % 60);
+
+    if (hours > 0) {
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(
+        secs,
+      ).padStart(2, '0')}`;
+    }
+
+    if (minutes > 0) {
+      return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    return `${secs}`;
+  };
+
+  const progress = dur > 0 ? (timeLeft / dur) * 100 : 0;
+  const formattedTime = formatTime(timeLeft);
+
+  if (!open) {
     return null;
   }
 
   return (
     <NoSsr>
-      <div
-        style={{
+      <Box
+        sx={{
           marginLeft: 'auto',
           marginRight: 'auto',
-          width: '400px',
+          width: 400,
           position: 'relative',
-          zIndex: '0',
+          zIndex: 0,
         }}
       >
-        <ReactCountdownClock
-          seconds={dur}
-          color="#667C89"
-          alpha={0.9}
-          size={400}
-          onComplete={countDownComplete}
-        />
-      </div>
+        <Box sx={{ position: 'relative', display: 'inline-flex', width: 400, height: 400 }}>
+          <CircularProgress
+            variant="determinate"
+            value={progress}
+            size={400}
+            sx={{ color: '#667C89' }}
+          />
+          <Box
+            sx={{
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              position: 'absolute',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant="h4" component="div" color="#667C89">
+              {formattedTime}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
     </NoSsr>
   );
 };
