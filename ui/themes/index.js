@@ -8,6 +8,6 @@ export const NOTIFICATIONCOLORS = {
   INFO: '#2196F3',
   SUCCESS_V2: '#3FC6B6',
   ERROR_DARK: '#B32700',
-} as const;
+};
 
 export { rjsfTheme, notificationColors };

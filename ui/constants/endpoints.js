@@ -9,10 +9,7 @@ export const MESHERY_DOCS_URL = 'https://docs.meshery.io';
 export const PATTERN_ENDPOINT = '/api/pattern';
 export const FILTER_ENDPOINT = '/api/filter';
 export const RJSF_SCHEMAS = '/api/schema/resource';
-
 export const SORT = {
   ASCENDING: 'asc',
   DESCENDING: 'desc',
-} as const;
-
-export type SortDirection = (typeof SORT)[keyof typeof SORT];
+};

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export function isEmptyAtAllDepths(input: unknown): boolean {
+export function isEmptyAtAllDepths(input) {
   if (_.isArray(input)) {
     // If the input is an array, check if all items are empty at all depths
     return input.every(isEmptyAtAllDepths);
@@ -16,44 +16,38 @@ export function isEmptyAtAllDepths(input: unknown): boolean {
 /**
  * Finds the first nested object in a tree-like structure that satisfies a given condition.
  *
- * @param object - The root object to start the search.
- * @param condition - A function that takes an object as an argument and returns a boolean indicating if the condition is met.
- * @returns The first object that satisfies the condition, or null if no matching object is found.
+ * @param {Object} object - The root object to start the search.
+ * @param {Function} condition - A function that takes an object as an argument and returns a boolean indicating if the condition is met.
+ * @returns {Object|null} - The first object that satisfies the condition, or null if no matching object is found.
  */
-export const findNestedObject = <T>(
-  object: T,
-  // eslint-disable-next-line no-unused-vars
-  condition: (_obj: unknown) => boolean,
-): unknown | null => {
-  const stack: unknown[] = [object];
+export const findNestedObject = (object, condition) => {
+  const stack = [object];
   while (stack.length) {
     const currentObject = stack.pop();
     if (condition(currentObject)) {
       return currentObject;
     }
     if (_.isObject(currentObject) || _.isArray(currentObject)) {
-      const objWithModels = currentObject as { models?: unknown };
-      const values = _.values(currentObject).filter((value) => value !== objWithModels.models);
-      stack.push(...values);
+      if (_.isObject(currentObject) || _.isArray(currentObject)) {
+        const values = _.values(currentObject).filter((value) => value !== currentObject.models);
+        stack.push(...values);
+      }
     }
   }
   return null;
 };
-
 /**
  * Accept object and removes empty properties from object.
- */
-export const filterEmptyFields = <T extends Record<string, unknown>>(
-  data: T | null | undefined,
-): Partial<T> => {
+ **/
+export const filterEmptyFields = (data) => {
   if (!data) {
     return {};
   }
 
   return Object.keys(data).reduce((acc, key) => {
     if (data[key] !== undefined && data[key] !== '') {
-      (acc as Record<string, unknown>)[key] = data[key];
+      acc[key] = data[key];
     }
     return acc;
-  }, {} as Partial<T>);
+  }, {});
 };
