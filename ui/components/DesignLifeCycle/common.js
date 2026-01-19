@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Checkbox, CircularProgress, Stack, styled, Typography } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { processDesign } from '@/utils/utils';
+import { processDesign as processDesignUtil } from '@/utils/utils';
 import { CustomTooltip } from '@sistent/sistent';
 import { InfoCircleIcon, useTheme } from '@sistent/sistent';
 import { IconButton } from '@sistent/sistent';
@@ -117,4 +117,5 @@ export const StepHeading = ({ children }) => {
   return <Typography variant="textB2SemiBold"> {children}</Typography>;
 };
 
-export { processDesign };
+// Re-export processDesign with explicit export
+export const processDesign = processDesignUtil;
