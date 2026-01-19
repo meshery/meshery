@@ -57,6 +57,6 @@ export default function ConfigurationSubscription(onNext, variables) {
     subscription: configurationSubscription,
     variables: variables,
     onNext: onNext,
-    onError: (error) => console.log('ERROR OCCURED IN CONFIGURATION SUBCRIPTION', error),
+    onError: (error) => console.error('ERROR OCCURED IN CONFIGURATION SUBCRIPTION', error),
   });
 }

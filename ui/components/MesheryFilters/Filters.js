@@ -479,7 +479,7 @@ function MesheryFilters() {
         catalogContentRef.current = result?.catalogFilters;
         initFiltersSubscription();
       },
-      error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
+      error: (err) => console.error('There was an error fetching Catalog Filter: ', err),
     });
 
     return () => {

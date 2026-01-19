@@ -29,6 +29,6 @@ export default function subscribeK8sContext(dataCB, variables) {
     subscription: k8sContextSubscription,
     variables: variables,
     onNext: dataCB,
-    onError: (error) => console.log('K8sContextSubscription: An error occured:', error),
+    onError: (error) => console.error('K8sContextSubscription: An error occured:', error),
   });
 }

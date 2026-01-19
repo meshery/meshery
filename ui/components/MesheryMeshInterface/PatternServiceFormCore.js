@@ -56,7 +56,7 @@ function PatternServiceFormCore_({
         createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace),
       );
     } catch (e) {
-      console.log('error while submitting form-data', e);
+      console.error('error while submitting form-data', e);
     }
   };
 

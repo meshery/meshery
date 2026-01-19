@@ -23,6 +23,6 @@ export default function subscribeClusterResources(dataCB, variables) {
     subscription: meshmodelSummarySubscription,
     variables: variables,
     onNext: dataCB,
-    onError: (error) => console.log(`MeshModel Subscription error:`, error),
+    onError: (error) => console.error(`MeshModel Subscription error:`, error),
   });
 }

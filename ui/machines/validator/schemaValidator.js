@@ -89,7 +89,7 @@ const validateDesign = (design, componentDefsStore) => {
       );
       validationResults[configurableComponent.id] = componentValidationResults;
     } catch (error) {
-      console.log('Error validating component', error, design, componentDefsStore);
+      console.error('Error validating component', error, design, componentDefsStore);
     }
   }
 

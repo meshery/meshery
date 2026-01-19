@@ -18,6 +18,6 @@ export default function subscribeMesheryControllersStatus(dataCB, variables) {
     subscription: mesheryControllersStatusSubscription,
     variables: { connectionIDs: variables },
     onNext: dataCB,
-    onError: (error) => console.log(`An error occured:`, error),
+    onError: (error) => console.error(`An error occured:`, error),
   });
 }
