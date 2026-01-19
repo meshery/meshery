@@ -120,18 +120,37 @@ const MainDesignsContent = ({
   });
 
   const handleInfoModal = async (design) => {
-    const selectedDesignWithPatternFile = await getDesign({
+    const result = await getDesign({
       design_id: design?.id,
     });
 
-    setSelectedDesign(selectedDesignWithPatternFile?.data);
+    if (result?.error?.status === 403) {
+      notify({
+        message:
+          'You don’t have access to this design. Ask the owner to share it or check your permissions.',
+        severity: 'warning',
+      });
+      return;
+    }
+
+    if (!result?.data) {
+      notify({
+        message: 'Failed to fetch Design',
+        severity: 'error',
+      });
+      return;
+    }
+
+    const fetchedDesign = result.data;
+
+    setSelectedDesign(fetchedDesign);
 
     sistentInfoModal.openModal({
-      title: selectedDesign?.name,
+      title: fetchedDesign?.name,
     });
     setInfoModal({
       open: true,
-      userId: selectedDesignWithPatternFile?.data?.user_id,
+      userId: fetchedDesign?.user_id,
     });
   };
 
