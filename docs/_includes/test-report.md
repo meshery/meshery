@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 19th 2026, 1:04:16 am
+- Testing started at: January 19th 2026, 1:59:46 am
 
 **📦 Test Result Summary**
 
-- ✅ 81 passed
-- ❌ 3 failed
+- ✅ 79 passed
+- ❌ 4 failed
 - ⚠️ 0 flaked
-- ⏩ 4 skipped
+- ⏩ 5 skipped
 
-⌛ _Duration: 5 minutes and 34 seconds_
+⌛ _Duration: 5 minutes and 25 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -22,14 +22,14 @@
 | Test | Provider | Browser | Test Case | Tags | Result |
 | :---: | :---: | :---: | :--- | :---: | :---: |
 | 1 | Meshery | chromium-meshery-provider | Action buttons on adapters tab |  | ✅ |
-| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ✅ |
+| 2 | Meshery | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
 | 3 | Meshery | chromium-meshery-provider | Aggregation Charts are displayed |  | ✅ |
 | 4 | Meshery | chromium-meshery-provider | All settings tabs |  | ✅ |
 | 5 | Meshery | chromium-meshery-provider | Common UI elements |  | ✅ |
 | 6 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 7 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 8 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 9 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
+| 9 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 10 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
@@ -124,6 +124,20 @@
 
 The following tests failed. Click on each to see the failure reason:
 
+
+<details>
+<summary>❌ Add a cluster connection by uploading kubeconfig file (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
 
 <details>
 <summary>❌ imports design via File (Meshery - chromium-meshery-provider)</summary>
