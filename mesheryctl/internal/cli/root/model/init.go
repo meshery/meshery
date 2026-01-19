@@ -16,6 +16,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
 )
 
 var initModelCmd = &cobra.Command{
@@ -217,10 +218,10 @@ func initModelGetValidOutputFormat() []string {
 
 const (
 	initModelDirPerm                   = 0o755
-	initModelModelSchema               = "schemas/constructs/v1beta1/model/model.json"
-	initModelTemplatePathModel         = "schemas/constructs/v1beta1/model/model_template"
-	initModelTemplatePathComponent     = "schemas/constructs/v1beta1/component/component_template"
-	initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+	initModelModelSchema               = "schemas/constructs/v1beta1/model/model.yaml"
+	initModelTemplatePathModel         = "schemas/constructs/v1beta1/model/templates/model_template"
+	initModelTemplatePathComponent     = "schemas/constructs/v1beta1/component/templates/component_template"
+	initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
 )
 
 // TODO: Connection templates are temporarily disabled.
@@ -378,12 +379,15 @@ func initModelValidateDataOverSchema(schema []byte, data map[string]interface{})
 }
 
 func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode JSON
+	// Generic structure to decode JSON or YAML
 	var schemaMap map[string]interface{}
 
-	// Unmarshal JSON schema into a map
+	// Try to unmarshal as JSON first
 	if err := json.Unmarshal(schema, &schemaMap); err != nil {
-		return "", err
+		// If JSON fails, try YAML
+		if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
+			return "", err
+		}
 	}
 
 	// Navigate to "properties" -> propertyName -> "pattern"
