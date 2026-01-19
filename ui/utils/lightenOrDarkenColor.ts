@@ -31,9 +31,9 @@ function RGBBlender(R: number, G: number, B: number, percent: number): string {
   newG = newG < 255 ? newG : 255;
   newB = newB < 255 ? newB : 255;
 
-  const RR = newR.toString(16).length == 1 ? '0' + newR.toString(16) : newR.toString(16);
-  const GG = newG.toString(16).length == 1 ? '0' + newG.toString(16) : newG.toString(16);
-  const BB = newB.toString(16).length == 1 ? '0' + newB.toString(16) : newB.toString(16);
+  const RR = newR.toString(16).padStart(2, '0');
+  const GG = newG.toString(16).padStart(2, '0');
+  const BB = newB.toString(16).padStart(2, '0');
 
   return '#' + RR + GG + BB;
 }

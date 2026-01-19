@@ -279,14 +279,17 @@ export default function Provider(): React.ReactElement {
                     }}
                   />
                   {/* Create provider link */}
-                  <a
+                  <Button
+                    component="a"
                     href="https://docs.meshery.io/extensibility/providers"
+                    // @ts-expect-error - target and rel are valid for anchor elements
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-describedby={id}
                     aria-label="Create Provider"
                     data-cy="create_provider"
-                    style={{
+                    variant="text"
+                    sx={{
                       display: 'flex',
                       fontStyle: 'italic',
                       margin: 'auto 0.5rem',
@@ -298,6 +301,10 @@ export default function Provider(): React.ReactElement {
                       color: '#ccc',
                       alignItems: 'center',
                       padding: '6px 8px',
+                      '&:hover': {
+                        backgroundColor: accentGrey[20],
+                        color: '#fff',
+                      },
                     }}
                   >
                     Create Your Own Provider&nbsp;
@@ -312,7 +319,7 @@ export default function Provider(): React.ReactElement {
                         filter: 'brightness(20)',
                       }}
                     />
-                  </a>
+                  </Button>
                 </MenuList>
               </ClickAwayListener>
             </StyledPopover>
@@ -387,19 +394,25 @@ export default function Provider(): React.ReactElement {
 
         <CustomDialogActions>
           <div className="learnmore">
-            <a
+            <Button
+              component="a"
               href="https://docs.meshery.io/extensibility/providers"
+              // @ts-expect-error - target and rel are valid for anchor elements
               target="_blank"
               rel="noopener noreferrer"
-              style={{
+              variant="text"
+              sx={{
+                color: (theme) => theme.palette.text.inverse,
                 textTransform: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
                 fontWeight: 400,
                 fontSize: '1rem',
-                textDecoration: 'none',
-                color: 'inherit',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  backgroundColor: 'transparent',
+                },
               }}
             >
               Providers in Meshery Docs
@@ -411,7 +424,7 @@ export default function Provider(): React.ReactElement {
                 width="16px"
                 alt="External link"
               />
-            </a>
+            </Button>
           </div>
 
           <StyledButton
