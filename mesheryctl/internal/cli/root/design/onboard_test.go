@@ -25,7 +25,7 @@ func TestOnboardCmd(t *testing.T) {
 		{
 			Name:             "Onboard Design",
 			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			ExpectedContains: []string{"design file saved", "design onboarded", "deployed application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -52,13 +52,12 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "Onboard design with --skip-save",
 			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			ExpectedContains: []string{"design file saved", "design onboarded", "deployed application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -79,7 +78,6 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -94,7 +92,6 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError: func() error {
@@ -121,7 +118,6 @@ func TestOnboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(),

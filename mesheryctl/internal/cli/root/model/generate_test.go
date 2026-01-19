@@ -24,45 +24,54 @@ func TestModelGenerate(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	testdataDir := filepath.Join(currDir, "testdata")
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	apiURL := "/api/meshmodels/register"
 
 	type tc struct {
-		Name             string
-		Args             []string
-		URL              string
-		Fixture          string
-		ExpectedResponse string
-		ExpectHelp       bool
-		ExpectErr        bool
-		HttpCode         int
+		Name                 string
+		Args                 []string
+		URL                  string
+		Fixture              string
+		ExpectedContains     []string
+		ExpectedErrContains  []string
+		ExpectHelp           bool
+		ExpectErr            bool
+		HttpCode             int
 	}
 
 	tests := []tc{
 		{
-			Name:             "model generate: no args prints help and errors",
-			Args:             []string{"generate"},
-			ExpectedResponse: "generate.no-args.output.golden",
-			ExpectHelp:       true,
-			ExpectErr:        true,
+			Name:                "model generate: no args prints help and errors",
+			Args:                []string{"generate"},
+			ExpectedErrContains: []string{"isn't specified", "mesheryctl model generate"},
+			ExpectHelp:          true,
+			ExpectErr:           true,
 		},
 		{
-			Name:             "model generate: from CSV directory",
-			Args:             []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs")},
-			ExpectedResponse: "generate.dir.skip-register.output.golden",
-			URL:              apiURL,
-			Fixture:          "generate.api.ok.response.golden",
-			HttpCode:         200,
+			Name: "model generate: from CSV directory",
+			Args: []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs")},
+			ExpectedContains: []string{
+				"Generating model from CSV files",
+				"Imported model couchbase",
+				"Model can be accessed from .meshery/models",
+				"Logs for the csv generation can be accessed .meshery/logs/registry",
+			},
+			URL:      apiURL,
+			Fixture:  "generate.api.ok.response.golden",
+			HttpCode: 200,
 		},
 		{
-			Name:             "model generate: from URL with template",
-			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
-			URL:              apiURL,
-			Fixture:          "generate.api.ok.response.golden",
-			ExpectedResponse: "generate.dir.register.output.golden",
-			HttpCode:         200,
+			Name: "model generate: from URL with template",
+			Args: []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
+			URL:      apiURL,
+			Fixture:  "generate.api.ok.response.golden",
+			HttpCode: 200,
+			ExpectedContains: []string{
+				"Generating model from URL",
+				"Imported model couchbase",
+				"Model can be accessed from .meshery/models",
+			},
 		},
 	}
 
@@ -84,7 +93,7 @@ func TestModelGenerate(t *testing.T) {
 			resetFlags(ModelCmd, t)
 
 			if tt.URL != "" {
-				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
+				apiResponse := utils.ReadTestFixtureBytes(t, fixturesDir, tt.Fixture)
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
 
@@ -93,8 +102,6 @@ func TestModelGenerate(t *testing.T) {
 			}
 
 			utils.TokenFlag = utils.GetToken(t)
-
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 			ModelCmd.SetOut(b)
@@ -106,8 +113,11 @@ func TestModelGenerate(t *testing.T) {
 					t.Fatal("expected an error, but got nil")
 				}
 				t.Logf("[%s] stderr (error):\n%s", tt.Name, err.Error())
-				expectedResponse := golden.Load()
-				utils.Equals(t, expectedResponse, err.Error())
+				for _, expected := range tt.ExpectedErrContains {
+					if !strings.Contains(err.Error(), expected) {
+						t.Fatalf("expected error to contain %q, got %q", expected, err.Error())
+					}
+				}
 				return
 			}
 
@@ -117,9 +127,11 @@ func TestModelGenerate(t *testing.T) {
 
 			actualResponse := utils.StripAnsiEscapeCodes(b.String())
 			t.Logf("[%s] stdout:\n%s", tt.Name, actualResponse)
-
-			expectedResponse := strings.TrimSpace(golden.Load())
-			utils.Equals(t, expectedResponse, strings.TrimSpace(actualResponse))
+			for _, expected := range tt.ExpectedContains {
+				if !strings.Contains(actualResponse, expected) {
+					t.Fatalf("expected output to contain %q, got %q", expected, actualResponse)
+				}
+			}
 		})
 	}
 

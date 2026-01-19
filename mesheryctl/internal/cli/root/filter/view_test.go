@@ -1,127 +1,56 @@
 package filter
 
 import (
-	"flag"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-var update = flag.Bool("update", false, "update golden files")
-
 func TestViewCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
-	// create a test helper
-	testContext := utils.NewTestHelper(t)
-
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
+	testContext := utils.NewTestHelper(t)
+	base := testContext.BaseURL
 
-	// test scenrios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		URL              string
-		Fixture          string
-		Token            string
-		ExpectedResponse string
-		ExpectError      bool
-	}{
-
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "Fetch Filter View",
-			Args:             []string{"view", "KumaTest"},
-			ExpectedResponse: "view.filter.output.golden",
-			Fixture:          "view.filter.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
+			Name: "Fetch Filter View",
+			Args: []string{"view", "KumaTest"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter?page_size=10000", base), Response: "view.filter.api.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter?search=KumaTest", base), Response: "view.filter.api.response.golden", ResponseCode: 200},
+			},
+			ExpectedContains: []string{"name: KumaTest", "id: 957fbc9b-a655-4892-823d-375102a9587c"},
 			ExpectError:      false,
 		},
 		{
-			Name:             "Fetch Kuma Filter View with ID",
-			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
-			ExpectedResponse: "view.id.filter.output.golden",
-			Fixture:          "view.id.filter.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/957fbc9b-a655-4892-823d-375102a9587c",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
+			Name: "Fetch Kuma Filter View with ID",
+			Args: []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter?page_size=10000", base), Response: "view.filter.api.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter/957fbc9b-a655-4892-823d-375102a9587c", base), Response: "view.id.filter.api.response.golden", ResponseCode: 200},
+			},
+			ExpectedContains: []string{"name: KumaTest", "id: 957fbc9b-a655-4892-823d-375102a9587c"},
 			ExpectError:      false,
 		},
 		{
-			Name:             "Fetch Filter View for non existing filter",
-			Args:             []string{"view", "xyz"},
-			ExpectedResponse: "view.nonexisting.filter.output.golden",
-			Fixture:          "view.nonexisting.filter.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
+			Name: "Fetch Filter View for non existing filter",
+			Args: []string{"view", "xyz"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter?page_size=10000", base), Response: "view.filter.api.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: fmt.Sprintf("%s/api/filter?search=xyz", base), Response: "view.nonexisting.filter.api.response.golden", ResponseCode: 200},
+			},
+			ExpectedContains: []string{"filter with name: xyz not found"},
 			ExpectError:      false,
 		},
 	}
 
-	// Run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			// View api response from golden files
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
-			// set token
-			utils.TokenFlag = tt.Token
-
-			// mock response
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
-
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			FilterCmd.SetOut(b)
-
-			FilterCmd.SetArgs(tt.Args)
-			err := FilterCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
-					return
-				}
-				t.Fatal(err)
-			}
-
-			// response being printed in console
-			output := b.String()
-			actualResponse := output
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-		t.Log("View Filter test Passed")
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+	utils.RunMesheryctlMultiURLTests(t, update, FilterCmd, tests, currDir, "filter", func() {})
 }

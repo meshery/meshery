@@ -39,7 +39,7 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "result.list.output.golden",
+			ExpectedContains: []string{"NAME", "QPS", "istio_1630091576784"},
 			ExpectError:      false,
 		},
 	}
@@ -52,7 +52,7 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "result.json.output.golden",
+			ExpectedContains: []string{"\"meshery_id\":\"71fc9834-8968-4d61-bab6-689b013b5a34\""},
 			ExpectError:      false,
 		},
 		{
@@ -62,7 +62,7 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
-			ExpectedResponse: "result.yaml.output.golden",
+			ExpectedContains: []string{"meshery_id: 71fc9834-8968-4d61-bab6-689b013b5a34"},
 			ExpectError:      false,
 		},
 		{

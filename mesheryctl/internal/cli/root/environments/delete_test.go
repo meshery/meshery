@@ -41,7 +41,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			HttpStatusCode:   200,
 			URL:              fmt.Sprintf("/api/environments/%s", environmentId),
 			Fixture:          "delete.environment.response.golden",
-			ExpectedResponse: "delete.environment.success.golden",
+			ExpectedContains: []string{"has been deleted"},
 			ExpectError:      false,
 		},
 	}

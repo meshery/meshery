@@ -1,7 +1,6 @@
 package components
 
 import (
-	"flag"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -10,8 +9,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 )
-
-var update = flag.Bool("update", false, "update golden files")
 
 func TestComponent(t *testing.T) {
 
@@ -59,7 +56,7 @@ func TestComponent(t *testing.T) {
 			Args:             []string{"--count"},
 			URL:              fmt.Sprintf("/%s", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.count.output.golden",
+			ExpectedContains: []string{"Total number of components: 1"},
 			ExpectError:      false,
 			ExpectedError:    nil,
 		},

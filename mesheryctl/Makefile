@@ -109,7 +109,9 @@ lint:
 coverage:
 	go test -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
-
+## Run all Mesheryctl integration tests (Golang)
+tests-int:
+	go test ./...
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------

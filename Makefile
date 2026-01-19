@@ -416,7 +416,7 @@ docs-mesheryctl:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint helm-meshery-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -436,6 +436,7 @@ helm-lint: helm-operator-lint helm-meshery-lint
 ## Lint Meshery Operator Helm Chart
 helm-operator-lint:
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
@@ -469,20 +470,6 @@ graphql-docs-build:
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
 	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
-
-
-
-## testing
-test-setup-ui:
-	cd ui; npx playwright install chromium --with-deps; cd ..
-
-test-ui:
-	 touch .env
-	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
-
-test-e2e-ci:
-	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies

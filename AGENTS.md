@@ -265,7 +265,7 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 
 > TODO: Expand JavaScript unit testing infrastructure.
 
-### Integration Tests (Go)
+### End-to-End Tests for MeshSync Server (Go)
 
 - **Location**: `server/integration-tests/`
 - **Setup**: `make server-integration-tests-meshsync-setup` (creates kind cluster, deploys
@@ -274,13 +274,23 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 - **Cleanup**: `make server-integration-tests-meshsync-cleanup`
 - **Requirements**: Docker, kind, kubectl, helm.
 
-### End-to-End Tests (UI)
+### Integration Tests for Meshery CLI (Go)
+
+- **mesheryctl Tests**: `make mesheryctl-tests-int` runs unit and integration tests for the CLI.
+
+### End-to-End Tests for Meshery CLI (BATS)
+
+- **Location**: `mesheryctl/tests/`
+- **Framework**: BATS (Bash Automated Testing System)
+- **Run**: `make mesheryctl-tests-e2e` or `bats tests/`
+
+### End-to-End Tests for Meshery UI (Playwright)
 
 - **Location**: `ui/` (Playwright tests).
 - **Framework**: Playwright.
-- **Setup**: `make test-setup-ui` (installs Playwright browsers with dependencies).
+- **Setup**: `make ui-test-setup` (installs Playwright browsers with dependencies).
 - **Run**: `make ui-integration-tests` or `npm run test:e2e` in `ui/`.
-- **CI**: `make test-e2e-ci` runs in non-interactive mode.
+- **CI**: `make ui-test-e2e-ci` runs in non-interactive mode.
 
 ### CI/CD Testing
 

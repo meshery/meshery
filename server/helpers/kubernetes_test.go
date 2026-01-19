@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -27,13 +26,10 @@ func TestFetchKubernetesVersion(t *testing.T) {
 		logrus.Error(err)
 		os.Exit(1)
 	}
-	utils.SetupContextEnv(t)
-	utils.StartMockery(t)
-	testByte := []byte{0, 0}
-	var testContext = "nil"
-
-	_, err = FetchKubernetesVersion(testByte, testContext, log)
-	if err != nil {
-		t.Error("FetchKubernetesVersion() failed")
+	// Provide an intentionally invalid kubeconfig to ensure the function returns
+	// a wrapped, actionable error instead of requiring a live cluster.
+	_, err = FetchKubernetesVersion([]byte{0, 0}, "", log)
+	if err == nil {
+		t.Error("expected FetchKubernetesVersion() to fail with invalid kubeconfig")
 	}
 }

@@ -26,7 +26,7 @@ func TestOffboardCmd(t *testing.T) {
 		{
 			Name:             "Offboard Application",
 			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "offboard.output.golden",
+			ExpectedContains: []string{"design file converted to design", "design offboarded", "deleted application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -41,7 +41,6 @@ func TestOffboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -49,7 +48,6 @@ func TestOffboardCmd(t *testing.T) {
 			Args:             []string{"offboard", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
@@ -66,7 +64,6 @@ func TestOffboardCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound(),

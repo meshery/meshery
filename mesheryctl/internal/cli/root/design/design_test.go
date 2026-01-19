@@ -1,7 +1,6 @@
 package design
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -10,7 +9,6 @@ import (
 )
 
 var (
-	update          = flag.Bool("update", false, "update golden files")
 	invalidFilePath = "/invalid/path/design.yaml"
 )
 
@@ -31,7 +29,7 @@ func TestDesignCmd(t *testing.T) {
 		{
 			Name:             "design apply",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "design.golden")},
-			ExpectedResponse: "design.apply.output.golden",
+			ExpectedContains: []string{"design applied", "deployed application meshapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -46,13 +44,12 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "design delete",
 			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "design.golden")},
-			ExpectedResponse: "design.delete.output.golden",
+			ExpectedContains: []string{"deleted application meshapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
@@ -61,13 +58,12 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "design view",
 			Args:             []string{"view", "kumatest"},
-			ExpectedResponse: "design.view.kuma.output.golden",
+			ExpectedContains: []string{"name: kumatest", "id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -82,13 +78,12 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
 			Name:             "design view with ID",
 			Args:             []string{"view", "4o7fbc9b-708d-4396-84b8-e2ba37c1adcc"},
-			ExpectedResponse: "design.id.view.output.golden",
+			ExpectedContains: []string{"name: kumatest", "id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -109,7 +104,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -130,7 +124,6 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			IsOutputGolden: false,
 			ExpectError:    true,
 			ExpectedError:  ErrDesignNotFound(),

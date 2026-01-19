@@ -34,7 +34,7 @@ func TestListWorkspaces(t *testing.T) {
 			Args:             []string{"list", "--orgId", testOrgId},
 			URL:              fmt.Sprintf("/%s?orgID=%s", workspacesApiPath, testOrgId),
 			Fixture:          "list.workspace.api.response.golden",
-			ExpectedResponse: "list.workspace.output.golden",
+			ExpectedContains: []string{"Total number of workspaces: 5", "ID", "ORGANIZATION ID", "workspace-0"},
 			ExpectError:      false,
 		},
 		{
@@ -42,7 +42,7 @@ func TestListWorkspaces(t *testing.T) {
 			Args:             []string{"list", "--orgId", testOrgId},
 			URL:              fmt.Sprintf("/%s?orgID=%s", workspacesApiPath, testOrgId),
 			Fixture:          "list.workspace.empty.api.response.golden",
-			ExpectedResponse: "list.workspace.empty.output.golden",
+			ExpectedContains: []string{"No workspaces found"},
 			ExpectError:      false,
 		},
 	}

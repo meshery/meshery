@@ -386,14 +386,36 @@ func initModelGetPatternFromSchema(schema []byte, property string) (string, erro
 		return "", err
 	}
 
-	// Navigate to "properties" -> propertyName -> "pattern"
-	if properties, ok := schemaMap["properties"].(map[string]interface{}); ok {
-		if propSchema, ok := properties[property].(map[string]interface{}); ok {
-			if pattern, ok := propSchema["pattern"].(string); ok {
-				return pattern, nil
-			}
-		}
+	properties := mapStringInterface(schemaMap["properties"])
+	if properties == nil {
+		return "", fmt.Errorf("properties not found in schema")
+	}
+	propSchema := mapStringInterface(properties[property])
+	if propSchema == nil {
+		return "", fmt.Errorf("pattern not found for property: %s", property)
+	}
+	if pattern, ok := propSchema["pattern"].(string); ok {
+		return pattern, nil
 	}
 
 	return "", fmt.Errorf("pattern not found for property: %s", property)
+}
+
+func mapStringInterface(value interface{}) map[string]interface{} {
+	switch typed := value.(type) {
+	case map[string]interface{}:
+		return typed
+	case map[interface{}]interface{}:
+		converted := make(map[string]interface{}, len(typed))
+		for key, val := range typed {
+			keyString, ok := key.(string)
+			if !ok {
+				continue
+			}
+			converted[keyString] = val
+		}
+		return converted
+	default:
+		return nil
+	}
 }

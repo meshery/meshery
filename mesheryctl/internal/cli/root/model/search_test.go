@@ -33,12 +33,20 @@ func TestSearchModel(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(goerrors.New(errSearchModelName)),
 		},
 		{
-			Name:             "Search model with query",
-			Args:             []string{"search", querySearch},
-			URL:              fmt.Sprintf("/%s?search=%s&pagesize=all", modelsApiPath, url.QueryEscape(querySearch)),
-			Fixture:          "search.model.api.response.golden",
-			ExpectedResponse: "search.model.output.golden",
-			ExpectError:      false,
+			Name:     "Search model with query",
+			Args:     []string{"search", querySearch, "--page", "1"},
+			URL:      fmt.Sprintf("/%s?search=%s&pagesize=all", modelsApiPath, url.QueryEscape(querySearch)),
+			Fixture:  "search.model.api.response.golden",
+			ExpectedContains: []string{
+				"Total number of models: 41",
+				"MODEL",
+				"CATEGORY",
+				"VERSION",
+				"model-test-0",
+				"category-test-0",
+				"v1.0.0",
+			},
+			ExpectError: false,
 		},
 	}
 

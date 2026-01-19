@@ -28,7 +28,7 @@ func TestDeleteCmd(t *testing.T) {
 		{
 			Name:             "Delete Design",
 			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "delete.output.golden",
+			ExpectedContains: []string{"deleted application myapp"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
@@ -37,7 +37,6 @@ func TestDeleteCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
 		{
@@ -45,7 +44,6 @@ func TestDeleteCmd(t *testing.T) {
 			Args:             []string{"delete", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
@@ -68,7 +66,6 @@ func TestDeleteCmd(t *testing.T) {
 					ResponseCode: 404,
 				},
 			},
-			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError: func() error {

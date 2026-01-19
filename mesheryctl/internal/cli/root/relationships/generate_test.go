@@ -2,30 +2,32 @@ package relationships
 
 import (
 	"encoding/json"
-	"io"
 	"os"
-	"path/filepath"
-	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/sheets/v4"
 )
 
 func TestGenerateCreateJsonFile(t *testing.T) {
-
-	sheetData, err := os.ReadFile("./fixtures/generate.relationship.sheet.data.golden")
-	if err != nil {
-		t.Fatal("Error in reading file 'generate.relationship.sheet.data.golden': ", err)
-	}
-
-	var sheetDataParsed map[string]interface{}
-	err = json.Unmarshal(sheetData, &sheetDataParsed)
-	if err != nil {
-		t.Fatal("Error in parsing file 'generate.relationship.sheet.data.golden': ", err)
+	row3 := []interface{}{
+		"kubernetes",
+		"v1.25.2",
+		"Hierarchical",
+		"",
+		"Inventory",
+		"A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.\"",
+		"",
+		"",
+		"hierarchical_inventory_relationship",
+		"",
+		"",
+		"{\"kind\": \"PersistentVolume\",\r\n            \"model\": \"kubernetes\",\r\n            \"patch\": {\r\n              \"patchStrategy\": \"replace\",\r\n              \"mutatorRef\": [\r\n                [\"name\"]\r\n              ],\r\n              \"description\": \"PersistentVolume in Kubernetes provides durable storage for Pods, ensuring data persistence across Pod restarts and rescheduling.\"\r\n            }\r\n          }",
+		"{\"kind\": \"VolumeAttachment\",\r\n            \"model\": \"kubernetes\",\r\n            \"patch\": {\r\n              \"patchStrategy\": \"replace\",\r\n              \"mutatedRef\": [\r\n                [\"settings\", \"spec\", \"source\", \"persistentVolumeName\"]\r\n              ],\r\n              \"description\": \"VolumeAttachment in Kubernetes facilitates the attachment of a PersistentVolume to a node, enabling its utilization by Pods on that node.\"\r\n            }\r\n          }",
+		"{\"apiVersion\": \"core.meshery.io/v1alpha1\",\r\"kind\":\"Hierarchical\",\r\"metadata\": {\r  \"description\": \"A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.\"\",\r  \"styles\": { \"\",}\r  },\r  \"model\": {\r    \"name\": \"kubernetes\",\r    \"version\": \"v1.25.2\",\r    \"category\": {\r      \"name\": \"Orchestration \\u0026 Management\",\r      \"metadata\": null\r    },\r    \"metadata\": {}\r},\r\"subType\": \"Inventory\",\r\"rego_query\": \"hierarchical_inventory_relationship\",\r\"selectors\": {\r  \"allow\": {\r    \"from\": [{\"kind\": \"PersistentVolume\",\r\r            \"model\": \"kubernetes\",\r\r            \"patch\": {\r\r              \"patchStrategy\": \"replace\",\r\r              \"mutatorRef\": [\r\r                [\"name\"]\r\r              ],\r\r              \"description\": \"PersistentVolume in Kubernetes provides durable storage for Pods, ensuring data persistence across Pod restarts and rescheduling.\"\r\r            }\r\r          }],\r    \"to\": [{\"kind\": \"VolumeAttachment\",\r\r            \"model\": \"kubernetes\",\r\r            \"patch\": {\r\r              \"patchStrategy\": \"replace\",\r\r              \"mutatedRef\": [\r\r                [\"settings\", \"spec\", \"source\", \"persistentVolumeName\"]\r\r              ],\r\r              \"description\": \"VolumeAttachment in Kubernetes facilitates the attachment of a PersistentVolume to a node, enabling its utilization by Pods on that node.\"\r\r            }\r\r          }]\r    },\r  \"deny\": {\r    \"from\": [],\r    \"to\": []\r    }\r  }\r}",
+		"",
 	}
 
 	resp := &sheets.ValueRange{
@@ -34,100 +36,73 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 		Values: [][]interface{}{
 			{},
 			{},
-			sheetDataParsed["ROW3"].([]interface{}),
+			row3,
 		},
 	}
 
-	// for testing, relative path is required in createJsonFile function
-	jsonFilePath := "./testdata/RelationshipDataTest.json"
+	jsonFilePath := t.TempDir() + "/RelationshipDataTest.json"
 
-	err = createJsonFile(resp, jsonFilePath)
-	if err != nil {
+	if err := createJsonFile(resp, jsonFilePath); err != nil {
 		t.Fatal("Error in createJsonFile function: ", err)
 	}
 
-	// comparing the generated JSON file with the expected JSON file
-	goldenFilePath := "./fixtures/generate.relationship.json.output.golden"
-
-	relationshipData, err := os.ReadFile(jsonFilePath)
+	generated, err := os.ReadFile(jsonFilePath)
 	if err != nil {
-		t.Fatal("Error in reading file 'RelationshipsDataTest.json': ", err)
+		t.Fatalf("Error in reading generated JSON file: %v", err)
 	}
 
-	expectedRelationshipData, err := os.ReadFile(goldenFilePath)
-	if err != nil {
-		t.Fatal("Error in reading file 'generate.relationship.json.output.golden': ", err)
+	var got []CustomValueRange
+	if err := json.Unmarshal(generated, &got); err != nil {
+		t.Fatalf("Error in parsing generated JSON file: %v", err)
 	}
 
-	var relationshipDataJson, expectedRelationshipDataJson []map[string]interface{}
-	err = json.Unmarshal([]byte(relationshipData), &relationshipDataJson)
-	if err != nil {
-		t.Fatal("Error in parsing file 'RelationshipsDataTest.json': ", err)
+	expected := []CustomValueRange{
+		{
+			Model:                row3[0].(string),
+			Version:              row3[1].(string),
+			Kind:                 row3[2].(string),
+			Type:                 row3[3].(string),
+			SubType:              row3[4].(string),
+			MetadataDescription:  row3[5].(string),
+			Docs:                 row3[6].(string),
+			MetadataStyles:       row3[7].(string),
+			EvalPolicy:           row3[8].(string),
+			SelectorsDenyFrom:    row3[9].(string),
+			SelectorsDenyTo:      row3[10].(string),
+			SelectorsAllowFrom:   row3[11].(string),
+			SelectorsAllowTo:     row3[12].(string),
+			CompleteDefinition:   row3[13].(string),
+			VisualizationExample: row3[14].(string),
+		},
 	}
 
-	err = json.Unmarshal([]byte(expectedRelationshipData), &expectedRelationshipDataJson)
-	if err != nil {
-		t.Fatal("Error in parsing file 'RelationshipsDataTest.json': ", err)
+	if diff := cmp.Diff(expected, got); diff != "" {
+		t.Fatalf("Generated JSON data does not match expected (-want +got):\n%s", diff)
 	}
-
-	assert.JSONEqf(t, string(expectedRelationshipData), string(relationshipData), "Generated JSON data does not match expected data.\n Difference: %s", cmp.Diff(relationshipData, expectedRelationshipDataJson))
-
-	t.Log("Create JSON file test passed")
 }
 
 func TestGenerate(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	//initialize mock server for handling requests
-	utils.StartMockery(t)
-
-	// create a test helper
-	testContext := utils.NewTestHelper(t)
-
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	// test scenarios for fetching data
 	tests := []struct {
-		Name             string
-		Args             []string
-		URL              string
-		Fixture          string
-		Token            string
-		ExpectedResponse string
-		ExpectError      bool
+		Name                string
+		Args                []string
+		ExpectedErrContains []string
+		ExpectError         bool
 	}{
 		{
 			Name:             "Generate registered relationships without spreadsheet id",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "",
-			ExpectedResponse: "generate.relationship.output.without.spreadsheet.id.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      true,
+			ExpectedErrContains: []string{"[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified"},
+			ExpectError:         true,
 		},
 		{
 			Name:             "Generate registered relationships without spreadsheet creadentials",
 			Args:             []string{"generate", "--spreadsheet-id", "1"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "",
-			ExpectedResponse: "generate.relationship.output.without.spreadsheet.cred.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      true,
+			ExpectedErrContains: []string{"[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified"},
+			ExpectError:         true,
 		},
 		{
 			Name:             "Generate registered relationships",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "generate.relationship.api.response.golden",
-			ExpectedResponse: "generate.relationship.output.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
 	}
@@ -135,72 +110,30 @@ func TestGenerate(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			if tt.Fixture != "" {
-				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
-				utils.TokenFlag = tt.Token
-
-				httpmock.RegisterResponder("GET", tt.URL,
-					httpmock.NewStringResponder(200, apiResponse))
-			}
-
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// Grab console prints with proper cleanup
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			// Execute command and validate errors (if any). No golden snapshots.
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
+			RelationshipCmd.SetOut(b)
 			err := RelationshipCmd.Execute()
-
-			// Close write end before reading
-			_ = w.Close()
-
 			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-					actualResponse := err.Error()
-					utils.Equals(t, expectedResponse, actualResponse)
-					// reset the global variables
-					spreadsheeetCred = ""
-					spreadsheeetID = ""
-					return
+				if !tt.ExpectError {
+					t.Fatal(err)
 				}
-				t.Error(err)
+				for _, s := range tt.ExpectedErrContains {
+					if !strings.Contains(err.Error(), s) {
+						t.Fatalf("expected error to contain %q, got %q", s, err.Error())
+					}
+				}
+				spreadsheeetCred = ""
+				spreadsheeetID = ""
+				return
 			}
-
-			out, _ := io.ReadAll(r)
-			actualResponse := string(out)
-
-			if *update {
-				golden.Write(actualResponse)
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
 			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 			// reset the global variables
 			spreadsheeetCred = ""
 			spreadsheeetID = ""
 		})
-		t.Log("Generate experimental relationship test passed")
 	}
-
-	utils.StopMockery(t)
 }

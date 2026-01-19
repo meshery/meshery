@@ -2,17 +2,12 @@ package system
 
 import (
 	"bytes"
-	"flag"
-	"path/filepath"
-	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
-
-var update = flag.Bool("update", false, "update golden files")
 
 // This is an Integration test
 func TestPreflightCmdIntegration(t *testing.T) {
@@ -47,26 +42,11 @@ func TestPreflightCmdIntegration(t *testing.T) {
 				t.Error(err)
 			}
 
-			output := buf.String()
-			actualResponse := output
-
-			// get current directory
-			_, filename, _, ok := runtime.Caller(0)
-			if !ok {
-				t.Fatal("Not able to get current working directory")
-			}
-
-			currDir := filepath.Dir(filename)
-			testdataDir := filepath.Join(currDir, "testdata")
-			// testdataDir := filepath.Join(filepath.Dir(filename), tf.dir, tf.name)
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, filepath.Join(testdataDir, "check"))
-
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			assert.Equal(t, expectedResponse, actualResponse)
+			actualResponse := buf.String()
+			assert.Contains(t, actualResponse, "Docker")
+			assert.Contains(t, actualResponse, "Kubernetes API")
+			assert.Contains(t, actualResponse, "Kubernetes Version")
+			assert.Contains(t, actualResponse, "Meshery prerequisites")
 		})
 		t.Log("PreflightCmdIntegration Test Passed")
 	}

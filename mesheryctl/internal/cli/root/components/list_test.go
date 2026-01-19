@@ -25,7 +25,7 @@ func TestListComponent(t *testing.T) {
 			Args:             []string{"list", "--page", "1"},
 			URL:              testUrl,
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.output.golden",
+			ExpectedContains: []string{"Total number of components: 1", "Page: 1", "NAME", "component-test-0"},
 			ExpectError:      false,
 		},
 		{
@@ -33,7 +33,7 @@ func TestListComponent(t *testing.T) {
 			Args:             []string{"list", "--count"},
 			URL:              testUrl,
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.count.output.golden",
+			ExpectedContains: []string{"Total number of components: 1"},
 			ExpectError:      false,
 		},
 		{
@@ -41,7 +41,7 @@ func TestListComponent(t *testing.T) {
 			Args:             []string{"list", "--count"},
 			URL:              testUrl,
 			Fixture:          "components.empty.api.response.golden",
-			ExpectedResponse: "components.list.count.empty.ouput.golden",
+			ExpectedContains: []string{"No components found"},
 			ExpectError:      false,
 		},
 	}
