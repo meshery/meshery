@@ -1,11 +1,16 @@
 import React, { useMemo, useRef, useEffect } from 'react';
-import ReactCodeMirror from '@uiw/react-codemirror/cjs/index.js';
+import dynamic from 'next/dynamic';
 import { material } from '@uiw/codemirror-theme-material';
 import { json } from '@codemirror/lang-json';
 import { yaml } from '@codemirror/lang-yaml';
 import { EditorView } from '@codemirror/view';
 import { lintGutter, linter } from '@codemirror/lint';
 import jsyaml from 'js-yaml';
+
+const ReactCodeMirror = dynamic(
+  () => import('@uiw/react-codemirror').then((mod) => mod.default),
+  { ssr: false },
+);
 
 const getSafeValue = (value) => {
   if (typeof value === 'string') {
