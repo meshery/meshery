@@ -7,7 +7,7 @@
     "dev": "next lint --fix && node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
+    "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx}\"",
     "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
@@ -45,6 +45,7 @@
     "@rjsf/mui": "^5.24.8",
     "@rjsf/utils": "^5.24.8",
     "@rjsf/validator-ajv8": "^5.24.8",
+    "@sistent/mui-datatables": "^5.1.4",
     "@sistent/sistent": "^0.16.4",
     "@uiw/react-md-editor": "^4.0.5",
     "@xstate/react": "^5.0.4",
@@ -63,7 +64,6 @@
     "jss": "latest",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "@sistent/mui-datatables": "^5.1.4",
     "next": "^12.3.4",
     "next-remove-imports": "^1.0.12",
     "notistack": "^3.0.2",
@@ -99,17 +99,19 @@
   },
   "devDependencies": {
     "@actions/core": "^1.11.1",
-    "@next/eslint-plugin-next": "^13.1.2",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.39.2",
+    "@next/eslint-plugin-next": "^16.1.2",
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.13.14",
     "ajv": "^8.17.1",
     "allure-playwright": "^3.4.3",
     "dotenv": "^16.4.7",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^13.1.2",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.37.2",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "16.1.3",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-unused-imports": "^4.1.4",
     "http-proxy": "^1.18.1",
     "husky": "^9.1.7",
@@ -121,10 +123,11 @@
     "prettier": "^3.5.3",
     "relay-compiler": "^20.1.0",
     "start-server-and-test": "^2.1.3",
+    "typescript": "^5.9.3",
     "webpack": "^5.104.1",
     "webpack-cli": "^5.1.4"
   },
   "engines": {
-    "node": "^18 || ^20"
+    "node": "^20"
   }
 }
