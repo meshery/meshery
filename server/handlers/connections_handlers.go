@@ -21,8 +21,6 @@ import (
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
-type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
-
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodDelete {
 		h.handleProcessTermination(w, req)
@@ -335,7 +333,16 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 // responses:
 // 200: mesheryConnectionsStatusPage
 func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID.String())
+	statusProvider, ok := provider.(interface {
+		GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
+	})
+	if !ok {
+		h.log.Error(ErrQueryGet("connections status"))
+		http.Error(w, "connections status not supported by provider", http.StatusNotImplemented)
+		return
+	}
+
+	connectionsStatusPage, err := statusProvider.GetConnectionsStatus(req, user.ID.String())
 	obj := "connections status"
 
 	if err != nil {
@@ -352,7 +359,7 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionStatusPayload := &connectionStatusPayload{}
+	connectionStatusPayload := map[uuid.UUID]connections.ConnectionStatus{}
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -360,7 +367,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
 
-	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
+	err := json.NewDecoder(req.Body).Decode(&connectionStatusPayload)
 	if err != nil {
 		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
 		eventBuilder.WithSeverity(events.Error).WithDescription("Unable to update connection status.").
@@ -377,7 +384,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	if connKind == "kubernetes" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		for id, status := range *connectionStatusPayload {
+		for id, status := range connectionStatusPayload {
 			eventBuilder.ActedUpon(id)
 			k8scontext, err := provider.GetK8sContext(token, id.String())
 
@@ -459,7 +466,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		}
 	} else {
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		for id, status := range *connectionStatusPayload {
+		for id, status := range connectionStatusPayload {
 			connection, statusCode, err := provider.UpdateConnectionStatusByID(token, id, status)
 
 			if err != nil {
