@@ -34,7 +34,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from './CodeMirror';
 import Moment from 'react-moment';
 import yaml from 'js-yaml';
