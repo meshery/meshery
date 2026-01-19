@@ -1,5 +1,7 @@
 import { createTheme } from '@sistent/sistent';
 
+const breakpoints = createTheme().breakpoints;
+
 export const rjsfTheme = createTheme({
   palette: {
     primary: {
