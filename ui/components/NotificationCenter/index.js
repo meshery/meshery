@@ -215,7 +215,12 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
-  const Icon = uiConfig.icon || BellIcon;
+  // Map the string identifiers to actual components
+  const iconMap = {
+    bell: BellIcon,
+  };
+
+  const Icon = iconMap[uiConfig.icon] || BellIcon;
   return (
     <NotificationContainer>
       <Title>
