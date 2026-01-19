@@ -25,7 +25,7 @@ const (
 	errInitUnsupportedFormat = "[ %s ] are the only format supported"
 	errInitInvalidVersion    = "version must follow a semver format, f.e. v1.2.3"
 	errInitFolderExists      = "folder %s exists, please specify different model name or version"
-	errInitInvalidModelName  = "invalid model name: name must contains alphanumeric characters or hyphens"
+	errInitInvalidModelName  = "invalid model name: name must match pattern ^[a-z0-9-]+$"
 
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
