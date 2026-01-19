@@ -1,10 +1,10 @@
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/mui';
 import customValidator from '../../../utils/rjsfValidator';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
-import { useTheme, ThemeProvider } from '@sistent/sistent';
+import { createTheme, useTheme, ThemeProvider } from '@sistent/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
@@ -62,18 +62,35 @@ function RJSFForm_({
   ...restProps
 }) {
   const globalTheme = useTheme();
+  const [menuContainer, setMenuContainer] = useState(null);
+  const baseTheme = globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme;
 
   useEffect(() => {
-    const extensionTooltipPortal =
-      isExtensionTooltipPortal && document.getElementById('extension-tooltip-portal');
-    if (extensionTooltipPortal) {
-      rjsfTheme.components.MuiMenu.defaultProps = {
-        ...rjsfTheme.components.MuiMenu.defaultProps,
-        container: extensionTooltipPortal,
-      };
+    if (!isExtensionTooltipPortal) {
+      setMenuContainer(null);
+      return;
     }
-    rjsfTheme.zIndex.modal = 99999;
-  }, []);
+
+    const extensionTooltipPortal = document.getElementById('extension-tooltip-portal');
+    setMenuContainer(extensionTooltipPortal || null);
+  }, [isExtensionTooltipPortal]);
+
+  const resolvedRjsfTheme = useMemo(() => {
+    if (!menuContainer) {
+      return baseTheme;
+    }
+
+    return createTheme(baseTheme, {
+      components: {
+        MuiMenu: {
+          defaultProps: {
+            ...baseTheme.components?.MuiMenu?.defaultProps,
+            container: menuContainer,
+          },
+        },
+      },
+    });
+  }, [baseTheme, menuContainer]);
 
   if (isLoading && LoadingComponent) {
     return <LoadingComponent />;
@@ -82,7 +99,7 @@ function RJSFForm_({
   return (
     <ErrorBoundary customFallback={CustomErrorFallback}>
       {/* Putting RJSF into error boundary, so that error can be catched.. */}{' '}
-      <ThemeProvider theme={globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme}>
+      <ThemeProvider theme={resolvedRjsfTheme}>
         <MuiRJSFForm
           schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}

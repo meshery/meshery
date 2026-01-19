@@ -63,7 +63,7 @@ import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';
-import { getFallbackImageBasedOnKind } from '@/utils/fallback';
+import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -637,6 +637,10 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
+          const iconSrc = normalizeStaticImagePath(
+            getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
+              getFallbackImageBasedOnKind(kind),
+          );
           return (
             <>
               <TooltipWrappedConnectionChip
@@ -659,10 +663,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                     );
                   }
                 }}
-                iconSrc={`/${
-                  getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
-                  getFallbackImageBasedOnKind(kind)
-                }`}
+                iconSrc={iconSrc}
                 width="12rem"
               />
               {kind == 'kubernetes' && (

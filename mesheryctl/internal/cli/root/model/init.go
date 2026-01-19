@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -217,11 +216,11 @@ func initModelGetValidOutputFormat() []string {
 }
 
 const (
-	initModelDirPerm                   = 0o755
-	initModelModelSchema               = "schemas/constructs/v1beta1/model/model.yaml"
-	initModelTemplatePathModel         = "schemas/constructs/v1beta1/model/templates/model_template"
-	initModelTemplatePathComponent     = "schemas/constructs/v1beta1/component/templates/component_template"
-	initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
+	initModelDirPerm                  = 0o755
+	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
 )
 
 // TODO: Connection templates are temporarily disabled.
@@ -280,7 +279,7 @@ var initModelData = []struct {
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
-			"relationship": initModelTemplatePathRelathionship,
+			"relationship": initModelTemplatePathRelationship,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Creating sample relationships...")
@@ -379,13 +378,12 @@ func initModelValidateDataOverSchema(schema []byte, data map[string]interface{})
 }
 
 func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode JSON/YAML
+	// Generic structure to decode Yaml
 	var schemaMap map[string]interface{}
 
-	if err := json.Unmarshal(schema, &schemaMap); err != nil {
-		if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
-			return "", err
-		}
+	// Unmarshal Yaml schema into a map
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
+		return "", err
 	}
 
 	properties := mapStringInterface(schemaMap["properties"])

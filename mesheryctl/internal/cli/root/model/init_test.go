@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -60,6 +58,7 @@ func TestModelInit(t *testing.T) {
 		initTestEC2Controller,
 		initTestDynamoController,
 		"test_case_some_other_custom_dir",
+		"test-case_aws-ec2-controller", // underscore variant used in invalid model name test
 	}
 	cleanupTestArtifacts(cleanupDirs)
 	t.Cleanup(func() {
@@ -275,10 +274,12 @@ func TestModelInit(t *testing.T) {
 			ExpectedError: ErrModelInitFromString(errInitOneArg),
 		},
 		{
-			Name:          "model init invalid model name (underscore)",
-			Args:          []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
-			ExpectError:   true,
-			ExpectedError: ErrModelInitFromString(errInitInvalidModelName),
+			Name:             "model init invalid model name (underscore)",
+			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
 		},
 	}
 	for _, tc := range tests {
@@ -305,9 +306,14 @@ func TestModelInit(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
-					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
+					if tc.IsOutputGolden {
+
+						expectedResponse := golden.Load()
+
+						utils.Equals(t, expectedResponse, err.Error())
+						return
+					}
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
 
 				}

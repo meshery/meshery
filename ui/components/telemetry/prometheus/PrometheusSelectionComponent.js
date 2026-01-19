@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@sistent/sistent';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import { Controlled as CodeMirror } from '../../CodeMirror';
 import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import CodeIcon from '@mui/icons-material/Code';
@@ -91,7 +91,6 @@ const PrometheusSelectionComponent = (props) => {
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [selectedTemplateVars, setSelectedTemplateVars] = useState([]);
 
-  const cmEditorRef = useRef(null);
   const boardTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -236,6 +235,19 @@ const PrometheusSelectionComponent = (props) => {
 
   const genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
+  const isValidJson = (value) => {
+    if (!value) {
+      return false;
+    }
+
+    try {
+      JSON.parse(value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const handleCodeChange = (editor, data, value) => {
     setGrafanaBoard(value);
     setGrafanaBoardObject({});
@@ -250,7 +262,7 @@ const PrometheusSelectionComponent = (props) => {
     }
 
     boardTimeoutRef.current = setTimeout(() => {
-      if (cmEditorRef.current?.state.lint.marked.length === 0) {
+      if (isValidJson(value)) {
         boardChange(value);
       }
     }, 1000);
@@ -279,12 +291,6 @@ const PrometheusSelectionComponent = (props) => {
             </div>
 
             <CodeMirror
-              editorDidMount={(editor) => {
-                cmEditorRef.current = editor;
-              }}
-              editorWillUnmount={() => {
-                cmEditorRef.current = null;
-              }}
               value={grafanaBoard}
               options={{
                 theme: 'material',
@@ -295,7 +301,6 @@ const PrometheusSelectionComponent = (props) => {
                 mode: 'application/json',
               }}
               onBeforeChange={handleCodeChange}
-              onChange={() => {}}
             />
           </Grid2>
 
