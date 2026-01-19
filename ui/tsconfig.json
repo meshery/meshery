@@ -8,10 +8,9 @@
     "paths": {
       "@/*": ["ui/*"]
     },
-
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    "module": "esnext",
     "moduleResolution": "nodenext",
     "target": "esnext",
     "allowJs": true,
@@ -21,12 +20,10 @@
     // "lib": ["esnext"],
     // "types": ["node"],
     // and npm install -D @types/node
-
     // Other Outputs
     "noEmit": true,
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
-
     // Recommended Options
     "strict": false,
     "noImplicitAny": false,
@@ -39,13 +36,17 @@
     // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
-
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "include": ["next-env.d.ts", "ui/**/*.ts", "ui/**/*.tsx"],
   "exclude": ["node_modules"]

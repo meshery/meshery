@@ -32,7 +32,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../utils/Enum';
-import CAN from '@/utils/can';
+import CAN from '../utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
