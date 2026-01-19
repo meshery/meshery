@@ -42,9 +42,7 @@ func TestOrganization(t *testing.T) {
 				if !test.ExpectError {
 					t.Fatal(err)
 				}
-				assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(test.ExpectedError))
-				assert.Equal(t, errors.GetCode(err), errors.GetCode(test.ExpectedError))
-				assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(test.ExpectedError))
+                utils.AssertMeshkitErrorsEqual(t, err, test.ExpectedError)
 				return
 			}
 			if test.ExpectError {
