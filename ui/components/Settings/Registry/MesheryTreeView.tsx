@@ -123,9 +123,10 @@ const MesheryTreeView = React.memo(
       setExpanded(arr);
     };
 
-    const handleSelect = (_event: unknown, nodeIds: string[]) => {
-      if (nodeIds.length >= 0) {
-        let selectedIdArr = nodeIds[0].split('.');
+    const handleSelect = (_event: unknown, nodeIds: string | string[]) => {
+      if ((Array.isArray(nodeIds) ? nodeIds.length : 1) >= 0) {
+        const nodeIdList = Array.isArray(nodeIds) ? nodeIds : [nodeIds];
+        const selectedIdArr = nodeIdList[0].split('.');
         let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
 
         // update route -> not in modal mode
@@ -136,9 +137,9 @@ const MesheryTreeView = React.memo(
             ...(searchText && { searchText }),
             pagesize: indx + 14,
           };
-          handleUpdateSelectedRoute(nodeIds, filter);
+          handleUpdateSelectedRoute(nodeIdList, filter);
         }
-        setSelected([0, nodeIds]);
+        setSelected(nodeIdList);
       } else {
         setSelected([]);
       }
@@ -166,7 +167,7 @@ const MesheryTreeView = React.memo(
         return;
       }
 
-      let selectedIdArr = selectedItemUUID.split('.');
+      const selectedIdArr = selectedItemUUID.split('.');
       if (selectedIdArr.length >= 0) {
         // Check if showDetailsData data matches with item from route
         // This will prevent unnecessary state update
@@ -197,7 +198,7 @@ const MesheryTreeView = React.memo(
     }, [selectedItemUUID, data, showDetailsData]);
 
     useEffect(() => {
-      let selectedIdArr = selectedItemUUID.split('.');
+      const selectedIdArr = selectedItemUUID.split('.');
       if (selectedIdArr.length >= 0) {
         setTimeout(() => {
           requestAnimationFrame(() => {

@@ -62,16 +62,16 @@ const VersionedModelRelationshipTree = ({
             versionedModelDef.id
           }.2`}
           labelText={`Relationships (${
-            relationshipsData.relationships ? relationshipsData.relationships.length : 0
+            relationshipsData?.relationships ? relationshipsData.relationships.length : 0
           })`}
         >
-          {relationshipsData.relationships.length > 0 && (
+          {relationshipsData?.relationships?.length > 0 && (
             <RelationshipTree
               handleToggle={handleToggle}
               handleSelect={handleSelect}
               expanded={expanded}
               selected={selected}
-              data={groupRelationshipsByKind(relationshipsData.relationships)}
+              data={groupRelationshipsByKind(relationshipsData.relationships || [])}
               view={MODELS}
               setShowDetailsData={setShowDetailsData}
               idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${

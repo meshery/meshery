@@ -58,7 +58,7 @@ const CSV_TEMPLATE_BASE_URL =
 type CsvStepperProps = { handleClose: () => void };
 
 const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
-  const [modelData, setModelData] = React.useState({});
+  const [modelData, setModelData] = React.useState<Record<string, any>>({});
   const [modelCsvFile, setModelCsvFile] = React.useState<{ base64: string; name: string } | null>(
     null,
   );
@@ -72,11 +72,11 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
   } | null>(null);
   const registerModel = true;
 
-  const fileToBase64 = (file: File) => {
+  const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
   };
