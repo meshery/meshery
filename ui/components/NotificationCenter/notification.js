@@ -282,21 +282,23 @@ export const getErrorCodesFromEvent = (event) => {
 };
 export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
-  const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
-  const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
-  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
-  const notificationColor = severityStyles?.color;
+  const isVisible = useSelector((state) => selectIsEventVisible(state, event_id));
   const theme = useTheme();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
+  const uiConfig = useSelector((state) => state.events.ui);
+  const { data: user } = useGetUserByIdQuery(event?.user_id || '');
+
+  // Return null if event doesn't exist (e.g., already deleted)
+  if (!event) return null;
+
+  const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
+  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
+  const notificationColor = severityStyles?.color;
   const handleExpandClick = (e) => {
     e.stopPropagation();
     setExpanded(!expanded);
   };
-
-  const uiConfig = useSelector((state) => state.events.ui);
-
-  const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
   const userAvatarUrl = user?.avatar_url || '';
