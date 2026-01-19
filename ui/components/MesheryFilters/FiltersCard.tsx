@@ -15,7 +15,7 @@ import Fullscreen from '@mui/icons-material/Fullscreen';
 import Save from '@mui/icons-material/Save';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from '../CodeMirror';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import {
   BottomContainer,

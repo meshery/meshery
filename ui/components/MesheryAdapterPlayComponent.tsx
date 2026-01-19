@@ -34,8 +34,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import PropTypes from 'prop-types';
+import { Controlled as CodeMirror } from './CodeMirror';
 import Moment from 'react-moment';
+import yaml from 'js-yaml';
 import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
@@ -123,8 +125,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const { notify } = useNotification();
   const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
-  const cmEditorAddRef = useRef(null);
-  const cmEditorDelRef = useRef(null);
   const addIconEles = useRef({});
   const delIconEles = useRef({});
 
@@ -157,6 +157,19 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const [versionList, setVersionList] = useState([]);
   const [version, setVersion] = useState({ label: '', value: '' });
   const [versionError, setVersionError] = useState(false);
+
+  const isYamlValid = (value) => {
+    if (!value) {
+      return false;
+    }
+
+    try {
+      yaml.load(value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
 
   // Initialize menu state based on adapter operations
   const initMenuState = () => {
@@ -386,18 +399,12 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
       }
 
       if (deleteOp) {
-        if (
-          op === 'custom' &&
-          (cmEditorValDel === '' || cmEditorDelRef.current?.state.lint.marked.length > 0)
-        ) {
+        if (op === 'custom' && !isYamlValid(cmEditorValDel)) {
           setCmEditorValDelError(true);
           setSelectionError(true);
           return;
         }
-      } else if (
-        op === 'custom' &&
-        (cmEditorValAdd === '' || cmEditorAddRef.current?.state.lint.marked.length > 0)
-      ) {
+      } else if (op === 'custom' && !isYamlValid(cmEditorValAdd)) {
         setCmEditorValAddError(true);
         setSelectionError(true);
         return;
@@ -628,13 +635,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
             </Grid>
             <Grid item xs={12}>
               <CodeMirror
-                editorDidMount={(editor) => {
-                  if (isDelete) {
-                    cmEditorDelRef.current = editor;
-                  } else {
-                    cmEditorAddRef.current = editor;
-                  }
-                }}
                 value={isDelete ? cmEditorValDel : cmEditorValAdd}
                 options={{
                   theme: 'material',
@@ -645,15 +645,16 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                   mode: 'text/x-yaml',
                 }}
                 onBeforeChange={(editor, data, value) => {
+                  const isValid = isYamlValid(value);
                   if (isDelete) {
                     setCmEditorValDel(value);
-                    if (value !== '' && editor.state.lint.marked.length === 0) {
+                    if (isValid) {
                       setSelectionError(false);
                       setCmEditorValDelError(false);
                     }
                   } else {
                     setCmEditorValAdd(value);
-                    if (value !== '' && editor.state.lint.marked.length === 0) {
+                    if (isValid) {
                       setSelectionError(false);
                       setCmEditorValAddError(false);
                     }
