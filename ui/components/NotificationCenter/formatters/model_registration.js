@@ -3,6 +3,7 @@ import { Typography, Grid2, Box } from '@sistent/sistent';
 import { ErrorMetadataFormatter } from './error';
 import { TitleLink } from './common';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import { iconMedium } from 'css/icons.styles';
 
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
@@ -57,9 +58,9 @@ const ComponentWithIcon = ({ component }) => {
     `/ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
     `/ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
     `/ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
-  ];
+  ].map((path) => normalizeStaticImagePath(path));
 
-  const defaultPath = FALLBACK_MESHERY_IMAGE_PATH;
+  const defaultPath = normalizeStaticImagePath(FALLBACK_MESHERY_IMAGE_PATH);
 
   const [finalPath, setFinalPath] = useState(defaultPath);
 
