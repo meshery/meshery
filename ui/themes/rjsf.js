@@ -265,6 +265,9 @@ export const darkRjsfTheme = createTheme({
     fontFamily: 'Qanelas Soft, sans-serif',
     fontSize: 13,
   },
+  zIndex: {
+    modal: 99999,
+  },
   components: {
     // Most components mirror the light theme, with dark mode adjustments
     MuiTextField: {
