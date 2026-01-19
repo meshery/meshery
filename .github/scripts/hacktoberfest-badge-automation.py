@@ -107,6 +107,7 @@ class GitHubAPI:
         self.base_url = base_url
         self.logger = logger
         self.session = requests.Session()
+        self.timeout = 30
         
         if token:
             self.session.headers.update({
@@ -118,7 +119,7 @@ class GitHubAPI:
         """Fetch issue details"""
         url = f'{self.base_url}/repos/{self.repo}/issues/{issue_number}'
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -133,7 +134,7 @@ class GitHubAPI:
         
         try:
             while url:
-                response = self.session.get(url, params=params)
+                response = self.session.get(url, params=params, timeout=self.timeout)
                 response.raise_for_status()
                 issues.extend(response.json())
                 
@@ -151,7 +152,7 @@ class GitHubAPI:
         """Fetch issue timeline to find linked PRs"""
         url = f'{self.base_url}/repos/{self.repo}/issues/{issue_number}/timeline'
         try:
-            response = self.session.get(url, headers={'Accept': 'application/vnd.github.mockingbird-preview+json'})
+            response = self.session.get(url, headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -162,7 +163,7 @@ class GitHubAPI:
         """Fetch PR details"""
         url = f'{self.base_url}/repos/{self.repo}/pulls/{pr_number}'
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -173,7 +174,7 @@ class GitHubAPI:
         """Fetch all commits from a PR"""
         url = f'{self.base_url}/repos/{self.repo}/pulls/{pr_number}/commits'
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -215,13 +216,13 @@ class GitHubAPI:
         """Find PR number associated with a commit"""
         url = f'{self.base_url}/repos/{self.repo}/commits/{commit_sha}/pulls'
         try:
-            response = self.session.get(url, headers={'Accept': 'application/vnd.github.groot-preview+json'})
+            response = self.session.get(url, headers={'Accept': 'application/vnd.github.groot-preview+json'}, timeout=self.timeout)
             response.raise_for_status()
             prs = response.json()
             if prs:
                 return prs[0]['number']
-        except requests.exceptions.RequestException:
-            pass
+        except requests.exceptions.RequestException as e:
+            self.logger.debug(f"Could not find PR for commit {commit_sha}: {e}")
         return None
 
 
@@ -288,7 +289,7 @@ class SlackAPI:
         }
         
         try:
-            response = requests.post(self.api_url, json=payload, headers=headers)
+            response = requests.post(self.api_url, json=payload, headers=headers, timeout=30)
             response.raise_for_status()
             result = response.json()
             
@@ -383,12 +384,12 @@ class HacktoberfestAutomation:
         
         # Process each PR
         for pr_number in pr_numbers:
-            emails = self._process_pr(pr_number, issue_number)
+            emails = self._process_pr(pr_number)
             awarded_emails.update(emails)
         
         return awarded_emails
     
-    def _process_pr(self, pr_number: int, issue_number: int) -> Set[str]:
+    def _process_pr(self, pr_number: int) -> Set[str]:
         """Process a single PR"""
         awarded_emails = set()
         

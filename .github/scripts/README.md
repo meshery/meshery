@@ -134,7 +134,7 @@ python hacktoberfest-badge-automation.py --issues 16187 --dry-run
 
 ## GitHub Actions Integration
 
-The included workflow file (`.github/workflows/hacktoberfest-badge-award.yml`) allows:
+The included workflow file `.github/workflows/hacktoberfest-badge-award.yml` allows:
 - Scheduled daily execution
 - Manual triggering with custom parameters
 - Automatic log archiving
