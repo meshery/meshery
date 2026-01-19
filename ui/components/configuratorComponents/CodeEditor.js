@@ -1,10 +1,14 @@
 import { Card, CardContent, styled } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 
 export const CodeMirrorWrapper = styled(CodeMirror)(() => ({
-  '& .CodeMirror': {
+  '& .cm-editor': {
     minHeight: '300px',
     height: '54vh',
+  },
+  '& .cm-scroller': {
+    minHeight: '300px',
   },
 }));
 
@@ -14,17 +18,13 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, onChange }) {
       <CardContent>
         <CodeMirrorWrapper
           value={yaml}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            mode: 'text/x-yaml',
+          theme={codeMirrorTheme}
+          basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+          extensions={yamlExtensions}
+          onChange={(value, viewUpdate) => {
+            onChange?.(value, viewUpdate);
           }}
-          onChange={(a, b, c) => {
-            onChange(a, b, c);
-          }}
-          onBlur={(a) => saveCodeEditorChanges(a)}
+          onBlur={() => saveCodeEditorChanges?.(yaml)}
         />
       </CardContent>
     </Card>

@@ -32,7 +32,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 import Moment from 'react-moment';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../utils/utils';
 import ViewSwitch from '../ViewSwitch';
@@ -183,9 +184,12 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
 
   const FullScreenCodeMirrorWrapper = styled('div')(() => ({
     height: '100%',
-    '& .CodeMirror': {
+    '& .cm-editor': {
       minHeight: '300px',
       height: fullScreen ? '80vh' : '30vh',
+    },
+    '& .cm-scroller': {
+      minHeight: '300px',
     },
   }));
 
@@ -223,18 +227,12 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       <DialogContent>
         <FullScreenCodeMirrorWrapper>
           <CodeMirror
-            value={pattern.pattern_file}
-            options={{
-              theme: 'material',
-              lineNumbers: true,
-              lineWrapping: true,
-              gutters: ['CodeMirror-lint-markers'],
-              // @ts-ignore
-              lint: true,
-              mode: 'text/x-yaml',
-              readOnly: isReadOnly,
-            }}
-            onChange={(_, data, val) => setYaml(val)}
+            value={yaml}
+            theme={codeMirrorTheme}
+            basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+            extensions={yamlExtensions}
+            editable={!isReadOnly}
+            onChange={(value) => setYaml(value)}
           />
         </FullScreenCodeMirrorWrapper>
       </DialogContent>

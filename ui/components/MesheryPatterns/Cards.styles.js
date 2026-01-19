@@ -3,10 +3,13 @@ import { Grid, styled } from '@sistent/sistent';
 export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
   height: fullScreen ? '100%' : undefined,
   width: '100%',
-  '& .CodeMirror': {
+  '& .cm-editor': {
     minHeight: '300px',
     height: fullScreen ? '100%' : undefined,
     width: '100%',
+  },
+  '& .cm-scroller': {
+    minHeight: '300px',
   },
 }));
 

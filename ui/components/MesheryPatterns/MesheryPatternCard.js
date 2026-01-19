@@ -7,7 +7,8 @@ import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -360,18 +361,12 @@ function MesheryPatternCard_({
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
                   <CodeMirror
-                    value={showCode && formatted_pattern_file}
-                    options={{
-                      theme: 'material',
-                      lineNumbers: true,
-                      lineWrapping: true,
-                      gutters: ['CodeMirror-lint-markers'],
-                      // @ts-ignore
-                      lint: true,
-                      mode: 'text/x-yaml',
-                      readOnly: isReadOnly,
-                    }}
-                    onChange={(_, data, val) => setYaml(val)}
+                    value={showCode ? formatted_pattern_file : ''}
+                    theme={codeMirrorTheme}
+                    basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+                    extensions={yamlExtensions}
+                    editable={!isReadOnly}
+                    onChange={(value) => setYaml(value)}
                   />
                 </StyledCodeMirrorWrapper>
               ) : (

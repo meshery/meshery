@@ -34,7 +34,8 @@ import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions, isValidYaml } from '@/utils/codemirror';
 import Moment from 'react-moment';
 import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
@@ -107,8 +108,6 @@ const MesheryAdapterPlayComponent = (props) => {
   const { notify } = useNotification();
   const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
-  const cmEditorAddRef = useRef(null);
-  const cmEditorDelRef = useRef(null);
   const addIconEles = useRef({});
   const delIconEles = useRef({});
 
@@ -157,6 +156,8 @@ const MesheryAdapterPlayComponent = (props) => {
   };
 
   const [menuState, setMenuState] = useState(initMenuState());
+
+  const hasValidYaml = (value) => value !== '' && isValidYaml(value);
 
   // Equivalent to componentDidMount
   useEffect(() => {
@@ -370,18 +371,12 @@ const MesheryAdapterPlayComponent = (props) => {
       }
 
       if (deleteOp) {
-        if (
-          op === 'custom' &&
-          (cmEditorValDel === '' || cmEditorDelRef.current?.state.lint.marked.length > 0)
-        ) {
+        if (op === 'custom' && !hasValidYaml(cmEditorValDel)) {
           setCmEditorValDelError(true);
           setSelectionError(true);
           return;
         }
-      } else if (
-        op === 'custom' &&
-        (cmEditorValAdd === '' || cmEditorAddRef.current?.state.lint.marked.length > 0)
-      ) {
+      } else if (op === 'custom' && !hasValidYaml(cmEditorValAdd)) {
         setCmEditorValAddError(true);
         setSelectionError(true);
         return;
@@ -612,32 +607,20 @@ const MesheryAdapterPlayComponent = (props) => {
             </Grid>
             <Grid item xs={12}>
               <CodeMirror
-                editorDidMount={(editor) => {
-                  if (isDelete) {
-                    cmEditorDelRef.current = editor;
-                  } else {
-                    cmEditorAddRef.current = editor;
-                  }
-                }}
                 value={isDelete ? cmEditorValDel : cmEditorValAdd}
-                options={{
-                  theme: 'material',
-                  lineNumbers: true,
-                  lineWrapping: true,
-                  gutters: ['CodeMirror-lint-markers'],
-                  lint: true,
-                  mode: 'text/x-yaml',
-                }}
-                onBeforeChange={(editor, data, value) => {
+                theme={codeMirrorTheme}
+                basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+                extensions={yamlExtensions}
+                onChange={(value) => {
                   if (isDelete) {
                     setCmEditorValDel(value);
-                    if (value !== '' && editor.state.lint.marked.length === 0) {
+                    if (hasValidYaml(value)) {
                       setSelectionError(false);
                       setCmEditorValDelError(false);
                     }
                   } else {
                     setCmEditorValAdd(value);
-                    if (value !== '' && editor.state.lint.marked.length === 0) {
+                    if (hasValidYaml(value)) {
                       setSelectionError(false);
                       setCmEditorValAddError(false);
                     }

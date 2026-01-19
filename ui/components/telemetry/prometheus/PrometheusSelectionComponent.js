@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@sistent/sistent';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, jsonExtensions, isValidJson } from '@/utils/codemirror';
 import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import CodeIcon from '@mui/icons-material/Code';
@@ -91,7 +92,6 @@ const PrometheusSelectionComponent = (props) => {
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [selectedTemplateVars, setSelectedTemplateVars] = useState([]);
 
-  const cmEditorRef = useRef(null);
   const boardTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -236,7 +236,7 @@ const PrometheusSelectionComponent = (props) => {
 
   const genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
-  const handleCodeChange = (editor, data, value) => {
+  const handleCodeChange = (value) => {
     setGrafanaBoard(value);
     setGrafanaBoardObject({});
     setPanels([]);
@@ -250,7 +250,7 @@ const PrometheusSelectionComponent = (props) => {
     }
 
     boardTimeoutRef.current = setTimeout(() => {
-      if (cmEditorRef.current?.state.lint.marked.length === 0) {
+      if (isValidJson(value)) {
         boardChange(value);
       }
     }, 1000);
@@ -279,23 +279,11 @@ const PrometheusSelectionComponent = (props) => {
             </div>
 
             <CodeMirror
-              editorDidMount={(editor) => {
-                cmEditorRef.current = editor;
-              }}
-              editorWillUnmount={() => {
-                cmEditorRef.current = null;
-              }}
               value={grafanaBoard}
-              options={{
-                theme: 'material',
-                lineNumbers: true,
-                lineWrapping: true,
-                gutters: ['CodeMirror-lint-markers'],
-                lint: true,
-                mode: 'application/json',
-              }}
-              onBeforeChange={handleCodeChange}
-              onChange={() => {}}
+              theme={codeMirrorTheme}
+              basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+              extensions={jsonExtensions}
+              onChange={handleCodeChange}
             />
           </Grid2>
 

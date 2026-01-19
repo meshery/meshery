@@ -1,7 +1,8 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
@@ -126,9 +127,12 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 
   const FullScreenCodeMirrorWrapper = styled('div')(() => ({
     height: '100%',
-    '& .CodeMirror': {
+    '& .cm-editor': {
       minHeight: '300px',
       height: fullScreen ? '80vh' : '100%',
+    },
+    '& .cm-scroller': {
+      minHeight: '300px',
     },
   }));
 
@@ -178,16 +182,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
       <Divider variant="fullWidth" light />
       <FullScreenCodeMirrorWrapper>
         <CodeMirror
-          value={config}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            lint: true,
-            mode: 'text/x-yaml',
-          }}
-          onChange={(_, data, val) => setYaml(val)}
+          value={yaml}
+          theme={codeMirrorTheme}
+          basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+          extensions={yamlExtensions}
+          onChange={(value) => setYaml(value)}
         />
       </FullScreenCodeMirrorWrapper>
       <Divider variant="fullWidth" light />

@@ -14,7 +14,8 @@ import Fullscreen from '@mui/icons-material/Fullscreen';
 import Save from '@mui/icons-material/Save';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import {
   BottomContainer,
@@ -252,17 +253,11 @@ function FiltersCard_({
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
                   <CodeMirror
-                    value={showCode && filter_resource}
-                    options={{
-                      theme: 'material',
-                      lineNumbers: true,
-                      lineWrapping: true,
-                      gutters: ['CodeMirror-lint-markers'],
-                      // @ts-ignore
-                      lint: true,
-                      mode: 'text/x-yaml',
-                    }}
-                    onChange={(_, data, val) => setYaml(val)}
+                    value={showCode ? filter_resource : ''}
+                    theme={codeMirrorTheme}
+                    basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+                    extensions={yamlExtensions}
+                    onChange={(value) => setYaml(value)}
                   />
                 </StyledCodeMirrorWrapper>
               ) : (

@@ -6,13 +6,14 @@ import {
   IconButton,
   Tooltip,
 } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from '@uiw/react-codemirror';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import SaveIcon from '@mui/icons-material/Save';
 import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
 import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
+import { codeMirrorTheme, yamlExtensions } from '@/utils/codemirror';
 
 const YAMLDialog = ({
   fullScreen,
@@ -45,16 +46,11 @@ const YAMLDialog = ({
         <StyledCodeMirrorWrapper fullScreen={fullScreen}>
           <CodeMirror
             value={config_file}
-            options={{
-              theme: 'material',
-              lineNumbers: true,
-              lineWrapping: true,
-              gutters: ['CodeMirror-lint-markers'],
-              lint: true,
-              mode: 'text/x-yaml',
-              readOnly: isReadOnly,
-            }}
-            onChange={(_, data, val) => setYaml(val)}
+            theme={codeMirrorTheme}
+            basicSetup={{ lineNumbers: true, highlightActiveLine: false }}
+            extensions={yamlExtensions}
+            editable={!isReadOnly}
+            onChange={(value) => setYaml(value)}
           />
         </StyledCodeMirrorWrapper>
       </DialogContent>
