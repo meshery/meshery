@@ -99,7 +99,13 @@ const ImportModelModal = React.memo(
       updateProgress({ showProgress: false });
     };
 
-    const CustomRadioWidget = (props) => {
+    const CustomRadioWidget = (props: {
+      options: any;
+      value: string;
+      onChange: (value: string) => void;
+      label: string;
+      schema: any;
+    }) => {
       const { options, value, onChange, label, schema } = props;
       const { enumOptions } = options;
 

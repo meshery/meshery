@@ -10,17 +10,29 @@ const requires = createRequires(getDependencies);
 
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-const RemoteComponent = ({ url, loaderType, ...props }) => {
-  const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
+interface RemoteComponentUrl {
+  url: string;
+}
+
+interface RemoteComponentProps {
+  url: RemoteComponentUrl;
+  loaderType?: 'circular' | 'default';
+  [key: string]: unknown;
+}
+
+const RemoteComponent: React.FC<RemoteComponentProps> = ({ url, loaderType, ...props }) => {
+  const [loading, err, RemoteComponentInstance] = useRemoteComponent(url.url);
+
   if (loading) {
     if (loaderType === 'circular') {
-      return '';
+      return null;
     } else {
       return (
         <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
       );
     }
   }
+
   if (err != null) {
     /* Debugging log */
     console.error(`Extension Error: ${err.toString()}`);
@@ -29,7 +41,7 @@ const RemoteComponent = ({ url, loaderType, ...props }) => {
 
   return (
     <div>
-      <RemoteComponent {...props} />
+      <RemoteComponentInstance {...props} />
     </div>
   );
 };

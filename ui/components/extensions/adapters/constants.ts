@@ -1,4 +1,18 @@
-const adaptersDescription = (adapterName) => {
+interface AdapterConfig {
+  name: string;
+  label: string;
+  imageSrc: string;
+  description: string;
+  defaultPort: number;
+  enabled: boolean;
+  url: string;
+}
+
+export interface AdaptersListType {
+  [key: string]: AdapterConfig;
+}
+
+const adaptersDescription = (adapterName: string): string => {
   return `Deploy the Meshery Adapter for ${adapterName} in order to enable deeper lifecycle management of ${adapterName}.`;
 };
 
@@ -6,7 +20,7 @@ const adaptersDescription = (adapterName) => {
  * adaptersList.name  -> name of the adapter to display on the card.
  * adaptersList.label -> used as a payload for adapter deployment (like an adapterId).
  */
-export const adaptersList = {
+export const adaptersList: AdaptersListType = {
   ISTIO: {
     name: 'Istio',
     label: 'meshery-istio',
@@ -93,4 +107,6 @@ export const adaptersList = {
 export const ADAPTER_STATUS = {
   ENABLED: 'ENABLED',
   DISABLED: 'DISABLED',
-};
+} as const;
+
+export type AdapterStatusType = (typeof ADAPTER_STATUS)[keyof typeof ADAPTER_STATUS];

@@ -24,7 +24,7 @@ import fetchCatalogFilter from '../graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
 import { RJSFModalWrapper } from '../General/Modals/Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../../utils/utils';
-import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
+import Filter from '../../public/static/img/drawer-icons/filter_svg';
 import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -54,7 +54,7 @@ import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { DefaultTableCell, SortableTableCell } from '../connections/common/index.js';
+import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
@@ -1315,9 +1315,9 @@ function MesheryFilters() {
   );
 }
 
-const ImportModal = React.memo((props) => {
-  const { handleClose, handleImportFilter } = props;
+type ImportModalProps = { handleClose: () => void; handleImportFilter: (data: any) => void };
 
+const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModalProps) => {
   return (
     <>
       <SistentModal
@@ -1341,9 +1341,13 @@ const ImportModal = React.memo((props) => {
   );
 });
 
-const PublishModal = React.memo((props) => {
-  const { handleClose, handleSubmit, title } = props;
+type PublishModalProps = {
+  handleClose: () => void;
+  handleSubmit: (data: any) => void;
+  title: string;
+};
 
+const PublishModal = React.memo(({ handleClose, handleSubmit, title }: PublishModalProps) => {
   return (
     <>
       <SistentModal

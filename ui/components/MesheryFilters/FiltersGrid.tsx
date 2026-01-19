@@ -13,7 +13,7 @@ import { RJSFModalWrapper } from '../General/Modals/Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Modal as SistentModal } from '@sistent/sistent';
-import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
+import Filter from '../../public/static/img/drawer-icons/filter_svg';
 
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 

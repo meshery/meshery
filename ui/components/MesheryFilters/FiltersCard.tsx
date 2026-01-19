@@ -31,7 +31,7 @@ import {
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import PublicIcon from '@mui/icons-material/Public';
-import TooltipButton from '../../utils/TooltipButton.js';
+import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -99,8 +99,8 @@ function FiltersCard_({
     setFullScreen(!fullScreen);
   };
 
-  const catalogContentKeys = Object.keys(description || {});
-  const catalogContentValues = Object.values(description || {});
+  const catalogContentKeys = Object.keys(description);
+  const catalogContentValues = Object.values(description);
   const theme = useTheme<Theme>();
 
   return (

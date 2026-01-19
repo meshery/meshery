@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { isNil, isUndefined } from 'lodash';
-import { useEffect, useState } from 'react';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
-import { ADAPTER_STATUS, adaptersList } from './constants';
+import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
@@ -10,9 +10,24 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
-const Adapters = () => {
+interface AdapterPayload {
+  status: string;
+  adapter: string;
+  targetPort: number;
+}
+
+interface MeshAdapter {
+  name: string;
+  adapter_location: string;
+}
+
+interface SyncResult {
+  meshAdapters: MeshAdapter[];
+}
+
+const Adapters: React.FC = () => {
   // States.
-  const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
+  const [availableAdapters, setAvailableAdapters] = useState<AdaptersListType>(adaptersList);
 
   // Hooks.
   const { notify } = useNotification();
@@ -25,20 +40,19 @@ const Adapters = () => {
   const theme = useTheme();
 
   // Handlers.
-  const handleAdapterSync = async (showLoader = true) => {
+  const handleAdapterSync = async (showLoader = true): Promise<void> => {
     showLoader && updateProgress({ showProgress: true });
 
     promisifiedDataFetch('/api/system/sync', {
       method: 'GET',
       credentials: 'include',
     })
-      .then((result) => {
+      .then((result: SyncResult) => {
         showLoader && updateProgress({ showProgress: false });
 
         if (!isUndefined(result)) {
           // Deep copying to avoid mutability.
-          // Ref: https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
-          let currentAdaptersList = structuredClone(adaptersList);
+          const currentAdaptersList = structuredClone(adaptersList);
 
           result.meshAdapters.forEach((element) => {
             const adapterId = element.name;
@@ -53,10 +67,15 @@ const Adapters = () => {
       .catch(() => handleError('Unable to fetch list of adapters.'));
   };
 
-  const handleAdapterDeployment = (payload, msg, selectedAdapter, adapterId) => {
+  const handleAdapterDeployment = (
+    payload: AdapterPayload,
+    msg: string,
+    selectedAdapter: AdaptersListType[string],
+    adapterId: string,
+  ): void => {
     updateProgress({ showProgress: true });
 
-    changeAdapterState((response, errors) => {
+    changeAdapterState((response: unknown, errors: unknown) => {
       updateProgress({ showProgress: false });
 
       if (!isNil(errors)) {
@@ -76,18 +95,20 @@ const Adapters = () => {
     }, payload);
   };
 
-  const handleError = (msg) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
-  };
+  const handleError =
+    (msg: string) =>
+    (error?: Error): void => {
+      updateProgress({ showProgress: false });
+      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error?.toString() });
+    };
 
-  const handleToggle = (selectedAdapter, adapterId) => {
+  const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
     setAvailableAdapters({
       ...availableAdapters,
       [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
     });
-    let payload = {},
-      msg = '';
+    let payload: AdapterPayload;
+    let msg: string;
     if (!selectedAdapter.enabled) {
       payload = {
         status: ADAPTER_STATUS.ENABLED,
