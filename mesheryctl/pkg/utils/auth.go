@@ -149,6 +149,12 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
+	
+	// Check if the file contains HTML (common when auth.json is corrupted)
+	if len(file) > 0 && file[0] == '<' {
+		return ErrInvalidTokenHTML()
+	}
+	
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
 		err = errors.Wrap(err, "token file invalid: ")
@@ -450,7 +456,32 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 
 	defer func() { _ = resp.Body.Close() }()
 
-	return io.ReadAll(resp.Body)
+	// Validate that the response is JSON, not HTML
+	if ContentTypeIsHTML(resp) {
+		// Read and discard the body to properly close the connection
+		_, _ = io.ReadAll(resp.Body)
+		return nil, ErrInvalidTokenResponse()
+	}
+
+	// Read the response body
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Additional check: if body starts with '<', it's likely HTML
+	if len(data) > 0 && data[0] == '<' {
+		return nil, ErrInvalidTokenResponse()
+	}
+
+	// Validate that the response body is valid JSON
+	var tokenObj map[string]interface{}
+	if err := json.Unmarshal(data, &tokenObj); err != nil {
+		// If it's not valid JSON, it might be HTML or another error response
+		return nil, errors.Wrap(err, "server response is not valid JSON. The response may be an HTML error page")
+	}
+
+	return data, nil
 }
 
 func IsServerRunning(serverAddr string) error {

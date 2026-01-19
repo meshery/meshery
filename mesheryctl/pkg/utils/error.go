@@ -56,6 +56,8 @@ var (
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrInvalidTokenHTMLCode        = "mesheryctl-1157"
+	ErrInvalidTokenResponseCode    = "mesheryctl-1158"
 	ErrCreateFileCode              = "mesheryctl-1123"
 	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
 	ErrReadFromBodyCode            = "mesheryctl-1125"
@@ -752,6 +754,20 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
 }
 
+func ErrInvalidTokenHTML() error {
+	return errors.New(ErrInvalidTokenHTMLCode, errors.Alert,
+		[]string{"Token file contains HTML instead of JSON"},
+		[]string{"Token file contains HTML instead of JSON. This usually means the authentication token is invalid or corrupted."},
+		[]string{"The auth.json file contains HTML content instead of valid JSON token data."},
+		[]string{"Please log in again with `mesheryctl system login` to generate a valid token file."})
+}
+
+func ErrInvalidTokenResponse() error {
+	return errors.New(ErrInvalidTokenResponseCode, errors.Alert,
+		[]string{"Server returned HTML instead of JSON token"},
+		[]string{"Server returned HTML instead of JSON token. This usually indicates an authentication error or server issue."},
+		[]string{"The server response is HTML instead of the expected JSON token format.", "Authentication may have failed or the server returned an error page."},
+		[]string{"Verify your authentication credentials and try logging in again with `mesheryctl system login`.", "Check if the Meshery server is running and accessible."})
 func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
