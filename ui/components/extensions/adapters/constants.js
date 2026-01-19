@@ -10,7 +10,7 @@ export const adaptersList = {
   ISTIO: {
     name: 'Istio',
     label: 'meshery-istio',
-    imageSrc: '/static/img/istio.svg',
+    imageSrc: '/static/img/adapters/istio.svg',
     description: adaptersDescription('Istio'),
     defaultPort: 10000,
     enabled: false,
@@ -19,7 +19,7 @@ export const adaptersList = {
   LINKERD: {
     name: 'Linkerd',
     label: 'meshery-linkerd',
-    imageSrc: '/static/img/linkerd.svg',
+    imageSrc: '/static/img/adapters/linkerd.svg',
     description: adaptersDescription('Linkerd'),
     defaultPort: 10001,
     enabled: false,
@@ -28,7 +28,7 @@ export const adaptersList = {
   CONSUL: {
     name: 'Consul',
     label: 'meshery-consul',
-    imageSrc: '/static/img/consul.svg',
+    imageSrc: '/static/img/adapters/consul.svg',
     description: adaptersDescription('Consul'),
     defaultPort: 10002,
     enabled: false,
@@ -37,25 +37,16 @@ export const adaptersList = {
   NETWORK_SERVICE_MESH: {
     name: 'Network Service Mesh',
     label: 'meshery-nsm',
-    imageSrc: '/static/img/networkservicemesh.svg',
+    imageSrc: '/static/img/adapters/networkservicemesh.svg',
     description: adaptersDescription('Network Service Mesh'),
     defaultPort: 10004,
-    enabled: false,
-    url: '',
-  },
-  APP_MESH: {
-    name: 'App Mesh',
-    label: 'meshery-app-mesh',
-    imageSrc: '/static/img/app_mesh.svg',
-    description: adaptersDescription('App Mesh'),
-    defaultPort: 10005,
     enabled: false,
     url: '',
   },
   TRAEFIK_MESH: {
     name: 'Traefik Mesh',
     label: 'meshery-traefik-mesh',
-    imageSrc: '/static/img/traefik_mesh.svg',
+    imageSrc: '/static/img/adapters/traefik_mesh.svg',
     description: adaptersDescription('Traefik Mesh'),
     defaultPort: 10006,
     enabled: false,
@@ -64,27 +55,16 @@ export const adaptersList = {
   KUMA: {
     name: 'Kuma',
     label: 'meshery-kuma',
-    imageSrc: '/static/img/kuma.svg',
+    imageSrc: '/static/img/adapters/kuma.svg',
     description: adaptersDescription('Kuma'),
     defaultPort: 10007,
     enabled: false,
     url: '',
   },
-  // TODO: Need to add icon for this.
-  // "meshery-cpx": {
-  //   name: "Meshery Cpx",
-  // label: "meshery-cpx",
-  //   imageSrc: "/static/img/",
-  //   description: adaptersDescription("Meshery CPX"),
-  //   defaultPort: 10008,
-  //   enabled: false,
-  //   url: "",
-  // },
-
   NGINX_SERVICE_MESH: {
     name: 'NGINX Service Mesh',
     label: 'meshery-nginx-sm',
-    imageSrc: '/static/img/nginx.svg',
+    imageSrc: '/static/img/adapters/nginx.svg',
     description: adaptersDescription('NGINX Service Mesh'),
     defaultPort: 10010,
     enabled: false,
@@ -93,7 +73,7 @@ export const adaptersList = {
   CILIUM_SERVICE_MESH: {
     name: 'Cilium Service Mesh',
     label: 'meshery-cilium',
-    imageSrc: '/static/img/cilium_service_mesh.svg',
+    imageSrc: '/static/img/adapters/cilium_service_mesh.svg',
     description: adaptersDescription('Cilium Service Mesh'),
     defaultPort: 10012,
     enabled: false,
@@ -102,7 +82,7 @@ export const adaptersList = {
   NIGHTHAWK: {
     name: 'Nighthawk',
     label: 'meshery-nighthawk',
-    imageSrc: '/static/img/nighthawk-logo.svg',
+    imageSrc: '/static/img/adapters/nighthawk-logo.svg',
     description: adaptersDescription('Performance Characterization by Meshery Nighthawk'),
     defaultPort: 10013,
     enabled: false,
