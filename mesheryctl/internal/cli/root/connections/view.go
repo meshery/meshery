@@ -97,7 +97,8 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		// Get the home directory of the user to save the output file
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
-			return errors.Wrap(err, "failed to determine user home directory")
+			utils.ErrRetrieveHomeDir(err)
+			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
 		}
 		connectionString := strings.ReplaceAll(fmt.Sprintf("%v", selectedConnection.Name), " ", "_")
 
