@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from '../CodeMirror';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
@@ -126,7 +126,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 
   const FullScreenCodeMirrorWrapper = styled('div')(() => ({
     height: '100%',
-    '& .CodeMirror': {
+    '& .cm-editor': {
       minHeight: '300px',
       height: fullScreen ? '80vh' : '100%',
     },
