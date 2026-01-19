@@ -557,34 +557,38 @@ function MesheryPatterns({
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
 
-  useEffect(async () => {
-    try {
-      const { models } = await getMeshModels();
-      const modelNames = _.uniqBy(
-        models?.map((model) => {
-          if (model.displayName && model.displayName !== '') {
-            return model.displayName;
-          }
-        }),
-        _.toLower,
-      );
-      modelNames.sort();
+  useEffect(() => {
+    const fetchMeshModels = async () => {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = _.uniqBy(
+          models?.map((model) => {
+            if (model.displayName && model.displayName !== '') {
+              return model.displayName;
+            }
+          }),
+          _.toLower,
+        );
+        modelNames.sort();
 
-      // Modify the schema using the utility function
-      const modifiedSchema = modifyRJSFSchema(
-        publishCatalogItemSchema,
-        'properties.compatibility.items.enum',
-        modelNames,
-      );
+        // Modify the schema using the utility function
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema,
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
 
-      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-      setMeshModels(models);
-    } catch (err) {
-      console.error(err);
-      handleError(ACTION_TYPES.SCHEMA_FETCH);
-    }
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+        setMeshModels(models);
+      } catch (err) {
+        console.error(err);
+        handleError(ACTION_TYPES.SCHEMA_FETCH);
+      }
 
-    catalogVisibilityRef.current = catalogVisibility;
+      catalogVisibilityRef.current = catalogVisibility;
+    };
+
+    void fetchMeshModels();
 
     /*
                                        Below is a graphql query that fetches the catalog patterns that is published so

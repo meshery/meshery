@@ -27,7 +27,7 @@ import {
 } from '@sistent/sistent';
 import { SectionHeading } from '../DataFormatter';
 
-const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
+const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });

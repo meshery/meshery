@@ -11,6 +11,7 @@ import {
 } from '@sistent/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -77,6 +78,7 @@ const View = (props) => {
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
   const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
+  const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
   return (
     <Container>
@@ -95,7 +97,7 @@ const View = (props) => {
                 <ArrowBack />
               </TooltipIconButton>
               <img
-                src={`/${resource.component_metadata?.styles?.svgColor}`}
+                src={iconSrc || FALLBACK_MESHERY_IMAGE_PATH}
                 alt={resource?.kind}
                 onError={(e) => {
                   e.currentTarget.src = FALLBACK_MESHERY_IMAGE_PATH;

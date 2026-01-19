@@ -1,4 +1,4 @@
-import { getWebAdress } from '../../../utils/webApis';
+import { normalizeStaticImagePath } from '../../../utils/fallback';
 import clsx from 'clsx';
 import { getComponentMetadata, getStyleOverrides } from './utils';
 import {
@@ -108,7 +108,7 @@ function getSvgUrl(url) {
     return url;
   }
 
-  return getWebAdress() + '/' + url;
+  return normalizeStaticImagePath(url);
 }
 
 function styleProps(metadata) {

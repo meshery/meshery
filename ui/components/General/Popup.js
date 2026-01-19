@@ -116,7 +116,7 @@ export function MesheryExtensionEarlyAccessCard({
   const cookies = new Cookies('registered');
 
   const popupImageSrc =
-    theme.palette.mode === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
+    theme.palette.mode === 'dark' ? '/static/img/popup/aws.svg' : '/static/img/popup/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {

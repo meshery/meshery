@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 17th 2026, 6:04:22 pm
+- Testing started at: January 19th 2026, 4:10:06 am
 
 **📦 Test Result Summary**
 
-- ✅ 80 passed
-- ❌ 4 failed
+- ✅ 81 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 4 skipped
 
-⌛ _Duration: 5 minutes and 20 seconds_
+⌛ _Duration: 5 minutes and 14 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -31,7 +31,7 @@
 | 8 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
-| 11 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ❌ |
+| 11 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
 | 14 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
@@ -141,20 +141,6 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ Add a cluster connection by uploading kubeconfig file (None - chromium-local-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ deploys a published design to a connected cluster (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
