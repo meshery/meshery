@@ -32,7 +32,7 @@ import {
   StyledKeyValueProperty,
 } from './MeshModel.style';
 import { iconSmall } from 'css/icons.styles';
-const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
+const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
 
