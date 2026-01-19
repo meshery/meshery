@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
@@ -40,6 +39,8 @@ const IframeGridItem = styled(Grid2)(({ theme }) => ({
     border: 'none',
   },
 }));
+
+const LazyGrafanaPanelIframe = lazy(() => import('./GrafanaPanelIframe'));
 
 const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
   const [dateRange, setDateRange] = useState({
@@ -100,14 +101,15 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
               <Grid2 container spacing={5} size="grow">
                 {config.panels.map((panel, ind) => (
                   <IframeGridItem key={ind} size={{ xs: 12, sm: 6, md: 4 }}>
-                    <LazyLoad once>
-                      <iframe
+                    <Suspense fallback={null}>
+                      <LazyGrafanaPanelIframe
                         key={`url_-_-${ind}`}
                         src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
                           .map((tv) => `var-${tv}`)
                           .join('&')}`}
+                        title={`${config.board.title} panel ${panel.id}`}
                       />
-                    </LazyLoad>
+                    </Suspense>
                   </IframeGridItem>
                 ))}
               </Grid2>
