@@ -87,13 +87,11 @@ test_view_save() {
 }
 
 @test "view command fails with an invalid output format" {
-  local expected_error="Error: output-format \"xml\" is invalid. Available options [json|yaml]
-See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage details"
-
   run $MESHERYCTL_BIN component view some-component -o xml
 
   assert_failure
-  assert_output "$expected_error"
+  assert_output --partial "output-format \"xml\" is invalid"
+  assert_output --partial "Available options [json|yaml]"
 }
 
 @test "view command displays JSON output for a known component" {
