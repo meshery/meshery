@@ -36,3 +36,7 @@ mesheryctl model search [query-text]
 		return displayModels(modelsResponse, cmd)
 	},
 }
+
+func init() {
+	searchModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+}
