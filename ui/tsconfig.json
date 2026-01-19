@@ -4,13 +4,18 @@
     // File Layout
     // "rootDir": "./src",
     // "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["ui/*"]
+    },
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "esnext",
     "allowJs": true,
-    "types": [],
+    // "types": [],
     "checkJs": false,
     // For nodejs:
     // "lib": ["esnext"],
@@ -18,14 +23,15 @@
     // and npm install -D @types/node
 
     // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
+    "noEmit": true,
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
 
+    // Recommended Options
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
     // Style Options
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
@@ -34,14 +40,13 @@
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
-    // Recommended Options
-    "strict": false,
-    "noImplicitAny": false,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+    "skipLibCheck": true
+  },
+  "include": ["next-env.d.ts", "ui/**/*.ts", "ui/**/*.tsx"],
+  "exclude": ["node_modules"]
 }
