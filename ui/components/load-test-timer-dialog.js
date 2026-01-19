@@ -6,14 +6,10 @@ const parseDuration = (value) => {
     return 0;
   }
 
-  let tNum = 0;
-  try {
-    tNum = parseInt(value.substring(0, value.length - 1));
-  } catch {
-    console.error('Unexpected Error');
-  }
+  const tNum = parseInt(value.substring(0, value.length - 1), 10);
 
   if (Number.isNaN(tNum)) {
+    console.error(`Failed to parse duration value: ${value}`);
     return 0;
   }
 
