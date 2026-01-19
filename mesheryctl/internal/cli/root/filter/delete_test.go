@@ -29,6 +29,11 @@ func TestDeleteCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
+	// Mock the filter list endpoint (used by ValidId/GetID)
+	filterListResponse := utils.NewGoldenFile(t, "delete.filter.list.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, filterListResponse))
+
 	testcase := []struct {
 		Name             string
 		Args             []string
