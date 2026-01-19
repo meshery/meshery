@@ -7,10 +7,9 @@ import { EditorView } from '@codemirror/view';
 import { lintGutter, linter } from '@codemirror/lint';
 import jsyaml from 'js-yaml';
 
-const ReactCodeMirror = dynamic(
-  () => import('@uiw/react-codemirror').then((mod) => mod.default),
-  { ssr: false },
-);
+const ReactCodeMirror = dynamic(() => import('@uiw/react-codemirror').then((mod) => mod.default), {
+  ssr: false,
+});
 
 const getSafeValue = (value) => {
   if (typeof value === 'string') {
