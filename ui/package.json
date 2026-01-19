@@ -4,9 +4,9 @@
   "description": "collaborative management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint --fix && node ui_dev_server.js",
+    "dev": "npm run lint:fix && node ui_dev_server.js",
     "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint",
-    "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint --fix",
+    "lint:fix": "npm run lint -- --fix",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
