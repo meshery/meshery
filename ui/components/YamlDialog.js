@@ -6,7 +6,7 @@ import {
   IconButton,
   Tooltip,
 } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from './CodeMirror';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';

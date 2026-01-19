@@ -7,7 +7,7 @@ import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from '../CodeMirror';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
