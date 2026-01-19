@@ -1,7 +1,6 @@
 import { createTheme } from '@sistent/sistent';
-import { unstable_createBreakpoints } from '@mui/material';
 
-const breakpoints = unstable_createBreakpoints({});
+const breakpoints = createTheme().breakpoints;
 
 export const rjsfTheme = createTheme({
   palette: {
@@ -12,6 +11,9 @@ export const rjsfTheme = createTheme({
   typography: {
     fontFamily: 'Qanelas Soft, sans-serif',
     fontSize: 13,
+  },
+  zIndex: {
+    modal: 99999,
   },
   components: {
     MuiTextField: {
@@ -262,6 +264,9 @@ export const darkRjsfTheme = createTheme({
   typography: {
     fontFamily: 'Qanelas Soft, sans-serif',
     fontSize: 13,
+  },
+  zIndex: {
+    modal: 99999,
   },
   components: {
     // Most components mirror the light theme, with dark mode adjustments
