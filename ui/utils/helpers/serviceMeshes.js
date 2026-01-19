@@ -72,18 +72,14 @@ export const configureAdapterWithNotification = (
   const successCb = (result) => {
     updateProgress({ showProgress: false });
     if (typeof result !== 'undefined') {
-      notify({ message: 'Adapter was configured!', event_type: EVENT_TYPES.SUCCESS });
+      // Server-side event handles notification via Notification Center
       updateAdaptersInfo({ meshAdapters: result });
     }
   };
 
-  const errorCb = (err) => {
+  const errorCb = () => {
     updateProgress({ showProgress: false });
-    notify({
-      message: 'Adapter configuration failed!',
-      event_type: EVENT_TYPES.ERROR,
-      details: err.toString(),
-    });
+    // Server-side event handles error notification via Notification Center
   };
 
   configureAdapter(successCb, errorCb, adapterLocation);

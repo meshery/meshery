@@ -246,7 +246,6 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 }
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
-
 	k8sServerID := *k8sContext.KubernetesServerID
 
 	var connID uuid.UUID
@@ -1224,7 +1223,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								return
 							}
 
-							var pattern = &MesheryPattern{
+							pattern := &MesheryPattern{
 								PatternFile: file.Content,
 								Name:        patternName,
 								ID:          &id,
@@ -1255,7 +1254,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				} else {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
-						var filter = &MesheryFilter{
+						filter := &MesheryFilter{
 							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
@@ -1773,7 +1772,7 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// if err != nil {
 	// 	return err
 	// }
-	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
+	// Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
 	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
 	res, err := http.Get(downloadURL)
 	if err != nil {
@@ -1782,6 +1781,7 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	gzipStream := res.Body
 	return extractTarGz(gzipStream, downloadPath)
 }
+
 func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 	uncompressedStream, err := gzip.NewReader(gzipStream)
 	if err != nil {
@@ -1818,7 +1818,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
-	err := e.DB.Save(event).Error
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}
@@ -1914,17 +1914,14 @@ func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID uuid.UUID
 	}
 
 	return nil
-
 }
 
 func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
-
 	err := l.EventsPersister.DB.Model(&events.Event{Status: events.EventStatus(status)}).Where("id IN ?", eventIDs).Update("status", status).Error
 	if err != nil {
 		return err
 	}
 	return nil
-
 }
 
 func (l *DefaultLocalProvider) DeleteEvent(token string, eventID uuid.UUID) error {
