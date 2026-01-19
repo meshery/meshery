@@ -19,45 +19,45 @@ const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 type FiltersGridProps = {
   filters?: Array<any>;
-  handleClone: (id: string, name: string) => void;
-  handleDownload: (event: React.MouseEvent, id: string, name: string) => void;
-  handleSubmit: (payload: {
+  handleClone: (_id: string, _name: string) => void;
+  handleDownload: (_event: React.MouseEvent, _id: string, _name: string) => void;
+  handleSubmit: (_payload: {
     data: string;
     id: string;
     type: string;
     name: string;
     catalog_data: unknown;
   }) => void;
-  setSelectedFilter: (value: { filter: any; show: boolean }) => void;
+  setSelectedFilter: (_value: { filter: any; show: boolean }) => void;
   selectedFilter: { show: boolean; filter: any };
   pages?: number;
-  setPage: (page: number) => void;
+  setPage: (_page: number) => void;
   selectedPage: number;
   canPublishFilter: boolean;
   handleUploadImport: () => void;
-  handlePublish: (data: any) => void;
-  handleUnpublishModal: (event: React.MouseEvent, filter: any) => () => Promise<void>;
+  handlePublish: (_data: any) => void;
+  handleUnpublishModal: (_event: React.MouseEvent, _filter: any) => () => Promise<void>;
   publishModal: { open: boolean; filter: any; name: string };
-  setPublishModal: (publishModal: { open: boolean; filter: any; name: string }) => void;
+  setPublishModal: (_publishModal: { open: boolean; filter: any; name: string }) => void;
   publishSchema: { rjsfSchema: any; uiSchema: any };
-  handleInfoModal: (filter: any) => void;
+  handleInfoModal: (_filter: any) => void;
 };
 
 type FilterCardGridItemProps = {
   filter: any;
   yamlConfig: string;
-  handleDownload: (event: React.MouseEvent, id: string, name: string) => void;
-  handleSubmit: (payload: {
+  handleDownload: (_event: React.MouseEvent, _id: string, _name: string) => void;
+  handleSubmit: (_payload: {
     data: string;
     id: string;
     type: string;
     name: string;
     catalog_data: unknown;
   }) => void;
-  setSelectedFilters: (value: { filter: any; show: boolean }) => void;
+  setSelectedFilters: (_value: { filter: any; show: boolean }) => void;
   handleClone: () => void;
   handlePublishModal: () => void;
-  handleUnpublishModal: (event: React.MouseEvent) => Promise<void>;
+  handleUnpublishModal: (_event: React.MouseEvent) => Promise<void>;
   canPublishFilter: boolean;
   handleInfoModal: () => void;
 };

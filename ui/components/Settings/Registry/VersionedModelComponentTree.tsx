@@ -12,7 +12,7 @@ type VersionedModelComponentTreeProps = {
   registrantID?: string;
   modelDef: any;
   versionedModelDef: any;
-  setShowDetailsData: (data: { type: string; data: any }) => void;
+  setShowDetailsData: (_data: { type: string; data: any }) => void;
   showDetailsData: { type: string; data: any };
 };
 

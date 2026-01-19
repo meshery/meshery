@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -66,41 +66,8 @@ interface Adapter {
   ops?: AdapterOperation[];
 }
 
-interface SelectOption {
-  value: string;
-  label: string;
-}
-
 interface MesheryAdapterPlayComponentProps {
   adapter: Adapter;
-}
-
-interface MenuState {
-  [key: number]: {
-    add: boolean;
-    delete: boolean;
-  };
-}
-
-interface SMIResult {
-  results?: Array<{
-    id: string;
-    date: string;
-    mesh_name: string;
-    mesh_version: string;
-    passing_percentage: string;
-    status: string;
-    more_details: Array<{
-      smi_specification: string;
-      assertions: string;
-      time: string;
-      smi_version: string;
-      capability: string;
-      status: string;
-      reason: string;
-    }>;
-  }>;
-  total_count?: number;
 }
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({

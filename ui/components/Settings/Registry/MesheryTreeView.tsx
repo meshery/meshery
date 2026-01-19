@@ -27,7 +27,7 @@ import RelationshipTree from './RelationshipTree';
 type MesheryTreeViewProps = {
   data: any[];
   view: string;
-  setSearchText: (value: string | null) => void;
+  setSearchText: (_value: string | null) => void;
   searchText: string | null;
   setPage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>;
   checked: boolean;

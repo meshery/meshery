@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-const useTestIDsGenerator = (prefix: string): ((identifier: string) => string) => {
-  return useMemo(() => (identifier: string) => `${prefix}-${identifier}`, [prefix]);
+const useTestIDsGenerator = (prefix: string): ((_identifier: string) => string) => {
+  return useMemo(() => (_identifier: string) => `${prefix}-${_identifier}`, [prefix]);
 };
 
 export default useTestIDsGenerator;

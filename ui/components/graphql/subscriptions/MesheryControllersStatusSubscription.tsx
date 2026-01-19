@@ -13,7 +13,7 @@ const mesheryControllersStatusSubscription = graphql`
 `;
 
 export default function subscribeMesheryControllersStatus(
-  dataCB: (data: unknown) => void,
+  dataCB: (_data: unknown) => void,
   variables: string[],
 ) {
   const environment = createRelayEnvironment({});

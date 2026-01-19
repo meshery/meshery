@@ -10,10 +10,10 @@ import StyledTreeItem from './StyledTreeItem';
 type RelationshipTreeProps = {
   expanded: string[];
   selected: string[];
-  handleToggle: (event: unknown, nodeIds: string[]) => void;
-  handleSelect: (event: unknown, nodeIds: string[]) => void;
+  handleToggle: (_event: unknown, _nodeIds: string[]) => void;
+  handleSelect: (_event: unknown, _nodeIds: string[]) => void;
   data: any[];
-  setShowDetailsData: (data: { type: string; data: any }) => void;
+  setShowDetailsData: (_data: { type: string; data: any }) => void;
   view?: string;
   idForKindAsProp?: string;
   lastRegistrantRef?: React.MutableRefObject<any>;

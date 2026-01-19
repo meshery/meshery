@@ -4,7 +4,7 @@ import { PromptComponent } from '@sistent/sistent';
 type PromptComponentProps = ComponentProps<typeof PromptComponent>;
 
 export interface PromptRef {
-  show: (options: {
+  show: (_options: {
     title: string;
     subtitle?: string;
     options?: string[];
