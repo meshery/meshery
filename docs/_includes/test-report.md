@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 19th 2026, 1:59:46 am
+- Testing started at: January 19th 2026, 4:00:30 am
 
 **📦 Test Result Summary**
 
-- ✅ 79 passed
-- ❌ 4 failed
+- ✅ 77 passed
+- ❌ 6 failed
 - ⚠️ 0 flaked
 - ⏩ 5 skipped
 
-⌛ _Duration: 5 minutes and 25 seconds_
+⌛ _Duration: 5 minutes and 30 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -33,7 +33,7 @@
 | 10 | Meshery | chromium-meshery-provider | deletes a published design from the list |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | deploys a published design to a connected cluster |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | displays public design card correctly |  | ✅ |
-| 13 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ✅ |
+| 13 | Meshery | chromium-meshery-provider | displays published design card correctly |  | ❌ |
 | 14 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 15 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 16 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
@@ -44,7 +44,7 @@
 | 21 | Meshery | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 22 | Meshery | chromium-meshery-provider | renders design page UI |  | ✅ |
 | 23 | Meshery | chromium-meshery-provider | Search a Model and Export it |  | ✅ |
-| 24 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ✅ |
+| 24 | Meshery | chromium-meshery-provider | should edit design in Design Configurator |  | ❌ |
 | 25 | Meshery | chromium-meshery-provider | should identify relationships for All Relationships | relationship | ✅ |
 | 26 | Meshery | chromium-meshery-provider | should identify relationships for Container-Hierarchical-Parent-Alias-Relationship | relationship | ✅ |
 | 27 | Meshery | chromium-meshery-provider | should identify relationships for deployment-configmap-reference-relationship | relationship | ✅ |
@@ -127,6 +127,34 @@ The following tests failed. Click on each to see the failure reason:
 
 <details>
 <summary>❌ Add a cluster connection by uploading kubeconfig file (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ displays published design card correctly (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
