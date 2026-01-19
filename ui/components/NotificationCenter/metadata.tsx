@@ -10,6 +10,7 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse, SchemaValidationFormatter } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
+import { MeshSyncPropertyFormatters } from './formatters/meshsync_events';
 import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
@@ -54,11 +55,13 @@ export const PropertyFormatters = {
         label={value}
         clickable
         component="a"
-        href={`/management/connections?tab=connections&searchText=${value}`}
+        href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
         target="_self"
       />
     );
   },
+  // MeshSync event field formatters - imported from formatters/meshsync_events.js
+  ...MeshSyncPropertyFormatters,
   error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
@@ -125,6 +128,12 @@ export const FormattedMetadata = ({ event }) => {
     'doclink',
     'ShortDescription',
     'connectionName',
+    'connectionID',
+    'k8sContextName',
+    'k8sContextID',
+    'meshsyncDeploymentMode',
+    'operatorStatus',
+    'brokerEndpoint',
     'LongDescription',
     'Summary',
     'SuggestedRemediation',

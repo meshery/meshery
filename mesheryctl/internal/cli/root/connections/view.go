@@ -17,18 +17,16 @@ package connections
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -48,67 +46,45 @@ mesheryctl connection view [connection-name]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("connection name or ID isn't specified\n\n" + errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(errors.New("too many arguments\n\n" + errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		baseURL := mctlCfg.GetBaseMesheryURL()
 		connectionNameOrID := args[0]
 
-		url := fmt.Sprintf("%s/api/integrations/connections?search=%s&pagesize=all", baseURL, connectionNameOrID)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
+		var selectedConnection *connection.Connection
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
+		// Check if the argument is a valid UUID
+		if _, err := uuid.FromString(connectionNameOrID); err == nil {
+			// Fetch connection directly by ID
+			url := fmt.Sprintf("%s/%s", connectionApiPath, connectionNameOrID)
+			conn, err := api.Fetch[connection.Connection](url)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
+			selectedConnection = conn
+		} else {
+			// Search by name
+			url := fmt.Sprintf("%s?search=%s&pagesize=all", connectionApiPath, connectionNameOrID)
+			connectionsResponse, err := api.Fetch[connection.ConnectionPage](url)
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
 
-		if resp.StatusCode != http.StatusOK {
-			errBody, _ := io.ReadAll(resp.Body)
-			_ = resp.Body.Close()
-			return fmt.Errorf("failed to view connection: received status code %d with body: %s", resp.StatusCode, errBody)
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer func() { _ = resp.Body.Close() }()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		connectionsResponse := &connections.ConnectionPage{}
-		err = json.Unmarshal(data, connectionsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		var selectedConnection *connections.Connection
-
-		switch connectionsResponse.TotalCount {
-		case 0:
-			fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
-			return nil
-		case 1:
-			selectedConnection = connectionsResponse.Connections[0]
-		default:
-			selectedConnection = selectConnectionPrompt(connectionsResponse.Connections)
+			switch connectionsResponse.TotalCount {
+			case 0:
+				fmt.Println("No connection(s) found for the given name: ", connectionNameOrID)
+				return nil
+			case 1:
+				selectedConnection = connectionsResponse.Connections[0]
+			default:
+				selectedConnection = selectConnectionPrompt(connectionsResponse.Connections)
+			}
 		}
 
 		var output []byte
@@ -163,7 +139,7 @@ mesheryctl connection view [connection-name]
 }
 
 // selectConnectionPrompt lets user to select a connection if connections are more than one
-func selectConnectionPrompt(connectionsList []*connections.Connection) *connections.Connection {
+func selectConnectionPrompt(connectionsList []*connection.Connection) *connection.Connection {
 	connectionNames := []string{}
 
 	for _, conn := range connectionsList {
@@ -187,14 +163,14 @@ func selectConnectionPrompt(connectionsList []*connections.Connection) *connecti
 }
 
 // outputConnectionJSON outputs the connection in JSON format
-func outputConnectionJSON(connection *connections.Connection) error {
+func outputConnectionJSON(conn *connection.Connection) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", "  ")
 
-	return enc.Encode(connection)
+	return enc.Encode(conn)
 }
 
 func init() {

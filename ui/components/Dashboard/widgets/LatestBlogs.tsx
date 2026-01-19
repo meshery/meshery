@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { useTheme, PlainCard, BellIcon } from '@sistent/sistent';
-
+import { useTheme, PlainCard, BellIcon, DesignIcon } from '@sistent/sistent';
 const LatestBlogs = (props) => {
   const theme = useTheme();
   const [resources, setResources] = useState([]);
@@ -22,7 +21,14 @@ const LatestBlogs = (props) => {
             name: title,
             link: link,
             external: true,
-            icon: '/static/img/designs.svg',
+            icon: (
+              <DesignIcon
+                width="15px"
+                height="15px"
+                primaryFill="currentColor"
+                secondaryFill="currentColor"
+              />
+            ),
           };
         });
 

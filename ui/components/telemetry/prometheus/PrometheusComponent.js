@@ -4,7 +4,7 @@ import { NoSsr } from '@sistent/sistent';
 import { Typography, styled, Box } from '@sistent/sistent';
 import {
   useConfigureConnectionMutation,
-  useUpdateConnectionMutation,
+  useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
 import { useGetPrometheusConfigQuery } from '@/rtk-query/telemetry';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
@@ -143,7 +143,7 @@ const PrometheusComponent = (props) => {
     props.notify({ message, event_type: EVENT_TYPES.ERROR });
   };
 
-  const [updateConnection] = useUpdateConnectionMutation();
+  const [updateConnectionById] = useUpdateConnectionByIdMutation();
 
   const handlePrometheusChipDelete = async (e) => {
     e.preventDefault();
@@ -151,9 +151,9 @@ const PrometheusComponent = (props) => {
 
     updateProgress({ showProgress: true });
     try {
-      await updateConnection({
-        connectionKind: CONNECTION_KINDS.PROMETHEUS,
-        connectionPayload: { [connectionID]: CONNECTION_STATES.DISCOVERED },
+      await updateConnectionById({
+        connectionId: connectionID,
+        body: { status: CONNECTION_STATES.DISCOVERED },
       }).unwrap();
 
       setPrometheusConfigSuccess(false);

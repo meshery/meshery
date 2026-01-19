@@ -250,14 +250,18 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 		return unknowStatus, nil
 	}
 
-	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+	connectionUUID := uuid.FromStringOrNil(connectionID)
+	if connectionUUID == uuid.Nil {
+		return unknowStatus, nil
+	}
+
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(connectionUUID)
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
 		return unknowStatus, nil
 	}
 
 	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
 		return unknowStatus, nil

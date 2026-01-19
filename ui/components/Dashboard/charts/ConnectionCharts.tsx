@@ -1,12 +1,12 @@
 // @ts-nocheck
-import React from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { InfoOutlined } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -16,14 +16,25 @@ import ConnectCluster from './ConnectCluster';
 import { Box, Typography, useTheme } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
-  const { data: statusData } = useGetAllConnectionStatusQuery();
+  const { data: connectionsData } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 'all',
+  });
   const router = useRouter();
   const theme = useTheme();
 
-  const chartData =
-    statusData?.connections_status
-      ?.filter((data) => isValidColumnName(data.status))
-      .map((data) => [data.status, data.count]) || [];
+  // Compute status counts from connections data
+  const chartData = useMemo(() => {
+    if (!connectionsData?.connections) return [];
+    const statusCounts = {};
+    connectionsData.connections.forEach((conn) => {
+      const status = conn.status || 'unknown';
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+    });
+    return Object.entries(statusCounts)
+      .filter(([status]) => isValidColumnName(status))
+      .map(([status, count]) => [status, count]);
+  }, [connectionsData]);
 
   const chartOptions = {
     data: {
