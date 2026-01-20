@@ -32,7 +32,7 @@ jobs:
       - name: Generate Models and Components
         run: |
           cd mesheryctl
-          ./mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+          ./mesheryctl registry generate --output ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
 
       - name: Upload artifacts
         if: always()
@@ -96,7 +96,7 @@ jobs:
             "Model Generator" <no-reply@meshery.io>
           to: developers@meshery.io
           body: |
-               The Model Generator workflow (https://github.com/meshery/meshery/actions/workflows/model-generator.yml) encountered one or more errors. Refer to the attached error log for details or review the results of the failed workflow - https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}.
+            The Model Generator workflow (https://github.com/meshery/meshery/actions/workflows/model-generator.yml) encountered one or more errors. Refer to the attached error log for details or review the results of the failed workflow - https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}.
 
-               Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
+            Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
           attachments: ~/.meshery/logs/registry/registry-errors.log

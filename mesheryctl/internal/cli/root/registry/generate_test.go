@@ -1,19 +1,26 @@
 package registry
 
 import (
+	"flag"
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
+var update = flag.Bool("update", false, "update golden files")
+
 // resetGenerateFlags resets all flags to their default values
 func resetGenerateFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().VisitAll(func(f *pflag.Flag) {
 		_ = f.Value.Set(f.DefValue)
+		f.Changed = false
 	})
 }
 
@@ -49,7 +56,7 @@ func TestGenerateCmdFlags(t *testing.T) {
 		{
 			name:         "output flag exists with correct default",
 			flagName:     "output",
-			defaultValue: "../server/meshmodel",
+			defaultValue: "./",
 			expectedType: "string",
 			description:  "location to output generated models",
 		},
@@ -292,40 +299,76 @@ func TestGenerationOptionsCreation(t *testing.T) {
 }
 
 func TestPreRunEValidation(t *testing.T) {
-	// Test PreRunE validation for various input scenarios
+	_, filename, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(filename)
+
+	if parent := generateCmd.Parent(); parent != nil {
+		parent.RemoveCommand(generateCmd)
+		defer parent.AddCommand(generateCmd)
+	}
+
+	tests := []utils.MesheryCommandTest{
+		{
+			Name:           "Fails when no source flags are provided",
+			Args:           []string{"--output", "./output"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrNoSourceSpecified(),
+		},
+		{
+			Name:           "Fails when spreadsheet-id provided without spreadsheet-cred",
+			Args:           []string{"--output", "./output", "--spreadsheet-id", "test-id"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrSpreadsheetCredRequired(),
+		},
+	}
+
+	utils.InvokeMesheryctlTestCommand(t, update, generateCmd, tests, dir, "generate")
+}
+
+func TestGenerateCmdOutputDefault(t *testing.T) {
+	resetGenerateFlags(generateCmd)
+
+	// Test that output flag has correct new default
+	outputFlag := generateCmd.PersistentFlags().Lookup("output")
+	assert.NotNil(t, outputFlag, "output flag should exist")
+	assert.Equal(t, "./", outputFlag.DefValue, "output flag should default to current directory")
+}
+
+func TestGenerateCmdOutputBehavior(t *testing.T) {
 	tests := []struct {
-		name        string
-		args        []string
-		setup       func()
-		expectError bool
-		errorMsg    string
+		name           string
+		outputFlagSet  bool
+		outputValue    string
+		expectedOutput string
 	}{
 		{
-			name:        "No input source specified",
-			args:        []string{},
-			setup:       func() { resetGenerateFlags(generateCmd) },
-			expectError: true,
-			errorMsg:    "isn't specified",
+			name:           "Default output to current directory when not specified",
+			outputFlagSet:  false,
+			outputValue:    "",
+			expectedOutput: "./",
+		},
+		{
+			name:           "Custom output when specified",
+			outputFlagSet:  true,
+			outputValue:    "../server/meshmodel",
+			expectedOutput: "../server/meshmodel",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.setup != nil {
-				tt.setup()
-			}
+			resetGenerateFlags(generateCmd)
 
-			generateCmd.SetArgs(tt.args)
-			err := generateCmd.PreRunE(generateCmd, tt.args)
-
-			if tt.expectError {
-				assert.Error(t, err)
-				if tt.errorMsg != "" {
-					assert.Contains(t, err.Error(), tt.errorMsg)
-				}
-			} else {
+			if tt.outputFlagSet {
+				err := generateCmd.PersistentFlags().Set("output", tt.outputValue)
 				assert.NoError(t, err)
 			}
+
+			outputValue, err := generateCmd.PersistentFlags().GetString("output")
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedOutput, outputValue)
 		})
 	}
 }
