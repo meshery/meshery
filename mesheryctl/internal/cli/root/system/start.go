@@ -40,6 +40,7 @@ import (
 var (
 	skipUpdateFlag  bool
 	skipBrowserFlag bool
+	skipCRDsFlag bool
 )
 
 // startCmd represents the start command
@@ -66,6 +67,9 @@ mesheryctl system start -p docker
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
+
+// (optional) skip installation of CRDs for restricted clusters.
+mesheryctl system start --skip-crds
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -456,7 +460,7 @@ func start() error {
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, !skipCRDsFlag, callbackURL, providerURL); err != nil {
 			return err
 		}
 
@@ -486,14 +490,16 @@ func start() error {
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
-	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.PersistentFlags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	startCmd.PersistentFlags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.PersistentFlags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.PersistentFlags().BoolVarP(&skipCRDsFlag, "skip-crds", "", false, "Skip installation of Meshery's Custom Resource Definitions.") //skipCRDs logic
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
 // Apply Meshery helm charts
-func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, installCRDs bool, callbackURL, providerURL string) error {
+	log.Printf("DEBUG: applyHelmCharts received installCRDs: %v", installCRDs)
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
@@ -506,6 +512,8 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if act == meshkitkube.UNINSTALL {
 		action = "uninstall"
 	}
+	serverSkipCRDs := !installCRDs
+	log.Printf("DEBUG: For main Meshery chart, setting SkipCRDs: %v (derived from !installCRDs)", serverSkipCRDs)
 	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery",
@@ -520,21 +528,33 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
+		SkipCRDs:         !installCRDs,
 	})
-	errOperator := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery-operator",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartOperatorName,
-			Version:    chartVersion,
-		},
-		Action: act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-	})
+	var errOperator error 
+	log.Printf("DEBUG: Before operator chart logic. installCRDs: %v", installCRDs)
+	if installCRDs { 
+	    log.Printf("DEBUG: Attempting to apply Meshery Operator chart.")     // Only attempt to apply the operator chart if CRDs are being installed
+		errOperator = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:        utils.MesheryNamespace,
+			ReleaseName:      "meshery-operator",
+			CreateNamespace:  true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartOperatorName,
+				Version:    chartVersion,
+			},
+			Action:           act,
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+			SkipCRDs:         !installCRDs, // Keep this for consistency, though the 'if installCRDs' wrapper is key
+		})
+	} else {
+		log.Printf("DEBUG: Skipping Meshery Operator Helm chart deployment as --skip-crds flag is set. (installCRDs is false)")
+		// If CRDs are being skipped, we explicitly state that the operator is not being installed.
+		log.Info("Skipping Meshery Operator Helm chart deployment as --skip-crds flag is set.")
+	}
+	
+	
 	if errServer != nil && errOperator != nil {
 		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
 	}
