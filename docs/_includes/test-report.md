@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 20th 2026, 12:42:19 pm
+- Testing started at: January 20th 2026, 4:49:38 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 12 skipped
 
-⌛ _Duration: 12 minutes and 18 seconds_
+⌛ _Duration: 12 minutes and 24 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -133,29 +133,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify that UI components are displayed (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 40 |[39m
- [90m 41 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 42 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 43 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 44 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 45 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -174,6 +151,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Verify that UI components are displayed (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 40 |[39m
+ [90m 41 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Connection Management Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 42 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 43 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 44 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 45 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToConnections()[33m;[39m[0m
 ```
 
 </details>
@@ -216,29 +216,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 23 |[39m
- [90m 24 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Model Workflow Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 25 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Performance Analysis Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -257,6 +234,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Create a Model (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 23 |[39m
+ [90m 24 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Model Workflow Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 25 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
 ```
 
 </details>
@@ -285,29 +285,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Aggregation Charts are displayed (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/settings.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 30 |[39m
- [90m 31 |[39m test[33m.[39mdescribe([32m'Settings Page Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 32 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 33 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 34 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 35 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -326,6 +303,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Aggregation Charts are displayed (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/settings.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 30 |[39m
+ [90m 31 |[39m test[33m.[39mdescribe([32m'Settings Page Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 32 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 33 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 34 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 35 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
 ```
 
 </details>
@@ -469,29 +469,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Design Embed Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -510,6 +487,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should verify Design Configurator page elements (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
 ```
 
 </details>
@@ -561,29 +561,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Catalog Section Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -602,6 +579,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
 ```
 
 </details>
@@ -644,29 +644,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Create a Model (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m 23 |[39m
- [90m 24 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Model Workflow Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 25 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Meshery Adapter for Istio Section (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -685,6 +662,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Create a Model (None - chromium-local-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/models.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 23 |[39m
+ [90m 24 |[39m test[33m.[39mdescribe[33m.[39mserial([32m'Model Workflow Tests'[39m[33m,[39m () [33m=>[39m {
+[31m[1m>[22m[39m[90m 25 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
+ [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
+ [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
 ```
 
 </details>
