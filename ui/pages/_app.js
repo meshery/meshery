@@ -5,7 +5,6 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
-import Script from 'next/script';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -713,8 +712,6 @@ const MesheryAppWrapper = (props) => {
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
       </Head>
-      {/* Load loading messages before interactive */}
-      <Script src="/loadingMessages.js" strategy="beforeInteractive" />
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <MesheryApp {...props} />
       </LocalizationProvider>
