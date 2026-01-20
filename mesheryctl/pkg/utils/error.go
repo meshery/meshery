@@ -816,8 +816,8 @@ func ErrSetKubernetesContext(err error) error {
 		errors.Fatal,
 		[]string{"Unable to set kubernetes context"},
 		[]string{err.Error()},
-		[]string{"The specified kubernetes context does not exist"},
-		[]string{"Verify the kubernetescontext name provided is valid and try again."})
+		[]string{"The specified Kubernetes context does not exist. "},
+		[]string{"Verify that the Kubernetes context provided is valid and try again."})
 }
 
 func ErrReadInput(err error) error {
