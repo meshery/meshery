@@ -1,0 +1,14 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mesherynsbinding
+  namespace: meshery
+subjects:
+- kind: ServiceAccount
+  name: playground-user
+  namespace: playground-sandbox
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: playground-sandbox-clusterrole
+  apiGroup: ""
