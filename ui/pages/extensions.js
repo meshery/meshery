@@ -137,7 +137,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/kanvas-icon-color.svg"
+            src="/static/img/extensions/kanvas-icon-color.svg"
             alt="Kanvas Icon"
             testId="kanvas-signup-icon"
           />
@@ -177,7 +177,7 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
 
         <UnifiedDescription data-testid="kanvas-snapshot-description" variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshmap-snapshot-logo.svg"
+            src="/static/img/extensions/meshmap-snapshot-logo.svg"
             alt="Kanvas Snapshot Logo"
             testId="kanvas-snapshot-image"
           />
@@ -221,7 +221,7 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/smp-dark.svg"
+            src="/static/img/extensions/smp-dark.svg"
             alt="Meshery Performance Logo"
             testId="performance-analysis-icon"
           />
@@ -261,7 +261,7 @@ const MesheryDockerExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/docker.svg"
+            src="/static/img/extensions/docker.svg"
             alt="Docker Logo"
             testId="docker-extension-icon"
           />
@@ -302,7 +302,7 @@ const MesheryHelmKanvasExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/helm_chart.svg"
+            src="/static/img/extensions/helm_chart.svg"
             alt="Helm Chart Logo"
             testId="helm-kanvas-icon"
           />
@@ -343,7 +343,7 @@ const MesheryDesignEmbedExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshmap.svg"
+            src="/static/img/extensions/meshmap.svg"
             alt="Meshery Design Logo"
             testId="design-embed-icon"
           />
@@ -384,7 +384,7 @@ const Layer5CloudExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/layer5.svg"
+            src="/static/img/extensions/layer5.svg"
             alt="Layer5 Cloud Logo"
             testId="layer5-cloud-image"
           />
@@ -425,7 +425,7 @@ const KubectlPluginExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/kubectl.svg"
+            src="/static/img/extensions/kubectl.svg"
             alt="Kubectl Plugin Logo"
             testId="kubectl-plugin-image"
           />
@@ -466,7 +466,7 @@ const KubectlMeshSyncExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshsync.svg"
+            src="/static/img/extensions/meshsync.svg"
             alt="MeshSync Logo"
             testId="kubectl-meshsync-image"
           />
@@ -540,6 +540,7 @@ const CatalogCard = ({ catalogContent, handleToggle, theme }) => {
             <a
               href="https://meshery.io/catalog"
               target="_blank"
+              data-testid="catalog-link"
               rel="noreferrer"
               style={{
                 textDecoration: 'none',

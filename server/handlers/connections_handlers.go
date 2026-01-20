@@ -442,8 +442,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
