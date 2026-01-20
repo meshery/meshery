@@ -1,11 +1,15 @@
-// @ts-nocheck
 import React from 'react';
 import { styled, Badge } from '@sistent/sistent';
+import type { Theme } from '@sistent/sistent';
 
-const StyledBadge = styled(Badge)(({ theme, color }) => ({
+type StyledBadgeProps = {
+  color?: string;
+};
+
+const StyledBadge = styled(Badge)<StyledBadgeProps>(({ theme, color }: { theme: Theme; color?: string }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: color || theme.palette.background.brand.default,
-    color: color || theme.palette.background.brand.default,
+    backgroundColor: color || theme.palette.background?.brand?.default || theme.palette.primary.main,
+    color: color || theme.palette.background?.brand?.default || theme.palette.primary.main,
     '&::after': {
       position: 'absolute',
       top: 0,
@@ -30,7 +34,7 @@ const StyledBadge = styled(Badge)(({ theme, color }) => ({
   },
 }));
 
-const Container = styled('div')(({ theme }) => ({
+const Container = styled('div')(({ theme }: { theme: Theme }) => ({
   display: 'flex',
   '& > *': {
     marginLeft: theme.spacing(0.5),
@@ -38,7 +42,12 @@ const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function BadgeAvatars({ children, color }) {
+type BadgeAvatarsProps = {
+  children: React.ReactNode;
+  color?: string;
+};
+
+export default function BadgeAvatars({ children, color }: BadgeAvatarsProps) {
   return (
     <Container>
       <StyledBadge
@@ -48,7 +57,7 @@ export default function BadgeAvatars({ children, color }) {
           horizontal: 'right',
         }}
         variant="dot"
-        color={color}
+        {...(color && { color: color as 'primary' | 'secondary' | 'default' | 'error' | 'info' | 'success' | 'warning' })}
       >
         {children}
       </StyledBadge>
