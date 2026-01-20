@@ -276,7 +276,7 @@ const MesherySettings = () => {
                     label="Overview"
                     // tab="Overview"
                     value={OVERVIEW}
-                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                    // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
                   />
                 </CustomTooltip>
                 <CustomTooltip
@@ -325,7 +325,7 @@ const MesherySettings = () => {
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
-                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                   />
                 </CustomTooltip>
               </Tabs>
