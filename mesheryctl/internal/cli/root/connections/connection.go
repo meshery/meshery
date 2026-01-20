@@ -62,7 +62,7 @@ mesheryctl exp connection delete [connection_id]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp connection --help' to display usage guide.\n", args[0]), "connection"))
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl connection --help' to display usage guide.\n", args[0]))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
