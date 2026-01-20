@@ -75,13 +75,13 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		var selectedConnection *connection.Connection
 
 		if isArgumentUUID(connectionNameOrID) {
-			fetchedConnection, err := fecthConnectionByID(connectionNameOrID)
+			fetchedConnection, err := fetchConnectionByID(connectionNameOrID)
 			if err != nil {
 				return err
 			}
 			selectedConnection = fetchedConnection
 		} else {
-			fetchedConnection, err := fecthConnectionByName(connectionNameOrID)
+			fetchedConnection, err := fetchConnectionByName(connectionNameOrID)
 			if err != nil {
 				return err
 			}
@@ -171,7 +171,7 @@ func isArgumentUUID(arg string) bool {
 	return err == nil
 }
 
-func fecthConnectionByID(connectionID string) (*connection.Connection, error) {
+func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
 	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {
@@ -180,7 +180,7 @@ func fecthConnectionByID(connectionID string) (*connection.Connection, error) {
 	return fetchedConnection, nil
 }
 
-func fecthConnectionByName(connectionName string) (*connection.Connection, error) {
+func fetchConnectionByName(connectionName string) (*connection.Connection, error) {
 	viewUrlValue := url.Values{}
 	viewUrlValue.Add("search", connectionName)
 	viewUrlValue.Add("pagesize", "all")
