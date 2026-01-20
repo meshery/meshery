@@ -112,15 +112,15 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		// Validate individual CSV files if provided
 		if hasIndividualCSVs {
 			if _, err := os.Stat(modelCSV); os.IsNotExist(err) {
-				return ErrCSVFileNotFound(modelCSV, "Model")
+				return meshkitRegistryUtils.ErrCSVFileNotFound(modelCSV)
 			}
 			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
-				return ErrCSVFileNotFound(componentCSV, "Component")
+				return meshkitRegistryUtils.ErrCSVFileNotFound(componentCSV)
 			}
 			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
 			if relationshipCSV != "" {
 				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
-					return ErrCSVFileNotFound(relationshipCSV, "Relationship")
+					return meshkitRegistryUtils.ErrCSVFileNotFound(relationshipCSV)
 				}
 			}
 		}

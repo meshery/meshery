@@ -61,22 +61,6 @@ func ErrModelGenerationFailed(modelName string, err error) error {
 	return errors.New(ErrModelGenerationFailedCode, errors.Alert, []string{fmt.Sprintf("failed to generate model: %s", modelName)}, []string{err.Error()}, []string{"Invalid model source URL", "Unsupported registrant type", "Network issues fetching model data"}, []string{"Verify the model's source URL is accessible", "Check the registrant type is supported", "Review network connectivity"})
 }
 
-func ErrInvalidOutputPath(path string) error {
-	return errors.New(ErrInvalidOutputPathCode, errors.Alert,
-		[]string{fmt.Sprintf("Output path not found: %s", path)},
-		[]string{fmt.Sprintf("The default output path '%s' cannot be found relative to your current location.", path)},
-		[]string{
-			"The default path assumes you are running this command from the 'meshery/mesheryctl' directory.",
-			"You are likely running this command from the repository root or a different location.",
-		},
-		[]string{
-			// The Best Fix
-			"Recommended: Use the --output flag to specify your desired destination (e.g., --output ../server/meshmodel).",
-			// The "I want to rely on defaults" Fix
-			"Alternatively: Change directory to 'meshery/mesheryctl' and try again.",
-		})
-}
-
 func ErrCreateOutputDir(err error, path string) error {
 	return errors.New(ErrCreateOutputDirCode, errors.Alert,
 		[]string{fmt.Sprintf("Failed to create output directory: %s", path)},
@@ -91,12 +75,6 @@ func ErrCreateOutputDir(err error, path string) error {
 			"Try specifying a different output location using --output.",
 			"Check if a file with the same name already exists.",
 		})
-}
-
-func ErrCSVFileNotFound(filePath string, fileType string) error {
-	return goerrors.New(utils.RegistryError(
-		fmt.Sprintf("%s CSV file not found: %s", fileType, filePath),
-		"generate"))
 }
 
 func ErrFailedToGetCWD(err error) error {
