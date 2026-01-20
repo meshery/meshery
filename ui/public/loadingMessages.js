@@ -111,5 +111,19 @@ window.Loader = {
   PersistedRandomLoadingMessage,
   RandomLoadingMessage: getRandomLoadingMessage,
   show,
-  hide
+  hide,
+  renderMessageWithFont: function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const setMessage = () => {
+      el.textContent = PersistedRandomLoadingMessage();
+    };
+
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('1em QanelasSoftRegular').then(setMessage).catch(setMessage);
+    } else {
+      setMessage();
+    }
+  }
 }

@@ -94,10 +94,7 @@ class MesheryDocument extends Document {
                     const loaderId = "PRE_REACT_LOADER-text-message"
 
                     try {
-                      var el = document.getElementById(loaderId)
-                      if (!el) return;
-
-                      el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                      window.Loader.renderMessageWithFont(loaderId);
                     } catch (e) {
                       console.log("Failed to set loading message",e)
                     }
