@@ -29,6 +29,9 @@ func TestDeleteCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
+	listURL := testContext.BaseURL + "/api/filter?page_size=10000"
+	listResponse := `{"filters":[{"id":"c0c6035a-b1b9-412d-aab2-4ed1f1d51f84","name":"Kuma-Test"},{"id":"d0e09134-acb6-4c71-b051-3d5611653f70","name":"RolloutAndIstio"}]}`
+
 	testcase := []struct {
 		Name             string
 		Args             []string
@@ -64,6 +67,9 @@ func TestDeleteCmd(t *testing.T) {
 	}
 	for _, tt := range testcase {
 		t.Run(tt.Name, func(t *testing.T) {
+			httpmock.RegisterResponder("GET", listURL,
+				httpmock.NewStringResponder(200, listResponse))
+
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 			// set token
 			utils.TokenFlag = tt.Token
