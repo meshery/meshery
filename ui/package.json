@@ -30,7 +30,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@casl/ability": "^6.7.3",
-    "@casl/react": "^5.0.0",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
     "@codemirror/lint": "^6.9.2",
