@@ -49,7 +49,7 @@ push-extension: prepare-buildx
 	--tag=$(GIT_VERSION) .
 
 ui-build:
-	cd ui && npm install --legacy-peer-deps && npm run build
+	cd ui && npm install --legacy-peer-deps && npm run build; cd ../..;
 
 ui:
 	cd ui && npm run start; cd ../..;
