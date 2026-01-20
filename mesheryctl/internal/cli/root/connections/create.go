@@ -159,7 +159,7 @@ func createEKSConnection() error {
 		return err
 	}
 
-	clusterName, err = getUserPrompt(userPrompt{request: "Please enter the AWS cluster name:", errorReadingResourceMsg: "AWS cluster name"})
+	clusterName, err = getUserPrompt(userPrompt{request: "Please enter the EKS cluster name:", errorReadingResourceMsg: "EKS cluster name"})
 	if err != nil {
 		return err
 	}
