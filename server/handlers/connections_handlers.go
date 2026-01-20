@@ -197,6 +197,10 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 // ```?status={status}``` Status takes array as param to filter connections based on status, eg /api/integrations/connections?status=["connected", "deleted"]
 //
 // ```?kind={kind}``` Kind takes array as param to filter connections based on kind, eg /api/integrations/connections?kind=["meshery", "kubernetes"]
+//
+// ```?type={type}``` Type takes array as param to filter connections based on type, eg /api/integrations/connections?type=["platform", "observability"]
+//
+// ```?name={name}``` Name filters connections by name (partial match), eg /api/integrations/connections?name=my-cluster
 // responses:
 // 200: mesheryConnectionsResponseWrapper
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -206,6 +210,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	search := q.Get("search")
 	pageSizeStr := q.Get("pagesize")
 	filter := q.Get("filter")
+	name := q.Get("name")
 
 	var pageSize int
 	if pageSizeStr == "all" {
@@ -237,10 +242,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	queryParam := struct {
 		Status []string `json:"status"`
 		Kind   []string `json:"kind"`
+		Type   []string `json:"type"`
 	}{}
 
 	status := q.Get("status")
 	kind := q.Get("kind")
+	connType := q.Get("type")
 	if status != "" {
 		err := json.Unmarshal([]byte(status), &queryParam.Status)
 		if err != nil {
@@ -259,7 +266,16 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind)
+	if connType != "" {
+		err := json.Unmarshal([]byte(connType), &queryParam.Type)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
 	obj := "connections"
 
 	if err != nil {
@@ -275,18 +291,9 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-// swagger:route GET /api/integrations/connections/{connectionKind} GetConnectionsByKind idGetConnectionsByKind
-// Handle GET request for getting all connections for a given kind.
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?search={}``` If search is non empty then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10
-// responses:
-// 200: ConnectionPage
+// GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
+// Note: This handler is used internally by other handlers (e.g., GrafanaConfigHandler, PrometheusConfigHandler)
+// and is not exposed as an HTTP route since the route was deprecated in schemas v0.8.115.
 func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	connectionKind := mux.Vars(req)["connectionKind"]
@@ -308,9 +315,10 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 		order = "updated_at desc"
 	}
 
-	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
+	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s, kind: %s", page+1, pageSize, search, order, connectionKind))
 
-	connectionsPage, err := provider.GetConnectionsByKind(req, user.ID.String(), page, pageSize, search, order, connectionKind)
+	// Use GetConnections with kind filter
+	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, "", nil, []string{connectionKind}, nil, "")
 	obj := "connections"
 
 	if err != nil {
@@ -655,7 +663,18 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		}
 	}
 
-	updatedConnection, err := provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(w, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -672,12 +691,93 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	eventBuilder = eventBuilder.WithDescription(description)
 
+	if connection.Status != "" {
+		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		_ = provider.PersistEvent(event, nil)
+	}
+
+	event := eventBuilder.WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID uuid.UUID, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+	connectionID := connection.ID
+
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+
+	if connection.Status != "" {
+		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		// token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		k8scontext, err := provider.GetK8sContext(token, connectionID.String())
+
+		if err != nil {
+			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+
+			return *eventBuilder.Build(), err
+		}
+
+		eventBuilder = eventBuilder.WithSeverity(events.Informational).
+			WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", connection.Status, k8scontext.Name)).
+			WithMetadata(map[string]interface{}{
+				"connectionName": k8scontext.Name,
+			})
+
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext:         k8scontext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
+		}
+
+		inst, err := helpers.InitializeMachineWithContext(
+			machineCtx,
+			context,
+			connectionID,
+			userID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.InitialState,
+			"kubernetes",
+			kubernetes.AssignInitialCtx,
+		)
+
+		if err != nil {
+			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			return *eventBuilder.Build(), err
+		}
+
+		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
+			if err != nil {
+				h.log.Error(err)
+				_ = provider.PersistEvent(*event, nil)
+				h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			if status == connections.DELETED {
+				smInstanceTracker.Remove(inst.ID)
+			}
+
+			_ = provider.PersistEvent(*event, nil)
+			h.config.EventBroadcaster.Publish(userID, event)
+		}(inst, connection.Status)
+	}
+
+	return *eventBuilder.Build(), nil
 }
 
 // swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
@@ -739,13 +839,17 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	mesheryInstanceID := *h.SystemID
 
 	// Retrieve existing connection for mode comparison
-	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
+	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
 	}
 
 	if existingConnection == nil {
 		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	if existingConnection.Kind != "kubernetes" {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
 	}
 
 	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)

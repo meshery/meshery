@@ -5,3 +5,16 @@ export function getFallbackImageBasedOnKind(kind) {
   };
   return fallbackComponent[kind];
 }
+
+export function normalizeStaticImagePath(path) {
+  if (!path) {
+    return '';
+  }
+
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  const trimmed = path.replace(/^\/?ui\/public\//, '').replace(/^\/+/, '');
+  return `/${trimmed}`;
+}

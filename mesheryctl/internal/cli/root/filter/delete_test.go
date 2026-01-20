@@ -31,6 +31,10 @@ func TestDeleteCmd(t *testing.T) {
 
 	listURL := testContext.BaseURL + "/api/filter?page_size=10000"
 	listResponse := `{"filters":[{"id":"c0c6035a-b1b9-412d-aab2-4ed1f1d51f84","name":"Kuma-Test"},{"id":"d0e09134-acb6-4c71-b051-3d5611653f70","name":"RolloutAndIstio"}]}`
+	// Mock the filter list endpoint (used by ValidId/GetID)
+	filterListResponse := utils.NewGoldenFile(t, "delete.filter.list.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, filterListResponse))
 
 	testcase := []struct {
 		Name             string
