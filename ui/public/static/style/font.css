@@ -11,3 +11,10 @@
   font-weight: 400;
   font-display: swap;
 }
+
+@font-face {
+  font-family: 'QanelasSoftRegular';
+  src: url('../fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
