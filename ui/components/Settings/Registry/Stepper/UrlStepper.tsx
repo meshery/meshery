@@ -2,7 +2,9 @@ import React from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import {
   ModalFooter,
+  // @ts-expect-error
   useStepper,
+  // @ts-expect-error
   CustomizedStepper,
   ModalBody,
   Box,
@@ -65,7 +67,8 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
   );
 
   const [modelShape, setModelShape] = React.useState<string>(
-    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.enum?.[0] ??
+      'round-rectangle',
   );
   const [modelUrl, setModelUrl] = React.useState<string>('');
   const [urlError, setUrlError] = React.useState<string>('');
@@ -85,14 +88,21 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
   const [isAnnotation, setIsAnnotation] = React.useState<boolean>(false);
 
   const handleLogoLightThemeChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
+    const files = event.target.files;
+    if (!files || !files[0]) {
+      return;
+    }
+    const file = files[0];
 
     if (file && file.type === 'image/svg+xml') {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        const svgData = e.target.result;
-        setLogoLightThemePath(svgData);
+        const target = e.target;
+        if (target && typeof target.result === 'string') {
+          const svgData = target.result;
+          setLogoLightThemePath(svgData);
+        }
       };
       reader.readAsText(file);
     } else {
@@ -101,14 +111,21 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
   };
 
   const handleLogoDarkThemeChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
+    const files = event.target.files;
+    if (!files || !files[0]) {
+      return;
+    }
+    const file = files[0];
 
     if (file && file.type === 'image/svg+xml') {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        const svgData = e.target.result;
-        setLogoDarkThemePath(svgData);
+        const target = e.target;
+        if (target && typeof target.result === 'string') {
+          const svgData = target.result;
+          setLogoDarkThemePath(svgData);
+        }
       };
 
       // Read the file as text (since it's an SVG)
@@ -290,7 +307,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     id="category"
                     value={modelCategory}
                     label="Category"
-                    onChange={(e) => setModelCategory(e.target.value)}
+                    onChange={(e) => setModelCategory(e.target.value as string)}
                     MenuProps={{
                       style: { zIndex: 1500 },
                     }}
@@ -315,7 +332,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     id="subcategory"
                     value={modelSubcategory}
                     label="Subcategory"
-                    onChange={(e) => setModelSubcategory(e.target.value)}
+                    onChange={(e) => setModelSubcategory(e.target.value as string)}
                     MenuProps={{
                       style: { zIndex: 1500 },
                     }}
@@ -385,7 +402,6 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     accept=".svg"
                     onChange={handleLogoDarkThemeChange}
                     style={{ marginTop: '1rem' }}
-                    label=" "
                   />
                 </FormControl>
               </Grid2>
@@ -437,7 +453,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     id="shape"
                     value={modelShape}
                     label="Shape"
-                    onChange={(e) => setModelShape(e.target.value)}
+                    onChange={(e) => setModelShape(e.target.value as string)}
                     MenuProps={{
                       style: { zIndex: 1500 },
                     }}

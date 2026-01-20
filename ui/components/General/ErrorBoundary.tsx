@@ -1,5 +1,5 @@
 import {
-  Fallback,
+  Box,
   Modal,
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
@@ -33,8 +33,8 @@ const CustomErrorFallback = (props) => {
   const theme = useTheme();
   const { notify } = useNotification();
   const [triggerWebhook] = useSupportWebHookMutation();
-  const { data: userData } = useGetLoggedInUserQuery();
-  const { data: providerData } = useGetProviderCapabilitiesQuery();
+  const { data: userData } = useGetLoggedInUserQuery(undefined);
+  const { data: providerData } = useGetProviderCapabilitiesQuery(undefined);
   const showSupportBasedOnProvider = providerData?.provider_type === 'remote';
 
   const handleOpenSupportModal = () => {
@@ -81,7 +81,7 @@ const CustomErrorFallback = (props) => {
 
   return (
     <FallbackWrapper>
-      <Fallback showPackageInfo={true} {...props}>
+      <Box {...props}>
         <>
           {showSupportBasedOnProvider ? (
             <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
@@ -110,13 +110,16 @@ const CustomErrorFallback = (props) => {
           open={openSupportModal}
           closeModal={handleCloseSupportModal}
           title="Help & Support"
-          headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
+          headerIcon={<SupportIcon width={24} height={24} fill="#51636B" />}
         >
           <RJSFModalWrapper
             schema={helpAndSupportModalSchema}
             uiSchema={helpAndSupportModalUiSchema}
             handleClose={handleCloseSupportModal}
             handleSubmit={handleSupportFormSubmission}
+            handleNext={() => {}}
+            title="Help & Support"
+            helpText=""
             submitBtnText="Submit"
           />
         </Modal>
@@ -127,7 +130,7 @@ const CustomErrorFallback = (props) => {
             defaultOpen={true}
           />
         ) : null}
-      </Fallback>
+      </Box>
     </FallbackWrapper>
   );
 };

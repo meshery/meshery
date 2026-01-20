@@ -19,6 +19,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
+// @ts-expect-error
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
@@ -62,7 +63,7 @@ function RJSFForm_({
   ...restProps
 }) {
   const globalTheme = useTheme();
-  const [menuContainer, setMenuContainer] = useState(null);
+  const [menuContainer, setMenuContainer] = useState<HTMLElement | null>(null);
   const baseTheme = globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme;
 
   useEffect(() => {
@@ -110,8 +111,8 @@ function RJSFForm_({
           validator={validator || customValidator}
           templates={{
             ArrayFieldTemplate,
-            ObjectFieldTemplate,
-            WrapIfAdditionalTemplate,
+            ObjectFieldTemplate: ObjectFieldTemplate as any,
+            WrapIfAdditionalTemplate: WrapIfAdditionalTemplate as any,
             BaseInputTemplate,
             FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
             ...fieldTemplates,
@@ -122,7 +123,7 @@ function RJSFForm_({
             // Custom components to be added here
             TextWidget: CustomTextWidget,
             DateTimeWidget: CustomDateTimeWidget,
-            SelectWidget,
+            SelectWidget: SelectWidget as any,
             ColorWidget: CustomColorWidget,
             CheckboxWidget: CustomCheckboxWidget,
             TextareaWidget: CustomTextAreaWidget,

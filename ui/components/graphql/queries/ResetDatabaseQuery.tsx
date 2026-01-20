@@ -1,8 +1,14 @@
 import { fetchQuery, graphql } from 'react-relay';
 import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
+interface ReSyncSelector {
+  clearDB?: string;
+  ReSync?: string;
+  hardReset?: string;
+}
+
 interface ResetDatabaseVariables {
-  selector: string;
+  selector: ReSyncSelector;
   k8scontextID: string;
 }
 

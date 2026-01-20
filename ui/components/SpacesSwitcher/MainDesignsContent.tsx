@@ -4,7 +4,6 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  PromptComponent,
   OutlinedPatternIcon,
   useModal,
   Modal,
@@ -14,8 +13,11 @@ import {
   ExportIcon,
   DeleteIcon,
   InfoIcon,
-  WorkspaceContentMoveModal,
 } from '@sistent/sistent';
+// @ts-expect-error - PromptComponent exists at runtime but types may not be exported
+import { PromptComponent } from '@sistent/sistent';
+// @ts-expect-error - WorkspaceContentMoveModal exists at runtime but types may not be exported
+import { WorkspaceContentMoveModal } from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
@@ -49,6 +51,22 @@ import {
 } from '@/rtk-query/workspace';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { MergeOutlined } from '@mui/icons-material';
+import type { RootState } from '@/store/index';
+
+type MainDesignsContentProps = {
+  page: number;
+  setPage: (_page: number) => void;
+  isLoading: boolean;
+  isFetching: boolean;
+  designs?: any[];
+  hasMore: boolean;
+  total_count: number;
+  workspace?: any;
+  refetch: () => void;
+  isMultiSelectMode?: boolean;
+  showWorkspaceName?: boolean;
+  showOrganizationName?: boolean;
+};
 
 const MainDesignsContent = ({
   page,
@@ -63,9 +81,9 @@ const MainDesignsContent = ({
   isMultiSelectMode,
   showWorkspaceName = true,
   showOrganizationName = true,
-}) => {
+}: MainDesignsContentProps) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
-  const [selectedDesign, setSelectedDesign] = useState(null);
+  const [selectedDesign, setSelectedDesign] = useState<any>(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [moveModal, setMoveModal] = useState(false);
@@ -84,7 +102,7 @@ const MainDesignsContent = ({
   });
   const [downloadModal, setDownloadModal] = useState({
     open: false,
-    content: null,
+    content: null as any,
   });
 
   const handleDesignDownloadModal = (design) => {
@@ -116,7 +134,7 @@ const MainDesignsContent = ({
     setSelectedDesign(null);
   };
   const sistentInfoModal = useModal({
-    headerIcon: OutlinedPatternIcon,
+    headerIcon: <OutlinedPatternIcon />,
   });
 
   const handleInfoModal = async (design) => {
@@ -127,7 +145,7 @@ const MainDesignsContent = ({
     setSelectedDesign(selectedDesignWithPatternFile?.data);
 
     sistentInfoModal.openModal({
-      title: selectedDesign?.name,
+      title: selectedDesignWithPatternFile?.data?.name,
     });
     setInfoModal({
       open: true,
@@ -265,8 +283,8 @@ const MainDesignsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
+  const { organization: currentOrganization } = useSelector((state: RootState) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
@@ -291,7 +309,11 @@ const MainDesignsContent = ({
                 <DesignViewListItem
                   showWorkspaceName={showWorkspaceName}
                   showOrganizationName={showOrganizationName}
-                  activeUsers={activeUsers?.[design?.id]}
+                  activeUsers={
+                    Array.isArray(activeUsers?.[design?.id])
+                      ? (activeUsers?.[design?.id] as any)
+                      : undefined
+                  }
                   type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
@@ -308,25 +330,27 @@ const MainDesignsContent = ({
                   }}
                   MenuComponent={
                     <MenuComponent
-                      options={getMenuOptions({
-                        design,
-                        handleRemove,
-                        handleDelete,
-                        handleDesignDownloadModal,
-                        handleShare,
-                        handleInfoModal,
-                        refetch,
-                      })}
+                      options={
+                        getMenuOptions({
+                          design,
+                          handleRemove,
+                          handleDelete,
+                          handleDesignDownloadModal,
+                          handleShare,
+                          handleInfoModal,
+                          refetch,
+                        }) as any
+                      }
                     />
                   }
-                  isMultiSelectMode={isMultiSelectMode}
+                  isMultiSelectMode={isMultiSelectMode ?? false}
                 />
                 <Divider light />
               </React.Fragment>
             );
           })}
 
-        <LoadingContainer ref={loadingRef}>
+        <LoadingContainer ref={loadingRef as unknown as React.Ref<HTMLDivElement>}>
           {isLoading || isInitialFetch ? (
             Array(10)
               .fill(null)
@@ -337,7 +361,7 @@ const MainDesignsContent = ({
             <DesignViewListItemSkeleton isMultiSelectMode={isMultiSelectMode} />
           ) : null}
 
-          {!hasMore && !isLoading && !isFetching && designs?.length > 0 && !isEmpty && (
+          {!hasMore && !isLoading && !isFetching && (designs?.length ?? 0) > 0 && !isEmpty && (
             <ListItemText secondary="No more designs to load" sx={{ padding: '1rem' }} />
           )}
         </LoadingContainer>

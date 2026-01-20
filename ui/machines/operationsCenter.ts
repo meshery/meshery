@@ -5,6 +5,9 @@ import { store } from '../store';
 import { pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
 import { PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
+
+type NotifyFn = (_args: any) => void;
+const noopNotify: NotifyFn = () => {};
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
@@ -62,7 +65,7 @@ export const operationsCenterActor = setup({
   actions: {
     spawnSubscriptionActor: spawnChild(subscriptionActor, {
       id: 'subscriptionActor',
-    }),
+    } as any),
     storeInRedux: ({ event }) => {
       store.dispatch(pushEvent(event.data.event));
     },
@@ -71,7 +74,7 @@ export const operationsCenterActor = setup({
     },
     notifyUI: ({ context, event }) => {
       const validatedEvent = event.data.event;
-      context.notify({
+      context.notify?.({
         message: validatedEvent.description,
         event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
         id: validatedEvent.id,
@@ -84,7 +87,7 @@ export const operationsCenterActor = setup({
   id: 'operationsCenter',
   initial: 'init',
   context: ({ input }) => ({
-    notify: input.notify,
+    notify: ((input as any)?.notify as NotifyFn | undefined) ?? noopNotify,
   }),
 
   states: {

@@ -1,7 +1,5 @@
-// @ts-nocheck
-import { Typography, useTheme, styled } from '@sistent/sistent';
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Typography, useTheme, styled } from '@sistent/sistent';
 import AnimatedMeshSync from './Animations/AnimatedMeshSync';
 import AnimatedMeshPattern from './Animations/AnimatedMeshPattern';
 import AnimatedMeshery from './Animations/AnimatedMeshery';
@@ -14,7 +12,13 @@ const LoadingContainer = styled('div')({
   transform: 'translateY(-50%)',
 });
 
-const animatedIconList = {
+type AnimatedIconType =
+  | 'AnimatedMeshPattern'
+  | 'AnimatedMeshSync'
+  | 'AnimatedFilter'
+  | 'AnimatedMeshery';
+
+const animatedIconList: Record<AnimatedIconType, React.ReactNode> = {
   AnimatedMeshPattern: <AnimatedMeshPattern style={{ height: '100px', margin: '4px 0px 8px' }} />,
   AnimatedMeshSync: (
     <>
@@ -31,7 +35,7 @@ const animatedIconList = {
   AnimatedMeshery: <AnimatedMeshery style={{ height: '100px', margin: '4px 0px 8px' }} />,
 };
 
-const animatedLightIconList = {
+const animatedLightIconList: Record<AnimatedIconType, React.ReactNode> = {
   AnimatedMeshPattern: <AnimatedMeshPattern style={{ height: '100px', margin: '4px 0px 8px' }} />,
   AnimatedMeshSync: (
     <>
@@ -48,7 +52,14 @@ const animatedLightIconList = {
   AnimatedMeshery: <AnimatedLightMeshery style={{ height: '100px', margin: '4px 0px 8px' }} />,
 };
 
-function LoadingScreen(props) {
+type LoadingScreenProps = {
+  message: string;
+  className?: string;
+  animatedIcon: AnimatedIconType;
+  [key: string]: any;
+};
+
+function LoadingScreen(props: LoadingScreenProps) {
   const { message, className, animatedIcon, ...other } = props;
   const theme = useTheme();
 
@@ -63,11 +74,5 @@ function LoadingScreen(props) {
     </LoadingContainer>
   );
 }
-
-LoadingScreen.propTypes = {
-  message: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  animatedIcon: PropTypes.string.isRequired,
-};
 
 export default LoadingScreen;

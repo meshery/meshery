@@ -32,7 +32,7 @@ const YAMLDialog = ({
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <StyledDialog disableTypography id="filter-dialog-title">
+      <StyledDialog id="filter-dialog-title">
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
           <IconButton onClick={toggleFullScreen} size="large">
@@ -54,7 +54,7 @@ const YAMLDialog = ({
               mode: 'text/x-yaml',
               readOnly: isReadOnly,
             }}
-            onChange={(_, data, val) => setYaml(val)}
+            onChange={(value) => setYaml(value)}
           />
         </StyledCodeMirrorWrapper>
       </DialogContent>

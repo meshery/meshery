@@ -7,12 +7,14 @@ import { WILDCARD_V } from './hooks/useMeshModelComponents';
  *
  * @param {Array.<String>} versionList
  */
-export default function getMostRecentVersion(versionList) {
+export default function getMostRecentVersion(
+  versionList: string[] | undefined,
+): string | undefined {
   if (!versionList) return;
 
-  const stableList = [];
-  const alphaList = [];
-  const betaList = [];
+  const stableList: string[] = [];
+  const alphaList: string[] = [];
+  const betaList: string[] = [];
 
   versionList.forEach((apiVersion) => {
     const isStable = /^v[0-9]$/.test(apiVersion); // returns true if matches v1-v9
@@ -39,9 +41,9 @@ export default function getMostRecentVersion(versionList) {
  * @param {string} versionB
  * @returns
  */
-export function versionSortComparatorFn(versionA, versionB) {
+export function versionSortComparatorFn(versionA, versionB): number {
   if (!versionA || !versionB) {
-    return;
+    return 0;
   }
 
   if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
@@ -61,11 +63,13 @@ export function versionSortComparatorFn(versionA, versionB) {
       vB = removeVFromVersion(vB);
     }
     // move to next comparison
-    if (vA - vB === 0) {
+    const diff = (vA as any) - (vB as any);
+    if (diff === 0) {
       continue;
     }
-    return vA - vB;
+    return diff;
   }
+  return 0;
 }
 
 function removeVFromVersion(version) {
@@ -84,13 +88,15 @@ function removeVFromVersion(version) {
  * @param {Array.<string>} versions
  * @returns Versions sorted in decreasing order
  */
-export const sortByVersionInDecreasingOrder = (versions) => {
+export const sortByVersionInDecreasingOrder = (
+  versions: string[] | undefined,
+): string[] | undefined => {
   if (!versions) {
     return;
   }
 
   // add wildcard only in the case of multiple distinct versions
-  let wildCardV = [];
+  let wildCardV: string[] = [];
   if (versions.length > 1) {
     wildCardV = [WILDCARD_V];
   }

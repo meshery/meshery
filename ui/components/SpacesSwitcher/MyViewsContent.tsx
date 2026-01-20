@@ -1,9 +1,12 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { Box, Grid2, PromptComponent, useTheme } from '@sistent/sistent';
+import { Box, Grid2, useTheme } from '@sistent/sistent';
+// @ts-expect-error - PromptComponent exists at runtime but types may not be exported
+import { PromptComponent } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
+// @ts-expect-error - StyledSearchBar exists at runtime but types may not be exported
 import { StyledSearchBar } from '@sistent/sistent';
 import {
   MultiContentSelectToolbar,
@@ -17,7 +20,10 @@ import ShareModal from './ShareModal';
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
-  const [shareModal, setShareModal] = useState({ open: false, content: null });
+  const [shareModal, setShareModal] = useState<{ open: boolean; content: any }>({
+    open: false,
+    content: null,
+  });
 
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
@@ -125,7 +131,9 @@ const MyViewsContent = () => {
       </Grid2>
       <MultiContentSelectToolbar
         type={RESOURCE_TYPE.VIEW}
+        handleContentMove={undefined}
         handleDelete={handleDelete}
+        handleDownload={() => {}}
         handleViewDownload={handleViewDownload}
         refetch={refetch}
         handleShare={(multiSelectedContent) => {
@@ -145,6 +153,7 @@ const MyViewsContent = () => {
         setPage={setPage}
         views={views}
         total_count={total_count}
+        workspace={undefined}
         refetch={refetch}
         isMultiSelectMode={true}
       />
@@ -152,7 +161,7 @@ const MyViewsContent = () => {
       {shareModal.open && (
         <ShareModal
           resource={shareModal.content}
-          handleClose={() => setShareModal(false)}
+          handleClose={() => setShareModal({ open: false, content: null })}
           type={RESOURCE_TYPE.VIEW}
         />
       )}

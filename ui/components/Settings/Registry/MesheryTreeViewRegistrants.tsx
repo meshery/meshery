@@ -83,6 +83,7 @@ const MesheryTreeViewRegistrants = ({
                       handleSelect={handleSelect}
                       expanded={expanded}
                       selected={selected}
+                      // @ts-expect-error
                       setShow={setShow}
                       registrantID={registrant.id}
                       setShowDetailsData={setShowDetailsData}

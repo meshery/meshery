@@ -32,9 +32,12 @@ const FinishModelGenerateStep = ({
   }, []);
 
   useEffect(() => {
-    const subscription = operationsCenterActorRef.on(
+    if (!operationsCenterActorRef) {
+      return;
+    }
+    const subscription = (operationsCenterActorRef as any).on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-      (event) => {
+      (event: any) => {
         const serverEvent = event.data.event;
         if (serverEvent.action === generateType) {
           setGenerateEvent(serverEvent);

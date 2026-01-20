@@ -5,6 +5,7 @@ import Github from '@/assets/icons/social/github';
 import Slack from '@/assets/icons/social/slack';
 import Twitter from '@/assets/icons/social/twitter';
 import Youtube from '@/assets/icons/social/youtube';
+import { Colors } from '@/themes/app';
 
 export const SocialMain = styled('div')(() => ({
   padding: '1.3rem 2rem',
@@ -51,9 +52,9 @@ export const TwitterIcon = styled(Twitter)(({ theme }) => ({
   },
 }));
 
-export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
-  fill: theme.palette.keppelGreen,
-  color: theme.palette.keppelGreen,
+export const TwitterHandleIcon = styled(Twitter)(() => ({
+  fill: Colors.keppelGreen,
+  color: Colors.keppelGreen,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
@@ -62,9 +63,9 @@ export const TwitterHandleIcon = styled(Twitter)(({ theme }) => ({
   },
 }));
 
-export const GithubHandleIcon = styled(Github)(({ theme }) => ({
-  fill: theme.palette.keppelGreen,
-  color: theme.palette.keppelGreen,
+export const GithubHandleIcon = styled(Github)(() => ({
+  fill: Colors.keppelGreen,
+  color: Colors.keppelGreen,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {

@@ -73,22 +73,24 @@ const MesheryTreeViewItem = ({
             }}
           >
             <VersionedModelComponentTree
-              registrantID={registrantID}
+              {...(registrantID ? { registrantID } : {})}
               modelDef={modelDef}
               versionedModelDef={versionedModelDef}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
             />
-            <VersionedModelRelationshipTree
-              registrantID={registrantID}
-              modelDef={modelDef}
-              versionedModelDef={versionedModelDef}
-              setShowDetailsData={setShowDetailsData}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              selected={selected}
-              expanded={expanded}
-            />
+            {handleToggle && handleSelect && selected && expanded ? (
+              <VersionedModelRelationshipTree
+                {...(registrantID ? { registrantID } : {})}
+                modelDef={modelDef}
+                versionedModelDef={versionedModelDef}
+                setShowDetailsData={setShowDetailsData}
+                handleToggle={handleToggle}
+                handleSelect={handleSelect}
+                selected={selected}
+                expanded={expanded}
+              />
+            ) : null}
           </StyledTreeItem>
         ))}
     </StyledTreeItem>

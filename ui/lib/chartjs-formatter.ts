@@ -109,9 +109,8 @@ export function getMetadata(rawdata, res) {
     duration: {
       display: {
         key: 'Duration',
-        value: `Achieved ${myRound(res.ActualDuration / 1e9, 1)} (Requested ${
-          res.RequestedDuration
-        })`,
+        value: `Achieved ${myRound(res.ActualDuration / 1e9, 1)} (Requested ${res.RequestedDuration
+          })`,
       },
     },
     errors: {
@@ -217,7 +216,7 @@ export function getMetadata(rawdata, res) {
 }
 
 export function makeTitle(rawdata, res) {
-  var title = [];
+  var title: string[] = [];
   if (res.Labels !== '') {
     if (res.URL) {
       // http results
@@ -280,12 +279,10 @@ export function makeTitle(rawdata, res) {
     title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);
     title.push('Nodes:');
     res.kubernetes?.nodes?.forEach((node, ind) => {
-      title.push(`Node ${ind + 1} - \nHostname: ${node.hostname} \nCPU: ${
-        node.allocatable_cpu
-      } \nMemory: ${node.allocatable_memory} \nArch: ${node.architecture} \nOS: ${node.os_image}
-                    \nKubelet version: ${node.kubelet_version} \nContainer runtime: ${
-                      node.container_runtime_version
-                    }`);
+      title.push(`Node ${ind + 1} - \nHostname: ${node.hostname} \nCPU: ${node.allocatable_cpu
+        } \nMemory: ${node.allocatable_memory} \nArch: ${node.architecture} \nOS: ${node.os_image}
+                    \nKubelet version: ${node.kubelet_version} \nContainer runtime: ${node.container_runtime_version
+        }`);
     });
   }
 
@@ -330,7 +327,7 @@ export function fortioResultToJsChartData(rawdata, res) {
     prevX = x;
     prevY = y;
   }
-  var dataH = [];
+  var dataH: Array<{ x: number; y: number }> = [];
   var prev = 1000.0 * res.DurationHistogram.Data[0].Start;
   for (i = 0; i < len; i++) {
     it = res.DurationHistogram.Data[i];
@@ -572,7 +569,7 @@ export function makeMultiChart(rawdata, results) {
   // deleteSingleChart()
   // deleteOverlayChart()
   // var ctx = chartEl.getContext('2d')
-  let data = {
+  let data: any = {
     // type: 'line',
     data: {
       labels: [],

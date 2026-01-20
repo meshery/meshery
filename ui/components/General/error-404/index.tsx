@@ -35,7 +35,7 @@ const UnknownServerSideError = (props) => {
   return (
     <div>
       <ErrorContentContainer>
-        <Typography variant="p" component="p" align="center">
+        <Typography component="p" align="center">
           {errorContent}
         </Typography>
       </ErrorContentContainer>

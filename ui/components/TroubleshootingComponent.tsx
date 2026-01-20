@@ -23,7 +23,7 @@ const Troubleshoot = ({ errorMessage, ...props }) => {
     setOpen(true);
   };
 
-  const { data: userData } = useGetLoggedInUserQuery();
+  const { data: userData } = useGetLoggedInUserQuery({});
 
   const handleOpenForm = () => {
     setOpenForm(true);
@@ -88,13 +88,16 @@ const Troubleshoot = ({ errorMessage, ...props }) => {
         open={openForm}
         closeModal={handleSupportFormClose}
         title="Help & Support"
-        headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
+        headerIcon={<SupportIcon height="24" width="24" fill="currentColor" />}
       >
         <RJSFModalWrapper
           schema={helpAndSupportModalSchema}
           uiSchema={helpAndSupportModalUiSchema}
           handleClose={handleSupportFormClose}
           handleSubmit={handleSupportFormSubmission}
+          handleNext={() => {}}
+          title="Help & Support"
+          helpText=""
           submitBtnText="Submit"
         />
       </Modal>

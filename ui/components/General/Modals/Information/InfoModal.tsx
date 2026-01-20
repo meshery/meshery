@@ -23,7 +23,6 @@ import {
   publishCatalogItemUiSchema,
   Skeleton,
   Typography,
-  VisibilityChipMenu,
 } from '@sistent/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
@@ -54,7 +53,7 @@ export const VIEW_VISIBILITY = {
   PRIVATE: 'private',
 };
 
-const InfoModal_ = React.memo((props) => {
+const InfoModal_ = React.memo((props: any) => {
   const {
     infoModalOpen,
     handleInfoModalClose,
@@ -64,9 +63,9 @@ const InfoModal_ = React.memo((props) => {
     isReadOnly = false,
   } = props;
 
-  const { user: currentUser } = useSelector((state) => state.ui);
-  const formRef = React.createRef();
-  const formStateRef = useRef();
+  const { user: currentUser } = useSelector((state: any) => state.ui);
+  const formRef = React.createRef<any>();
+  const formStateRef = useRef<any>(null);
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
   const [dataIsUpdated, setDataIsUpdated] = useState(false);
   const [visibility, setVisibility] = useState(selectedResource?.visibility);
@@ -80,12 +79,13 @@ const InfoModal_ = React.memo((props) => {
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
-  const [meshModels, setMeshModels] = useState([]);
+  const [meshModels, setMeshModels] = useState<any[]>([]);
   const [publishSchema, setPublishSchema] = useState({});
 
   useEffect(() => {
     const fetchModels = async () => {
-      const { models } = await getMeshModels();
+      const result = (await getMeshModels()) as { models?: any[] };
+      const { models } = result;
       const modelNames = _.uniqBy(
         models?.map((model) => {
           if (model.displayName && model.displayName !== '') {
@@ -103,7 +103,7 @@ const InfoModal_ = React.memo((props) => {
         modelNames,
       );
       setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-      setMeshModels(models);
+      setMeshModels(models || []);
     };
     fetchModels();
   }, []);
@@ -122,12 +122,14 @@ const InfoModal_ = React.memo((props) => {
 
   const [publishCatalog] = usePublishPatternMutation();
 
-  const handlePublish = (formData) => {
-    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-      ?.filter((model) =>
-        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+  const handlePublish = (formData: any) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model: any) => _.toLower(model.displayName))
+      ?.filter((model: any) =>
+        formData?.compatibility?.some(
+          (comp: any) => _.toLower(comp) === _.toLower(model.displayName),
+        ),
       )
-      ?.map((model) => model.name);
+      ?.map((model: any) => model.name);
 
     const payload = {
       id: selectedResource?.id,
@@ -168,25 +170,25 @@ const InfoModal_ = React.memo((props) => {
 
   const handleSubmit = () => {
     setSaveFormLoading(true);
-    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-      ?.filter((model) =>
-        formStateRef.current?.compatibility?.some(
-          (comp) => _.toLower(comp) === _.toLower(model.displayName),
+    const compatibilityStore = _.uniqBy(meshModels, (model: any) => _.toLower(model.displayName))
+      ?.filter((model: any) =>
+        (formStateRef.current as any)?.compatibility?.some(
+          (comp: any) => _.toLower(comp) === _.toLower(model.displayName),
         ),
       )
-      ?.map((model) => model.name);
+      ?.map((model: any) => model.name);
 
-    let body = null;
+    let body: string | null = null;
     let modifiedData = {
-      ...formStateRef.current,
-      type: formStateRef.current?.type?.toLowerCase(),
+      ...(formStateRef.current as any),
+      type: (formStateRef.current as any)?.type?.toLowerCase(),
       compatibility: compatibilityStore,
     };
 
     body = JSON.stringify({
-      name: selectedResource.name,
+      name: (selectedResource as any).name,
       catalog_data: modifiedData,
-      design_file: yaml.load(selectedResource.pattern_file),
+      design_file: yaml.load((selectedResource as any).pattern_file),
       id: selectedResource.id,
       visibility: visibility,
     });
@@ -252,11 +254,11 @@ const InfoModal_ = React.memo((props) => {
 
         const filteredCompatibilityArray = _.uniq(
           meshModels
-            .filter((obj) => {
+            .filter((obj: any) => {
               const modelName = obj.name.toLowerCase();
               return compatibilitySet.has(modelName);
             })
-            .map((obj) => obj.displayName),
+            .map((obj: any) => obj.displayName),
         );
 
         let modifiedData = {
@@ -273,7 +275,7 @@ const InfoModal_ = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
-      const newUiSchema = { ...publishSchema.uiSchema };
+      const newUiSchema = { ...(publishSchema as any).uiSchema };
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;
@@ -294,12 +296,16 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const handlePublishController = () => {
-    formRef.current.state.schema['required'] = publishSchema.rjsfSchema.required;
-    if (formRef.current && formRef.current.validateForm()) {
-      setSaveFormLoading(true);
-      handleInfoModalClose();
-      handlePublish(formRef.current.state.formData);
-      setSaveFormLoading(false);
+    if (formRef.current) {
+      (formRef.current as any).state.schema['required'] = (
+        publishSchema as any
+      ).rjsfSchema.required;
+      if ((formRef.current as any).validateForm()) {
+        setSaveFormLoading(true);
+        handleInfoModalClose();
+        handlePublish((formRef.current as any).state.formData);
+        setSaveFormLoading(false);
+      }
     }
   };
 
@@ -317,7 +323,15 @@ const InfoModal_ = React.memo((props) => {
         open={infoModalOpen}
         closeModal={handleInfoModalClose}
         title={selectedResource?.name}
-        headerIcon={<PatternIcon style={{ ...iconSmall }} fill="#FFF" />}
+        headerIcon={
+          <PatternIcon
+            style={{ ...iconSmall }}
+            fill="#FFF"
+            color="#FFF"
+            width={iconSmall.width}
+            height={iconSmall.height}
+          />
+        }
         maxWidth={false}
         sx={{
           '& .MuiDialog-container': {
@@ -351,14 +365,15 @@ const InfoModal_ = React.memo((props) => {
                     onError={handleError}
                   />
                 ) : (
-                  <ServiceMesheryIcon
-                    style={{
+                  <Box
+                    sx={{
                       boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
                       borderRadius: '20px',
+                      display: 'inline-block',
                     }}
-                    width={100}
-                    height={100}
-                  />
+                  >
+                    <ServiceMesheryIcon width={100} height={100} />
+                  </Box>
                 )}
               </Button>
               <ResourceName variant="subtitle1">{selectedResource?.name}</ResourceName>
@@ -373,7 +388,7 @@ const InfoModal_ = React.memo((props) => {
               <Grid item xs={12}>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
-                  <CreatAtContainer idBold={false}>
+                  <CreatAtContainer isBold={false}>
                     {getFormatDate(selectedResource?.updated_at)}
                   </CreatAtContainer>
                 </Typography>
@@ -412,18 +427,31 @@ const InfoModal_ = React.memo((props) => {
                     variant="subtitle1"
                     style={{ display: 'flex', marginRight: '2rem' }}
                   >
-                    <VisibilityChipMenu
-                      value={visibility}
-                      onChange={(value) => {
-                        setVisibility(value);
-                        setDataIsUpdated(value != selectedResource?.visibility);
-                      }}
-                      enabled={canChangeVisibility}
-                      options={[
-                        [VIEW_VISIBILITY.PUBLIC, Public],
-                        [VIEW_VISIBILITY.PRIVATE, Lock],
-                      ]}
-                    />
+                    {/* VisibilityChipMenu replaced with ButtonGroup */}
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button
+                        variant={visibility === VIEW_VISIBILITY.PUBLIC ? 'contained' : 'outlined'}
+                        disabled={!canChangeVisibility}
+                        onClick={() => {
+                          setVisibility(VIEW_VISIBILITY.PUBLIC);
+                          setDataIsUpdated(VIEW_VISIBILITY.PUBLIC != selectedResource?.visibility);
+                        }}
+                        startIcon={<Public />}
+                      >
+                        Public
+                      </Button>
+                      <Button
+                        variant={visibility === VIEW_VISIBILITY.PRIVATE ? 'contained' : 'outlined'}
+                        disabled={!canChangeVisibility}
+                        onClick={() => {
+                          setVisibility(VIEW_VISIBILITY.PRIVATE);
+                          setDataIsUpdated(VIEW_VISIBILITY.PRIVATE != selectedResource?.visibility);
+                        }}
+                        startIcon={<Lock />}
+                      >
+                        Private
+                      </Button>
+                    </Box>
                   </Typography>
                 </Grid>
 
@@ -438,7 +466,7 @@ const InfoModal_ = React.memo((props) => {
                   <RJSFWrapper
                     formData={formStateRef.current}
                     jsonSchema={{
-                      ...publishSchema.rjsfSchema,
+                      ...(publishSchema as any).rjsfSchema,
                       required: [],
                     }}
                     uiSchema={uiSchema}
@@ -459,7 +487,7 @@ const InfoModal_ = React.memo((props) => {
           variant="filled"
         >
           <ActionContainer>
-            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
+            <TooltipButton title={'Copy Design Link'} onClick={handleCopy} variant="contained">
               <CopyLinkButton>Copy Link</CopyLinkButton>
             </TooltipButton>
 
