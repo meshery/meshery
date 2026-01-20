@@ -53,7 +53,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
     },
   );
 
-  () => {
+  return () => {
     subscription.dispose();
   };
 });
