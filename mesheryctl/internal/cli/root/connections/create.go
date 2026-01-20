@@ -181,7 +181,7 @@ func createEKSConnection() error {
 		return err
 	}
 
-	utils.Log.Infof("EKS connection on cluster %s created successfully.", clusterName)
+	utils.Log.Infof("EKS connection on cluster %s created.", clusterName)
 	return nil
 }
 
