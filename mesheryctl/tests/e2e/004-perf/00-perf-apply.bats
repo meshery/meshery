@@ -8,7 +8,7 @@ setup() {
 @test "mesheryctl perf apply fails when new profile and URL is missing" {
     run $MESHERYCTL_BIN perf apply dummy-test-profile -y
 
-    assert_success
+    assert_failure
     assert_line --partial "Unable to get URL for performing test"
 }
 
