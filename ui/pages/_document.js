@@ -80,8 +80,6 @@ class MesheryDocument extends Document {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
-          {/* Pre-React script */}
-          <script src="/loadingMessages.js"></script>
 
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />

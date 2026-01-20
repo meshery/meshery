@@ -148,13 +148,13 @@
         "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
       },
       "1018": {
-        "name": "ErrFilterNameOrIDCode",
+        "name": "ErrDeleteFilterCode",
         "code": "1018",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to fetch filter",
-        "probable_cause": "Probable invalid filter name or id",
-        "suggested_remediation": "Run `mesheryctl filter list` to view all available filters."
+        "short_description": "Failed to delete filter",
+        "probable_cause": "Unable to delete the specified filter",
+        "suggested_remediation": "Verify the filter exists using `mesheryctl filter list`"
       },
       "1019": {
         "name": "ErrFetchFilterCode",
@@ -1406,6 +1406,60 @@
         "short_description": "Design name or ID not specified",
         "probable_cause": "Command requires a design name or ID as argument",
         "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+      },
+      "1167": {
+        "name": "ErrFilterNotFoundCode",
+        "code": "1167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Filter not found",
+        "probable_cause": "The specified filter does not exist",
+        "suggested_remediation": "Use `mesheryctl filter list` to see available filters"
+      },
+      "1168": {
+        "name": "ErrFilterURIRequiredCode",
+        "code": "1168",
+        "severity": "Alert",
+        "long_description": "No URI provided for filter import",
+        "short_description": "URI is required",
+        "probable_cause": "Filter import command requires a URI",
+        "suggested_remediation": "Provide a valid file path or URL"
+      },
+      "1169": {
+        "name": "ErrViewAllWithNameCode",
+        "code": "1169",
+        "severity": "Alert",
+        "long_description": "--all cannot be used when filter name or ID is specified",
+        "short_description": "Invalid flag combination",
+        "probable_cause": "Conflicting options provided",
+        "suggested_remediation": "Use either --all flag OR specify a filter name/ID"
+      },
+      "1170": {
+        "name": "ErrMultiWordFilterNameCode",
+        "code": "1170",
+        "severity": "Alert",
+        "long_description": "multi-word filter names must be enclosed in double quotes",
+        "short_description": "Invalid filter name format",
+        "probable_cause": "Filter name with spaces requires quoting",
+        "suggested_remediation": "Enclose multi-word filter names in double quotes"
+      },
+      "1171": {
+        "name": "ErrInvalidFilterCommandCode",
+        "code": "1171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided subcommand is not recognized",
+        "suggested_remediation": "Run `mesheryctl filter --help` to see available commands"
+      },
+      "1172": {
+        "name": "ErrHandlePaginationCode",
+        "code": "1172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to display paginated results",
+        "probable_cause": "Interactive pagination requires keyboard input support",
+        "suggested_remediation": "Ensure you are running in an interactive terminal\nIf running in a non-interactive environment, use '--page' flag to skip pagination"
       }
     }
   }
