@@ -21,7 +21,7 @@ interface ClusterResourcesVariables {
 }
 
 export default function subscribeClusterResources(
-  dataCB: (data: unknown) => void,
+  dataCB: (_data: unknown) => void,
   variables: ClusterResourcesVariables,
 ) {
   const environment = createRelayEnvironment({});

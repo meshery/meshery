@@ -86,9 +86,9 @@ function TabContainer({ children }: TabContainerProps) {
 type SettingsRouter = {
   selectedSettingsCategory?: string;
   selectedTab?: string;
-  handleChangeSettingsCategory: (settingsCategory?: string) => void;
-  handleChangeSelectedTab: (tab: string) => void;
-  handleChangeSelectedTabCustomCategory: (settingsCategory: string, tab: string) => void;
+  handleChangeSettingsCategory: (_settingsCategory?: string) => void;
+  handleChangeSelectedTab: (_tab: string) => void;
+  handleChangeSelectedTabCustomCategory: (_settingsCategory: string, _tab: string) => void;
 };
 
 const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter => {
@@ -159,7 +159,7 @@ const MesherySettings = () => {
     scannedGrafana: [],
   });
 
-  const systemResetPromptRef = useRef<{ show: (args: any) => Promise<string> } | null>(null);
+  const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {

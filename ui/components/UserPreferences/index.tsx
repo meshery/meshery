@@ -58,7 +58,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
 interface ThemeTogglerProps {
-  handleUpdateUserPref: (theme: string) => void;
+  handleUpdateUserPref: (_theme: string) => void;
 }
 
 interface ThemeComponentProps {
@@ -82,7 +82,7 @@ interface ProviderExtension {
   type: string;
 }
 
-interface ProviderInfo {
+interface _ProviderInfo {
   provider_name?: string;
   provider_type?: string;
   provider_url?: string;
@@ -97,7 +97,7 @@ interface ExtensionPreferences {
   [key: string]: unknown;
 }
 
-interface UserData {
+interface _UserData {
   usersExtensionPreferences?: ExtensionPreferences;
   remoteProviderPreferences?: {
     theme?: string;

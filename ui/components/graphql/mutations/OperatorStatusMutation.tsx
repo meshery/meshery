@@ -7,7 +7,7 @@ interface OperatorStatusVariables {
 }
 
 export default function changeOperatorState(
-  onComplete: (response: unknown) => void,
+  onComplete: (_response: unknown) => void,
   variables: OperatorStatusVariables,
 ) {
   const environment = createRelayEnvironment({});

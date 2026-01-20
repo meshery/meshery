@@ -22,7 +22,7 @@ export const meshmodelSummarySubscription = graphql`
 `;
 
 export default function subscribeClusterResources(
-  dataCB: (data: unknown) => void,
+  dataCB: (_data: unknown) => void,
   variables: MeshModelSummarySelector,
 ) {
   const environment = createRelayEnvironment({});
