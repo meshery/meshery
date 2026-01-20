@@ -8,11 +8,11 @@ import MesheryTreeViewItem from './MesheryTreeViewItem';
 
 type MesheryTreeViewModelProps = {
   data: any[];
-  handleToggle: (event: unknown, nodeIds: string[]) => void;
-  handleSelect: (event: unknown, nodeIds: string[]) => void;
+  handleToggle: (_event: unknown, _nodeIds: string[]) => void;
+  handleSelect: (_event: unknown, _nodeIds: string[]) => void;
   expanded: string[];
   selected: string[];
-  setShowDetailsData: (data: { type: string; data: any }) => void;
+  setShowDetailsData: (_data: { type: string; data: any }) => void;
   lastModelRef: React.MutableRefObject<any>;
   isModelFetching: boolean;
   showDetailsData: { type: string; data: any };

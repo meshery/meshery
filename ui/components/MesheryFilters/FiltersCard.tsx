@@ -53,17 +53,17 @@ type FiltersCardProps = {
   updated_at?: string;
   created_at?: string;
   filter_resource: string;
-  handleClone: (ev: React.MouseEvent) => void;
-  handleDownload: (ev: React.MouseEvent) => void;
+  handleClone: (_ev: React.MouseEvent) => void;
+  handleDownload: (_ev: React.MouseEvent) => void;
   deleteHandler: () => void;
-  setYaml: (value: string) => void;
+  setYaml: (_value: string) => void;
   description?: FilterDescription;
   visibility: string;
-  handlePublishModal: (ev: React.MouseEvent) => void;
-  handleUnpublishModal: (ev: React.MouseEvent) => void;
+  handlePublishModal: (_ev: React.MouseEvent) => void;
+  handleUnpublishModal: (_ev: React.MouseEvent) => void;
   updateHandler: () => void;
   canPublishFilter?: boolean;
-  handleInfoModal: (ev: React.MouseEvent) => void;
+  handleInfoModal: (_ev: React.MouseEvent) => void;
   ownerId?: string;
 };
 
@@ -85,7 +85,7 @@ function FiltersCard_({
   handleInfoModal,
   ownerId,
 }: FiltersCardProps) {
-  const genericClickHandler = (ev: React.MouseEvent, fn: (event: React.MouseEvent) => void) => {
+  const genericClickHandler = (ev: React.MouseEvent, fn: (_event: React.MouseEvent) => void) => {
     ev.stopPropagation();
     fn(ev);
   };

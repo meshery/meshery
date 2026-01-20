@@ -4,7 +4,7 @@ import UrlStepper from './Stepper/UrlStepper';
 
 type CreateModelModalProps = {
   isCreateModalOpen: boolean;
-  setIsCreateModalOpen: (open: boolean) => void;
+  setIsCreateModalOpen: (_open: boolean) => void;
 };
 
 const CreateModelModal = ({ isCreateModalOpen, setIsCreateModalOpen }: CreateModelModalProps) => {
