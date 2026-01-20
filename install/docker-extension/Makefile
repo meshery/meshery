@@ -52,7 +52,7 @@ ui-build:
 	cd ui && npm install --legacy-peer-deps && npm run build
 
 ui:
-	cd ui && npm run start
+	cd ui && npm run start; cd ../..;
 # Make easier to debug the UI
 link:
 	docker extension dev ui-source meshery/docker-extension-meshery:${GIT_STRIPPED_VERSION} http://localhost:3000
