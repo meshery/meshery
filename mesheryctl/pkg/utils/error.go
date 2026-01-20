@@ -56,6 +56,7 @@ var (
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrHandlePaginationCode        = "mesheryctl-1172"
 	ErrCreateFileCode              = "mesheryctl-1123"
 	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
 	ErrReadFromBodyCode            = "mesheryctl-1125"
@@ -750,6 +751,17 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{fmt.Sprintf("Meshery Server is not available on platform: %s", platform)},
 		[]string{"Meshery Server is not running or is unreachable", "Docker or Kubernetes environment is not ready", "Network connectivity issues"},
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
+}
+
+func ErrHandlePagination(err error) error {
+	return errors.New(ErrHandlePaginationCode, errors.Alert,
+		[]string{"Unable to display paginated results"},
+		[]string{err.Error()},
+		[]string{"Interactive pagination requires keyboard input support"},
+		[]string{
+			"Ensure you are running in an interactive terminal",
+			"If running in a non-interactive environment, use '--page' flag to skip pagination",
+		})
 }
 
 func ErrCreateFile(filepath string, err error) error {

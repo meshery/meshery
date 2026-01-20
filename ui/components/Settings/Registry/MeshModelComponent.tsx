@@ -31,7 +31,7 @@ import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRelationshipModal';
 
 type MeshModelComponentProps = {
-  settingsRouter?: (router: any) => { handleChangeSelectedTab?: (tab: string) => void };
+  settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
   externalView?: string | null;
   externalSearchText?: string | null;
   externalSelectedItemUUID?: string | null;

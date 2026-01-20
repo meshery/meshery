@@ -12,9 +12,9 @@ type VersionedModelRelationshipTreeProps = {
   registrantID?: string;
   modelDef: any;
   versionedModelDef: any;
-  setShowDetailsData: (data: { type: string; data: any }) => void;
-  handleToggle: (event: unknown, nodeIds: string[]) => void;
-  handleSelect: (event: unknown, nodeIds: string[]) => void;
+  setShowDetailsData: (_data: { type: string; data: any }) => void;
+  handleToggle: (_event: unknown, _nodeIds: string[]) => void;
+  handleSelect: (_event: unknown, _nodeIds: string[]) => void;
   selected: string[];
   expanded: string[];
 };
