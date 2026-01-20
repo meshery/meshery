@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 20th 2026, 4:49:38 pm
+- Testing started at: January 20th 2026, 5:13:43 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 12 skipped
 
-⌛ _Duration: 12 minutes and 24 seconds_
+⌛ _Duration: 12 minutes and 18 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -96,7 +96,7 @@
 | 73 | None | chromium-local-provider | Verify Performance Analysis Details |  | ❌ |
 | 74 | None | chromium-local-provider | Verify that UI components are displayed |  | ❌ |
 | 75 | None | local-setup | authenticate as None provider |  | ✅ |
-| 76 | None | remote-setup | authenticate as Meshery provider |  | ✅ |
+| 76 | None | remote-setup | authenticate with Remote Provider |  | ✅ |
 
 </div>
 </details>
@@ -108,29 +108,6 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-
-<details>
-<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
 
 <details>
 <summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
@@ -151,6 +128,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
 ```
 
 </details>
@@ -193,29 +193,6 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
 <summary>❌ Verify Performance Analysis Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -234,6 +211,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
  [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
  [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
 ```
 
 </details>
