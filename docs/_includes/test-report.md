@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 20th 2026, 2:26:20 am
+- Testing started at: January 20th 2026, 3:48:23 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 0 flaked
 - ⏩ 12 skipped
 
-⌛ _Duration: 12 minutes and 19 seconds_
+⌛ _Duration: 12 minutes and 21 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -51,7 +51,7 @@
 | 28 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ❌ |
 | 29 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ❌ |
 | 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ❌ |
-| 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot using data-testid |  | ❌ |
+| 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ❌ |
 | 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ❌ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ❌ |
 | 34 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ❌ |
@@ -88,7 +88,7 @@
 | 65 | None | chromium-local-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ❌ |
 | 66 | None | chromium-local-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ❌ |
 | 67 | None | chromium-local-provider | Verify Kanvas Details |  | ❌ |
-| 68 | None | chromium-local-provider | Verify Kanvas Snapshot using data-testid |  | ❌ |
+| 68 | None | chromium-local-provider | Verify Kanvas Snapshot UI elements |  | ❌ |
 | 69 | None | chromium-local-provider | Verify Meshery Adapter for Istio Section |  | ❌ |
 | 70 | None | chromium-local-provider | Verify Meshery Catalog Section Details |  | ❌ |
 | 71 | None | chromium-local-provider | Verify Meshery Design Embed Details |  | ❌ |
@@ -110,30 +110,7 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
-```
-
-**Code Snippet:**
-```
-[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
- [90m  6 |[39m
-[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
- [90m    |[39m        [31m[1m^[22m[39m
- [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
- [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
- [90m 10 |[39m     })[33m;[39m[0m
-```
-
-</details>
-
-<details>
-<summary>❌ Verify Kanvas Snapshot using data-testid (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
 
@@ -144,13 +121,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -179,21 +156,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Logout from current user session (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
-
-</details>
-
-<details>
-<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ should verify Design Configurator page elements (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
 
@@ -216,6 +179,20 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
+<summary>❌ Logout from current user session (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
 <summary>❌ Verify Performance Analysis Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
@@ -227,13 +204,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -257,6 +234,29 @@ The following tests failed. Click on each to see the failure reason:
  [90m 26 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
  [90m 27 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
  [90m 28 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToSettings()[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ should edit design in Design Configurator (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/designConfig.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m  5 |[39m   [36mlet[39m designConfigPage[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m  8 |[39m     [36mawait[39m page[33m.[39mroute([32m'**/api/pattern'[39m[33m,[39m [36masync[39m (route) [33m=>[39m {
+ [90m  9 |[39m       [36mawait[39m route[33m.[39mfulfill()[33m;[39m
+ [90m 10 |[39m     })[33m;[39m[0m
 ```
 
 </details>
@@ -296,13 +296,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -388,13 +388,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -480,13 +480,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -538,7 +538,7 @@ The following tests failed. Click on each to see the failure reason:
 </details>
 
 <details>
-<summary>❌ Verify Kanvas Snapshot using data-testid (None - chromium-local-provider)</summary>
+<summary>❌ Verify Kanvas Snapshot UI elements (None - chromium-local-provider)</summary>
 
 **File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
 
@@ -549,13 +549,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -572,13 +572,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -632,13 +632,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -655,13 +655,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -724,13 +724,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -793,13 +793,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -862,13 +862,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -931,13 +931,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>
@@ -954,13 +954,13 @@ The following tests failed. Click on each to see the failure reason:
 
 **Code Snippet:**
 ```
-[0m [90m 18 |[39m [90m// Extensions Section Tests[39m
- [90m 19 |[39m test[33m.[39mdescribe([32m'Extensions Section Tests'[39m[33m,[39m () [33m=>[39m {
-[31m[1m>[22m[39m[90m 20 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
  [90m    |[39m        [31m[1m^[22m[39m
- [90m 21 |[39m     [36mconst[39m dashboardPage [33m=[39m [36mnew[39m [33mDashboardPage[39m(page)[33m;[39m
- [90m 22 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToDashboard()[33m;[39m
- [90m 23 |[39m     [36mawait[39m dashboardPage[33m.[39mnavigateToExtensions()[33m;[39m[0m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
 ```
 
 </details>

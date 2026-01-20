@@ -8,7 +8,7 @@ interface AdapterStatusVariables {
 }
 
 export default function changeAdapterState(
-  onComplete: (response: unknown) => void,
+  onComplete: (_response: unknown) => void,
   variables: AdapterStatusVariables,
 ) {
   const environment = createRelayEnvironment({});

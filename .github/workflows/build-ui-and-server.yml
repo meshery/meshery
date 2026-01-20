@@ -262,7 +262,26 @@ jobs:
   # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests
-    if: github.repository == 'meshery/meshery'
+    if: >-
+      github.repository == 'meshery/meshery' && (
+      (
+        github.event_name == 'push' &&
+        (
+        contains(toJson(github.event.commits), '.rego') ||
+        contains(toJson(github.event.commits), 'server/policies/') ||
+        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
+        )
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        (
+        contains(toJson(github.event.pull_request), '.rego') ||
+        contains(toJson(github.event.pull_request), 'server/policies/') ||
+        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
+        )
+      )
+      )
+
     uses: ./.github/workflows/rego-lint-and-test.yml
     permissions:
       contents: write

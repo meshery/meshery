@@ -109,7 +109,7 @@ type TypeView = 'grid' | 'table';
 
 type TooltipIconProps = {
   children: React.ReactNode;
-  onClick: (event: React.MouseEvent) => void;
+  onClick: (_event: React.MouseEvent) => void;
   title: string;
   disabled?: boolean;
   placement?: string;
@@ -130,7 +130,7 @@ function TooltipIcon({ children, onClick, title }: TooltipIconProps) {
 type YAMLEditorProps = {
   filter: any;
   onClose: () => void;
-  onSubmit: (payload: {
+  onSubmit: (_payload: {
     data: string;
     id: string;
     name: string;
@@ -262,7 +262,7 @@ function MesheryFilters() {
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const modalRef = useRef<{ show: (args: any) => Promise<string> } | null>(null);
+  const modalRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
@@ -1315,7 +1315,7 @@ function MesheryFilters() {
   );
 }
 
-type ImportModalProps = { handleClose: () => void; handleImportFilter: (data: any) => void };
+type ImportModalProps = { handleClose: () => void; handleImportFilter: (_data: any) => void };
 
 const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModalProps) => {
   return (
@@ -1343,7 +1343,7 @@ const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModal
 
 type PublishModalProps = {
   handleClose: () => void;
-  handleSubmit: (data: any) => void;
+  handleSubmit: (_data: any) => void;
   title: string;
 };
 

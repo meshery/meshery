@@ -67,7 +67,7 @@ interface Adapter {
   ops?: AdapterOperation[];
 }
 
-interface SelectOption {
+interface _SelectOption {
   value: string;
   label: string;
 }
@@ -76,14 +76,14 @@ interface MesheryAdapterPlayComponentProps {
   adapter: Adapter;
 }
 
-interface MenuState {
+interface _MenuState {
   [key: number]: {
     add: boolean;
     delete: boolean;
   };
 }
 
-interface SMIResult {
+interface _SMIResult {
   results?: Array<{
     id: string;
     date: string;

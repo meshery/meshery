@@ -62,8 +62,8 @@ const StyledTitle = styled('div')(({ theme }) => ({
 type RenderContentsProps = {
   metaDataLeft: Record<string, any>;
   metaDataRight: Record<string, any>;
-  PropertyFormattersLeft: Record<string, (value: any) => JSX.Element>;
-  PropertyFormattersRight: Record<string, (value: any) => JSX.Element>;
+  PropertyFormattersLeft: Record<string, (_value: any) => React.ReactElement>;
+  PropertyFormattersRight: Record<string, (_value: any) => React.ReactElement>;
   orderLeft: string[];
   orderRight: string[];
   jsonData?: any;
