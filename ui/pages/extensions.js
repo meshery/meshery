@@ -540,6 +540,7 @@ const CatalogCard = ({ catalogContent, handleToggle, theme }) => {
             <a
               href="https://meshery.io/catalog"
               target="_blank"
+              data-testid="catalog-link"
               rel="noreferrer"
               style={{
                 textDecoration: 'none',
