@@ -392,21 +392,37 @@ const Navigator_ = () => {
     },
   ];
 
-  const fetchCapabilities = async () => {
-    const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
+  const setNavigatorFallback = () => {
+    const capabilitiesRegistryObj = new CapabilitiesRegistry({});
+    updateState({
+      navigator: [],
+      capabilitiesRegistryObj,
+      navigatorComponents: createNavigatorComponents(capabilitiesRegistryObj),
+    });
+  };
 
-    if (isSuccess) {
-      const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-      const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
-      updateState({
-        navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
-        capabilitiesRegistryObj,
-        navigatorComponents,
-      });
-      dispatch(updateCapabilities({ capabilitiesRegistry: result }));
-    }
-    if (isError) {
+  const fetchCapabilities = async () => {
+    try {
+      const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
+
+      if (isSuccess && result) {
+        const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+        const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+        updateState({
+          navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
+          capabilitiesRegistryObj,
+          navigatorComponents,
+        });
+        dispatch(updateCapabilities({ capabilitiesRegistry: result }));
+      } else {
+        setNavigatorFallback();
+      }
+      if (isError) {
+        console.error('Error fetching capabilities', error);
+      }
+    } catch (error) {
       console.error('Error fetching capabilities', error);
+      setNavigatorFallback();
     }
   };
 
