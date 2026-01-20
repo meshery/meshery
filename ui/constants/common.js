@@ -7,6 +7,5 @@ export const ErrorTypes = {
 export const KUBERNETES = 'kubernetes';
 export const CUSTOM_RESOURCE_DEFINITION = 'customresourcedefinition';
 
-export const FALLBACK_MESHERY_IMAGE_PATH =
-  'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
-export const FALLBACK_KUBERNETES_IMAGE_PATH = 'ui/public/static/img/kubernetes.svg';
+export const FALLBACK_MESHERY_IMAGE_PATH = '/static/img/meshery-logo/meshery-logo.svg';
+export const FALLBACK_KUBERNETES_IMAGE_PATH = '/static/img/kubernetes.svg';

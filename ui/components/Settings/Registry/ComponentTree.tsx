@@ -1,0 +1,64 @@
+import React from 'react';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { CircularProgress } from '@sistent/sistent';
+import { COMPONENTS } from '../../../constants/navigator';
+import MinusSquare from '../../../assets/icons/MinusSquare';
+import PlusSquare from '../../../assets/icons/PlusSquare';
+import DotSquare from '../../../assets/icons/DotSquare';
+import StyledTreeItem from './StyledTreeItem';
+
+type ComponentTreeProps = {
+  expanded: string[];
+  selected: string[];
+  handleToggle: (event: unknown, nodeIds: string[]) => void;
+  handleSelect: (event: unknown, nodeIds: string[]) => void;
+  data: any[];
+  setShowDetailsData: (data: { type: string; data: any }) => void;
+  lastComponentRef: React.MutableRefObject<any>;
+  isComponentFetching: boolean;
+};
+
+const ComponentTree = ({
+  expanded,
+  selected,
+  handleToggle,
+  handleSelect,
+  data,
+  setShowDetailsData,
+  lastComponentRef,
+  isComponentFetching,
+}: ComponentTreeProps) => {
+  return (
+    <TreeView
+      aria-label="controlled"
+      defaultExpanded={['3']}
+      defaultCollapseIcon={<MinusSquare />}
+      defaultExpandIcon={<PlusSquare />}
+      defaultEndIcon={<DotSquare />}
+      onNodeToggle={handleToggle}
+      onNodeSelect={handleSelect}
+      multiSelect
+      expanded={expanded}
+      selected={selected}
+    >
+      {data.map((component, index) => (
+        <StyledTreeItem
+          key={index}
+          nodeId={`${component.id}`}
+          data-id={`${component.id}`}
+          labelText={component.displayName}
+          onClick={() => {
+            setShowDetailsData({
+              type: COMPONENTS,
+              data: component,
+            });
+          }}
+        />
+      ))}
+      <div ref={lastComponentRef} style={{ height: '48px' }}></div>
+      {isComponentFetching ? <CircularProgress /> : null}
+    </TreeView>
+  );
+};
+
+export default ComponentTree;

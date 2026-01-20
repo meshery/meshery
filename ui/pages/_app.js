@@ -3,11 +3,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'billboard.js/dist/theme/dark.min.css';
-import 'codemirror/addon/lint/lint.css';
-// codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
-// link clicks, hence attempting to add them here
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
@@ -52,9 +47,7 @@ import {
   Hidden,
   NoSsr,
 } from '@sistent/sistent';
-import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import {
@@ -83,21 +76,7 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
-
-if (typeof window !== 'undefined') {
-  require('codemirror/mode/yaml/yaml');
-  require('codemirror/mode/javascript/javascript');
-  require('codemirror/addon/lint/lint');
-  require('codemirror/addon/lint/yaml-lint');
-  require('codemirror/addon/lint/json-lint');
-  if (typeof window.jsyaml === 'undefined') {
-    window.jsyaml = require('js-yaml');
-  }
-  if (typeof window.jsonlint === 'undefined') {
-    // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
-    window.jsonlint = require('jsonlint-mod');
-  }
-}
+import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -616,7 +595,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const { extensionType } = useSelector((state) => state.ui);
 
   return (
-    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
+    <DynamicFullScreenLoader isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
           <MesheryThemeProvider>
@@ -710,7 +689,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
           </MesheryThemeProvider>
         </RelayEnvironmentProvider>
       </DynamicComponentProvider>
-    </LoadingScreen>
+    </DynamicFullScreenLoader>
   );
 };
 
