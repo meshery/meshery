@@ -91,7 +91,7 @@ test_view_save() {
 
   assert_failure
   assert_output --partial 'Error: output-format "xml" is invalid. Available options [json|yaml]'
-  assert_output --partial "See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage details"
+  assert_output --partial 'See https://docs.meshery.io/reference/mesheryctl/exp/components/view for usage details'
 }
 
 @test "view command displays JSON output for a known component" {
