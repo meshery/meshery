@@ -118,6 +118,8 @@
         - title: Managing Connections
           url: guides/infrastructure-management/lifecycle-management
           grandchildren:
+            - title: Kubernetes Cluster Permissions
+              url: guides/infrastructure-management/kubernetes-cluster-permissions
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
     - title: Configuration Management ↆ

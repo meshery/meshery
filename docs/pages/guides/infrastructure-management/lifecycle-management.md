@@ -16,6 +16,8 @@ abstract: 'Manage the lifecycle of your infrastructure by registering each infra
 
 Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations](/extensibility/integrations).
 
+{% include alert.html type="info" title="Kubernetes Cluster Permissions" content="When connecting Kubernetes clusters to Meshery, ensure your kubeconfig has appropriate permissions. See <a href='/guides/infrastructure-management/kubernetes-cluster-permissions'>Kubernetes Cluster Permissions</a> for detailed requirements." %}
+
 ## Cloud Native Infrastructure Lifecycle Management
 
 [![Lifecycle Management]({{ site.baseurl }}/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)](/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)
