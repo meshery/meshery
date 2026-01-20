@@ -56,6 +56,11 @@ var (
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrHandlePaginationCode        = "mesheryctl-1172"
+	ErrCreateFileCode              = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
+	ErrReadFromBodyCode            = "mesheryctl-1125"
+	ErrMarkFlagRequireCode         = "mesheryctl-1126"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -515,6 +520,7 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+
 func ErrCreateManifestsFolder(err error) error {
 	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
@@ -526,6 +532,7 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
+
 func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
@@ -555,6 +562,7 @@ func ErrNoManifestFilesFound(path string) error {
 		[]string{"Verify the specified path contains valid manifest files."},
 	)
 }
+
 func ErrGetChannelVersion(err error) error {
 	return errors.New(
 		ErrGetChannelVersionCode,
@@ -565,6 +573,7 @@ func ErrGetChannelVersion(err error) error {
 		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
 	)
 }
+
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
 		[]string{"Error indenting JSON body"},
@@ -742,4 +751,47 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{fmt.Sprintf("Meshery Server is not available on platform: %s", platform)},
 		[]string{"Meshery Server is not running or is unreachable", "Docker or Kubernetes environment is not ready", "Network connectivity issues"},
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
+}
+
+func ErrHandlePagination(err error) error {
+	return errors.New(ErrHandlePaginationCode, errors.Alert,
+		[]string{"Unable to display paginated results"},
+		[]string{err.Error()},
+		[]string{"Interactive pagination requires keyboard input support"},
+		[]string{
+			"Ensure you are running in an interactive terminal",
+			"If running in a non-interactive environment, use '--page' flag to skip pagination",
+		})
+}
+
+func ErrCreateFile(filepath string, err error) error {
+	return errors.New(ErrCreateFileCode, errors.Alert,
+		[]string{"Error creating file"},
+		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk page, filepath could be invalid."},
+		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+}
+
+func ErrRetrieveHomeDir(err error) error {
+	return errors.New(ErrRetrieveHomeDirCode, errors.Alert,
+		[]string{"Error retrieving user home/root directory"},
+		[]string{"Failed to retrieve the home/root directory,", err.Error()},
+		[]string{"Operating system environment issue or insufficient permissions."},
+		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
+}
+
+func ErrMarkFlagRequire(flagName string, err error) error {
+	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{err.Error()},
+		[]string{"The flag may not exist or there was some error while specifying the flag."},
+		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+}
+
+func ErrReadFromBody(err error) error {
+	return errors.New(ErrReadFromBodyCode, errors.Alert,
+		[]string{"Unable to read data from the response body"},
+		[]string{err.Error()},
+		[]string{"The data for the pattern (design) file might be corrupted."},
+		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
 }

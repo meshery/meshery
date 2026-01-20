@@ -1,3 +1,4 @@
+# this policy is just for testing . 
 package hierarchical_policy
 
 import rego.v1

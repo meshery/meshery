@@ -474,7 +474,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	// skip this part as we failed to get a response from the api
 	if !skipServerLogs {
 		// needs multiple defer as Body.Close needs a valid response
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
@@ -691,7 +691,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 		if !skipAdapter {
 			// needs multiple defer as Body.Close needs a valid response
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
 					log.Infof("!! Meshery Adapter for %s is running but not reachable", name)

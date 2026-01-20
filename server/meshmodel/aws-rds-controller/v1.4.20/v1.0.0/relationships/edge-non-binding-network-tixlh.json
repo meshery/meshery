@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EKS pods connect to RDS instances for stateful applications",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

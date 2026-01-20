@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between DBinstance and subnet",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

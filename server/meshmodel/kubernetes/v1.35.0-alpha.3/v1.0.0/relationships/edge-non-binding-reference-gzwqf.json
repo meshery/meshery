@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship APIService registers a custom APIGroup, exposing it through the Kubernetes API server.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: 20
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
@@ -78,7 +78,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: "20.x"
+          node-version: 20
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
@@ -98,7 +98,7 @@ jobs:
       - name: Install Playwright
         run: make ui-setup-ci
       - name: Install Playwright Browsers
-        run: make test-setup-ui
+        run: make ui-test-setup
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -106,7 +106,7 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
-        run: make test-e2e-ci
+        run: make ui-test-e2e-ci
       - name: Save PR metadata
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
         run: |
@@ -119,7 +119,7 @@ jobs:
         # run only for pushes to master
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         with:
-          repository: meshery-extensions/qa
+          repository: meshery/qa
           path: ./qa
           file_pattern: meshery-results
           token: ${{ secrets.GH_ACCESS_TOKEN }}
@@ -128,11 +128,13 @@ jobs:
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
-          make meshery-results-sync MESHERY_RESULTS_PATH=../meshery/ui/allure-results
+          ls 
+          ls ..
+          make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
 
       - name: Commit & push academy to qa
         if: ${{ !cancelled() &&  github.event_name == 'push' }}
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
           commit_options: "--signoff"
@@ -260,7 +262,26 @@ jobs:
   # Run Rego policy tests
   rego-tests:
     name: Rego Policy Tests
-    if: github.repository == 'meshery/meshery'
+    if: >-
+      github.repository == 'meshery/meshery' && (
+      (
+        github.event_name == 'push' &&
+        (
+        contains(toJson(github.event.commits), '.rego') ||
+        contains(toJson(github.event.commits), 'server/policies/') ||
+        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
+        )
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        (
+        contains(toJson(github.event.pull_request), '.rego') ||
+        contains(toJson(github.event.pull_request), 'server/policies/') ||
+        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
+        )
+      )
+      )
+
     uses: ./.github/workflows/rego-lint-and-test.yml
     permissions:
       contents: write

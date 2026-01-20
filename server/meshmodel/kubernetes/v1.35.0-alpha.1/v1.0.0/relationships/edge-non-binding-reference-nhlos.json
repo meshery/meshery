@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where PodDisruptionBudget references a ReplicaSet\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
