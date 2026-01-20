@@ -10,16 +10,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
-import {
-  Modal,
-  Button,
-  Grid2,
-  Paper,
-  Typography,
-  useTheme,
-  styled,
-  useMediaQuery,
-} from '@sistent/sistent';
+import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 
@@ -73,10 +64,6 @@ function Dashboard() {
   const router = useRouter();
   const { grafana } = useSelector((state) => state.telemetry);
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up('xs'));
-  if (matches) {
-    console.log('HIT');
-  }
 
   /**
    * fetch performance profiles when the page loads
