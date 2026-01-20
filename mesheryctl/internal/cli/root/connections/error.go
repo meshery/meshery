@@ -9,13 +9,13 @@ import (
 
 var (
 	ErrAwsCliNotFoundCode         = "mesheryctl-1174"
-	ErrAwsEksGetCredentialsCode   = "mesheryctl-1173"
-	ErrAzureAksGetCredentialsCode = "mesheryctl-1172"
-	ErrAzureCliNotFoundCode       = "mesheryctl-1169"
+	ErrAwsEksGetCredentialsCode   = "mesheryctl-1186"
+	ErrAzureAksGetCredentialsCode = "mesheryctl-1189"
+	ErrAzureCliNotFoundCode       = "mesheryctl-1190"
 	ErrConnectionTypeCode         = "mesheryctl-1182"
 	ErrGcpGKEGetCredentialsCode   = "mesheryctl-1175"
-	ErrReadKubeConfigCode         = "mesheryctl-1167"
-	ErrWriteKubeConfigCode        = "mesheryctl-1168"
+	ErrReadKubeConfigCode         = "mesheryctl-1187"
+	ErrWriteKubeConfigCode        = "mesheryctl-1188"
 
 	invalidOutputFormatMsg = "output-format choice is invalid, use [json|yaml]"
 )

@@ -63,8 +63,8 @@ var (
 	ErrMarkFlagRequireCode         = "mesheryctl-1126"
 	ErrGetKubernetesContextsCode   = "mesheryctl-1165"
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
-	ErrReadInputCode               = "mesheryctl-1170"
-	ErrUploadFileWithParamsCode    = "replace_me"
+	ErrReadInputCode               = "mesheryctl-1193"
+	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
