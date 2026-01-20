@@ -49,7 +49,7 @@ import { useRouter } from 'next/router';
 import { RJSFModalWrapper } from '../General/Modals/Modal';
 import downloadContent from '../../utils/fileDownloader';
 import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
-import Pattern from '../../public/static/img/drawer-icons/pattern_svg.js';
+import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
