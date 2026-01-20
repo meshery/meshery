@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ComponentIcon, Loading, processDesign } from './common';
+import { FALLBACK_COMPONENT_ICON_PATH } from '@/constants/common';
 import {
   designValidatorCommands,
   designValidatorEvents,
@@ -131,7 +132,7 @@ const ValidationResults_ = (props) => {
                 iconSrc={
                   componentResult.component?.styles?.svgWhite
                     ? `/${componentResult.component.styles.svgWhite}`
-                    : null
+                    : FALLBACK_COMPONENT_ICON_PATH
                 }
               />
               <ListItemText primary={componentResult.component.displayName} disableTypography />(
