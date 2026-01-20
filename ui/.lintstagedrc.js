@@ -1,6 +1,9 @@
 module.exports = {
-  // Lint & Prettify TS and JS files
-  '**/*.(ts|tsx|js|jsx)': (filenames) => [`npm run lint:fix`, `npm run format`],
+  // Lint & Prettify only staged JS/JSX/TS/TSX files
+  '**/*.(ts|tsx|js|jsx)': (filenames) => [
+    `npx eslint --fix --max-warnings=0 ${filenames.join(' ')}`,
+    `npx prettier --write ${filenames.join(' ')}`,
+  ],
 
   // Prettify only Markdown and JSON files
   '**/*.(md|json)': (filenames) => `npx prettier --write ${filenames.join(' ')}`,
