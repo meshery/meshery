@@ -184,7 +184,6 @@ export const designValidationMachine = createMachine({
   states: {
     init: {
       entry: [
-        () => console.log('spawning design validation actor wooo'),
         assign({
           schemaValidator: ({ spawn }) =>
             spawn(
