@@ -18,7 +18,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
-  setIsImportModalOpen: (open: boolean) => void;
+  setIsImportModalOpen: (_open: boolean) => void;
 };
 
 const ImportModelModal = React.memo(
@@ -102,7 +102,7 @@ const ImportModelModal = React.memo(
     const CustomRadioWidget = (props: {
       options: any;
       value: string;
-      onChange: (value: string) => void;
+      onChange: (_value: string) => void;
       label: string;
       schema: any;
     }) => {

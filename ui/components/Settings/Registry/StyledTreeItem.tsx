@@ -12,7 +12,7 @@ type StyledTreeItemProps = {
   labelText: React.ReactNode;
   root?: boolean;
   search?: boolean;
-  setSearchText?: (value: string) => void;
+  setSearchText?: (_value: string) => void;
   check?: boolean;
   [key: string]: any;
 };
