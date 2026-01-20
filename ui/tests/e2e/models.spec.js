@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { DashboardPage } from './pages/DashboardPage';
 
 const model = {
   MODEL_URL: 'git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm',
@@ -10,7 +11,7 @@ const model = {
 const model_import = {
   MODEL_NAME: `test`,
   MODEL_URL_IMPORT:
-    'https://raw.githubusercontent.com/vr-varad/meshery/refs/heads/feat/create_import_model_testing/ui/tests/e2e/assets/test.tar',
+    'https://raw.githubusercontent.com/meshery/meshery/master/ui/tests/e2e/assets/test.tar',
   MODEL_FILE_IMPORT: path.resolve('tests/e2e/assets/test.tar'),
   MODEL_CSV_IMPORT: {
     Model_Name: 'couchbase',
@@ -22,8 +23,9 @@ const model_import = {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.getByTestId('settings-button').click();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToSettings();
     await page.getByTestId('settings-tab-registry').click();
   });
 
@@ -78,7 +80,7 @@ test.describe.serial('Model Workflow Tests', () => {
     expect(download).toBeDefined();
     await page.getByRole('combobox', { name: 'enabled' }).click();
     await page.getByRole('option', { name: 'ignored' }).click();
-    expect(page.getByRole('option', { name: 'ignored' }).isVisible()).toBeTruthy();
+    await expect(page.getByRole('combobox', { name: 'ignored' })).toBeVisible();
   });
 
   test('Import a Model via File Import', async ({ page }) => {

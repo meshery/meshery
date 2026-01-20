@@ -3,7 +3,7 @@ import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
 import DefaultError from '@/components/General/error-404';
-import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import {
   useGetSelectedOrganization,
   // useGetUserPrefQuery,
@@ -111,7 +111,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   }
 
   const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
-  return <DynamicFullScrrenLoader isLoading={isLoading}>{children}</DynamicFullScrrenLoader>;
+  return <DynamicFullScreenLoader isLoading={isLoading}>{children}</DynamicFullScreenLoader>;
 };
 
 export const LoadSessionGuard = ({ children }) => {

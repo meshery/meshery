@@ -97,7 +97,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistEvent(event)
+	_ = (*provider).PersistEvent(*event, nil)
 	ec.Publish(userUUID, event)
 	return
 }
@@ -217,7 +217,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 			},
 			Metadata:    compMetadata,
 			DisplayName: manifests.FormatToReadableString(crd.kind),
-			Model: model.ModelDefinition{
+			Model: &model.ModelDefinition{
 				SchemaVersion: v1beta1.ModelSchemaVersion,
 				Version:       "v1.0.0",
 

@@ -43,16 +43,12 @@ const connectionsApi = api.injectEndpoints({
           order: queryArg.order,
           status: queryArg.status,
           kind: queryArg.kind,
+          type: queryArg.type,
+          name: queryArg.name,
         },
         method: 'GET',
       }),
       providesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
-    getConnectionStatus: builder.query({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/status`,
-        params: { id: queryArg.repoURL },
-      }),
     }),
     getConnectionDetails: builder.query({
       query: (queryArg) => ({
@@ -81,31 +77,16 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
     }),
-    updateConnection: builder.mutation({
+    updateConnectionById: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/status`,
+        url: `integrations/connections/${queryArg.connectionId}`,
         method: 'PUT',
-        body: queryArg.connectionPayload,
+        body: {
+          status: queryArg.body?.status,
+          metadata: queryArg.body?.metadata,
+        },
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
-    getAllConnectionStatus: builder.query({
-      query: () => ({
-        url: `integrations/connections/status`,
-        method: 'GET',
-      }),
-    }),
-    getConnectionByKind: builder.query({
-      query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}`,
-        params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-          order: queryArg.order,
-        },
-        method: 'GET',
-      }),
     }),
     cancelConnectionRegister: builder.mutation({
       query: (queryArg) => ({
@@ -131,14 +112,11 @@ export const {
   useConnectToConnectionMutation,
   useGetConnectionsQuery,
   useLazyGetConnectionsQuery,
-  useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
-  useUpdateConnectionMutation,
-  useGetAllConnectionStatusQuery,
-  useGetConnectionByKindQuery,
+  useUpdateConnectionByIdMutation,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
 } = connectionsApi;

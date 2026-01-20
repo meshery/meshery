@@ -1,4 +1,4 @@
 [--kind, --subtype or --type or --model] and [query-text] are required
 
 Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
-Run 'mesheryctl exp relationship search --help'
+Run 'mesheryctl exp relationship search --help' | Short Description: Invalid Argument | Probable Cause: Invalid Argument | Suggested Remediation: Please check the arguments passed

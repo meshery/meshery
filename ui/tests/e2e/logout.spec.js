@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { DashboardPage } from './pages/DashboardPage';
 
 test.describe('Logout Page Tests', () => {
+  let dashboardPage;
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
   });
   test('Logout from current user session', async ({ page }) => {
     await page.route('/user/logout', (route) => {
@@ -16,8 +19,7 @@ test.describe('Logout Page Tests', () => {
 
     const waitForLogoutRequest = page.waitForRequest('/user/logout');
 
-    await page.getByTestId('header-menu').click();
-    await page.getByRole('menuitem', { name: 'Logout' }).click();
+    await dashboardPage.navigateToLogout();
 
     const request = await waitForLogoutRequest;
     expect(request.url()).toContain('/user/logout');

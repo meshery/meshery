@@ -18,14 +18,16 @@ func TestListWorkspaces(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List workspaces whithout providing organization ID",
 			Args:             []string{"list"},
 			URL:              "",
 			Fixture:          "list.workspace.api.response.golden",
-			ExpectedResponse: "list.workspace.no.orgID.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage)),
 		},
 		{
 			Name:             "List workspaces providing organization ID",

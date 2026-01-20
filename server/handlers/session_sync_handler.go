@@ -50,14 +50,17 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	h.log.Debug("final list of active adapters: ", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
-	err := provider.RecordPreferences(req, user.UserID, prefObj)
+	err := provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil { // ignoring errors in this context
 		h.log.Error(ErrSaveSession(err))
 	}
 	s := []SessionSyncDataK8sConfig{}
-	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
+	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	if ok {
 		for _, k8scontext := range k8scontexts {
+			if k8scontext == nil {
+				continue
+			}
 			var cid string
 			if k8scontext.KubernetesServerID != nil {
 				cid = k8scontext.KubernetesServerID.String()

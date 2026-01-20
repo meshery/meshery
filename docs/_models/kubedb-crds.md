@@ -13,27 +13,27 @@ components:
 - name: hazelcast-version
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-version/icons/color/hazelcast-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-version/icons/white/hazelcast-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: oracle-version
   colorIcon: assets/img/integrations/kubedb-crds/components/oracle-version/icons/color/oracle-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/oracle-version/icons/white/oracle-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: hazelcast
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast/icons/color/hazelcast-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast/icons/white/hazelcast-white.svg
-  description: App Definition and Development
+  description: 
 - name: oracle
   colorIcon: assets/img/integrations/kubedb-crds/components/oracle/icons/color/oracle-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/oracle/icons/white/oracle-white.svg
-  description: App Definition and Development
+  description: 
 - name: cassandra-ops-request
   colorIcon: assets/img/integrations/kubedb-crds/components/cassandra-ops-request/icons/color/cassandra-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra-ops-request/icons/white/cassandra-ops-request-white.svg
-  description: App Definition and Development
+  description: 
 - name: hazelcast-ops-request
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-ops-request/icons/color/hazelcast-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-ops-request/icons/white/hazelcast-ops-request-white.svg
-  description: App Definition and Development
+  description: 
 - name: elasticsearch-autoscaler
   colorIcon: assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/color/elasticsearch-autoscaler-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/white/elasticsearch-autoscaler-white.svg
@@ -482,7 +482,67 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/color/ignite-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/white/ignite-white.svg
   description: 
-components-count: 118
+- name: ignite-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite-ops-request/icons/color/ignite-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite-ops-request/icons/white/ignite-ops-request-white.svg
+  description: 
+- name: hazelcast-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-autoscaler/icons/color/hazelcast-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-autoscaler/icons/white/hazelcast-autoscaler-white.svg
+  description: 
+- name: ignite-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite-autoscaler/icons/color/ignite-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite-autoscaler/icons/white/ignite-autoscaler-white.svg
+  description: 
+- name: db2version
+  colorIcon: assets/img/integrations/kubedb-crds/components/db2version/icons/color/db2version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/db2version/icons/white/db2version-white.svg
+  description: 
+- name: hana-db-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/hana-db-version/icons/color/hana-db-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/hana-db-version/icons/white/hana-db-version-white.svg
+  description: 
+- name: milvus-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/milvus-version/icons/color/milvus-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/milvus-version/icons/white/milvus-version-white.svg
+  description: 
+- name: neo4j-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/neo4j-version/icons/color/neo4j-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/neo4j-version/icons/white/neo4j-version-white.svg
+  description: 
+- name: qdrant-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/qdrant-version/icons/color/qdrant-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/qdrant-version/icons/white/qdrant-version-white.svg
+  description: 
+- name: weaviate-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/weaviate-version/icons/color/weaviate-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/weaviate-version/icons/white/weaviate-version-white.svg
+  description: 
+- name: db2
+  colorIcon: assets/img/integrations/kubedb-crds/components/db2/icons/color/db2-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/db2/icons/white/db2-white.svg
+  description: 
+- name: hana-db
+  colorIcon: assets/img/integrations/kubedb-crds/components/hana-db/icons/color/hana-db-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/hana-db/icons/white/hana-db-white.svg
+  description: 
+- name: milvus
+  colorIcon: assets/img/integrations/kubedb-crds/components/milvus/icons/color/milvus-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/milvus/icons/white/milvus-white.svg
+  description: 
+- name: neo4j
+  colorIcon: assets/img/integrations/kubedb-crds/components/neo4j/icons/color/neo4j-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/neo4j/icons/white/neo4j-white.svg
+  description: 
+- name: qdrant
+  colorIcon: assets/img/integrations/kubedb-crds/components/qdrant/icons/color/qdrant-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/qdrant/icons/white/qdrant-white.svg
+  description: 
+- name: weaviate
+  colorIcon: assets/img/integrations/kubedb-crds/components/weaviate/icons/color/weaviate-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/weaviate/icons/white/weaviate-white.svg
+  description: 
+components-count: 133
 relationships: 
 relationship-count: 0
 featureList: [

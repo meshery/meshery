@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ffcd3c",
@@ -189,5 +204,7 @@
     "version": "apiextensions.crossplane.io/v1",
     "kind": "CompositionRevision",
     "schema": "{\n \"description\": \"A CompositionRevision represents a revision of a Composition. Crossplane\\ncreates new revisions when there are changes to the Composition.\\n\\nCrossplane creates and manages CompositionRevisions. Don't directly edit\\nCompositionRevisions.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CompositionRevisionSpec specifies the desired state of the composition\\nrevision.\",\n   \"properties\": {\n    \"compositeTypeRef\": {\n     \"description\": \"CompositeTypeRef specifies the type of composite resource that this\\ncomposition is compatible with.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the type.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the type.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"mode\": {\n     \"default\": \"Pipeline\",\n     \"description\": \"Mode controls what type or \\\"mode\\\" of Composition will be used.\\n\\n\\\"Pipeline\\\" indicates that a Composition specifies a pipeline of\\nComposition Functions, each of which is responsible for producing\\ncomposed resources that Crossplane should create or update.\",\n     \"enum\": [\n      \"Pipeline\"\n     ],\n     \"type\": \"string\"\n    },\n    \"pipeline\": {\n     \"description\": \"Pipeline is a list of composition function steps that will be used when a\\ncomposite resource referring to this composition is created. One of\\nresources and pipeline must be specified - you cannot specify both.\\n\\nThe Pipeline is only used by the \\\"Pipeline\\\" mode of Composition. It is\\nignored by other modes.\",\n     \"items\": {\n      \"description\": \"A PipelineStep in a Composition Function pipeline.\",\n      \"properties\": {\n       \"credentials\": {\n        \"description\": \"Credentials are optional credentials that the Composition Function needs.\",\n        \"items\": {\n         \"description\": \"FunctionCredentials are optional credentials that a Composition Function\\nneeds to run.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of this set of credentials.\",\n           \"type\": \"string\"\n          },\n          \"secretRef\": {\n           \"description\": \"A SecretRef is a reference to a secret containing credentials that should\\nbe supplied to the function.\",\n           \"properties\": {\n            \"name\": {\n             \"description\": \"Name of the secret.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"Namespace of the secret.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"source\": {\n           \"description\": \"Source of the function credentials.\",\n           \"enum\": [\n            \"None\",\n            \"Secret\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"source\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"the Secret source requires a secretRef\",\n           \"rule\": \"self.source == 'Secret' \\u0026\\u0026 has(self.secretRef)\"\n          }\n         ]\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-map-keys\": [\n         \"name\"\n        ],\n        \"x-kubernetes-list-type\": \"map\"\n       },\n       \"functionRef\": {\n        \"description\": \"FunctionRef is a reference to the Composition Function this step should\\nexecute.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the referenced Function.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"input\": {\n        \"description\": \"Input is an optional, arbitrary Kubernetes resource (i.e. a resource\\nwith an apiVersion and kind) that will be passed to the Composition\\nFunction as the 'input' of its RunFunctionRequest.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\",\n        \"x-kubernetes-embedded-resource\": true\n       },\n       \"step\": {\n        \"description\": \"Step name. Must be unique within its Pipeline.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"functionRef\",\n       \"step\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"step\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"revision\": {\n     \"description\": \"Revision number. Newer revisions have larger numbers.\\n\\nThis number can change. When a Composition transitions from state A\\n-\\u003e B -\\u003e A there will be only two CompositionRevisions. Crossplane will\\nedit the original CompositionRevision to change its revision number from\\n0 to 2.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"writeConnectionSecretsToNamespace\": {\n     \"description\": \"WriteConnectionSecretsToNamespace specifies the namespace in which the\\nconnection secrets of composite resource dynamically provisioned using\\nthis composition will be created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"compositeTypeRef\",\n    \"revision\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Composition Revision\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

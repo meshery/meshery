@@ -137,6 +137,10 @@
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
+        - title: Identifying Components
+          url: guides/configuration-management/identifying-components
+        - title: Edge Styles Guide
+          url: guides/configuration-management/edges-guide
     - title: Performance Management ↆ
       url: guides/performance-management
       children:
@@ -170,11 +174,15 @@
           url: guides/troubleshooting/meshery-operator-meshsync
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
+        - title: Enabling Extensions
+          url: guides/troubleshooting/enabling-extensions-locally
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
+        - title: Exploring Kubernetes Services
+          url: guides/tutorials/kubernetes-services
         - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
         - title: Exploring Kubernetes Pods
@@ -195,6 +203,8 @@
           url: guides/tutorials/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
           url: guides/tutorials/publish-to-artifacthub
+        - title: Kubernetes Request Flow – A Visual Guide
+          url: guides/tutorials/kubernetes-request-flow
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -213,20 +223,8 @@
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
-            - title: Component Shape Guide
-              url: extensions/component-shape-guide
-            - title: Edges Style Guide
-              url: extensions/edges-shape-guide
             - title: Import & Export Designs
               url: extensions/import-export-designs
-            - title: Merging Designs
-              url: extensions/merging-design
-            - title: Publishing Designs
-              url: extensions/publishing-a-design
-            - title: Sharing Designs
-              url: extensions/sharing-a-design
-            - title: Working with Tags
-              url: extensions/working-with-tags
         - title: Kanvas Snapshot
           url: extensions/kanvas-snapshot
 
@@ -302,6 +300,8 @@
       children:
         - title: Authorization
           url: extensibility/authorization
+        - title: Build-time
+          url: extensibility/build-time
         - title: Load Generators
           url: extensibility/load-generators
         - title: Providers
@@ -314,7 +314,7 @@
       url: reference/error-codes
     - title: Permission Keys
       url: reference/permissions
-    - title: Meshery Operator CRD
+    - title: Meshery Operator & CRDs
       url: reference/meshery-operator-crds
     - title: CLI Command
       url: reference/mesheryctl

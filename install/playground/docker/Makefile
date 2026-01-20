@@ -23,7 +23,7 @@ play-prod-run:
 	meshery/meshery:playground-latest ./meshery
 	
 # docker run -d --name meshery \
-# 	-e PROVIDER_BASE_URLS=https://cloud.layer5.io \
+# 	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER) \
 # 	-e PLAYGROUND=true \
 # 	-p 80:8080 \
 # 	meshery/meshery:playground-latest ./meshery

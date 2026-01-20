@@ -207,6 +207,7 @@ func TestAddContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			utils.SetupMeshkitLoggerTesting(t, false)
 			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
@@ -265,7 +266,7 @@ func TestSwitchContextCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "switch to a different context",
-			Args:             []string{"context", "switch", "local2", "-y"},
+			Args:             []string{"context", "switch", "local2"},
 			ExpectedResponse: "switch.context.golden",
 		},
 	}

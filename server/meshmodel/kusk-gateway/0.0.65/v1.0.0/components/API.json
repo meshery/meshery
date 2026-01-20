@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#009787",
@@ -189,5 +204,7 @@
     "version": "gateway.kusk.io/v1alpha1",
     "kind": "API",
     "schema": "{\n \"description\": \"API is the Schema for the apis API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APISpec defines the desired state of API\",\n   \"properties\": {\n    \"fleet\": {\n     \"description\": \"Fleet represents EnvoyFleet ID, which is deployed EnvoyFleet CustomResource name and namespace Optional, if missing will be automatically added by the Kusk Gateway with the discovery of the single fleet in the cluster (MutatingWebhookConfiguration for the API resource must be enabled).\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"deployed Envoy Fleet CR name\",\n       \"pattern\": \"^[a-z0-9-]{1,62}$\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"deployed Envoy Fleet CR namespace\",\n       \"pattern\": \"^[a-z0-9-]{1,62}$\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"spec\": {\n     \"description\": \"Spec represents OpenAPI spec as an embedded string.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"spec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"API\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

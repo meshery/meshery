@@ -1,0 +1,7 @@
+Generating model from CSV files
+SUMMARY: Imported model couchbase (1 component and 1 relationship)
+
+MODEL: couchbase
+  RELATIONSHIP: Kind of edge, sub type firewall and type binding
+Model can be accessed from .meshery/models
+Logs for the csv generation can be accessed .meshery/logs/registry

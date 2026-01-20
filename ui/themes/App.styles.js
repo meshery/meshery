@@ -40,6 +40,7 @@ export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
+  overflowY: 'hidden',
   [theme.breakpoints.down('sm')]: {
     marginLeft: canShowNav ? '4.25rem' : '0',
   },
@@ -105,8 +106,8 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
 const StyledCircularProgress = styled(CircularProgress)(({ theme }) => ({
   color: theme.palette.text.info,
   marginRight: '0.75rem',
-  height: '1.5rem !important',
-  width: '1.5rem !important',
+  height: '24px !important',
+  width: '24px !important',
 }));
 
 export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {

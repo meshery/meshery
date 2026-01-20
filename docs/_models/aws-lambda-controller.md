@@ -46,9 +46,49 @@ components:
   colorIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/color/version-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/white/version-white.svg
   description: 
-components-count: 9
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-lambda-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-lambda-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 12
 featureList: [
   "Run code for virtually any type of application or backend service. ",
   "Write Lambda functions in your favorite language ",

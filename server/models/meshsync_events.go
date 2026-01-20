@@ -8,7 +8,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )
@@ -28,9 +28,10 @@ type MeshsyncDataHandler struct {
 	ConnectionID uuid.UUID
 	InstanceID   uuid.UUID
 	Token        string
+	StopFunc     func()
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
 		broker:       broker,
 		dbHandler:    dbHandler,
@@ -40,6 +41,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		ConnectionID: connID,
 		InstanceID:   instanceID,
 		Token:        token,
+		StopFunc:     stopFunc,
 	}
 }
 
@@ -265,7 +267,9 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	componentDef := component.ComponentDefinition{} // Retrieve the entire component
 	defer func() {
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
-		model = componentDef.Model.Name
+		if componentDef.Model != nil {
+			model = componentDef.Model.Name
+		}
 	}()
 
 	// Query the database for the complete component definition
@@ -287,4 +291,26 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}
 
 	return
+}
+
+func (mh *MeshsyncDataHandler) Resync() error {
+	if mh.broker.Info() == broker.NotConnected {
+		mh.log.Warnf("Resync meshsync: broker is not connected")
+		return nil
+	}
+	err := mh.broker.Publish(MeshsyncRequestSubject, &broker.Message{
+		Request: &broker.RequestObject{
+			Entity: broker.ReSyncDiscoveryEntity,
+		},
+	})
+	if err != nil {
+		return ErrMeshsyncDataHandler(err)
+	}
+	return nil
+}
+
+func (mh *MeshsyncDataHandler) Stop() {
+	if mh.StopFunc != nil {
+		mh.StopFunc()
+	}
 }

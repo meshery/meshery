@@ -22,9 +22,28 @@ components:
   colorIcon: assets/img/integrations/aws-sqs-controller/components/queue/icons/color/queue-color.svg
   whiteIcon: assets/img/integrations/aws-sqs-controller/components/queue/icons/white/queue-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sqs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sqs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 5
 featureList: [
   "Scalable message queuing",
   "Reliable message delivery",

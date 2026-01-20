@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +204,7 @@
     "version": "community.zufardhiyaulhaq.com/v1alpha1",
     "kind": "TwitterHandler",
     "schema": "{\n \"description\": \"TwitterHandler is the Schema for the twitterhandlers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TwitterHandlerSpec defines the desired state of TwitterHandler\",\n   \"properties\": {\n    \"authentication\": {\n     \"properties\": {\n      \"accessToken\": {\n       \"properties\": {\n        \"secret\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secret\"\n       ],\n       \"type\": \"object\"\n      },\n      \"accessTokenSecret\": {\n       \"properties\": {\n        \"secret\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secret\"\n       ],\n       \"type\": \"object\"\n      },\n      \"apiKey\": {\n       \"properties\": {\n        \"secret\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secret\"\n       ],\n       \"type\": \"object\"\n      },\n      \"apiKeySecret\": {\n       \"properties\": {\n        \"secret\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secret\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"accessToken\",\n      \"accessTokenSecret\",\n      \"apiKey\",\n      \"apiKeySecret\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"authentication\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Twitter Handler\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

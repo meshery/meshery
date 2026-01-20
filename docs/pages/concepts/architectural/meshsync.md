@@ -14,7 +14,7 @@ list: include
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
-        Managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure.
+        MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
         </p>
     </div>
 </div>
@@ -97,6 +97,28 @@ For efficient management of large Kubernetes clusters, MeshSync uses tiered disc
 ## Event-Driven Implementation
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](./broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
+
+# MeshSync deployment mode
+
+MeshSync operates in one of two modes: operator or embedded.
+
+## Operator mode (default)
+
+When it runs in operator mode, it is managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
+
+## Embedded mode
+
+When it runs in embedded mode, it is integrated into the Meshery server as a library and no additional resources are deployed to the managed cluster.
+
+## Mode selection and switch
+
+The user selects the deployment mode when creating a new Kubernetes connection (submitting a kube config). The selection is applied to all contexts from the submitted config.
+
+The user can switch the deployment mode per connection on the connections list page.
+
+When the deployment mode is switched from operator to embedded: the operator is undeployed from the managed cluster, and the MeshSync library routine is started inside the Meshery server for the managed cluster.
+
+When the deployment mode is switched from embedded to operator: the MeshSync library routine is stopped for the managed cluster, and the operator is deployed to the managed cluster.
 
 # MeshSync FAQs
 

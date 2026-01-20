@@ -23,10 +23,9 @@ type WorkspacePersister struct {
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
 	}
 }
 
@@ -132,7 +131,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	// Marshal the workspace to JSON
@@ -342,7 +341,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -401,7 +400,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)

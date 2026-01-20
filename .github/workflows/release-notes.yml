@@ -30,7 +30,7 @@ jobs:
           run: git pull origin master
 
         - name: Commit
-          uses: stefanzweifel/git-auto-commit-action@v5
+          uses: stefanzweifel/git-auto-commit-action@v7
           with:
             file_pattern: docs
             commit_user_name: l5io

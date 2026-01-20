@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4b9b33",
@@ -189,5 +204,7 @@
     "version": "registries.mittwald.de/v1alpha2",
     "kind": "Replication",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ReplicationSpec defines the desired state of Replication\",\n   \"properties\": {\n    \"creator\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"destNamespace\": {\n     \"description\": \"The destination namespace\\nIf left empty, the resource will be but in the same namespace as the source\",\n     \"type\": \"string\"\n    },\n    \"destRegistry\": {\n     \"description\": \"Destination Registry\\nReference to a registry cr\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"enabled\": {\n     \"description\": \"Whether the policy is enabled or not\",\n     \"type\": \"boolean\"\n    },\n    \"filters\": {\n     \"description\": \"The replication policy filter array\",\n     \"items\": {\n      \"description\": \"ReplicationFilter holds the specifications of a replication filter\",\n      \"properties\": {\n       \"type\": {\n        \"description\": \"The replication policy filter type.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"The value of replication policy filter.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"description\": \"The name of the replication\",\n     \"type\": \"string\"\n    },\n    \"override\": {\n     \"description\": \"Whether to override the resources on the destination registry or not\",\n     \"type\": \"boolean\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the replication policy gets created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"replicateDeletion\": {\n     \"description\": \"Whether to replicate the deletion operation\",\n     \"type\": \"boolean\"\n    },\n    \"srcRegistry\": {\n     \"description\": \"Source Registry\\nReference to a registry cr\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"trigger\": {\n     \"description\": \"The replication policy trigger type\",\n     \"properties\": {\n      \"triggerSettings\": {\n       \"description\": \"TriggerSettings holds the settings of a trigger\",\n       \"properties\": {\n        \"cron\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"cron\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"triggerAfterCreation\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"override\",\n    \"parentInstance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Replication\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

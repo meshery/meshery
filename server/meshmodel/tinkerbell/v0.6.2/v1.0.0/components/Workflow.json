@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0087ac",
@@ -189,5 +204,7 @@
     "version": "tinkerbell.org/v1alpha1",
     "kind": "Workflow",
     "schema": "{\n \"description\": \"Workflow is the Schema for the Workflows API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkflowSpec defines the desired state of Workflow.\",\n   \"properties\": {\n    \"bootOptions\": {\n     \"description\": \"BootOptions are options that control the booting of Hardware.\",\n     \"properties\": {\n      \"bootMode\": {\n       \"description\": \"BootMode is the type of booting that will be done.\",\n       \"enum\": [\n        \"netboot\",\n        \"iso\"\n       ],\n       \"type\": \"string\"\n      },\n      \"isoURL\": {\n       \"description\": \"ISOURL is the URL of the ISO that will be one-time booted. When this field is set, the controller will create a job.bmc.tinkerbell.org object\\nfor getting the associated hardware into a CDROM booting state.\\nA HardwareRef that contains a spec.BmcRef must be provided.\",\n       \"format\": \"url\",\n       \"type\": \"string\"\n      },\n      \"toggleAllowNetboot\": {\n       \"description\": \"ToggleAllowNetboot indicates whether the controller should toggle the field in the associated hardware for allowing PXE booting.\\nThis will be enabled before a Workflow is executed and disabled after the Workflow has completed successfully.\\nA HardwareRef must be provided.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hardwareMap\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A mapping of template devices to hadware mac addresses.\",\n     \"type\": \"object\"\n    },\n    \"hardwareRef\": {\n     \"description\": \"Name of the Hardware associated with this workflow.\",\n     \"type\": \"string\"\n    },\n    \"templateRef\": {\n     \"description\": \"Name of the Template associated with this workflow.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workflow\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

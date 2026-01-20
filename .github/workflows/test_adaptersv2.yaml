@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.31.4', 'v1.32.0']
+        k8s_version: ["v1.31.4", "v1.32.0"]
     runs-on: ubuntu-24.04
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
@@ -164,7 +164,7 @@ jobs:
           config='{"contexts":{"local":{"endpoint":'$svcip',"token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config  > ~/.meshery/config.yaml
       - name: Download patternfile
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: patternfile
       - name: Wait for Meshery pods to come up
@@ -259,8 +259,16 @@ jobs:
           MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep -oP 'releases/tag/\K[^"]+' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)    
           echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
           echo "exitstatus=$exitstatus" >> $GITHUB_ENV
-      - name: UploadResults
-        uses: actions/upload-artifact@v4
+      - name: UploadResults (Versioned)
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs.output_filename }}-${{ matrix.k8s_version }}
+          path: ./${{ inputs.output_filename }}
+          overwrite: true
+        continue-on-error: true
+
+      - name: UploadResults (Legacy)
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}
@@ -271,4 +279,3 @@ jobs:
           if [ "$exitstatus" -eq 1 ];then
               exit 1
           fi
-

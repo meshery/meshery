@@ -15,26 +15,22 @@
 package design
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/fatih/color"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	verbose           bool
-	pageNumber        int
-	pageSize          = 25
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	verbose  bool
+	page     int
+	pageSize int
+	provider string
 )
 
 var linkDocPatternList = map[string]string{
@@ -45,139 +41,110 @@ var linkDocPatternList = map[string]string{
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List designs",
-	Long:  `Display list of all available design files.`,
-	Args:  cobra.MinimumNArgs(0),
+	Long: `Display list of all available designs.
+Documentation for design can be found at https://docs.meshery.io/reference/mesheryctl/design/list
+`,
+	Args: cobra.MinimumNArgs(0),
 	Example: `
-// list all available designs
+// Display a list of all available designs
 mesheryctl design list
+
+// Display a list of all available designs with verbose output
+mesheryctl design list --verbose
+
+// Display a list of all available designs with specified page number (10 designs per page by default)
+mesheryctl design list --page [pange-number]
+
+// Display a list of all available designs with custom page size (10 designs per page by default)
+mesheryctl design list --pagesize [page-size]
+
+// Display only the count of all available designs
+mesheryctl design list --count
 	`,
 	Annotations: linkDocPatternList,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/pattern?pagesize=%d&page=%d", baseUrl, pageSize, pageNumber)
-		var response models.PatternsAPIResponse
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		res, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		defer res.Body.Close()
-
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
-		}
-
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// token flag is not provided
+		if utils.TokenFlag == "" {
+			// retrieve token from default location
+			tokenPath, err := utils.GetCurrentAuthToken()
+			if err != nil {
+				return err
+			}
+			utils.TokenFlag = tokenPath
 		}
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadToken(err))
-			return nil
+			return err
 		}
-
-		provider := tokenObj["meshery-provider"]
-		var data [][]string
-		provider_header := []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
-		non_provider_header := []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
-
-		if verbose {
-			if provider == "None" {
-				for _, v := range response.Patterns {
-					PatternID := v.ID.String()
-					PatterName := v.Name
-					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
-				}
-				processData(cmd, data, non_provider_header, int64(response.TotalCount))
-				return nil
-			}
-
-			for _, v := range response.Patterns {
-				PatternID := utils.TruncateID(v.ID.String())
-				var UserID string
-				if v.UserID != nil {
-					UserID = utils.TruncateID(*v.UserID)
-				} else {
-					UserID = "null"
-				}
-				PatterName := v.Name
-				CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-				data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
-			}
-			processData(cmd, data, provider_header, int64(response.TotalCount))
-
-			return nil
-		}
-
-		// Check if messhery provider is set
-		if provider == "None" {
-			for _, v := range response.Patterns {
-				PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
-				PatternID := utils.TruncateID(v.ID.String())
-				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{PatternID, PatterName, CreatedAt, UpdatedAt})
-			}
-			processData(cmd, data, non_provider_header, int64(response.TotalCount))
-			return nil
-		}
-
-		for _, v := range response.Patterns {
-			PatternID := utils.TruncateID(v.ID.String())
-			var UserID string
-			if v.UserID != nil {
-				UserID = utils.TruncateID(*v.UserID)
-			} else {
-				UserID = "null"
-			}
-			PatterName := v.Name
-			CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-			data = append(data, []string{PatternID, UserID, PatterName, CreatedAt, UpdatedAt})
-		}
-		processData(cmd, data, provider_header, int64(response.TotalCount))
-
+		provider = tokenObj["meshery-provider"]
 		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		header := func(provider string) []string {
+			if provider == "None" {
+				return []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
+			}
+			return []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+		}(provider)
+
+		designData := display.DisplayDataAsync{
+			UrlPath:          "api/pattern",
+			DataType:         "design",
+			Header:           header,
+			Page:             page,
+			PageSize:         pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
+		}
+
+		return display.ListAsyncPagination(designData, processDesignData)
 	},
 }
 
-func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and design file identifiers")
-	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of designs with --page (default = 1)")
-}
+func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
+	var displayData [][]string
+	for _, v := range data.Patterns {
+		designId := func(id *uuid.UUID, isVerbose bool) string {
+			if isVerbose {
+				return id.String()
+			}
+			return utils.TruncateID(id.String())
+		}(v.ID, verbose)
 
-func processData(cmd *cobra.Command, data [][]string, header []string, totalCount int64) {
-	if len(data) == 0 {
-		whiteBoardPrinter.Println("No pattern(s) found")
-		return
-	}
-	utils.DisplayCount("patterns", totalCount)
-	if cmd.Flags().Changed("page") {
-		utils.PrintToTable(header, data)
-	} else {
-		err := utils.HandlePagination(pageSize, "patterns", data, header)
-		if err != nil {
-			utils.Log.Error(err)
+		designName := strings.Trim(v.Name, filepath.Ext(v.Name))
+		createdAt := formatTimeToString(v.CreatedAt, verbose)
+		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
+
+		if provider != "None" {
+			userID := func(userID *string) string {
+				if userID != nil {
+					if verbose {
+						return *userID
+					}
+					return utils.TruncateID(*userID)
+				}
+				return "null"
+			}(v.UserID)
+			displayData = append(displayData, []string{designId, userID, designName, createdAt, updatedAt})
+		} else {
+			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})
 		}
 	}
+	return displayData, int64(data.TotalCount)
+}
+
+func formatTimeToString(t *time.Time, isVerbose bool) string {
+	if isVerbose {
+		return t.Format("01-02-2006 15:04:05") // M-D-YYYY HH:MM:SS
+	}
+	return t.Format("01-02-2006") // MM-DD-YYYY
+}
+
+func init() {
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user and design file identifiers")
+	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
+	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
+	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }

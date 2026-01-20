@@ -78,6 +78,7 @@ export const CONTROLLER_STATES = {
   RUNNING: 'RUNNING',
   CONNECTED: 'CONNECTED',
   DISABLED: 'DISABLED',
+  UNKNOWN: 'UNKNOWN',
 };
 
 export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
@@ -93,6 +94,11 @@ export const CONNECTION_KINDS = {
   PROMETHEUS: 'prometheus',
   GRAFANA: 'grafana',
   GITHUB: 'github',
+};
+
+export const MESHSYNC_DEPLOYMENT_TYPE = {
+  OPERATOR: 'operator',
+  EMBEDDED: 'embedded',
 };
 
 export const MESHSYNC_STATES = {

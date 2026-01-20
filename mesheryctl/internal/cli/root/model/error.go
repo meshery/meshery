@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 
+	goerrors "errors"
+
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -12,6 +14,21 @@ const (
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
+	ErrModelBuildCode                   = "mesheryctl-1151"
+
+	// Error Constants
+	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
+	errBuildFolderNotFound           = "\nfolder %s does not exist"
+	errBuildMultiVersionNotSupported = "\nCommand does not support multiple versions build under one image"
+
+	errInitOneArg            = "must provide only one argument: model name"
+	errInitUnsupportedFormat = "[ %s ] are the only format supported"
+	errInitInvalidVersion    = "version must follow a semver format, f.e. v1.2.3"
+	errInitFolderExists      = "folder %s exists, please specify different model name or version"
+	errInitInvalidModelName  = "invalid model name: name must match pattern ^[a-z0-9-]+$"
+
+	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
+	errSearchModelName = "Please provide a model name. " + errSearchUsage
 )
 
 func ErrExportModel(err error, name string) error {
@@ -36,4 +53,16 @@ func ErrModelInitFromString(message string) error {
 
 func ErrModelInit(err error) error {
 	return ErrModelInitFromString(err.Error())
+}
+
+func ErrModelBuildFromStrings(message ...string) error {
+	errs := make([]error, 0, len(message))
+	for _, m := range message {
+		errs = append(errs, goerrors.New(m))
+	}
+	return ErrModelBuild(goerrors.Join(errs...))
+}
+
+func ErrModelBuild(err error) error {
+	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }

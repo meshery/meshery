@@ -13,14 +13,20 @@ components:
 - name: role-assignment
   colorIcon: assets/img/integrations/azure-authorization/components/role-assignment/icons/color/role-assignment-color.svg
   whiteIcon: assets/img/integrations/azure-authorization/components/role-assignment/icons/white/role-assignment-white.svg
-  description: Security & Compliance
+  description: 
 - name: role-definition
   colorIcon: assets/img/integrations/azure-authorization/components/role-definition/icons/color/role-definition-color.svg
   whiteIcon: assets/img/integrations/azure-authorization/components/role-definition/icons/white/role-definition-white.svg
-  description: Security & Compliance
+  description: 
 components-count: 2
 relationships: 
-relationship-count: 0
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 2
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

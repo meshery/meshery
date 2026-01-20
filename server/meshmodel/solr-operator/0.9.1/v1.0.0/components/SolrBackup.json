@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#d93321",
@@ -189,5 +204,7 @@
     "version": "solr.apache.org/v1beta1",
     "kind": "SolrBackup",
     "schema": "{\n \"description\": \"SolrBackup is the Schema for the solrbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SolrBackupSpec defines the desired state of SolrBackup\",\n   \"properties\": {\n    \"collections\": {\n     \"description\": \"The list of collections to backup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"The location to store the backup in the specified backup repository.\",\n     \"type\": \"string\"\n    },\n    \"recurrence\": {\n     \"description\": \"Set this backup to be taken recurrently, with options for scheduling and storage.\\n\\nNOTE: This is only supported for Solr Clouds version 8.9+, as it uses the incremental backup API.\",\n     \"properties\": {\n      \"disabled\": {\n       \"default\": false,\n       \"description\": \"Disable the recurring backups. Note this will not affect any currently-running backup.\",\n       \"type\": \"boolean\"\n      },\n      \"maxSaved\": {\n       \"default\": 5,\n       \"description\": \"Define the number of backup points to save for this backup at any given time.\\nThe oldest backups will be deleted if too many exist when a backup is taken.\\nIf not provided, this defaults to 5.\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"schedule\": {\n       \"description\": \"Perform a backup on the given schedule, in CRON format.\\n\\nMultiple CRON syntaxes are supported\\n  - Standard CRON (e.g. \\\"CRON_TZ=Asia/Seoul 0 6 * * ?\\\")\\n  - Predefined Schedules (e.g. \\\"@yearly\\\", \\\"@weekly\\\", \\\"@daily\\\", etc.)\\n  - Intervals (e.g. \\\"@every 10h30m\\\")\\n\\nFor more information please check this reference:\\nhttps://pkg.go.dev/github.com/robfig/cron/v3?utm_source=godoc#hdr-CRON_Expression_Format\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"schedule\"\n     ],\n     \"type\": \"object\"\n    },\n    \"repositoryName\": {\n     \"description\": \"The name of the repository to use for the backup.  Defaults to \\\"legacy_local_repository\\\" if not specified (the\\nauto-configured repository for legacy singleton volumes).\",\n     \"maxLength\": 100,\n     \"minLength\": 1,\n     \"pattern\": \"[a-zA-Z0-9]([-_a-zA-Z0-9]*[a-zA-Z0-9])?\",\n     \"type\": \"string\"\n    },\n    \"solrCloud\": {\n     \"description\": \"A reference to the SolrCloud to create a backup for\",\n     \"maxLength\": 63,\n     \"minLength\": 1,\n     \"pattern\": \"[a-z0-9]([-a-z0-9]*[a-z0-9])?\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"solrCloud\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Solr Backup\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

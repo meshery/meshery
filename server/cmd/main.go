@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -12,7 +13,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/gofrs/uuid"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -30,13 +30,15 @@ import (
 	_events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/tracing"
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
-	"github.com/spf13/viper"
-
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -72,11 +74,14 @@ func main() {
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
 	}
-	// Initialize Logger instance
-	log, err := logger.New("meshery", logger.Options{
+	logOption := logger.Options{
 		Format:   logger.SyslogLogFormat,
 		LogLevel: logLevel,
-	})
+		// if debug, output caller
+		EnableCallerInfo: logLevel == int(logrus.DebugLevel),
+	}
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logOption)
 	if err != nil {
 		logrus.Error(err)
 		os.Exit(1)
@@ -112,14 +117,37 @@ func main() {
 	viper.SetDefault(constants.ProviderENV, "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
+	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
 	store.Initialize()
+
+	// initialize tracing
+	otelConfigString := viper.GetString("OTEL_CONFIG")
+log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+
+	if err != nil {
+		log.Error(fmt.Errorf("Failed to initialize OpenTelemetry tracing: %v", err))
+	} else {
+		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+	}
+	// Defer shutdown of tracer provider
+	defer func() {
+		if tracingProvider != nil {
+			if err := tracingProvider.Shutdown(context.Background()); err != nil {
+				log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+			}
+		}
+	}()
 
 	log.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
+
+	log.Infof("MESHSYNC_DEFAULT_DEPLOYMENT_MODE is %s", viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"))
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -221,6 +249,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+	)
+
+	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	}
+
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
@@ -242,6 +278,7 @@ func main() {
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
+		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
 	}
 
 	// Local remote provider is initalized here.
@@ -306,19 +343,20 @@ func main() {
 			continue
 		}
 		cp := &models.RemoteProvider{
-			RemoteProviderURL:          parsedURL.String(),
-			RefCookieName:              parsedURL.Host + "_ref",
-			SessionName:                parsedURL.Host,
-			TokenStore:                 make(map[string]string),
-			LoginCookieDuration:        1 * time.Hour,
-			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
-			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
-			ProviderVersion:            version,
-			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
-			GenericPersister:           dbHandler,
-			EventsPersister:            &models.EventsPersister{DB: dbHandler},
-			Log:                        log,
-			CookieDuration:             24 * time.Hour,
+			RemoteProviderURL:             parsedURL.String(),
+			RefCookieName:                 parsedURL.Host + "_ref",
+			SessionName:                   parsedURL.Host,
+			TokenStore:                    make(map[string]string),
+			LoginCookieDuration:           1 * time.Hour,
+			SessionPreferencePersister:    &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:     &models.UserCapabilitiesPersister{DB: dbHandler},
+			ProviderVersion:               version,
+			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
+			GenericPersister:              dbHandler,
+			EventsPersister:               &models.EventsPersister{DB: dbHandler},
+			Log:                           log,
+			CookieDuration:                24 * time.Hour,
+			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
 		}
 
 		cp.Initialize()
@@ -337,7 +375,15 @@ func main() {
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
-	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	// this mctrlHelper is not used it is being recreated per connection entity
+	mctrlHelper := models.NewMesheryControllersHelper(
+		log,
+		operatorDeploymentConfig,
+		dbHandler,
+		hc.EventBroadcaster,
+		nil,
+		&instanceID,
+	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[uuid.UUID]*machines.StateMachine, 0),
 	}
@@ -347,7 +393,7 @@ func main() {
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	policies.SyncRelationship.Lock()
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker, meshsyncDefaultDeploymentMode)
 	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)

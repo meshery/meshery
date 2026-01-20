@@ -18,6 +18,10 @@ Meshery’s build and release system incorporates many tools, organized into dif
 
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
+All repositories under the `github.com/meshery` and `github.com/meshery-extensions` organizations use immutable releases.
+<img width="954" height="166" alt="immutable-releases-setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
+
+
 ### Artifact Repositories
 
 Artifacts produced in the build processes are published and persisted in different public repositories and in different formats.
@@ -37,7 +41,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of December, 2024 is 1.23
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
@@ -50,8 +53,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `METAL_SERVER2`: Configuration for metal server 2
-- `METAL_SERVER3`: Configuration for metal server 3
 - `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
 - `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
@@ -79,6 +80,14 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Docker build, tag and push
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
+
+### UI Build System
+
+Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
+
+**Build Commands**:
+- `make ui-build` - Builds both Meshery UI and Provider UI
+- `make ui-provider-build` - Builds Provider UI only
 
 ## Tests for adapters
 

@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0068b5",
@@ -189,5 +204,7 @@
     "version": "deviceplugin.intel.com/v1",
     "kind": "IaaDevicePlugin",
     "schema": "{\n \"description\": \"IaaDevicePlugin is the Schema for the iaadeviceplugins API. It represents\\nthe IAA device plugin responsible for advertising Intel IAA hardware resources to\\nthe kubelet.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IaaDevicePluginSpec defines the desired state of IaaDevicePlugin.\",\n   \"properties\": {\n    \"image\": {\n     \"description\": \"Image is a container image with IAA device plugin executable.\",\n     \"type\": \"string\"\n    },\n    \"initImage\": {\n     \"description\": \"InitImage is an initcontainer image to configure and enable IAA devices and workqueues with accel-config utility\",\n     \"type\": \"string\"\n    },\n    \"logLevel\": {\n     \"description\": \"LogLevel sets the plugin's log level.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"NodeSelector provides a simple way to constrain device plugin pods to nodes with particular labels.\",\n     \"type\": \"object\"\n    },\n    \"provisioningConfig\": {\n     \"description\": \"ProvisioningConfig is a ConfigMap used to pass the IAA configuration into idxd initcontainer.\",\n     \"type\": \"string\"\n    },\n    \"sharedDevNum\": {\n     \"description\": \"SharedDevNum is a number of containers that can share the same IAA device.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"tolerations\": {\n     \"description\": \"Specialized nodes (e.g., with accelerators) can be Tainted to make sure unwanted pods are not scheduled on them. Tolerations can be set for the plugin pod to neutralize the Taint.\",\n     \"items\": {\n      \"description\": \"The pod this Toleration is attached to tolerates any taint that matches\\nthe triple \\u003ckey,value,effect\\u003e using the matching operator \\u003coperator\\u003e.\",\n      \"properties\": {\n       \"effect\": {\n        \"description\": \"Effect indicates the taint effect to match. Empty means match all taint effects.\\nWhen specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.\",\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"description\": \"Key is the taint key that the toleration applies to. Empty means match all taint keys.\\nIf the key is empty, operator must be Exists; this combination means to match all values and all keys.\",\n        \"type\": \"string\"\n       },\n       \"operator\": {\n        \"description\": \"Operator represents a key's relationship to the value.\\nValid operators are Exists and Equal. Defaults to Equal.\\nExists is equivalent to wildcard for value, so that a pod can\\ntolerate all taints of a particular category.\",\n        \"type\": \"string\"\n       },\n       \"tolerationSeconds\": {\n        \"description\": \"TolerationSeconds represents the period of time the toleration (which must be\\nof effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,\\nit is not set, which means tolerate the taint forever (do not evict). Zero and\\nnegative values will be treated as 0 (evict immediately) by the system.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"value\": {\n        \"description\": \"Value is the taint value the toleration matches to.\\nIf the operator is Exists, the value should be empty, otherwise just a regular string.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Iaa Device Plugin\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

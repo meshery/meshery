@@ -4,6 +4,7 @@ title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
 component: Istio
 earliest_version: v1.6.0
+adapter_version: v0.8.3
 port: 10000/gRPC
 project_status: stable
 lab: istio-meshery-adapter
@@ -68,7 +69,6 @@ Click on (+) and choose the {{page.earliest_version}} of the {{page.component}}.
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
 - [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps#bookinfo)
-  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 - [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
 - [Online Boutique]({{site.baseurl}}/guides/infrastructure-management/sample-apps#online-boutique)

@@ -13,29 +13,22 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   zIndex: '101',
 }));
 
-export const MeshModelToolbar = styled(Box)(({ theme }) => ({
+export const MeshModelToolbar = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor: theme.palette.background.card,
-  boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
   height: '4rem',
-  padding: '0.68rem',
+  paddingLeft: '1.5rem',
   borderRadius: '0.5rem',
   position: 'relative',
   zIndex: '125',
   marginBottom: '0.5rem',
-  marginTop: '1rem',
 }));
 
-export const MainContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: 'inherit',
+export const MainContainer = styled(Box)(() => ({
   borderRadius: '0.25rem',
-  height: '68vh',
   display: 'flex',
+  flexDirection: 'column',
   position: 'relative',
-  [theme.breakpoints.down('sm')]: {
-    height: '73rem',
-  },
 }));
 
 export const InnerContainer = styled(Box)(({ theme }) => ({
@@ -102,7 +95,6 @@ export const CardStyle = styled(Box, {
 export const DetailsContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isEmpty',
 })(({ theme, isEmpty }) => ({
-  height: '60vh',
   width: '50%',
   backgroundColor:
     theme.palette.mode === 'dark'
@@ -120,13 +112,10 @@ export const DetailsContainer = styled(Box, {
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     padding: isEmpty ? '0.5rem' : '1rem',
-    height: 'fit-content',
-    maxHeight: '30rem',
   },
 }));
 
 export const TreeContainer = styled(Box)(({ theme }) => ({
-  height: '30rem',
   width: '50%',
   margin: '1rem',
   display: 'flex',
@@ -137,14 +126,13 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
 }));
 
 export const TreeWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: accentGrey[30],
   display: 'flex',
   gap: '1rem',
-  padding: '1rem',
+  paddingTop: '0.5rem',
+  paddingLeft: '1rem',
+  paddingRight: '1rem',
   flexDirection: 'row',
   width: '100%',
-  position: 'absolute',
-  top: '3.7rem',
   borderBottomLeftRadius: '0.5rem',
   borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {

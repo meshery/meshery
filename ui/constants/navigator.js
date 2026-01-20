@@ -3,6 +3,7 @@ export const LIFECYCLE = 'lifecycle';
 export const CONFIGURATION = 'configuration';
 export const CONFORMANCE = 'conformance';
 export const PERFORMANCE = 'performance';
+export const EXTENSIONS = 'extensions';
 
 export const WORKLOADS = 'workloads';
 export const STORAGE = 'storage';

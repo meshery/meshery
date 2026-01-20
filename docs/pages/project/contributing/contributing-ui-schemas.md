@@ -163,6 +163,11 @@ const validateDesign = (data) => {
 };
 ```
 
+{% include alert.html type="info" title="Can't find a Schema Import in the UI?" content="
+  <p>If you're trying to import a schema object or type in the UI but it's missing, it's likely because it hasn't been exported yet from the schemas package.</p>
+  <p>To keep the package lightweight, only actively used types and objects are exported by default. If you need access to a new schema, simply export it in the <a href='https://github.com/meshery/schemas' target='_blank'>Meshery Schemas repository</a> and regenerate the package.</p>
+" %}
+
 ---
 
 ## Integration Points in UI

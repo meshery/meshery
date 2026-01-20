@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl environment
 
-View list of environments and detail of environments
+Manage environments
 
 ## Synopsis
 
