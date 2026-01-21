@@ -15,6 +15,7 @@
 package connections
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -130,15 +131,25 @@ func saveConnectionToFile(conn *connection.Connection, format, connectionString,
 	var err error
 
 	fmt.Printf("Saving output as %s file", strings.ToUpper(format))
-	if output, err = yaml.Marshal(conn); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format)))
+	if strings.ToLower(format) == "yaml" {
+		if output, err = yaml.Marshal(conn); err != nil {
+			return utils.ErrMarshal(errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format))))
+		}
 	}
+
+	if strings.ToLower(format) == "json" {
+		if output, err = json.MarshalIndent(conn, "", "  "); err != nil {
+			return utils.ErrMarshalIndent(errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format))))
+		}
+	}
+
 	fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(format))
 	file := filepath.Join(homeDir, ".meshery", fileName)
 	err = os.WriteFile(file, output, 0644)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format)))
+		return utils.ErrCreateFile(errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format))))
 	}
+
 	fmt.Println("Output saved as " + strings.ToUpper(format) + " file in " + file)
 	return nil
 }
