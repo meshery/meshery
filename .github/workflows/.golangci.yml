@@ -1,0 +1,27 @@
+# This file exists only to prevent GitHub Actions from failing on workflow ID 219547425.
+# The actual golangci-lint configuration is located at .github/.golangci.yml
+# 
+# This workflow is intentionally disabled. A repository admin should disable
+# this workflow from the GitHub Actions UI and then delete this file.
+# 
+# Background: This file was accidentally created as a copy of the golangci-lint
+# config file in the workflows directory. GitHub registered it as a workflow,
+# but since it's not a valid workflow YAML, all runs fail with "0 jobs".
+
+name: Deprecated - Golangci Placeholder
+# This workflow is intentionally disabled - no triggers defined
+on:
+  workflow_dispatch:
+    inputs:
+      placeholder:
+        description: 'This workflow is deprecated and should be disabled by an admin'
+        required: false
+        default: 'true'
+
+jobs:
+  placeholder:
+    if: false  # This job will never run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: echo "This workflow is deprecated"
