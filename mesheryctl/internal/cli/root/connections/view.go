@@ -100,7 +100,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		if err != nil {
 			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
 		}
-		connectionString := strings.ReplaceAll(fmt.Sprintf("%v", selectedConnection.Name), " ", "_")
 
 		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
 		outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, *selectedConnection)
@@ -114,7 +113,15 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if saveFlag {
-			fmt.Println()
+			// Prepare the connection string for file naming since connection from local provider
+			// can be created without a name.
+			connectionString := func(c connection.Connection) string {
+				if c.Name == "" {
+					return c.ID.String()
+				}
+				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
+			}(*selectedConnection)
+
 			err := saveConnectionToFile(selectedConnection, outputFormatFlag, connectionString, homeDir)
 			if err != nil {
 				return err
@@ -130,7 +137,7 @@ func saveConnectionToFile(conn *connection.Connection, format, connectionString,
 	var output []byte
 	var err error
 
-	fmt.Printf("Saving output as %s file", strings.ToUpper(format))
+	fmt.Println()
 	if strings.ToLower(format) == "yaml" {
 		if output, err = yaml.Marshal(conn); err != nil {
 			return utils.ErrMarshal(errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format))))
@@ -150,7 +157,7 @@ func saveConnectionToFile(conn *connection.Connection, format, connectionString,
 		return utils.ErrCreateFile(file, errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format))))
 	}
 
-	fmt.Println("Output saved as " + strings.ToUpper(format) + " file in " + file)
+	utils.Log.Info("Connection saved to file: ", file)
 	return nil
 }
 
