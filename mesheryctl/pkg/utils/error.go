@@ -61,6 +61,10 @@ var (
 	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
 	ErrReadFromBodyCode            = "mesheryctl-1125"
 	ErrMarkFlagRequireCode         = "mesheryctl-1126"
+	ErrGetKubernetesContextsCode   = "mesheryctl-1165"
+	ErrSetKubernetesContextCode    = "mesheryctl-1166"
+	ErrReadInputCode               = "mesheryctl-1193"
+	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -794,4 +798,45 @@ func ErrReadFromBody(err error) error {
 		[]string{err.Error()},
 		[]string{"The data for the pattern (design) file might be corrupted."},
 		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
+}
+
+func ErrGetKubernetesContexts(err error) error {
+	return errors.New(
+		ErrGetKubernetesContextsCode,
+		errors.Fatal,
+		[]string{"Unable to get kubernetes contexts"},
+		[]string{err.Error()},
+		[]string{"No kubernetes contexts found"},
+		[]string{"Ensure you have at least one valid context in your meshconfig file."})
+}
+
+func ErrSetKubernetesContext(err error) error {
+	return errors.New(
+		ErrSetKubernetesContextCode,
+		errors.Fatal,
+		[]string{"Unable to set kubernetes context"},
+		[]string{err.Error()},
+		[]string{"The specified Kubernetes context does not exist. "},
+		[]string{"Verify that the Kubernetes context provided is valid and try again."})
+}
+
+func ErrReadInput(err error) error {
+	return errors.New(
+		ErrReadInputCode,
+		errors.Fatal,
+		[]string{"Unable to read the input"},
+		[]string{err.Error()},
+		[]string{"The provided input was invalid or could not be read"},
+		[]string{"Validate the input and try again."})
+}
+
+func ErrUploadFileWithParams(err error, fileName string) error {
+	return errors.New(
+		ErrUploadFileWithParamsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to upload file: %s", fileName)},
+		[]string{err.Error()},
+		[]string{"File upload failed due to network issues or server errors"},
+		[]string{"Check your network connection and ensure the server is reachable."},
+	)
 }

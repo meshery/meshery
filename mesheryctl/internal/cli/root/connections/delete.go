@@ -2,13 +2,11 @@ package connections
 
 import (
 	"fmt"
-	"net/http"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var deleteConnectionCmd = &cobra.Command{
@@ -30,32 +28,12 @@ mesheryctl connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
-		req, err := utils.NewRequest(http.MethodDelete, url, nil)
+		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer func() { _ = resp.Body.Close() }()
-
-		// Check if the response status code is 200
-		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted successfully")
-			return nil
-		}
-
-		return utils.ErrBadRequest(errors.New(fmt.Sprintf("failed to delete connection with id %s", args[0])))
+		utils.Log.Info("Connection deleted.")
+		return nil
 	},
 }
