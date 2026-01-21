@@ -137,7 +137,7 @@ func createAKSConnection() error {
 		return err
 	}
 
-	utils.Log.Infof("AKS connection on cluster %s created successfully.", aksName)
+	utils.Log.Infof("AKS connection on cluster %s created.", aksName)
 	return nil
 }
 
@@ -200,7 +200,7 @@ func createGKEConnection() error {
 		return err
 	}
 
-	utils.Log.Info("GKE connection created successfully.")
+	utils.Log.Info("GKE connection created.")
 	return nil
 }
 
@@ -232,6 +232,7 @@ func createMinikubeConnection() error {
 		return err
 	}
 
+	utils.Log.Info("Minikube connection created.")
 	return nil
 }
 
@@ -364,7 +365,7 @@ func setToken() error {
 		return utils.ErrSetKubernetesContext(err)
 	}
 
-	utils.Log.Infof("Token set successfully in the context %s", chosenCtx)
+	utils.Log.Infof("Token set in context %s", chosenCtx)
 	return nil
 }
 

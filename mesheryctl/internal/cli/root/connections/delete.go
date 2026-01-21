@@ -33,7 +33,7 @@ mesheryctl connection delete [connection_id]
 			return err
 		}
 
-		utils.Log.Info("Connection deleted successfully")
+		utils.Log.Info("Connection deleted.")
 		return nil
 	},
 }
