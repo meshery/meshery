@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Emissary Ingress
 subtitle: Collaborative and visual infrastructure as design for Emissary Ingress
