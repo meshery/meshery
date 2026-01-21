@@ -96,7 +96,6 @@
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@playwright/test": "^1.51.1",
-    "@types/node": "^22.13.14",
     "ajv": "^8.17.1",
     "allure-playwright": "^3.4.3",
     "dotenv": "^16.4.7",
