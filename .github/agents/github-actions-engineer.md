@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🔍 Introspect Inputs
         run: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: 🚨 Email Alert on Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v4.74
+        uses: dawidd6/action-send-mail@v7
         with:
           # Standard SMTP configuration or similar
           subject: "Workflow Failed: ${{ github.workflow }}"
