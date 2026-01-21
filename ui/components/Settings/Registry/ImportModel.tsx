@@ -28,14 +28,14 @@ const ImportModelModal = React.memo(
     const [registerMeshmodels] = useImportMeshModelMutation();
     const handleGenerateModal = async (data) => {
       const { component_csv, model_csv, relationship_csv, register } = data;
-      let requestBody = {
+      const requestBody = {
         importBody: {
-          modelCsv: model_csv,
-          componentCsv: component_csv,
-          relationshipCsv: relationship_csv,
+          model_csv,
+          component_csv,
+          relationship_csv,
         },
         uploadType: 'csv',
-        register: register,
+        register,
       };
 
       updateProgress({ showProgress: true });
@@ -47,18 +47,18 @@ const ImportModelModal = React.memo(
       const { uploadType, url, file } = data;
       let requestBody = null;
 
-      const fileElement = document.getElementById('root_file');
+      const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
 
       switch (uploadType) {
         case 'File Import': {
-          const fileName = fileElement.files[0].name;
+          const fileName = fileElement?.files?.[0]?.name;
           const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+          if (fileData && fileName) {
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
               uploadType: 'file',
               register: true,
@@ -73,9 +73,9 @@ const ImportModelModal = React.memo(
           if (url) {
             requestBody = {
               importBody: {
-                url: url,
+                url,
               },
-              uploadType: 'urlImport',
+              uploadType: 'url',
               register: true,
             };
           } else {
