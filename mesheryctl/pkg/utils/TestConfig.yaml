@@ -16,6 +16,7 @@ contexts:
         channel: stable
         version: latest
 current-context: local
+log_level: 4
 tokens:
     - location: auth.json
       name: default

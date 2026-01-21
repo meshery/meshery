@@ -34,10 +34,9 @@ func SetupContextEnv(t *testing.T) {
 }
 
 func SetupFunc() {
-	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
-	utils.SetupMeshkitLogger("mesheryctl", true, b)
-	SystemCmd.SetOut(b)
+	utils.Log = utils.SetupMeshkitLogger("mesheryctl", true, b)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", true, b)
 }
 
 func BreakupFunc() {
@@ -73,8 +72,13 @@ func TestViewCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()
+
+			// Set command output to buffer instead of redirecting stdout
+			SystemCmd.SetOut(b)
+
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
+
 			if err != nil {
 				t.Error(err)
 			}
@@ -104,11 +108,17 @@ func TestSetCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()
+
+			// Set command output to buffer instead of redirecting stdout
+			SystemCmd.SetOut(b)
+
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
+
 			if err != nil {
 				t.Error(err)
 			}
+
 			actualResponse := b.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)

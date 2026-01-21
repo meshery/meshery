@@ -88,8 +88,6 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Endpoint = serverURL
 		}
 
-		utils.Log.Debug("serverURL: `" + tempCntxt.Endpoint + "`")
-
 		if platform != "" {
 			tempCntxt.Platform = platform
 		}
@@ -238,7 +236,7 @@ mesheryctl system context list
 		sort.Strings(keys)
 
 		for _, k := range keys {
-			cmd.Printf("- %s", k)
+			cmd.Printf("- %s\n", k)
 		}
 
 		if currContext == "" {
@@ -306,6 +304,7 @@ mesheryctl system context view --all
 			}
 
 			cmd.Print(getYAML(tempcontexts))
+			cmd.Println()
 
 			return nil
 		}
@@ -330,6 +329,7 @@ mesheryctl system context view --all
 			utils.Log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", currContext)
 			cmd.Printf("\nCurrent Context: %s\n", currContext)
 			cmd.Print(getYAML(contextData))
+			cmd.Println()
 		} else {
 			temp, ok := getContextWithTokenLocation(&contextData)
 			cmd.Printf("\nCurrent Context: %s\n", currContext)
@@ -337,6 +337,7 @@ mesheryctl system context view --all
 				utils.Log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, currContext)
 			}
 			cmd.Print(getYAML(temp))
+			cmd.Println()
 		}
 
 		return nil
@@ -404,7 +405,7 @@ mesheryctl system context create `
 
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
-		cmd.Printf("switched to context '%s'", args[0])
+		cmd.Printf("switched to context '%s'\n", args[0])
 		err = viper.WriteConfig()
 
 		return err

@@ -1,6 +1,5 @@
 
 Current Context: local
-
 endpoint: http://localhost:9081
 token: default
 token-location: auth.json

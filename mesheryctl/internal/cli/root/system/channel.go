@@ -152,6 +152,8 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			return nil
 		}
 
+		// ContextContent should be valid here from the map lookup
+
 		ContextContent.Version = version
 		ContextContent.Channel = channelNameSeperated[0]
 
@@ -168,7 +170,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			utils.LogError.Error(ErrWriteConfig(err))
 			return nil
 		}
-		utils.Log.Infof("Channel set to %s-%s", ContextContent.Channel, ContextContent.Version)
+
+		// Safe logging - use the values we just set
+		channel := channelNameSeperated[0]
+		utils.Log.Infof("Channel set to %s-%s", channel, version)
 		return nil
 	},
 }

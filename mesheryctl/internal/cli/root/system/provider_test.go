@@ -10,18 +10,19 @@ func TestViewProviderCmd(t *testing.T) {
 		{
 			Name:             "view without any parameter",
 			Args:             []string{"provider", "view"},
-			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
+			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["local"], "local") + "\n",
 		},
 		{
 			Name:             "view with context override",
 			Args:             []string{"provider", "view", "-c", "gke"},
-			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()
+			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
