@@ -25,21 +25,21 @@ const ImportModelModal = React.memo(
   ({ isImportModalOpen, setIsImportModalOpen }: ImportModelModalProps) => {
     const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
-    const [importModelReq] = useImportMeshModelMutation();
+    const [registerMeshmodels] = useImportMeshModelMutation();
     const handleGenerateModal = async (data) => {
       const { component_csv, model_csv, relationship_csv, register } = data;
       let requestBody = {
         importBody: {
-          model_csv: model_csv,
-          component_csv: component_csv,
-          relationship_csv: relationship_csv,
+          modelCsv: model_csv,
+          componentCsv: component_csv,
+          relationshipCsv: relationship_csv,
         },
         uploadType: 'csv',
         register: register,
       };
 
       updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
+      await registerMeshmodels({ body: requestBody });
       updateProgress({ showProgress: false });
     };
 
@@ -95,7 +95,7 @@ const ImportModelModal = React.memo(
         }
       }
       updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
+      await registerMeshmodels({ body: requestBody });
       updateProgress({ showProgress: false });
     };
 
