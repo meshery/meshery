@@ -36,9 +36,10 @@ mesheryctl connection create --type minikube
 
 // List all the connection
 mesheryctl connection list
+mesheryctl connection list --count
 
 // Delete a connection
-mesheryctl exp connection delete [connection_id]
+mesheryctl connection delete [connection_id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")

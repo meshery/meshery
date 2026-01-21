@@ -212,7 +212,6 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 	}
 
 	if connectionsResponse.TotalCount == 0 {
-		fmt.Println("No connection(s) found for the given name: ", connectionName)
 		return nil, nil
 	}
 
