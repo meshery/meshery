@@ -1,1 +1,1 @@
-Filter RolloutAndIstio deleted
+Get "http://localhost:9081/api/filter?page_size=10000": no responder found | Short Description: Failed to make a request | Probable Cause: Meshery server is not reachable. | Suggested Remediation: Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'. | Short Description: Unable to fetch filter | Probable Cause: Probable invalid filter name or id | Suggested Remediation: Run `mesheryctl filter list` to view all available filters.

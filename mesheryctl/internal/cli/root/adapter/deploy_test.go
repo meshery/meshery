@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
-	"os"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -16,8 +15,6 @@ var update = flag.Bool("update", false, "update golden files")
 
 func TestDeployMesh(t *testing.T) {
 	utils.SetupContextEnv(t)
-	utils.Log = utils.SetupMeshkitLogger("mesheryctl", false, os.Stdout)
-	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", false, os.Stdout)
 
 	// initialize mock server for handling requests
 	utils.StartMockery(t)

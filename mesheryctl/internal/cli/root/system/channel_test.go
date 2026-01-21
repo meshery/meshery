@@ -61,12 +61,12 @@ func TestViewCmd(t *testing.T) {
 		{
 			Name:             "view without any parameter",
 			Args:             []string{"channel", "view"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n",
 		},
 		{
 			Name:             "view with context override",
 			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n",
 		},
 	}
 
