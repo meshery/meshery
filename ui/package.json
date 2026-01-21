@@ -41,7 +41,7 @@
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
     "@mui/x-date-pickers": "^7.24.0",
-    "@mui/x-tree-view": "^6.0.0-beta.0",
+    "@mui/x-tree-view": "^7.22.2",
     "@open-policy-agent/opa-wasm": "^1.10.0",
     "@paciolan/remote-component": "^2.13.0",
     "@reduxjs/toolkit": "^2.8.1",
