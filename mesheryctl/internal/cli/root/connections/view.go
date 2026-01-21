@@ -147,7 +147,7 @@ func saveConnectionToFile(conn *connection.Connection, format, connectionString,
 	file := filepath.Join(homeDir, ".meshery", fileName)
 	err = os.WriteFile(file, output, 0644)
 	if err != nil {
-		return utils.ErrCreateFile(errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format))))
+		return utils.ErrCreateFile(file, errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format))))
 	}
 
 	fmt.Println("Output saved as " + strings.ToUpper(format) + " file in " + file)
