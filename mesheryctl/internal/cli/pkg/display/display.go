@@ -45,11 +45,10 @@ func List(data DisplayedData) error {
 		maxRowsPerPage := 25
 		err := utils.HandlePagination(maxRowsPerPage, data.DataType, data.Rows, data.Header)
 		if err != nil {
-			return err
+			return utils.ErrHandlePagination(err)
 		}
 	}
 	return nil
-
 }
 
 func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataProcessor[T]) error {

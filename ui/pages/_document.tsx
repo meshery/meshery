@@ -36,7 +36,7 @@ class MesheryDocument extends Document {
           {/* eslint-disable-next-line @next/next/next-script-for-ga */}
           <script
             dangerouslySetInnerHTML={{
-              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             // Fetch user preferences
             fetch("/api/user/prefs", { credentials: 'include' })
               .then((res) => res.json())
@@ -80,6 +80,8 @@ class MesheryDocument extends Document {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
+          {/* Pre-React script */}
+          <script src="/loadingMessages.js"></script>
 
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />
@@ -109,7 +111,7 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = async (ctx) => {
+MesheryDocument.getInitialProps = (ctx) => {
   // resolution order
   //
   // on the server:
@@ -134,32 +136,26 @@ MesheryDocument.getInitialProps = async (ctx) => {
 
   // render app and page and get the context of the page with collected side effects.
   let pageContext;
-  const originalRenderPage = ctx.renderPage;
-  ctx.renderPage = () =>
-    originalRenderPage({
-      enhanceComponent: (Component) => {
-        const WrappedComponent = (props) => {
-          pageContext = props.pageContext;
-          return <Component {...props} />;
-        };
+  const page = ctx.renderPage((Component) => {
+    const WrappedComponent = (props) => {
+      pageContext = props.pageContext;
+      return <Component {...props} />;
+    };
 
-        WrappedComponent.propTypes = {
-          pageContext: PropTypes.object.isRequired,
-        };
+    WrappedComponent.propTypes = {
+      pageContext: PropTypes.object.isRequired,
+    };
 
-        return WrappedComponent;
-      },
-    });
-
-  const initialProps = await Document.getInitialProps(ctx);
+    return WrappedComponent;
+  });
 
   let css;
   // it might be undefined, e.g. after an error.
-  if (pageContext && pageContext.sheetsRegistry) {
+  if (pageContext) {
     css = pageContext.sheetsRegistry.toString();
   }
   return {
-    ...initialProps,
+    ...page,
     pageContext,
     // styles fragment is rendered after the app and page rendering finish.
     styles: (
@@ -167,10 +163,9 @@ MesheryDocument.getInitialProps = async (ctx) => {
         <style
           id="jss-server-side"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: css || '' }}
+          dangerouslySetInnerHTML={{ __html: css }}
         />
         {flush || null}
-        {initialProps.styles}
       </React.Fragment>
     ),
   };
