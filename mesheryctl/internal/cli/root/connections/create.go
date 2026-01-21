@@ -15,6 +15,7 @@
 package connections
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -262,7 +263,12 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, utils.ErrReadResponseBody(err)
 	}
 
-	log.Debugf("Get context API response: %s", string(body))
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, body, "", "  "); err == nil {
+		log.Debugf("Get context API response:\n%s", prettyJSON.String())
+	} else {
+		log.Debugf("Get context API response: %s", string(body))
+	}
 	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
@@ -314,8 +320,13 @@ func setContext(configFile, cname string) error {
 	if err != nil {
 		return utils.ErrReadResponseBody(err)
 	}
-	// TODO: Pretty print the output
-	log.Debugf("Set context API response: %s", string(body))
+
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, body, "", "  "); err == nil {
+		log.Debugf("Set context API response:\n%s", prettyJSON.String())
+	} else {
+		log.Debugf("Set context API response: %s", string(body))
+	}
 	return nil
 }
 
