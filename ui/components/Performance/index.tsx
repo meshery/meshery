@@ -453,6 +453,7 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const submitLoadTest = (id) => {
+    setTimerDialogOpen(true);
     const computedTestName = generateTestName(testNameState, meshNameState);
     setTestName(computedTestName);
 
@@ -539,7 +540,6 @@ const MesheryPerformanceComponent_ = (props) => {
         case 'info':
           notify({ message: data.message, event_type: EVENT_TYPES.INFO });
           if (track === 0) {
-            setTimerDialogOpen(true);
             // setResult({});
             track++;
           }
