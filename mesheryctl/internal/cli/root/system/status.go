@@ -208,7 +208,30 @@ mesheryctl system status --verbose
 			// Print the data to a table for readability
 			utils.PrintToTable(columnNames, data, nil)
 
-			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
+			// Display endpoint information
+			configuredEndpoint := currCtx.GetEndpoint()
+
+			// Try to get the actual service endpoint from Kubernetes
+			var opts meshkitkube.ServiceOptions
+			opts.Name = "meshery"
+			opts.Namespace = utils.MesheryNamespace
+			opts.APIServerURL = client.RestConfig.Host
+
+			endpoint, err := meshkitkube.GetServiceEndpoint(cmd.Context(), client.KubeClient, &opts)
+			if err == nil && endpoint.External.Address != "" {
+				actualEndpoint := fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
+				log.Info(fmt.Sprintf("\nMeshery endpoint is %s", actualEndpoint))
+				if actualEndpoint != configuredEndpoint {
+					log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
+					log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+				}
+			} else {
+				// Fallback to configured endpoint if service discovery fails
+				if err != nil && verboseStatus {
+					log.Warnf("Could not discover Meshery service endpoint: %v", err)
+				}
+				log.Info("\nMeshery endpoint is " + configuredEndpoint)
+			}
 		}
 		return nil
 	},
