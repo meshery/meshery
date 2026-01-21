@@ -29,7 +29,7 @@ const FinishModelGenerateStep = ({
     };
 
     performImport();
-  }, []);
+  }, [registerMeshmodels, requestBody]);
 
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
