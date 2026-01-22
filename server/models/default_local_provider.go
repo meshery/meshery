@@ -139,8 +139,17 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
+// For local auth we just send the user to the home page and avoid caching.
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	// l.issueSession(w, r, fromMiddleWare)
+
+	// Prevent stale cached redirects.
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
+
+	// Nothing to authenticate locally; land on the app shell.
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
