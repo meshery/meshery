@@ -14,7 +14,15 @@ import { updateUser } from '@/store/slices/mesheryUi';
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
 type UserProps = {
-  color?: string;
+  color?:
+    | 'default'
+    | 'inherit'
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning';
   [key: string]: any;
 };
 
@@ -94,7 +102,11 @@ const User = (props: UserProps) => {
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
+          <IconButtonAvatar
+            {...(color ? { color } : {})}
+            aria-haspopup="true"
+            onClick={goToProfile}
+          >
             <Avatar
               sx={{ height: 36, width: 36 }}
               src={isGetUserSuccess ? userData?.avatar_url : null}
@@ -108,7 +120,15 @@ const User = (props: UserProps) => {
 };
 
 type UserProviderProps = {
-  color?: string;
+  color?:
+    | 'default'
+    | 'inherit'
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning';
   [key: string]: any;
 };
 
