@@ -63,7 +63,7 @@ mesheryctl model view [model-name]
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(modelViewOutputFormat, selectedModel)
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), selectedModel)
 		if err != nil {
 			return err
 		}
