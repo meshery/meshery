@@ -11,7 +11,7 @@ import type {
   CollaboratorSchema,
   FullPageExtensionSchema,
 } from '../utils/ExtensionPointSchemaValidator';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../store';
 
 /**
  * getPath returns the current pathname
@@ -232,8 +232,10 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
 
+      // @ts-expect-error - capabilitiesRegistry.extensions type definition is incomplete
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
         try {
+          // @ts-expect-error - capabilitiesRegistry.extensions type definition is incomplete
           const extensionData = capabilitiesRegistry.extensions[type];
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
@@ -264,7 +266,6 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         case 'collaborator': {
           const collaboratorUri = getComponentURIFromPathForCollaborator(
             extension as CollaboratorSchema[],
-            getPath(),
           );
           return collaboratorUri.map((uri) => (
             <Extension url={createPathForRemoteComponent(uri)} key={uri} />

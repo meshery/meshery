@@ -23,7 +23,7 @@ const TipsCarousel = ({ tips }) => {
 
   return (
     <Box
-      style={{
+      sx={{
         width: '40%',
         minWidth: '320px',
         maxWidth: '320px',
@@ -54,7 +54,7 @@ const TipsCarousel = ({ tips }) => {
               color:
                 index === activeStep
                   ? theme.palette.background.brand?.default
-                  : theme.palette.background.constant.white,
+                  : theme.palette.background.constant?.white || theme.palette.common.white,
             }}
           >
             &bull;
