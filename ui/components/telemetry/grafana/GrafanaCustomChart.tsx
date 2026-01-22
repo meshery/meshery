@@ -572,12 +572,9 @@ function GrafanaCustomChart(props) {
 
     // Set new interval if liveTail is enabled
     if (liveTail) {
-      const newInterval = setInterval(
-        () => {
-          collectChartData();
-        },
-        computeRefreshInterval(refresh) * 1000,
-      );
+      const newInterval = setInterval(() => {
+        collectChartData();
+      }, computeRefreshInterval(refresh) * 1000);
       setIntervalState(newInterval);
     }
 
