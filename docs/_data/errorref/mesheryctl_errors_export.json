@@ -1390,22 +1390,22 @@
         "suggested_remediation": "Verify the design exists using 'mesheryctl design list'\nCheck your network connection and Meshery server status"
       },
       "1165": {
-        "name": "ErrInvalidCommandCode",
+        "name": "ErrGetKubernetesContextsCode",
         "code": "1165",
-        "severity": "Alert",
+        "severity": "Fatal",
         "long_description": "",
-        "short_description": "Invalid command",
-        "probable_cause": "The provided command is not recognized",
-        "suggested_remediation": "Run 'mesheryctl design --help' to see available commands"
+        "short_description": "Unable to get kubernetes contexts",
+        "probable_cause": "No kubernetes contexts found",
+        "suggested_remediation": "Ensure you have at least one valid context in your meshconfig file."
       },
       "1166": {
-        "name": "ErrDesignNameOrIDNotSpecifiedCode",
+        "name": "ErrSetKubernetesContextCode",
         "code": "1166",
-        "severity": "Alert",
-        "long_description": "No design name or ID was provided",
-        "short_description": "Design name or ID not specified",
-        "probable_cause": "Command requires a design name or ID as argument",
-        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to set kubernetes context",
+        "probable_cause": "The specified Kubernetes context does not exist. ",
+        "suggested_remediation": "Verify that the Kubernetes context provided is valid and try again."
       },
       "1167": {
         "name": "ErrFilterNotFoundCode",
@@ -1460,6 +1460,132 @@
         "short_description": "Unable to display paginated results",
         "probable_cause": "Interactive pagination requires keyboard input support",
         "suggested_remediation": "Ensure you are running in an interactive terminal\nIf running in a non-interactive environment, use '--page' flag to skip pagination"
+      },
+      "1174": {
+        "name": "ErrAwsCliNotFoundCode",
+        "code": "1174",
+        "severity": "Alert",
+        "long_description": "The AWS CLI is required to create an EKS connection but was not found on your system",
+        "short_description": "AWS CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      },
+      "1175": {
+        "name": "ErrGcpGKEGetCredentialsCode",
+        "code": "1175",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the GKE cluster credentials",
+        "short_description": "Unable to get GKE cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the GKE cluster name, zone, and project ID are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1182": {
+        "name": "ErrConnectionTypeCode",
+        "code": "1182",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1183": {
+        "name": "ErrEncodingDataCode",
+        "code": "1183",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Non supported characters in the data",
+        "suggested_remediation": "Ensure the content of the data provided does not contain invalid supported characters"
+      },
+      "1184": {
+        "name": "ErrUnsupportedFormatCode",
+        "code": "1184",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "An unsupported output format was requested. ",
+        "suggested_remediation": "Specify a supported output format. Choices are 'json' or 'yaml'."
+      },
+      "1185": {
+        "name": "ErrUploadFileWithParamsCode",
+        "code": "1185",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "File upload failed due to network issues or server errors",
+        "suggested_remediation": "Check your network connection and ensure the server is reachable."
+      },
+      "1186": {
+        "name": "ErrAwsEksGetCredentialsCode",
+        "code": "1186",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the EKS cluster credentials",
+        "short_description": "Unable to get EKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the EKS cluster name and region are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1187": {
+        "name": "ErrReadKubeConfigCode",
+        "code": "1187",
+        "severity": "Alert",
+        "long_description": "There was an error reading the kubeconfig file",
+        "short_description": "Unable to read kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that the kubeconfig file exists, content is valid and is accessible"
+      },
+      "1188": {
+        "name": "ErrWriteKubeConfigCode",
+        "code": "1188",
+        "severity": "Alert",
+        "long_description": "There was an error writing the kubeconfig file",
+        "short_description": "Unable to write kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that you have the necessary permissions to write to the kubeconfig file location"
+      },
+      "1189": {
+        "name": "ErrAzureAksGetCredentialsCode",
+        "code": "1189",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the AKS cluster credentials",
+        "short_description": "Unable to get AKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1190": {
+        "name": "ErrAzureCliNotFoundCode",
+        "code": "1190",
+        "severity": "Alert",
+        "long_description": "The Azure CLI is required to create an AKS connection but was not found on your system",
+        "short_description": "Azure CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      },
+      "1191": {
+        "name": "ErrInvalidCommandCode",
+        "code": "1191",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided command is not recognized",
+        "suggested_remediation": "Run 'mesheryctl design --help' to see available commands"
+      },
+      "1192": {
+        "name": "ErrDesignNameOrIDNotSpecifiedCode",
+        "code": "1192",
+        "severity": "Alert",
+        "long_description": "No design name or ID was provided",
+        "short_description": "Design name or ID not specified",
+        "probable_cause": "Command requires a design name or ID as argument",
+        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+      },
+      "1193": {
+        "name": "ErrReadInputCode",
+        "code": "1193",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to read the input",
+        "probable_cause": "The provided input was invalid or could not be read",
+        "suggested_remediation": "Validate the input and try again."
       }
     }
   }
