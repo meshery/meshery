@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
-  reactStrictMode: false,
+  reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -44,8 +44,8 @@ const nextConfig = removeImports({
       ...config.resolve.alias,
       'remote-component.config.js': __dirname + '/remote-component.config.js',
     };
-    (config.output.webassemblyModuleFilename = 'static/[modulehash].wasm'),
-      (config.experiments = { asyncWebAssembly: true, layers: true });
+    // (config.output.webassemblyModuleFilename = 'static/[modulehash].wasm'),
+    //   (config.experiments = { asyncWebAssembly: true, layers: true });
     return config;
   },
 });

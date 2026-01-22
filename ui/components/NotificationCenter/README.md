@@ -55,7 +55,6 @@ This component serves as the entry point for formatting events. It provides the 
 Formatting follows a structured hierarchy to determine the most appropriate transformation for event data:
 
 1. **Custom Event Formatter**
-
    - Defines specialized formatting for specific event types.
    - Applied when formatting depends on the event's type, action, or category.
    - Should only be used for events that require highly specific or unique formatting.
