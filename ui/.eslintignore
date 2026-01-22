@@ -8,3 +8,5 @@ nodemon.json
 lib/
 tests/samples/
 **/__generated__/**
+playwright-report/
+test-results/
