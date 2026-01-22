@@ -568,6 +568,41 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	userID := user.ID
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
+	// Get token for retrieving connection details
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	if token == "" {
+		if ck, err := req.Cookie(models.TokenCookieName); err == nil {
+			token = ck.Value
+		}
+	}
+
+	// Retrieve connection details before deletion to check if it's a Kubernetes connection
+	// that requires state machine cleanup
+	connection, _, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		// Connection not found or other error - log but proceed with deletion attempt
+		h.log.Warn(fmt.Sprintf("Could not retrieve connection %s before deletion: %v", connectionID, err))
+	}
+
+	// If this is a Kubernetes connection, trigger state machine transition to DELETED state
+	// This ensures proper cleanup (undeploy operators, remove handlers, flush data)
+	if connection != nil && strings.ToLower(connection.Kind) == "kubernetes" {
+		connectionPayload := &connections.ConnectionPayload{
+			ID:     connectionID,
+			Kind:   connection.Kind,
+			Status: connections.DELETED,
+		}
+
+		// Notify state machine of deletion - this triggers cleanup in DeleteAction
+		// Ignore errors here as we want to proceed with database deletion regardless
+		_, smErr := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connectionPayload)
+		if smErr != nil {
+			h.log.Warn(fmt.Sprintf("Failed to notify state machine of connection deletion for %s: %v", connectionID, smErr))
+		} else {
+			h.log.Info(fmt.Sprintf("State machine notified of deletion for connection %s", connectionID))
+		}
+	}
+
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"
