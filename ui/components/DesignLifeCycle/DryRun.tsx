@@ -125,11 +125,7 @@ const ExpandableComponentErrors = ({
               >
                 <ListItemIcon>
                   {' '}
-                  <ErrorIcon
-                    height="24px"
-                    width="24px"
-                    fill={NOTIFICATIONCOLORS.ERROR_DARK}
-                  />{' '}
+                  <ErrorIcon height="24px" width="24px" fill={NOTIFICATIONCOLORS.ERROR_DARK} />{' '}
                 </ListItemIcon>
 
                 {typeof err === 'string' ? (
@@ -193,7 +189,11 @@ export const FormatDryRunResponse = ({
       subheader={
         <ValidationSubHeader disableSticky={true} component="div" id="nested-list-subheader">
           {canShowComponentCount && (
-            <Typography variant="h6" sx={{ padding: 0 }} style={{ color: theme.palette.text.default }}>
+            <Typography
+              variant="h6"
+              sx={{ padding: 0 }}
+              style={{ color: theme.palette.text.default }}
+            >
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
@@ -203,10 +203,11 @@ export const FormatDryRunResponse = ({
             variant="h6"
             sx={{ padding: 0 }}
             style={{
-              color: `${totalDryRunErrors > 0
-                ? NOTIFICATIONCOLORS.ERROR_DARK
-                : NOTIFICATIONCOLORS.SUCCESS_V2
-                }`,
+              color: `${
+                totalDryRunErrors > 0
+                  ? NOTIFICATIONCOLORS.ERROR_DARK
+                  : NOTIFICATIONCOLORS.SUCCESS_V2
+              }`,
             }}
           >
             {`${totalDryRunErrors} error(s)`}

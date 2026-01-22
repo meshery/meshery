@@ -67,11 +67,12 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail: any) => {
       const arr = Array.isArray(perComponentDetail) ? perComponentDetail : [];
-      return arr.flatMap((perContextDetail: any) =>
-        perContextDetail?.Summary?.map((detail: any) => ({
-          ...detail,
-          Location: perContextDetail.Location,
-        })) || [],
+      return arr.flatMap(
+        (perContextDetail: any) =>
+          perContextDetail?.Summary?.map((detail: any) => ({
+            ...detail,
+            Location: perContextDetail.Location,
+          })) || [],
       );
     },
   );
@@ -107,7 +108,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             }
             style={{ gap: '0.25rem' }}
           >
-            Open In Operator <ExternalLinkIcon fill={theme.palette.background?.constant?.white || '#fff'} />
+            Open In Operator{' '}
+            <ExternalLinkIcon fill={theme.palette.background?.constant?.white || '#fff'} />
           </Button>
         )}
       </StyledDetailBox>

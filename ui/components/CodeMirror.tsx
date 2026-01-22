@@ -86,11 +86,11 @@ type CodeMirrorOptions = {
 type CodeMirrorProps = {
   value?: string;
   options?: CodeMirrorOptions;
-  onBeforeChange?: (editor: any, data: any, value: string) => void;
-  onChange?: (value: string, viewUpdate: any) => void;
-  onBlur?: (editor: any, event: any) => void;
-  editorDidMount?: (editor: any, value?: string) => void;
-  editorWillUnmount?: (editor: any) => void;
+  onBeforeChange?: (_editor: any, _data: any, _value: string) => void;
+  onChange?: (_value: string, _viewUpdate: any) => void;
+  onBlur?: (_editor: any, _event: any) => void;
+  editorDidMount?: (_editor: any, _value?: string) => void;
+  editorWillUnmount?: (_editor: any) => void;
   [key: string]: any;
 };
 

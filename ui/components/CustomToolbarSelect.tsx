@@ -23,7 +23,7 @@ const StyledIcon = styled('span')(({ theme }) => ({
       : theme.palette.text.default,
 }));
 
-function CustomToolbarSelect({ setSelectedRows }: { setSelectedRows: (rows: any[]) => void }) {
+function CustomToolbarSelect({ setSelectedRows }: { setSelectedRows: (_rows: any[]) => void }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [, setChartCompare] = useState<any[]>([]);

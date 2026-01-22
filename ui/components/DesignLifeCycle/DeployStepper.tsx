@@ -201,7 +201,7 @@ export const UpdateDeploymentStepper = ({
 }) => {
   const [includeDependencies, setIncludeDependencies] = useState(false);
   const [bypassDryRun, setBypassDryRun] = useState(false);
-  const [openInOperator, setOpenInOperator] = useState(false);
+  const [openInOperator, _setOpenInOperator] = useState(false);
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);

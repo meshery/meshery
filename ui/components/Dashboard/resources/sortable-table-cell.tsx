@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Grid2, Tooltip, Typography, TableCell, TableSortLabel } from '@sistent/sistent';
 
-const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
+export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (
     <TableCell key={index} onClick={onSort}>
       <Grid2 style={{ display: 'flex' }}>
@@ -29,7 +29,7 @@ const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, toolti
   );
 };
 
-const DefaultTableCell = ({ columnData, icon, tooltip }) => {
+export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
   return (
     <TableCell>
       <Grid2 style={{ display: 'flex' }}>
@@ -51,5 +51,3 @@ const DefaultTableCell = ({ columnData, icon, tooltip }) => {
     </TableCell>
   );
 };
-
-export default { SortableTableCell, DefaultTableCell };

@@ -119,7 +119,8 @@ const DatabaseSummary = (props) => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility: Record<string, boolean> = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = (col.options as { sort?: boolean; display?: boolean })?.display !== false;
+      initialVisibility[col.name] =
+        (col.options as { sort?: boolean; display?: boolean })?.display !== false;
     });
     return initialVisibility;
   });
