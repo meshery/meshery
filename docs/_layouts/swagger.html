@@ -12,34 +12,101 @@ title: Rest API Docs
 {% endif %}
 {% assign sorted_paths = swagger.paths | sort %}
 
+{% comment %}
+Filter cloud-only endpoints from the paths.
+An endpoint is hidden if x-internal contains "cloud" but NOT "meshery".
+Logic: SHOW if x-internal is null, empty, contains "meshery", or doesn't contain "cloud"
+       HIDE if x-internal contains "cloud" but NOT "meshery"
+{% endcomment %}
+
 <details>
     <summary>
         Here is a concise list of all REST API endpoints.
     </summary>
     <ul>
         {% for route in sorted_paths %}
+        {% comment %} Check if this path has any visible (non-cloud-only) methods {% endcomment %}
+        {% assign path_has_visible_methods = false %}
+        {% for method in route[1] %}
+        {% assign is_http_method = false %}
+        {% if method[0] == "get" or method[0] == "post" or method[0] == "put" or method[0] == "delete" or method[0] == "patch" or method[0] == "options" or method[0] == "head" %}
+        {% assign is_http_method = true %}
+        {% endif %}
+        {% if is_http_method %}
+        {% assign x_internal = method[1]["x-internal"] %}
+        {% assign show_method = true %}
+        {% if x_internal and x_internal.size > 0 %}
+        {% assign x_str = x_internal | join: "," %}
+        {% if x_str contains "cloud" %}
+        {% unless x_str contains "meshery" %}
+        {% assign show_method = false %}
+        {% endunless %}
+        {% endif %}
+        {% endif %}
+        {% if show_method %}
+        {% assign path_has_visible_methods = true %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% if path_has_visible_methods %}
         <li>{{ route[0] }}</li>
+        {% endif %}
         {% endfor %}
     </ul>
 </details>
 
 {% for route in sorted_paths %}
+{% comment %} First pass: check if this path has any visible methods {% endcomment %}
+{% assign path_has_visible_methods = false %}
+{% for method in route[1] %}
+{% assign is_http_method = false %}
+{% if method[0] == "get" or method[0] == "post" or method[0] == "put" or method[0] == "delete" or method[0] == "patch" or method[0] == "options" or method[0] == "head" %}
+{% assign is_http_method = true %}
+{% endif %}
+{% if is_http_method %}
+{% assign x_internal = method[1]["x-internal"] %}
+{% assign show_method = true %}
+{% if x_internal and x_internal.size > 0 %}
+{% assign x_str = x_internal | join: "," %}
+{% if x_str contains "cloud" %}
+{% unless x_str contains "meshery" %}
+{% assign show_method = false %}
+{% endunless %}
+{% endif %}
+{% endif %}
+{% if show_method %}
+{% assign path_has_visible_methods = true %}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% if path_has_visible_methods %}
 <div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h2>
     {% if route[0] contains '/api/oam' %}
     <span class="deprecated-label">Deprecated</span>
     {% endif %}
     {% for method in route[1] %}
-    {% assign method_name = method[0] | downcase %}
-    {% if method_name == 'get' or method_name == 'post' or method_name == 'put' or method_name == 'delete' or
-    method_name == 'patch' or method_name == 'options' or method_name == 'head' %}
-    {% comment %} Direct conditional check - no intermediate variables {% endcomment %}
+    {% comment %} Only process HTTP methods {% endcomment %}
+    {% assign is_http_method = false %}
+    {% if method[0] == "get" or method[0] == "post" or method[0] == "put" or method[0] == "delete" or method[0] == "patch" or method[0] == "options" or method[0] == "head" %}
+    {% assign is_http_method = true %}
+    {% endif %}
+    
+    {% if is_http_method %}
+    {% comment %} Filter cloud-only endpoints {% endcomment %}
+    {% assign skip_endpoint = false %}
     {% assign x_internal = method[1]["x-internal"] %}
-    {% if x_internal %}
+    {% if x_internal and x_internal.size > 0 %}
     {% assign x_str = x_internal | join: "," %}
     {% if x_str contains "cloud" %}
-    {% if x_str contains "meshery" %}
-    {% comment %} Has both cloud and meshery - SHOW {% endcomment %}
+    {% unless x_str contains "meshery" %}
+    {% assign skip_endpoint = true %}
+    {% endunless %}
+    {% endif %}
+    {% endif %}
+
+    {% unless skip_endpoint %}
     <div class="swagger-method swagger-method-{{ method[0] }}">
         <h3 class="swagger-method-title">
             <a href="#" class="swagger-method-link">
@@ -152,240 +219,11 @@ title: Rest API Docs
             {% endif %}
         </div>
     </div>
-    {% endif %}
-    {% else %}
-    {% comment %} No cloud tag - SHOW {% endcomment %}
-    <div class="swagger-method swagger-method-{{ method[0] }}">
-        <h3 class="swagger-method-title">
-            <a href="#" class="swagger-method-link">
-                <span class="swagger-method-name">{{ method[0] | upcase }}</span>
-                <span class="swagger-method-summary">{{ method[1].summary }}</span>
-            </a>
-        </h3>
-        <div class="swagger-method-details">
-            <h5>Description</h5>
-            <md-block>
-                <span class="swagger-method-description">{{method[1].description}}</span>
-            </md-block>
-            {% if method[1].parameters %}
-            <div class="swagger-parameters">
-                <h5>Parameters</h5>
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Located in</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in method[1].parameters %}
-                        <tr>
-                            <td>
-                                {% if parameter.required %}
-                                <span class="swagger-parameter-required">
-                                    {% endif %}
-                                    {{ parameter.name }}
-                                    {% if parameter.required %}
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td>{{ parameter.in }}</td>
-                            <td>{{ parameter.description }}</td>
-                            <td>
-                                {% if parameter.type %}
-                                {{ parameter.type | capitalize }}
-                                {% if parameter.items %}
-                                of {{ parameter.items.type | capitalize }}
-                                {% endif %}
-                                {% else %}
-                                Unknown
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-            {% if method[1].responses %}
-            <div class="swagger-response">
-                <h5>Responses</h5>
-                {% for response in method[1].responses %}
-                <div class="swagger-response-{{ response[0] }}">
-                    <p class="swagger-response-title">
-                        <span class="swagger-response-code">{{ response[0] }}</span>
-                        {% if response[1].description != "" %}<span class="swagger-response-seperator">-</span>{% endif
-                        %}
-                        <md-block class="mdblock">
-                            <span class="swagger-response-description">{{ response[1].description }}</span>
-                        </md-block>
-                    </p>
-                </div>
-                {% if response[1].schema.properties %}
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Format</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in response[1].schema.properties %}
-                        <tr>
-                            <td>{{ parameter[0] }}</td>
-                            <td>
-                                {% if parameter[1].format %}
-                                {{ parameter[1].format }}
-                                {% else %}
-                                Object
-                                {% endif %}
-
-                            </td>
-                            <td>{{ parameter[1].type }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
-                {% for content_type in swagger.produces %}
-                {% if response[1].examples[content_type] %}
-                {% assign example = response[1].examples[content_type] %}
-                {% if content_type contains 'json' %}
-                {% highlight json %}{{ example }}{% endhighlight %}
-                {% elsif content_type contains 'xml' %}
-                {% highlight xml %}{{ example }}{% endhighlight %}
-                {% else %}
-                {% highlight http %}{{ example }}{% endhighlight %}
-                {% endif %}
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-    {% else %}
-    {% comment %} No x-internal - SHOW {% endcomment %}
-    <div class="swagger-method swagger-method-{{ method[0] }}">
-        <h3 class="swagger-method-title">
-            <a href="#" class="swagger-method-link">
-                <span class="swagger-method-name">{{ method[0] | upcase }}</span>
-                <span class="swagger-method-summary">{{ method[1].summary }}</span>
-            </a>
-        </h3>
-        <div class="swagger-method-details">
-            <h5>Description</h5>
-            <md-block>
-                <span class="swagger-method-description">{{method[1].description}}</span>
-            </md-block>
-            {% if method[1].parameters %}
-            <div class="swagger-parameters">
-                <h5>Parameters</h5>
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Located in</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in method[1].parameters %}
-                        <tr>
-                            <td>
-                                {% if parameter.required %}
-                                <span class="swagger-parameter-required">
-                                    {% endif %}
-                                    {{ parameter.name }}
-                                    {% if parameter.required %}
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td>{{ parameter.in }}</td>
-                            <td>{{ parameter.description }}</td>
-                            <td>
-                                {% if parameter.type %}
-                                {{ parameter.type | capitalize }}
-                                {% if parameter.items %}
-                                of {{ parameter.items.type | capitalize }}
-                                {% endif %}
-                                {% else %}
-                                Unknown
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-            {% if method[1].responses %}
-            <div class="swagger-response">
-                <h5>Responses</h5>
-                {% for response in method[1].responses %}
-                <div class="swagger-response-{{ response[0] }}">
-                    <p class="swagger-response-title">
-                        <span class="swagger-response-code">{{ response[0] }}</span>
-                        {% if response[1].description != "" %}<span class="swagger-response-seperator">-</span>{% endif
-                        %}
-                        <md-block class="mdblock">
-                            <span class="swagger-response-description">{{ response[1].description }}</span>
-                        </md-block>
-                    </p>
-                </div>
-                {% if response[1].schema.properties %}
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Format</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in response[1].schema.properties %}
-                        <tr>
-                            <td>{{ parameter[0] }}</td>
-                            <td>
-                                {% if parameter[1].format %}
-                                {{ parameter[1].format }}
-                                {% else %}
-                                Object
-                                {% endif %}
-
-                            </td>
-                            <td>{{ parameter[1].type }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
-                {% for content_type in swagger.produces %}
-                {% if response[1].examples[content_type] %}
-                {% assign example = response[1].examples[content_type] %}
-                {% if content_type contains 'json' %}
-                {% highlight json %}{{ example }}{% endhighlight %}
-                {% elsif content_type contains 'xml' %}
-                {% highlight xml %}{{ example }}{% endhighlight %}
-                {% else %}
-                {% highlight http %}{{ example }}{% endhighlight %}
-                {% endif %}
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
+    {% endunless %}
     {% endif %}
     {% endfor %}
 </div>
+{% endif %}
 {% endfor %}
 
 <script type="text/javascript">
