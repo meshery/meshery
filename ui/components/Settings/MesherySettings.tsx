@@ -167,10 +167,10 @@ const MesherySettings = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const modelsResponse = await getMeshModels();
-        const componentsResponse = await getComponentsDetail();
-        const relationshipsResponse = await getRelationshipsDetail();
-        const registrantResponce = await getMeshModelRegistrants();
+        const modelsResponse = (await getMeshModels()) as { models: any[] };
+        const componentsResponse = (await getComponentsDetail(1)) as { total_count: number };
+        const relationshipsResponse = (await getRelationshipsDetail(1)) as { total_count: number };
+        const registrantResponce = (await getMeshModelRegistrants()) as { total_count: number };
 
         const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
         const componentsCount = componentsResponse.total_count;
