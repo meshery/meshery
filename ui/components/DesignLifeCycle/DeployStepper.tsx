@@ -4,13 +4,13 @@ import { DryRunDesign, getTotalCountOfDeploymentErrors } from './DryRun';
 import {
   ModalBody,
   ModalFooter,
-  useStepper,
-  CustomizedStepper,
   ModalButtonPrimary,
   ModalButtonSecondary,
   Box,
   Typography,
 } from '@sistent/sistent';
+// @ts-ignore - useStepper, CustomizedStepper exist at runtime but types may not be exported
+import { useStepper, CustomizedStepper } from '@sistent/sistent';
 import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
@@ -49,9 +49,13 @@ const StepWrapper = styled(Box)({
   overflowY: 'auto',
 });
 
+type StepContentProps = {
+  backgroundColor?: string | undefined;
+};
+
 const StepContent = styled('div', {
-  // shouldForwardProp: (prop) => prop !== 'backgroundColor',
-})(({ theme, backgroundColor }) => ({
+  shouldForwardProp: (prop) => prop !== 'backgroundColor',
+})<StepContentProps>(({ theme, backgroundColor }) => ({
   paddingInline: theme.spacing(4),
   paddingBlock: theme.spacing(2),
   backgroundColor: backgroundColor || theme.palette.background.default,
@@ -76,7 +80,8 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
   }, []);
 
   useEffect(() => {
-    const subscription = operationsCenterActorRef.on(
+    if (!operationsCenterActorRef) return;
+    const subscription = (operationsCenterActorRef as any).on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
       (event) => {
         const serverEvent = event.data.event;
@@ -120,9 +125,9 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 };
 
 const SelectTargetStep = () => {
-  const { organization } = useSelector((state) => state.ui);
-  const { connectionMetadataState } = useSelector((state) => state.ui);
-  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const { organization } = useSelector((state: any) => state.ui);
+  const { connectionMetadataState } = useSelector((state: any) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state: any) => state.ui);
 
   const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
@@ -158,6 +163,7 @@ const DryRunStep = ({
     <Box>
       <DryRunDesign
         handleClose={handleClose}
+        currentComponentName={undefined}
         selectedK8sContexts={selectedK8sContexts}
         includeDependencies={includeDependencies}
         design={design}
@@ -208,7 +214,7 @@ export const UpdateDeploymentStepper = ({
     (k8sConnection) => k8sConnection.metadata.id,
   );
 
-  const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
+  const FinalizeBackgroundColor = theme.palette?.background?.blur?.light;
   const actionFunction = () => {
     handlePerformDeployment({
       design,
@@ -222,7 +228,7 @@ export const UpdateDeploymentStepper = ({
           <StepContent>
             <ValidateDesign
               data-testid="validate-design-step"
-              handleClose={handleClose}
+              currentNodeId={undefined}
               validationMachine={validationMachine}
               design={design}
             />
@@ -236,7 +242,7 @@ export const UpdateDeploymentStepper = ({
         component: (
           <StepContent>
             {' '}
-            <SelectTargetStep handleClose={handleClose} />{' '}
+            <SelectTargetStep />
           </StepContent>
         ),
         helpText:
@@ -255,6 +261,7 @@ export const UpdateDeploymentStepper = ({
               deployment_type={deployment_type}
               includeDependencies={includeDependencies}
               setIncludeDependencies={setIncludeDependencies}
+              bypassDryRun={bypassDryRun}
               setBypassDryRun={setBypassDryRun}
               dryRunErrors={dryRunErrors}
             />
@@ -269,12 +276,7 @@ export const UpdateDeploymentStepper = ({
       {
         component: (
           <StepContent backgroundColor={FinalizeBackgroundColor}>
-            <FinalizeDeployment
-              design={design}
-              deployment_type={deployment_type}
-              openInVisualizer={openInOperator}
-              setOpenInVisualizer={setOpenInOperator}
-            />
+            <FinalizeDeployment design={design} />
           </StepContent>
         ),
         helpText:
@@ -287,7 +289,6 @@ export const UpdateDeploymentStepper = ({
         component: (
           <StepContent>
             <FinishDeploymentStep
-              design={design}
               deployment_type={deployment_type}
               perform_deployment={actionFunction}
               autoOpenView={openInOperator}
@@ -314,7 +315,7 @@ export const UpdateDeploymentStepper = ({
       nextAction: () => deployStepper.handleNext(),
     },
     2: {
-      canGoNext: () => !isDryRunning & (totalDryRunErrors == 0 || bypassDryRun),
+      canGoNext: () => !isDryRunning && (totalDryRunErrors == 0 || bypassDryRun),
       nextButtonText: 'Next',
       nextAction: () => deployStepper.handleNext(),
     },

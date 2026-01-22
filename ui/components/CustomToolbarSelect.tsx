@@ -19,17 +19,17 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 const StyledIcon = styled('span')(({ theme }) => ({
   color:
     theme.palette.mode === 'dark'
-      ? theme.palette.background.brand.pressed
+      ? theme.palette.background?.brand?.pressed || theme.palette.primary.main
       : theme.palette.text.default,
 }));
 
-function CustomToolbarSelect({ setSelectedRows }) {
+function CustomToolbarSelect({ setSelectedRows }: { setSelectedRows: (rows: any[]) => void }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [data, setData] = useState([]);
-  const [, setChartCompare] = useState([]);
-  const fullData = [];
+  const [data, setData] = useState<any[]>([]);
+  const [, setChartCompare] = useState<any[]>([]);
+  const fullData: any[] = [];
   const dispatch = useDispatch();
-  const { results_selection } = useSelector((state) => state.prefTest);
+  const { results_selection } = useSelector((state: any) => state.prefTest);
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
@@ -102,17 +102,18 @@ function CustomToolbarSelect({ setSelectedRows }) {
           </Tooltip>
           {fullData.length === 1 && (
             <Tooltip title="Download">
-              <StyledIconButton
-                key="download"
-                aria-label="download"
-                color="inherit"
+              <a
                 href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
                 download={`${fullData[0].name}_test_result.json`}
+                style={{ display: 'inline-flex' }}
+                aria-label="download"
               >
-                <StyledIcon>
-                  <GetAppIcon />
-                </StyledIcon>
-              </StyledIconButton>
+                <StyledIconButton key="download" aria-label="download" color="inherit">
+                  <StyledIcon>
+                    <GetAppIcon />
+                  </StyledIcon>
+                </StyledIconButton>
+              </a>
             </Tooltip>
           )}
           <Tooltip title="Compare selected">

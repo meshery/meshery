@@ -77,6 +77,23 @@ const getLanguageExtension = (mode) => {
   }
 };
 
+type CodeMirrorOptions = {
+  mode?: string;
+  lineWrapping?: boolean;
+  [key: string]: any;
+};
+
+type CodeMirrorProps = {
+  value?: string;
+  options?: CodeMirrorOptions;
+  onBeforeChange?: (editor: any, data: any, value: string) => void;
+  onChange?: (value: string, viewUpdate: any) => void;
+  onBlur?: (editor: any, event: any) => void;
+  editorDidMount?: (editor: any, value?: string) => void;
+  editorWillUnmount?: (editor: any) => void;
+  [key: string]: any;
+};
+
 const CodeMirror = ({
   value,
   options = {},
@@ -86,8 +103,8 @@ const CodeMirror = ({
   editorDidMount,
   editorWillUnmount,
   ...rest
-}) => {
-  const editorViewRef = useRef(null);
+}: CodeMirrorProps) => {
+  const editorViewRef = useRef<any>(null);
 
   useEffect(() => {
     return () => {
@@ -98,8 +115,8 @@ const CodeMirror = ({
   }, [editorWillUnmount]);
 
   const extensions = useMemo(() => {
-    const editorExtensions = [];
-    const languageExtension = getLanguageExtension(options.mode);
+    const editorExtensions: any[] = [];
+    const languageExtension = options.mode ? getLanguageExtension(options.mode) : null;
 
     if (languageExtension) {
       editorExtensions.push(languageExtension);
@@ -134,7 +151,7 @@ const CodeMirror = ({
           onBeforeChange(viewUpdate?.view, null, nextValue);
         }
         if (onChange) {
-          onChange(viewUpdate?.view, null, nextValue);
+          onChange(nextValue, viewUpdate);
         }
       }}
       onBlur={(event) => {
@@ -145,7 +162,7 @@ const CodeMirror = ({
       onCreateEditor={(view) => {
         editorViewRef.current = view;
         if (editorDidMount) {
-          editorDidMount(view);
+          editorDidMount(view, getSafeValue(value));
         }
       }}
       {...rest}

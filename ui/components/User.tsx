@@ -13,19 +13,30 @@ import { updateUser } from '@/store/slices/mesheryUi';
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
-const User = (props) => {
+type UserProps = {
+  color?: string;
+  [key: string]: any;
+};
+
+type AccountItem = {
+  title: string;
+  href: string;
+  [key: string]: any;
+};
+
+const User = (props: UserProps) => {
   const [userLoaded, setUserLoaded] = useState(false);
-  const [account, setAccount] = useState([]);
+  const [account, setAccount] = useState<AccountItem[]>([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: any) => state.ui);
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
     isError: isGetUserError,
     error: getUserError,
-  } = useGetLoggedInUserQuery();
+  } = useGetLoggedInUserQuery(undefined, {});
 
   const getProfileUrl = () => {
     return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
@@ -34,7 +45,7 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.location.href = profileUrl;
       return;
     }
   };
@@ -47,7 +58,7 @@ const User = (props) => {
       notify({
         message: 'Error fetching user',
         event_type: EVENT_TYPES.ERROR,
-        details: getUserError?.data,
+        details: (getUserError as any)?.data,
       });
     }
   }, [userData, isGetUserSuccess, isGetUserError]);
@@ -96,7 +107,12 @@ const User = (props) => {
   );
 };
 
-const UserProvider = (props) => {
+type UserProviderProps = {
+  color?: string;
+  [key: string]: any;
+};
+
+const UserProvider = (props: UserProviderProps) => {
   return <User {...props} />;
 };
 

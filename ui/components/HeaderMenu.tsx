@@ -49,7 +49,7 @@ const HeaderMenu = () => {
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const handleLogout = () => {
-    window.location = '/user/logout';
+    window.location.href = '/user/logout';
     handleClose();
   };
 
