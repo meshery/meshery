@@ -1,6 +1,9 @@
 package connections
 
 import (
+	"fmt"
+	"net/url"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -8,6 +11,14 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
+
+type connectionListFlags struct {
+	count bool
+	kind  []string
+	page  int
+}
+
+var connectionListFlagsProvided connectionListFlags
 
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
@@ -24,7 +35,6 @@ mesheryctl connection list --page [page-number]
 // Display total count of all available connections
 mesheryctl connection list --count
 `,
-
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection list \nRun 'mesheryctl connection list --help' to see detailed help message"
 		if len(args) != 0 {
@@ -32,9 +42,19 @@ mesheryctl connection list --count
 		}
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
-		connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
+		urlPath := connectionApiPath
+		querySearch := url.Values{}
+
+		for _, kind := range connectionListFlagsProvided.kind {
+			utils.Log.Debug("Adding kind to query: ", kind)
+			querySearch.Add("kind", kind)
+		}
+
+		urlPath = fmt.Sprintf("%s?%s", connectionApiPath, querySearch.Encode())
+		utils.Log.Debug("Final URL: ", urlPath)
+
+		connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
 
 		if err != nil {
 			return err
@@ -87,6 +107,7 @@ func getConnectionDetail(connection *connection.Connection) []string {
 }
 
 func init() {
-	listConnectionsCmd.Flags().BoolP("count", "c", false, "Display the count of total available connections")
-	listConnectionsCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "Page number")
+	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
 }
