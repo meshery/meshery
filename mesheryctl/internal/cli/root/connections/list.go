@@ -51,7 +51,9 @@ mesheryctl connection list --count
 			querySearch.Add("kind", kind)
 		}
 
-		urlPath = fmt.Sprintf("%s?%s", connectionApiPath, querySearch.Encode())
+		if len(querySearch) > 0 {
+			urlPath += fmt.Sprintf("?%s", querySearch.Encode())
+		}
 		utils.Log.Debug("Final URL: ", urlPath)
 
 		connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
