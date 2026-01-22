@@ -21476,6 +21476,300 @@ paths:
           description: Internal server error
       tags:
         - Organization_other
+  /api/identity/orgs/{orgID}/teams/{teamId}:
+    servers: []
+    post:
+      summary: Add team to organization or soft delete team
+      description: >-
+        Adds a team to an organization. If request body contains action=delete,
+        tombstones a team by setting its deleted_at timestamp. The team's
+        organization mapping remains intact.
+      operationId: AddTeamToOrg
+      parameters:
+        - name: orgID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              description: >-
+                Optional action payload for POST on
+                /api/identity/orgs/{orgID}/teams/{teamId}.
+              properties:
+                action:
+                  type: string
+                  description: Internal action to perform on the team resource.
+                  enum:
+                    - delete
+      responses:
+        '200':
+          description: Team added to organization or team tombstoned
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+                      teams_organizations_mapping:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: id
+                                json: id
+                              x-go-type-name: GeneralId
+                              x-go-type-skip-optional-pointer: true
+                            org_id:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: org_id
+                                json: org_id
+                              x-go-type-name: OrganizationId
+                              x-go-type-skip-optional-pointer: true
+                            team_id:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: team_id
+                                json: team_id
+                              x-go-type-name: TeamId
+                              x-go-type-skip-optional-pointer: true
+                            created_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            updated_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            deleted_at:
+                              type: string
+                              format: date-time
+                              x-go-type: sql.NullTime
+                              x-go-type-import:
+                                path: database/sql
+                              x-go-type-skip-optional-pointer: true
+                  - type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+                      teams:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: id
+                                json: id
+                              x-go-type-name: GeneralId
+                              x-go-type-skip-optional-pointer: true
+                            name:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            description:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            owner:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            metadata:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              x-go-type-skip-optional-pointer: true
+                            created_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            updated_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            deleted_at:
+                              type: string
+                              format: date-time
+                              x-go-type: sql.NullTime
+                              x-go-type-import:
+                                path: database/sql
+                              x-go-type-skip-optional-pointer: true
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+      tags:
+        - Organization_other
+    delete:
+      summary: Remove team from organization
+      description: Removes (unassigns) a team from an organization.
+      operationId: RemoveTeamFromOrg
+      parameters:
+        - name: orgID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+      responses:
+        '200':
+          description: Team removed from organization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  page_size:
+                    type: integer
+                  total_count:
+                    type: integer
+                  teams_organizations_mapping:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ID:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: id
+                          x-go-type-name: GeneralId
+                          x-go-type-skip-optional-pointer: true
+                        org_id:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: org_id
+                            json: org_id
+                          x-go-type-name: OrganizationId
+                          x-go-type-skip-optional-pointer: true
+                        team_id:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: team_id
+                            json: team_id
+                          x-go-type-name: TeamId
+                          x-go-type-skip-optional-pointer: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updated_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        deleted_at:
+                          type: string
+                          format: date-time
+                          x-go-type: sql.NullTime
+                          x-go-type-import:
+                            path: database/sql
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+      tags:
+        - Organization_other
   /api/entitlement/plans:
     servers: []
     get:
@@ -66363,6 +66657,25 @@ components:
       type: string
       format: date-time
       x-go-type-skip-optional-pointer: true
+    Organization_Text:
+      type: string
+      x-go-type-skip-optional-pointer: true
+    Organization_MapObject:
+      type: object
+      additionalProperties:
+        type: string
+      x-go-type-skip-optional-pointer: true
+    Organization_OrgTeamActionPayload:
+      type: object
+      description: >-
+        Optional action payload for POST on
+        /api/identity/orgs/{orgID}/teams/{teamId}.
+      properties:
+        action:
+          type: string
+          description: Internal action to perform on the team resource.
+          enum:
+            - delete
     Organization_Location:
       type: object
       required:
@@ -66815,6 +67128,216 @@ components:
           nullable: true
           x-oapi-codegen-extra-tags:
             db: domain
+    Organization_AvailableTeam:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: id
+            json: id
+          x-go-type-name: GeneralId
+          x-go-type-skip-optional-pointer: true
+        name:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        description:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        owner:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          x-go-type-skip-optional-pointer: true
+        created_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          type: string
+          format: date-time
+          x-go-type: sql.NullTime
+          x-go-type-import:
+            path: database/sql
+          x-go-type-skip-optional-pointer: true
+    Organization_TeamsPage:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  json: id
+                x-go-type-name: GeneralId
+                x-go-type-skip-optional-pointer: true
+              name:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              description:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              owner:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              metadata:
+                type: object
+                additionalProperties:
+                  type: string
+                x-go-type-skip-optional-pointer: true
+              created_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                type: string
+                format: date-time
+                x-go-type: sql.NullTime
+                x-go-type-import:
+                  path: database/sql
+                x-go-type-skip-optional-pointer: true
+    Organization_TeamsOrganizationsMapping:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: id
+            json: id
+          x-go-type-name: GeneralId
+          x-go-type-skip-optional-pointer: true
+        org_id:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: org_id
+            json: org_id
+          x-go-type-name: OrganizationId
+          x-go-type-skip-optional-pointer: true
+        team_id:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: team_id
+            json: team_id
+          x-go-type-name: TeamId
+          x-go-type-skip-optional-pointer: true
+        created_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          type: string
+          format: date-time
+          x-go-type: sql.NullTime
+          x-go-type-import:
+            path: database/sql
+          x-go-type-skip-optional-pointer: true
+    Organization_TeamsOrganizationsMappingPage:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+        teams_organizations_mapping:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  json: id
+                x-go-type-name: GeneralId
+                x-go-type-skip-optional-pointer: true
+              org_id:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: org_id
+                  json: org_id
+                x-go-type-name: OrganizationId
+                x-go-type-skip-optional-pointer: true
+              team_id:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: team_id
+                  json: team_id
+                x-go-type-name: TeamId
+                x-go-type-skip-optional-pointer: true
+              created_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                type: string
+                format: date-time
+                x-go-type: sql.NullTime
+                x-go-type-import:
+                  path: database/sql
+                x-go-type-skip-optional-pointer: true
     plan_PlanPage:
       type: object
       required:
@@ -69165,6 +69688,36 @@ components:
       description: Get responses that match search param value
       schema:
         type: string
+    Organization_orgID:
+      name: orgID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: org_id
+          json: org_id
+        x-go-type-name: OrganizationId
+        x-go-type-skip-optional-pointer: true
+    Organization_teamId:
+      name: teamId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: team_id
+          json: team_id
+        x-go-type-name: TeamId
+        x-go-type-skip-optional-pointer: true
     subscription_subscriptionId:
       name: subscriptionId
       in: path
