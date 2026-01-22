@@ -239,8 +239,13 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		return
 	}
 
+	// TODO: validate statusList values from connection schema
 	statusList := q["status"]
+
+	// TODO: validate kindList values from connection schema
 	kindList := q["kind"]
+
+	// TODO: validate typeList values from connection schema
 	typeList := q["type"]
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s, filter: %s, status: %v, kind: %v, type: %v, name: %s", page+1, pageSize, search, order, filter, statusList, kindList, typeList, name))
