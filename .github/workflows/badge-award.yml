@@ -60,10 +60,10 @@ jobs:
             # Check each PR
             for pr in $prs; do
               # Check if merged
-              merged=$(gh pr view "$pr" --json merged --jq '.merged' 2>/dev/null || echo "false")
+              merged_at=$(gh pr view "$pr" --json mergedAt --jq '.mergedAt' 2>/dev/null || echo "null")
               
-              if [ "$merged" = "true" ]; then
-                echo "  PR #$pr: merged ✓"
+              if [ "$merged_at" != "null" ] && [ -n "$merged_at" ]; then
+                echo "  PR #$pr: merged at $merged_at"
                 
                 # Extract emails from commit messages
                 gh pr view "$pr" --json commits \
