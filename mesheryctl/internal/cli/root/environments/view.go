@@ -21,8 +21,8 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -84,6 +84,18 @@ mesheryctl environment view --orgID [orgID]
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
+		outputFormatterFactory := display.OutputFormatterFactory[environment.Environment]{}
+		outputFormatter, err := outputFormatterFactory.New(outFormat, selectedEnvironment)
+		if err != nil {
+			return err
+		}
+
+		err = outputFormatter.Display()
+		if err != nil {
+			return err
+		}
+
+		// TODO: Add support for YAML/JSON output saving in outputFormatter itself
 		switch outFormat {
 		case "yaml", "yml":
 			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
@@ -96,8 +108,6 @@ mesheryctl environment view --orgID [orgID]
 					return utils.ErrMarshal(errors.Wrap(err, "failed to save output as YAML file"))
 				}
 				utils.Log.Info("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
-			} else {
-				utils.Log.Info(string(output))
 			}
 		case "json":
 			if save {
@@ -113,7 +123,6 @@ mesheryctl environment view --orgID [orgID]
 				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return format.OutputJson(selectedEnvironment)
 		}
 
 		return nil
