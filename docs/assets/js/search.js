@@ -111,3 +111,26 @@ excluded_in_search: true
 
 	displaySearchResults(results, query); // Hand the results off to be displayed
 })();
+
+document.addEventListener("keydown", function (event) {
+  const tag = document.activeElement.tagName.toLowerCase();
+  const isTyping =
+    tag === "input" ||
+    tag === "textarea" ||
+    document.activeElement.isContentEditable;
+
+  if (isTyping) return;
+
+  if (event.key === "/") {
+    event.preventDefault();
+
+    const searchInput = document.querySelector(
+      'input[type="search"], input#search-input, input[name="search"]'
+    );
+
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  }
+});
