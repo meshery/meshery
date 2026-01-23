@@ -212,12 +212,7 @@ mesheryctl system status --verbose
 			configuredEndpoint := currCtx.GetEndpoint()
 
 			// Try to get the actual service endpoint from Kubernetes
-			var opts meshkitkube.ServiceOptions
-			opts.Name = "meshery"
-			opts.Namespace = utils.MesheryNamespace
-			opts.APIServerURL = client.RestConfig.Host
-
-			endpoint, err := meshkitkube.GetServiceEndpoint(cmd.Context(), client.KubeClient, &opts)
+			endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
 			if err == nil && endpoint.External.Address != "" {
 				actualEndpoint := fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
 				log.Info(fmt.Sprintf("\nMeshery endpoint is %s", actualEndpoint))
