@@ -25,6 +25,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl model`](#meshery-models) - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
 - [`mesheryctl component`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
 - [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
+- [`mesheryctl connection`](#meshery-connections) - Managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments. 
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
@@ -783,6 +784,52 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% for subcommand_hash in command14.subcommands %}{% assign subcomand = subcommand_hash[1] %}
       <tr>
         <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+## Meshery Connection
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign cmdConnection = site.data.mesheryctlcommands.cmds.connection %}
+  {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmdConnection.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmdConnection.subcommands.size | plus: subcommand_flag_count | plus: cmdConnection.flags.size | plus: 1 %}
+    <tr>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdConnection.name }}">{{ cmdConnection.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ cmdConnection.description }}</td>
+    </tr>
+    {% for flag_hash in cmdConnection.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in cmdConnection.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdConnection.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
         <td></td>
         <td>{{ subcomand.description }}</td>
       </tr>
