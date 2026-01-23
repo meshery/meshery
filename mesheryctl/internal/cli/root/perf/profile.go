@@ -96,15 +96,13 @@ mesheryctl perf profile test --view
 
 		// print in json/yaml format
 		if outputFormatFlag != "" {
-			for _, profile := range profiles {
-				outputFormatterFactory := display.OutputFormatterFactory[models.PerformanceProfile]{}
-				outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, profile)
-				if err != nil {
-					return err
-				}
-
-				outputFormatter.Display()
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceProfile]{}
+			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, profiles)
+			if err != nil {
+				return err
 			}
+
+			outputFormatter.Display()
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
