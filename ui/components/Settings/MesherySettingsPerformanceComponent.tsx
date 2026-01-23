@@ -33,9 +33,9 @@ const FormControlWrapper = styled(FormControl)({
 
 const MesherySettingsPerformanceComponent = () => {
   const { notify } = useNotification();
-  const { loadTestPref } = useSelector((state) => state.prefTest);
+  const { loadTestPref } = useSelector((state: any) => state.prefTest);
   const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = loadTestPref;
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state: any) => state.ui);
 
   const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);
   const [updateLoadTestPrefs, { isLoading: isSaving }] = useUpdateLoadTestPrefsMutation();
@@ -70,7 +70,7 @@ const MesherySettingsPerformanceComponent = () => {
   };
 
   const handleDurationChange = (_event: unknown, newValue: string | null) => {
-    setTValue(newValue);
+    setTValue(newValue || '');
     if (newValue !== null) {
       setTError('');
     }
@@ -113,12 +113,14 @@ const MesherySettingsPerformanceComponent = () => {
     }
   };
 
-  const handleError = (msg: string) => (error: Error | string) => {
+  const handleError = (msg: string) => (error: Error | string | unknown) => {
     let finalMsg = msg;
     if (typeof error === 'string') {
       finalMsg = `${msg}: ${error}`;
     }
-    notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
+    const errorDetails = error instanceof Error ? error.toString() : String(error);
+    // @ts-expect-error - details type definition is incorrect, should accept string
+    notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: errorDetails });
   };
 
   // const { blockRunTest, qps, t, c, gen, tValue, tError } = state;
@@ -172,6 +174,7 @@ const MesherySettingsPerformanceComponent = () => {
                   required
                   id="t"
                   name="t"
+                  // @ts-expect-error
                   freeSolo
                   label="Duration*"
                   fullWidth
@@ -184,14 +187,14 @@ const MesherySettingsPerformanceComponent = () => {
                   onInputChange={handleInputDurationChange}
                   options={durationOptions}
                   style={{ marginTop: '16px', marginBottom: '8px' }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Duration*" variant="outlined" />
+                  renderInput={(params: any) => (
+                    <TextField {...params} label="Duration*" variant="outlined" size={undefined} />
                   )}
                 />
               </CustomTooltip>
             </Grid2>
             <Grid2 size={{ xs: 12, lg: 4 }}>
-              <FormControlWrapper component="loadGenerator">
+              <FormControlWrapper>
                 <label>
                   <strong>Default Load Generator</strong>
                 </label>
