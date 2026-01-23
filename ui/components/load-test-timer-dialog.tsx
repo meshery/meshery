@@ -96,15 +96,15 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
           marginRight: 'auto',
           width: 400,
           position: 'relative',
-          zIndex: 0,
         }}
+        aria-label={`Performance test countdown: ${formattedTime} remaining`}
       >
         <Box sx={{ position: 'relative', display: 'inline-flex', width: 400, height: 400 }}>
           <CircularProgress
             variant="determinate"
             value={progress}
             size={400}
-            sx={{ color: '#667C89' }}
+            sx={{ color: 'white' }}
           />
           <Box
             sx={{
@@ -118,7 +118,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
               justifyContent: 'center',
             }}
           >
-            <Typography variant="h4" component="div" color="#667C89">
+            <Typography variant="h4" component="div" color="white">
               {formattedTime}
             </Typography>
           </Box>

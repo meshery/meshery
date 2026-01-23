@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Button,
   Typography,
@@ -453,6 +454,9 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const submitLoadTest = (id) => {
+    // Open timer dialog immediately to provide instant visual feedback
+    // This ensures the countdown timer is always displayed when a test is initiated,
+    // rather than waiting for server-side events which may be unreliable
     setTimerDialogOpen(true);
     const computedTestName = generateTestName(testNameState, meshNameState);
     setTestName(computedTestName);
@@ -1261,16 +1265,19 @@ const MesheryPerformanceComponent_ = (props) => {
               </React.Fragment>
             </ModalFooter>
 
-            {timerDialogOpenState ? (
-              <CenterTimer>
-                <LoadTestTimerDialog
-                  open={timerDialogOpenState}
-                  t={tState}
-                  onClose={handleTimerDialogClose}
-                  countDownComplete={handleTimerDialogClose}
-                />
-              </CenterTimer>
-            ) : null}
+            {timerDialogOpenState &&
+              typeof window !== 'undefined' &&
+              createPortal(
+                <CenterTimer>
+                  <LoadTestTimerDialog
+                    open={timerDialogOpenState}
+                    t={tState}
+                    onClose={handleTimerDialogClose}
+                    countDownComplete={handleTimerDialogClose}
+                  />
+                </CenterTimer>,
+                document.body,
+              )}
           </React.Fragment>
 
           {displayStaticCharts}
