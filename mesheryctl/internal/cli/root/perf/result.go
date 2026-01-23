@@ -144,15 +144,13 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if outputFormatFlag != "" {
-			for _, result := range results {
-				outputFormatterFactory := display.OutputFormatterFactory[models.PerformanceResult]{}
-				outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, result)
-				if err != nil {
-					return err
-				}
-
-				outputFormatter.Display()
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
+			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, results)
+			if err != nil {
+				return err
 			}
+
+			outputFormatter.Display()
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {

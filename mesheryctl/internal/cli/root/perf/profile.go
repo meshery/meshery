@@ -247,5 +247,5 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 
 func init() {
 	profileCmd.Flags().BoolVarP(&viewSingleProfile, "view", "", false, "(optional) View single performance profile with more info")
-	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance data with --page (default = 1)")
+	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
 }
