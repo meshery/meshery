@@ -35,8 +35,8 @@ const (
 	ErrPatternSourceTypeCode          = "mesheryctl-1121"
 	ErrParseDesignFileCode            = "mesheryctl-1163"
 	ErrDeleteDesignCode               = "mesheryctl-1164"
-	ErrInvalidCommandCode             = "mesheryctl-1165"
-	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1166"
+	ErrInvalidCommandCode             = "mesheryctl-1191"
+	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 )
 
 const (

@@ -21,7 +21,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
@@ -55,7 +55,7 @@ mesheryctl environment list --orgID [orgID]
 			return utils.ErrInvalidOrgID(err)
 		}
 
-		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
+		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
 		if err != nil {
 			return utils.ErrFetchEnvironments(err)
