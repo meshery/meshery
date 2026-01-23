@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -90,8 +89,9 @@ mesheryctl perf result saturday-profile --view
 
 		// Check for valid output Format
 		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
 			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(errors.New(fmt.Sprintf(invalidOutputFormatMsg, outputFormatFlag)))
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
 			}
 		}
 

@@ -68,8 +68,9 @@ mesheryctl perf profile test --view
 
 		// Check for valid output Format
 		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
 			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(errors.New(fmt.Sprintf(invalidOutputFormatMsg, outputFormatFlag)))
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
 			}
 		}
 
