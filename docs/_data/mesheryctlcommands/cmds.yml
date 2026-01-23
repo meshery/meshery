@@ -1076,7 +1076,6 @@ environment:
           usage: mesheryctl environment view --output-format [json|yaml] --save [filepath]
           example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
 
-exp:
   connection:
     name: connection
     description: Manage Meshery connections
@@ -1104,11 +1103,21 @@ exp:
             name: -p, --page
             description: "(optional) List next set of exp connection list with --page (default = 1) (default 1)."
             usage: mesheryctl exp connection list --page [page number]
-            example: mesheryctl exp connection list --page 2
+            example: mesheryctl connection list --page 2
           count:
             name: --count
             description: (optional) Get the number of exp connection in total
-  
+            example: mesheryctl connection list --count
+          kind:
+            name: -k, --kind
+            description: set of kind of connection
+            example: mesheryctl connection list --kind artifacthub --kind github
+          status:
+            name: -s, --status
+            description: set of status of connection
+            example: mesheryctl connection list --status active --status inactive
+
+exp:  
   relationship:
     name: relationship
     description: View list of relationships and details of relationship

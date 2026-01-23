@@ -13,9 +13,10 @@ import (
 )
 
 type connectionListFlags struct {
-	count bool
-	kind  []string
-	page  int
+	count  bool
+	kind   []string
+	status []string
+	page   int
 }
 
 var connectionListFlagsProvided connectionListFlags
@@ -31,6 +32,12 @@ mesheryctl connection list
 
 // List all the connections with page number
 mesheryctl connection list --page [page-number]
+
+// List all the connections matching a specific kind and status
+mesheryctl connection list --kind [kind] --status [status]
+
+// List all the connections matching a set of kinds and statuses
+mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
 
 // Display total count of all available connections
 mesheryctl connection list --count
@@ -49,6 +56,11 @@ mesheryctl connection list --count
 		for _, kind := range connectionListFlagsProvided.kind {
 			utils.Log.Debug("Adding kind to query: ", kind)
 			querySearch.Add("kind", kind)
+		}
+
+		for _, status := range connectionListFlagsProvided.status {
+			utils.Log.Debug("Adding status to query: ", status)
+			querySearch.Add("status", status)
 		}
 
 		if len(querySearch) > 0 {
@@ -111,5 +123,6 @@ func getConnectionDetail(connection *connection.Connection) []string {
 func init() {
 	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
 	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
 }
