@@ -139,6 +139,7 @@ mesheryctl system status --verbose
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
 			if err = hc.Run(); err != nil {
+				utils.Log.Debug(err)
 				return nil
 			}
 
