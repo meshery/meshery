@@ -25,7 +25,7 @@ import (
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -87,14 +87,15 @@ mesheryctl perf profile test --view
 
 		// print in json/yaml format
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(profiles)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
-			}
-			utils.Log.Info(string(body))
+			for _, profile := range profiles {
+				outputFormatterFactory := display.OutputFormatterFactory[models.PerformanceProfile]{}
+				outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, profile)
+				if err != nil {
+					return err
+				}
 
+				outputFormatter.Display()
+			}
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
@@ -239,5 +240,5 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 
 func init() {
 	profileCmd.Flags().BoolVarP(&viewSingleProfile, "view", "", false, "(optional) View single performance profile with more info")
-	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
+	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance data with --page (default = 1)")
 }

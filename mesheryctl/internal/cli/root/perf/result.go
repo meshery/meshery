@@ -21,9 +21,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -135,13 +135,15 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(results)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
+			for _, result := range results {
+				outputFormatterFactory := display.OutputFormatterFactory[models.PerformanceResult]{}
+				outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, result)
+				if err != nil {
+					return err
+				}
+
+				outputFormatter.Display()
 			}
-			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {
