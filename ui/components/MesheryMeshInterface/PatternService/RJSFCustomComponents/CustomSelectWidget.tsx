@@ -41,7 +41,7 @@ export default function CustomSelectWidget({
   // registry,
   // uiSchema,
   // hideError,
-  formContext,
+  formContext: _formContext,
   ...textFieldProps
 }) {
   const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
@@ -90,7 +90,6 @@ export default function CustomSelectWidget({
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
                   bgColor={ERROR_COLOR}
-                  flag={formContext?.overrideFlag}
                   title={rawErrors?.join('  ')}
                   interactive={true}
                 >
@@ -106,7 +105,6 @@ export default function CustomSelectWidget({
               )}
               {schema?.description && (
                 <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
                   title={schema?.description}
                   interactive={true}
                 >
@@ -131,11 +129,11 @@ export default function CustomSelectWidget({
         }}
         SelectProps={{
           ...textFieldProps.SelectProps,
-          renderValue: (selected) => {
+          renderValue: (selected: any) => {
             if (multiple) {
-              return selected.map((index) => enumOptions[index].label).join(', ');
+              return (selected as number[]).map((index) => enumOptions[index].label).join(', ');
             }
-            return enumOptions[selected].label;
+            return enumOptions[selected as number].label;
           },
           multiple,
           MenuProps: {

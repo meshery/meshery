@@ -1,8 +1,10 @@
 import { Grid2, Pagination } from '@sistent/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
-import DesignConfigurator from '../configuratorComponents/MeshModel';
+import DesignConfiguratorComponent from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
+
+const DesignConfigurator = DesignConfiguratorComponent as any;
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
   GridNoContainerStyles,
@@ -145,7 +147,7 @@ function MesheryPatternGrid({
   hideVisibility = false,
   arePatternsReadOnly = false,
   'data-testid': testId = 'meshery-patterns-grid',
-}) {
+}: any) {
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
@@ -279,6 +281,8 @@ function MesheryPatternGrid({
             handleSubmit={handlePublish}
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
             handleClose={handlePublishModalClose}
+            handleNext={() => { }}
+            title={publishModal.pattern?.name || 'Publish Pattern'}
           />
         </SistentModal>
       )}

@@ -16,7 +16,13 @@ const CustomFileWidget = (props) => {
     const f = event.target.files[0];
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target.result);
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          resolve(event.target.result);
+        } else {
+          reject(new Error('Failed to read file'));
+        }
+      };
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(f);
     })

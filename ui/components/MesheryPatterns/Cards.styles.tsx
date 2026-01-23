@@ -1,6 +1,8 @@
 import { Grid, styled } from '@sistent/sistent';
 
-export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
+export const StyledCodeMirrorWrapper = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'fullScreen',
+})(({ fullScreen }: any) => ({
   height: fullScreen ? '100%' : undefined,
   width: '100%',
   '& .cm-editor': {

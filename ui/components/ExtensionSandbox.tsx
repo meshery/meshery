@@ -232,11 +232,9 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
 
-      // @ts-expect-error - capabilitiesRegistry.extensions type definition is incomplete
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
         try {
-          // @ts-expect-error - capabilitiesRegistry.extensions type definition is incomplete
-          const extensionData = capabilitiesRegistry.extensions[type];
+          const extensionData = (capabilitiesRegistry.extensions as any)[type];
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
           setIsLoading(false);
