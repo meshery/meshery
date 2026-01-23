@@ -21,7 +21,7 @@ common_outputs_on_success() {
 @test "mesheryctl registry generate displays usage instructions when no arguments are provided" {
     run $MESHERYCTL_BIN registry generate 
     assert_failure
-    assert_output --partial "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified"
+    assert_output --partial "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified"
     assert_output --partial "Usage:"
     assert_output --partial "mesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred \$CRED"
 }
