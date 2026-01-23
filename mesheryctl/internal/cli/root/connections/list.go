@@ -70,7 +70,7 @@ mesheryctl connection list --count
 
 		header := []string{"id", "Name", "Type", "Kind", "Status"}
 
-		designData := display.DisplayDataAsync{
+		data := display.DisplayDataAsync{
 			UrlPath:          urlPath,
 			DataType:         "connection",
 			Header:           header,
@@ -80,11 +80,11 @@ mesheryctl connection list --count
 			DisplayCountOnly: connectionListFlagsProvided.count,
 		}
 
-		return display.ListAsyncPagination(designData, processDesignData)
+		return display.ListAsyncPagination(data, processConnectionData)
 	},
 }
 
-func processDesignData(connectionsResponse *connection.ConnectionPage) ([][]string, int64) {
+func processConnectionData(connectionsResponse *connection.ConnectionPage) ([][]string, int64) {
 	rows := [][]string{}
 	for _, connection := range connectionsResponse.Connections {
 		row := getConnectionDetail(connection)
