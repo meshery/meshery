@@ -2,10 +2,12 @@
 import React from 'react';
 import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
+import { isMultiSelect } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
@@ -25,9 +27,9 @@ function getTitle(props) {
 }
 
 const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultFormState(), classes } = props;
+  const { schema, registry, classes } = props;
   // TODO: update types so we don't have to cast registry as any
-  if (isMultiSelect(schema, registry.rootSchema)) {
+  if (isMultiSelect(schema, registry?.rootSchema)) {
     return <DefaultFixedArrayFieldTemplate {...props} />;
   } else {
     return <DefaultNormalArrayFieldTemplate {...props} />;
@@ -73,25 +75,25 @@ const DefaultArrayItem = (props) => {
           <Grid2>
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconButton
-                icon="arrow-up"
                 className="array-item-move-up"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
                 disabled={props.disabled || props.readonly || !props.hasMoveUp}
                 onClick={props.onReorderClick(props.index, props.index - 1)}
-              />
+              >
+                <ArrowUpwardIcon fontSize="small" />
+              </IconButton>
             )}
 
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconButton
-                icon="arrow-down"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
                 disabled={props.disabled || props.readonly || !props.hasMoveDown}
                 onClick={props.onReorderClick(props.index, props.index + 1)}
-              />
+              >
+                <ArrowDownwardIcon fontSize="small" />
+              </IconButton>
             )}
           </Grid2>
         )}
@@ -116,10 +118,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 
       <ArrayFieldTitle
         key={`array-field-title-${props.idSchema.$id}`}
-        TitleField={props.TitleField}
-        idSchema={props.idSchema}
         title={getTitle(props)}
-        required={props.required}
         classes={classes}
       />
 
@@ -153,23 +152,20 @@ const DefaultNormalArrayFieldTemplate = (props) => {
       <Box p={1}>
         <Grid2
           alignItems="center"
-          justify="space-between"
+          justifyContent="space-between"
           style={{ marginBottom: '0.3rem' }}
           size="grow"
         >
           <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
               key={`array-field-title-${props.idSchema.$id}`}
-              TitleField={props.TitleField}
-              idSchema={props.idSchema}
               title={getTitle(props)}
-              required={props.required}
               classes={classes}
             />
 
             {(props.uiSchema['ui:description'] || props.schema.description) && (
               <CustomTextTooltip title={props.schema.description}>
-                <IconButton disableTouchRipple="true" disableRipple="true">
+                <IconButton disableTouchRipple={true} disableRipple={true}>
                   <HelpOutlineIcon
                     width="14px"
                     height="14px"
@@ -188,8 +184,8 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 <IconButton
                   component="span"
                   size="small"
-                  disableTouchRipple="true"
-                  disableRipple="true"
+                  disableTouchRipple={true}
+                  disableRipple={true}
                 >
                   <ErrorOutlineIcon
                     width="16px"
@@ -203,15 +199,15 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid2>
           <Grid2 size={{ xs: 4 }}>
             {props.canAdd && (
-              <Grid2 container justify="flex-end">
-                <Grid2 item={true}>
+              <Grid2 container justifyContent="flex-end">
+                <Grid2>
                   <Box mt={2}>
                     <IconButton
                       className="array-item-add"
                       onClick={props.onAddClick}
                       disabled={props.disabled || props.readonly}
                     >
-                      <AddIcon width="18px" height="18px" fill="gray" />
+                      <AddIcon />
                     </IconButton>
                   </Box>
                 </Grid2>
