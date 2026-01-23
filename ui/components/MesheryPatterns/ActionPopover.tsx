@@ -10,7 +10,16 @@ import {
 } from '@sistent/sistent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const ActionPopover = ({ actions = [] }: { actions?: Array<{ disabled?: boolean; onClick: (event: any) => void; icon?: React.ReactNode; label?: string }> }) => {
+const ActionPopover = ({
+  actions = [],
+}: {
+  actions?: Array<{
+    disabled?: boolean;
+    onClick: (_event: any) => void;
+    icon?: React.ReactNode;
+    label?: string;
+  }>;
+}) => {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
 

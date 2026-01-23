@@ -6,7 +6,8 @@ export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {
     cursor: 'not-allowed',
     pointerEvents: 'auto',
-    backgroundColor: theme.palette.background.brand.disabled,
+    backgroundColor:
+      theme.palette.background.brand?.disabled ?? theme.palette.action.disabledBackground,
     color: theme.palette.text.disabled,
   },
 }));

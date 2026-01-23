@@ -118,9 +118,7 @@ const sortProperties = (properties) => {
 
       if (properties[key].items?.properties) {
         // Handles Arrays in the schema
-        sortedProperties[key].items.properties = sortProperties(
-          properties[key].items.properties,
-        );
+        sortedProperties[key].items.properties = sortProperties(properties[key].items.properties);
       }
 
       if (properties[key] || properties[key].items) {
@@ -140,9 +138,7 @@ const sortProperties = (properties) => {
           }
           if (item.items?.properties) {
             // Handles Arrays in the schema
-            handleReserve[index].items.properties = sortProperties(
-              item.items.properties,
-            );
+            handleReserve[index].items.properties = sortProperties(item.items.properties);
           }
         });
       }

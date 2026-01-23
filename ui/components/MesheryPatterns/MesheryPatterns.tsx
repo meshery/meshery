@@ -321,7 +321,9 @@ function MesheryPatterns({
   });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { view } = router.query;
-  const [viewType, setViewType] = useState((view === 'table' ? 'table' : 'grid') as 'table' | 'grid');
+  const [viewType, setViewType] = useState(
+    (view === 'table' ? 'table' : 'grid') as 'table' | 'grid',
+  );
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
   const { selectedK8sContexts } = useSelector((state: any) => state.ui);
@@ -1324,7 +1326,9 @@ function MesheryPatterns({
     },
 
     onCellClick: (_, meta) =>
-      meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(patterns[meta.rowIndex] || null),
+      meta.colIndex !== 3 &&
+      meta.colIndex !== 4 &&
+      setSelectedRowData(patterns[meta.rowIndex] || null),
 
     onRowsDelete: async function handleDelete(row) {
       const toBeDeleted = Object.keys(row.lookup).map((idx) => ({
@@ -1345,7 +1349,11 @@ function MesheryPatterns({
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn !== undefined && tableState.activeColumn !== null && columns[tableState.activeColumn]) {
+      if (
+        tableState.activeColumn !== undefined &&
+        tableState.activeColumn !== null &&
+        columns[tableState.activeColumn]
+      ) {
         order = `${columns[tableState.activeColumn]?.name} desc`;
       }
 
@@ -1374,7 +1382,11 @@ function MesheryPatterns({
           }, 500) as any;
           break;
         case 'sort':
-          if (sortInfo.length === 2 && tableState.activeColumn !== undefined && tableState.activeColumn !== null) {
+          if (
+            sortInfo.length === 2 &&
+            tableState.activeColumn !== undefined &&
+            tableState.activeColumn !== null
+          ) {
             const activeCol = columns[tableState.activeColumn];
             if (activeCol && sortInfo[1]) {
               if (sortInfo[1] === 'ascending') {
@@ -1470,14 +1482,14 @@ function MesheryPatterns({
       //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
       options: catalogVisibility
         ? [
-          { label: 'Public', value: 'public' },
-          { label: 'Private', value: 'private' },
-          { label: 'Published', value: 'published' },
-        ]
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+            { label: 'Published', value: 'published' },
+          ]
         : [
-          { label: 'Public', value: 'public' },
-          { label: 'Private', value: 'private' },
-        ],
+            { label: 'Public', value: 'public' },
+            { label: 'Private', value: 'private' },
+          ],
     },
   };
 
@@ -1705,7 +1717,12 @@ export const ImportDesignModal = React.memo((props: any) => {
           open={true}
           closeModal={handleClose}
           headerIcon={
-            <Pattern fill="#fff" color="#fff" className="" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern
+              fill="#fff"
+              color="#fff"
+              className=""
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            />
           }
           maxWidth="sm"
           title="Import Design"
@@ -1717,7 +1734,7 @@ export const ImportDesignModal = React.memo((props: any) => {
             handleSubmit={handleImportDesign}
             submitBtnText="Import"
             handleClose={handleClose}
-            handleNext={() => { }}
+            handleNext={() => {}}
             title="Import Design"
             helpText=""
           />
@@ -1739,7 +1756,12 @@ const PublishModal = React.memo((props: any) => {
           aria-label="catalog publish"
           title={title}
           headerIcon={
-            <Pattern fill="#fff" color="#fff" className="" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern
+              fill="#fff"
+              color="#fff"
+              className=""
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            />
           }
           maxWidth="sm"
         >
@@ -1749,7 +1771,7 @@ const PublishModal = React.memo((props: any) => {
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}
-            handleNext={() => { }}
+            handleNext={() => {}}
             title={title || 'Publish Pattern'}
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           />

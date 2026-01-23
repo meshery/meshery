@@ -104,10 +104,7 @@ export default function CustomSelectWidget({
                 </CustomTextTooltip>
               )}
               {schema?.description && (
-                <CustomTextTooltip
-                  title={schema?.description}
-                  interactive={true}
-                >
+                <CustomTextTooltip title={schema?.description} interactive={true}>
                   <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
                     <HelpOutlineIcon
                       width="14px"

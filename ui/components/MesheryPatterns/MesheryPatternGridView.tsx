@@ -281,7 +281,7 @@ function MesheryPatternGrid({
             handleSubmit={handlePublish}
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
             handleClose={handlePublishModalClose}
-            handleNext={() => { }}
+            handleNext={() => {}}
             title={publishModal.pattern?.name || 'Publish Pattern'}
           />
         </SistentModal>
