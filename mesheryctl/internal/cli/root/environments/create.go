@@ -22,7 +22,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -70,7 +70,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 			return utils.ErrInvalidArgument(errors.New("name is required"))
 		}
 
-		payload := &environments.EnvironmentPayload{
+		payload := &environment.EnvironmentPayload{
 			Name:        name,
 			Description: description,
 			OrgId:       orgID, // TODO update OrgId in schema to OrgID

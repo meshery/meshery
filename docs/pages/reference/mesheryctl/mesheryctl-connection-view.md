@@ -16,7 +16,8 @@ View a connection
 
 ## Synopsis
 
-View a connection by its ID or name
+View a connection by its ID or name.
+Documentation for viewing connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection view [flags]
@@ -26,10 +27,26 @@ mesheryctl connection view [flags]
 
 ## Examples
 
-View details of a specific connection
+View details of a specific connection in default format (yaml)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection view [connection-name]
+mesheryctl connection view [connection-name|connection-id]
+
+</div>
+</pre> 
+
+View details of a specific connection in JSON format
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection view [connection-name|connection-id] --output-format json
+
+</div>
+</pre> 
+
+View details of a specific connection in json format and save it to a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection view [connection-name|connection-id] --output-format json --save
 
 </div>
 </pre> 

@@ -23,7 +23,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
-	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -53,13 +53,13 @@ mesheryctl environment view --orgID [orgID]
 		outFormat, _ := cmd.Flags().GetString("output-format")
 		save, _ := cmd.Flags().GetBool("save")
 
-		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
+		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
 		if err != nil {
 			return err
 		}
 
-		var selectedEnvironment environments.EnvironmentData
+		var selectedEnvironment environment.Environment
 
 		switch environmentResponse.TotalCount {
 		case 0:
