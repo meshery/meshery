@@ -1099,7 +1099,7 @@ connection:
           name: -t, --type
           description: (required) type of connection to create (aks, eks, gke, minikube)
           usage: mesheryctl connection create --type [type]
-        tokenp:
+        token:
           name: --token
           description: (optional) Path to token for authenticating to Meshery API
           usage: mesheryctl connection create --type [type] --token [path/to/token/file]
@@ -1114,7 +1114,7 @@ connection:
       flags:
         page:
           name: -p, --page
-          description: "(optional) List a set of connection in specific page (default = 1)."
+          description: "(optional) List a set of connection in specific page (default=1)."
           usage: mesheryctl connection list --page [page number]
         count:
           name: --count
@@ -1122,11 +1122,11 @@ connection:
           usage: mesheryctl connection list --count
         kind:
           name: -k, --kind
-          description: set of kind of connection_id
+          description: (optional) Filter by kind (repeatable)
           usage: mesheryctl connection list --kind [kind] --kind [kind]
         status:
           name: -s, --status
-          description: set of status of connection
+          description: (optional) Filter by status (repeatable)
           usage: mesheryctl connection list --status [status] --status [status]
     view:
       name: view
