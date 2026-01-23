@@ -57,6 +57,12 @@ tags:
     x-displayName: subscription
   - name: subscription_other
     x-displayName: other
+  - name: team_teams
+    description: >-
+      A Team is a group of one or more users. Teams are used for assigning
+      permissions in organizations and workspaces. Learn more at
+      https://docs.meshery.io/concepts/logical/teams
+    x-displayName: teams
   - name: workspace_workspaces
     description: >-
       Workspaces serve as a virtual space for your team-based work, allows you
@@ -21476,6 +21482,300 @@ paths:
           description: Internal server error
       tags:
         - Organization_other
+  /api/identity/orgs/{orgID}/teams/{teamId}:
+    servers: []
+    post:
+      summary: Add team to organization or soft delete team
+      description: >-
+        Adds a team to an organization. If request body contains action=delete,
+        tombstones a team by setting its deleted_at timestamp. The team's
+        organization mapping remains intact.
+      operationId: AddTeamToOrg
+      parameters:
+        - name: orgID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              description: >-
+                Optional action payload for POST on
+                /api/identity/orgs/{orgID}/teams/{teamId}.
+              properties:
+                action:
+                  type: string
+                  description: Internal action to perform on the team resource.
+                  enum:
+                    - delete
+      responses:
+        '200':
+          description: Team added to organization or team tombstoned
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+                      teams_organizations_mapping:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: id
+                                json: id
+                              x-go-type-name: GeneralId
+                              x-go-type-skip-optional-pointer: true
+                            org_id:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: org_id
+                                json: org_id
+                              x-go-type-name: OrganizationId
+                              x-go-type-skip-optional-pointer: true
+                            team_id:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: team_id
+                                json: team_id
+                              x-go-type-name: TeamId
+                              x-go-type-skip-optional-pointer: true
+                            created_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            updated_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            deleted_at:
+                              type: string
+                              format: date-time
+                              x-go-type: sql.NullTime
+                              x-go-type-import:
+                                path: database/sql
+                              x-go-type-skip-optional-pointer: true
+                  - type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+                      teams:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            ID:
+                              type: string
+                              format: uuid
+                              x-go-type: uuid.UUID
+                              x-go-type-import:
+                                path: github.com/gofrs/uuid
+                              x-oapi-codegen-extra-tags:
+                                db: id
+                                json: id
+                              x-go-type-name: GeneralId
+                              x-go-type-skip-optional-pointer: true
+                            name:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            description:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            owner:
+                              type: string
+                              x-go-type-skip-optional-pointer: true
+                            metadata:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              x-go-type-skip-optional-pointer: true
+                            created_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            updated_at:
+                              type: string
+                              format: date-time
+                              x-go-type-skip-optional-pointer: true
+                            deleted_at:
+                              type: string
+                              format: date-time
+                              x-go-type: sql.NullTime
+                              x-go-type-import:
+                                path: database/sql
+                              x-go-type-skip-optional-pointer: true
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+      tags:
+        - Organization_other
+    delete:
+      summary: Remove team from organization
+      description: Removes (unassigns) a team from an organization.
+      operationId: RemoveTeamFromOrg
+      parameters:
+        - name: orgID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+      responses:
+        '200':
+          description: Team removed from organization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  page_size:
+                    type: integer
+                  total_count:
+                    type: integer
+                  teams_organizations_mapping:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ID:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: id
+                          x-go-type-name: GeneralId
+                          x-go-type-skip-optional-pointer: true
+                        org_id:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: org_id
+                            json: org_id
+                          x-go-type-name: OrganizationId
+                          x-go-type-skip-optional-pointer: true
+                        team_id:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: team_id
+                            json: team_id
+                          x-go-type-name: TeamId
+                          x-go-type-skip-optional-pointer: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updated_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        deleted_at:
+                          type: string
+                          format: date-time
+                          x-go-type: sql.NullTime
+                          x-go-type-import:
+                            path: database/sql
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+      tags:
+        - Organization_other
   /api/entitlement/plans:
     servers: []
     get:
@@ -22536,6 +22836,1138 @@ paths:
           description: Invalid webhook event
       tags:
         - subscription_other
+  /api/identity/orgs/{orgId}/teams:
+    servers:
+      - url: https://cloud.meshery.io
+        description: Meshery Cloud production server URL
+      - url: https://staging-cloud.meshery.io
+        description: Meshery Cloud staging server URL
+      - url: http://localhost:9876
+        description: >-
+          Meshery Cloud development server URL (controlled via PORT environment
+          variable)
+    get:
+      tags:
+        - team_teams
+      operationId: GetTeams
+      summary: Get all teams for an organization
+      description: Gets all teams within an organization
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: search
+          in: query
+          description: Get responses that match search param value
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: Get ordered responses
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Get responses by page
+          schema:
+            type: string
+        - name: pagesize
+          in: query
+          description: Get responses by pagesize
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Teams
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated list of teams
+                properties:
+                  page:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  page_size:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  total_count:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  teams:
+                    type: array
+                    x-go-type-skip-optional-pointer: true
+                    items:
+                      x-go-type: Team
+                      $id: https://schemas.meshery.io/team.yaml
+                      $schema: http://json-schema.org/draft-07/schema#
+                      description: >-
+                        A Team is a group of one or more users. Teams are often
+                        used as a grouping mechanism for assigning permissions,
+                        whether in the context of an organization, a workspace,
+                        or some other domain within Meshery. Learn more at
+                        https://docs.meshery.io/concepts/logical/teams
+                      additionalProperties: false
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          description: Team ID
+                          x-order: 1
+                          x-go-name: ID
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            yaml: id
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        name:
+                          x-oapi-codegen-extra-tags:
+                            db: name
+                            yaml: name
+                          x-order: 2
+                          type: string
+                          description: Team name
+                        description:
+                          x-oapi-codegen-extra-tags:
+                            db: description
+                            yaml: description
+                          x-order: 3
+                          type: string
+                          description: Team description
+                        owner:
+                          x-oapi-codegen-extra-tags:
+                            db: owner
+                            yaml: owner
+                          x-order: 4
+                          description: User ID of the owner of the team
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        metadata:
+                          x-oapi-codegen-extra-tags:
+                            db: metadata
+                            yaml: metadata
+                          x-order: 5
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          type: object
+                          description: Additional metadata for the team
+                        created_at:
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                          x-order: 6
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updated_at:
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                          x-order: 7
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        deleted_at:
+                          x-oapi-codegen-extra-tags:
+                            db: deleted_at
+                            yaml: deleted_at
+                          x-go-type: core.NullTime
+                          x-go-import: database/sql
+                          x-order: 8
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+    post:
+      tags:
+        - team_teams
+      operationId: CreateTeam
+      summary: Create a team
+      description: Creates a new team within an organization
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+      requestBody:
+        description: Body for creating a team
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload for creating a new team
+              required:
+                - name
+              properties:
+                name:
+                  description: >-
+                    Team name. Provide a meaningful name that represents this
+                    team.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                description:
+                  description: >-
+                    A detailed description of the team's purpose and
+                    responsibilities.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+      responses:
+        '201':
+          description: Created team
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/team.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                description: >-
+                  A Team is a group of one or more users. Teams are often used
+                  as a grouping mechanism for assigning permissions, whether in
+                  the context of an organization, a workspace, or some other
+                  domain within Meshery. Learn more at
+                  https://docs.meshery.io/concepts/logical/teams
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                properties:
+                  id:
+                    description: Team ID
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      yaml: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      yaml: name
+                    x-order: 2
+                    type: string
+                    description: Team name
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      yaml: description
+                    x-order: 3
+                    type: string
+                    description: Team description
+                  owner:
+                    x-oapi-codegen-extra-tags:
+                      db: owner
+                      yaml: owner
+                    x-order: 4
+                    description: User ID of the owner of the team
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  metadata:
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      yaml: metadata
+                    x-order: 5
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    type: object
+                    description: Additional metadata for the team
+                  created_at:
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                    x-order: 6
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  updated_at:
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                    x-order: 7
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  deleted_at:
+                    x-oapi-codegen-extra-tags:
+                      db: deleted_at
+                      yaml: deleted_at
+                    x-go-type: core.NullTime
+                    x-go-import: database/sql
+                    x-order: 8
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+  /api/identity/orgs/{orgId}/teams/{teamId}:
+    servers:
+      - url: https://cloud.meshery.io
+        description: Meshery Cloud production server URL
+      - url: https://staging-cloud.meshery.io
+        description: Meshery Cloud staging server URL
+      - url: http://localhost:9876
+        description: >-
+          Meshery Cloud development server URL (controlled via PORT environment
+          variable)
+    get:
+      tags:
+        - team_teams
+      operationId: GetTeamByID
+      summary: Get a team by ID
+      description: Gets a team by its ID
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+      responses:
+        '200':
+          description: Team
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/team.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                description: >-
+                  A Team is a group of one or more users. Teams are often used
+                  as a grouping mechanism for assigning permissions, whether in
+                  the context of an organization, a workspace, or some other
+                  domain within Meshery. Learn more at
+                  https://docs.meshery.io/concepts/logical/teams
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                properties:
+                  id:
+                    description: Team ID
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      yaml: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      yaml: name
+                    x-order: 2
+                    type: string
+                    description: Team name
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      yaml: description
+                    x-order: 3
+                    type: string
+                    description: Team description
+                  owner:
+                    x-oapi-codegen-extra-tags:
+                      db: owner
+                      yaml: owner
+                    x-order: 4
+                    description: User ID of the owner of the team
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  metadata:
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      yaml: metadata
+                    x-order: 5
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    type: object
+                    description: Additional metadata for the team
+                  created_at:
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                    x-order: 6
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  updated_at:
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                    x-order: 7
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  deleted_at:
+                    x-oapi-codegen-extra-tags:
+                      db: deleted_at
+                      yaml: deleted_at
+                    x-go-type: core.NullTime
+                    x-go-import: database/sql
+                    x-order: 8
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+    put:
+      tags:
+        - team_teams
+      operationId: UpdateTeam
+      summary: Update a team
+      description: Updates a team's information
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+      requestBody:
+        description: Body for updating a team
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload for updating an existing team
+              properties:
+                name:
+                  description: Updated team name
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                description:
+                  description: Updated team description
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+      responses:
+        '200':
+          description: Updated team
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/team.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                description: >-
+                  A Team is a group of one or more users. Teams are often used
+                  as a grouping mechanism for assigning permissions, whether in
+                  the context of an organization, a workspace, or some other
+                  domain within Meshery. Learn more at
+                  https://docs.meshery.io/concepts/logical/teams
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                properties:
+                  id:
+                    description: Team ID
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      yaml: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      yaml: name
+                    x-order: 2
+                    type: string
+                    description: Team name
+                  description:
+                    x-oapi-codegen-extra-tags:
+                      db: description
+                      yaml: description
+                    x-order: 3
+                    type: string
+                    description: Team description
+                  owner:
+                    x-oapi-codegen-extra-tags:
+                      db: owner
+                      yaml: owner
+                    x-order: 4
+                    description: User ID of the owner of the team
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  metadata:
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      yaml: metadata
+                    x-order: 5
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    type: object
+                    description: Additional metadata for the team
+                  created_at:
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                    x-order: 6
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  updated_at:
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                    x-order: 7
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  deleted_at:
+                    x-oapi-codegen-extra-tags:
+                      db: deleted_at
+                      yaml: deleted_at
+                    x-go-type: core.NullTime
+                    x-go-import: database/sql
+                    x-order: 8
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+    delete:
+      tags:
+        - team_teams
+      operationId: DeleteTeam
+      summary: Delete a team
+      description: Deletes a team by its ID
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+      responses:
+        '204':
+          description: Team deleted successfully
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+  /api/identity/orgs/{orgId}/teams/{teamId}/users:
+    servers:
+      - url: https://cloud.meshery.io
+        description: Meshery Cloud production server URL
+      - url: https://staging-cloud.meshery.io
+        description: Meshery Cloud staging server URL
+      - url: http://localhost:9876
+        description: >-
+          Meshery Cloud development server URL (controlled via PORT environment
+          variable)
+    get:
+      tags:
+        - team_teams
+      operationId: GetTeamUsers
+      summary: Get all users in a team
+      description: Gets all users that belong to a team
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: search
+          in: query
+          description: Get responses that match search param value
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: Get ordered responses
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Get responses by page
+          schema:
+            type: string
+        - name: pagesize
+          in: query
+          description: Get responses by pagesize
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Team users mapping
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated list of team-user mappings
+                properties:
+                  page:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  page_size:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  total_count:
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
+                  teams_users_mapping:
+                    type: array
+                    x-go-type-skip-optional-pointer: true
+                    items:
+                      x-go-type: TeamsUsersMapping
+                      type: object
+                      description: Mapping between teams and users
+                      properties:
+                        id:
+                          x-go-name: ID
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: id
+                          x-go-type-name: GeneralId
+                          x-go-type-skip-optional-pointer: true
+                        team_id:
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-oapi-codegen-extra-tags:
+                            db: team_id
+                            json: team_id
+                          x-go-type-name: TeamId
+                          x-go-type-skip-optional-pointer: true
+                        user_id:
+                          type: string
+                          description: user's email or username
+                          x-go-type-skip-optional-pointer: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updated_at:
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        deleted_at:
+                          description: SQL null Timestamp to handle null values of time.
+                          x-go-type: sql.NullTime
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+  /api/identity/orgs/{orgId}/teams/{teamId}/users/{userId}:
+    servers:
+      - url: https://cloud.meshery.io
+        description: Meshery Cloud production server URL
+      - url: https://staging-cloud.meshery.io
+        description: Meshery Cloud staging server URL
+      - url: http://localhost:9876
+        description: >-
+          Meshery Cloud development server URL (controlled via PORT environment
+          variable)
+    post:
+      tags:
+        - team_teams
+      operationId: AddUserToTeam
+      summary: Add a user to a team
+      description: Assigns a user to a team
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: userId
+          in: path
+          description: User ID
+          schema:
+            type: string
+            description: user's email or username
+            x-go-type-skip-optional-pointer: true
+          required: true
+      responses:
+        '200':
+          description: User added to team
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Mapping between teams and users
+                properties:
+                  id:
+                    x-go-name: ID
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      json: id
+                    x-go-type-name: GeneralId
+                    x-go-type-skip-optional-pointer: true
+                  team_id:
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    x-oapi-codegen-extra-tags:
+                      db: team_id
+                      json: team_id
+                    x-go-type-name: TeamId
+                    x-go-type-skip-optional-pointer: true
+                  user_id:
+                    type: string
+                    description: user's email or username
+                    x-go-type-skip-optional-pointer: true
+                  created_at:
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  updated_at:
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  deleted_at:
+                    description: SQL null Timestamp to handle null values of time.
+                    x-go-type: sql.NullTime
+                    type: string
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
+    delete:
+      tags:
+        - team_teams
+      operationId: RemoveUserFromTeam
+      summary: Remove a user from a team
+      description: Unassigns a user from a team
+      parameters:
+        - name: orgId
+          in: path
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: teamId
+          in: path
+          description: Team ID
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: team_id
+              json: team_id
+            x-go-type-name: TeamId
+            x-go-type-skip-optional-pointer: true
+          required: true
+        - name: userId
+          in: path
+          description: User ID
+          schema:
+            type: string
+            description: user's email or username
+            x-go-type-skip-optional-pointer: true
+          required: true
+      responses:
+        '200':
+          description: User removed from team
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Mapping between teams and users
+                properties:
+                  id:
+                    x-go-name: ID
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      json: id
+                    x-go-type-name: GeneralId
+                    x-go-type-skip-optional-pointer: true
+                  team_id:
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                    x-oapi-codegen-extra-tags:
+                      db: team_id
+                      json: team_id
+                    x-go-type-name: TeamId
+                    x-go-type-skip-optional-pointer: true
+                  user_id:
+                    type: string
+                    description: user's email or username
+                    x-go-type-skip-optional-pointer: true
+                  created_at:
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  updated_at:
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  deleted_at:
+                    description: SQL null Timestamp to handle null values of time.
+                    x-go-type: sql.NullTime
+                    type: string
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+        - team_jwt: []
   /api/workspaces:
     servers:
       - url: https://cloud.meshery.io
@@ -66363,6 +67795,25 @@ components:
       type: string
       format: date-time
       x-go-type-skip-optional-pointer: true
+    Organization_Text:
+      type: string
+      x-go-type-skip-optional-pointer: true
+    Organization_MapObject:
+      type: object
+      additionalProperties:
+        type: string
+      x-go-type-skip-optional-pointer: true
+    Organization_OrgTeamActionPayload:
+      type: object
+      description: >-
+        Optional action payload for POST on
+        /api/identity/orgs/{orgID}/teams/{teamId}.
+      properties:
+        action:
+          type: string
+          description: Internal action to perform on the team resource.
+          enum:
+            - delete
     Organization_Location:
       type: object
       required:
@@ -66815,6 +68266,216 @@ components:
           nullable: true
           x-oapi-codegen-extra-tags:
             db: domain
+    Organization_AvailableTeam:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: id
+            json: id
+          x-go-type-name: GeneralId
+          x-go-type-skip-optional-pointer: true
+        name:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        description:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        owner:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          x-go-type-skip-optional-pointer: true
+        created_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          type: string
+          format: date-time
+          x-go-type: sql.NullTime
+          x-go-type-import:
+            path: database/sql
+          x-go-type-skip-optional-pointer: true
+    Organization_TeamsPage:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  json: id
+                x-go-type-name: GeneralId
+                x-go-type-skip-optional-pointer: true
+              name:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              description:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              owner:
+                type: string
+                x-go-type-skip-optional-pointer: true
+              metadata:
+                type: object
+                additionalProperties:
+                  type: string
+                x-go-type-skip-optional-pointer: true
+              created_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                type: string
+                format: date-time
+                x-go-type: sql.NullTime
+                x-go-type-import:
+                  path: database/sql
+                x-go-type-skip-optional-pointer: true
+    Organization_TeamsOrganizationsMapping:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: id
+            json: id
+          x-go-type-name: GeneralId
+          x-go-type-skip-optional-pointer: true
+        org_id:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: org_id
+            json: org_id
+          x-go-type-name: OrganizationId
+          x-go-type-skip-optional-pointer: true
+        team_id:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: team_id
+            json: team_id
+          x-go-type-name: TeamId
+          x-go-type-skip-optional-pointer: true
+        created_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          type: string
+          format: date-time
+          x-go-type: sql.NullTime
+          x-go-type-import:
+            path: database/sql
+          x-go-type-skip-optional-pointer: true
+    Organization_TeamsOrganizationsMappingPage:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+        teams_organizations_mapping:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  json: id
+                x-go-type-name: GeneralId
+                x-go-type-skip-optional-pointer: true
+              org_id:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: org_id
+                  json: org_id
+                x-go-type-name: OrganizationId
+                x-go-type-skip-optional-pointer: true
+              team_id:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: team_id
+                  json: team_id
+                x-go-type-name: TeamId
+                x-go-type-skip-optional-pointer: true
+              created_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                type: string
+                format: date-time
+                x-go-type: sql.NullTime
+                x-go-type-import:
+                  path: database/sql
+                x-go-type-skip-optional-pointer: true
     plan_PlanPage:
       type: object
       required:
@@ -67641,6 +69302,327 @@ components:
         unpaid: >-
           The subscription is still technically active but has unpaid invoices
           and is no longer generating new invoices.
+    team_team:
+      $id: https://schemas.meshery.io/team.yaml
+      $schema: http://json-schema.org/draft-07/schema#
+      description: >-
+        A Team is a group of one or more users. Teams are often used as a
+        grouping mechanism for assigning permissions, whether in the context of
+        an organization, a workspace, or some other domain within Meshery. Learn
+        more at https://docs.meshery.io/concepts/logical/teams
+      additionalProperties: false
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Team ID
+          x-order: 1
+          x-go-name: ID
+          x-oapi-codegen-extra-tags:
+            db: id
+            yaml: id
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+        name:
+          x-oapi-codegen-extra-tags:
+            db: name
+            yaml: name
+          x-order: 2
+          type: string
+          description: Team name
+        description:
+          x-oapi-codegen-extra-tags:
+            db: description
+            yaml: description
+          x-order: 3
+          type: string
+          description: Team description
+        owner:
+          x-oapi-codegen-extra-tags:
+            db: owner
+            yaml: owner
+          x-order: 4
+          description: User ID of the owner of the team
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+        metadata:
+          x-oapi-codegen-extra-tags:
+            db: metadata
+            yaml: metadata
+          x-order: 5
+          x-go-type: core.Map
+          x-go-type-skip-optional-pointer: true
+          type: object
+          description: Additional metadata for the team
+        created_at:
+          x-oapi-codegen-extra-tags:
+            db: created_at
+            yaml: created_at
+          x-order: 6
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          x-oapi-codegen-extra-tags:
+            db: updated_at
+            yaml: updated_at
+          x-order: 7
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          x-oapi-codegen-extra-tags:
+            db: deleted_at
+            yaml: deleted_at
+          x-go-type: core.NullTime
+          x-go-import: database/sql
+          x-order: 8
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+    team_teamPayload:
+      type: object
+      description: Payload for creating a new team
+      required:
+        - name
+      properties:
+        name:
+          description: Team name. Provide a meaningful name that represents this team.
+          type: string
+          x-go-type-skip-optional-pointer: true
+        description:
+          description: A detailed description of the team's purpose and responsibilities.
+          type: string
+          x-go-type-skip-optional-pointer: true
+    team_teamUpdatePayload:
+      type: object
+      description: Payload for updating an existing team
+      properties:
+        name:
+          description: Updated team name
+          type: string
+          x-go-type-skip-optional-pointer: true
+        description:
+          description: Updated team description
+          type: string
+          x-go-type-skip-optional-pointer: true
+    team_teamPage:
+      type: object
+      description: Paginated list of teams
+      properties:
+        page:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        page_size:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        total_count:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        teams:
+          type: array
+          x-go-type-skip-optional-pointer: true
+          items:
+            x-go-type: Team
+            $id: https://schemas.meshery.io/team.yaml
+            $schema: http://json-schema.org/draft-07/schema#
+            description: >-
+              A Team is a group of one or more users. Teams are often used as a
+              grouping mechanism for assigning permissions, whether in the
+              context of an organization, a workspace, or some other domain
+              within Meshery. Learn more at
+              https://docs.meshery.io/concepts/logical/teams
+            additionalProperties: false
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                description: Team ID
+                x-order: 1
+                x-go-name: ID
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  yaml: id
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+              name:
+                x-oapi-codegen-extra-tags:
+                  db: name
+                  yaml: name
+                x-order: 2
+                type: string
+                description: Team name
+              description:
+                x-oapi-codegen-extra-tags:
+                  db: description
+                  yaml: description
+                x-order: 3
+                type: string
+                description: Team description
+              owner:
+                x-oapi-codegen-extra-tags:
+                  db: owner
+                  yaml: owner
+                x-order: 4
+                description: User ID of the owner of the team
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+              metadata:
+                x-oapi-codegen-extra-tags:
+                  db: metadata
+                  yaml: metadata
+                x-order: 5
+                x-go-type: core.Map
+                x-go-type-skip-optional-pointer: true
+                type: object
+                description: Additional metadata for the team
+              created_at:
+                x-oapi-codegen-extra-tags:
+                  db: created_at
+                  yaml: created_at
+                x-order: 6
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                x-oapi-codegen-extra-tags:
+                  db: updated_at
+                  yaml: updated_at
+                x-order: 7
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                x-oapi-codegen-extra-tags:
+                  db: deleted_at
+                  yaml: deleted_at
+                x-go-type: core.NullTime
+                x-go-import: database/sql
+                x-order: 8
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+    team_teamsUsersMapping:
+      type: object
+      description: Mapping between teams and users
+      properties:
+        id:
+          x-go-name: ID
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: id
+            json: id
+          x-go-type-name: GeneralId
+          x-go-type-skip-optional-pointer: true
+        team_id:
+          type: string
+          format: uuid
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            path: github.com/gofrs/uuid
+          x-oapi-codegen-extra-tags:
+            db: team_id
+            json: team_id
+          x-go-type-name: TeamId
+          x-go-type-skip-optional-pointer: true
+        user_id:
+          type: string
+          description: user's email or username
+          x-go-type-skip-optional-pointer: true
+        created_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        updated_at:
+          type: string
+          format: date-time
+          x-go-type-skip-optional-pointer: true
+        deleted_at:
+          description: SQL null Timestamp to handle null values of time.
+          x-go-type: sql.NullTime
+          type: string
+          x-go-type-skip-optional-pointer: true
+    team_teamsUsersMappingPage:
+      type: object
+      description: Paginated list of team-user mappings
+      properties:
+        page:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        page_size:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        total_count:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        teams_users_mapping:
+          type: array
+          x-go-type-skip-optional-pointer: true
+          items:
+            x-go-type: TeamsUsersMapping
+            type: object
+            description: Mapping between teams and users
+            properties:
+              id:
+                x-go-name: ID
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: id
+                  json: id
+                x-go-type-name: GeneralId
+                x-go-type-skip-optional-pointer: true
+              team_id:
+                type: string
+                format: uuid
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/gofrs/uuid
+                x-oapi-codegen-extra-tags:
+                  db: team_id
+                  json: team_id
+                x-go-type-name: TeamId
+                x-go-type-skip-optional-pointer: true
+              user_id:
+                type: string
+                description: user's email or username
+                x-go-type-skip-optional-pointer: true
+              created_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              updated_at:
+                type: string
+                format: date-time
+                x-go-type-skip-optional-pointer: true
+              deleted_at:
+                description: SQL null Timestamp to handle null values of time.
+                x-go-type: sql.NullTime
+                type: string
+                x-go-type-skip-optional-pointer: true
     User_Schema_User:
       type: object
       description: Represents a user in Layer5 Cloud (Meshery)
@@ -69165,6 +71147,36 @@ components:
       description: Get responses that match search param value
       schema:
         type: string
+    Organization_orgID:
+      name: orgID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: org_id
+          json: org_id
+        x-go-type-name: OrganizationId
+        x-go-type-skip-optional-pointer: true
+    Organization_teamId:
+      name: teamId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: team_id
+          json: team_id
+        x-go-type-name: TeamId
+        x-go-type-skip-optional-pointer: true
     subscription_subscriptionId:
       name: subscriptionId
       in: path
@@ -69194,6 +71206,62 @@ components:
       name: order
       in: query
       description: Get ordered responses
+      schema:
+        type: string
+    team_teamId:
+      name: teamId
+      in: path
+      description: Team ID
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: team_id
+          json: team_id
+        x-go-type-name: TeamId
+        x-go-type-skip-optional-pointer: true
+      required: true
+    team_orgId:
+      name: orgId
+      in: path
+      description: Organization ID
+      schema:
+        type: string
+        format: uuid
+        x-go-type: uuid.UUID
+        x-go-type-import:
+          path: github.com/gofrs/uuid
+        x-oapi-codegen-extra-tags:
+          db: org_id
+          json: org_id
+        x-go-type-name: OrganizationId
+        x-go-type-skip-optional-pointer: true
+      required: true
+    team_search:
+      name: search
+      in: query
+      description: Get responses that match search param value
+      schema:
+        type: string
+    team_order:
+      name: order
+      in: query
+      description: Get ordered responses
+      schema:
+        type: string
+    team_page:
+      name: page
+      in: query
+      description: Get responses by page
+      schema:
+        type: string
+    team_pagesize:
+      name: pagesize
+      in: query
+      description: Get responses by pagesize
       schema:
         type: string
   responses:
@@ -69293,6 +71361,36 @@ components:
         text/plain:
           schema:
             type: string
+    team_200:
+      description: ok
+      content:
+        text/plain:
+          schema:
+            type: string
+    team_400:
+      description: Invalid request body or request param
+      content:
+        text/plain:
+          schema:
+            type: string
+    team_401:
+      description: Expired JWT token used or insufficient privilege
+      content:
+        text/plain:
+          schema:
+            type: string
+    team_404:
+      description: Result not found
+      content:
+        text/plain:
+          schema:
+            type: string
+    team_500:
+      description: Internal server error
+      content:
+        text/plain:
+          schema:
+            type: string
   securitySchemes:
     environment_jwt:
       type: http
@@ -69305,6 +71403,10 @@ components:
     keychain_jwt:
       type: http
       scheme: bearer
+      bearerFormat: JWT
+    team_jwt:
+      type: http
+      scheme: Bearer
       bearerFormat: JWT
     workspace_jwt:
       type: http
@@ -69348,6 +71450,46 @@ components:
             required:
               - name
               - organizationID
+    team_teamPayload:
+      description: Body for creating a team
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: Payload for creating a new team
+            required:
+              - name
+            properties:
+              name:
+                description: >-
+                  Team name. Provide a meaningful name that represents this
+                  team.
+                type: string
+                x-go-type-skip-optional-pointer: true
+              description:
+                description: >-
+                  A detailed description of the team's purpose and
+                  responsibilities.
+                type: string
+                x-go-type-skip-optional-pointer: true
+    team_teamUpdatePayload:
+      description: Body for updating a team
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: Payload for updating an existing team
+            properties:
+              name:
+                description: Updated team name
+                type: string
+                x-go-type-skip-optional-pointer: true
+              description:
+                description: Updated team description
+                type: string
+                x-go-type-skip-optional-pointer: true
     workspace_workspacePayload:
       description: Body for creating workspace
       required: true
@@ -69461,6 +71603,9 @@ x-tagGroups:
       - subscription_Payment Processors
       - subscription_subscription
       - subscription_other
+  - name: team
+    tags:
+      - team_teams
   - name: workspace
     tags:
       - workspace_workspaces
