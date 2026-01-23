@@ -18,8 +18,16 @@ import (
 	"github.com/meshery/meshery/server/models"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
+	"github.com/meshery/meshkit/logger"
 )
-
+//Meshkit Logger Handler
+var log = func() logger.Handler {
+	l, err := logger.New("server/helpers/adapters_tracker", logger.Options{})
+	if err != nil {
+		panic(err)
+	}
+	return l
+}()
 // AdaptersTracker is used to hold the list of known adapters
 type AdaptersTracker struct {
 	adapters     map[string]models.Adapter
@@ -81,7 +89,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		defer func() {
 			if err := cli.Close(); err != nil {
-				fmt.Println(err)
+				log.Error(err)
 			}
 		}()
 
@@ -105,7 +113,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 		defer func() {
 			if err := resp.Close(); err != nil {
-				fmt.Println(err)
+				log.Error(err)
 			}
 		}()
 		_, err = io.ReadAll(resp)
@@ -234,7 +242,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		}
 		defer func() {
 			if err := cli.Close(); err != nil {
-				fmt.Println(err)
+				log.Error(err)
 			}
 		}()
 		containers, err := cli.ContainerList(ctx, container.ListOptions{})

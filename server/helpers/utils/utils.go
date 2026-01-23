@@ -21,6 +21,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
+	"github.com/meshery/meshkit/logger"
 )
 
 const (
@@ -32,7 +33,13 @@ const (
 	RegistryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
-
+var log = func() logger.Handler {
+	l, err := logger.New("server/helpers/adapters_tracker", logger.Options{})
+	if err != nil {
+		panic(err)
+	}
+	return l
+}()
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
 func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
@@ -244,7 +251,7 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 func DeleteSVGsFromFileSystem() {
 	for _, path := range UISVGPaths {
 		if err := os.RemoveAll(path); err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 	}
 }
@@ -514,14 +521,14 @@ func CopyDirectory(src string, dst string) error {
 	return nil
 }
 
-func copyFile(src, dst string) error {
+func copyFile(src, dst string) (err error) {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer func() {
-		if cerr := srcFile.Close(); cerr != nil {
-			fmt.Println(cerr)
+		if cerr := srcFile.Close(); err == nil {
+			err = cerr
 		}
 	}()
 
@@ -530,12 +537,12 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	defer func() {
-		if cerr := dstFile.Close(); cerr != nil {
-			fmt.Println(cerr)
+		if cerr := dstFile.Close(); err == nil {
+			err = cerr
 		}
 	}()
 
-	if _, err := io.Copy(dstFile, srcFile); err != nil {
+	if _, err = io.Copy(dstFile, srcFile); err != nil {
 		return err
 	}
 
@@ -544,6 +551,7 @@ func copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+
 	return os.Chmod(dst, srcInfo.Mode())
 }
 
