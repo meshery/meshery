@@ -18,10 +18,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/pkg/errors"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -74,7 +76,7 @@ mesheryctl perf result saturday-profile --view
 		// used for searching performance profile
 		var searchString, profileID string
 		// setting up for error formatting
-		cmdUsed = "result"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -84,6 +86,13 @@ mesheryctl perf result saturday-profile --view
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
 			return ErrNoProfileName()
+		}
+
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(errors.New(fmt.Sprintf(invalidOutputFormatMsg, outputFormatFlag)))
+			}
 		}
 
 		// handles spaces in args if quoted args passed

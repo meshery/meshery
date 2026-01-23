@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -62,7 +63,14 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
+		}
+
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(errors.New(fmt.Sprintf(invalidOutputFormatMsg, outputFormatFlag)))
+			}
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,7 +82,7 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		if len(profiles) == 0 {
