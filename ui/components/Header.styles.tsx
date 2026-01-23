@@ -72,9 +72,10 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   },
 }));
 
-export const CBadge = styled('span')(({theme})=>({
+export const CBadge = styled('span')(({ theme }) => ({
   fontSize: '0.65rem',
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.common.white,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.common.white,
   borderRadius: '50%',
   color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
   height: '1.30rem',
