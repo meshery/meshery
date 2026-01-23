@@ -4,7 +4,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +34,7 @@ mesheryctl connection list --count
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		connectionsResponse, err := api.Fetch[connections.ConnectionPage](connectionApiPath)
+		connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
 
 		if err != nil {
 			return err
@@ -64,7 +64,7 @@ mesheryctl connection list --count
 	},
 }
 
-func getConnectionDetail(connection *connections.Connection) []string {
+func getConnectionDetail(connection *connection.Connection) []string {
 	data := make([]string, 5)
 
 	data[0] = connection.ID.String()

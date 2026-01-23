@@ -30,7 +30,36 @@ mesheryctl connection [flags]
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection --count
+mesheryctl connection --count
+
+</div>
+</pre> 
+
+Create a new Kubernetes connection using a specific type
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type aks
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type eks
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type gke
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection create --type minikube
 
 </div>
 </pre> 
@@ -38,7 +67,14 @@ mesheryctl exp connection --count
 List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection list
+mesheryctl connection list
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl connection list --count
 
 </div>
 </pre> 
@@ -46,7 +82,7 @@ mesheryctl exp connection list
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp connection delete [connection_id]
+mesheryctl connection delete [connection_id]
 
 </div>
 </pre> 

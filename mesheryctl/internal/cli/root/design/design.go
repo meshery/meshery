@@ -15,11 +15,9 @@
 package design
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -60,9 +58,9 @@ mesheryctl design list
 				}
 			}
 			if len(suggestions) > 0 {
-				return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl design --help' to display usage guide.\n", args[0], suggestions)))
+				return ErrInvalidCommand(args[0], suggestions)
 			}
-			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
+			return ErrInvalidCommand(args[0], []string{})
 		}
 		return nil
 	},

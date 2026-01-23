@@ -16,6 +16,7 @@ package filter
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -24,7 +25,6 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -51,6 +51,9 @@ mesheryctl filter view "filter name"
         `,
 	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		subCmdUsed := cmd.Use
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -62,7 +65,7 @@ mesheryctl filter view "filter name"
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return ErrViewAllWithName(subCmdUsed)
 			}
 			fullArg := strings.Join(args, " ")
 
@@ -75,13 +78,12 @@ mesheryctl filter view "filter name"
 				filterArg = args[0]
 			} else {
 				// If multiple words without quotes, return an error
-				return errors.New(utils.FilterViewError("multi-word filter names must be enclosed in double quotes\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return ErrMultiWordFilterName(subCmdUsed)
 			}
 
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
 			if err != nil {
-				utils.Log.Error(ErrFilterNameOrID(err))
-				return nil
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -90,7 +92,7 @@ mesheryctl filter view "filter name"
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
@@ -102,37 +104,32 @@ mesheryctl filter view "filter name"
 
 		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		defer func() { _ = res.Body.Close() }()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.FilterViewError("failed to read response body"))
+			return utils.ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else {
 			// use the first match from the result when searching by filter name
@@ -142,19 +139,16 @@ mesheryctl filter view "filter name"
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				utils.Log.Error(utils.ErrJSONToYAML(err))
-				return nil
+				return utils.ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			utils.Log.Error(utils.ErrOutFormatFlag())
-			return nil
+			return utils.ErrOutFormatFlag()
 		}
 		utils.Log.Info(string(body))
 		return nil

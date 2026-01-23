@@ -2,7 +2,7 @@
 Docker 
 --------------
 ✓ Docker is running
-✓ docker-compose is available
+✓ docker-compose is available (via library)
 
 Kubernetes API 
 --------------
