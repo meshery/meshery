@@ -1118,7 +1118,7 @@ connection:
           usage: mesheryctl connection list --page [page number]
         count:
           name: --count
-          description: (optional) Get the number of connection in total
+          description: (optional) Get the total number of connections
           usage: mesheryctl connection list --count
         kind:
           name: -k, --kind

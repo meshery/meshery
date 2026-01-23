@@ -44,7 +44,7 @@ func HandlePaginationAsync[T any](
 			utils.ClearLine()
 		}
 
-		urlPath := displayData.UrlPath
+		urlPath := ""
 
 		pagesQuesrySearch := url.Values{}
 		if !strings.Contains(displayData.UrlPath, "page") {
