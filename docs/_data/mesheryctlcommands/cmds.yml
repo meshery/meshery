@@ -1088,7 +1088,7 @@ connection:
       example: mesheryctl connection --help
     count:
       name: --count
-      description: (optional) Get the number of connection in total
+      description: (optional) Get the total number of connections
   subcommands:
     create:
       name: create
@@ -1112,10 +1112,6 @@ connection:
       description: list all the connections
       usage: mesheryctl connection list [flags]
       flags:
-        page:
-          name: -p, --page
-          description: "(optional) List a set of connection in specific page (default=1)."
-          usage: mesheryctl connection list --page [page number]
         count:
           name: --count
           description: (optional) Get the total number of connections
@@ -1124,6 +1120,14 @@ connection:
           name: -k, --kind
           description: (optional) Filter by kind (repeatable)
           usage: mesheryctl connection list --kind [kind] --kind [kind]
+        page:
+          name: -p, --page
+          description: "(optional) List a set of connection in specific page (default=1)."
+          usage: mesheryctl connection list --page [page number]
+        pagesize:
+          name: --pagesize
+          description: "(optional) List a set of connection in specific page (default=10)."
+          usage: mesheryctl connection list --pagesize [page size]
         status:
           name: -s, --status
           description: (optional) Filter by status (repeatable)
