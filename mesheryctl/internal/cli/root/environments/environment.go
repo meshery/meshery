@@ -17,11 +17,10 @@ package environments
 import (
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/environments"
-
-	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -77,11 +76,9 @@ func init() {
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectEnvironmentPrompt(environment []environments.EnvironmentData) environments.EnvironmentData {
+func selectEnvironmentPrompt(environments []environment.Environment) environment.Environment {
 	environmentNames := []string{}
-	environmentArray := []environments.EnvironmentData{}
-
-	environmentArray = append(environmentArray, environment...)
+	environmentArray := environments
 
 	for _, environment := range environmentArray {
 		environmentName := fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
