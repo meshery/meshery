@@ -26,8 +26,12 @@ export class LoginPage {
       throw new Error('Password is required for login');
     }
 
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
+    await this.emailInput.evaluate((el, value) => {
+      el.value = value;
+    }, email);
+    await this.passwordInput.evaluate((el, value) => {
+      el.value = value;
+    }, password);
     await this.loginButton.click();
   }
 
