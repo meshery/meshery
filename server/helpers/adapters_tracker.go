@@ -79,7 +79,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
+		defer func() {
+			if err := cli.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
 
 		containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 		if err != nil {
@@ -99,7 +103,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInDocker(err)
 		}
 
-		defer resp.Close()
+		defer func() {
+			if err := resp.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
 		_, err = io.ReadAll(resp)
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
@@ -224,8 +232,11 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
-		defer cli.Close()
-
+		defer func() {
+			if err := cli.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
 		containers, err := cli.ContainerList(ctx, container.ListOptions{})
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
