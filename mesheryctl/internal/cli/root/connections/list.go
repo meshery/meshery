@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -13,10 +12,11 @@ import (
 )
 
 type connectionListFlags struct {
-	count  bool
-	kind   []string
-	status []string
-	page   int
+	count    bool
+	kind     []string
+	status   []string
+	pageSize int
+	page     int
 }
 
 var connectionListFlagsProvided connectionListFlags
@@ -68,34 +68,29 @@ mesheryctl connection list --count
 		}
 		utils.Log.Debug("Final URL: ", urlPath)
 
-		connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
-
-		if err != nil {
-			return err
-		}
-
 		header := []string{"id", "Name", "Type", "Kind", "Status"}
-		rows := [][]string{}
-		for _, connection := range connectionsResponse.Connections {
-			rows = append(rows, getConnectionDetail(connection))
-		}
 
-		count, _ := cmd.Flags().GetBool("count")
-		dataToDisplay := display.DisplayedData{
+		designData := display.DisplayDataAsync{
+			UrlPath:          urlPath,
 			DataType:         "connection",
 			Header:           header,
-			Rows:             rows,
-			Count:            int64(connectionsResponse.TotalCount),
-			DisplayCountOnly: count,
+			Page:             connectionListFlagsProvided.page,
+			PageSize:         connectionListFlagsProvided.pageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-		}
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
+			DisplayCountOnly: connectionListFlagsProvided.count,
 		}
 
-		return nil
+		return display.ListAsyncPagination(designData, processDesignData)
 	},
+}
+
+func processDesignData(connectionsResponse *connection.ConnectionPage) ([][]string, int64) {
+	rows := [][]string{}
+	for _, connection := range connectionsResponse.Connections {
+		row := getConnectionDetail(connection)
+		rows = append(rows, row)
+	}
+	return rows, int64(connectionsResponse.TotalCount)
 }
 
 func getConnectionDetail(connection *connection.Connection) []string {
@@ -123,6 +118,7 @@ func getConnectionDetail(connection *connection.Connection) []string {
 func init() {
 	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", -1, "Page number")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.pageSize, "pagesize", "", 10, "Number of connections per page")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
-	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
 }
