@@ -84,16 +84,20 @@ const RenderContents = ({
       <Segment>
         <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
           <FormatStructuredData
-            data={reorderObjectProperties(metaDataLeft, orderLeft)}
-            propertyFormatters={PropertyFormattersLeft}
-            order={orderLeft}
+            {...({
+              data: reorderObjectProperties(metaDataLeft, orderLeft),
+              propertyFormatters: PropertyFormattersLeft,
+              order: orderLeft,
+            } as any)}
           />
         </FullWidth>
         <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
-            data={reorderObjectProperties(metaDataRight, orderRight)}
-            propertyFormatters={PropertyFormattersRight}
-            order={orderRight}
+            {...({
+              data: reorderObjectProperties(metaDataRight, orderRight),
+              propertyFormatters: PropertyFormattersRight,
+              order: orderRight,
+            } as any)}
           />
         </FullWidth>
       </Segment>
@@ -140,12 +144,12 @@ const RenderContents = ({
 
 const ModelContents = ({ modelDef }: { modelDef: any }) => {
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    hostname: (value) => <KeyValue property="Registrant" value={value} />,
-    components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
-    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    version: (value: any) => <KeyValue property="API Version" value={value} />,
+    hostname: (value: any) => <KeyValue property="Registrant" value={value} />,
+    components: (value: any) => <KeyValue property="Components" value={value} />,
+    subCategory: (value: any) => <KeyValue property="Sub-Category" value={value} />,
+    modelVersion: (value: any) => <KeyValue property="Model Version" value={value} />,
+    registrant: (value: any) => <KeyValue property="Registrant" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -179,9 +183,9 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    category: (value) => <KeyValue property="Category" value={value} />,
-    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    relationships: (value) => <KeyValue property="Relationships" value={value} />,
+    category: (value: any) => <KeyValue property="Category" value={value} />,
+    duplicates: (value: any) => <KeyValue property="Duplicates" value={value} />,
+    relationships: (value: any) => <KeyValue property="Relationships" value={value} />,
   };
 
   const metaDataRight = {
@@ -210,9 +214,8 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
         <div style={{ display: 'flex', gap: '1rem' }}>
           {ExportAvailable ? (
             <Button
-              aria-label="Export Model"
+              aria-label="Export Model to OCI Image"
               variant="contained"
-              alt="Export Model to OCI Image"
               onClick={handleExport}
               size="small"
               data-testid="export-model-button"
@@ -247,10 +250,10 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
   });
   const componentData = data?.components?.find((comp) => comp.id === componentDef.id);
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    version: (value: any) => <KeyValue property="API Version" value={value} />,
+    modelName: (value: any) => <KeyValue property="Model Name" value={value} />,
+    kind: (value: any) => <KeyValue property="Kind" value={value} />,
+    subCategory: (value: any) => <KeyValue property="Sub Category" value={value} />,
   };
 
   const metaDataLeft = {
@@ -264,9 +267,9 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
-    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    category: (value) => <KeyValue property="Category" value={value} />,
+    registrant: (value: any) => <KeyValue property="Registrant" value={value} />,
+    duplicates: (value: any) => <KeyValue property="Duplicates" value={value} />,
+    category: (value: any) => <KeyValue property="Category" value={value} />,
   };
 
   const metaDataRight = {
@@ -310,8 +313,8 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
 
 const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => {
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    version: (value: any) => <KeyValue property="API Version" value={value} />,
+    registrant: (value: any) => <KeyValue property="Registrant" value={value} />,
   };
 
   const metaDataLeft = {
@@ -324,8 +327,8 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
-    subType: (value) => <KeyValue property="Sub Type" value={value} />,
+    registrant: (value: any) => <KeyValue property="Registrant" value={value} />,
+    subType: (value: any) => <KeyValue property="Sub Type" value={value} />,
   };
 
   const metaDataRight = {
@@ -357,8 +360,8 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
 
 const RegistrantContent = ({ registrant }: { registrant: any }) => {
   const PropertyFormattersLeft = {
-    models: (value) => <KeyValue property="Models" value={value} />,
-    components: (value) => <KeyValue property="Components" value={value} />,
+    models: (value: any) => <KeyValue property="Models" value={value} />,
+    components: (value: any) => <KeyValue property="Components" value={value} />,
   };
 
   const metaDataLeft = {
@@ -370,8 +373,8 @@ const RegistrantContent = ({ registrant }: { registrant: any }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    relationships: (value) => <KeyValue property="Relationships" value={value} />,
-    policies: (value) => <KeyValue property="Policies" value={value} />,
+    relationships: (value: any) => <KeyValue property="Relationships" value={value} />,
+    policies: (value: any) => <KeyValue property="Policies" value={value} />,
   };
 
   const metaDataRight = {
@@ -444,7 +447,7 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
   });
 
   const data = modelData?.models?.find((model) => model.id === entityData.id);
-  const handleStatusChange = (e) => {
+  const handleStatusChange = (e: any) => {
     updateEntityStatus({
       entityType: _.toLower(entityType),
       body: {
@@ -503,7 +506,7 @@ const MeshModelDetails = ({
     <p style={{ color: '#979797', margin: 'auto' }}>No {view} selected</p>
   );
 
-  const getContent = (type) => {
+  const getContent = (type: string) => {
     switch (type) {
       case MODELS:
         return <ModelContents modelDef={showDetailsData.data} />;
