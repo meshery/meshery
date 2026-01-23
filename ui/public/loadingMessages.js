@@ -121,7 +121,7 @@ window.Loader = {
     };
 
     if (document.fonts && document.fonts.load) {
-      document.fonts.load('1em QanelasSoftRegular').then(setMessage).catch(setMessage);
+      document.fonts.load('1em Qanelas Soft Regular').then(setMessage).catch(setMessage);
     } else {
       setMessage();
     }
