@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 23rd 2026, 12:17:14 am
+- Testing started at: January 23rd 2026, 1:03:40 am
 
 **📦 Test Result Summary**
 
-- ✅ 68 passed
-- ❌ 2 failed
+- ✅ 65 passed
+- ❌ 5 failed
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 3 minutes and 48 seconds_
+⌛ _Duration: 5 minutes and 35 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -51,12 +51,12 @@
 | 28 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Performance Results&quot; |  | ✅ |
 | 29 | Meshery | chromium-meshery-provider | Toggle &quot;Send Anonymous Usage Statistics&quot; |  | ✅ |
 | 30 | Meshery | chromium-meshery-provider | Verify Kanvas Details |  | ❌ |
-| 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ✅ |
+| 31 | Meshery | chromium-meshery-provider | Verify Kanvas Snapshot UI elements |  | ❌ |
 | 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 34 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
 | 35 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
-| 36 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
+| 36 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ❌ |
 | 37 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ✅ |
 | 38 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
 | 39 | None | chromium-local-provider | Aggregation Charts are displayed |  | ✅ |
@@ -67,7 +67,7 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ❌ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
 | 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
 | 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
@@ -110,7 +110,21 @@ The following tests failed. Click on each to see the failure reason:
 
 
 <details>
-<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+<summary>❌ Verify Kanvas Snapshot UI elements (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
+
+</details>
+
+<details>
+<summary>❌ Verify Performance Analysis Details (Meshery - chromium-meshery-provider)</summary>
 
 **File Location:** `Not Found`
 
@@ -143,6 +157,43 @@ Error: No connected Kubernetes cluster found to delete. Ensure a connection exis
  [90m 190 |[39m       )[33m;[39m
  [90m 191 |[39m     }[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
+
+**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/extensions.spec.js`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+```
+
+**Code Snippet:**
+```
+[0m [90m 19 |[39m   [36mlet[39m extensionsPage[33m;[39m
+ [90m 20 |[39m
+[31m[1m>[22m[39m[90m 21 |[39m   test[33m.[39mbeforeEach([36masync[39m ({ page }) [33m=>[39m {
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 22 |[39m     extensionsPage [33m=[39m [36mnew[39m [33mExtensionsPage[39m(page)[33m;[39m
+ [90m 23 |[39m     [36mawait[39m extensionsPage[33m.[39mgoto()[33m;[39m
+ [90m 24 |[39m   })[33m;[39m[0m
+```
+
+</details>
+
+<details>
+<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
