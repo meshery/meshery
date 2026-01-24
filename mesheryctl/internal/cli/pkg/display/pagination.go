@@ -46,19 +46,19 @@ func HandlePaginationAsync[T any](
 
 		urlPath := ""
 
-		pagesQuesrySearch := url.Values{}
+		pagesQuerySearch := url.Values{}
 		if !strings.Contains(displayData.UrlPath, "page") {
-			pagesQuesrySearch.Set("page", fmt.Sprintf("%d", currentPage))
+			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
 		if !strings.Contains(displayData.UrlPath, "pagesize") {
-			pagesQuesrySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
+			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
 		}
 
 		if strings.Contains(displayData.UrlPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuesrySearch.Encode())
+			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
 		} else {
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuesrySearch.Encode())
+			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
 		}
 
 		utils.Log.Debug("Fetching data from URL: ", urlPath)
