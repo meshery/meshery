@@ -13,7 +13,10 @@ list: exclude
 display-suggested-reading: false
 abstract: How to contribute to the Meshery project and any of its components.
 ---
-# Contributing 
+
+{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+
+# Contributing
 
 Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md).
 
