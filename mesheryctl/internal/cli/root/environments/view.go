@@ -15,9 +15,9 @@
 package environments
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -27,7 +27,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
 
 type environmentViewFlags struct {
@@ -48,7 +47,7 @@ Documentation for environment can be found at https://docs.meshery.io/reference/
 // View details of a specific environment
 mesheryctl environment view --orgID [orgID]
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		if environmentViewFlagsProvided.orgID == "" {
 			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment view --orgID [orgID]\nRun 'mesheryctl environment view --help' to see detailed help message"
@@ -81,10 +80,6 @@ mesheryctl environment view --orgID [orgID]
 			selectedEnvironment = selectEnvironmentPrompt(environmentResponse.Environments)
 		}
 
-		var output []byte
-
-		// user may pass flag in lower or upper case but we have to keep it lower
-		// in order to make it consistent while checking output format
 		outputFormat := strings.ToLower(environmentViewFlagsProvided.outputFormat)
 
 		outputFormatterFactory := display.OutputFormatterFactory[environment.Environment]{}
@@ -99,36 +94,25 @@ mesheryctl environment view --orgID [orgID]
 		}
 
 		// Get the home directory of the user to save the output file
-		homeDir, _ := os.UserHomeDir()
-		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+		}
+		environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
-		// TODO: Add support for YAML/JSON output saving in outputFormatter itself
-		switch outputFormat {
-		case "yaml", "yml":
-			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
-				return utils.ErrMarshal(errors.Wrap(err, "failed to format output in YAML"))
+		if environmentViewFlagsProvided.save {
+			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
+			file := filepath.Join(homeDir, ".meshery", fileName)
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}
+			outputFormatterSaver, err := outputFormatterSaverFactory.New(environmentViewFlagsProvided.outputFormat, outputFormatter)
+			if err != nil {
+				return err
 			}
-			if environmentViewFlagsProvided.save {
-				utils.Log.Info("Saving output as YAML file")
-				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
-				if err != nil {
-					return utils.ErrMarshal(errors.Wrap(err, "failed to save output as YAML file"))
-				}
-				utils.Log.Info("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
-			}
-		case "json":
-			if environmentViewFlagsProvided.save {
-				utils.Log.Info("Saving output as JSON file")
-				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
-				if err != nil {
-					return utils.ErrMarshal(errors.Wrap(err, "failed to format output in JSON"))
-				}
-				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".json", output, 0666)
-				if err != nil {
-					return utils.ErrMarshal(errors.Wrap(err, "failed to save output as JSON file"))
-				}
-				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
-				return nil
+
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+			err = outputFormatterSaver.Save()
+			if err != nil {
+				return err
 			}
 		}
 
