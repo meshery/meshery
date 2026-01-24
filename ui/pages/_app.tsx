@@ -223,12 +223,11 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   }, []);
 
   const loadPromGrafanaConnection = useCallback(() => {
+    var urlPath = "/api/integrations/connections?page=0&pagesize=2&";
+    urlPath += [CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED].map(status => "status="+encodeURIComponent(status)).join('&');
+    urlPath += [CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA].map(kind => "kind="+encodeURIComponent(kind)).join('&');
     dataFetch(
-      `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
-      )}&kind=${encodeURIComponent(
-        JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
-      )}`,
+      urlPath,
       {
         credentials: 'include',
         method: 'GET',
