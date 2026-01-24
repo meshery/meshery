@@ -9,7 +9,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.23+. `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarise yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
 

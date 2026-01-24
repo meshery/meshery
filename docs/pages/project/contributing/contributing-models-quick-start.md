@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 [Meshery Models](/concepts/logical/models) are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
 

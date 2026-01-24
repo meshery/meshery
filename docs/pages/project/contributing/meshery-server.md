@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for any issues that you might work on.
 

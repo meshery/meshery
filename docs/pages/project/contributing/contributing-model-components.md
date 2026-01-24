@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 In Meshery, a [Components](/concepts/logical/components) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry](/concepts/logical/registry)), components are available for inclusion in [Designs](/concepts/logical/designs) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
 

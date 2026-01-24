@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 

@@ -9,7 +9,7 @@ category: contributing
 list: include
 ---
 
-{% include alert.html type="info" title="Schema-Driven Development" content="Meshery follows <b>Schema-Driven Development (SDD)</b>. Schemas are the single source of truth, used for validation, API documentation, and code generation. Before contributing, review the <a href='/project/contributing/contributing-schemas'>Contributing to Schemas</a> guide." %}
+{% include sdd-alert.md %}
 
 ## Background
 Meshery has a built-in policy engine, based on [Open Policy Agent (OPA)](https://www.openpolicyagent.org/docs/latest/). Meshery uses the [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) query language to create these [policies](https://docs.meshery.io/concepts/logical/policies). 
