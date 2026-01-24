@@ -55,6 +55,17 @@ mesheryctl perf profile test 2
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
+			}
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString string
@@ -64,14 +75,6 @@ mesheryctl perf profile test --view
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
-		}
-
-		// Check for valid output Format
-		if outputFormatFlag != "" {
-			outputFormatFlag = strings.ToLower(outputFormatFlag)
-			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
-			}
 		}
 
 		// handles spaces in args if quoted args passed

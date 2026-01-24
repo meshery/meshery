@@ -71,6 +71,17 @@ mesheryctl perf result saturday-profile --page 2
 mesheryctl perf result saturday-profile --view
 `,
 	Annotations: linkDocPerfResult,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
+			}
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString, profileID string
@@ -85,14 +96,6 @@ mesheryctl perf result saturday-profile --view
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
 			return ErrNoProfileName()
-		}
-
-		// Check for valid output Format
-		if outputFormatFlag != "" {
-			outputFormatFlag = strings.ToLower(outputFormatFlag)
-			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
-			}
 		}
 
 		// handles spaces in args if quoted args passed
