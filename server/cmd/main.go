@@ -39,6 +39,8 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
+
 )
 
 var (
@@ -125,14 +127,25 @@ func main() {
 
 	// initialize tracing
 	otelConfigString := viper.GetString("OTEL_CONFIG")
-log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
-	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+	cfg := tracing.Config{}
+	if otelConfigString != "" {
+		if err := yaml.Unmarshal([]byte(otelConfigString), &cfg); err != nil {
+			log.Error(fmt.Errorf("invalid OTEL_CONFIG: %v", err))
+		}
+	}
+	enabled := cfg.Endpoint != ""
+	cfg.Enabled = &enabled
+	if cfg.ServiceName == "" {
+	cfg.ServiceName = "meshery-server"
+	}
 
+	log.Infof("Initializing OpenTelemetry tracing. Enabled: %v", enabled)
+
+	tracingProvider, err := tracing.InitTracer(context.Background(), cfg)
 	if err != nil {
 		log.Error(fmt.Errorf("Failed to initialize OpenTelemetry tracing: %v", err))
-	} else {
-		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
 	}
+
 	// Defer shutdown of tracer provider
 	defer func() {
 		if tracingProvider != nil {

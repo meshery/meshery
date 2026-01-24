@@ -66,6 +66,8 @@ spec:
             timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
           {{- end }}
           env:
+          - name: OTEL_CONFIG
+            value: {{ .Values.tracing.otelConfig | quote }}
           {{- if .Values.env }}
           {{- range $key, $val := .Values.env }}
           - name: {{ $key }}

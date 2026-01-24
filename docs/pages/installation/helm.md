@@ -147,3 +147,23 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 {% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 {% include related-discussions.html tag="meshery" %}
+
+### OpenTelemetry Tracing (Optional)
+
+Meshery supports distributed tracing using OpenTelemetry.
+Tracing is **disabled by default** and is enabled only when an
+OpenTelemetry collector endpoint is configured.
+
+Tracing configuration is provided to Meshery via the `OTEL_CONFIG`
+environment variable, which can be set using Helm values.
+
+#### Enabling tracing via Helm
+
+To enable tracing, configure the following in your `values.yaml`:
+
+```yaml
+tracing:
+  otelConfig: |
+    service_name: meshery-server
+    endpoint: localhost:4317
+    insecure: true

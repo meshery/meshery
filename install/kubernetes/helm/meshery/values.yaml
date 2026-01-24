@@ -198,3 +198,7 @@ mesherygateway:
 meshery-operator:
   enabled: false
   fullnameOverride: "meshery-operator"
+
+tracing:
+  enabled: false
+  otelConfig: ""
