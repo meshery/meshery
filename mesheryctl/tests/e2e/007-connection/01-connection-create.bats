@@ -22,7 +22,8 @@ setup() {
 
     run $MESHERYCTL_BIN connection create --type minikube
     assert_success
-    assert_output --partial "Minikube connection created" || assert_output --partial "Token set in context minikube"
+    assert_output --partial "Minikube connection created" 
+    assert_output --partial "Token set in context minikube"
 
     #Extract connection ID if present and store it in temp dir
     CONNECTION_ID=$(

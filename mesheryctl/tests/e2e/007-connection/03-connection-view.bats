@@ -10,7 +10,8 @@ setup() {
 @test "mesheryctl connection view fails without connection-id" {
     run $MESHERYCTL_BIN connection view
     assert_failure
-    assert_output --partial "Error" || assert_output --partial "Invalid Argument"
+    assert_output --partial "Error" 
+    assert_output --partial "Invalid Argument"
 }
 
 @test "meshery connection view connection-id displays connection details" {
@@ -23,5 +24,8 @@ setup() {
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID"
     assert_success
-    assert_output --partial "id" || assert_output --partial "name" || assert_output --partial "metadata" || assert_output --partial "connection_id"
+    assert_output --partial "id" 
+    assert_output --partial "name" 
+    assert_output --partial "metadata" 
+    assert_output --partial "connection_id"
 }

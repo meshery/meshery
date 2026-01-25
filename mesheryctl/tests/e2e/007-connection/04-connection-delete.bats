@@ -12,7 +12,8 @@ setup() {
 
     run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
     assert_failure
-    assert_output --partial "Invalid API call" || assert_output --partial "Failed"
+    assert_output --partial "Invalid API call" 
+    assert_output --partial "Failed"
 }
 
 @test "mesheryctl connection delete connection-id removes an existing connection if available" {
