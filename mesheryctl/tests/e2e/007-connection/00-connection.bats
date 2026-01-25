@@ -1,13 +1,13 @@
 #!/usr/bin/env bats
 
-setup(){
+setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
 
     load "$E2E_HELPERS_PATH/constants"
 }
 
-@test "mesheryctl connection --count return total number of connections" {
+@test "mesheryctl connection --count returns total number of connections" {
     run $MESHERYCTL_BIN connection --count
     assert_success
 

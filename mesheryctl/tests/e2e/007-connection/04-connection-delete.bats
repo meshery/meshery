@@ -17,7 +17,7 @@ setup() {
 
 @test "mesheryctl connection delete connection-id removes an existing connection if available" {
     if [ ! -f "$TESTDATA_DIR/id" ]; then
-    skip "No connection ID available to delete"
+        skip "No connection ID available to delete"
     fi
 
     CONNECTION_ID="$(cat "$TESTDATA_DIR/id")"

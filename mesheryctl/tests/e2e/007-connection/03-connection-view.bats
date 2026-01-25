@@ -7,7 +7,7 @@ setup() {
     export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
 }
 
-@test "meshery connection view invalid connection-id shows error" {
+@test "mesheryctl connection view fails without connection-id" {
     run $MESHERYCTL_BIN connection view
     assert_failure
     assert_output --partial "Error" || assert_output --partial "Invalid Argument"
@@ -23,5 +23,5 @@ setup() {
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID"
     assert_success
-    assert_output --partial "id" || assert_output --partial "name" || assert_output --partial "metadata"
+    assert_output --partial "id" || assert_output --partial "name" || assert_output --partial "metadata" || assert_output --partial "connection_id"
 }

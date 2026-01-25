@@ -1,6 +1,6 @@
-setup(){
+setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
-	_load_bats_libraries
+    _load_bats_libraries
 
     load "$E2E_HELPERS_PATH/constants"
 
@@ -28,8 +28,7 @@ setup(){
     CONNECTION_ID=$(
         echo "$output" |
         grep -oE '"connection_id"\s*:\s*"[^"]+"' |
-        head -n1 |
-        sed -E 's/.*"connection_id"\s*:\s*"([^"]+)".*/\1/'
+        cut -d '"' -f 4
     )
     [ -n "$CONNECTION_ID" ] || skip "No ID found in output"
 
