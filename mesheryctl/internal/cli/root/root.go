@@ -159,15 +159,22 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-		if !os.IsNotExist(err) && stat.Size() == 0 {
-			log.Println("Empty meshconfig. Please populate it before running a command")
-		}
-		if os.IsNotExist(err) {
+		createDefaultConfig := false
+		if err == nil {
+			if stat.Size() == 0 {
+				log.Println("Empty meshconfig. Please populate it before running a command")
+				createDefaultConfig = true
+			}
+		} else if os.IsNotExist(err) {
 			log.Printf("Missing Meshery config file.")
+			createDefaultConfig = true
+		} else {
+			log.Printf("Unable to stat config file: %v", err)
+			return
 		}
 
 		// Create a default meshconfig in each of the above two scenarios.
-		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
+		if createDefaultConfig {
 			// Check for Meshery existence and permission of application folder
 			if _, err := os.Stat(utils.MesheryFolder); err != nil {
 				if os.IsNotExist(err) {
@@ -175,6 +182,8 @@ func initConfig() {
 					if err != nil {
 						log.Fatal(err)
 					}
+				} else {
+					log.Fatal(err)
 				}
 			}
 
