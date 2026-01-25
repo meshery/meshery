@@ -39,7 +39,6 @@ function GrafanaConfigComponent({
 }) {
   const [availableGrafanaConnection, setAvailableGrafanaConnection] = useState([]);
   useEffect(() => {
-    
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(CONNECTION_STATES.CONNECTED)}&kind=${encodeURIComponent(CONNECTION_KINDS.GRAFANA)}`,
       {
