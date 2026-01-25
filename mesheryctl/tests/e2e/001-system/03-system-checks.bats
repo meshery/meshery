@@ -22,6 +22,7 @@ setup() {
    assert_output --partial "$CHECK_KUBERNETES_VERSION_HEADER"
    assert_output --partial "$CHECK_MESHERY_COMPONENTS_HEADER"
    # Note: Meshery Operators section may show errors if auth is not configured
+   assert_output --partial "$CHECK_MESHERY_OPERATORS_HEADER"
 }
 
 
