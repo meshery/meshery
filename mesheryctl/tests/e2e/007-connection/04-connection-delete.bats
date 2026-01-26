@@ -7,6 +7,10 @@ setup() {
     export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
 }
 
+teardown_file() {
+    rm -rf "$TESTDATA_DIR"
+}
+
 @test "given non valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then a message error is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
