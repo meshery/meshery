@@ -16,7 +16,7 @@ Manage environments
 
 ## Synopsis
 
-View list of environments and detailed information of a specific environments
+Create, delete, list of view details of environment(s) of a specific organization
 Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
 	
 <pre class='codeblock-pre'>
@@ -28,7 +28,23 @@ mesheryctl environment [flags]
 
 ## Examples
 
-To view a list environments
+Create an environment in an organization
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+
+</div>
+</pre> 
+
+Delete an environment in an organization
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl environment delete environment-id
+
+</div>
+</pre> 
+
+List of registered environments in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment list --orgID [orgID]
@@ -36,18 +52,10 @@ mesheryctl environment list --orgID [orgID]
 </div>
 </pre> 
 
-To view a particular environment
+View a particular environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment view --orgID [orgID]
-
-</div>
-</pre> 
-
-To create a environment
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 
 </div>
 </pre> 

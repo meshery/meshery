@@ -16,14 +16,12 @@ package environments
 
 import (
 	"fmt"
-	"net/http"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var deleteEnvironmentCmd = &cobra.Command{
@@ -35,42 +33,25 @@ Documentation for environment can be found at Documentation for environment can 
 // delete a new environment
 mesheryctl environment delete [environmentId]
 `,
-
-	Args: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			const errMsg = "[ Environment ID ] isn't specified\n\nUsage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
+
+		if !utils.IsUUID(args[0]) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid environment ID: %s", args[0]))
+		}
+
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/environments/%s", baseUrl, args[0])
-		req, err := utils.NewRequest(http.MethodDelete, url, nil)
+		_, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
 		if err != nil {
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer func() { _ = resp.Body.Close() }()
-
-		// Check if the response status code is 200
-		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info(fmt.Sprintf("Environment with ID %s has been deleted", args[0]))
-			return nil
-		}
-
-		return utils.ErrBadRequest(errors.New(fmt.Sprintf("failed to delete environment with id %s", args[0])))
+		utils.Log.Infof("Environment with ID %s has been deleted", args[0])
+		return nil
 	},
 }
