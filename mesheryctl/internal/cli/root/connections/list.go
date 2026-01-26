@@ -118,14 +118,9 @@ func getConnectionDetail(connection *connection.Connection) []string {
 }
 
 func init() {
-<<<<<<< HEAD
 	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
 	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
 	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.pageSize, "pagesize", "", 10, "Number of connections per page")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
-=======
-	listConnectionsCmd.Flags().BoolP("count", "c", false, "Display the count of total available connections")
-	listConnectionsCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "Page number")
->>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 }
