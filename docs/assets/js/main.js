@@ -143,15 +143,24 @@ document.addEventListener("click", (event) => {
 })
 
 // Bring focus to search bar when "/" is pressed
-document.addEventListener("keydown", function (event) {
-  if (
-    event.key === "/" &&
-    !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
-  ) {
-    event.preventDefault();
-    const searchInput = document.getElementById("sidebar-search-input");
-    if (searchInput) {
+const searchInput = document.getElementById("sidebar-search-input");
+
+if (searchInput) {
+  document.addEventListener("keydown", function (event) {
+    const activeEl = document.activeElement;
+    const isEditable =
+      activeEl.isContentEditable ||
+      ["INPUT", "TEXTAREA"].includes(activeEl.tagName);
+
+    if (
+      event.key === "/" &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey &&
+      !isEditable
+    ) {
+      event.preventDefault();
       searchInput.focus();
     }
-  }
-})
+  });
+}
