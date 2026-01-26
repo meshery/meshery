@@ -1,11 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
-
-	"encoding/json"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -125,35 +124,42 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	// only validate load test data when LoadTestPreferences is send
 	if prefObj.LoadTestPreferences != nil {
 		// validate load test data
-		qps := prefObj.LoadTestPreferences.QueriesPerSecond
-		if qps < 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			err := fmt.Errorf("QPS value less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+
+		if prefObj.LoadTestPreferences.Qps != nil {
+			qps := *prefObj.LoadTestPreferences.Qps
+			if qps < 0 {
+				w.WriteHeader(http.StatusBadRequest)
+				err := fmt.Errorf("QPS value less than 0")
+				h.log.Error(ErrSavingUserPreference(err))
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
-		dur := prefObj.LoadTestPreferences.Duration
-		if _, err := time.ParseDuration(dur); err != nil {
-			err = errors.Wrap(err, "unable to parse test duration")
-			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		if prefObj.LoadTestPreferences.T != nil {
+			dur := prefObj.LoadTestPreferences.T
+			if _, err := time.ParseDuration(*dur); err != nil {
+				err = errors.Wrap(err, "unable to parse test duration")
+				h.log.Error(ErrSavingUserPreference(err))
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
-		c := prefObj.LoadTestPreferences.ConcurrentRequests
-		if c < 0 {
-			err := fmt.Errorf("number of concurrent requests less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		if prefObj.LoadTestPreferences.C != nil {
+			c := *prefObj.LoadTestPreferences.C
+			if c < 0 {
+				err := fmt.Errorf("number of concurrent requests less than 0")
+				h.log.Error(ErrSavingUserPreference(err))
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
-		loadGen := prefObj.LoadTestPreferences.LoadGenerator
+		loadGen := prefObj.LoadTestPreferences.Gen
 		loadGenSupported := false
 		for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-			if lg.Name() == loadGen {
+			if lg.Name() == *loadGen {
 				loadGenSupported = true
 			}
 		}

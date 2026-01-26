@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/grafana-tools/sdk"
+	"github.com/meshery/schemas/models/v1beta1/user"
 )
 
 // K8SNode - represents a kubernetes node
@@ -44,14 +45,6 @@ type Prometheus struct {
 	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
-// LoadTestPreferences represents the load test preferences
-type LoadTestPreferences struct {
-	ConcurrentRequests int    `json:"c,omitempty"`
-	QueriesPerSecond   int    `json:"qps,omitempty"`
-	Duration           string `json:"t,omitempty"`
-	LoadGenerator      string `json:"gen,omitempty"`
-}
-
 // Parameters to updates Anonymous stats
 type PreferenceParams struct {
 	AnonymousUsageStats  bool `json:"anonymousUsageStats"`
@@ -60,18 +53,18 @@ type PreferenceParams struct {
 
 // Preference represents the data stored in session / local DB
 type Preference struct {
-	MeshAdapters                      []*Adapter             `json:"meshAdapters,omitempty"`
-	Grafana                           *Grafana               `json:"grafana,omitempty"`
-	Prometheus                        *Prometheus            `json:"prometheus,omitempty"`
-	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
-	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
-	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
-	UpdatedAt                         time.Time              `json:"updated_at,omitempty"`
-	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
-	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
-	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
-	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
-	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+	MeshAdapters                      []*Adapter                `json:"meshAdapters,omitempty"`
+	Grafana                           *Grafana                  `json:"grafana,omitempty"`
+	Prometheus                        *Prometheus               `json:"prometheus,omitempty"`
+	LoadTestPreferences               *user.LoadTestPreferences `json:"loadTestPrefs,omitempty"`
+	AnonymousUsageStats               bool                      `json:"anonymousUsageStats"`
+	AnonymousPerfResults              bool                      `json:"anonymousPerfResults"`
+	UpdatedAt                         time.Time                 `json:"updated_at,omitempty"`
+	DashboardPreferences              map[string]interface{}    `json:"dashboardPreferences,omitempty"`
+	SelectedOrganizationID            string                    `json:"selectedOrganizationID,omitempty"`
+	SelectedWorkspaceForOrganizations map[string]string         `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
+	UsersExtensionPreferences         map[string]interface{}    `json:"usersExtensionPreferences,omitempty"`
+	RemoteProviderPreferences         map[string]interface{}    `json:"remoteProviderPreferences,omitempty"`
 }
 
 func init() {
