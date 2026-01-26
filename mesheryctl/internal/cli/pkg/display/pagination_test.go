@@ -37,7 +37,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 		hasToken         bool
 	}{
 		{
-			name:     "Successful pagination",
+			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Response",
 			pageSize: 2,
 			displayData: DisplayDataAsync{
 				Page:             1,
@@ -63,7 +63,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Successful count",
+			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Response",
 			pageSize: 2,
 			displayData: DisplayDataAsync{
 				Page:             1,
@@ -89,7 +89,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Successful count empty response",
+			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Empty_Response",
 			pageSize: 2,
 			displayData: DisplayDataAsync{
 				Page:             1,
@@ -112,7 +112,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Failed when missing token",
+			name:     "Given_Missing_Token_When_HandlePaginationAsync_Then_Error_Returned",
 			pageSize: 2,
 			displayData: DisplayDataAsync{
 				Page:             1,
@@ -135,7 +135,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         false,
 		},
 		{
-			name:     "Failed when meshery server is not reachable",
+			name:     "Given_Meshery_Server_Is_Not_Reachable_When_HandlePaginationAsync_Then_Error_Returned",
 			pageSize: 2,
 			displayData: DisplayDataAsync{
 				Page:             1,

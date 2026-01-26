@@ -12,11 +12,11 @@ subcommand: create
 
 # mesheryctl environment create
 
-Create a new environments
+Create a new environment
 
 ## Synopsis
 
-Create a new environments by providing the name and description of the environment
+Create a new environment by providing the name and description of the environment
 Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/create
 <pre class='codeblock-pre'>
 <div class='codeblock'>
