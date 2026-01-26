@@ -117,7 +117,7 @@ const meshModelApi = api
           return {
             url: `meshmodels/register`,
             method: 'POST',
-            body: queryArgs.importBody,
+            body: queryArgs.body ?? queryArgs.importBody ?? queryArgs,
           };
         },
         invalidatesTags: [TAGS.MESH_MODELS],
