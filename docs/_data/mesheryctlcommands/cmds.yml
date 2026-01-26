@@ -1076,39 +1076,77 @@ environment:
           usage: mesheryctl environment view --output-format [json|yaml] --save [filepath]
           example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
 
+connection:
+  name: connection
+  description: Manage Meshery connections
+  usage: mesheryctl connection [command] [flags]
+  flags:
+    help:
+      name: --help, -h
+      description: help for connection
+      usage: mesheryctl connection --help
+      example: mesheryctl connection --help
+    count:
+      name: --count
+      description: (optional) Get the total number of connections
+  subcommands:
+    create:
+      name: create
+      description: Create a new connection to a Kubernetes cluster or other supported platform
+      usage: mesheryctl connection create [flags]
+      flags:
+        type:
+          name: -t, --type
+          description: (required) type of connection to create (aks, eks, gke, minikube)
+          usage: mesheryctl connection create --type [type]
+        token:
+          name: --token
+          description: (optional) Path to token for authenticating to Meshery API
+          usage: mesheryctl connection create --type [type] --token [path/to/token/file]
+    delete:
+      name: delete
+      description: delete a connection
+      usage: mesheryctl connection delete [connection_id]
+    list:
+      name: list
+      description: list all the connections
+      usage: mesheryctl connection list [flags]
+      flags:
+        count:
+          name: --count
+          description: (optional) Get the total number of connections
+          usage: mesheryctl connection list --count
+        kind:
+          name: -k, --kind
+          description: (optional) Filter by kind (repeatable)
+          usage: mesheryctl connection list --kind [kind] --kind [kind]
+        page:
+          name: -p, --page
+          description: "(optional) List a set of connection in specific page (default=1)."
+          usage: mesheryctl connection list --page [page number]
+        pagesize:
+          name: --pagesize
+          description: "(optional) Number of connections per page (default=10)."
+          usage: mesheryctl connection list --pagesize [page size]
+        status:
+          name: -s, --status
+          description: (optional) Filter by status (repeatable)
+          usage: mesheryctl connection list --status [status] --status [status]
+    view:
+      name: view
+      description: view a connection queried by the connection id
+      usage: mesheryctl connection view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+          usage: mesheryctl connection view --output-format [json|yaml]
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+          usage: mesheryctl connection view --output-format [json|yaml] --save
+
 exp:
-  connection:
-    name: connection
-    description: Manage Meshery connections
-    usage: mesheryctl exp connection [command] [flags]
-    flags:
-      help:
-        name: --help, -h
-        description: help for exp connection
-        usage: mesheryctl exp connection --help
-        example: mesheryctl exp connection --help
-      count:
-        name: --count
-        description: (optional) Get the number of exp connection in total
-    subcommands:
-      delete:
-        name: delete
-        description: delete a connection
-        usage: mesheryctl exp connection delete [connection_id]
-      list:
-        name: list
-        description: list all the connections
-        usage: mesheryctl exp connection list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp connection list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp connection list --page [page number]
-            example: mesheryctl exp connection list --page 2
-          count:
-            name: --count
-            description: (optional) Get the number of exp connection in total
-  
   relationship:
     name: relationship
     description: View list of relationships and details of relationship
