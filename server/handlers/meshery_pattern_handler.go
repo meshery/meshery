@@ -41,7 +41,6 @@ import (
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
 	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v3"
 )
@@ -98,7 +97,6 @@ func (h *Handler) PatternFileRequestHandler(
 }
 
 func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
-
 	var meshkitErr errors.Error
 	var event *events.Event
 	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
@@ -131,7 +129,6 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 }
 
 func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
-
 	var meshkitErr errors.Error
 	var event *events.Event
 	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
@@ -207,7 +204,6 @@ func (h *Handler) handlePatternPOST(
 	meshkitPatternHelpers.DehydratePattern(&requestPayload.DesignFile)
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
-
 	if err != nil {
 		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
 		return
@@ -225,7 +221,6 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
-
 	if err != nil {
 		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
@@ -254,7 +249,6 @@ func (h *Handler) handlePatternPOST(
 	_ = provider.PersistEvent(*event, nil)
 
 	_, _ = rw.Write(savedDesignByt)
-
 }
 
 // Verifies and converts a pattern to design format if required.
@@ -551,7 +545,6 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
-
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -844,7 +837,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		var design patternV1beta1.PatternFile
 
 		err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
-
 		if err != nil {
 
 			err = ErrEncodePattern(err)
@@ -860,7 +852,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		ymlDesign, err := yaml.Marshal(design)
-
 		if err != nil {
 			err = ErrEncodePattern(err)
 			h.log.Error(err)
@@ -976,7 +967,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
+		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0o444)
 		if err != nil {
 			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
 			http.Error(rw, ErrOpenFile(tmpOCITarFilePath).Error(), http.StatusInternalServerError)
@@ -1374,7 +1365,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	if err != nil {
 		h.log.Error(models.ErrDataRead(err, "Request Body"))
 	}
-	var patterns models.MesheryPatternDeleteRequestBody
+	var patterns patternV1beta1.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "pattern"))
@@ -1383,7 +1374,6 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	h.log.Debug("patterns to be deleted: ", patterns)
 
 	resp, err := provider.DeleteMesheryPatterns(r, patterns)
-
 	if err != nil {
 		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
@@ -1466,7 +1456,6 @@ func (h *Handler) GetMesheryPatternHandler(
 	// deprettify pattern for backward compatibility with older designs which had the configuration in prettified format
 	var design patternV1beta1.PatternFile
 	err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
-
 	if err != nil {
 		err = ErrParsePattern(err)
 		h.log.Error(err)
@@ -1540,7 +1529,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
 
-//unsued currently
+// unsued currently
 
 // func evalImportAndReferenceStage(p *pattern.PatternFile) (newp pattern.PatternFile) {
 // 	chain := stages.CreateChain()
@@ -1667,7 +1656,6 @@ func (h *Handler) handlePatternUpdate(
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
-
 }
 
 // swagger:route POST /api/pattern/{sourcetype} PatternsAPI idPostPatternFileRequest
@@ -1783,11 +1771,10 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	return data, nil
 }
 
-func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern, eventBuilder *events.EventBuilder) (*pattern.PatternFile, string, error) {
-
+func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern, eventBuilder *events.EventBuilder) (*patternV1beta1.PatternFile, string, error) {
 	v1alpha1PatternFile := v1alpha2.PatternFile{}
 
-	v1beta1PatternFile := pattern.PatternFile{}
+	v1beta1PatternFile := patternV1beta1.PatternFile{}
 
 	err := encoding.Unmarshal([]byte(mesheryPattern.PatternFile), &v1alpha1PatternFile)
 	if err != nil {
@@ -1824,7 +1811,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern
 	return &v1beta1PatternFile, string(v1beta1PatternByt), nil
 }
 
-func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.PatternFile) error {
+func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *patternV1beta1.PatternFile) error {
 	s := selector.New(reg)
 	for _, comp := range patternFile.Components {
 		if comp == nil {
