@@ -1529,7 +1529,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
 
-// unsued currently
+// unused currently
 
 // func evalImportAndReferenceStage(p *pattern.PatternFile) (newp pattern.PatternFile) {
 // 	chain := stages.CreateChain()

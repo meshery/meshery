@@ -158,13 +158,18 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 		loadGen := prefObj.LoadTestPreferences.Gen
 		loadGenSupported := false
-		for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-			if lg.Name() == *loadGen {
-				loadGenSupported = true
+		if loadGen != nil {
+			for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
+				if lg.Name() == *loadGen {
+					loadGenSupported = true
+				}
 			}
+		} else {
+			loadGenSupported = true
 		}
+
 		if !loadGenSupported {
-			err := fmt.Errorf("invalid load generator: %s", loadGen)
+			err := fmt.Errorf("invalid load generator: %s", *loadGen)
 			h.log.Error(ErrSavingUserPreference(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
