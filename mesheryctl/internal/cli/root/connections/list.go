@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-<<<<<<< HEAD
 type connectionListFlags struct {
 	count    bool
 	kind     []string
@@ -26,8 +25,6 @@ type connectionListFlags struct {
 
 var connectionListFlagsProvided connectionListFlags
 
-=======
->>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
