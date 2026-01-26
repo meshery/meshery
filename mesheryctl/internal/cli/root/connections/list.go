@@ -1,13 +1,9 @@
 package connections
 
 import (
-<<<<<<< HEAD
 	"fmt"
 	"net/url"
 
-=======
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
->>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
