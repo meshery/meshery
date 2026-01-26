@@ -56,31 +56,21 @@ mesheryctl connection list --count
 		urlPath := connectionApiPath
 		querySearch := url.Values{}
 
-		var kinds []string
-		for _, kind := range connectionListFlagsProvided.kind {
-			kinds = append(kinds, kind)
-		}
-
-		kindQuery, err := json.Marshal(kinds)
+		kindQuery, err := json.Marshal(connectionListFlagsProvided.kind)
 		if err != nil {
 			return utils.ErrMarshal(err)
 		}
-		if len(kinds) > 0 {
+		if len(connectionListFlagsProvided.kind) > 0 {
 			utils.Log.Debug("Adding kind to query: ", string(kindQuery))
 			querySearch.Add("kind", string(kindQuery))
 		}
 
-		var statuses []string
-		for _, status := range connectionListFlagsProvided.status {
-			statuses = append(statuses, status)
-		}
-
-		statusQuery, err := json.Marshal(statuses)
+		statusQuery, err := json.Marshal(connectionListFlagsProvided.status)
 		if err != nil {
 			return utils.ErrMarshal(err)
 		}
 
-		if len(statuses) > 0 {
+		if len(connectionListFlagsProvided.status) > 0 {
 			utils.Log.Debug("Adding status to query: ", string(statusQuery))
 			querySearch.Add("status", string(statusQuery))
 		}
