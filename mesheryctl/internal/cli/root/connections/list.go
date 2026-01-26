@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 
@@ -55,14 +56,33 @@ mesheryctl connection list --count
 		urlPath := connectionApiPath
 		querySearch := url.Values{}
 
+		var kinds []string
 		for _, kind := range connectionListFlagsProvided.kind {
-			utils.Log.Debug("Adding kind to query: ", kind)
-			querySearch.Add("kind", kind)
+			kinds = append(kinds, kind)
 		}
 
+		kindQuery, err := json.Marshal(kinds)
+		if err != nil {
+			return utils.ErrMarshal(err)
+		}
+		if len(kinds) > 0 {
+			utils.Log.Debug("Adding kind to query: ", string(kindQuery))
+			querySearch.Add("kind", string(kindQuery))
+		}
+
+		var statuses []string
 		for _, status := range connectionListFlagsProvided.status {
-			utils.Log.Debug("Adding status to query: ", status)
-			querySearch.Add("status", status)
+			statuses = append(statuses, status)
+		}
+
+		statusQuery, err := json.Marshal(statuses)
+		if err != nil {
+			return utils.ErrMarshal(err)
+		}
+
+		if len(statuses) > 0 {
+			utils.Log.Debug("Adding status to query: ", string(statusQuery))
+			querySearch.Add("status", string(statusQuery))
 		}
 
 		if len(querySearch) > 0 {
