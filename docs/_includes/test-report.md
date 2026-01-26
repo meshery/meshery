@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: January 26th 2026, 2:35:22 am
+- Testing started at: January 26th 2026, 8:11:11 pm
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 3 failed
+- ✅ 68 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 3 minutes and 46 seconds_
+⌛ _Duration: 3 minutes and 44 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,7 +28,7 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
@@ -108,29 +108,6 @@
 
 The following tests failed. Click on each to see the failure reason:
 
-
-<details>
-<summary>❌ Delete Kubernetes cluster connections (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
-
-**Error Message:**
-```
-Error: No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.
-```
-
-**Code Snippet:**
-```
-[0m [90m 186 |[39m     [90m// Fail the test if the connection is not found[39m
- [90m 187 |[39m     [36mif[39m (([36mawait[39m row[33m.[39mcount()) [33m===[39m [35m0[39m) {
-[31m[1m>[22m[39m[90m 188 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m(
- [90m     |[39m             [31m[1m^[22m[39m
- [90m 189 |[39m         [32m'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.'[39m[33m,[39m
- [90m 190 |[39m       )[33m;[39m
- [90m 191 |[39m     }[0m
-```
-
-</details>
 
 <details>
 <summary>❌ Verify Kanvas Details (Meshery - chromium-meshery-provider)</summary>
