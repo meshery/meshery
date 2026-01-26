@@ -53,7 +53,7 @@ export const StyledTreeItemRoot = styled(TreeItem)(
         fontWeight: theme.typography.fontWeightRegular,
       },
     },
-    [`& .${treeItemClasses.group}`]: {
+    [`& .${treeItemClasses.groupTransition}`]: {
       // marginLeft: 34,
       paddingLeft: 36,
       borderLeft: `1px dashed ${alpha(lineColor, 0.4)}`,
