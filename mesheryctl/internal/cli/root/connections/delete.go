@@ -2,6 +2,7 @@ package connections
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -33,18 +34,22 @@ mesheryctl connection delete [connection_id]
 
 		if _, err := uuid.Parse(connectionID); err != nil {
 			return utils.ErrInvalidArgument(
-				errors.Errorf("Invalid connection ID:%s", connectionID),
+				errors.Errorf("invalid connection ID : %q", connectionID),
 			)
 		}
 
 		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
-			return utils.ErrInvalidArgument(
-				errors.Errorf("Invalid connection ID:%s", connectionID),
-			)
+			if strings.Contains(err.Error(), "no rows in result set") {
+				return utils.ErrInvalidArgument(
+					errors.Errorf("invalid connection ID : %q not found", args[0]),
+				)
+			}
+
+			return err
 		}
 
-		utils.Log.Info("Connection with id %s is deleted.", connectionID)
+		utils.Log.Info("Connection with ID : %q is deleted.", connectionID)
 		return nil
 	},
 }
