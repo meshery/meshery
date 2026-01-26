@@ -6,9 +6,10 @@ import { ENV } from './env';
 const PROVIDERS = {
   LOCAL: 'None',
   MESHERY: 'Layer5',
+  // Extension Point: Add other providers as needed
 };
 
-setup('authenticate as Meshery provider', async ({ page }) => {
+setup('authenticate with Remote Provider', async ({ page }) => {
   //set test timeout to 2 minutes
   setup.setTimeout(2 * 60 * 1000);
   // Perform authentication steps. Replace these actions with your own.

@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         go: ['1.25']
-        k8s_version: ['v1.34.3', 'v1.35.0']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['kubernetes']
     steps:
       - name: Checkout Code
@@ -56,7 +56,7 @@ jobs:
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.35.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
       - name: Run minikube tunnel
@@ -67,6 +67,12 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: Build mesheryctl and start Meshery
+        run: |
+          make build && \
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+        shell: bash
+        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
           bash run_tests.bash
@@ -111,13 +117,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.34.3', 'v1.35.0']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.33.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
       - run: |
@@ -170,13 +176,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.34.3', 'v1.35.0']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.11.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.35.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 

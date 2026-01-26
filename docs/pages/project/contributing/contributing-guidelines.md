@@ -54,7 +54,7 @@ Command line interfaces offer less context to the user, which makes them inheren
 
 - Provide only relevant output. Use "debug" logs that can be accessed with `--verbose` flag wherever needed.
 - Add headers to output to give context to the user.
-- As mentioned [above](#intuition-vs-consistency), similar commands should behave similarly.
+- As mentioned [above](#flags), similar commands should behave similarly.
 - Confirm steps for risky commands. For example, use the `AskForConfirmation` function which will prompt the user to type in "yes" or "no" to continue.
 - Anticipate user actions. If the user creates a new context with `mesheryctl system context create` then the next action might be `mesheryctl system start` to start Meshery ot `mesheryctl system context switch` to switch context names.
 - Anticipate user errors. For example, if the user types in `mesheryctl system satrt`, using the inbuilt features with the [cobra library](https://github.com/spf13/cobra), we can correct it to `start` and alert the user.
