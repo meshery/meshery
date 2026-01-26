@@ -3,6 +3,7 @@ package connections
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -20,7 +21,7 @@ mesheryctl connection delete [connection_id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl connection delete \nRun 'mesheryctl connection delete --help' to see detailed help message"
+		const errMsg = "mesheryctl connection delete needs connection-id \nRun 'mesheryctl connection delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -28,12 +29,22 @@ mesheryctl connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
-		if err != nil {
-			return err
+		connectionID := args[0]
+
+		if _, err := uuid.Parse(connectionID); err != nil {
+			return utils.ErrInvalidArgument(
+				errors.Errorf("Invalid connection ID:%s", connectionID),
+			)
 		}
 
-		utils.Log.Info("Connection deleted.")
+		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
+		if err != nil {
+			return utils.ErrInvalidArgument(
+				errors.Errorf("Invalid connection ID:%s", connectionID),
+			)
+		}
+
+		utils.Log.Info("Connection with id %s is deleted.", connectionID)
 		return nil
 	},
 }
