@@ -41,7 +41,7 @@ var environmentViewOutputFormats = []string{"json", "yaml"}
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered environmnents",
-	Long: `View details of an environment registered in Meshery Server
+	Long: `View details of an environment registered in Meshery Server for a specific organization
 Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
@@ -54,6 +54,10 @@ mesheryctl environment view --orgID [orgID]
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
+		if !utils.IsUUID(environmentViewFlagsProvided.orgID) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgID: %s", environmentViewFlagsProvided.orgID))
+		}
+
 		if !slices.Contains(environmentViewOutputFormats, strings.ToLower(environmentViewFlagsProvided.outputFormat)) {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
@@ -62,7 +66,7 @@ mesheryctl environment view --orgID [orgID]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", environmentViewFlagsProvided.orgID))
+		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("%s?orgID=%s", environmentApiPath, environmentViewFlagsProvided.orgID))
 
 		if err != nil {
 			return err
