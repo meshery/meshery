@@ -1,9 +1,13 @@
 package connections
 
 import (
+<<<<<<< HEAD
 	"fmt"
 	"net/url"
 
+=======
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+>>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -11,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+<<<<<<< HEAD
 type connectionListFlags struct {
 	count    bool
 	kind     []string
@@ -21,6 +26,8 @@ type connectionListFlags struct {
 
 var connectionListFlagsProvided connectionListFlags
 
+=======
+>>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
@@ -42,6 +49,7 @@ mesheryctl connection list --kind [kind] --kind [kind] --status [status] --statu
 // Display total count of all available connections
 mesheryctl connection list --count
 `,
+
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl connection list \nRun 'mesheryctl connection list --help' to see detailed help message"
 		if len(args) != 0 {
@@ -49,6 +57,7 @@ mesheryctl connection list --count
 		}
 		return nil
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		urlPath := connectionApiPath
 		querySearch := url.Values{}
@@ -116,9 +125,14 @@ func getConnectionDetail(connection *connection.Connection) []string {
 }
 
 func init() {
+<<<<<<< HEAD
 	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
 	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
 	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.pageSize, "pagesize", "", 10, "Number of connections per page")
 	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
+=======
+	listConnectionsCmd.Flags().BoolP("count", "c", false, "Display the count of total available connections")
+	listConnectionsCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "Page number")
+>>>>>>> parent of 17b3e1218e3 (feat: add --kind flags to mesheryctl)
 }

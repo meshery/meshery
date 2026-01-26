@@ -239,13 +239,43 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		return
 	}
 
-	statusList := q["status"]
-	kindList := q["kind"]
-	typeList := q["type"]
+	queryParam := struct {
+		Status []string `json:"status"`
+		Kind   []string `json:"kind"`
+		Type   []string `json:"type"`
+	}{}
 
-	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s, filter: %s, status: %v, kind: %v, type: %v, name: %s", page+1, pageSize, search, order, filter, statusList, kindList, typeList, name))
+	status := q.Get("status")
+	kind := q.Get("kind")
+	connType := q.Get("type")
+	if status != "" {
+		err := json.Unmarshal([]byte(status), &queryParam.Status)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, statusList, kindList, typeList, name)
+	if kind != "" {
+		err := json.Unmarshal([]byte(kind), &queryParam.Kind)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if connType != "" {
+		err := json.Unmarshal([]byte(connType), &queryParam.Type)
+		if err != nil {
+			h.log.Error(ErrGetConnections(err))
+			http.Error(w, ErrGetConnections(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
 	obj := "connections"
 
 	if err != nil {
