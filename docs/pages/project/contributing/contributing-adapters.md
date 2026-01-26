@@ -10,6 +10,7 @@ list: include
 abstract: How to contribute to Meshery Adapters
 ---
 
+{% include sdd-alert.md %}
 
 Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters]({{site.baseurl}}/extensibility/adapters).
 

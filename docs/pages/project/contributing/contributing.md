@@ -13,7 +13,10 @@ list: exclude
 display-suggested-reading: false
 abstract: How to contribute to the Meshery project and any of its components.
 ---
-# Contributing 
+
+{% include sdd-alert.md %}
+
+# Contributing
 
 Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md).
 
