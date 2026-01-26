@@ -9,9 +9,6 @@ setup() {
     run $MESHERYCTL_BIN perf apply dummy-test-profile -y
 
     assert_failure
-    # The command may fail due to:
-    # 1. Missing URL when profile doesn't exist: "Unable to get URL for performing test"
-    # 2. Auth failure when fetching profile: "authentication token has expired or is invalid"
     assert_output --partial "Unable to get URL for performing test" || \
     assert_output --partial "authentication token"
 }

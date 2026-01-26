@@ -12,22 +12,15 @@ setup() {
    export CHECK_PREREQUISISTE_RESULT="Meshery prerequisites met"
 }
 
-@test "Given all requirement met when running mesheryctl system check then required sections are displayed" {
+@test "Given all requirements are met, when running mesheryctl system check, then required sections are displayed" {
    run $MESHERYCTL_BIN system check
-   # Note: The command may fail with exit code 1 if auth token is missing,
-   # but it should still output all sections. We verify the sections are displayed.
-   # When auth is available, the command should succeed.
-   
    assert_output --partial "$CHECK_KUBERNETES_API_HEADER"
    assert_output --partial "$CHECK_KUBERNETES_VERSION_HEADER"
    assert_output --partial "$CHECK_MESHERY_COMPONENTS_HEADER"
-   # Note: Meshery Operators section may show errors if auth is not configured
    assert_output --partial "$CHECK_MESHERY_OPERATORS_HEADER"
 }
 
-
-
-@test "mesheryctl system check --pre succeeds displaying required sections and expected prerequisites result" {
+@test "Given all requirements are met, when running mesheryctl system check --pre, then required sections and prerequisites result are displayed" {
    run $MESHERYCTL_BIN system check --pre
    assert_success
 
@@ -37,7 +30,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "mesheryctl system check --preflight succeeds displaying required sections and expected prerequisites result" {
+@test "Given all requirements are met, when running mesheryctl system check --preflight, then required sections and prerequisites result are displayed" {
    run $MESHERYCTL_BIN system check --pre
    assert_success
 
@@ -47,7 +40,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "mesheryctl system check --operators succeeds displaying required section and meshery operators in running state" {
+@test "Given all requirements are met, when running mesheryctl system check --operator, then operators are shown in running state" {
    run $MESHERYCTL_BIN system check --operator
    assert_success
 

@@ -15,10 +15,9 @@ setup() {
     assert_output --partial "Run 'mesheryctl model generate --help' to see detailed help message"
 }
 
-@test "mesheryctl model generate fails with invalid path" {
+@test "mesheryctl model generate fails with error reading directory for invalid path" {
     run $MESHERYCTL_BIN model generate --file "invalid-path"
     assert_failure
-    # When the path doesn't exist, meshkit returns "error reading directory"
     assert_output --partial "error reading directory"
 }
 
@@ -28,11 +27,9 @@ setup() {
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
 }
 
-@test "mesheryctl model generate fails with missing template for URL" {
-    # When using a URL without providing a template file, the command should fail
+@test "mesheryctl model generate fails with template file not present when URL provided without template" {
     run $MESHERYCTL_BIN model generate --file "https://example.com/model"
     assert_failure
-    # The actual error message from ErrTemplateFileNotPresent is "template file not present"
     assert_output --partial "template file not present"
 }
 
@@ -43,14 +40,13 @@ setup() {
     assert_output --partial "Logs for the csv generation can be accessed $TESTDATA_DIR/logs"
 }
 
-@test "mesheryctl model generate fails with invalid CSV directory" {
+@test "mesheryctl model generate fails with error reading directory for invalid CSV directory" {
     run $MESHERYCTL_BIN model generate --file "invalid-dir"
     assert_failure
-    # When directory doesn't exist, meshkit returns "error reading directory"
     assert_output --partial "error reading directory"
 }
 
-@test "given all requirements met and --register flag is provided when mesheryctl model generate -- file -valid-path --register then a model is generated and registration is skipped" {
+@test "Given all requirements are met, when running mesheryctl model generate with --register flag, then model is generated and registration is skipped" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
