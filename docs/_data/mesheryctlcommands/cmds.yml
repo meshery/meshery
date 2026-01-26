@@ -1095,7 +1095,7 @@ connection:
       description: Create a new connection to a Kubernetes cluster or other supported platform
       usage: mesheryctl connection create [flags]
       flags:
-        type: 
+        type:
           name: -t, --type
           description: (required) type of connection to create (aks, eks, gke, minikube)
           usage: mesheryctl connection create --type [type]
@@ -1146,7 +1146,7 @@ connection:
           description: (optional) save output as a JSON/YAML file
           usage: mesheryctl connection view --output-format [json|yaml] --save
 
-exp:  
+exp:
   relationship:
     name: relationship
     description: View list of relationships and details of relationship
@@ -1250,4 +1250,3 @@ exp:
           count:
             name: --count
             description: (optional) Get the total of registrered organizations
-

@@ -26,7 +26,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl component`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
 - [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - [`mesheryctl environment`](#meshery-environment) - Logical group of connections and their associated credentials.
-- [`mesheryctl connection`](#meshery-connection) - Managed or unmanaged resources that either through discovery or manual entry are tracked by Meshery. 
+- [`mesheryctl connection`](#meshery-connection) - Managed or unmanaged resources that either through discovery or manual entry are tracked by Meshery.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
