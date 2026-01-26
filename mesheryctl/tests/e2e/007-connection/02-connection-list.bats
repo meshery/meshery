@@ -5,14 +5,14 @@ setup() {
     load "$E2E_HELPERS_PATH/constants"
 }
 
-@test "mesheryctl connection list runs successfully" {
+@test "given all requirements met when mesheryctl connection list then header of total number of connections followed by a list are displayed" {
     run $MESHERYCTL_BIN connection list
 
     assert_success
     assert_output --partial "Total number of connection"
 }
 
-@test "mesheryctl connection list --count returns only count" {
+@test "given all requirements met when running mesheryctl connection list --count then only the total number of available connections is displayed" {
     run $MESHERYCTL_BIN connection list --count
 
     assert_success

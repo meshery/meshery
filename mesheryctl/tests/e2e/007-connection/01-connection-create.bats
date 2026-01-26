@@ -8,14 +8,32 @@ setup() {
     mkdir -p "$TESTDATA_DIR"
 }
 
-@test "mesheryctl connection create fails without --type flag" {
+@test "given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create
 
     assert_failure
     assert_output --partial "Invalid Argument"
+    assert_output --partial "Use --type flag"
 }
 
-@test "mesheryctl connection create --type minikube succeeds" {
+@test "given non valid argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
+    run $MESHERYCTL_BIN connection create --type foo
+
+    assert_failure
+    assert_output --partial "Invalid connection type"
+    assert_output --partial "provide a valid connection"
+    assert_output --partial "Error"
+}
+
+@test "given no argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
+    run $MESHERYCTL_BIN connection create --type
+
+    assert_failure
+    assert_output --partial "flag needs an argument"
+    assert_output --partial "Error"
+}
+
+@test "given valid type minikube is provided when running mesheryctl connection create --type minikube then a new connection is created" {
     if ! command -v minikube >/dev/null 2>&1; then
         skip "minikube not installed"
     fi

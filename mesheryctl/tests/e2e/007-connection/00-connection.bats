@@ -7,7 +7,7 @@ setup() {
     load "$E2E_HELPERS_PATH/constants"
 }
 
-@test "mesheryctl connection --count returns total number of connections" {
+@test "given all requirements met when running  mesheryctl connection --count then total number of available connections is displayed" {
     run $MESHERYCTL_BIN connection --count
     assert_success
 

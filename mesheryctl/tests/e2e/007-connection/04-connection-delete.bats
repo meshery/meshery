@@ -7,7 +7,7 @@ setup() {
     export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
 }
 
-@test "mesheryctl connection delete fails for non-existent connection ID" {
+@test "given non valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then a message error is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
@@ -16,7 +16,7 @@ setup() {
     assert_output --partial "Failed"
 }
 
-@test "mesheryctl connection delete connection-id removes an existing connection if available" {
+@test "given a valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then the existing connection is deleted" {
     if [ ! -f "$TESTDATA_DIR/id" ]; then
         skip "No connection ID available to delete"
     fi
