@@ -1,0 +1,2 @@
+registrant,model,component,category,subCategory,description,shape,primaryColor,secondaryColor,svgColor,svgWhite,svgComplete,docs,styleOverrides,styles,shapePolygonPoints,defaultData,capabilities,logoURL,genealogy,isAnnotation
+Meshery,TestModel,TestComponent,Orchestration & Management,App Definition,Desc,circle,#000000,#ffffff,x,x,x,x,x,x,x,x,x,x,x,false
