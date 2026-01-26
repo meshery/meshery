@@ -15,7 +15,6 @@
 package connections
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -31,13 +30,17 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
+
+type connectionViewFlags struct {
+	outputFormat string
+	save         bool
+}
+
+var connectionViewFlagsProvided connectionViewFlags
 
 var (
 	validOutputFormats = []string{"json", "yaml"}
-	outputFormatFlag   string
-	saveFlag           bool
 )
 
 var viewConnectionCmd = &cobra.Command{
@@ -65,7 +68,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
 		}
 
-		if !slices.Contains(validOutputFormats, strings.ToLower(outputFormatFlag)) {
+		if !slices.Contains(validOutputFormats, strings.ToLower(connectionViewFlagsProvided.outputFormat)) {
 			return utils.ErrInvalidArgument(errors.New(invalidOutputFormatMsg))
 		}
 		return nil
@@ -102,7 +105,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
-		outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, *selectedConnection)
+		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
 		if err != nil {
 			return err
 		}
@@ -112,7 +115,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			return err
 		}
 
-		if saveFlag {
+		if connectionViewFlagsProvided.save {
 			// Prepare the connection string for file naming since connection from local provider
 			// can be created without a name.
 			connectionString := func(c connection.Connection) string {
@@ -122,7 +125,15 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
 			}(*selectedConnection)
 
-			err := saveConnectionToFile(selectedConnection, outputFormatFlag, connectionString, homeDir)
+			fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))
+			file := filepath.Join(homeDir, ".meshery", fileName)
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[connection.Connection]{}
+			outputFormatterSaver, err := outputFormatterSaverFactory.New(connectionViewFlagsProvided.outputFormat, outputFormatter)
+			if err != nil {
+				return err
+			}
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+			err = outputFormatterSaver.Save()
 			if err != nil {
 				return err
 			}
@@ -130,35 +141,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 		return nil
 	},
-}
-
-// TODO: refactor this function using meshkit errors, put it in utils package for reusability
-func saveConnectionToFile(conn *connection.Connection, format, connectionString, homeDir string) error {
-	var output []byte
-	var err error
-
-	fmt.Println()
-	if strings.ToLower(format) == "yaml" {
-		if output, err = yaml.Marshal(conn); err != nil {
-			return utils.ErrMarshal(errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format))))
-		}
-	}
-
-	if strings.ToLower(format) == "json" {
-		if output, err = json.MarshalIndent(conn, "", "  "); err != nil {
-			return utils.ErrMarshalIndent(errors.Wrap(err, fmt.Sprintf("failed to format output in %s", strings.ToUpper(format))))
-		}
-	}
-
-	fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(format))
-	file := filepath.Join(homeDir, ".meshery", fileName)
-	err = os.WriteFile(file, output, 0644)
-	if err != nil {
-		return utils.ErrCreateFile(file, errors.Wrap(err, fmt.Sprintf("failed to save output as %s file", strings.ToUpper(format))))
-	}
-
-	utils.Log.Info("Connection saved to file: ", file)
-	return nil
 }
 
 func selectConnectionPrompt(connectionsList []*connection.Connection) *connection.Connection {
@@ -223,6 +205,6 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 }
 
 func init() {
-	viewConnectionCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewConnectionCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewConnectionCmd.Flags().StringVarP(&connectionViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewConnectionCmd.Flags().BoolVarP(&connectionViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
