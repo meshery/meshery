@@ -10,10 +10,6 @@ setup() {
   export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/design"
 }
 
-teardown_file() {
-  rm -rf "$TESTDATA_DIR"
-}
-
 @test "mesheryctl design delete removes the associate design" {
   DESIGN_ID=$(cat "$TESTDATA_DIR/id")
   [ -n "$DESIGN_ID" ] || skip "Empty design ID"
