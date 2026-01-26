@@ -100,7 +100,7 @@
     "allure-playwright": "^3.4.3",
     "dotenv": "^16.4.7",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^13.1.2",
+    "eslint-config-next": "^15.4.10",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
@@ -121,5 +121,8 @@
   },
   "engines": {
     "node": "^18 || ^20"
+  },
+  "overrides": {
+    "glob": "^10.3.10"
   }
 }
