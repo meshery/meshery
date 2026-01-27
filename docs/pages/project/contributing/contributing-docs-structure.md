@@ -2,7 +2,7 @@
 layout: page
 title: Meshery Documentation Structure and Organization
 permalink: project/contributing/contributing-docs-structure
-abstract: Audience, high-Level outline & information architecture for Meshery Documentation
+abstract: Audience, high-level outline & information architecture for Meshery Documentation
 language: en
 type: project
 category: contributing
@@ -81,7 +81,7 @@ A task page shows how to do a **single** thing, typically by giving a short sequ
 
 - **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
 - **Configuration Management:** Designing infrastructure, managing configuration files.
-- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
+- **Lifecycle Management:** Discovering, registering, configuring infrastructure
   - Discovery (MeshSync): Greenfield/Brownfield scenarios.
   - Managing Connections: Registering, updating, and deleting connections.
   - Managing Credentials: Registering, updating, and deleting credentials.
@@ -94,7 +94,7 @@ Designed for platform engineers, operators, DevOps, and other advanced users who
 
 - **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
 - **GitOps / DevOps & CI/CD**: Integrating Meshery with continuous integration and deployment pipelines.  
-- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
+- **Best Practices:** Recommendations for securing Meshery, monitoring performance, managing versions.
 - **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
 - **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
 - **Troubleshooting Guides:** Common errors, debugging, tips.  

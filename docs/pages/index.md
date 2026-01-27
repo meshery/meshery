@@ -248,8 +248,8 @@ list: exclude
       </summary>
       <ul class="section-title">
         {% assign sorted_ints = site.models | sort: "name" | alphabetical %}
-        <ul><li>
-        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
+        <li>
+        See all <a href="{{site.baseurl}}/extensibility/integrations">{{ sorted_ints | size }} integrations</a></li>
         {% for item in sorted_ints %}
         {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
@@ -351,4 +351,4 @@ list: exclude
 
 </div>
 
-<p width="100%">Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
+<p width="100%">Follow us on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>

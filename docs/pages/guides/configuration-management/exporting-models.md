@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Exporting Models
-abstract: Exporting Meshery Model as an OCI or Compress file
+abstract: Exporting Meshery Model as an OCI or compressed file
 permalink: guides/configuration-management/exporting-models
 category: configuration
 type: guides
@@ -18,7 +18,7 @@ Before you can use the Meshery CLI to export a [Model](/concepts/logical/models)
 
 **Step 2: Export the Model**
 
-Model can be exported in 2 format and OCI or Compress file. These files contain different [components](/concepts/logical/components), [relationships](/concepts/logical/relationships) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
+Model can be exported in 2 format and OCI or compressed file. These files contain different [components](/concepts/logical/components), [relationships](/concepts/logical/relationships) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model export [model-name] </div></div>
@@ -58,4 +58,4 @@ This Meshery model will include components, relationships.
 
 <a href="{{ site.baseurl }}/assets/img/export/ExportModel.gif"><img alt="Export-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/ExportModel.gif" /></a>
 
-Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize on Kanvas, operate and observe your components that are geneated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
+Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize on Kanvas, operate and observe your components that are generated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected Kubernetes clusters. For more information, see [connections](/installation/kubernetes)
