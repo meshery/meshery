@@ -21,14 +21,12 @@ mesheryctl connection delete [connection_id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "mesheryctl connection delete needs connection-id \nRun 'mesheryctl connection delete --help' to see detailed help message"
+		const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		connectionID := args[0]
-
-		if utils.IsUUID(connectionID) {
+		if !utils.IsUUID(args[0]) {
 			return utils.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %q", args[0]))
 		}
 
@@ -39,9 +37,7 @@ mesheryctl connection delete [connection_id]
 		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
 			if strings.Contains(err.Error(), "no rows in result set") {
-				return utils.ErrInvalidArgument(
-					errors.Errorf("invalid connection ID: %q not found", args[0]),
-				)
+				return utils.ErrConnectionNotFound(fmt.Errorf("non-existent connection ID: %q", args[0]))
 			}
 
 			return err

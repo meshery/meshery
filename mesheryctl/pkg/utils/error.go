@@ -65,6 +65,7 @@ var (
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
+	ErrConnectionNotFoundCode      = "mesheryctl-1195"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -672,6 +673,15 @@ func ErrBadRequest(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while deleting the connection"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrConnectionNotFound(err error) error {
+	return errors.New(ErrConnectionNotFoundCode, errors.Alert,
+		[]string{"Connection not found"},
+		[]string{err.Error()},
+		[]string{"The specified connection ID does not exist"},
+		[]string{"Verify the connection ID using `mesheryctl connection list`"},
+	)
 }
 
 func ErrInvalidArgument(err error) error {
