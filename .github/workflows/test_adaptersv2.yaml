@@ -45,6 +45,9 @@ on:
       provider: #default to local
         required: false
         type: string
+      job_type:
+        required: true
+        type: string
     secrets:
       token:
         required: true
@@ -262,7 +265,7 @@ jobs:
       - name: UploadResults (Versioned)
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ inputs.output_filename }}-${{ matrix.k8s_version }}
+          name: ${{ inputs.job_type }}-${{ matrix.k8s_version }}
           path: ./${{ inputs.output_filename }}
           overwrite: true
         continue-on-error: true
