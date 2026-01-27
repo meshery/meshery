@@ -56,7 +56,7 @@ You can develop and run Meshery in GitHub Codespaces using your choice of tool:
 Start Minikube, if it is not already running, using the following command:
 {% capture code_content %}minikube start --cpus 4 --memory 4096{% endcapture %}
 {% include code.html code=code_content %}
-Please allocate CPUs based on the machine you selected in GitHub Codespaces. To check the status of your minikube cluster:
+Please allocate CPUs based on the machine you selected in GitHub Codespaces. To check the status of your Minikube cluster:
 {% capture code_content %}minikube status{% endcapture %}
 {% include code.html code=code_content %}
 Verify your kubeconfig's current context.
