@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "status": "enabled",
+  "metadata": {
+    "description": "A relationship that defines how an ECR Repository can be referenced by a Kubernetes Deployment to automatically populate the container image field with the ECR repository URI.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ecr-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.1.0"
+    },
+    "displayName": "AWS Elastic Container Registry",
+    "category": {
+      "name": "Cloud Native Storage",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Repository",
+            "model": {
+              "name": "aws-ecr-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "status",
+                  "repositoryURI"
+                ]
+              ],
+              "description": "Extract the ECR repository URI from the Repository status field. This URI is automatically populated by the AWS Controllers for Kubernetes (ACK) after the repository is created in AWS ECR."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "image"
+                ]
+              ],
+              "description": "Automatically populate the Deployment's first container image field with the ECR repository URI. This eliminates manual typing of long ECR URIs and prevents errors."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
