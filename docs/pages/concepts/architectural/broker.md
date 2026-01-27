@@ -17,7 +17,7 @@ Broker is a custom Kubernetes controller that provides data streaming across ind
 ### Broker FAQs
 
 #### How many Brokers can run?
-It is recommended to run one broker instance for each Kubernetes cluster, However the instance itself can be scaled up based on the incoming data volume in each of the cluster. The scaling is independent of the number of instances running.
+It is recommended to run one broker instance for each Kubernetes cluster, However, the instance itself can be scaled up based on the incoming data volume in each of the cluster. The scaling is independent of the number of instances running.
 
 #### What does an HA configuration look like?
 We leverage on the Kubernetes functionality in terms of the High-Availability behaviour. Meaning, the broker instance gets instantiated/restarted on its own when an issue occurs. In part, Meshery-Operator is also responsible for keeping the broker functional.
