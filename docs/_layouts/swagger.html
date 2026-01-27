@@ -25,61 +25,61 @@ HIDE if x-internal contains "cloud" but NOT "meshery"
     </summary>
     <ul>
         {% for route in sorted_paths %}
-        {% comment %} Check if this path has any visible (non-cloud-only) methods {% endcomment %}
-        {% assign path_has_visible_methods = false %}
-        {% for method in route[1] %}
-        {% assign is_http_method = false %}
-        {% if "get,post,put,delete,patch,options,head" contains method[0] %}
-        {% assign is_http_method = true %}
-        {% endif %}
-        {% if is_http_method %}
-        {% assign x_internal = method[1]["x-internal"] %}
-        {% assign show_method = true %}
-        {% if x_internal and x_internal.size > 0 %}
-        {% assign x_str = x_internal | join: "," %}
-        {% if x_str contains "cloud" %}
-        {% unless x_str contains "meshery" %}
-        {% assign show_method = false %}
-        {% endunless %}
-        {% endif %}
-        {% endif %}
-        {% if show_method %}
-        {% assign path_has_visible_methods = true %}
-        {% endif %}
-        {% endif %}
-        {% endfor %}
-        {% if path_has_visible_methods %}
-        <li>{{ route[0] }}</li>
-        {% endif %}
+            {% comment %} Check if this path has any visible (non-cloud-only) methods {% endcomment %}
+            {% assign path_has_visible_methods = false %}
+            {% for method in route[1] %}
+                {% assign is_http_method = false %}
+                {% if "get,post,put,delete,patch,options,head" contains method[0] %}
+                    {% assign is_http_method = true %}
+                {% endif %}
+                {% if is_http_method %}
+                    {% assign x_internal = method[1]["x-internal"] %}
+                    {% assign show_method = true %}
+                    {% if x_internal and x_internal.size > 0 %}
+                        {% assign x_str = x_internal | join: "," %}
+                        {% if x_str contains "cloud" %}
+                            {% unless x_str contains "meshery" %}
+                                {% assign show_method = false %}
+                            {% endunless %}
+                        {% endif %}
+                    {% endif %}
+                    {% if show_method %}
+                        {% assign path_has_visible_methods = true %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if path_has_visible_methods %}
+                <li>{{ route[0] }}</li>
+            {% endif %}
         {% endfor %}
     </ul>
 </details>
 
 {% for route in sorted_paths %}
-{% comment %} Use capture to build method HTML - filtering happens only once {% endcomment %}
-{% capture methods_html %}
-{% for method in route[1] %}
-{% comment %} Only process HTTP methods {% endcomment %}
-{% assign is_http_method = false %}
-{% if method[0] == "get" or method[0] == "post" or method[0] == "put" or method[0] == "delete" or method[0] ==
-"patch" or method[0] == "options" or method[0] == "head" %}
-{% assign is_http_method = true %}
-{% endif %}
+    {% comment %} Use capture to build method HTML - filtering happens only once {% endcomment %}
+    {% capture methods_html %}
+        {% for method in route[1] %}
+            {% comment %} Only process HTTP methods {% endcomment %}
+            {% assign is_http_method = false %}
+            {% if method[0] == "get" or method[0] == "post" or method[0] == "put" or method[0] == "delete" or method[0] ==
+            "patch" or method[0] == "options" or method[0] == "head" %}
+                {% assign is_http_method = true %}
+            {% endif %}
 
-{% if is_http_method %}
-{% comment %} Filter cloud-only endpoints {% endcomment %}
-{% assign skip_endpoint = false %}
-{% assign x_internal = method[1]["x-internal"] %}
-{% if x_internal and x_internal.size > 0 %}
-{% assign x_str = x_internal | join: "," %}
-{% if x_str contains "cloud" %}
-{% unless x_str contains "meshery" %}
-{% assign skip_endpoint = true %}
-{% endunless %}
-{% endif %}
-{% endif %}
+            {% if is_http_method %}
+                {% comment %} Filter cloud-only endpoints {% endcomment %}
+                {% assign skip_endpoint = false %}
+                {% assign x_internal = method[1]["x-internal"] %}
+                {% if x_internal and x_internal.size > 0 %}
+                    {% assign x_str = x_internal | join: "," %}
+                    {% if x_str contains "cloud" %}
+                        {% unless x_str contains "meshery" %}
+                            {% assign skip_endpoint = true %}
+                        {% endunless %}
+                    {% endif %}
+                {% endif %}
 
-{% unless skip_endpoint %}
+                {% unless skip_endpoint %}
 <div class="swagger-method swagger-method-{{ method[0] }}">
     <h3 class="swagger-method-title">
         <a href="#" class="swagger-method-link">
@@ -176,30 +176,30 @@ HIDE if x-internal contains "cloud" but NOT "meshery"
             </table>
             {% endif %}
             {% for content_type in swagger.produces %}
-            {% if response[1].examples[content_type] %}
-            {% assign example = response[1].examples[content_type] %}
-            {% if content_type contains 'json' %}
-            {% highlight json %}{{ example }}{% endhighlight %}
-            {% elsif content_type contains 'xml' %}
-            {% highlight xml %}{{ example }}{% endhighlight %}
-            {% else %}
-            {% highlight http %}{{ example }}{% endhighlight %}
-            {% endif %}
-            {% endif %}
+                {% if response[1].examples[content_type] %}
+                    {% assign example = response[1].examples[content_type] %}
+                    {% if content_type contains 'json' %}
+                        {% highlight json %}{{ example }}{% endhighlight %}
+                    {% elsif content_type contains 'xml' %}
+                        {% highlight xml %}{{ example }}{% endhighlight %}
+                    {% else %}
+                        {% highlight http %}{{ example }}{% endhighlight %}
+                    {% endif %}
+                {% endif %}
             {% endfor %}
             {% endfor %}
         </div>
         {% endif %}
     </div>
 </div>
-{% endunless %}
-{% endif %}
-{% endfor %}
-{% endcapture %}
+                {% endunless %}
+            {% endif %}
+        {% endfor %}
+    {% endcapture %}
 
-{% comment %} Only render path container if we have visible methods {% endcomment %}
-{% assign methods_trimmed = methods_html | strip %}
-{% if methods_trimmed != "" %}
+    {% comment %} Only render path container if we have visible methods {% endcomment %}
+    {% assign methods_trimmed = methods_html | strip %}
+    {% if methods_trimmed != "" %}
 <div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h2>
     {% if route[0] contains '/api/oam' %}
@@ -207,7 +207,7 @@ HIDE if x-internal contains "cloud" but NOT "meshery"
     {% endif %}
     {{ methods_html }}
 </div>
-{% endif %}
+    {% endif %}
 {% endfor %}
 
 <script type="text/javascript">
