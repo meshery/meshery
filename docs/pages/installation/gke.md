@@ -50,7 +50,7 @@ Read through the following considerations prior to deploying Meshery on GKE.
 
 1. Verify your connection to a Google Kubernetes Engine Cluster using the gcloud CLI.
 2. Log in to your GCP account using [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
-1. After a successful login, set the Project Id:
+3. After a successful login, set the Project Id:
 {% capture code_content %}gcloud config set project [PROJECT_ID]
 {% endcapture %}
 {% include code.html code=code_content %}
