@@ -17,8 +17,16 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 
 }
 func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := machines.ErrMissingUserContext()
+		return machines.NoOp, nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := machines.ErrMissingSystemIDContext()
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")

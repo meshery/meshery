@@ -35,8 +35,18 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		os.Exit(1)
 	}
 
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := machines.ErrMissingUserContext()
+		log.Error(err)
+		return machines.NoOp, nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := machines.ErrMissingSystemIDContext()
+		log.Error(err)
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)

@@ -20,10 +20,22 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 }
 
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := machines.ErrMissingUserContext()
+		return machines.NoOp, nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := machines.ErrMissingSystemIDContext()
+		return machines.NoOp, nil, err
+	}
 	userUUID := user.ID
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok || provider == nil {
+		err := ErrConnectAction(fmt.Errorf("failed to retrieve provider from context"))
+		return machines.NoOp, nil, err
+	}
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 

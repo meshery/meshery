@@ -129,8 +129,18 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := ErrMissingUserContext()
+		sm.Log.Error(err)
+		return nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := ErrMissingSystemIDContext()
+		sm.Log.Error(err)
+		return nil, err
+	}
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)

@@ -147,8 +147,18 @@ func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachin
 }
 
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := machines.ErrMissingUserContext()
+		log.Error(err)
+		return nil, nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := machines.ErrMissingSystemIDContext()
+		log.Error(err)
+		return nil, nil, err
+	}
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 

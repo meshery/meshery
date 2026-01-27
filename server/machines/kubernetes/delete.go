@@ -34,8 +34,18 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		logrus.Error(err)
 		os.Exit(1)
 	}
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := machines.ErrMissingUserContext()
+		log.Error(err)
+		return machines.NoOp, nil, err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	if !ok || sysID == nil {
+		err := machines.ErrMissingSystemIDContext()
+		log.Error(err)
+		return machines.NoOp, nil, err
+	}
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 
