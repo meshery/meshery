@@ -1,0 +1,80 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "status": "enabled",
+  "metadata": {
+    "description": "Reference relationship from AWS ElastiCache CacheCluster to Kubernetes StatefulSet. This represents applications referencing ElastiCache connection strings or credentials via StatefulSet configuration while targeting a given cache cluster.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-elasticache-controller",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "category": {
+      "name": "Database"
+    },
+    "displayName": "AWS ElastiCache Controller"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheCluster",
+            "model": {
+              "name": "aws-elasticache-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ],
+              "description": "ElastiCache CacheCluster endpoint can be referenced by Kubernetes StatefulSet configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "StatefulSet",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "template", "spec", "containers", "_", "env"]
+              ],
+              "description": "StatefulSet containers can store ElastiCache connection strings or credentials used for accessing the cache cluster."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
