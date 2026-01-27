@@ -22,7 +22,6 @@ setup() {
 }
 
 @test "mesheryctl model generate succeeds with valid URL and template" {
-  skip "Blocked by Bug: model generate rejects valid CSVs with generic error"
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model" --template "$FIXTURES_DIR/valid-template.json"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
@@ -35,7 +34,6 @@ setup() {
 }
 
 @test "mesheryctl model generate succeeds with valid CSV directory" {
-  skip "Blocked by Bug: model generate rejects valid CSVs with generic error"
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
@@ -49,7 +47,6 @@ setup() {
 }
 
 @test "mesheryctl model generate skips registration with --register flag" {
-  skip "Blocked by Bug: model generate rejects valid CSVs with generic error"
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
