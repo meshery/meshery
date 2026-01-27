@@ -73,7 +73,7 @@ export const LearnMore = styled("div")(() => ({
   marginLeft: "auto",
   marginRight: "auto",
   marginTop: "3rem",
-  "& :hover": {
+  "&:hover": {
     cursor: "pointer",
   },
 }));
