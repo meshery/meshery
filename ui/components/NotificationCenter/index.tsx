@@ -261,6 +261,7 @@ const BulkActions = () => {
   const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
   const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
+  const [isAllAcrossPagesSelected, setIsAllAcrossPagesSelected] = useState(false);
 
   // stores which update is currently going on , usefull to know which action is going
   // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
@@ -337,6 +338,16 @@ const BulkActions = () => {
           {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
         </Typography>
       </Box>
+      {areAllEventsChecked && !isAllAcrossPagesSelected && (
+        <Box sx={{ ml: '2rem', mt: 0.5 }}>
+          <Typography variant="body2">
+            All {checkedEvents.length} notifications on this page are selected.
+            <Button size="small" onClick={() => setIsAllAcrossPagesSelected(true)}>
+              Select all notifications
+            </Button>
+          </Typography>
+        </Box>
+      )}
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
