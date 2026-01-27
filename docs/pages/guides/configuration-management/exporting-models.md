@@ -18,7 +18,7 @@ Before you can use the Meshery CLI to export a [Model](/concepts/logical/models)
 
 **Step 2: Export the Model**
 
-Model can be exported in 2 format and OCI or compressed file. These files contain different [components](/concepts/logical/components), [relationships](/concepts/logical/relationships) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
+Model can be exported in 2 formats and OCI or compressed file. These files contain different [components](/concepts/logical/components), [relationships](/concepts/logical/relationships) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model export [model-name] </div></div>
