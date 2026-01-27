@@ -392,7 +392,7 @@ export const Notification = ({ event_id }) => {
           <GridItem item xs="auto">
             <Checkbox
               onClick={eventstopPropagation}
-              checked={isAllAcrossPagesSelected ? !event.checked : Boolean(event.checked)}
+              checked={isAllAcrossPagesSelected ? true : Boolean(event.checked)}
               onChange={handleSelectEvent}
               sx={{
                 margin: '0rem',
