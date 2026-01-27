@@ -16,8 +16,8 @@ Meshery Playground is a web-based, collaborative environment that lets you explo
 With Meshery Playground, you can:
 
 - Collaborate with other engineers, share your knowledge, and exchange ideas
-- Explore new cloud native tools without the need for complex setup or configuration. Simply open your browser and go
-- Design new cloud native scenarios and easily deploy them in the Playground environment. Keep your designs and deploy them in your own environment when you’re ready
+- Explore new cloud native tools without the need for complex setup or configuration. Simply open your browser and go.
+- Design new cloud native scenarios and easily deploy them in the Playground environment. Keep your designs and deploy them in your own environment when you’re ready.
 
 You can interactively explore all kinds of cloud native infrastructure and do so without having to install them on your local machine. You can create virtual services and deploy sample applications and observe their behavior in real-time.
 
