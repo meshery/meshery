@@ -33,20 +33,20 @@ setup() {
     assert_output --partial "error reading csv file"
 }
 
-@test "mesheryctl model generate succeeds with valid CSV directory" {
+@test "given a valid CSV directory is provided when running mesheryctl model generate then the model is generated successfully" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
     assert_output --partial "Logs for the csv generation can be accessed $TESTDATA_DIR/logs"
 }
 
-@test "mesheryctl model generate fails with invalid CSV directory" {
+@test "given an invalid CSV directory is provided when running mesheryctl model generate then an error is returned" {
     run $MESHERYCTL_BIN model generate --file "invalid-dir"
     assert_failure
     assert_output --partial "no such file or directory"
 }
 
-@test "mesheryctl model generate skips registration with --register flag" {
+@test "given the --register flag is provided when running mesheryctl model generate then the model is generated without registry registration" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
