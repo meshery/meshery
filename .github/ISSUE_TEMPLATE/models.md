@@ -17,10 +17,9 @@ assignees: ''
 <!-- 
 🚀 Help Your PR Get Merged Faster
 
-For easier review and approval, please provide:
-- Screenshots - Show your design in Kanvas with the relationships working
-- Video Demo - Record a short video demonstrating the relationship functionality
-- Validated Design - Confirm the relationships work as expected
+For easier review and approval, please provide one of the following to confirm the relationships work as expected:
+- Screenshots showing your design in Kanvas with the relationships working.
+- A short video demonstrating the relationship functionality.
 
 After your PR is merged: Get your work recognized by publishing your design to the Meshery Catalog (https://meshery.io/catalog)!
 -->
