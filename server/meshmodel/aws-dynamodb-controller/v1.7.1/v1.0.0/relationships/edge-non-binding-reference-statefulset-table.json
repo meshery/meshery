@@ -21,7 +21,7 @@
   },
   "model": {
     "schemaVersion": "models.meshery.io/v1beta1",
-    "version": "v1.0.0",
+    "version": "v1.7.1",
     "name": "aws-dynamodb-controller",
     "registrant": {
       "kind": "artifacthub"

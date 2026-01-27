@@ -21,7 +21,7 @@
   },
   "model": {
     "schemaVersion": "models.meshery.io/v1beta1",
-    "version": "v1.0.0",
+    "version": "v1.3.3",
     "name": "aws-elasticache-controller",
     "registrant": {
       "kind": "artifacthub"
