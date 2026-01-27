@@ -23,7 +23,7 @@ It is recommended to run one broker instance for each Kubernetes cluster, Howeve
 We leverage the Kubernetes functionality in terms of the High-Availability behaviour. Meaning, the broker instance gets instantiated/restarted on its own when an issue occurs. In part, Meshery-Operator is also responsible for keeping the broker functional.
 
 #### What stateful characteristics does the Broker have?
-All the messages that are published to the broker is persisted in-memory within the broker instance until it gets consumed. Persistent-volume/Disk-space is not currently being used by the Broker.
+All the messages that are published to the broker are persisted in-memory within the broker instance until it gets consumed. Persistent-volume/Disk-space is not currently being used by the Broker.
 
 #### How do I know if the Broker is working? How do I troubleshoot the Broker?
 To check if your Broker instance is running smoothly (it's deployed as a Kubernetes StatefulSet), follow these quick checks:
