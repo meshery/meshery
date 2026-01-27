@@ -56,23 +56,30 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
+<!-- Anchorjs included for adding hover anchor links to headings -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/5.0.0/anchor.min.js"
+        integrity="sha512-aVMyH3N2IeKRTxMv5T09zhI2J42k1t4s2QYq2EVi/T0eO2p6e2gXyT5mUqxxL5h2f+2L+1gBmdtN42e0/j2gQ=="
+        crossorigin="anonymous"></script>
 
-  <!-- Anchorjs included for adding hover anchor links to headings -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/5.0.0/anchor.min.js"></script>
-  <script>
-    $(function () {
-      /** AnchorJS options and selector */
-      anchors.options = {
-        visible: "hover",
-        placement: "right",
-      };
-      anchors.add("h1, h2, h3, h4, h5");
-    });
-    // Function to handle anchor links
-    document.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
-        window.location.hash = event.target.getAttribute('href');
-      }
-    });
-  </script>
+<script>
+  $(function () {
+    /** AnchorJS options and selector */
+    anchors.options = {
+      visible: "hover",
+      placement: "right",
+    };
+    anchors.add("h1, h2, h3, h4, h5");
+  });
+
+  // Function to handle anchor links
+  document.addEventListener('click', function (event) {
+    if (
+      event.target.tagName === 'A' &&
+      event.target.getAttribute('href') &&
+      event.target.getAttribute('href').startsWith('#')
+    ) {
+      window.location.hash = event.target.getAttribute('href');
+    }
+  });
+</script>
 </head>
