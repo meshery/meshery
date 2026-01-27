@@ -58,18 +58,6 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedResponse: "profile.searchTest3.output.golden",
 			ExpectError:      false,
 		},
-	}
-
-	loggerTests := []utils.MesheryMultiURLCommamdTest{
-		{
-			Name: "No profiles found",
-			Args: []string{"profile", "--view"},
-			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
-			},
-			ExpectedResponse: "profile.noProfiles.output.golden",
-			ExpectError:      false,
-		},
 		{
 			Name: "standard profiles in json output",
 			Args: []string{"profile", "-o", "json"},
@@ -88,6 +76,18 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedResponse: "profile.yaml.output.golden",
 			ExpectError:      false,
 		},
+	}
+
+	loggerTests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name: "No profiles found",
+			Args: []string{"profile", "--view"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "profile.noProfiles.output.golden",
+			ExpectError:      false,
+		},
 		{
 			Name: "invalid output format",
 			Args: []string{"profile", "-o", "invalid"},
@@ -97,7 +97,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    ErrInvalidOutputChoice(),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, "invalid")),
 		},
 		{
 			Name: "Unmarshal error",
@@ -115,7 +115,7 @@ func TestProfileCmd(t *testing.T) {
 				var response PerformanceProfilesAPIResponse
 				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
 
-				return ErrFailUnmarshal(innerErr)
+				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
 			}(),
 		},
 		{
@@ -131,7 +131,7 @@ func TestProfileCmd(t *testing.T) {
 				cmdUsed = "profile"
 
 				body := ""
-				return utils.ErrFailReqStatus(400, body)
+				return utils.ErrLoadConfig(utils.ErrFailReqStatus(400, body))
 			}(),
 		},
 		{
@@ -144,7 +144,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				tokenPath := testToken + "invalid-path"
 				innerErr := fmt.Errorf("%s does not exist", tokenPath)
-				return utils.ErrAttachAuthToken(innerErr)
+				return utils.ErrLoadConfig(utils.ErrAttachAuthToken(innerErr))
 			}(),
 		},
 	}
