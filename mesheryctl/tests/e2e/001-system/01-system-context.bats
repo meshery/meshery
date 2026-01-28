@@ -125,7 +125,7 @@ teardown() {
    run $MESHERYCTL_BIN system context view  --context foo
 
    assert_failure
-   assert_output --partial "doesn't exist"
+   assert_output --partial "does not exist"
 }
 
 @test "given a valid context-name as an argument when running mesheryctl system context view --context then it displays the detailed context" {
