@@ -324,7 +324,7 @@ mesheryctl system context view --all
 		contextData, ok := configuration.Contexts[currContext]
 		if !ok {
 			return fmt.Errorf(
-				"Error: context %q doesn't exist\n\nRun:\nmesheryctl system context create %s",
+				"context %q does not exist\n\nRun: mesheryctl system context create %s",
 				currContext, currContext,
 			)
 		}
