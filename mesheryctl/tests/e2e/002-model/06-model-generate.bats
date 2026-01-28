@@ -15,7 +15,7 @@ setup() {
     assert_output --partial "Run 'mesheryctl model generate --help' to see detailed help message"
 }
 
-@test "given an invalid URL is provided when running mesheryctl model generate then an error is returned" {
+@test "given an invalid URL is provided when running mesheryctl model generate then an error message is displayed" {
     run $MESHERYCTL_BIN model generate --file "invalid-url"
     assert_failure
     assert_output --partial "no such file or directory"
