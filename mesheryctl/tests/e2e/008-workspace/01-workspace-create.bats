@@ -1,22 +1,25 @@
 #!/usr/bin/env bats
+
 setup() {
-    export ORIGINAL_HOME="$HOME"
-    HOME="$TEMP_DATA_DIR"
-
-    mkdir -p "$HOME"
-
 
     load "$E2E_HELPERS_PATH/bats_libraries"
-    _load_bats_libraries
-
     load "$E2E_HELPERS_PATH/constants"
-
-    export FAKE_ORGID="11223344-1122-1122-1122-112233445566"
-}
-
-@test "mesheryctl exp workspace create --orgId --name --description" {
-    run $MESHERYCTL_BIN exp workspace create --orgId $FAKE_ORGID --name ghj --description ibhv
-
+	_load_bats_libraries
 
 }
 
+@test "given no orgId is provided as an argument when running mesheryctl exp workspace create --orgId then the error message is displayed" {
+    run $MESHERYCTL_BIN exp workspace create --orgId
+
+    assert_failure 
+    assert_output --partial "Error"
+    assert_output --partial "needs an argument"
+}
+
+@test "given invalid orgId is provided as an argument when running mesheryctl exp workspace create --orgId --name --description then the error message is displayed" {
+    run $MESHERYCTL_BIN exp workspace create --orgId foo --name name --description description
+
+    assert_failure 
+    assert_output --partial "Error"
+    assert_output --partial "provide a valid organization ID"
+}
