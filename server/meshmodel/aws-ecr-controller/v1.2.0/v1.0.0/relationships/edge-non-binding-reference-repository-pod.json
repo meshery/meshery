@@ -51,12 +51,19 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "status",
-                  "repositoryURI"
+                  "displayName"
                 ]
               ],
-              "description": "Extract the ECR repository URI from the Repository status field. This URI is automatically populated by the AWS Controllers for Kubernetes (ACK) after the repository is created in AWS ECR."
-            }
+              "description": "ECR Repository can be visually referenced by Kubernetes workloads."
+            },
+            "match_strategy_matrix": [
+              [
+                "equal_as_strings",
+                "not_null"
+              ]
+            ],
+            "id": null,
+            "match": {}
           }
         ],
         "to": [
@@ -73,15 +80,17 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
                   "spec",
                   "containers",
-                  "0",
+                  "_",
                   "image"
                 ]
               ],
-              "description": "Automatically populate the Pod's first container image field with the ECR repository URI. This eliminates manual typing of long ECR URIs and prevents errors."
-            }
+              "description": "Pod containers can reference ECR repository images."
+            },
+            "match_strategy_matrix": null,
+            "id": null,
+            "match": {}
           }
         ]
       },
@@ -90,5 +99,6 @@
         "to": []
       }
     }
-  ]
+  ],
+  "evaluationQuery": "edge_non_binding_reference_relationship"
 }
