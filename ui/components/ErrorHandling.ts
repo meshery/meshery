@@ -20,10 +20,12 @@ function HandleError() {
   const errorH = (err: Error | string, prefixMessage: string, variant: ErrorHandlerVariant) => {
     console.error('an error occured with severity: ', variant, { err });
     const message = err instanceof Error ? err.message : err;
+    const errorDetails = err.toString();
     return notify({
       message: `${prefixMessage}: ${message}`,
       event_type: EVENT_TYPES.ERROR,
-      details: err.toString(),
+      // @ts-expect-error - details type definition is incorrect, should accept string
+      details: errorDetails,
     });
   };
 

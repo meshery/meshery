@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar } from '@sistent/sistent';
+import { NoSsr, AppBar } from '@sistent/sistent';
+// @ts-expect-error - ErrorBoundary exists at runtime but types may not be exported
+import { ErrorBoundary } from '@sistent/sistent';
 import Modal from '../General/Modals/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
@@ -71,8 +72,16 @@ function Connections() {
   _operatorStateRef.current = _operatorState;
 
   const { query, pathname, push, isReady } = router;
-  const tabParam = query.tab?.toLowerCase();
+  const tabParam = Array.isArray(query.tab)
+    ? query.tab[0]?.toLowerCase()
+    : query.tab?.toLowerCase();
   const connectionId = query.connectionId;
+  const selectedFilter =
+    typeof query.kind === 'string'
+      ? query.kind
+      : Array.isArray(query.kind)
+        ? query.kind[0]
+        : undefined;
 
   const tab = tabParam === 'meshsync' ? 1 : 0;
 
@@ -143,6 +152,7 @@ function Connections() {
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
+              selectedFilter={selectedFilter}
               selectedConnectionId={connectionId}
               updateUrlWithConnectionId={updateUrlWithConnectionId}
             />

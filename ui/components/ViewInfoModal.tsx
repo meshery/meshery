@@ -1,4 +1,4 @@
-// @ts-nocheck
+import React, { useState } from 'react';
 import {
   Avatar,
   Chip,
@@ -9,27 +9,34 @@ import {
   getFullFormattedTime,
   styled,
   useTheme,
+  Box,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalButtonSecondary,
+  ModalButtonPrimary,
 } from '@sistent/sistent';
-import React, { useState } from 'react';
+// @ts-ignore - VisibilityChipMenu exists at runtime but types may not be exported
+import { VisibilityChipMenu } from '@sistent/sistent';
 import _ from 'lodash';
-import { Box, Modal, ModalBody, ModalFooter } from '@sistent/sistent';
 import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import { iconLarge } from 'css/icons.styles';
-import { VisibilityChipMenu } from '@sistent/sistent';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { MDEditor } from './Markdown';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { ModalButtonSecondary } from '@sistent/sistent';
 import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';
-import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
-const Row = styled('div')(({ justifyContent = 'space-between' }) => ({
+type RowProps = {
+  justifyContent?: string;
+};
+
+const Row = styled('div')<RowProps>(({ justifyContent = 'space-between' }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -82,7 +89,23 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
+type ViewInfoModalProps = {
+  open: boolean;
+  closeModal: () => void;
+  view_id: string;
+  view_name: string;
+  metadata: any;
+  refetch?: () => void;
+};
+
+export const ViewInfoModal_ = ({
+  open,
+  closeModal,
+  view_id,
+  view_name,
+  metadata,
+  refetch,
+}: ViewInfoModalProps) => {
   const [formState, setFormState] = useState(metadata);
   const viewRes = useGetViewQuery(
     { viewId: view_id },
@@ -90,7 +113,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
       skip: !view_id,
     },
   );
-  const userRes = useGetLoggedInUserQuery();
+  const userRes = useGetLoggedInUserQuery(undefined, {});
   const view = viewRes.data;
   const user = userRes.data;
 
@@ -119,7 +142,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
   const uiSchema = _.merge({}, UIFormSchema, {
     'ui:readonly': !canEdit,
   });
-  const viewExists = (v) => Boolean(v && v?.id);
+  const viewExists = (v: any) => Boolean(v && v?.id);
   const theme = useTheme();
   return (
     <Modal
@@ -184,7 +207,16 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
   );
 };
 
-export const ViewInfoModal = (props) => {
+type ViewInfoModalWrapperProps = {
+  open: boolean;
+  closeModal: () => void;
+  view_id: string;
+  view_name: string;
+  metadata: any;
+  refetch?: () => void;
+};
+
+export const ViewInfoModal = (props: ViewInfoModalWrapperProps) => {
   return (
     <ProviderStoreWrapper>
       <ViewInfoModal_ {...props} />
@@ -195,7 +227,11 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-export const UserChip = ({ user_id }) => {
+type UserChipProps = {
+  user_id: string;
+};
+
+export const UserChip = ({ user_id }: UserChipProps) => {
   const userProfileRes = useGetUserProfileSummaryByIdQuery(
     { id: user_id },
     {
@@ -214,12 +250,21 @@ export const UserChip = ({ user_id }) => {
   );
 };
 
-const formatUsername = ({ first_name, last_name }) => {
+type FormatUsernameProps = {
+  first_name?: string;
+  last_name?: string;
+};
+
+const formatUsername = ({ first_name, last_name }: FormatUsernameProps) => {
   return `${first_name || ''} ${last_name || ''}`.trim();
 };
 
-const ViewVisibilityMenu = ({ view }) => {
-  const { data: userData } = useGetLoggedInUserQuery();
+type ViewVisibilityMenuProps = {
+  view: any;
+};
+
+const ViewVisibilityMenu = ({ view }: ViewVisibilityMenuProps) => {
+  const { data: userData } = useGetLoggedInUserQuery(undefined, {});
   const [updateView] = useUpdateViewVisibilityMutation();
   return (
     <VisibilityChipMenu
@@ -236,12 +281,19 @@ const ViewVisibilityMenu = ({ view }) => {
   );
 };
 
-const MarkdownInput = (props) => {
+type MarkdownInputProps = {
+  readonly?: boolean;
+  onChange?: (_value: string) => void;
+  value?: string;
+  label?: string;
+};
+
+const MarkdownInput = (props: MarkdownInputProps) => {
   const preview = props.readonly ? 'preview' : 'edit';
   const hideToolbar = props.readonly ? true : false;
   const theme = useTheme();
 
-  const handleChange = (value) => {
+  const handleChange = (value: string) => {
     if (props.onChange && value !== props.value) {
       props.onChange(value);
     }
@@ -272,7 +324,14 @@ const MarkdownInput = (props) => {
   );
 };
 
-const CopyLinkButton = ({ onClick, link, ...props }) => {
+type CopyLinkButtonProps = {
+  onClick?: () => void;
+  link: string;
+  disabled?: boolean;
+  [key: string]: any;
+};
+
+const CopyLinkButton = ({ onClick, link, ...props }: CopyLinkButtonProps) => {
   const { notify } = useNotification();
 
   const handleClick = () => {
@@ -290,7 +349,14 @@ const CopyLinkButton = ({ onClick, link, ...props }) => {
   );
 };
 
-const SaveButton = ({ onClick, isSaving, ...props }) => (
+type SaveButtonProps = {
+  onClick?: () => void;
+  isSaving: boolean;
+  disabled?: boolean;
+  [key: string]: any;
+};
+
+const SaveButton = ({ onClick, isSaving, ...props }: SaveButtonProps) => (
   <ModalButtonPrimary onClick={onClick} {...props} disabled={props?.disabled || isSaving}>
     {isSaving ? (
       <div style={{ display: 'flex', alignItems: 'center' }}>

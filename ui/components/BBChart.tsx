@@ -1,9 +1,14 @@
-// @ts-nocheck
-import { useRef, useEffect, memo } from 'react';
+import React, { useRef, useEffect, memo } from 'react';
 import { bb } from 'billboard.js';
+import type { ChartOptions } from 'billboard.js';
+// @ts-ignore
 import { ErrorBoundary } from '@sistent/sistent';
 
-const BBChart = ({ options }) => {
+type BBChartProps = {
+  options: ChartOptions;
+};
+
+const BBChart = ({ options }: BBChartProps) => {
   const chartRef = useRef(null);
 
   useEffect(() => {

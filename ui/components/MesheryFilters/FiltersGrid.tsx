@@ -262,7 +262,9 @@ function FiltersGrid({
           headerIcon={
             <Filter
               fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              height="24px"
+              width="24px"
+              style={{ fontSize: '1.45rem' }}
               className={undefined}
             />
           }
@@ -274,6 +276,8 @@ function FiltersGrid({
             handleClose={handlePublishModalClose}
             submitBtnText="Submit for Approval"
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+            handleNext={() => {}}
+            title={publishModal.filter?.name || 'Publish Filter'}
           />
         </SistentModal>
       )}

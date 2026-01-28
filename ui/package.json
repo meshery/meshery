@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run lint:fix && node ui_dev_server.js",
-    "lint": "npx --yes eslint@8.57.1 --ext .js,.jsx .",
-    "lint:fix": "npx --yes eslint@8.57.1 --fix --ext .js,.jsx .",
+    "lint": "npx --yes eslint@8.57.1 --ext .js,.jsx, .",
+    "lint:fix": "npx --yes eslint@8.57.1 --fix --ext .js,.jsx, .",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",

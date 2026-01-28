@@ -20,7 +20,7 @@ const MoveFileIcon = (props) => {
             clip-rule="evenodd"
             opacity="1"
             data-original="#000000"
-            class=""
+            className=""
           ></path>
         </g>
       </svg>

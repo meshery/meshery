@@ -53,15 +53,19 @@ export const InnerContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
+type CardStyleProps = {
+  isSelected?: boolean;
+};
+
 export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
-})(({ theme, isSelected }) => ({
+})<CardStyleProps>(({ theme, isSelected }) => ({
   background: isSelected
     ? accentGrey[30] // color when tab is selected
     : theme.palette.mode === 'dark'
       ? accentGrey[10] // color for inactive tabs
       : accentGrey[20],
-  color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
+  color: isSelected ? theme.palette.text.default : theme.palette.background?.constant?.white || '#ffffff',
   height: '3rem',
   width: '15rem',
   display: 'flex',
@@ -78,8 +82,8 @@ export const CardStyle = styled(Box, {
     background: isSelected
       ? accentGrey[30]
       : theme.palette.mode === 'dark'
-        ? theme.palette.background.hover
-        : theme.palette.background.inverseHover,
+        ? theme.palette.background?.hover || accentGrey[20]
+        : (theme.palette.background as any)?.inverseHover || accentGrey[10],
   },
   [theme.breakpoints.down('md')]: {
     width: '8.5rem',
@@ -92,13 +96,17 @@ export const CardStyle = styled(Box, {
   },
 }));
 
+type DetailsContainerProps = {
+  isEmpty?: boolean;
+};
+
 export const DetailsContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isEmpty',
-})(({ theme, isEmpty }) => ({
+})<DetailsContainerProps>(({ theme, isEmpty }) => ({
   width: '50%',
   backgroundColor:
     theme.palette.mode === 'dark'
-      ? theme.palette.background.constant.table
+      ? theme.palette.background?.constant?.table || theme.palette.background.paper
       : theme.palette.border.default,
   borderRadius: '6px',
   padding: isEmpty ? '2.5rem' : '1rem 2rem',

@@ -10,16 +10,25 @@ import {
 } from '@sistent/sistent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const ActionPopover = ({ actions = [] }) => {
+const ActionPopover = ({
+  actions = [],
+}: {
+  actions?: Array<{
+    disabled?: boolean;
+    onClick: (_event: any) => void;
+    icon?: React.ReactNode;
+    label?: string;
+  }>;
+}) => {
   const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
 
-  const handleToggle = (event) => {
-    event.stopPropagation();
+  const handleToggle = (_event: any) => {
+    _event.stopPropagation();
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event: any) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -44,14 +53,16 @@ const ActionPopover = ({ actions = [] }) => {
           sx={{ zIndex: 1 }}
           open={open}
           anchorEl={anchorRef.current}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          {...({
+            anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+            transformOrigin: { vertical: 'top', horizontal: 'left' },
+          } as any)}
         >
           <Paper>
             <MenuList autoFocusItem>
               {actions.map((action, index) => (
                 <MenuItem
-                  disabled={action.disabled}
+                  {...(action.disabled !== undefined ? { disabled: action.disabled } : {})}
                   key={index}
                   onClick={(event) => {
                     event.stopPropagation();

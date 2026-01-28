@@ -21,6 +21,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
 });
 
+export type RootState = ReturnType<typeof store.getState>;
+
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {
   console.log('Dispatching to Meshery Store:', event.data);
   store.dispatch(event.data);

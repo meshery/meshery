@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
@@ -8,7 +7,9 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar, Popover } from '@sistent/sistent';
+import { Popover } from '@sistent/sistent';
+// @ts-expect-error - NavigationNavbar exists at runtime but types may not be exported
+import { NavigationNavbar } from '@sistent/sistent';
 import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
@@ -30,9 +31,11 @@ function exportToJsonFile(jsonData, filename) {
  */
 const HeaderMenu = () => {
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: any) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
-  const [account, setAccount] = useState([]);
+  const [account, setAccount] = useState<
+    Array<{ id: string; title: string; href?: string; show?: boolean }>
+  >([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const router = useRouter();
@@ -44,12 +47,12 @@ const HeaderMenu = () => {
     isSuccess: isGetUserSuccess,
     isError: isGetUserError,
     error: getUserError,
-  } = useGetLoggedInUserQuery();
+  } = useGetLoggedInUserQuery(undefined);
 
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const handleLogout = () => {
-    window.location = '/user/logout';
+    window.location.href = '/user/logout';
     handleClose();
   };
 
@@ -72,7 +75,7 @@ const HeaderMenu = () => {
   };
 
   const handleGetToken = () => {
-    triggerGetToken()
+    triggerGetToken(undefined)
       .unwrap()
       .then((data) => {
         exportToJsonFile(data, 'auth.json');
@@ -88,18 +91,20 @@ const HeaderMenu = () => {
       notify({
         message: 'Error fetching user',
         event_type: EVENT_TYPES.ERROR,
-        details: getUserError?.data,
+        details: (getUserError as any)?.data,
       });
     }
-  }, [userData, isGetUserSuccess, isGetUserError]);
+  }, [userData, isGetUserSuccess, isGetUserError, getUserError, notify, dispatch]);
 
-  if (isTokenError) {
-    notify({
-      message: 'Error fetching token',
-      event_type: EVENT_TYPES.ERROR,
-      details: tokenError?.data,
-    });
-  }
+  useEffect(() => {
+    if (isTokenError) {
+      notify({
+        message: 'Error fetching token',
+        event_type: EVENT_TYPES.ERROR,
+        details: (tokenError as any)?.data,
+      });
+    }
+  }, [isTokenError, tokenError, notify]);
 
   useEffect(() => {
     if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
@@ -124,7 +129,13 @@ const HeaderMenu = () => {
       permission: typeof item.show === 'undefined' ? true : item.show,
     }));
 
-    const defaultItems = [];
+    const defaultItems: Array<{
+      id: string;
+      title: string;
+      onClick: () => void;
+      permission?: boolean;
+      showOnWeb?: boolean;
+    }> = [];
 
     // Only add Get Token if there are no account items
     if (!account.length) {
