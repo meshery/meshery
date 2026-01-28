@@ -21,7 +21,7 @@ Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cl
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
-    <li>Install <a href="https://cloud.google.com/sdk/docs/install">gCloud CLI</a>, configured for your environment.</li>
+    <li>Install <a href="https://cloud.google.com/sdk/docs/install">gcloud CLI</a>, configured for your environment.</li>
     <li>Access to an active GKE cluster in your Google Cloud project.</li>
   </ol>
 </div>
@@ -48,9 +48,9 @@ Read through the following considerations prior to deploying Meshery on GKE.
 
 ### Preflight: Cluster Connectivity
 
-1. Verfiy you connection to an Google Kubernetes Engine Cluster using gCloud CLI.
-1. Login to GCP account using [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
-1. After a successful login, set the Project Id:
+1. Verify your connection to a Google Kubernetes Engine Cluster using the gcloud CLI.
+2. Log in to your GCP account using [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
+3. After a successful login, set the Project Id:
 {% capture code_content %}gcloud config set project [PROJECT_ID]
 {% endcapture %}
 {% include code.html code=code_content %}
@@ -70,7 +70,7 @@ Read through the following considerations prior to deploying Meshery on GKE.
 {% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
-Meshery should now be running in your GKE cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
+Meshery should now be running in your GKE cluster, and the Meshery UI should be accessible at the `EXTERNAL IP` of the `meshery` service.
 
 ## Installation: Using `mesheryctl`
 
@@ -92,7 +92,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

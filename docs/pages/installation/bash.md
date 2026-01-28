@@ -11,7 +11,7 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/bash.png
-abstract: Install Meshery CLI on Linux or MacOS with Bash
+abstract: Install Meshery CLI on Linux or macOS with Bash
 ---
 # Install Meshery CLI with Bash
 

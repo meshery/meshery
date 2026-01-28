@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Upgrading Meshery and all of its components
-abstract: How to Meshery and all of its components
 permalink: installation/upgrades
 display-title: "false"
 type: guides
@@ -40,7 +39,7 @@ Some of the components must be upgraded simultaneously, while others may be upgr
     <tr>
         <td rowspan="3" class="childcomponent">Meshery Server</td>
         <td>Meshery UI</td>
-        <td rowspan="3">Manages lifecycle of Meshery Operator; Adapters, UI, Load Generators, Database.<br /><br />
+        <td rowspan="3">Manages the lifecycle of Meshery Operator; adapters, UI, load generators, database.<br /><br />
 Docker Deployment: Watchtower updates this component in accordance with the user’s release channel subscription.</td>
     </tr>
     <tr>
@@ -63,37 +62,37 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td></td>
         <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
         <ul> 
-            <li><code>system start</code> calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml. Unless the <code>skipUpdate</code> flag is used, operators are also updated here.</li>
-            <li><code>system reset</code> retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
+            <li><code>system start</code> calls system update by default, which updates the server and existing adapters, but doesn’t update <code>meshery.yaml</code>. Unless the <code>skipUpdate</code> flag is used, operators are also updated here.</li>
+            <li><code>system reset</code> retrieves <code>docker-compose.yaml</code> from GitHub (use a Git tag to reset to the right Meshery version).</li>
             <li><code>system restart</code> also updates operators, unless the <code>skipUpdate</code> flag is used.</li>
-            <li><code>system update</code> updates operators in case of both docker and kubernetes deployments.</li>
-            <li><code>system context</code> manages config.yaml, which manages meshery.yaml. </li>
-            <li><code>mesheryctl</code> should generally be checking for latest release and informing user.</li>
+            <li><code>system update</code> updates operators in case of both Docker and Kubernetes deployments.</li>
+            <li><code>system context</code> manages <code>config.yaml</code>, which manages <code>meshery.yaml</code>.</li>
+            <li><code>mesheryctl</code> should generally check for the latest release and inform the user.</li>
         </ul>
         </td>
     </tr>
     <tr>
-        <td rowspan="2" class="childcomponent"><a style="color:white;" ref="/extensibility/providers">Remote Providers</a></td>
+        <td rowspan="2" class="childcomponent"><a style="color:white;" href="/extensibility/providers">Remote Providers</a></td>
         <td>Meshery Cloud</td>
-        <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. Process is unique per provider.</td>
+        <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. The process is unique per provider.</td>
     </tr>
     <tr>
-        <td>Meshery Cloud</td>
-        <td> Static Extension: Integrators manage the lifecycle of their Meshery Extensions. Process is unique per provider.</td>
+        <td>Meshery Extensions</td>
+        <td>Static Extension: Integrators manage the lifecycle of their Meshery Extensions. The process is unique per provider.</td>
     </tr>
 </table>
 
-Sub-components deploy as a unit, however, they do not share the same version number.
+Sub-components deploy as a unit; however, they do not share the same version number.
 
 ### Meshery Docker Deployments
 
-In order to pull the latest images for Meshery Server, Adapters, and UI, execute the following command:
+To pull the latest images for Meshery Server, adapters, and UI, execute the following command:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system update</div></div>
  </pre>
 
-If you wish to update a running Meshery deployment with the images you just pulled, you'll also have to execute:
+If you want to update a running Meshery deployment with the images you just pulled, you'll also have to execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system restart</div></div>
@@ -105,7 +104,7 @@ Use `kubectl apply` or `helm` to upgrade the Meshery application manifests in yo
 
 ## Upgrading Meshery CLI
 
-The Meshery command line client, `mesheryctl`, is available in different package managers. Use the instructions relevant to your environment.
+The Meshery command-line client, `mesheryctl`, is available in different package managers. Use the instructions relevant to your environment.
 
 ### Upgrading `mesheryctl` using Homebrew
 
@@ -117,7 +116,7 @@ The Meshery command line client, `mesheryctl`, is available in different package
 
 ### Upgrading `mesheryctl` using Bash
 
-Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
+Upgrade `mesheryctl` and run Meshery on macOS or Linux with this script:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -</div></div>

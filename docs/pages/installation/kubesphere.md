@@ -5,7 +5,7 @@ permalink: installation/kubernetes/kubesphere
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/kubershphere
+- installation/platforms/kubesphere
 display-title: "false"
 language: en
 list: include
@@ -34,14 +34,14 @@ Perform the following steps in order:
 
 
 1. On the **Overview** page of the project `demo-project`, click **App Store** in the upper-left corner.
-2. Search for **Meshery** in the App Store, and click on the search result to enter the app.
+2. Search for **Meshery** in the App Store, and click on the search result to open the app.
 
     ![meshery-app]({{ site.baseurl }}/assets/img/platforms/meshery-app.png)
 3. In the **App Information** page, click **Install** on the upper right corner.
 
     ![meshery-install]({{ site.baseurl }}/assets/img/platforms/Meshery-install.png)
 
-4. In the App Settings page, set the application **Name**, **Location** (as your Namespace), and App Version, and then click Next on the upper right corner.
+4. In the App Settings page, set the application **Name**, **Location** (as your namespace), and **App Version**, then click **Next** on the upper right corner.
 
     ![meshery-info]({{ site.baseurl }}/assets/img/platforms/Meshery-info.png)
 
