@@ -14,8 +14,6 @@ list: include
 
 # Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
 
-abstract: "Meshery Operator controls and manages the lifecycle of components deployed inside a Kubernetes cluster"
-
 Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operation of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management—whether Meshery Server is deployed inside or outside of the clusters under management.
 
 ## Deployments
