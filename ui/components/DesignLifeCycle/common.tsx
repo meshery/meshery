@@ -58,10 +58,6 @@ export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
   );
 };
 
-export const getSvgWhiteForComponent = (component) => {
-  return `/${component.styles.svgWhite}`;
-};
-
 export const CheckBoxField = ({
   label,
   checked,
