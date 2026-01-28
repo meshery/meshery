@@ -22,7 +22,7 @@ teardown() {
    export HOME="$ORIGINAL_HOME"
 }
 
-@test "mesheryctl system context create" {
+@test "given a valid context-name is provided as an argument when running mesheryctl system context create then the context will be created" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create "$CONTEXT_NAME"
@@ -31,7 +31,7 @@ teardown() {
    assert_output --partial "Added"
 }
 
-@test "mesheryctl system context create duplicate" {
+@test "given a already existing context-name is provided as an argument when running mesheryctl system context create then the duplication error message displays" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create "$CONTEXT_NAME"
@@ -42,7 +42,7 @@ teardown() {
    assert_output --partial "name already exists"
 }
 
-@test "mesheryctl system context create empty" {
+@test "given no context-name as an argument when running mesheryctl system context create then the error message displays" {
    run $MESHERYCTL_BIN system context create
 
    assert_failure
@@ -50,7 +50,7 @@ teardown() {
    assert_output --partial "provide a context name"
 }
 
-@test "mesheryctl system context create correct --url empty" {
+@test "given no url as an argument when running mesheryctl system context create --url then the error message displays" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create $CONTEXT_NAME --url
@@ -60,7 +60,7 @@ teardown() {
    assert_output --partial "flag needs an argument"
 }
 
-@test "mesheryctl system context create correct --url correct" {
+@test "given a valid url as an argument when running mesheryctl system context create --url then the context will be created" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create $CONTEXT_NAME --url $CONTEXT_URL
@@ -69,7 +69,7 @@ teardown() {
    assert_output --partial "Added"
 }
 
-@test "mesheryctl system context create correct --url foo" {
+@test "given a invalid url as an argument when running mesheryctl system context create --url then the error message displays" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create $CONTEXT_NAME --url foo
@@ -79,7 +79,7 @@ teardown() {
    assert_output --partial "invalid URI"
 }
 
-@test "mesheryctl system context create correct --url correct --set" {
+@test "given all required arguments with --set flag when running mesheryctl system context create --url --set then the new context will be created and set it as current context" {
    CONTEXT_NAME_1="example-context1"
    CONTEXT_NAME_2="example-context2"
 
@@ -91,7 +91,7 @@ teardown() {
 }
 
 # bats test_tags=system:context
-@test "mesheryctl system context view --all display valid content" {
+@test "given an --all flag to view when running mesheryctl system context view displays all the context with it's details" {
    run $MESHERYCTL_BIN system context view --all
    assert_success
 
@@ -102,7 +102,7 @@ teardown() {
 }
 
 # bats test_tags=system:context
-@test "mesheryctl system context view display valid content" {
+@test "running mesheryctl system context view displays the current context" {
    run $MESHERYCTL_BIN system context view
    assert_success
    
@@ -113,7 +113,7 @@ teardown() {
    assert_line --regexp "$PROVIDER_REGEX_MATCH"
 }
 
-@test "mesheryctl system context view --context" {
+@test "given no context-name as an argument when running mesheryctl system context view --context then the error message displays" {
    run $MESHERYCTL_BIN system context view  --context
 
    assert_failure
@@ -121,14 +121,14 @@ teardown() {
    assert_output --partial "flag needs an argument"
 }
 
-@test "mesheryctl system context view --context invalid" {
+@test "given an invalid context-name as an argument when running mesheryctl system context view --context then the error message displays" {
    run $MESHERYCTL_BIN system context view  --context foo
 
    assert_failure
    assert_output --partial "doesn't exist"
 }
 
-@test "mesheryctl system context view --context correct" {
+@test "given a valid context-name as an argument when running mesheryctl system context view --context then it displays the detailed context" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create "$CONTEXT_NAME"
@@ -142,14 +142,14 @@ teardown() {
    assert_line --regexp "$PROVIDER_REGEX_MATCH"
 }
 
-@test "mesheryctl system context list" {
+@test "running mesheryctl system context list displays all the available context" {
    run $MESHERYCTL_BIN system context list
 
    assert_success
    assert_output --partial "Available contexts"
 }
 
-@test "mesheryctl system context switch foo" {
+@test "given invalid context-name as an argument when running mesheryctl system context switch then the error message displays" {
    run $MESHERYCTL_BIN system context switch foo
 
    assert_failure
@@ -157,7 +157,7 @@ teardown() {
    assert_output --partial "context does not exist"
 }
 
-@test "mesheryctl system context switch" {
+@test "given no context-name as an argument when running mesheryctl system context switch then the error message displays" {
    run $MESHERYCTL_BIN system context switch
 
    assert_failure
@@ -165,7 +165,7 @@ teardown() {
    assert_output --partial "provide exactly one context name"
 }
 
-@test "mesheryctl system context switch name" {
+@test "given a valid context-name as an argument when running mesheryctl system context switch then the current context will switch to specified context" {
    CONTEXT_NAME_1="example-context1"
    CONTEXT_NAME_2="example-context2"
 
@@ -178,7 +178,7 @@ teardown() {
    assert_output --partial "switched to context"
 }
 
-@test "mesheryctl system context delete" {
+@test "given no context-name as an argument when running mesheryctl system context delete then the error message displays" {
    run $MESHERYCTL_BIN system context delete
 
    assert_failure
@@ -186,7 +186,7 @@ teardown() {
    assert_output --partial "provide a context name to delete"
 }
 
-@test "mesheryctl system context delete foo" {
+@test "given an invalid context-name as an argument when running mesheryctl system context delete then the error message displays" {
    run $MESHERYCTL_BIN system context delete foo
 
    assert_failure
@@ -194,7 +194,7 @@ teardown() {
    assert_output --partial "no context name found"
 }
 
-@test "mesheryctl system context delete correct" {
+@test "given a valid context-name as an argument when running mesheryctl system context delete then the specified context will be deleted" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create $CONTEXT_NAME
