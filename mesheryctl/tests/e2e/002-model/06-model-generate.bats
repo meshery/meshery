@@ -21,7 +21,7 @@ setup() {
     assert_output --partial "no such file or directory"
 }
 
-@test "given a valid CSV directory is provided when running mesheryctl model generate then the model is generated successfully" {
+@test "given a valid CSV directory is provided when running mesheryctl model generate --file valid-csv-directory then the model is generated" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model" --template "$FIXTURES_DIR/valid-template.json"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
