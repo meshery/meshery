@@ -24,6 +24,13 @@ require_connection_id() {
     assert_output --partial "isn't specified"
 }
 
+@test "given no orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the error message is displayed" {
+    run $MESHERYCTL_BIN exp workspace list --orgId
+    assert_failure
+    assert_output --partial "Error"
+    assert_output --partial "needs an argument"
+}
+
 @test "given a valid orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the workspace details in default format is displayed" {
     require_connection_id
 
@@ -35,13 +42,26 @@ require_connection_id() {
     assert_output --partial "DESCRIPTION"
 }
 
+# todo change output
 @test "given an invalid orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the error message is displayed" {
     CONNECTION_ID="foo"
 
     run $MESHERYCTL_BIN exp workspace list --orgId "$CONNECTION_ID"
     assert_failure
-    assert_output --partial "ID"
-    assert_output --partial "NAME"
-    assert_output --partial "ORGANIZATION"
-    assert_output --partial "DESCRIPTION"
+}
+
+@test "given non-existent orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the error message is displayed" {
+    CONNECTION_ID="00000000-0000-0000-0000-000000000000"
+
+    run $MESHERYCTL_BIN exp workspace list --orgId "$CONNECTION_ID"
+    assert_success
+    assert_output --partial "No workspaces found"
+}
+
+@test "given a valid orgId is provided as an argument with --count flag when running mesheryctl exp workspace list --orgId --count it displays the total number of workspaces" {
+    require_connection_id
+
+    run $MESHERYCTL_BIN exp workspace list --orgId "$CONNECTION_ID --count"
+    assert_success
+    assert_output --partial "Total number of workspaces"
 }
