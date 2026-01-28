@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
+	"errors"
 	"github.com/pkg/errors"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -139,7 +139,7 @@ mesheryctl system status --verbose
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
 			if err = hc.Run(); err != nil {
-                                utils.Log.Warn("Could not run Kubernetes health checks. Skipping...")
+                          		utils.Log.Warn(errors.New("could not run kubernetes health checks, skipping"))
                                 utils.Log.Debug(err)
 				return nil
 			}
