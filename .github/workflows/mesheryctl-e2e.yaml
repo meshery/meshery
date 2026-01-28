@@ -75,7 +75,7 @@ jobs:
         working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
-          bash run_tests.bash
+          bash run_tests.bash | tee bats.tap
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
@@ -83,6 +83,12 @@ jobs:
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
+
+      - name: Convert TAP to Allure results
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: ./mesheryctl
+        run: |
+          node bats-to-allure.js tests/e2e/bats.tap
 
       - name: Checkout QA
         uses: actions/checkout@v6
