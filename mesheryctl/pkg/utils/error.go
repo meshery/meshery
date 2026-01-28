@@ -51,7 +51,7 @@ var (
 	ErrWalkManifestsCode           = "mesheryctl-1144"
 	ErrGetChannelVersionCode       = "mesheryctl-1145"
 	ErrInvalidModelCode            = "mesheryctl-1150"
-	ErrInvalidOrgIDCode            = "mesheryctl-1152"
+	ErrInvalidUUIDCode             = "mesheryctl-1152"
 	ErrFetchEnvironmentsCode       = "mesheryctl-1153"
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
@@ -697,12 +697,12 @@ func ErrClearLine(err error) error {
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
 
-func ErrInvalidOrgID(err error) error {
-	return errors.New(ErrInvalidOrgIDCode, errors.Alert,
-		[]string{"Invalid organization ID format"},
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert,
+		[]string{"Invalid ID format"},
 		[]string{err.Error()},
-		[]string{"Organization ID is not a valid UUID format", "Organization ID contains invalid characters"},
-		[]string{"Ensure the organization ID is a valid UUID format", "Check the orgID parameter for typos or formatting issues"})
+		[]string{"ID is not a valid UUID format", "ID contains invalid characters"},
+		[]string{"Ensure the ID is a valid UUID format", "Check the ID parameter for typos or formatting issues"})
 }
 
 func ErrFetchEnvironments(err error) error {

@@ -17,6 +17,11 @@ on:
       bats_test: 
         description: "run only bats suite test"
         required: false
+  push:
+    branches:
+      - "master"
+    paths:
+      - "mesheryctl/**"
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
@@ -25,7 +30,7 @@ jobs:
   manual-bats:
     name: Manual BATS Test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
+    if: ${{ (github.event_name == 'push' && github.repository == 'meshery/meshery') || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true') }} 
     strategy:
       fail-fast: false
       matrix:
@@ -78,6 +83,32 @@ jobs:
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        with:
+          repository: meshery/qa
+          path: ./qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: |
+          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
+
+      - name: Commit & push to qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
   manual-test:
     name: Manual e2e Test

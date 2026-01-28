@@ -1273,13 +1273,13 @@
         "suggested_remediation": "Ensure passing all params according to the command description"
       },
       "1152": {
-        "name": "ErrInvalidOrgIDCode",
+        "name": "ErrInvalidUUIDCode",
         "code": "1152",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid organization ID format",
-        "probable_cause": "Organization ID is not a valid UUID format\nOrganization ID contains invalid characters",
-        "suggested_remediation": "Ensure the organization ID is a valid UUID format\nCheck the orgID parameter for typos or formatting issues"
+        "short_description": "Invalid ID format",
+        "probable_cause": "ID is not a valid UUID format\nID contains invalid characters",
+        "suggested_remediation": "Ensure the ID is a valid UUID format\nCheck the ID parameter for typos or formatting issues"
       },
       "1153": {
         "name": "ErrFetchEnvironmentsCode",
@@ -1586,6 +1586,24 @@
         "short_description": "Unable to read the input",
         "probable_cause": "The provided input was invalid or could not be read",
         "suggested_remediation": "Validate the input and try again."
+      },
+      "1194": {
+        "name": "ErrOutputFileNotSpecifiedCode",
+        "code": "1194",
+        "severity": "Alert",
+        "long_description": "The output file path was not provided.",
+        "short_description": "Output file path is not specified.",
+        "probable_cause": "An output file path must be specified to save the output.",
+        "suggested_remediation": "Provide a valid file path."
+      },
+      "1195": {
+        "name": "ErrCreateEnvironmentCode",
+        "code": "1195",
+        "severity": "Alert",
+        "long_description": "There was an error while creating the environment",
+        "short_description": "",
+        "probable_cause": "Ensure Meshery server is running and reachable\nCheck if the organization ID is correct",
+        "suggested_remediation": "Start Meshery server and try again\nProvide a valid organization ID"
       }
     }
   }

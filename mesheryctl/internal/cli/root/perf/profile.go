@@ -19,13 +19,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -54,6 +55,17 @@ mesheryctl perf profile test 2
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
+			}
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString string
@@ -62,7 +74,7 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,7 +86,7 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			return utils.ErrLoadConfig(err)
 		}
 
 		if len(profiles) == 0 {
@@ -87,14 +99,13 @@ mesheryctl perf profile test --view
 
 		// print in json/yaml format
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(profiles)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceProfile]{}
+			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, profiles)
+			if err != nil {
+				return err
 			}
-			utils.Log.Info(string(body))
 
+			outputFormatter.Display()
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile

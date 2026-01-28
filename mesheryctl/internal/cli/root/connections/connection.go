@@ -16,7 +16,6 @@ const connectionApiPath = "api/integrations/connections"
 
 var (
 	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd, createConnectionCmd}
-	pageNumberFlag       int
 )
 
 var ConnectionsCmd = &cobra.Command{

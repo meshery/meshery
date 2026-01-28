@@ -9,6 +9,7 @@ import (
 var ErrListPaginationCode = "mesheryctl-1157"
 var ErrEncodingDataCode = "mesheryctl-1183"
 var ErrUnsupportedFormatCode = "mesheryctl-1184"
+var ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
 
 func ErrorListPagination(err error, currentPage int) error {
 	return errors.New(ErrListPaginationCode, errors.Alert,
@@ -24,4 +25,8 @@ func ErrEncodingData(err error, encoder string) error {
 
 func ErrUnsupportedFormat(format string) error {
 	return errors.New(ErrUnsupportedFormatCode, errors.Alert, []string{fmt.Sprintf("The output format '%s' is not supported. ", format)}, []string{fmt.Sprintf("Output format '%s' is not supported. ", format)}, []string{"An unsupported output format was requested. "}, []string{"Specify a supported output format. Choices are 'json' or 'yaml'."})
+}
+
+func ErrOutputFileNotSpecified() error {
+	return errors.New(ErrOutputFileNotSpecifiedCode, errors.Alert, []string{"Output file path is not specified."}, []string{"The output file path was not provided."}, []string{"An output file path must be specified to save the output."}, []string{"Provide a valid file path."})
 }

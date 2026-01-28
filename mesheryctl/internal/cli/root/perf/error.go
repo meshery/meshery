@@ -28,6 +28,8 @@ const (
 	ErrUserPromptCode               = "mesheryctl-1160"
 	ErrConvertConcurrentRequestCode = "mesheryctl-1161"
 	ErrConvertQPSCode               = "mesheryctl-1162"
+
+	invalidOutputFormatMsg = "output-format %q is invalid. Available options: [json, yaml]"
 )
 
 func ErrReadFilepath(err error) error {
