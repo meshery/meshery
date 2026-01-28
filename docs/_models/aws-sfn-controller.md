@@ -26,9 +26,22 @@ components:
   colorIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/color/state-machine-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/white/state-machine-white.svg
   description: 
-components-count: 4
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sfn-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sfn-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 5
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 3
 featureList: [
   "Step Functions is based on state machines and tasks.",
   "Supports Catch and Retry statements",

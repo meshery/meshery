@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
-	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/kubernetes/describe"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
+	meshkitKube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/kubernetes/describe"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
@@ -170,9 +170,15 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 	contextsChan := make(chan *model.K8sContextsPage)
 
 	r.Config.K8scontextChannel.SubscribeContext(ch)
-	r.Log.Info("K8s context subscription started")
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	r.Log.Debugf("K8s context subscription started for context: %v", search)
 
 	go func() {
+		defer r.Config.K8scontextChannel.UnsubscribeContext(ch)
+		defer close(contextsChan)
 		for {
 			select {
 			case <-ch:
@@ -184,7 +190,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 				contextsChan <- contexts
 
 			case <-ctx.Done():
-				r.Log.Info("K8s context subscription stopped")
+				r.Log.Debugf("K8s context subscription stopped for context: %v", search)
 				return
 			}
 		}
@@ -193,9 +199,20 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 }
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
+	search := ""
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	order := ""
+	if selector.Order != nil {
+		order = *selector.Order
+	}
 	// If the data from this subscriotion will be only used to manage then retrieve connected conns only. Right now in the settings page we need all avaliable contexts hence retireving conns of all statuses.
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, "", false)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, search, order, "", false)
 	if err != nil {
 		return nil, err
 	}

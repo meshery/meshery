@@ -8,9 +8,9 @@ Meshery Adapter for NGINX Service Mesh.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Meshery Authors | <community@layer5.io> |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
 | darrenlau | <panyuenlau@gmail.com> |  |
-| leecalcote | <lee.calcote@layer5.io> |  |
+
 
 ## Values
 
@@ -22,7 +22,7 @@ Meshery Adapter for NGINX Service Mesh.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"layer5/meshery-nginx-sm:stable-latest"` |  |
+| image.repository | string | `"meshery/meshery-nginx-sm:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |

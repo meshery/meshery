@@ -11,13 +11,10 @@ list: include
 ---
 
 <div style="display:flex;align-items:center;">
-    <div style="flex: 1; margin: 1rem;">
-        <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" />
-    </div>
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
-        Managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure.
+        MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
         </p>
     </div>
 </div>
@@ -101,15 +98,41 @@ For efficient management of large Kubernetes clusters, MeshSync uses tiered disc
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](./broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
+# MeshSync deployment mode
+
+MeshSync operates in one of two modes: operator or embedded.
+
+## Operator mode (default)
+
+When it runs in operator mode, it is managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
+
+## Embedded mode
+
+When it runs in embedded mode, it is integrated into the Meshery server as a library and no additional resources are deployed to the managed cluster.
+
+## Mode selection and switch
+
+The user selects the deployment mode when creating a new Kubernetes connection (submitting a kube config). The selection is applied to all contexts from the submitted config.
+
+The user can switch the deployment mode per connection on the connections list page.
+
+When the deployment mode is switched from operator to embedded: the operator is undeployed from the managed cluster, and the MeshSync library routine is started inside the Meshery server for the managed cluster.
+
+When the deployment mode is switched from embedded to operator: the MeshSync library routine is stopped for the managed cluster, and the operator is deployed to the managed cluster.
+
 # MeshSync FAQs
 
 ## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
-MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the `meshsync` CRD using kubectl:
+MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
 
-- Download the CRD with `kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml`
-- Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
-- Apply the new definition with `kubectl apply -f meshsync.yaml`
+- Download the CRD with kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
+- Open the downloaded file and edit the field informer_config to blacklist all the types of resources that you don't want updates from.
+- Apply the new definition with kubectl apply -f meshsync.yaml
+
+
+{% include alert.html type="info" title="Still seeing issues?" content="Check the <a href='https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync'><strong>Meshery Troubleshooting Guide</strong></a> for help with common issues." %}
+
 
 # Roadmap
 

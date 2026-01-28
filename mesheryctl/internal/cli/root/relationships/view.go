@@ -15,21 +15,18 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var viewCmd = &cobra.Command{
@@ -41,76 +38,81 @@ var viewCmd = &cobra.Command{
 mesheryctl exp relationship view [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationships view [model-name]\nRun 'mesheryctl exp relationships view --help' to see detailed help message"
+		const errMsg = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("[model-name] isn't specified%s", errMsg), "view"))
 		} else if len(args) > 1 {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "view"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("Too many arguments only [model-name] is expected%s", errMsg), "view"))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
 		model := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?pagesize=all", baseUrl, model)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
-
-		err = json.Unmarshal(data, relationshipsResponse)
+		relationshipsResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](fmt.Sprintf("api/meshmodels/models/%s/relationships?pagesize=all", model))
 		if err != nil {
 			return err
 		}
 
 		var selectedModel *relationship.RelationshipDefinition
 
-		if relationshipsResponse.Count == 0 {
+		switch relationshipsResponse.Count {
+		case 0:
 			utils.Log.Info("No relationship(s) found for the given name ", model)
 			return nil
-		} else if relationshipsResponse.Count == 1 {
+		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
-		} else {
+		default:
 			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
 		var output []byte
 
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
-		outFormatFlag = strings.ToLower(outFormatFlag)
-		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
+		outpoutFormat, _ := cmd.Flags().GetString("output-format")
+		outFormatFlag := strings.ToLower(outpoutFormat)
+		switch outFormatFlag {
+		case "yaml", "yml":
 			if output, err = yaml.Marshal(selectedModel); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
 			utils.Log.Info(string(output))
-		} else if outFormatFlag == "json" {
+		case "json":
 			// return outputRelationshipJson(selectedModel)
-			return components.OutputJson(selectedModel)
-		} else {
+			return format.OutputJson(selectedModel)
+		default:
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 
 		return nil
 	},
+}
+
+// selectModelPrompt lets user to select a relation if relations are more than one
+func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
+	relationshipNames := []string{}
+
+	for _, _rel := range relationship {
+		// here display Kind and EvaluationQuery as relationship name
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
+		relationshipNames = append(relationshipNames, relationshipName)
+	}
+
+	prompt := promptui.Select{
+		Label: "Select a relationship:",
+		Items: relationshipNames,
+	}
+
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			continue
+		}
+
+		return &relationship[i]
+	}
+}
+
+func init() {
+	viewCmd.Flags().StringP("output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }

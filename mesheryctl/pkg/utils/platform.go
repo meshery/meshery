@@ -14,16 +14,17 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitutils "github.com/meshery/meshkit/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/walker"
 	v1core "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -81,6 +82,7 @@ type Service struct {
 	Environment []string `yaml:"environment,omitempty"`
 	Volumes     []string `yaml:"volumes,omitempty"`
 	Ports       []string `yaml:"ports,omitempty"`
+	Command     []string `yaml:"command,omitempty"`
 }
 
 type Volumes struct {
@@ -316,43 +318,77 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 	return nil
 }
 
-// FetchManifests is a wrapper function that identifies the required manifest files as downloads them
-func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
+// FetchManifests is a wrapper function that identifies and downloads the required manifest files
+func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
+	// Get version information
 	_, version, err := GetChannelAndVersion(currCtx)
 	if err != nil {
-		return []Manifest{}, err
+		return []Manifest{}, ErrGetChannelVersion(err)
+	}
+	log.Infof("Retrieved version information: %s", version)
+
+	log.Debug("Fetching required Kubernetes manifest files...")
+
+	// Create manifests folder first
+	if err := CreateManifestsFolder(); err != nil {
+		return nil, ErrCreateManifestsFolder(err)
+	}
+	log.Debug("Successfully created manifests folder")
+
+	// Store downloaded manifest information
+	var downloadedManifests []Manifest
+
+	// Create Github Walker instance
+	gitWalker := walker.NewGithub().
+		Owner(constants.GetMesheryGitHubOrg()).
+		Repo(constants.GetMesheryGitHubRepo()).
+		Branch(version).
+		Root("install/deployment_yamls/k8s/**")
+
+	log.Debugf("Initialized GitHub walker with org: %s, repo: %s, branch: %s",
+		constants.GetMesheryGitHubOrg(),
+		constants.GetMesheryGitHubRepo(),
+		version)
+
+	// Register file interceptor to handle manifest files
+	gitWalker.RegisterFileInterceptor(func(content walker.GithubContentAPI) error {
+		// Create the local file path
+		localPath := filepath.Join(MesheryFolder, ManifestsFolder, content.Name)
+		log.Debugf("Attempting to download manifest to: %s", localPath)
+
+		if err := meshkitutils.DownloadFile(localPath, content.DownloadURL); err != nil {
+			return ErrDownloadFile(err, content.Name)
+		}
+
+		// Store manifest information thread-safely
+		downloadedManifests = append(downloadedManifests, Manifest{
+			Path: content.Path,
+			Size: json.Number(fmt.Sprintf("%d", content.Size)),
+			SHA:  content.SHA,
+			URL:  content.URL,
+		})
+		log.Debugf("Downloaded manifest: %s (size: %d bytes)", content.Name, content.Size)
+		return nil
+	})
+
+	// Log the source of manifests
+	gitHubFolder := fmt.Sprintf("https://github.com/%s/%s/tree/%s/install/deployment_yamls/k8s",
+		constants.GetMesheryGitHubOrg(),
+		constants.GetMesheryGitHubRepo(),
+		version)
+	log.Info("Downloading manifest files from ", gitHubFolder)
+
+	// Start the walking process
+	if err := gitWalker.Walk(); err != nil {
+		return nil, ErrWalkManifests(err)
 	}
 
-	log.Debug("fetching required Kubernetes manifest files...")
-	// get correct minfestsURL based on version
-	manifestsURL, err := GetManifestTreeURL(version)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to make GET request")
-	}
-	// pick all the manifest files stored in minfestsURL
-	manifests, err := ListManifests(manifestsURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to make GET request")
+	if len(downloadedManifests) == 0 {
+		return nil, ErrNoManifestFilesFound(gitHubFolder)
 	}
 
-	err = CreateManifestsFolder()
-
-	if err != nil {
-		return nil, err
-	}
-
-	gitHubFolder := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/tree/" + version + "/install/deployment_yamls/k8s"
-	log.Info("downloading manifest files from ", gitHubFolder)
-
-	// download all the manifest files to the ~/.meshery/manifests folder
-	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + version + "/install/deployment_yamls/k8s/"
-	err = DownloadManifests(manifests, rawManifestsURL)
-
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to download manifests")
-	}
-
-	return manifests, nil
+	log.Infof("Total manifest files: %d", len(downloadedManifests))
+	return downloadedManifests, nil
 }
 
 // IsAdapterValid checks if the component mentioned by the user is a valid component
@@ -372,9 +408,10 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
-		if ctx.Channel == "edge" {
+		switch ctx.Channel {
+		case "edge":
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
-		} else if ctx.Channel == "stable" {
+		case "stable":
 			if ctx.Version == "latest" {
 				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
@@ -389,7 +426,6 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 				if err != nil {
 					return errors.Wrap(err, "error processing meshconfig")
 				}
-
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
 					return err
@@ -398,7 +434,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			}
 
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
-		} else {
+		default:
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
@@ -607,17 +643,17 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("deleting " + ManifestsFolder + " folder...")
+	log.Debug("Deleting " + ManifestsFolder + " folder...")
 	// delete manifests folder if it already exists
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Debug("creating " + ManifestsFolder + "folder...")
+	log.Debug("Creating " + ManifestsFolder + " folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "failed to make %s directory", ManifestsFolder)
 	}
-	log.Debug("created manifests folder...")
+	log.Debug("Created manifests folder.")
 
 	return nil
 }

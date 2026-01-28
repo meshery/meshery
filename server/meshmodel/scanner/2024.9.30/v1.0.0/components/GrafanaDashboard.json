@@ -23,10 +23,12 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Security \u0026 Compliance"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +46,31 @@
     "model": {
       "version": "2024.9.30"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +82,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +110,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +140,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +168,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +182,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +191,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +201,10 @@
   },
   "configuration": null,
   "component": {
+    "version": "openviz.dev/v1alpha1",
     "kind": "GrafanaDashboard",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"folderID\": {\n     \"description\": \"FolderID defines the Grafana folderID\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"grafanaRef\": {\n     \"description\": \"GrafanaRef defines the grafana app binding name for the GrafanaDashboard\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"description\": \"Overwrite defines the existing grafanadashboard with the same name(if any) should be overwritten or not\",\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"description\": \"Templatize defines the fields which supports templating in GrafanaDashboard Model json\",\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}",
-    "version": "openviz.dev/v1alpha1"
-  }
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"grafanaRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

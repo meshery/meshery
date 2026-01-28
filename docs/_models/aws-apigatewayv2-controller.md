@@ -54,9 +54,34 @@ components:
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
   description: 
-components-count: 11
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 12
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 7
 featureList: [
   "Handles API requests and responses",
   "Supports RESTful and WebSocket APIs",

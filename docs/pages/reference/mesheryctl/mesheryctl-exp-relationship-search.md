@@ -12,11 +12,11 @@ subcommand: relationship
 
 # mesheryctl exp relationship search
 
-Searches registered relationships
+Search registered relationship(s)
 
 ## Synopsis
 
-Searches and finds the realtionship used by different models based on the query-text.
+Search registred relationship(s) used by different models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship search [flags]

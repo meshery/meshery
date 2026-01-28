@@ -17,11 +17,6 @@ This page contains results of tests performed in the development of Meshery.
 - See the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=0#gid=0) for a list of test cases.
 - See the [Compatibility Matrix](/installation/compatibility-matrix)
 
-## Relationships Test Results
-
-{% assign relationship_tests = site.data.relationshiptestresult.relationship-v07167-2 %}
-{% assign grouped_relationships = relationship_tests | group_by: "name" %}
-
 <style>
 /* General Table Styling */
 table {
@@ -39,9 +34,9 @@ th, td {
     cursor: pointer;
     background-color: #444;
     color: white;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
 .accordion-header:hover {
@@ -64,59 +59,14 @@ th, td {
 }
 </style>
 
-<table>
-    <thead>
-        <tr>
-            <th>Model</th>
-            <th>Meshery Version</th>
-            <th>Relationship Kind</th>
-            <th>Relationship Type</th>
-            <th>Relationship SubType</th>
-            <th>Test Result</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for group in grouped_relationships %}
-        <!-- Accordion Header Row -->
-        <tr class="accordion-header">
-            <td colspan="6">{{ group.name }}</td>
-        </tr>
-        <!-- Hidden Content: Detailed Table -->
-        <tr class="accordion-content">
-            <td colspan="6">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Meshery Version</th>
-                            <th>Relationship Kind</th>
-                            <th>Relationship Type</th>
-                            <th>Relationship SubType</th>
-                            <th>Test Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in group.items %}
-                        <tr>
-                            <td>{{ item.extensionVersion }}</td>
-                            <td>{{ item.kind }}</td>
-                            <td>{{ item.type }}</td>
-                            <td>{{ item.subType }}</td>
-                            <td>
-                                {% if item.testResultPassed %}
-                                    <img src="/assets/img/passing.svg" alt="Pass" />
-                                {% else %}
-                                    <img src="/assets/img/failing.svg" alt="Fail" />
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+## Latest E2E Test Report
+
+[🔗 View Build UI and Server Workflow](https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster)
+
+
+{% include test-report.md %}
+
 
 <script>
 // JavaScript for toggling the accordion content

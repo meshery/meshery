@@ -747,7 +747,7 @@ services:
           isAnnotation: false
           isModelAnnotation: "FALSE"
           isNamespaced: true
-          logoURL: https://layer5.io/company/brand
+          logoURL: https://meshery.io/company/brand
           model: postgres-controller
           modelDisplayName: Postgres Controller
           primaryColor: '#336791'
@@ -891,7 +891,7 @@ services:
           isAnnotation: false
           isModelAnnotation: "FALSE"
           isNamespaced: true
-          logoURL: https://layer5.io/company/brand
+          logoURL: https://meshery.io/company/brand
           model: apache-shardingsphere-operator-charts
           modelDisplayName: Apache Shardingsphere Operator Charts
           primaryColor: '#F26F23'
@@ -956,7 +956,7 @@ services:
           isAnnotation: false
           isModelAnnotation: "FALSE"
           isNamespaced: false
-          logoURL: https://layer5.io/company/brand
+          logoURL: https://meshery.io/company/brand
           model: apache-shardingsphere-operator-charts
           modelDisplayName: Apache Shardingsphere Operator Charts
           primaryColor: '#F26F23'

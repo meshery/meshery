@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils/kubernetes"
 )
 
 // One FSM per connection
@@ -149,7 +149,8 @@ func New(ID string, userID uuid.UUID, log logger.Handler) (*machines.StateMachin
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
@@ -161,6 +162,6 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 		return nil, eventBuilder.Build(), err
 	}
 	machinectx.log = log
-	AssignControllerHandlers(machinectx)
+	AssignControllerHandlers(machinectx, sysID, provider)
 	return machinectx, nil, nil
 }

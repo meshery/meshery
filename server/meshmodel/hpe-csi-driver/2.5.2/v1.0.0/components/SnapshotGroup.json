@@ -23,10 +23,12 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +46,31 @@
     "model": {
       "version": "2.5.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +82,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +110,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +140,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +168,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +182,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +191,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +201,10 @@
   },
   "configuration": null,
   "component": {
+    "version": "storage.hpe.com/v1",
     "kind": "SnapshotGroup",
-    "schema": "{\n \"description\": \"SnapshotGroup is a user's request for creating a snapshotgroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshotGroup requested by a user. Required.\",\n   \"properties\": {\n    \"snapshotGroupClassName\": {\n     \"description\": \"snapshotGroupClassName is the name of the SnapshotGroupClass requested by the SnapshotGroup.\",\n     \"type\": \"string\"\n    },\n    \"snapshotGroupContentName\": {\n     \"description\": \"snapshotGroupContentName is the name of the snapshotGroupContent the snapshotGroup is bound.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies where a snapshotGroup will be created. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"apiGroup of the source. Current supported is storage.hpe.com\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind of the source (VolumeGroup) is the only supported one.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name specifies the volumeGroupName of the VolumeGroup object in the same namespace as the SnapshotGroup object where the snapshotGroup should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the volumeSnapshotClass to create pre-provisioned snapshots\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"volumeSnapshotClassName\",\n    \"snapshotGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Snapshot Group\",\n \"type\": \"object\"\n}",
-    "version": "storage.hpe.com/v1"
-  }
+    "schema": "{\n \"description\": \"SnapshotGroup is a user's request for creating a snapshotgroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshotGroup requested by a user. Required.\",\n   \"properties\": {\n    \"snapshotGroupClassName\": {\n     \"description\": \"snapshotGroupClassName is the name of the SnapshotGroupClass requested by the SnapshotGroup.\",\n     \"type\": \"string\"\n    },\n    \"snapshotGroupContentName\": {\n     \"description\": \"snapshotGroupContentName is the name of the snapshotGroupContent the snapshotGroup is bound.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies where a snapshotGroup will be created. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"apiGroup of the source. Current supported is storage.hpe.com\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind of the source (VolumeGroup) is the only supported one.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name specifies the volumeGroupName of the VolumeGroup object in the same namespace as the SnapshotGroup object where the snapshotGroup should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the volumeSnapshotClass to create pre-provisioned snapshots\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"volumeSnapshotClassName\",\n    \"snapshotGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Snapshot Group\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

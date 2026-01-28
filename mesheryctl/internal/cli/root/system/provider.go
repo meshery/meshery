@@ -19,8 +19,8 @@ import (
 	"os"
 	"sort"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -30,7 +30,7 @@ import (
 var (
 	showProviderForAllContext bool
 	forceSetProvider          bool
-	MesheryProvider           = "Meshery"
+	MesheryProvider           = "Layer5"
 	NoneProvider              = "None"
 )
 
@@ -317,7 +317,7 @@ mesheryctl system provider switch [provider]
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset provider to default",
-	Long:  "Reset provider for current context to default (Meshery)",
+	Long:  "Reset provider for current context to default (Layer5)",
 	Example: `
 // Reset provider to default
 mesheryctl system provider reset
@@ -360,7 +360,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		log.Infof("Provider reset to Meshery")
+		log.Infof("Provider reset to %s", MesheryProvider)
 		return nil
 	},
 }

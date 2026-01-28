@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl adapter
 
-Cloud Native Lifecycle Management
+Connect and use Meshery adapters
 
 ## Synopsis
 

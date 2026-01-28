@@ -17,9 +17,35 @@
 
 <details>
     <summary>[Show/Hide] Test Result Details</summary>
+    <div markdown="1">
 
 <%- testTable %>
 
+</div>
+</details>
+<% } %>
+
+<% if (failedTestCount > 0) { %>
+
+**❌ Failed Test Details**
+
+The following tests failed. Click on each to see the failure reason:
+
+<%= failedTestDetails %>
+
+<% } %>
+
+<% if (relationshipTestCount > 0) { %>
+
+**🔗 Relationship Tests**
+
+<details>
+    <summary>[Show/Hide] Relationship Test Details (<%- relationshipTestCount %> tests)</summary>
+    <div markdown="1">
+
+<%- relationshipTestTable %>
+
+</div>
 </details>
 <% } %>
 

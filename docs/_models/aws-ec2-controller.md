@@ -86,9 +86,77 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
   description: 
-components-count: 19
+- name: launch-template
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/color/launch-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/white/launch-template-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+- name: managed-prefix-list
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/managed-prefix-list/icons/color/managed-prefix-list-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/managed-prefix-list/icons/white/managed-prefix-list-white.svg
+  description: 
+components-count: 24
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 16
 featureList: [
   "Optimized CPU Configurations",
   "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",

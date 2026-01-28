@@ -42,9 +42,44 @@ components:
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
-components-count: 8
+- name: multi-region-cluster
+  colorIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/color/multi-region-cluster-color.svg
+  whiteIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/white/multi-region-cluster-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-memorydb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 9
 featureList: [
   "Amazon MemoryDB for Redis enables machine learning (ML) and generative artificial intelligence (AI) models to work with data stored in Amazon MemoryDB in real-time and without moving your data.",
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",

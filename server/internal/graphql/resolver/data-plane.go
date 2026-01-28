@@ -3,8 +3,8 @@ package resolver
 import (
 	"context"
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
 )
 
 func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
@@ -27,6 +27,7 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	return dataPlaneList, nil
 }
 
+//nolint:unused // used by schema.resolvers.go
 func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
 	if r.dataPlaneChannel == nil {
 		r.dataPlaneChannel = make(chan []*model.DataPlane)

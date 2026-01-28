@@ -16,7 +16,9 @@ List designs
 
 ## Synopsis
 
-Display list of all available design files.
+Display list of all available designs.
+Documentation for design can be found at https://docs.meshery.io/reference/mesheryctl/design/list
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design list [flags]
@@ -26,10 +28,42 @@ mesheryctl design list [flags]
 
 ## Examples
 
-list all available designs
+Display a list of all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design list
+
+</div>
+</pre> 
+
+Display a list of all available designs with verbose output
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design list --verbose
+
+</div>
+</pre> 
+
+Display a list of all available designs with specified page number (10 designs per page by default)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design list --page [pange-number]
+
+</div>
+</pre> 
+
+Display a list of all available designs with custom page size (10 designs per page by default)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design list --pagesize [page-size]
+
+</div>
+</pre> 
+
+Display only the count of all available designs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design list --count
 
 </div>
 </pre> 
@@ -38,9 +72,11 @@ mesheryctl design list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of designs with --page (default = 1) (default 1)
-  -v, --verbose    Display full length user and design file identifiers
+  -c, --count          (optional) Display count only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of designs with --page (default 1)
+      --pagesize int   (optional) Number of designs to be displayed per page (default 10)
+  -v, --verbose        (optional) Display full length user and design file identifiers
 
 </div>
 </pre>

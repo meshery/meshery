@@ -8,5 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-linkerd"
-subheading: Meshery-Linkerd
+subheading: meshery-linkerd
 ---

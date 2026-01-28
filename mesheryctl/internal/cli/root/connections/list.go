@@ -3,31 +3,49 @@ package connections
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"net/url"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type connectionListFlags struct {
+	count    bool
+	kind     []string
+	status   []string
+	pageSize int
+	page     int
+}
+
+var connectionListFlagsProvided connectionListFlags
 
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
-	Long:  `List all the connections`,
+	Long: `List all available connections.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/list`,
 	Example: `
 // List all the connections
-mesheryctl exp connections list
+mesheryctl connection list
 
 // List all the connections with page number
-mesheryctl exp connections list --page 2
+mesheryctl connection list --page [page-number]
+
+// List all the connections matching a specific kind and status
+mesheryctl connection list --kind [kind] --status [status]
+
+// List all the connections matching a set of kinds and statuses
+mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
+
+// Display total count of all available connections
+mesheryctl connection list --count
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connection list \nRun 'mesheryctl exp connection list --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl connection list \nRun 'mesheryctl connection list --help' to see detailed help message"
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -35,72 +53,84 @@ mesheryctl exp connections list --page 2
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		urlPath := connectionApiPath
+		querySearch := url.Values{}
+
+		kindQuery, err := json.Marshal(connectionListFlagsProvided.kind)
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			return utils.ErrMarshal(err)
+		}
+		if len(connectionListFlagsProvided.kind) > 0 {
+			utils.Log.Debug("Adding kind to query: ", string(kindQuery))
+			querySearch.Add("kind", string(kindQuery))
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/integrations/connections?page=%d", baseUrl, pageNumberFlag)
-		} else {
-			url = fmt.Sprintf("%s/api/integrations/connections?pagesize=all", baseUrl)
-		}
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		statusQuery, err := json.Marshal(connectionListFlagsProvided.status)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrMarshal(err)
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
+		if len(connectionListFlagsProvided.status) > 0 {
+			utils.Log.Debug("Adding status to query: ", string(statusQuery))
+			querySearch.Add("status", string(statusQuery))
 		}
 
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
+		if len(querySearch) > 0 {
+			urlPath += fmt.Sprintf("?%s", querySearch.Encode())
+		}
+		utils.Log.Debug("Final URL: ", urlPath)
 
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
+		header := []string{"id", "Name", "Type", "Kind", "Status"}
+
+		data := display.DisplayDataAsync{
+			UrlPath:          urlPath,
+			DataType:         "connection",
+			Header:           header,
+			Page:             connectionListFlagsProvided.page,
+			PageSize:         connectionListFlagsProvided.pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: connectionListFlagsProvided.count,
 		}
 
-		connectionsResponse := &connections.ConnectionPage{}
-		err = json.Unmarshal(data, connectionsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		header := []string{"id", "Name", "Type", "Status"}
-		rows := [][]string{}
-
-		for _, connection := range connectionsResponse.Connections {
-			if len(connection.Name) > 0 {
-				rows = append(rows, []string{connection.ID.String(), connection.Name, connection.Type, string(connection.Status)})
-			}
-		}
-
-		if len(rows) == 0 {
-			// if no connection is found
-			fmt.Println("No connection(s) found")
-			return nil
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			maxRowsPerPage := 25
-			err := utils.HandlePagination(maxRowsPerPage, "connections", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-
-		return nil
+		return display.ListAsyncPagination(data, processConnectionData)
 	},
+}
+
+func processConnectionData(connectionsResponse *connection.ConnectionPage) ([][]string, int64) {
+	rows := [][]string{}
+	for _, connection := range connectionsResponse.Connections {
+		row := getConnectionDetail(connection)
+		rows = append(rows, row)
+	}
+	return rows, int64(connectionsResponse.TotalCount)
+}
+
+func getConnectionDetail(connection *connection.Connection) []string {
+	data := make([]string, 5)
+
+	data[0] = connection.ID.String()
+
+	data[1] = connection.Name
+	if connection.Name == "" {
+		data[1] = "N/A"
+	}
+
+	data[2] = connection.Type
+
+	data[3] = connection.Kind
+
+	data[4] = string(connection.Status)
+	if string(connection.Status) == "" {
+		data[4] = "N/A"
+	}
+
+	return data
+}
+
+func init() {
+	listConnectionsCmd.Flags().BoolVarP(&connectionListFlagsProvided.count, "count", "c", false, "Display the count of total available connections")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.kind, "kind", "k", []string{}, "Filter connections by kind")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.page, "page", "p", 1, "Page number")
+	listConnectionsCmd.Flags().IntVarP(&connectionListFlagsProvided.pageSize, "pagesize", "", 10, "Number of connections per page")
+	listConnectionsCmd.Flags().StringSliceVarP(&connectionListFlagsProvided.status, "status", "s", []string{}, "Filter connections by status")
 }

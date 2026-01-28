@@ -13,9 +13,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func init() {
@@ -190,7 +192,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	sysID := h.SystemID
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
@@ -222,7 +224,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			return
 		}
 
-		userUUID := uuid.FromStringOrNil(user.ID)
+		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
 			UserID: &userUUID,
 			Type:   "prometheus",
@@ -233,7 +235,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -252,13 +254,13 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
@@ -267,7 +269,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	err := provider.RecordPreferences(req, user.UserID, prefObj)
+	err := provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -289,14 +291,18 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
 	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
+		return
+	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -358,9 +364,13 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -374,7 +384,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
+	}
+
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
@@ -382,9 +396,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 
@@ -403,7 +421,10 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard
@@ -418,9 +439,13 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 	url, _ := connection.Metadata["url"].(string)
@@ -497,9 +522,13 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "prometheus")
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
+		return
+	}
+	if connection.Kind != "prometheus" {
+		http.Error(w, "connection is not of kind prometheus", http.StatusBadRequest)
 		return
 	}
 

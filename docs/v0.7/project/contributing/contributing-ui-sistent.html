@@ -912,7 +912,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <h2 id="contributing-to-meshery-ui---sistent"><a name="contributing-ui-sistent">Contributing to Meshery UI - Sistent</a></h2>
 
-<p><code class="language-plaintext highlighter-rouge">Sistent</code> is the Layer5 Design System - an open source design system that offers building blocks to create consistent, accessible, and user-friendly interfaces. It’s aimed at developers who want to design applications aligned with the same brand and ensure a uniform user experience across different products.</p>
+<p><code class="language-plaintext highlighter-rouge">Sistent</code> is the Meshery Design System - an open source design system that offers building blocks to create consistent, accessible, and user-friendly interfaces. It’s aimed at developers who want to design applications aligned with the same brand and ensure a uniform user experience across different products.</p>
 
 <p>Sistent leverages Material UI libraries and provides a custom theme on top of it for a consistent look and feel. It includes components, icons, and design tokens that developers can readily integrate into their applications. By using Sistent, developers can save time and effort while maintaining a high-quality user experience throughout Meshery.</p>
 
@@ -941,10 +941,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <h3 id="usage">Usage</h3>
 
 <ul>
-  <li><strong>Import any base or custom component from <code class="language-plaintext highlighter-rouge">@layer5/sistent</code></strong>. Here’s how you can do it:</li>
+  <li><strong>Import any base or custom component from <code class="language-plaintext highlighter-rouge">@sistent/sistent</code></strong>. Here’s how you can do it:</li>
 </ul>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">Button</span><span class="p">}</span> <span class="k">from</span> <span class="s2">`@layer5/sistent`</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">Button</span><span class="p">}</span> <span class="k">from</span> <span class="s2">`@sistent/sistent`</span>
 
 <span class="kd">function</span> <span class="nx">MyComponent</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span>
@@ -1013,13 +1013,13 @@ Roles specify the context for applying colors. Different roles can share the sam
 <h4 id="how-to-use-these-tokenscolors-from-sistent-theme">How to use these tokens/colors from sistent theme.</h4>
 
 <ul>
-  <li>Import <code class="language-plaintext highlighter-rouge">useTheme</code> hook from <code class="language-plaintext highlighter-rouge">@layer5/sistent</code> to access the current theme</li>
+  <li>Import <code class="language-plaintext highlighter-rouge">useTheme</code> hook from <code class="language-plaintext highlighter-rouge">@sistent/sistent</code> to access the current theme</li>
   <li>Use the <code class="language-plaintext highlighter-rouge">UsesSistent</code> wrapper to ensure the Sistent theme is applied to your components.</li>
   <li>Utilize the <code class="language-plaintext highlighter-rouge">useTheme</code> hook to access theme properties and apply them to your components, such as setting the background style of the <code class="language-plaintext highlighter-rouge">Button</code>.</li>
 </ul>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">UsesSistent</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">&lt;path&gt;/SistentWrapper</span><span class="dl">'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span><span class="nx">Button</span><span class="p">,</span> <span class="nx">useTheme</span><span class="p">}</span> <span class="k">from</span> <span class="s2">`@layer5/sistent`</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Button</span><span class="p">,</span> <span class="nx">useTheme</span><span class="p">}</span> <span class="k">from</span> <span class="s2">`@sistent/sistent`</span>
 
 <span class="kd">function</span> <span class="nx">MyComponent</span><span class="p">()</span> <span class="p">{</span>
  <span class="kd">const</span> <span class="nx">theme</span> <span class="o">=</span> <span class="nx">useTheme</span><span class="p">()</span>
@@ -1991,7 +1991,7 @@ meshery-custom-end -->
     <div class="footer-icons">
       <a
         class="social__link"
-        href="https://www.youtube.com/Layer5io?sub_confirmation=1"
+        href="https://www.youtube.com/mesheryio?sub_confirmation=1"
         target="_blank"
         rel="noreferrer"
       >
@@ -2005,7 +2005,7 @@ meshery-custom-end -->
     </div>
 
     <div class="footer-icons">
-      <a class="social__link" href="https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+      <a class="social__link" href="https://hub.docker.com/u/meshery/" target="_blank" rel="noreferrer">
         <img
           class="docker"
           src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="

@@ -7,6 +7,11 @@ on:
       - master
     paths-ignore:
       - '.github/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   update_release_draft:
     if: github.repository == 'meshery/meshery'
@@ -14,11 +19,11 @@ jobs:
     steps:
       - name: Drafting release
         id: release_drafter
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         with:
           config-name: release-drafter.yml
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
       # - name: Checkout
       #   uses: actions/checkout@master
@@ -34,7 +39,7 @@ jobs:
       #   with:
       #     token: ${{ secrets.RELEASE_NOTES_PAT }}
       #     commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
-      #     committer: l5io <ci@layer5.io>
+      #     committer: l5io <ci@meshery.io>
       #     author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
       #     signoff: true
       #     branch: docs/automated-release-notes

@@ -5,28 +5,48 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
+type ModelGenerator interface {
+	Generate() error
+}
+
+type UrlModelGenerator struct {
+	TemplateFile string
+	Url          string
+	SkipRegister bool
+}
+
+type CsvModelGenerator struct {
+	ModelFile        string
+	ComponentFile    string
+	RelationshipFile string
+	SkipRegister     bool
+}
+
 var generateModelCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "Generate models from mesheryctl command",
-	Long:  "Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
-	Example: `
-	mesheryctl model generate -f [ URI ]
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] ( only required in case of URL )
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
- 
-	
-	mesheryctl model generate --f /path/to/csv-drectory
-        mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
-	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
+	Short: "Generate models from a file",
+	Long: `Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+Documentation for models generate can be found at https://docs.meshery.io/reference/mesheryctl/model/generate`,
+	Example: ` 
+// Generate a model from a CSV file(s)
+mesheryctl model generate --f [path-to-csv-drectory]
+
+// Generate a model from a Uri baesd on a JSON template
+mesheryctl model generate --f [URL] -t [path-to-template.json]
+
+// Generate a model from a Uri baesd on a JSON template skipping registration
+mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model generate [ file | filePath | URL ]\nRun 'mesheryctl model generate --help' to see detailed help message"
-		if location == "" && len(args) == 0 {
+		file, _ := cmd.Flags().GetString("file")
+		if file == "" && len(args) == 0 {
 			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
 			return fmt.Errorf("too many arguments\n\n%v", errMsg)
@@ -35,57 +55,51 @@ var generateModelCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var path string
-		if location != "" {
-			path = location
+		file, _ := cmd.Flags().GetString("file")
+		if file != "" {
+			path = file
 		} else {
 			path = args[0]
 		}
 		isUrl := utils.IsValidUrl(path)
 
+		register, _ := cmd.Flags().GetBool("register")
+
+		// Path is a url
 		if isUrl {
-			if templateFile == "" {
+			template, _ := cmd.Flags().GetString("template")
+			if template == "" {
 				return ErrTemplateFileNotPresent()
 			}
 
-			fileData, err := os.ReadFile(templateFile)
-			if err != nil {
-				return utils.ErrFileRead(err)
+			urlModelGenerator := &UrlModelGenerator{
+				TemplateFile: template,
+				Url:          path,
+				SkipRegister: register,
 			}
-			err = registerModel(fileData, nil, nil, "", "url", path, !register)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			locationForModel := utils.MesheryFolder + "/models"
-			utils.Log.Info("Model can be accessed from ", locationForModel)
-			return nil
-		} else {
-			modelcsvpath, componentcsvpath, relationshipcsvpath, err := utils.GetCsv(path)
-			if err == nil {
-				modelData, err := os.ReadFile(modelcsvpath)
-				if err != nil {
-					return utils.ErrFileRead(err)
-				}
-				componentData, err := os.ReadFile(componentcsvpath)
-				if err != nil {
-					return utils.ErrFileRead(err)
-				}
-				relationshipData, err := os.ReadFile(relationshipcsvpath)
-				if err != nil {
-					return utils.ErrFileRead(err)
-				}
-				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !register)
-				if err != nil {
-					utils.Log.Error(err)
-					return nil
-				}
-				locationForModel := utils.MesheryFolder + "/models"
-				utils.Log.Info("Model can be accessed from ", locationForModel)
-				locationForLogs := utils.MesheryFolder + "/logs/registry"
-				utils.Log.Info("Logs for the csv generation can be accessed ", locationForLogs)
-			}
+			return urlModelGenerator.Generate()
 		}
-		return nil
+
+		// Path is a file or directory
+		err := meshkitRegistryUtils.SetLogger(true)
+		if err != nil {
+			utils.Log.Info("Error setting logger: ", err)
+		}
+
+		modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
+
+		if err != nil {
+			return err
+		}
+
+		csvModelGenerator := &CsvModelGenerator{
+			ModelFile:        modelcsvpath,
+			ComponentFile:    componentcsvpath,
+			RelationshipFile: relationshipcsvpath,
+			SkipRegister:     register,
+		}
+
+		return csvModelGenerator.Generate()
 	},
 }
 
@@ -94,8 +108,63 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	generateModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
-	generateModelCmd.Flags().StringVarP(&templateFile, "template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolVarP(&register, "register", "r", false, "Skip registration of the model")
+	generateModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
+	generateModelCmd.Flags().StringP("template", "t", "", "Specify path to the template JSON file")
+	generateModelCmd.Flags().BoolP("register", "r", false, "Skip registration of the model")
 
+}
+
+func (u *UrlModelGenerator) Generate() error {
+	utils.Log.Info("Generating model from URL: ", u.Url)
+
+	fileData, err := os.ReadFile(u.TemplateFile)
+	if err != nil {
+		return utils.ErrFileRead(err)
+	}
+
+	err = registerModel(fileData, nil, nil, "", "url", u.Url, !u.SkipRegister)
+	if err != nil {
+		return err
+	}
+
+	locationForModel := utils.MesheryFolder + "/models"
+	utils.Log.Info("Model can be accessed from ", locationForModel)
+
+	return nil
+}
+
+func (c *CsvModelGenerator) Generate() error {
+	utils.Log.Info("Generating model from CSV files")
+
+	var modelData, componentData, relationshipData []byte
+	var err error
+
+	filePaths := []struct {
+		path string
+		data *[]byte
+	}{
+		{c.ModelFile, &modelData},
+		{c.ComponentFile, &componentData},
+		{c.RelationshipFile, &relationshipData},
+	}
+
+	for _, f := range filePaths {
+		*f.data, err = os.ReadFile(f.path)
+		if err != nil {
+			return utils.ErrFileRead(err)
+		}
+	}
+
+	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !c.SkipRegister)
+	if err != nil {
+		return err
+	}
+
+	locationForModel := utils.MesheryFolder + "/models"
+	utils.Log.Info("Model can be accessed from ", locationForModel)
+
+	locationForLogs := utils.MesheryFolder + "/logs/registry"
+	utils.Log.Info("Logs for the csv generation can be accessed ", locationForLogs)
+
+	return nil
 }

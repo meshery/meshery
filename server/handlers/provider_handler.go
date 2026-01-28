@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	models "github.com/layer5io/meshery/server/models"
+	models "github.com/meshery/meshery/server/models"
 )
 
 // swagger:route GET /api/provider ProvidersAPI idChoiceProvider
@@ -105,10 +105,10 @@ func (h *Handler) ProviderCapabilityHandler(
 	provider models.Provider,
 ) {
 	// change it to use fethc from the meshery server cache
-	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID)
+	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID.String())
 	if err != nil {
-		h.log.Debugf("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID)
-		provider.GetProviderCapabilities(w, r, user.ID)
+		h.log.Debugf("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID.String())
+		provider.GetProviderCapabilities(w, r, user.ID.String())
 		return
 	}
 

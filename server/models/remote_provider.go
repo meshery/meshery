@@ -9,27 +9,38 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/meshery/server/core"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
+)
+
+const (
+	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
+	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
 // RemoteProvider - represents a local provider
@@ -62,6 +73,12 @@ type RemoteProvider struct {
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 	Log                logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
+}
+type AnonymousFlowResponse struct {
+	AccessToken string    `json:"access_token"`
+	UserID      uuid.UUID `json:"user_id,omitempty"`
 }
 
 type userSession struct {
@@ -87,12 +104,46 @@ func (l *RemoteProvider) Initialize() {
 	// Get the capabilities with no token
 	// assuming that this will help get basic info
 	// of the provider
-	providerProperties := l.loadCapabilities("")
-	l.ProviderProperties = providerProperties
+	providerProperties, err := l.loadCapabilities("")
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err))
+	} else {
+		l.ProviderProperties = providerProperties
+	}
 }
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
+	l.ProviderProperties.ProviderURL = l.GetProviderURL()
+}
+
+func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
+
+	l.Log.Info("Loading provider capabilities from local file: ", filePath)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return ProviderProperties{}, fmt.Errorf("failed to open capabilities file: %v", err)
+	}
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			l.Log.Error(ErrCloseIoReader(err))
+		}
+	}()
+
+	providerProperties := ProviderProperties{
+		ProviderURL: l.RemoteProviderURL,
+	}
+
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&providerProperties); err != nil {
+		err = ErrUnmarshal(err, "provider properties")
+		l.Log.Error(err)
+		return ProviderProperties{}, err
+	}
+	providerProperties.ProviderURL = l.RemoteProviderURL
+	return providerProperties, nil
 }
 
 // loadCapabilities loads the capabilities of the remote provider
@@ -101,7 +152,12 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 // if an empty string is provided then it will try to make a request
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
-func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
+func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
+
+	if viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV) != "" {
+		return l.loadCapabilitiesFromLocalFile(viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV))
+	}
+
 	var resp *http.Response
 	var err error
 
@@ -117,7 +173,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
 		l.Log.Error(ErrUrlParse(err))
-		return providerProperties
+		return providerProperties, err
 	}
 
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -143,14 +199,14 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	}
 	if err != nil && resp == nil {
 		l.Log.Error(ErrUnreachableRemoteProvider(err))
-		return providerProperties
+		return providerProperties, ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
 			err = ErrStatusCode(resp.StatusCode)
 		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
-		return providerProperties
+		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
 		err := resp.Body.Close()
@@ -165,12 +221,18 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		err = ErrUnmarshal(err, "provider properties")
 		l.Log.Error(err)
 	}
-	return providerProperties
+	return providerProperties, err
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
+	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
+	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
+		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
+		return
+	}
+
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -216,6 +278,18 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
+
+	// If the provider properties are not loaded yet, load them
+	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
+		providerProperties, err := l.loadCapabilities("")
+		if err != nil {
+			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
+			return l.ProviderProperties
+		}
+		l.SetProviderProperties(providerProperties)
+		return l.ProviderProperties
+	}
+
 	return l.ProviderProperties
 }
 
@@ -243,7 +317,14 @@ func (l *RemoteProvider) SyncPreferences() {
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
-	providerProperties := l.loadCapabilities(tokenString)
+	providerProperties, err := l.loadCapabilities(tokenString)
+
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
+		http.Error(w, fmt.Sprintf("failed to load capabilities from remote provider: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	providerProperties.ProviderURL = l.RemoteProviderURL
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
@@ -295,15 +376,104 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		return
 	}
 	if resp.StatusCode != http.StatusCreated {
-		err = ErrPost(fmt.Errorf("status code: %d", resp.StatusCode), "user preference data", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("status code: %d. ", resp.StatusCode), "user preference data", resp.StatusCode)
 		l.Log.Error(err)
 	}
+}
+
+func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http.Request, res http.ResponseWriter) {
+	providerProperties := l.GetProviderProperties()
+	providerURL, _ := url.Parse(l.GetProviderURL())
+	errorUI := "/error"
+	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
+
+	if !exists {
+		err := ErrInvalidCapability("PersistAnonymousUser", l.Name())
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	credential := make(map[string]interface{}, 0)
+	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
+
+	anonnymouseUserEp := providerURL.JoinPath(ep)
+
+	buf, _ := encoding.Marshal(connectionPayload)
+	data := bytes.NewReader(buf)
+
+	client := &http.Client{}
+	newReq, _ := http.NewRequest("POST", anonnymouseUserEp.String(), data)
+
+	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+
+	resp, err := client.Do(newReq)
+	if err != nil {
+		err = ErrUnreachableRemoteProvider(err)
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+	defer resp.Body.Close()
+
+	flowResponse := AnonymousFlowResponse{}
+	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
+	if err != nil {
+		err = ErrUnmarshal(err, "user flow response")
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	l.SetJWTCookie(res, flowResponse.AccessToken)
+
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
+	if err != nil {
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
+	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
+
+	l.Log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
+
+	// if request was directly intercepted from the kanvas page ( /extension ) , then the ref might not be present
+	// so we can directly redirect back to intercepted page
+	if strings.HasPrefix(req.URL.Path, "/extension") {
+		// redirect to the intercepted page with all original query params
+		l.Log.Infof("Redirecting to intercepted page with query params %s", req.URL.RawQuery)
+		http.Redirect(res, req, req.URL.String(), http.StatusFound)
+		return
+	}
+	// Respect the referrer , and the query params
+	// The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
+	// It is used to redirect the user back to that page after a successful login.
+	// if the ref points to some page other than under /extension then skip ref
+	refUrl, err := core.GetRefURLFromRequest(req)
+	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
+	if strings.HasPrefix(refUrl, "/extension") {
+		l.Log.Infof("Redirecting to referrer %s", refUrl)
+		http.Redirect(res, req, refUrl, http.StatusFound)
+		return
+	}
+
+	if redirectURL == "/" {
+		l.Log.Info("No navigator extension found, redirecting to /error")
+		redirectURL = errorUI
+	}
+	l.Log.Infof("No source refs resolved , Redirecting to base kanvas page  %s", redirectURL)
+	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+
+	_, supportsAnonymousUserSessions := l.GetProviderProperties().Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 
 	// Support for deep-link and redirection to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
@@ -340,11 +510,11 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"ref":              refURL,
 		}
 
-		releaseChannel := NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), l, l.Log)
-		if releaseChannel != nil {
-			releaseChannel.Intercept(r, w)
+		if supportsAnonymousUserSessions {
+			l.InterceptLoginAndInitiateAnonymousUserSession(r, w)
 			return
 		}
+
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
 		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
@@ -397,10 +567,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserID)
+	prefLocal, _ := l.ReadFromPersister(up.UserId)
 
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserID, up.Preferences)
+		_ = l.WriteToPersister(up.UserId, up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -704,7 +874,16 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
+	if k8sContext.ConnectionID != "" {
+		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		if connectionID != uuid.Nil {
+			conn, status, _ := l.GetConnectionByID(token, connectionID)
+			if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
+				return connections.Connection{}, ErrContextAlreadyPersisted
+			}
+		}
+	}
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -717,9 +896,19 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
-	metadata := make(map[string]interface{}, len(_metadata))
+	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
 		metadata[k] = v
+	}
+
+	maps.Copy(metadata, additionalMetadata)
+
+	// if undefined -> set to default
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{
@@ -731,6 +920,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		Kind:    "kubernetes",
 		Type:    "platform",
 		SubType: "orchestrator",
+		Name:    k8sContext.Name,
 		// Eventually the status would depend on other factors like, whether user administratively processed it or not
 		// Is clsuter reachable and other reasons.
 		Status:           connections.DISCOVERED,
@@ -739,6 +929,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 	}
 
 	connection, err := l.SaveConnection(conn, token, true)
+
+	l.Log.Infof("Persisting k8s context to remote_provider, %v %v",connection,err)
+
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
 		return connections.Connection{}, err
@@ -758,7 +951,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s?kind=kubernetes", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -773,11 +966,9 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("order", order)
 	}
 	if withStatus != "" {
-		q.Set("status", string(connections.CONNECTED))
+		q.Set("status", withStatus)
 	}
-	if !withCredentials {
-		q.Set("with_credentials", "false")
-	}
+	q.Set("with_credentials", strconv.FormatBool(withCredentials))
 	q.Set("meshery_instance_id", mi)
 	remoteProviderURL.RawQuery = q.Encode()
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -801,6 +992,30 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		// Remote provider now returns `connections.ConnectionPage` for kubernetes connections.
+		var cp connections.ConnectionPage
+		if err := json.Unmarshal(bdr, &cp); err == nil && cp.Connections != nil {
+			contexts := make([]*K8sContext, 0, len(cp.Connections))
+			for _, c := range cp.Connections {
+				ctx, err := K8sContextFromConnection(Provider(l), token, c)
+				if err != nil {
+					l.Log.Error(err)
+					continue
+				}
+				contexts = append(contexts, &ctx)
+			}
+
+			page := MesheryK8sContextPage{
+				Page:       uint64(cp.Page),
+				PageSize:   uint64(cp.PageSize),
+				TotalCount: cp.TotalCount,
+				Contexts:   contexts,
+			}
+			out, _ := json.Marshal(page)
+			l.Log.Info("kubernetes contexts retrieved from remote provider")
+			return out, nil
+		}
+
 		l.Log.Info("kubernetes contexts retrieved from remote provider")
 		return bdr, nil
 	}
@@ -873,51 +1088,32 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 }
 
 func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
-	l.Log.Info("attempting to fetch kubernetes contexts from cloud for connection id: ", connectionID)
+	l.Log.Info("attempting to fetch kubernetes context from cloud for connection id: ", connectionID)
 
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes/%s", l.RemoteProviderURL, ep, connectionID))
 
-	l.Log.Debug("constructed kubernetes contexts url: ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	connID := uuid.FromStringOrNil(connectionID)
+	if connID == uuid.Nil {
+		return K8sContext{}, fmt.Errorf("invalid connection id: %s", connectionID)
+	}
 
-	resp, err := l.DoRequest(cReq, token)
+	conn, status, err := l.GetConnectionByID(token, connID)
 	if err != nil {
-		if resp == nil {
-			return K8sContext{}, ErrUnreachableRemoteProvider(err)
-		}
-		return K8sContext{}, ErrFetch(err, "Kubernetes Context", resp.StatusCode)
+		return K8sContext{}, ErrFetch(err, "Kubernetes Context", status)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	if resp.StatusCode == http.StatusOK {
-		var kc MesheryK8sContextPage
-		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-			return K8sContext{}, ErrUnmarshal(err, "Kubernetes context")
-		}
-
-		if len(kc.Contexts) == 0 {
-			return K8sContext{}, fmt.Errorf("no Kubernetes contexts available")
-		}
-
-		l.Log.Info("Retrieved Kubernetes context from remote provider.")
-		// Response will contain single context
-		return *kc.Contexts[0], nil
+	if conn == nil {
+		return K8sContext{}, ErrFetch(fmt.Errorf("connection not found"), "Kubernetes Context", status)
 	}
 
-	bdr, err := io.ReadAll(resp.Body)
+	ctx, err := K8sContextFromConnection(Provider(l), token, conn)
 	if err != nil {
-		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
+		return K8sContext{}, err
 	}
-	err = ErrFetch(fmt.Errorf("Failed to retrieve Kubernetes context."), fmt.Sprint(bdr), resp.StatusCode)
-	l.Log.Error(err)
-	return K8sContext{}, err
+	l.Log.Info("Retrieved Kubernetes context from remote provider.")
+	return ctx, nil
 }
 
 // FetchResults - fetches results for profile id from provider backend
@@ -1315,8 +1511,19 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events.Event) error {
-	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+// IF the remote provider supports persisting events, this function will persist the event
+// The token is used to authenticate the request to the remote provider. if the token is nil, it uses the GlobalTokenForAnonymousResults
+func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
+
+	var tokenString string
+	if token == nil {
+		l.Log.Debug("No token provided, using GlobalTokenForAnonymousResults")
+		tokenString = GlobalTokenForAnonymousResults
+	} else {
+		tokenString = *token
+	}
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
@@ -1342,6 +1549,270 @@ func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events
 		l.Log.Error(ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode))
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
+	return nil
+}
+
+func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return nil, ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	// ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
+
+	l.Log.Info("attempting to fetch events from remote provider")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/events/list")
+	q := remoteProviderURL.Query()
+	q.Set("page", strconv.Itoa(page))
+	q.Set("pagesize", strconv.Itoa(eventsFilter.Limit))
+	q.Set("search", eventsFilter.Search)
+	q.Set("order", fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order))
+	filterBytes, _ := json.Marshal(eventsFilter)
+	q.Set("filter", string(filterBytes))
+
+	remoteProviderURL.RawQuery = q.Encode()
+	l.Log.Debug("constructed events url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Events", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Events")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(string(bdr)), resp.StatusCode)
+		l.Log.Error(err)
+		return nil, err
+	}
+
+	eventsResponse := &EventsResponse{}
+
+	type ProviderResp struct {
+		Data                 []*events.Event         `json:"data"`
+		Page                 int                     `json:"page"`
+		TotalCount           int64                   `json:"total_count"`
+		PageSize             int                     `json:"page_size"`
+		ReadCount            int64                   `json:"read_count"`
+		CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
+	}
+
+	response := &ProviderResp{}
+
+	if err := json.Unmarshal(bdr, &response); err != nil {
+		return nil, ErrUnmarshal(err, "Events Response")
+	}
+
+	eventsResponse.Events = response.Data
+	eventsResponse.Page = response.Page
+	eventsResponse.TotalCount = response.TotalCount
+	eventsResponse.PageSize = response.PageSize
+	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+	eventsResponse.ReadCount = response.ReadCount
+
+	return eventsResponse, nil
+
+}
+
+func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+
+	eventTypes := EventTypesResponse{}
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return eventTypes, ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	// ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
+
+	l.Log.Info("attempting to fetch events types from remote provider")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/events/types")
+	q := remoteProviderURL.Query()
+
+	remoteProviderURL.RawQuery = q.Encode()
+	l.Log.Debug("constructed events url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return eventTypes, ErrFetch(err, "Events", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return eventTypes, ErrDataRead(err, "Events")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(string(bdr)), resp.StatusCode)
+		l.Log.Error(err)
+		return eventTypes, err
+	}
+
+	type Response struct {
+		Action   string `json:"action"`
+		Category string `json:"category"`
+	}
+
+	eventTypesResponse := []Response{}
+
+	err = json.Unmarshal(bdr, &eventTypesResponse)
+
+	if err != nil {
+		return eventTypes, ErrUnmarshal(err, "Events Response")
+	}
+
+	for _, eventType := range eventTypesResponse {
+		eventTypes.Action = append(eventTypes.Action, eventType.Action)
+		eventTypes.Category = append(eventTypes.Category, eventType.Category)
+	}
+	slices.Sort(eventTypes.Action)
+	slices.Sort(eventTypes.Category)
+	eventTypes.Action = slices.Compact(eventTypes.Action)
+	eventTypes.Category = slices.Compact(eventTypes.Category)
+
+	return eventTypes, nil
+
+}
+
+func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to update event status in remote provider for event ID: ", eventID)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/%s/status", l.RemoteProviderURL, eventID.String()))
+	l.Log.Debug("constructed event status url: ", remoteProviderURL.String())
+	payload := map[string]interface{}{
+		"status": status,
+	}
+
+	data, err := json.Marshal(payload)
+
+	if err != nil {
+		return ErrMarshal(err, "update event status")
+	}
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bytes.NewBuffer(data))
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Event status updated successfully in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to bulk update event status in remote provider for event IDs: ", eventIDs)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/status", l.RemoteProviderURL))
+	payload := map[string]interface{}{
+		"ids":    eventIDs,
+		"status": status,
+	}
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return ErrMarshal(err, "bulk update event status")
+	}
+	bf := bytes.NewBuffer(data)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	cReq.Header.Set("Content-Type", "application/json")
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Bulk event status updated successfully in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to delete event in remote provider for event ID: ", eventID)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/%s", l.RemoteProviderURL, eventID.String()))
+	l.Log.Debug("constructed event deletion url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error deleting event with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error deleting event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Event deleted in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to bulk delete events in remote provider for event IDs: ", eventIDs)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events", l.RemoteProviderURL))
+	payload := map[string]interface{}{
+		"ids": eventIDs,
+	}
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return ErrMarshal(err, "bulk delete events")
+	}
+	bf := bytes.NewBuffer(data)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), bf)
+	cReq.Header.Set("Content-Type", "application/json")
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error bulk delete events with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error bulk deleting events with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Bulk events deleted successfully in remote provider.")
 	return nil
 }
 
@@ -1686,10 +2157,10 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
@@ -1905,18 +2376,24 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		l.Log.Error(ErrDataRead(err, "respone body"))
-		return nil, ErrDataRead(err, "design:"+patternID)
+		return bdr, ErrDataRead(err, "design:"+patternID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+
+	if string(bdr) != "null" && string(bdr) != "" {
+		return bdr, errors.New(string(bdr))
+	}
+
+	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
-	return nil, err
+	return bdr, err
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
@@ -3511,6 +3988,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 }
 
 // TokenHandler - specific to remote auth
+// Refreshes the token, sets the cookie and redirects to the home page and fetches the  latest capabilities
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(TokenCookieName)
 	// gets the session cookie from remote provider
@@ -3521,8 +3999,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	l.SetProviderSessionCookie(w, sessionCookie)
 
 	// Get new capabilities
-	// Doing this here is important so that
-	providerProperties := l.loadCapabilities(tokenString)
+	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
+	providerProperties, err := l.loadCapabilities(tokenString)
+
+	// error out if capabilities could not be fetched
+	if err != nil {
+		l.Log.Error(fmt.Errorf("[TokenHandler] error loading capabilities from remote provider: %v", err))
+		http.Error(w, "Error loading capabilities from remote provider", http.StatusInternalServerError)
+		return
+	}
+
 	l.ProviderProperties = providerProperties
 
 	// Download the package for the user only if they have extension capability
@@ -3827,10 +4313,10 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// check for all success status codes
 	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
 	if statusOK {
-		l.Log.Info("response retrieved from remote provider")
+		l.Log.Info("response retrieved from remote provider.")
 		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
@@ -3864,6 +4350,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	if err != nil {
 		return nil, ErrDataRead(err, "Save Connection")
 	}
+	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connectionPage := &connections.ConnectionPage{}
@@ -3876,13 +4363,13 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 		if len(connectionPage.Connections) > 0 {
 			return connectionPage.Connections[0], nil
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
 	}
 
-	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3898,6 +4385,9 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if filter != "" {
 		q.Set("filter", filter)
 	}
+	if name != "" {
+		q.Set("name", name)
+	}
 
 	if len(status) > 0 {
 		for _, v := range status {
@@ -3907,6 +4397,11 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if len(kind) > 0 {
 		for _, v := range kind {
 			q.Add("kind", v)
+		}
+	}
+	if len(connType) > 0 {
+		for _, v := range connType {
+			q.Add("type", v)
 		}
 	}
 
@@ -3936,96 +4431,6 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	return &cp, nil
 }
 
-// GetConnectionsByKind - to get saved credentials
-func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionKind))
-
-	q := remoteProviderURL.Query()
-	q.Add("page", strconv.Itoa(page))
-	q.Add("pagesize", strconv.Itoa(pageSize))
-	q.Add("search", search)
-	q.Add("order", order)
-
-	remoteProviderURL.RawQuery = q.Encode()
-	l.Log.Debug("Making request to : ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
-	}
-	defer resp.Body.Close()
-
-	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("%s", string(bdr)), "connections", resp.StatusCode)
-	}
-
-	var res map[string]interface{}
-	if err = json.Unmarshal(bdr, &res); err != nil {
-		return nil, err
-	}
-	return &res, nil
-}
-
-func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s", l.RemoteProviderURL, ep, kind, connectionID))
-
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		l.Log.Error(err)
-		statusCode := http.StatusInternalServerError
-		if resp != nil {
-			statusCode = resp.StatusCode
-		}
-		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
-	}
-	if resp.StatusCode == http.StatusOK {
-		connectionPage := &connections.ConnectionPage{}
-		if err = json.Unmarshal(bdr, connectionPage); err != nil {
-			l.Log.Error(ErrUnmarshal(err, "connection"))
-			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
-		}
-
-		if len(connectionPage.Connections) < 1 {
-			l.Log.Error(ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound))
-			return nil, http.StatusNotFound, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound)
-		}
-
-		if len(connectionPage.Connections) > 1 {
-			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one. using the first connection."))
-		}
-		return connectionPage.Connections[0], resp.StatusCode, nil
-	}
-
-	l.Log.Debug(string(bdr))
-	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
-}
-
 func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrInvalidCapability("PersistConnection", l.ProviderName))
@@ -4034,6 +4439,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+	fmt.Println("\n\n url :", remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -4044,14 +4450,15 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 		return nil, statusCode, ErrFetch(err, "connection", statusCode)
 	}
 
+	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
 		defer func() {
 			_ = resp.Body.Close()
 		}()
 
-		bdr, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
+			l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
+			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s, err body %s", connectionID, string(bdr)), "connection", resp.StatusCode)
 		}
 		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
@@ -4061,53 +4468,31 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID)
 		return &conn, resp.StatusCode, nil
 	}
 
+	l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvaibale)
-		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status", l.RemoteProviderURL, ep))
-
-	l.Log.Debug("Making request to : ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		statusCode := http.StatusInternalServerError
-		if resp != nil {
-			statusCode = resp.StatusCode
-		}
-		return nil, ErrFetch(err, "Connections Status Page", statusCode)
-	}
-	defer resp.Body.Close()
-
-	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections status: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
-	}
-
-	var cp connections.ConnectionsStatusPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, err
-	}
-	return &cp, nil
-}
-
+// UpdateConnectionStatusByID updates a connection's status by its ID.
+// Note: The HTTP route for this functionality has been removed, but the method
+// is kept for internal use by state machines and other internal components.
 func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	bf := bytes.NewBuffer([]byte(connectionStatus))
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
+
+	// Use the connection endpoint with PUT to update status
+	// The payload includes just the status field
+	payload := map[string]interface{}{
+		"status": connectionStatus,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	bf := bytes.NewBuffer(payloadBytes)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
 
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
@@ -4175,7 +4560,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+func (l *RemoteProvider) UpdateConnectionById(token string, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4189,11 +4574,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *con
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connId))
 	l.Log.Debug("Making request to : ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		l.Log.Error(ErrGetToken(err))
-		return nil, err
-	}
+	tokenString := token
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
@@ -4745,7 +5126,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -4833,11 +5214,11 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4872,7 +5253,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.Envir
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment v1beta1.Environment
+		var environment environment.Environment
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
@@ -5178,7 +5559,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -5266,11 +5647,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5305,7 +5686,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.Workspa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace v1beta1.Workspace
+		var workspace workspace.Workspace
 		if err = json.Unmarshal(bdr, &workspace); err != nil {
 			return nil, err
 		}
@@ -5483,40 +5864,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	return nil, ErrFetch(fmt.Errorf("failed to add design to workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designId string) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistWorkspaces) {
-		l.Log.Warn(ErrOperationNotAvaibale)
-
-		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
-	}
-
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designId)
-	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
-		return nil, err
-	}
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Design removed from workspace")
-		return bdr, nil
-	}
-	return nil, ErrFetch(fmt.Errorf("failed to remove design from workspace"), "Workspace", resp.StatusCode)
-}
-
-func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
@@ -5541,6 +5889,11 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	if filter != "" {
 		q.Set("filter", filter)
+	}
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			q.Add("visibility", v)
+		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 

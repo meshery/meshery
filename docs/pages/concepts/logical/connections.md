@@ -96,3 +96,7 @@ Note that some connections, such as the registration of Meshery server with remo
 For more information on the different states and the lifecycle of connections, refer to the documentation above.
 
 ![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
+
+
+
+Meshery supports different kinds of connections, and each handles transitions between their statuses differently. 

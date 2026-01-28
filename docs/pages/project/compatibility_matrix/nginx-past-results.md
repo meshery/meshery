@@ -8,5 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-nginx-sm"
-subheading: meshery-nginx
+subheading: meshery-nginx-sm
 ---

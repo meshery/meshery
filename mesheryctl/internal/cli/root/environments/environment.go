@@ -17,40 +17,38 @@ package environments
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models/environments"
-
-	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	name          string
-	description   string
-	orgID         string
-	outFormatFlag string
-	saveFlag      bool
-
-	maxRowsPerPage       = 25
-	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
+	environmentApiPath   = "api/environments"
 )
 
 var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
-	Short: "View list of environments and detail of environments",
-	Long:  "View list of environments and detailed information of a specific environments",
+	Short: "Manage environments",
+	Long: `Create, delete, list of view details of environment(s) of a specific organization
+Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
+	`,
 	Example: `
-// To view a list environments
-mesheryctl environment list --orgID [orgId]
-// To create a environment
-mesheryctl environment create --orgID [orgId] --name [name] --description [description]
-// Documentation for environment can be found at:
-https://docs.meshery.io/concepts/logical/environments
+// Create an environment in an organization
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+
+// Delete an environment in an organization
+mesheryctl environment delete environment-id
+
+// List of registered environments in an organization
+mesheryctl environment list --orgID [orgID]
+
+// View a particular environment
+mesheryctl environment view --orgID [orgID]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -63,7 +61,7 @@ https://docs.meshery.io/concepts/logical/environments
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide.'\n", args[0]), "environment")))
+			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide", args[0]), "environment")))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -78,21 +76,13 @@ https://docs.meshery.io/concepts/logical/environments
 }
 
 func init() {
-	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	createEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	createEnvironmentCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the environment")
-	createEnvironmentCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the environment")
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectEnvironmentPrompt(environment []environments.EnvironmentData) environments.EnvironmentData {
+func selectEnvironmentPrompt(environments []environment.Environment) environment.Environment {
 	environmentNames := []string{}
-	environmentArray := []environments.EnvironmentData{}
-
-	environmentArray = append(environmentArray, environment...)
+	environmentArray := environments
 
 	for _, environment := range environmentArray {
 		environmentName := fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)

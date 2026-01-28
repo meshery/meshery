@@ -13,7 +13,7 @@ Meshery pervasively uses MeshKit as a golang and infrastructure management-speci
 
 To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page](https://docs.meshery.io/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
 
-In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package.
+In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/meshery/meshkit/tree/master/errors">MeshKit Error</a> package.
 
 This tool will create a couple of files, one of them is designed to be used to generate the error reference on the Meshery Documentation website. The file errorutil_analyze_summary.json contains a summary of the analysis, notably lists of duplicates etc.
 
@@ -87,9 +87,9 @@ New
 
 ## Replacing logrus
 
-There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
+There already exists an [interface for logger](https://github.com/meshery/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
 
-{% include alert.html type="warning" title="WARNING" content="To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: <a href='https://github.com/layer5io/meshkit/pull/119'>meshkit#119</a> for more insight." %}
+{% include alert.html type="warning" title="WARNING" content="To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: <a href='https://github.com/meshery/meshkit/pull/119'>meshkit#119</a> for more insight." %}
 
 #### Defining a Logger
 
@@ -130,8 +130,8 @@ import (
 	"fmt"
 	"os"
 
-	meshkitErrors "github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/logger"
+	meshkitErrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

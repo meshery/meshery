@@ -38,8 +38,12 @@ import {
   CatalogCard,
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
-} from "@layer5/sistent";
-import { MESHMAP, providerUrl } from "../utils/constants";
+} from "@sistent/sistent";
+import {
+  MESHMAP,
+  providerUrl,
+  SELECTED_PROVIDER_NAME,
+} from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";
 const UnauthenticatedMsg = "Unauthenticated";
@@ -400,9 +404,7 @@ const ExtensionsComponent = () => {
                   style={{ textDecoration: "none" }}
                   href={
                     token &&
-                    "http://localhost:9081/api/user/token?token=" +
-                      token +
-                      "&provider=Meshery"
+                    `http://localhost:9081/api/user/token?token=${token}&provider=${SELECTED_PROVIDER_NAME}`
                   }
                 >
                   {isLoggedIn ? (
@@ -428,9 +430,7 @@ const ExtensionsComponent = () => {
                       style={{ textDecoration: "none", color: "white" }}
                       href={
                         token &&
-                        "http://localhost:9081/api/user/token?token=" +
-                          token +
-                          "&provider=Meshery"
+                        `http://localhost:9081/api/user/token?token=${token}&provider=${SELECTED_PROVIDER_NAME}`
                       }
                     >
                       Launch Meshery
@@ -448,10 +448,11 @@ const ExtensionsComponent = () => {
                   color="primary"
                   component="span"
                   onClick={() => {
-                    window.ddClient.host.openExternal(
+                    const url =
                       providerUrl +
-                        "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14",
-                    );
+                      "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14";
+                    console.log("provider url", url);
+                    window.ddClient.host.openExternal(url);
                   }}
                 >
                   Login

@@ -4,6 +4,7 @@ title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 component: NGINX Service Mesh
 earliest_version: v1.2.0
+adapter_version: v0.8.1
 port: 10010/gRPC
 project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
@@ -54,8 +55,6 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
-
-  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 
 - [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
 

@@ -23,10 +23,12 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -37,23 +39,38 @@
       "shape": "circle",
       "source_uri": "https://github.com/rustrial/aws-eks-iam-auth-controller/releases/download/rustrial-aws-eks-iam-auth-controller-0.1.9/rustrial-aws-eks-iam-auth-controller-0.1.9.tgz",
       "styleOverrides": "",
-      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e ",
+      "svgColor": "",
       "svgComplete": "",
       "svgWhite": ""
     },
     "model": {
       "version": "0.1.9"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +82,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +110,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +140,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +168,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +182,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +191,20 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/rustrial/aws-eks-iam-auth-controller/releases/download/rustrial-aws-eks-iam-auth-controller-0.1.9/rustrial-aws-eks-iam-auth-controller-0.1.9.tgz"
   },
   "configuration": null,
   "component": {
+    "version": "iamauthenticator.k8s.aws/v1alpha1",
     "kind": "IAMIdentityMapping",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arn\": {\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"username\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"arn\",\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Identity Mapping\",\n \"type\": \"object\"\n}",
-    "version": "iamauthenticator.k8s.aws/v1alpha1"
-  }
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arn\": {\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"username\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"arn\",\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Identity Mapping\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

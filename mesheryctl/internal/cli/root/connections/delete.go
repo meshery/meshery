@@ -2,61 +2,48 @@ package connections
 
 import (
 	"fmt"
-	"net/http"
+	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long: `Delete
-a connection`,
+	Long:  `Delete a connection`,
 
 	Example: `
 // Delete a connection
-mesheryctl exp connections delete [connection_id]
+mesheryctl connection delete [connection_id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connections delete \nRun 'mesheryctl exp connections delete --help' to see detailed help message"
+		const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
+
+		if !utils.IsUUID(args[0]) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %q", args[0]))
+		}
+
 		return nil
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
 		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
+			if strings.Contains(err.Error(), "no rows in result set") {
+				return errConnectionNotFound(fmt.Errorf("No connection with id %q found", args[0]))
+			}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
-		req, err := utils.NewRequest(http.MethodDelete, url, nil)
-		if err != nil {
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		// Check if the response status code is 200
-		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted")
-			return nil
-		}
-
-		return utils.ErrBadRequest(errors.New(fmt.Sprintf("failed to delete connection with id %s", args[0])))
+		utils.Log.Info("Connection with ID: %q is deleted.", args[0])
+		return nil
 	},
 }

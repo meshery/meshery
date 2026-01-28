@@ -20,10 +20,11 @@ Meshery chart for deploying Meshery
 | env.EVENT                                       | string | `"mesheryLocal"`                                                                                                                                                                                      |  |
 | env.PROVIDER                                    | string | `"Local"`                                                                                                                                                                                             | Use this security-related setting to enforce selection of one and only one Provider. In this way, your Meshery deployment will only trust and only allow users to authenticate using the Provider you have configured in this setting. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers) for a description of what a Provider is.  |
 | env.MESHERY_SERVER_CALLBACK_URL                 | string | `""`                                                                                                                                                                                                  | Configure an OAuth callback URL for Meshery Server to use when signing into a Remote Provider and your Meshery Server instance is not directly reachable by that Remote Provider. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers#configurable-oauth-callback-url) for more details. |
+| env.MESHSYNC_DEFAULT_DEPLOYMENT_MODE            | string | `"operator"` | Configure the deployment mode for Meshsync. Possible values are `embedded` (runs as a library inside Meshery Server process, one routine per connected Kubernetes cluster) and `operator` (deployed in managed k8s cluster, managed by Meshery Operator, one deployment per connected Kubernetes cluster). See the [Meshsync deployment documentation](https://docs.meshery.io/concepts/architecture/meshsync#meshsync-deployment-mode) for more details. |
 | env.PROVIDER_BASE_URLS                          | string | `"https://cloud.layer5.io"`                                                                                                                                                                         | Configure your Remote Provider of choice. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers) for a description of what a Provider is. |
 | fullnameOverride                                | string | `""`                                                                                                                                                                                                  |  |
 | image.pullPolicy                                | string | `"Always"`                                                                                                                                                                                            |  |
-| image.repository                                | string | `"layer5/meshery"`                                                                                                                                                                                    |  |
+| image.repository                                | string | `"meshery/meshery"`                                                                                                                                                                                    |  |
 | image.tag                                       | string | `"stable-latest"`                                                                                                                                                                                     |  |
 | imagePullSecrets                                | list | `[]`                                                                                                                                                                                                  |  |
 | ingress.annotations                             | object | `{}`                                                                                                                                                                                                  |  |
@@ -90,8 +91,9 @@ Meshery chart for deploying Meshery
 ## Setup Repo Info
 
 ```console
-helm repo add meshery meshery https://meshery.io/charts/
+helm repo add meshery https://meshery.io/charts/
 helm repo update
+
 ```
 
 _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
@@ -101,29 +103,118 @@ _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation
 To install the chart with the release name `meshery`:
 
 ```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery
+helm install meshery meshery/meshery --namespace meshery --create-namespace
+
 ```
+
+## Upgrading the Chart
+
+To upgrade an existing `meshery` deployment:
+
+```console
+# Upgrade with recommended settings for upgrades
+helm upgrade meshery meshery/meshery --namespace meshery -f values-upgrade.yaml --wait --timeout 10m
+
+# Or upgrade with default settings
+helm upgrade meshery meshery/meshery --namespace meshery
+```
+
+See [HEALTHCHECKS.md](HEALTHCHECKS.md) for detailed information about health check configuration during upgrades.
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `meshery` deployment:
+To uninstall `meshery` helm release:
 
 ```console
-helm delete meshery
+helm uninstall meshery --namespace meshery
+
 ```
 
-## Installing the Chart with a custom namespace
-
-```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery --namespace meshery
-```
-
-## Installing the Chart with a custom Meshery Adapters
+## Installing the Chart with one or more Meshery Adapters
 
 Eg: For [Meshery Adapter for Istio](https://github.com/meshery/meshery-istio)
 ```console
-kubectl create namespace meshery
-helm install meshery meshery/meshery --set meshery-istio.enabled=true
+helm install meshery meshery/meshery --set meshery-istio.enabled=true --namespace meshery --create-namespace
 ```
+
+## Health Checks and Probes
+
+Meshery implements Kubernetes-compliant health check endpoints for liveness and readiness probes:
+
+- **Liveness Probe**: `/healthz/live` - Checks if Meshery server is alive and responsive
+- **Readiness Probe**: `/healthz/ready` - Checks if Meshery is ready to accept traffic (includes capability validation)
+
+### Default Probe Configuration
+
+The chart includes pre-configured health checks with sensible defaults:
+
+```yaml
+probe:
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 80
+    periodSeconds: 12
+    failureThreshold: 4
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 4
+    failureThreshold: 4
+```
+
+### Monitoring Health Status
+
+Check detailed health status with verbose output:
+
+```console
+kubectl exec --namespace meshery deployment/meshery -- curl -s "http://localhost:8080/healthz/ready?verbose=1"
+```
+
+Example output:
+```
+[+]capabilities ok
+[i]extension extension package found
+healthz check passed
+```
+
+### Customizing Probes
+
+For specific deployment scenarios, you can customize probe settings in your `values.yaml`:
+
+```yaml
+probe:
+  # Enable startup probe for slow-starting containers (Kubernetes 1.18+)
+  startupProbe:
+    enabled: true
+    periodSeconds: 10
+    failureThreshold: 30  # Allow up to 5 minutes for startup
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120  # Adjust based on your environment
+    periodSeconds: 15
+    failureThreshold: 5
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    failureThreshold: 4
+```
+
+### Documentation
+
+For comprehensive guidance on health check configuration, including:
+- Installation vs upgrade considerations
+- Troubleshooting common issues
+- Advanced configuration options
+- Best practices
+
+See the detailed [HEALTHCHECKS.md](HEALTHCHECKS.md) documentation.
+
+## Additional Resources
+
+- [Meshery Documentation](https://docs.meshery.io/)
+- [Kubernetes Probes Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [GitHub Repository](https://github.com/meshery/meshery)

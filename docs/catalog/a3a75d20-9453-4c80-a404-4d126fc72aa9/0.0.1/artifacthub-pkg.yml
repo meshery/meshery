@@ -1,0 +1,24 @@
+version: 0.0.1
+name: wordpress-26.0.0.tgz
+displayName: wordpress-26.0.0.tgz
+createdAt: "2025-09-26T07:08:14Z"
+description: A popular open-source content management system for building websites and blogs.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a3a75d20-9453-4c80-a404-4d126fc72aa9/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Persistent Storage: This design requires a Persistent Volume to store the database and user-uploaded content. Ensure a Storage Class is available in your cluster for dynamic provisioning.\nAdmin Credentials: The admin username and password are automatically generated in a Kubernetes Secret upon first deployment. You will need to retrieve these from the secret to log in for the first time.\nProduction Database: For production use, it is highly recommended to use an external, managed database instead of the default one deployed by the chart. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a3a75d20-9453-4c80-a404-4d126fc72aa9-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a3a75d20-9453-4c80-a404-4d126fc72aa9-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

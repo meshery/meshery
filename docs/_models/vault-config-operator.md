@@ -146,7 +146,23 @@ components:
   colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/color/gcp-auth-engine-role-color.svg
   whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/white/gcp-auth-engine-role-white.svg
   description: 
-components-count: 34
+- name: azure-secret-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-role/icons/color/azure-secret-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-role/icons/white/azure-secret-engine-role-white.svg
+  description: 
+- name: cert-auth-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-config/icons/color/cert-auth-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-config/icons/white/cert-auth-engine-config-white.svg
+  description: 
+- name: cert-auth-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-role/icons/color/cert-auth-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-role/icons/white/cert-auth-engine-role-white.svg
+  description: 
+- name: cert-auth-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-role/icons/color/cert-auth-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/cert-auth-engine-role/icons/white/cert-auth-engine-role-white.svg
+  description: 
+components-count: 38
 relationships: 
 relationship-count: 0
 featureList: [

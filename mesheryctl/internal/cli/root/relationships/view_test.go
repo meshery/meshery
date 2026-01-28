@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestView(t *testing.T) {
@@ -40,7 +40,16 @@ func TestView(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "View registered relationships",
+			Name:             "View relationship without model name",
+			Args:             []string{"view"},
+			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
+			Fixture:          "",
+			ExpectedResponse: "view.relationship.no.arguments.golden",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
+			Name:             "View registered relationship",
 			Args:             []string{"view", "kubernetes"},
 			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
 			Fixture:          "view.relationship.api.response.golden",
@@ -53,24 +62,36 @@ func TestView(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			utils.TokenFlag = tt.Token
+				utils.TokenFlag = tt.Token
 
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
+				httpmock.RegisterResponder("GET", tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
+			// Grab console prints with proper cleanup
+			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
+			// Ensure stdout is always restored
+			defer func() {
+				os.Stdout = originalStdout
+			}()
+
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOutput(rescueStdout)
+			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
+
+			// Close write end before reading
+			_ = w.Close()
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -86,15 +107,13 @@ func TestView(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			w.Close()
 			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			actualResponse := string(out)
 
 			if *update {
 				golden.Write(actualResponse)
 			}
+
 			expectedResponse := golden.Load()
 
 			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)

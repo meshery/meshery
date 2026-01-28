@@ -29,8 +29,8 @@ import {
   accentGrey,
   CHINESE_SILVER,
   KEPPEL,
-} from "@layer5/sistent";
-import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
+} from "@sistent/sistent";
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
@@ -43,8 +43,8 @@ function CustomDialogTitle(props) {
           onClick={onClose}
           sx={{
             position: "absolute",
-            right: "1rem",
-            top: "1rem",
+            right: "16px",
+            top: "16px",
             color: (theme) => theme.palette.grey[500],
           }}
         >
@@ -201,6 +201,7 @@ export default function Provider() {
                 <DropDownIcon />
               </Button>
             </StyledButtonGroup>
+
             <StyledPopover
               id={id}
               open={open}
@@ -245,9 +246,9 @@ export default function Provider() {
                   <MenuProviderDisabled
                     sx={{ marginTop: "0px" }}
                     disabled={true}
-                    key="CNCF Labs"
+                    key="Exoscale Labs"
                   >
-                    CNCF Labs{"\u00A0"}
+                    Exoscale Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
@@ -258,14 +259,64 @@ export default function Provider() {
                     HPE Security{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="MIT">
-                    Massachusetts Institute of Technology (MIT){"\u00A0"}
+                  <MenuProviderDisabled disabled={true} key="F5">
+                    F5 BIG IP iHealth{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
                     The University of Texas at Austin{"\u00A0"}
                     <span> Offline</span>
                   </MenuProviderDisabled>
+                  <Divider
+                    sx={{
+                      my: 0.5,
+                      backgroundColor: accentGrey[40],
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "0px",
+                    }}
+                  />
+                  {/* Use Sistent's Button as a link */}
+                  <Button
+                    component="a"
+                    href="https://docs.meshery.io/extensibility/providers"
+                    aria-describedby={id}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Create Provider"
+                    data-cy="create_provider"
+                    variant="text"
+                    sx={{
+                      display: "flex",
+                      fontStyle: "italic",
+                      margin: "auto 0.5rem",
+                      textDecoration: "none",
+                      cursor: "pointer",
+                      width: "100%",
+                      backgroundColor: "none",
+                      justifySelf: "center",
+                      textAlign: "center",
+                      color: "#ccc",
+                      alignItems: "center",
+                      "&:hover": {
+                        backgroundColor: accentGrey[20],
+                        color: "#fff",
+                      },
+                    }}
+                  >
+                    Create Your Own Provider&nbsp;
+                    <img
+                      src="/provider/static/img/external-link.svg"
+                      onError={(e) =>
+                        (e.target.src = "/static/img/external-link.svg")
+                      }
+                      width="16px"
+                      alt="External link"
+                      style={{
+                        filter: "brightness(20)",
+                      }}
+                    />
+                  </Button>
                 </MenuList>
               </ClickAwayListener>
             </StyledPopover>
@@ -328,7 +379,6 @@ export default function Provider() {
           <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
           <ul>
             <li>Academic research and advanced studies by Ph.D. researchers</li>
-            <li></li>
             <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
           <p style={{ fontWeight: 700 }}>
@@ -338,7 +388,6 @@ export default function Provider() {
             <li>
               Performance and compatibility-centric research and validation
             </li>
-            <li></li>
             <li>Used by various cloud native projects</li>
           </ul>
           <p style={{ fontWeight: 700 }}>HPE Security</p>
@@ -354,17 +403,36 @@ export default function Provider() {
 
         <CustomDialogActions>
           <div className="learnmore">
-            <a href="https://docs.meshery.io/extensibility/providers">
+            <Button
+              component="a"
+              href="https://docs.meshery.io/extensibility/providers"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="text"
+              sx={{
+                color: (theme) => theme.palette.text.inverse,
+                textTransform: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontWeight: 400,
+                fontSize: "1rem",
+                "&:hover": {
+                  textDecoration: "underline",
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
               Providers in Meshery Docs
               <img
                 src="/provider/static/img/external-link.svg"
                 onError={(e) =>
-                  (e.target.src =
-                    "/static/img/external-link.svg")
+                  (e.target.src = "/static/img/external-link.svg")
                 }
                 width="16px"
+                alt="External link"
               />
-            </a>
+            </Button>
           </div>
 
           <StyledButton

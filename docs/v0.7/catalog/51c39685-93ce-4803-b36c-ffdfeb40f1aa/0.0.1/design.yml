@@ -204,7 +204,7 @@ services:
           version: 0.2.0
         meshmodel-metadata:
           genealogy: ""
-          logoURL: https://layer5.io/company/brand
+          logoURL: https://meshery.io/company/brand
           model: apache-shardingsphere-operator-charts
           modelDisplayName: Apache Shardingsphere Operator Charts
           primaryColor: '#F26F23'

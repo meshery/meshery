@@ -11,9 +11,9 @@ jobs:
         - name: Upgrade Meshery Helm Release
           uses: appleboy/ssh-action@v1.0.3
           with:
-              host: ${{ secrets.METAL_SERVER3 }}
-              username: root
-              key: ${{ secrets.METAL_SSH_KEY }}
+              host: ${{ secrets.OCI_BASTION_HOST }}
+              username: ${{ secrets.OCI_BASTION_USERNAME }}
+              key: ${{ secrets.OCI_BASTION_KEY }}
               script: |
-                mesheryctl system channel set edge
-                PROVIDER_BASE_URLS="https://staging-cloud.layer5.io" mesheryctl system update
+                kubectl config use-context staging
+                kubectl -n staging rollout restart deployment/playground

@@ -1,0 +1,4 @@
+[ file | filepath | URL ] isn't specified
+
+Usage: mesheryctl model generate [ file | filePath | URL ]
+Run 'mesheryctl model generate --help' to see detailed help message

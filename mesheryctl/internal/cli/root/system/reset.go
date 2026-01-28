@@ -17,8 +17,8 @@ package system
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
@@ -114,20 +114,20 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 		log.Printf("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
-			return ErrDownloadFile(err, utils.DockerComposeFile)
+			return utils.ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		err = utils.CreateManifestsFolder()
 
 		if err != nil {
-			return ErrCreateManifestsFolder(err)
+			return utils.ErrCreateManifestsFolder(err)
 		}
 
 		log.Printf("...fetching Meshery Operator manifests for Kubernetes...")
 		err = utils.DownloadOperatorManifest()
 
 		if err != nil {
-			return ErrDownloadFile(err, "operator manifest")
+			return utils.ErrDownloadFile(err, "operator manifest")
 		}
 
 		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")

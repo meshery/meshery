@@ -12,11 +12,12 @@ subcommand: delete
 
 # mesheryctl environment delete
 
-delete a new environments
+Delete an environment
 
 ## Synopsis
 
-delete a new environments by providing the name and description of the environment
+Delete an environment by providing the environment ID
+Documentation for environment can be found at Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/delete
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment delete [flags]
@@ -30,14 +31,6 @@ delete a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment delete [environmentId]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.meshery.io/concepts/logical/environments
 
 </div>
 </pre> 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"gopkg.in/yaml.v2"
 )
 

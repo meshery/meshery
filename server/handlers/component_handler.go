@@ -13,31 +13,32 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
 
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	// "github.com/meshery/meshkit/errors"
+	// "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
+
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -230,6 +231,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	if search != "" {
 		filter.DisplayName = search
+		filter.Name = search
 		filter.Greedy = true
 	}
 
@@ -494,7 +496,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Annotations:  returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -569,7 +571,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -643,7 +645,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -718,7 +720,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Annotations: returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -791,7 +793,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -865,7 +867,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -936,7 +938,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -979,6 +981,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
+// ```?id={id}``` If id is non empty then only the component with the given id is returned
+//
 // ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //  200: meshmodelComponentsDuplicateResponseWrapper
@@ -1006,7 +1010,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 
@@ -1143,7 +1147,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
@@ -1164,7 +1168,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(_event)
+		_ = provider.PersistEvent(*_event, nil)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1173,25 +1177,27 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+// processComponentDefinitions processes a list of entities and extracts component definitions,
+// it also sets the ModelReference field for each component definition.
+func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Component.Schema = string(b)
+			if comp.Model != nil {
+				comp.ModelReference = comp.Model.ToReference()
+			}
+
 			comps = append(comps, *comp)
 		}
+
 	}
 	return comps
 }
@@ -1214,7 +1220,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	var message string
 
 	//Here the codes handles to decode and store the data from the payload
@@ -1236,7 +1242,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	var dir registration.Dir
 	switch importRequest.UploadType {
 	case "csv":
-		err := mesheryctlUtils.SetLogger(false)
+		err := meshkitRegistryUtils.SetLogger(false)
 		if err != nil {
 			h.handleError(rw, err, "Error setting logger")
 			h.sendErrorEvent(userID, provider, "Error setting logger", err)
@@ -1332,7 +1338,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer os.RemoveAll(tempDir)
 
-		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
@@ -1367,13 +1373,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	//Case when it is URL and them the model is generated from the URL
 	case "url":
 
-		model := &mesheryctlUtils.ModelCSV{
-			Model:            importRequest.ImportBody.Model.Model,
-			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
-			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
-			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
-			Category:         importRequest.ImportBody.Model.Category,
-
+		model := &meshkitRegistryUtils.ModelCSV{
+			Model:             importRequest.ImportBody.Model.Model,
+			ModelDisplayName:  importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:      importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:    importRequest.ImportBody.Model.SecondaryColor,
+			Category:          importRequest.ImportBody.Model.Category,
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
@@ -1387,7 +1392,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err)
@@ -1409,7 +1414,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Component generation starts here
-		lengthofComps, _, err := mesheryctlUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef, model.Group)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
 			h.sendErrorEvent(userID, provider, "Error generating components", err)
@@ -1463,7 +1468,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
 			}
 
 			fileData, err := io.ReadAll(resp.Body)
@@ -1564,10 +1569,31 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// No entities found for the given filter
+	// This can happen if the model is not found or if the model is not registered
+	// or if the model is not in the registry
+	// In this case, we return a 404 error
 	if len(e) == 0 {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		message := "model with "
+		if modelId != "" {
+			message += fmt.Sprintf("id %s ", modelId)
+		}
+		if name != "" {
+			message += fmt.Sprintf("name %s ", name)
+		}
+		if version != "" {
+			message += fmt.Sprintf("version %s ", version)
+		}
+		message += "has not been found"
+		// h.log.Error(ErrGetMeshModels(err))
+		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
+		rw.WriteHeader(http.StatusNotFound)
+		// rw.Write([]byte(message))
+		fmt.Fprintln(rw, message)
+		return
 	}
+
 	model := e[0].(*_model.ModelDefinition)
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
@@ -1600,8 +1626,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer os.RemoveAll(modelDir)
 
-	components := model.Components.([]component.ComponentDefinition)
-	rels := model.Relationships.([]relationship.RelationshipDefinition)
+	components := []component.ComponentDefinition{}
+	// Components can be nil if hasComponents is false
+	if model.Components != nil {
+		components = model.Components.([]component.ComponentDefinition)
+	}
+
+	relationships := []relationship.RelationshipDefinition{}
+	// Relationships can be nil if hasRelationships is false
+	if model.Relationships != nil {
+		relationships = model.Relationships.([]relationship.RelationshipDefinition)
+	}
 
 	model.Relationships = nil
 	model.Components = nil
@@ -1617,15 +1652,15 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	for _, comp := range components {
 		_ = comp.ReplaceSVGData("../../")
-		comp.Model = *model
+		comp.Model = model
 		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
 		}
 
 	}
-	for _, rel := range rels {
-		rel.Model = *model
+	for _, rel := range relationships {
+		rel.Model = model.ToReference()
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)

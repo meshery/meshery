@@ -20,7 +20,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v3
         id: changes
@@ -46,11 +46,11 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated Swagger Docs for REST API"
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch }}
@@ -88,11 +88,11 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated GraphQL API Documentation"
@@ -104,16 +104,25 @@ jobs:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-24.04
     steps:
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
       - name: Fetch latest tag
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch }} 
       - name: Docker login
-        uses: azure/docker-login@v1
+        uses: azure/docker-login@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -128,8 +137,8 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
-  # update-staging-playground:
-  #   needs:
-  #     - docker-build-push
-  #   uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
-  #   secrets: inherit
+  update-staging-playground:
+    needs:
+      - docker-build-push
+    uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
+    secrets: inherit

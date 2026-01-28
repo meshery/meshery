@@ -3,6 +3,11 @@ on:
   issues:
     types: [labeled]
 
+
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   automate_invite:
     if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
@@ -19,7 +24,7 @@ jobs:
           INVITE_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
 
       - name: View context attributes
-        uses: actions/github-script@v4
+        uses: actions/github-script@v8
         id: set-url
         with:
           script: |

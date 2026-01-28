@@ -19,7 +19,8 @@ import (
 
 	"errors"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 )
 
@@ -37,10 +38,16 @@ var (
 
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
-	Use:     "registry",
-	Short:   "Model Database",
-	Long:    `Manage the state and contents of Meshery’s internal registry of capabilities.`,
+	Use:   "registry",
+	Short: "Manage the capability registry",
+	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry`,
 	Example: `mesheryctl registry [subcommand]`,
+
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		setupRegistryLogger()
+		return nil
+	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -55,5 +62,11 @@ var RegistryCmd = &cobra.Command{
 
 func init() {
 	RegistryCmd.AddCommand(availableSubcommands...)
+}
 
+func setupRegistryLogger() {
+	err := meshkitRegistryUtils.SetLogger(true)
+	if err != nil {
+		utils.Log.Info("Error setting logger: ", err)
+	}
 }

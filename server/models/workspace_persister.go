@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
 
@@ -22,10 +23,9 @@ type WorkspacePersister struct {
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
 	}
 }
 
@@ -37,7 +37,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		order = "updated_at desc"
 	}
 
-	query := wp.DB.Model(&v1beta1.Workspace{})
+	query := wp.DB.Model(&workspace.Workspace{})
 
 	// Filter by organization ID
 	if orgID != "" {
@@ -65,7 +65,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	count := int64(0)
 	query.Table("workspaces").Count(&count)
 
-	workspacesFetched := []v1beta1.Workspace{}
+	workspacesFetched := []workspace.Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	}
 
 	// Prepare the response
-	workspacesPage := &v1beta1.WorkspacePage{
+	workspacesPage := &workspace.WorkspacePage{
 		Page:       int(pageUint),
 		PageSize:   len(workspacesFetched),
 		TotalCount: int(count),
@@ -101,7 +101,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) SaveWorkspace(workspace *v1beta1.Workspace) ([]byte, error) {
+func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]byte, error) {
 	if workspace.ID == uuid.Nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -122,7 +122,7 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *v1beta1.Workspace) ([]byt
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteWorkspace(workspace *v1beta1.Workspace) ([]byte, error) {
+func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([]byte, error) {
 	err := wp.DB.Model(&workspace).Find(&workspace).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -131,7 +131,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *v1beta1.Workspace) ([]b
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	// Marshal the workspace to JSON
@@ -143,23 +143,23 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *v1beta1.Workspace) ([]b
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) UpdateWorkspaceByID(workspace *v1beta1.Workspace) (*v1beta1.Workspace, error) {
-	err := wp.DB.Save(workspace).Error
+func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.Workspace) (*workspace.Workspace, error) {
+	err := wp.DB.Save(selectedWorkspace).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
 	}
 
-	updatedWorkspace := v1beta1.Workspace{}
-	err = wp.DB.Model(&updatedWorkspace).Where("id = ?", workspace.ID).First(&updatedWorkspace).Error
+	updatedWorkspace := workspace.Workspace{}
+	err = wp.DB.Model(&updatedWorkspace).Where("id = ?", selectedWorkspace.ID).First(&updatedWorkspace).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
-	return workspace, nil
+	return selectedWorkspace, nil
 }
 
 // Get workspace by ID
-func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*v1beta1.Workspace, error) {
-	workspace := v1beta1.Workspace{}
+func (wp *WorkspacePersister) GetWorkspace(id uuid.UUID) (*workspace.Workspace, error) {
+	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
 	err := query.First(&workspace).Error
 	return &workspace, err
@@ -181,7 +181,7 @@ func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID uuid.UUID) ([]byte, e
 }
 
 // UpdateWorkspaceByID updates a single workspace by ID
-func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *v1beta1.WorkspacePayload) (*v1beta1.Workspace, error) {
+func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *workspace.WorkspacePayload) (*workspace.Workspace, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
 		return nil, err
@@ -206,7 +206,7 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID uuid.UUID) ([]byte
 
 // AddEnvironmentToWorkspace adds an environment to a workspace
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
-	wsEnvMapping := v1beta1.WorkspacesEnvironmentsMapping{
+	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
 		EnvironmentId: environmentID,
 		WorkspaceId:   workspaceID,
 		CreatedAt:     time.Now(),
@@ -295,7 +295,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 		pageSize = "10"
 	}
 
-	environmentsFetched := []v1beta1.Environment{}
+	environmentsFetched := []environment.Environment{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -312,7 +312,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
 	}
 
-	environmentsPage := &v1beta1.EnvironmentPage{
+	environmentsPage := &environment.EnvironmentPage{
 		Page:         int(pageUint),
 		PageSize:     len(environmentsFetched),
 		TotalCount:   int(count),
@@ -329,7 +329,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 
 // DeleteEnvironmentFromWorkspace deletes an environment from a workspace
 func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
-	var wsEnvMapping v1beta1.WorkspacesEnvironmentsMapping
+	var wsEnvMapping workspace.WorkspacesEnvironmentsMapping
 
 	// Find the specific environment mapping
 	if err := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).First(&wsEnvMapping).Error; err != nil {
@@ -341,7 +341,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -353,7 +353,15 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 }
 
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
-	wsDesignMapping := v1beta1.WorkspacesDesignsMapping{
+
+	// delete any existing mapping for the design in the workspace
+	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
+
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	}
+
+	wsDesignMapping := workspace.WorkspacesDesignsMapping{
 		DesignId:    designID,
 		WorkspaceId: workspaceID,
 		CreatedAt:   time.Now(),
@@ -380,7 +388,7 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UU
 }
 
 func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
-	var wsDesignMapping v1beta1.WorkspacesDesignsMapping
+	var wsDesignMapping workspace.WorkspacesDesignsMapping
 
 	// Find the specific design mapping
 	if err := wp.DB.Where("workspace_id = ? AND design_id = ?", workspaceID, designID).First(&wsDesignMapping).Error; err != nil {
@@ -392,7 +400,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -403,7 +411,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {

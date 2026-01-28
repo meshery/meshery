@@ -17,6 +17,7 @@ Update the registry with latest data.
 ## Synopsis
 
 Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/update
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry update [flags]
@@ -29,23 +30,23 @@ mesheryctl registry update [flags]
 Update models from Meshery Integration Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
 </div>
 </pre> 
 
-Updating models in the meshery/meshery repo
+Updating models in the meshery/meshery repository based on the spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
 
 </div>
 </pre> 
 
-Updating models in the meshery/meshery repo based on flag
+Updating models in the meshery/meshery repository based on flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 
 </div>
 </pre> 

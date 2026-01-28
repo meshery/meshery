@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl exp
 
-Experimental commands for mesheryctl
+Preview experimental commands
 
 ## Synopsis
 
@@ -45,8 +45,6 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl exp connections](/reference/mesheryctl/exp/connections)
-* [mesheryctl exp org](/reference/mesheryctl/exp/org)
 * [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)
 * [mesheryctl exp workspace](/reference/mesheryctl/exp/workspace)
 

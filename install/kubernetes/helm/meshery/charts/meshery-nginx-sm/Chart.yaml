@@ -3,7 +3,7 @@ name: meshery-nginx-sm
 description: Meshery Adapter for NGINX Service Mesh.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source:
-  - https://github.com/layer5io/meshery-nginx-sm
+  - https://github.com/meshery/meshery-nginx-sm
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.
@@ -27,8 +27,8 @@ appVersion: stable-latest
 
 maintainers:
   - name: Meshery Authors
-    email: community@layer5.io
+    email: maintainers@meshery.io
   - name: darrenlau
     email: panyuenlau@gmail.com
-  - name: leecalcote
-    email: lee.calcote@layer5.io
+  - name: maintainers
+    email: maintainers@meshery.io

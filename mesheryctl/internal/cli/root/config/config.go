@@ -24,7 +24,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
 )
@@ -51,14 +51,15 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint   string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
-	Token      string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
-	Platform   string   `yaml:"platform" mapstructure:"platform"`
-	Components []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
-	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
-	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
-	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
-	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	Endpoint   string         `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
+	Token      string         `yaml:"token,omitempty" mapstructure:"token,omitempty"`
+	Platform   string         `yaml:"platform" mapstructure:"platform"`
+	Components []string       `yaml:"components,omitempty" mapstructure:"components,omitempty"`
+	Channel    string         `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
+	Version    string         `yaml:"version,omitempty" mapstructure:"version,omitempty"`
+	Provider   string         `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string         `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -249,7 +250,7 @@ func (ctx *Context) ValidateVersion() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
 	defer func() {
@@ -264,10 +265,6 @@ func (ctx *Context) ValidateVersion() error {
 
 	if resp.StatusCode != http.StatusOK {
 		log.Fatal("failed to validate Meshery release version " + ctx.Version)
-	}
-
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
 	return nil
@@ -291,6 +288,16 @@ func (ctx *Context) GetOperatorStatus() string {
 // SetOperatorStatus can be used to set operator status
 func (ctx *Context) SetOperatorStatus(status string) {
 	ctx.Operator = status
+}
+
+// GetEnvs returns the environment variables from the context
+func (ctx *Context) GetEnvs() map[string]any {
+	return ctx.EnvVars
+}
+
+// SetEnvs sets the environment variables for the context
+func (ctx *Context) SetEnvs(value map[string]any) {
+	ctx.EnvVars = value
 }
 
 // GetName returns the token name

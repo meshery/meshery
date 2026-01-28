@@ -22,10 +22,11 @@ import (
 	"os"
 	"path"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -68,8 +69,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
@@ -85,19 +85,18 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		switch sourceType {
 		case "Helm Chart":
-			sourceType = core.IacFileTypes.HELM_CHART
+			sourceType = string(coreV1.HelmChart)
 		case "Kubernetes Manifest":
-			sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
+			sourceType = string(coreV1.K8sManifest)
 		case "Meshery Design":
-			sourceType = core.IacFileTypes.MESHERY_DESIGN
+			sourceType = string(coreV1.MesheryDesign)
 		case "Docker Compose":
-			sourceType = core.IacFileTypes.DOCKER_COMPOSE
+			sourceType = string(coreV1.DockerCompose)
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
@@ -147,7 +146,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("design file saved")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -180,7 +179,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("Fetched the design from the remote host")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {

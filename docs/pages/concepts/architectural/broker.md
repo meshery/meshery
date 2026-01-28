@@ -26,8 +26,10 @@ We leverage on the kubernetes functionality in terms of the High-Availability be
 All the messages that are published to the broker is persisted in-memory within the broker instance until it get consumed. Persistent-volume/Disk-space is not currently being used by the Broker.
 
 #### How do I know if the Broker is working? How do I troubleshoot the Broker?
-The Broker instance is deployed inside the kubernetes cluster as a `Statefulset`. In the case where the broker doesn't seem to work, here are a few steps to troubleshoot the instance:
+To check if your Broker instance is running smoothly (it's deployed as a Kubernetes StatefulSet), follow these quick checks:
 
-- Make sure the pods corresponding to the `Statefulset` is up and running.
-- Make sure the kubernetes cluster has support for kubernetes `Service` type `LoadBalancer` or `NodePort`.
-- Ensure connectivity between the Meshery-Server and the Broker service endpoint.
+- Confirm that the Broker pods are running.
+- Verify your cluster supports `LoadBalancer` or `NodePort` service types.
+- Make sure the Meshery Server can reach the Broker service.
+
+Still seeing issues? The **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)** covers common problems with the Broker, MeshSync, and Operator — and offers clear steps to resolve them.

@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery-server
       containers:
-      - image: layer5/meshery-traefik-mesh:stable-latest
+      - image: meshery/meshery-traefik-mesh:stable-latest
         imagePullPolicy: Always
         name: meshery-traefik-mesh
         ports:

@@ -12,11 +12,11 @@ subcommand: relationship
 
 # mesheryctl exp relationship generate
 
-generate relationships docs
+Generate relationships documents
 
 ## Synopsis
 
-generate relationships docs from the google spreadsheets
+Generate relationships documents from the google spreadsheets
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship generate [flags]
@@ -26,10 +26,10 @@ mesheryctl exp relationship generate [flags]
 
 ## Examples
 
-Generate relationships docs
+Generate relationships documentss
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
+mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 
 </div>
 </pre> 
@@ -38,8 +38,9 @@ mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help             help for generate
-  -s, --sheetId string   Google Sheet ID
+  -h, --help                      help for generate
+      --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
 </div>
 </pre>

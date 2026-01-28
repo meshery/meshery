@@ -58,36 +58,74 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
   description: 
-components-count: 12
+- name: db-cluster-endpoint
+  colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/color/db-cluster-endpoint-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/white/db-cluster-endpoint-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 14
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Parent"
-  kind: "Hierarchical"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Parent"
-  kind: "Hierarchical"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-relationship-count: 9
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 19
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",

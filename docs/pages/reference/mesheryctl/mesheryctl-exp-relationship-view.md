@@ -39,7 +39,7 @@ mesheryctl exp relationship view [model-name]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json| yaml] (default "yaml")
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>

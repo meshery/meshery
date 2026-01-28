@@ -9,12 +9,12 @@ import (
 	"net/url"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/machines"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -191,7 +191,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.UserID)
+		prefObj, err := provider.ReadFromPersister(user.UserId)
 		if err != nil {
 			h.log.Warn(ErrReadSessionPersistor)
 		}
@@ -223,7 +223,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		h.log.Error(err)
 		return nil, err
 	}
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts, err := provider.LoadAllK8sContext(token)
 
@@ -232,7 +232,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	if err != nil || len(connectedK8sContexts) == 0 {
 		h.log.Warn(ErrFailToGetK8SContext)
-		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID, token, provider)
+		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID.String(), token, provider)
 		if err != nil {
 			h.log.Warn(ErrFailToLoadK8sContext(err))
 		}
@@ -289,7 +289,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
@@ -312,7 +312,7 @@ type dataHandlerToClusterID struct {
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
@@ -347,7 +347,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)

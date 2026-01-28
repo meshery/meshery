@@ -13,15 +13,15 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/files"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/meshery/server/models"
+	pCore "github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/files"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -91,21 +91,21 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 	switch identifiedFile.Type {
 
-	case core.IacFileTypes.HELM_CHART:
+	case coreV1.HelmChart:
 		return files.ConvertHelmChartToKubernetesManifest(identifiedFile)
-	case core.IacFileTypes.DOCKER_COMPOSE:
+	case coreV1.DockerCompose:
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
-	case core.IacFileTypes.KUBERNETES_MANIFEST:
+	case coreV1.K8sManifest:
 		return string(rawFile.Data), nil
-	case core.IacFileTypes.KUSTOMIZE:
+	case coreV1.K8sKustomize:
 		return files.ConvertKustomizeToKubernetesManifest(identifiedFile)
 	default:
-		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, identifiedFile.Type)
+		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, string(identifiedFile.Type))
 	}
 }
 
 // returns the design file , the type of file that was identified during converion , and any error
-func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, string, error) {
+func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, coreV1.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
 
@@ -130,6 +130,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	now := time.Now()
+	// NOTE: the FileName must also have extension
 	sanitizedFile, err := files.SanitizeFile(fileToImport.Data, fileToImport.FileName, tempDir, validImportExtensions)
 	utils.TrackTime(logger, now, "SanitizeFile")
 
@@ -145,7 +146,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 		return emptyDesign, "", err
 	}
 
-	if identifiedFile.Type == core.IacFileTypes.MESHERY_DESIGN {
+	if identifiedFile.Type == coreV1.MesheryDesign {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
 		return design, identifiedFile.Type, nil
 	}
@@ -179,7 +180,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 
@@ -195,7 +196,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 }
@@ -233,7 +234,7 @@ func (h *Handler) DesignFileImportHandler(
 	}()
 
 	var err error
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
 	var importDesignPayload MesheryDesignImportPayload
@@ -257,7 +258,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -268,7 +269,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -284,7 +285,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -295,7 +296,7 @@ func (h *Handler) DesignFileImportHandler(
 		PatternFile:   string(patternFile),
 		SourceContent: fileToImport.Data,
 		Type: sql.NullString{
-			String: sourceFileType,
+			String: string(sourceFileType),
 			Valid:  true,
 		},
 	}
@@ -303,22 +304,15 @@ func (h *Handler) DesignFileImportHandler(
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 
 	if err != nil {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}
 
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 }

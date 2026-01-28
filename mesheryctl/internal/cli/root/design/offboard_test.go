@@ -1,21 +1,15 @@
 package design
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestOffboardCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -28,14 +22,7 @@ func TestOffboardCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-	}{
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "Offboard Application",
 			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
@@ -57,59 +44,35 @@ func TestOffboardCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name:             "Offboard design with invalid file path",
+			Args:             []string{"offboard", "-f", invalidFilePath},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
+		},
+		{
+			Name:             "Offboard design not found",
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "offboard.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound(),
+		},
 	}
 
 	// Run tests
-	for _, tt := range tests {
-		// View api response from golden files
-		t.Run(tt.Name, func(t *testing.T) {
-			for _, url := range tt.URLs {
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-
-				// mock response
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
-
-			// set token
-			utils.TokenFlag = tt.Token
-
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			DesignCmd.SetOutput(b)
-			DesignCmd.SetArgs(tt.Args)
-			err := DesignCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
-					return
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }

@@ -12,11 +12,11 @@ subcommand: nil
 
 # mesheryctl perf
 
-Performance Management
+Run performance tests
 
 ## Synopsis
 
-Performance Management & Benchmarking.
+Load generation and performance characterization
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

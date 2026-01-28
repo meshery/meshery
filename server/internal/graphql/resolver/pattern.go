@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
 )
 
 func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PatternPageResult, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	tokenString, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok || tokenString == "" {
+		return nil, ErrInvalidRequest
+	}
 	// user := ctx.Value(models.UserCtxKey).(*models.User)
 	// prefObj := ctx.Value(models.PerfObjCtxKey).(*models.Preference)
 	var updateAfter string
@@ -43,11 +46,8 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	// mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserID)
+	// mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserId)
 	// err = mc.AddMetadataForPatterns(ctx, &resp)
-	if err != nil {
-		r.Log.Error(ErrFetchingPatterns(err))
-	}
 
 	patterns := &model.PatternPageResult{}
 

@@ -5,15 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"golang.org/x/text/cases"
@@ -533,4 +535,13 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	return os.Chmod(dst, srcInfo.Mode())
+}
+
+func WriteEscaped(w http.ResponseWriter, data []byte, contentType string) (int, error) {
+	if contentType == "" {
+		contentType = "text/plain; charset=utf-8"
+	}
+	w.Header().Set("Content-Type", contentType)
+	escaped := template.HTMLEscapeString(string(data))
+	return w.Write([]byte(escaped))
 }

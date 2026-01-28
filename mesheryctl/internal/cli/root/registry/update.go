@@ -15,15 +15,16 @@
 package registry
 
 import (
-	"bytes"
+	// "bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/store"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 
@@ -33,7 +34,6 @@ import (
 var (
 	modelLocation            string
 	logFile                  *os.File
-	errorLogFile             *os.File
 	sheetGID                 int64
 	totalAggregateComponents int
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
@@ -44,15 +44,17 @@ var (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.",
+	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
-mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
-// Updating models in the meshery/meshery repo
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
-// Updating models in the meshery/meshery repo based on flag
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
+// Updating models in the meshery/meshery repository based on the spreadsheet
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
+
+// Updating models in the meshery/meshery repository based on flag
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -119,7 +121,8 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
+
+	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err
 	}
@@ -163,7 +166,7 @@ func InvokeCompUpdate() error {
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
-					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
 
@@ -193,45 +196,23 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
-						// Ensure the temporary file is removed regardless of what happens
-						defer func() {
-							_ = os.Remove(tmpFilePath)
-						}()
+						utils.Log.Infof("Updating genealogy for component %s...", component.Component)
+						componentDef.Metadata.Genealogy = component.Genealogy
 
-						if _, err := os.Stat(compPath); err == nil {
-							existingData, err := os.ReadFile(compPath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
+						_, err = os.Stat(compPath)
 
-							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							newData, err := os.ReadFile(tmpFilePath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							if bytes.Equal(existingData, newData) {
-								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
-								continue
-							} else {
-								err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-								if err != nil {
-									utils.Log.Error(err)
-									continue
-								}
-								totalCompsUpdatedPerModelPerVersion++
-
-							}
+						if err != nil {
+							utils.Log.Error(err)
+							continue
 						}
+
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdatedPerModelPerVersion++
 					}
 
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{

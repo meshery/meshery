@@ -11,18 +11,20 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
+	mutils "github.com/meshery/meshkit/utils"
 )
 
 const (
@@ -34,9 +36,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
 
-	alias := pattern.NonResolvedAlias{}
+	alias := core.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -76,7 +78,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -89,7 +91,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return pattern.NonResolvedAlias{}, false
+	return core.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
@@ -102,25 +104,18 @@ func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved pattern.NonResolvedAlias, path []string, design pattern.PatternFile) pattern.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved core.NonResolvedAlias, path []string, design pattern.PatternFile) core.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return pattern.ResolvedAlias{
-			NonResolvedAlias:     nonResolvedAlias,
-			ResolvedParentId:     currentNonResolved.ImmediateParentId,
-			ResolvedRefFieldPath: path,
-		}
+		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return pattern.ResolvedAlias{
-			NonResolvedAlias:     nonResolvedAlias,
-			ResolvedParentId:     currentNonResolved.ImmediateParentId,
-			ResolvedRefFieldPath: path,
-		}
+		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+
 	}
 
 	// slicing from 1 to remove "configuration" prefix when building the resolved ref
@@ -129,9 +124,9 @@ func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved 
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
 
-	resolvedAliases := make(map[string]pattern.ResolvedAlias)
+	resolvedAliases := make(map[string]core.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -145,40 +140,84 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.Resol
 
 }
 
+func doesntNeedReeval(response pattern.EvaluationResponse) bool {
+
+	for _, action := range response.Actions {
+		if action.Op == "delete_component" || action.Op == "add_component" || action.Op == "update_component_configuration" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// max number of time to keep revaluating the design till there are no reval triggering actions in the response
+const MAX_RE_EVALUATION_DEPTH = 5
+
 // Helper method to make design evaluation based on the relationship policies.
+// evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
+	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
+
+	// hydrate the design file components from the registry if needed
+	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
+		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
 
-	// evaluate specified relationship policies
-	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
-		RelationshipPolicyPackageName,
-	)
+	var lastEvaluationResponse pattern.EvaluationResponse
+	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
-	if err != nil {
-		h.log.Debug(err)
-		// log an event
-		return pattern.EvaluationResponse{}, err
+	for i := range MAX_RE_EVALUATION_DEPTH {
+
+		// evaluate specified relationship policies
+		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
+		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+			RelationshipPolicyPackageName,
+		)
+
+		if err != nil {
+			h.log.Debug(err)
+			// log an event
+			return pattern.EvaluationResponse{}, err
+		}
+
+		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+		now := time.Now()
+		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+
+		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
+		if evaluationResponse.Design.Metadata == nil {
+			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
+		}
+		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
+
+		mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
+
+		lastEvaluationResponse.Design = evaluationResponse.Design
+		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+
+		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
+			h.log.Info("Evaluation completed in iteration ", i+1)
+			break
+		}
+		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
+			h.log.Info("Evaluation depth exceeded")
+			return lastEvaluationResponse, fmt.Errorf("Evaluation depth exceeded")
+		}
+
 	}
 
 	currentTime := time.Now()
-	evaluationResponse.Timestamp = &currentTime
+	lastEvaluationResponse.Timestamp = &currentTime
 
-	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	now := time.Now()
-	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+	// dehydrate the design file components to remove unnecessary details
+	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
 
-	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
-	if evaluationResponse.Design.Metadata == nil {
-		evaluationResponse.Design.Metadata = &pattern.PatternFileMetadata{}
-	}
-	evaluationResponse.Design.Metadata.ResolvedAliases = evaluatedAliases
-
-	mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
-	return evaluationResponse, nil
+	return lastEvaluationResponse, nil
 }
 
 func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
@@ -311,7 +350,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 ) {
 	evalCtx := r.Context()
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -343,7 +382,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	go func() {
 		// Evaluate specified relationship policies
 		// Perform the CPU-intensive work
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 
 		if err != nil {
 			evalErrChan <- err // Send the error
@@ -362,12 +401,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
-		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
+		event := eventBuilder.WithDescription(description).
 			WithMetadata(map[string]interface{}{
-				"trace":        evaluationResponse.Trace,
-				"evaluated_at": *evaluationResponse.Timestamp,
+				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
+				"trace":               evaluationResponse.Trace,
+				"evaluation_response": evaluationResponse,
+				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
 		ec := json.NewEncoder(rw)

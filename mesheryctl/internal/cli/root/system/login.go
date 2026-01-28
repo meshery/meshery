@@ -17,8 +17,8 @@ package system
 import (
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -58,12 +58,12 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			log.Error("failed to check Meshery Server status: ", err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		if !isRunning {
-			log.Error(`Meshery Server is not running. Run "mesheryctl system start" to start Meshery.`)
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currCtx.GetPlatform()))
 			return nil
 		}
 
@@ -76,8 +76,7 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			log.Printf("authentication failed: Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`.", mctlCfg.GetBaseMesheryURL())
-			return nil
+			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
 
 		log.Println("authenticated")

@@ -49,31 +49,47 @@ Contexts configure Meshery deployments (server, adapters, operator and so on), w
 
 #### Question: What does the default meshconfig look like?
 
-The following template is used to create a config file from scratch. Not all of the following variables are required to be included. Some of the variables may have a null value or may be excluded (e.g. “adapters”).
+The following template is used to create a config file from scratch. Not all of the following variables are required to be included. Some of the variables may have a null value or may be excluded (e.g. "adapters").
 
-```
+#### Question: What is the importance of --config flag?
+
+The `--config` flag is a global option that applies to all `mesheryctl` commands. It allows you to specify the location of a custom meshconfig file, overriding the default configuration. This config file is used to set up the `mesheryctl` context, which defines the configuration for a particular Meshery deployment.
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+<div class="clipboardjs">
 contexts:
-    <context1-name>:
-      endpoint: <url to meshery server rest api>
-      token: <name of token variable in this config file>
-      platform: <type of platform: ”docker” or “kubernetes”>
-      # Future: specify type of kubernetes (e.g. eks)
-      adapters: <collection of names of Meshery adapters:
-          “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”>
+  [context1-name]:
+    endpoint: [url to meshery server rest api]
+    token: [name of token variable in this config file]
+    platform: [type of platform: "docker" or "kubernetes"]
+    # Future: specify type of kubernetes (e.g. eks)
+    channel: [release channel: "stable", "stable-version", "edge", or "edge-version"]
+    adapters: [collection of names of Meshery adapters:
+        "istio","linkerd","consul","nginx-sm","tanzu-sm","cilium","app-mesh","traefik-mesh","nighthawk","kuma","osm","nsm"]
+    version: [version of Meshery client "latest", "v0.8.132", ...]
+    provider: [meshery's providers: "Meshery", "None", ...]
+    # add ENVs here
+    env:
+      meshsync_deployment_mode: ["operator" or "embedded", defaults to "operator"]
 
-   <context2-name>:
-    endpoint: <url to meshery server rest api>
-    token: <name of token variable in this config file>
-    platform: <type of platform: ”docker” or “kubernetes”>
-    current-context: <context name>
+  [context2-name]:
+    endpoint: [url to meshery server rest api]
+    token: [name of token variable in this config file]
+    platform: [type of platform: "docker" or "kubernetes"]
+
+current-context: [context name]
 
 tokens:
-- name: <token1-name>
-  location: <token-location>
-- name: <token2-name>
-  value: <token-value>
-  # Future: allow embedding of token certificate
-```
+  - name: [token1-name]
+    location: [token-location]
+  - name: [token2-name]
+    value: [token-value]
+    # Future: allow embedding of token certificate
+
+</div></div>
+</pre>
+<br />
 
 Try it out and see for yourself. Run `mesheryctl system context create test` and `mesheryctl system context view test`.
 
@@ -91,13 +107,13 @@ Yes, if you need to establish a session with your Meshery Server, you can [authe
 ## Advanced Installation
 
 Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local _~/.meshery/meshery.yaml_ (a docker compose file).
-Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
+Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: meshery/meshery, users will instead identify a specific image tag like so:
 
-{% capture code_content %}bash
+{% capture code_content %}
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:v0.5.0
+    image: meshery/meshery:v0.5.0
     labels:
       - "com.centurylinklabs.watchtower.enable=true"{% endcapture %}
 {% include code.html code=code_content %}
@@ -220,7 +236,7 @@ Add the Meshery Scoop Bucket and install:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+ scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
  scoop install mesheryctl
  </div></div>
  </pre>

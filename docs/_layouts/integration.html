@@ -53,11 +53,27 @@ layout: default
     {% for design in site.catalog %}
     {% if design.compatibility contains tech %}
     <li class="design-link">
-      <a href="https://cloud.layer5.io/catalog/content/catalog/{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
+      <a href="https://meshery.io/catalog/{{ design.type }}/{{ design.name | slugify }}-{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
     </li>
     {% endif %}
     {% endfor %}
 </ul>
+</section>
+
+<section>
+    <h3 id="related-tutorials-header">Related Tutorials for {{ page.title }}</h3>
+    {% assign tutorials = site.pages | where: "category", "tutorials"%}
+    <ul>
+        {% for tutorial in tutorials %}
+            {% if tutorial.model %}
+                {% assign page_title_lower = page.title | downcase %}
+                {% assign tutorial_model_lower = tutorial.model | downcase %}
+                {% if page_title_lower contains tutorial_model_lower %}
+                    <li class="tutorial-link"><a href="{{ tutorial.url | relative_url }}">{{ tutorial.title }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
 </section>
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
@@ -65,6 +81,7 @@ layout: default
 {% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
+
 
 <script>
     function handleImageError(image) {
@@ -74,6 +91,11 @@ url=page.url language="en" %}
     const designLinks = document.querySelectorAll('.design-link');
     if (designLinks.length === 0) {
         document.getElementById('related-designs-header').style.display = 'none';
+    }
+
+    const relatedTutorials = document.querySelectorAll(".tutorial-link");
+    if (relatedTutorials.length === 0) {
+        document.getElementById("related-tutorials-header").style.display = "none";
     }
 
 </script>

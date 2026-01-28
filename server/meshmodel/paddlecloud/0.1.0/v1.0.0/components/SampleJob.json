@@ -23,10 +23,12 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +46,31 @@
     "model": {
       "version": "0.1.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +82,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +110,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +140,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +168,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +182,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +191,20 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://paddleflow-public.hkg.bcebos.com/charts/paddlecloud-0.1.0.tgz"
   },
   "configuration": null,
   "component": {
+    "version": "batch.paddlepaddle.org/v1alpha1",
     "kind": "SampleJob",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clearOptions\": {\n     \"properties\": {\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rmrOptions\": {\n     \"properties\": {\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sampleSetRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"secretRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncOptions\": {\n     \"properties\": {\n      \"bwlimit\": {\n       \"type\": \"integer\"\n      },\n      \"delete-dst\": {\n       \"type\": \"boolean\"\n      },\n      \"delete-src\": {\n       \"type\": \"boolean\"\n      },\n      \"destination\": {\n       \"type\": \"string\"\n      },\n      \"dirs\": {\n       \"type\": \"boolean\"\n      },\n      \"dry\": {\n       \"type\": \"boolean\"\n      },\n      \"end\": {\n       \"type\": \"string\"\n      },\n      \"exclude\": {\n       \"type\": \"string\"\n      },\n      \"force-update\": {\n       \"type\": \"boolean\"\n      },\n      \"http-port\": {\n       \"type\": \"integer\"\n      },\n      \"include\": {\n       \"type\": \"string\"\n      },\n      \"manager\": {\n       \"type\": \"string\"\n      },\n      \"no-https\": {\n       \"type\": \"boolean\"\n      },\n      \"perms\": {\n       \"type\": \"boolean\"\n      },\n      \"source\": {\n       \"type\": \"string\"\n      },\n      \"start\": {\n       \"type\": \"string\"\n      },\n      \"threads\": {\n       \"type\": \"integer\"\n      },\n      \"update\": {\n       \"type\": \"boolean\"\n      },\n      \"worker\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"terminate\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"sync\",\n      \"warmup\",\n      \"rmr\",\n      \"clear\"\n     ],\n     \"type\": \"string\"\n    },\n    \"warmupOptions\": {\n     \"properties\": {\n      \"file\": {\n       \"type\": \"string\"\n      },\n      \"partitions\": {\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"strategyName\": {\n       \"default\": \"sequence\",\n       \"enum\": [\n        \"random\",\n        \"sequence\"\n       ],\n       \"type\": \"string\"\n      },\n      \"threads\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sample Job\",\n \"type\": \"object\"\n}",
-    "version": "batch.paddlepaddle.org/v1alpha1"
-  }
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clearOptions\": {\n     \"properties\": {\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rmrOptions\": {\n     \"properties\": {\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sampleSetRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"secretRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncOptions\": {\n     \"properties\": {\n      \"bwlimit\": {\n       \"type\": \"integer\"\n      },\n      \"delete-dst\": {\n       \"type\": \"boolean\"\n      },\n      \"delete-src\": {\n       \"type\": \"boolean\"\n      },\n      \"destination\": {\n       \"type\": \"string\"\n      },\n      \"dirs\": {\n       \"type\": \"boolean\"\n      },\n      \"dry\": {\n       \"type\": \"boolean\"\n      },\n      \"end\": {\n       \"type\": \"string\"\n      },\n      \"exclude\": {\n       \"type\": \"string\"\n      },\n      \"force-update\": {\n       \"type\": \"boolean\"\n      },\n      \"http-port\": {\n       \"type\": \"integer\"\n      },\n      \"include\": {\n       \"type\": \"string\"\n      },\n      \"manager\": {\n       \"type\": \"string\"\n      },\n      \"no-https\": {\n       \"type\": \"boolean\"\n      },\n      \"perms\": {\n       \"type\": \"boolean\"\n      },\n      \"source\": {\n       \"type\": \"string\"\n      },\n      \"start\": {\n       \"type\": \"string\"\n      },\n      \"threads\": {\n       \"type\": \"integer\"\n      },\n      \"update\": {\n       \"type\": \"boolean\"\n      },\n      \"worker\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"terminate\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"sync\",\n      \"warmup\",\n      \"rmr\",\n      \"clear\"\n     ],\n     \"type\": \"string\"\n    },\n    \"warmupOptions\": {\n     \"properties\": {\n      \"file\": {\n       \"type\": \"string\"\n      },\n      \"partitions\": {\n       \"format\": \"int32\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"paths\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"strategyName\": {\n       \"default\": \"sequence\",\n       \"enum\": [\n        \"random\",\n        \"sequence\"\n       ],\n       \"type\": \"string\"\n      },\n      \"threads\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sample Job\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

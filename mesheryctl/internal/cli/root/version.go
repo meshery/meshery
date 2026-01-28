@@ -21,10 +21,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -42,7 +42,7 @@ var linkDoc = map[string]string{
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Version of mesheryctl",
+	Short: "Show Meshery CLI and Server versions",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Example: `
 // To view the current version and SHA of release binary of mesheryctl client 
@@ -125,7 +125,7 @@ mesheryctl version
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(ErrGettingRequestContext(err))
 			return
 		}
@@ -135,29 +135,29 @@ mesheryctl version
 		resp, err := client.Do(req)
 
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Warn(ErrConnectingToServer(err))
 			return
 		}
 
 		// needs multiple defer as Body.Close needs a valid response
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
 
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows)
+		utils.PrintToTable(header, rows, nil)
 	},
 }

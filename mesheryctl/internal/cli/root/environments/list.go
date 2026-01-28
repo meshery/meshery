@@ -15,135 +15,84 @@
 package environments
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/eiannone/keyboard"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type environmentListFlags struct {
+	count    bool
+	orgID    string
+	page     int
+	pagesize int
+}
+
+var environmentListFlagsProvided environmentListFlags
 
 var listEnvironmentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered environments",
-	Long:  `List name of all registered environments`,
+	Long: `List detailed information of all registered environments
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
 // List all registered environment
-mesheryctl environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgID]
 
-// Documentation for environment can be found at:
-https://docs.meshery.io/concepts/logical/environments
+// List count of all registered environment
+mesheryctl environment list --orgID [orgID] --count
 
+// List all registered environment at a specific page
+mesheryctl environment list --orgID [orgID] --page [page]
+
+// List all registered environment with a specific page size
+mesheryctl environment list --orgID [orgID] --pagesize [pagesize]
 `,
 
-	Args: func(cmd *cobra.Command, args []string) error {
-		// Check if all flag is set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
-
-		if orgIdFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if environmentListFlagsProvided.orgID == "" {
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
+
+		if !utils.IsUUID(environmentListFlagsProvided.orgID) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgID: %s", environmentListFlagsProvided.orgID))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
+		data := display.DisplayDataAsync{
+			UrlPath:          fmt.Sprintf("%s?orgID=%s", environmentApiPath, environmentListFlagsProvided.orgID),
+			DataType:         "environments",
+			Header:           []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"},
+			Page:             environmentListFlagsProvided.page,
+			PageSize:         environmentListFlagsProvided.pagesize,
+			DisplayCountOnly: environmentListFlagsProvided.count,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-
-		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		environmentResponse := &environments.EnvironmentPage{}
-		err = json.Unmarshal(data, environmentResponse)
-		if err != nil {
-			return err
-		}
-		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
-		rows := [][]string{}
-		for _, environment := range environmentResponse.Environments {
-			rows = append(rows, []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()})
-		}
-
-		if len(rows) == 0 {
-			utils.Log.Info("No environment found")
-			return nil
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of environments and current page number
-				whiteBoardPrinter.Println("Total number of environments: ", len(rows))
-				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
-			}
-		}
-		return nil
+		return display.ListAsyncPagination(data, processEnvironmentData)
 	},
+}
+
+func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
+	rows := [][]string{}
+	for _, environment := range environmentResponse.Environments {
+		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
+		rows = append(rows, row)
+	}
+	return rows, int64(environmentResponse.TotalCount)
+}
+
+func init() {
+	listEnvironmentCmd.Flags().BoolVarP(&environmentListFlagsProvided.count, "count", "c", false, "(optional) Display count only")
+	listEnvironmentCmd.Flags().StringVarP(&environmentListFlagsProvided.orgID, "orgID", "", "", "Organization ID")
+	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.page, "page", "", 1, "(optional) Page number of paginated results")
+	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.pagesize, "pagesize", "", 10, "(optional) Number of results per page")
 }

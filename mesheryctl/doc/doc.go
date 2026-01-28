@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
@@ -170,7 +170,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 
 	// check if the command is runnable
 	if cmd.Runnable() {
-		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine()))
+		fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine())
 	}
 
 	// check cmd has annotations link and caption
@@ -191,11 +191,11 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 			if examples[i] != "" && examples[i] != " " && examples[i] != "	" {
 				if strings.HasPrefix(examples[i], "//") {
 					// Description Line
-					buf.WriteString(strings.Replace(examples[i], "// ", "", -1) + "\n")
+					buf.WriteString(strings.ReplaceAll(examples[i], "// ", "") + "\n")
 				} else {
 					// Code Block Line
 
-					buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i]))
+					fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i])
 				}
 			}
 		}
@@ -236,7 +236,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 					if subCmd.IsAvailableCommand() {
 						subCmdPathParts := strings.Split(subCmd.CommandPath(), " ")
 						subCmdString := strings.Join(subCmdPathParts[1:], "-")
-						buf.WriteString(fmt.Sprintf("* [%s](%s)\n", subCmd.CommandPath(), subLinkHandler(subCmdString)))
+						fmt.Fprintf(buf, "* [%s](%s)\n", subCmd.CommandPath(), subLinkHandler(subCmdString))
 					}
 				}
 				buf.WriteString("\n")
@@ -278,7 +278,7 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 		}
 	}
 
-	basename := strings.Replace(cmd.CommandPath(), " ", "-", -1) + ".md"
+	basename := strings.ReplaceAll(cmd.CommandPath(), " ", "-") + ".md"
 	filename := filepath.Join(dir, basename)
 
 	manuallyAddedContent, _ := getManuallyAddedContentMap(filename)
@@ -287,7 +287,7 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	_, err = io.WriteString(f, filePrepender(filename))
 	if err != nil {
@@ -353,11 +353,10 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 		return err
 	}
 
-	// check error before defer
+	// check error before closing
 	if err = f.Close(); err != nil {
 		return err
 	}
-	defer f.Close()
 
 	return nil
 }

@@ -23,10 +23,12 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +46,31 @@
     "model": {
       "version": "2.5.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +82,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +110,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +140,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +168,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +182,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +191,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -190,8 +201,10 @@
   },
   "configuration": null,
   "component": {
+    "version": "storage.hpe.com/v1",
     "kind": "HPEVolumeInfo",
-    "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}",
-    "version": "storage.hpe.com/v1"
-  }
+    "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

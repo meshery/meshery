@@ -14,7 +14,7 @@
 
 package config
 
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 const (
 	ErrInvalidMeshConfigCode = "mesheryctl-1008"

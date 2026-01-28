@@ -17,84 +17,103 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl components view [component-name] subcommand.
+type componentViewFlags struct {
+	OutputFormat string
+	Save         bool
+}
+
+func (c *componentViewFlags) validate() error {
+	knownOutputFormat := []string{"json", "yaml"}
+
+	c.OutputFormat = strings.ToLower(c.OutputFormat)
+	if !slices.Contains(knownOutputFormat, c.OutputFormat) {
+		errMsg := utils.ComponentSubError(fmt.Sprintf("output-format %q is invalid. Available options [json|yaml]", c.OutputFormat), "view")
+		return utils.ErrFlagsInvalid(errMsg)
+	}
+
+	return nil
+}
+
+func saveComponentTofile(format, homeDir, componentName string, output []byte) error {
+	fmt.Println("Saving output as", format, "file")
+	fileName := filepath.Join(homeDir, ".meshery", fmt.Sprintf("component_%s.%s", componentName, format))
+	err := os.WriteFile(fileName, output, 0644)
+	if err != nil {
+		return errors.Wrap(err, "failed to save output as "+format+" file")
+	}
+	fmt.Println("Output saved as", format, "in file:", fileName)
+	return nil
+}
+
+var cmdComponentViewFlags componentViewFlags
+
+// represents the mesheryctl component view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view registered components",
-	Long:  "view a component registered in Meshery Server",
+	Short: "View registered components",
+	Long: `View a component registered in Meshery Server
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
+
+// View details of a specific component in specifed format 
+mesheryctl component view [component-name] -o [json|yaml]
+
+// View details of a specific component in specified format and save it as a file
+mesheryctl component view [component-name] -o [json|yaml] --save
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return cmdComponentViewFlags.validate()
+	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl component view [component-name]\nRun 'mesheryctl component view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("component name isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
 		componentDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, componentDefinition)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		viewUrlValue := url.Values{}
+		viewUrlValue.Add("search", componentDefinition)
+		viewUrlValue.Add("pagesize", "all")
+
+		urlPath := fmt.Sprintf("%s?%s", componentApiPath, viewUrlValue.Encode())
+
+		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		componentResponse := &models.MeshmodelComponentsAPIResponse{}
-		err = json.Unmarshal(data, componentResponse)
-		if err != nil {
-			utils.Log.Error(err)
+		if componentResponse.Count == 0 {
+			utils.Log.Info("No component(s) found for the given name: ", componentDefinition)
 			return nil
 		}
 
 		var selectedComponent component.ComponentDefinition
 
-		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found for the given name: ", componentDefinition)
-			return nil
-		} else if componentResponse.Count == 1 {
+		if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
 		} else {
 			selectedComponent = selectComponentPrompt(componentResponse.Components)
@@ -102,48 +121,29 @@ mesheryctl components view [component-name]
 
 		var output []byte
 
-		// user may pass flag in lower or upper case but we have to keep it lower
-		// in order to make it consistent while checking output format
-		outFormatFlag = strings.ToLower(outFormatFlag)
-
-		if outFormatFlag != "json" && outFormatFlag != "yaml" {
-			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
-		}
 		// Get the home directory of the user to save the output file
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")
 
-		if outFormatFlag == "yaml" {
+		if cmdComponentViewFlags.OutputFormat == "yaml" {
 			if output, err = yaml.Marshal(selectedComponent); err != nil {
-				return errors.Wrap(err, "failed to format output in YAML")
+				return format.ErrOutputToYaml()
 			}
-			if saveFlag {
-				fmt.Println("Saving output as YAML file")
-				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
-				if err != nil {
-					return errors.Wrap(err, "failed to save output as YAML file")
-				}
-				fmt.Println("Output saved as YAML file in ~/.meshery/component_" + componentString + ".yaml")
-			} else {
-				fmt.Print(string(output))
+			if cmdComponentViewFlags.Save {
+				return saveComponentTofile(cmdComponentViewFlags.OutputFormat, homeDir, componentString, output)
 			}
-		} else if outFormatFlag == "json" {
-			if saveFlag {
-				fmt.Println("Saving output as JSON file")
+			return format.OutputYaml(selectedComponent)
+		}
+
+		if cmdComponentViewFlags.OutputFormat == "json" {
+			if cmdComponentViewFlags.Save {
 				output, err = json.MarshalIndent(selectedComponent, "", "  ")
 				if err != nil {
-					return errors.Wrap(err, "failed to format output in JSON")
+					return format.ErrOutputToJson()
 				}
-				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".json", output, 0666)
-				if err != nil {
-					return errors.Wrap(err, "failed to save output as JSON file")
-				}
-				fmt.Println("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
-				return nil
+				return saveComponentTofile(cmdComponentViewFlags.OutputFormat, homeDir, componentString, output)
 			}
-			return OutputJson(selectedComponent)
-		} else {
-			return errors.New("output-format choice invalid, use [json|yaml]")
+			return format.OutputJson(selectedComponent)
 		}
 
 		return nil
@@ -152,6 +152,29 @@ mesheryctl components view [component-name]
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
-	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewComponentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewComponentCmd.Flags().StringVarP(&cmdComponentViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+}
+
+// selectComponentPrompt lets user to select a model if models are more than one
+func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
+	componentNames := make([]string, len(components))
+
+	for i, component := range components {
+		componentNames[i] = fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
+	}
+
+	prompt := promptui.Select{
+		Label: "Select component",
+		Items: componentNames,
+	}
+
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			continue
+		}
+
+		return components[i]
+	}
 }

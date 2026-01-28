@@ -12,11 +12,12 @@ subcommand: workspace
 
 # mesheryctl exp workspace
 
-View list of workspaces and detail of workspaces
+Managge workspaces under an organization
 
 ## Synopsis
 
-View list of workspaces and detailed information of a specific workspaces
+Create, list of workspaces under an organization
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace [flags]
@@ -42,19 +43,12 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 </div>
 </pre> 
 
-Documentation for workspace can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/workspaces/
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for workspace
+      --count   total number of registered workspaces
+  -h, --help    help for workspace
 
 </div>
 </pre>

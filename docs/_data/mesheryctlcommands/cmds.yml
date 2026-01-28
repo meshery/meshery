@@ -404,7 +404,7 @@ system-provider:
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI
-  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Layer5"
 
   flags:
     output-format:
@@ -653,17 +653,27 @@ design:
 
     list:
       name: list
-      description: displays a list of available design files
+      description: Displays a list of available design files
       usage: mesheryctl design list
       flags:
         page:
           name: --page, -p
-          description: list designs by specific page number (25 designs per page)
+          description: list designs by specific page number (10 designs per page)
         verbose:
           name: --verbose, -v
           description: show all design file metadata
           usage: mesheryctl design list --verbose
           example: mesheryctl design list -v
+        pagesize:
+          name: --pagesize
+          description: number of designs to be displayed per page (default 10)
+          usage: mesheryctl design list --pagesize [number]
+          example: mesheryctl design list --pagesize 50
+        count:
+          name: --count, -c
+          description: display the total number of available designs
+          usage: mesheryctl design list --count
+          example: mesheryctl design list --count
 
     view:
       name: view
@@ -701,22 +711,10 @@ design:
       name: export
       description: Export a design from Meshery
       usage: mesheryctl design export [design-name | ID]
-      example: |
-        # Export a design with a specific ID
-        mesheryctl design export [design-name | ID]
-
-        # Export a design with a specific ID and type
-        mesheryctl design export -[design-name | ID] --type [design-type]
-
-        # Export a design and save it to a specific directory
-        mesheryctl design export -[design-name | ID] --output ./designs
-
-        # Export a design with a specific type and save it to a directory
-        mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
       flags:
         type:
           name: --type
-          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          description: Specify the design type to export (default current). Supported types are oci,current,original
           usage: mesheryctl design export --type [design-type]
           example: mesheryctl design export --type oci
         output:
@@ -886,18 +884,33 @@ model:
       usage: mesheryctl model --help
       example: mesheryctl model --help
   subcommands:
-    list:
-      name: list
-      description: List models present in the registry
-      usage: mesheryctl model list [flags]
+    build:
+      name: build
+      description: Create an OCI-compliant package from the model files
+      usage: |
+        mesheryctl model build [model-name] [flags]
+        mesheryctl model build [model-name]/[model-version] [flags]
       flags:
-        page:
-          name: --page, -p
-          description: list models by specific page number (25 models per page)
-    search:
-      name: search
-      description: Using a keyword(s) search the registry for matching model(s)
-      usage: mesheryctl model search [keyword]
+        path:
+          name: --path, -p
+          description: (optional) looks for a model folder under specified path, defaults to current dir.
+          usage: |
+            mesheryctl model build [model-name] --path [path]
+            mesheryctl model build [model-name]/[model-version] --path [path]
+          examples:
+            - mesheryctl model build aws-ec2-controller --path .
+            - mesheryctl model build aws-ec2-controller --path ./some/folder/where/to/look/for/files
+            - mesheryctl model build aws-ec2-controller/v1.2.3 --path .
+            - mesheryctl model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
+    export:
+      name: export
+      description: Export a model by name to the given output type (default is oci).
+      usage: mesheryctl model export [model-name]
+      examples:
+        - mesheryctl model export [model-name] -l /home/meshery
+        - mesheryctl model export [model-name] --discard-components
+        - mesheryctl model export [model-name] -o yaml
+        - mesheryctl model export [model-name] --version v0.7.3
     generate:
       name: generate
       description: Generate models by specifying the directory, file, or URL.
@@ -912,6 +925,59 @@ model:
         register:
           name: --register, -r
           description: Skip model registration (default is true).    
+    import:
+      name: import
+      description: Import models using a file or filepath directly to the meshery registry
+      usage: mesheryctl model import --file [ file | path | URL ]
+      examples:
+        - mesheryctl model import /path/to/[file.yaml|file.json]
+        - mesheryctl model import /path/to/models
+      flags:
+        file:
+          name: --file, -f
+          description: (optional) path to a single model file to import from local filesystem or URL to import from web location
+          usage: mesheryctl model import --file [ file | path | URL ]
+          examples: 
+            - mesheryctl model import --file /path/to/model.tar
+            - mesheryctl model import --file /path/to/model.tar.gz
+            - mesheryctl model import --file https://example.com/model.tar.gz
+            - mesheryctl model import --file /path/to/model/directory # contains CSV files
+    init:
+      name: init
+      description: Scaffold a folder structure for model creation
+      usage: mesheryctl model init [model-name] [flags]
+      flags:
+        output-format:
+          name: --output-format, -o
+          description: (optional) format to scaffold files to, supports json or yaml, planned to support csv, defaults to json.
+          usage: mesheryctl model init [model-name] --output-format [format]
+          examples:
+            - mesheryctl model init aws-ec2-controller --output-format json
+            - mesheryctl model init aws-ec2-controller --output-format yaml
+        path:
+          name: --path, -p
+          description: (optional) generates a folder structure under specified path, defaults to current dir.
+          usage: mesheryctl model init [model-name] --path [path]
+          examples:
+            - mesheryctl model init aws-ec2-controller --path .
+            - mesheryctl model init aws-ec2-controller --path ./some/folder/where/to/put/files
+        version:
+          name: --version
+          description: (optional) model version, defaults to v0.1.0
+          usage: mesheryctl model init [model-name] --version [version]
+          example: mesheryctl model init aws-ec2-controller --version v1.2.3
+    list:
+      name: list
+      description: List models present in the registry
+      usage: mesheryctl model list [flags]
+      flags:
+        page:
+          name: --page, -p
+          description: list models by specific page number (25 models per page)
+    search:
+      name: search
+      description: Using a keyword(s) search the registry for matching model(s)
+      usage: mesheryctl model search [keyword]
     view:
       name: view
       description: View details of a specific model
@@ -920,27 +986,11 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
-    import:
-      name: import
-      description: Import models using a file or filepath directly to the meshery registry
-      usage: mesheryctl model import [ file | filepath ]
-      examples:
-         - mesheryctl import model /path/to/[file.yaml|file.json]
-         - mesheryctl import model /path/to/models
-    export:
-      name: export
-      description: Export a model by name to the given output type (default is oci).
-      usage: mesheryctl model export [model-name]
-      examples:
-         - mesheryctl model export [model-name] -l /home/meshery
-         - mesheryctl model export [model-name] --discard-components
-         - mesheryctl model export [model-name] -o yaml
-         - mesheryctl model export [model-name] --version v0.7.3
 
-components:
-  name: components
+component:
+  name: component
   description: Fundamental building block used to represent and define the infrastructure under management
-  usage: mesheryctl components [command] [flags]
+  usage: mesheryctl component [command] [flags]
   flags:
     count:
       name: --count
@@ -948,13 +998,13 @@ components:
     help:
       name: --help, -h
       description: help for components
-      usage: mesheryctl components --help
-      example: mesheryctl components --help
+      usage: mesheryctl component --help
+      example: mesheryctl component --help
   subcommands:
     list:
       name: list
       description: List all components registered in Meshery Server
-      usage: mesheryctl components list [flags]
+      usage: mesheryctl component list [flags]
       flags:
         page:
           name: --page, -p
@@ -962,11 +1012,11 @@ components:
     search:
       name: search
       description: Using a keyword(s) search the registry for matching component(s)
-      usage: mesheryctl components search [keyword]
+      usage: mesheryctl component search [keyword]
     view:
       name: view
       description: View details of a specific component
-      usage: mesheryctl components view [component-name]
+      usage: mesheryctl component view [component-name]
       flags:
         output-format:
           name: -o, --output-format
@@ -974,8 +1024,8 @@ components:
         save:
           name: --save
           description: Save output as a JSON/YAML file
-          usage: mesheryctl components view --output-format [json|yaml] --save [filepath]
-          example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
+          usage: mesheryctl component view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl component view --save "bookInfo.yaml" --output-format yaml
 
 environment:
   name: environment
@@ -1026,36 +1076,77 @@ environment:
           usage: mesheryctl environment view --output-format [json|yaml] --save [filepath]
           example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
 
+connection:
+  name: connection
+  description: Manage Meshery connections
+  usage: mesheryctl connection [command] [flags]
+  flags:
+    help:
+      name: --help, -h
+      description: help for connection
+      usage: mesheryctl connection --help
+      example: mesheryctl connection --help
+    count:
+      name: --count
+      description: (optional) Get the total number of connections
+  subcommands:
+    create:
+      name: create
+      description: Create a new connection to a Kubernetes cluster or other supported platform
+      usage: mesheryctl connection create [flags]
+      flags:
+        type:
+          name: -t, --type
+          description: (required) type of connection to create (aks, eks, gke, minikube)
+          usage: mesheryctl connection create --type [type]
+        token:
+          name: --token
+          description: (optional) Path to token for authenticating to Meshery API
+          usage: mesheryctl connection create --type [type] --token [path/to/token/file]
+    delete:
+      name: delete
+      description: delete a connection
+      usage: mesheryctl connection delete [connection_id]
+    list:
+      name: list
+      description: list all the connections
+      usage: mesheryctl connection list [flags]
+      flags:
+        count:
+          name: --count
+          description: (optional) Get the total number of connections
+          usage: mesheryctl connection list --count
+        kind:
+          name: -k, --kind
+          description: (optional) Filter by kind (repeatable)
+          usage: mesheryctl connection list --kind [kind] --kind [kind]
+        page:
+          name: -p, --page
+          description: "(optional) List a set of connection in specific page (default=1)."
+          usage: mesheryctl connection list --page [page number]
+        pagesize:
+          name: --pagesize
+          description: "(optional) Number of connections per page (default=10)."
+          usage: mesheryctl connection list --pagesize [page size]
+        status:
+          name: -s, --status
+          description: (optional) Filter by status (repeatable)
+          usage: mesheryctl connection list --status [status] --status [status]
+    view:
+      name: view
+      description: view a connection queried by the connection id
+      usage: mesheryctl connection view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+          usage: mesheryctl connection view --output-format [json|yaml]
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+          usage: mesheryctl connection view --output-format [json|yaml] --save
+
 exp:
-  connections:
-    name: connections
-    description: Manage Meshery connections
-    usage: mesheryctl exp connections [command] [flags]
-    flags:
-      help:
-        name: --help, -h
-        description: help for exp connections
-        usage: mesheryctl exp connections --help
-        example: mesheryctl exp connections --help
-    subcommands:
-      delete:
-        name: delete
-        description: delete a connection
-        usage: mesheryctl exp connections delete [connection_id]
-      list:
-        name: list
-        description: list all the connections
-        usage: mesheryctl exp connections list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp connections list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp connections list --page [page number]
-            example: mesheryctl exp connections list --page 2
-          count:
-            name: --count
-            description: (optional) Get the number of exp connections in total
-  
   relationship:
     name: relationship
     description: View list of relationships and details of relationship
@@ -1134,17 +1225,28 @@ exp:
           org:
             name: -o, -orgId
             description: organization id 
-  org:
-    name: org
-    description: show existing organizations with their name,id, date of creation
-    usage: mesheryctl exp org 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
     flags:
-      description: 
-        pageNo:
-          name: -p --pagenumber
-          description: page number to fetch
-        pagesize:
-          name: -s --size
-          description: page size
-      
-
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations

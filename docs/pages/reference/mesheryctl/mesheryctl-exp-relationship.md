@@ -12,11 +12,13 @@ subcommand: relationship
 
 # mesheryctl exp relationship
 
-View list of relationships and details of relationship
+Manage relationships
 
 ## Synopsis
 
-Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship
+Generate, list, search and view relationship(s) and detailed information
+Meshery uses relationships to define how interconnected components interact.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship [flags]
@@ -26,34 +28,42 @@ mesheryctl exp relationship [flags]
 
 ## Examples
 
-To view list of relationships
+Display number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships list
+mesheryctl relationship --count
 
 </div>
 </pre> 
 
-To view a specific relationship
+Generate a relationship documentation 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships view [model-name]
+mesheryctl exp relationship generate [flags]
 
 </div>
 </pre> 
 
-//To search a specific relationship
+List available relationship(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships search --[flag] [query-text]
+mesheryctl exp relationship list [flags]
 
 </div>
 </pre> 
 
-//To generate a relationship documentation 
+Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
+mesheryctl exp relationship search [flags] [query-text]
+
+</div>
+</pre> 
+
+View a specific relationship
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship view [model-name]
 
 </div>
 </pre> 
@@ -62,7 +72,8 @@ mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [shee
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for relationship
+  -c, --count   (optional) Get the number of relationship(s) in total
+  -h, --help    help for relationship
 
 </div>
 </pre>

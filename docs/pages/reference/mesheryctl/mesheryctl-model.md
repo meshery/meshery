@@ -12,11 +12,12 @@ subcommand: nil
 
 # mesheryctl model
 
-View list of models and detail of models
+Manage models in the registery
 
 ## Synopsis
 
-View list of models and detailed information of a specific model
+Export, generate, import, list, search and view model(s) and detailed informations
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]
@@ -26,7 +27,7 @@ mesheryctl model [flags]
 
 ## Examples
 
-To view total of available models
+Display number of available models in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model --count
@@ -34,7 +35,31 @@ mesheryctl model --count
 </div>
 </pre> 
 
-To view list of models
+Export registred models
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model export [model-name]
+
+</div>
+</pre> 
+
+Generate model(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model export [model-name]
+
+</div>
+</pre> 
+
+Import model(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model import -f [Uri]
+
+</div>
+</pre> 
+
+List available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
@@ -42,7 +67,15 @@ mesheryctl model list
 </div>
 </pre> 
 
-To view a specific model
+Search for a specific model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model search [model-name]
+
+</div>
+</pre> 
+
+View a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]
@@ -50,10 +83,25 @@ mesheryctl model view [model-name]
 </div>
 </pre> 
 
-To search for a specific model
+Scaffold a folder structure for model creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model search [model-name]
+mesheryctl model init [model-name]
+
+</div>
+</pre> 
+
+Create an OCI-compliant package from the model files
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model build [model-name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model build [model-name]/[model-version]
 
 </div>
 </pre> 
@@ -80,9 +128,11 @@ mesheryctl model search [model-name]
 
 ## See Also
 
+* [mesheryctl model build](/reference/mesheryctl/model/build)
 * [mesheryctl model export](/reference/mesheryctl/model/export)
 * [mesheryctl model generate](/reference/mesheryctl/model/generate)
 * [mesheryctl model import](/reference/mesheryctl/model/import)
+* [mesheryctl model init](/reference/mesheryctl/model/init)
 * [mesheryctl model list](/reference/mesheryctl/model/list)
 * [mesheryctl model search](/reference/mesheryctl/model/search)
 * [mesheryctl model view](/reference/mesheryctl/model/view)

@@ -4,6 +4,14 @@ import rego.v1
 
 #--- General datastructures and algorithm  utils
 
+set_to_array(set) := [val |
+	some val in set
+]
+
+array_to_set(arr) := {val |
+	some val in arr
+}
+
 new_uuid(seed) := id if {
 	now := format_int(time.now_ns(), 10)
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
@@ -27,6 +35,15 @@ pop_first(arr) := array.slice(arr, 1, count(arr))
 
 array_endswith(arr, item) if {
 	arr[count(arr) - 1] == item
+}
+
+# coalesce is a utility function that returns the first non-null value from the provided arguments.
+coalesce(val, defautl) := val if {
+	val != null
+}
+
+coalesce(val, defautl) := defautl if {
+	val == null
 }
 
 # truncate_set restricts a set to a maximum number of elements
@@ -60,7 +77,19 @@ truncate_set(s, max_length) := result if {
 	result := {arr[i] | i < max_length}
 }
 
-#-----------
+# normalize_path normalizes a given path to a slash-separated string compatible with json.patch.
+normalize_path(p) := out if {
+	# If input is a string, return as-is
+	is_string(p)
+	out := p
+}
+
+normalize_path(p) := out if {
+	# If input is an array, convert to slash-separated string
+	is_array(p)
+	joined := concat("/", p)
+	out := sprintf("/%s", [joined])
+}
 
 #-------- Get Component Configuration -----------
 
@@ -112,7 +141,15 @@ is_direct_reference(ref) if {
 }
 
 configuration_for_component_at_path(path, component, design) := result if {
+	# if path starts with configuration, then we need to get the configuration for the component ( i.e alias aware config)
+	path[0] == "configuration"
 	result := object_get_nested(get_component_configuration(component, design), pop_first(path), null)
+}
+
+configuration_for_component_at_path(path, component, design) := result if {
+	# if path does not start with configuration, then we are looking for a direct reference
+	not path[0] == "configuration"
+	result := object_get_nested(component, path, null)
 }
 
 # get_array_aware_configuration_for_component_at_path returns the configuration for a component at a given path. If the path is an array reference, it returns the configuration for each element in the array. Otherwise, it returns the configuration for the path.
@@ -151,4 +188,18 @@ get_array_aware_configuration_for_component_at_path(ref, component, design) := r
 		"items": [value],
 		"paths": [ref],
 	}
+}
+
+# upsert item into set
+# if the item already exists in the set, it will be replaced with the new item
+# if the item does not exist in the set, it will be added to the set
+upsert_into_set(set, item, keys) := result if {
+	without_item := {x |
+		some x in set
+		every key in keys {
+			x[key] != item[key]
+		}
+	}
+
+	result := without_item | item
 }

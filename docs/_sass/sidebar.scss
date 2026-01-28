@@ -3,6 +3,7 @@
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
+  margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
   & .sidebar-container-wrapper {
     height: 100%;
@@ -20,6 +21,7 @@
     }
   }
   @media (max-width: 75em) {
+    margin-top: 0;
     transform: translateX(calc(-100% + 2rem));
     position: fixed;
     display: flex;
@@ -145,7 +147,7 @@
           margin-bottom: .5rem;
           
           &:hover {
-            font-weight: normal;
+            // font-weight: normal;
           }
         }
         &-link a {

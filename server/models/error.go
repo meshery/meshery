@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 // Please reference the following before contributing an error code:
@@ -137,6 +137,7 @@ const (
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
+	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
 )
 
 var (
@@ -258,18 +259,18 @@ func ErrEncoding(err error, obj string) error {
 }
 
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
 }
 func ErrStatusCode(statusCode int) error {
 	return errors.New(
 		ErrStatusCodeCode,
 		errors.Alert,
 		[]string{"Request was not successful"},
-		[]string{fmt.Sprintf("Received unexpected status code: %d", statusCode)},
+		[]string{fmt.Sprintf("Received unexpected status code: %d. ", statusCode)},
 		[]string{
 			"The server might be down or temporarily unavailable.",
 			"There could be network connectivity issues between the client and the server.",
@@ -608,4 +609,8 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 
 func ErrMarshallingDesignIntoYAML(err error) error {
 	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrMeshsyncDataHandler(err error) error {
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }

@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 
-test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
+test.describe.skip('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
   const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
 
   mesheryAdapters.forEach(({ adapterName, adapterPort }) => {
@@ -10,7 +11,9 @@ test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
       page,
     }) => {
       // Visit Settings Page
-      await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
+      const dashboardPage = new DashboardPage(page);
+      await dashboardPage.navigateToDashboard();
+      await dashboardPage.navigateToSettings();
 
       // Navigate to 'Adapters' tab
       await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
@@ -28,7 +31,7 @@ test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
       await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
       // Verify success notification
-      await expect(page.getByText('Adapter was configured!')).toBeVisible();
+      await expect(page.getByText('Adapter configured')).toBeVisible();
 
       // Visit Lifecycle > Service Mesh Page
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/adapter`);

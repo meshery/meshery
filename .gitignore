@@ -13,7 +13,7 @@
 *.out
 
 .DS_Store
-
+.dccache
 .vscode/
 .cusorignore
 *.config
@@ -30,6 +30,7 @@ fortio_chart.js
 ui/.next/
 ui/out/
 ui/node_modules/
+ui/tests/e2e/.env
 
 provider-ui/out/
 provider-ui/.next/
@@ -79,3 +80,11 @@ default.profraw
 wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
+allure-results/
+playwright-report/
+
+install/docker-extension/vm/vm
+.env
+ui/.env
+*.env
+*/.env

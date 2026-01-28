@@ -15,16 +15,16 @@
 package system
 
 import (
+	"context"
 	"fmt"
-	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -101,24 +101,26 @@ mesheryctl system status --verbose
 
 		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		if !ok {
-			log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
+			utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 			return nil
 		}
 
 		switch currPlatform {
 		case "docker":
-			// List the running Meshery containers
-			start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
+			// List the running Meshery containers using compose library
+			composeClient, err := utils.NewComposeClient()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+			}
 
-			outputStd, err := start.Output()
+			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}
-
-			outputString := string(outputStd)
 
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
@@ -204,7 +206,7 @@ mesheryctl system status --verbose
 				columnNames = append(columnNames, "Pod-IP")
 			}
 			// Print the data to a table for readability
-			utils.PrintToTable(columnNames, data)
+			utils.PrintToTable(columnNames, data, nil)
 
 			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}

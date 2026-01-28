@@ -5,24 +5,10 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/spf13/pflag"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-func clearAllFlags() {
-	onboardCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-		_ = flag.Value.Set("")
-	})
-}
-
 func TestOnboardCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -35,14 +21,7 @@ func TestOnboardCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-	}{
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "Onboard Design",
 			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
@@ -103,61 +82,52 @@ func TestOnboardCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name:             "Onboard design with invalid source type",
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "invalid-source"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: func() error {
+				// validSourceTypes will be populated from the mock response
+				// These should match the values in view.designTypes.response.golden
+				return ErrInValidSource("invalid-source", []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"})
+			}(),
+		},
+		{
+			Name:             "Onboard non-existent design by name",
+			Args:             []string{"onboard", "nonexistent-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound(),
+		},
 	}
 
 	// Run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			for _, url := range tt.URLs {
-				// View api response from golden files
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-
-				// mock response
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
-
-			// set token
-			utils.TokenFlag = tt.Token
-
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-
-			DesignCmd.SetArgs(tt.Args)
-			DesignCmd.SetOutput(b)
-			err := DesignCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
-					return
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-			clearAllFlags()
-		})
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }

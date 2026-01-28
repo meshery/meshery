@@ -15,11 +15,9 @@
 package design
 
 import (
-	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +30,7 @@ var (
 // DesignCmd represents the root command for design commands
 var DesignCmd = &cobra.Command{
 	Use:   "design",
-	Short: "Cloud Native Designs Management",
+	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
@@ -60,9 +58,9 @@ mesheryctl design list
 				}
 			}
 			if len(suggestions) > 0 {
-				return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl design --help' to display usage guide.\n", args[0], suggestions)))
+				return ErrInvalidCommand(args[0], suggestions)
 			}
-			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
+			return ErrInvalidCommand(args[0], []string{})
 		}
 		return nil
 	},
@@ -71,6 +69,6 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
 }
