@@ -56,7 +56,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 		}
 
 		if !utils.IsUUID(workspacePayload.OrganizationID) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %q", workspacePayload.OrganizationID))
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid organization ID: %q", workspacePayload.OrganizationID))
 		}
 
 		return nil
