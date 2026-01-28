@@ -221,7 +221,17 @@ const Header = ({ handleFilter, handleClose }) => {
   };
 
   // Fix: Resolve the string name from Redux back to a Component
-  const Icon = ICON_MAP[uiConfig.icon] || BellIcon;
+  let Icon = ICON_MAP[uiConfig.icon];
+  if (!Icon) {
+    if (uiConfig.icon) {
+      console.warn(
+        '[NotificationCenter] Icon "' +
+          uiConfig.icon +
+          '" not found. Falling back to default BellIcon.',
+      );
+    }
+    Icon = BellIcon;
+  }
   return (
     <NotificationContainer>
       <Title>
