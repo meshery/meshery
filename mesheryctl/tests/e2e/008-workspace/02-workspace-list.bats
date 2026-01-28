@@ -12,6 +12,10 @@ setup() {
     fi
 }
 
+teardown_file() {
+    rm -rf "$TESTDATA_DIR"
+}
+
 require_connection_id() {
     [ -n "$CONNECTION_ID" ] || skip "No connection ID available"
 }
