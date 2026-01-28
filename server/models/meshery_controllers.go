@@ -7,13 +7,20 @@ import (
 	"sync"
 	"time"
 
+	"maps"
+
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshkit/broker"
+	channelBroker "github.com/meshery/meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	libmeshsync "github.com/meshery/meshsync/pkg/lib/meshsync"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 )
 
@@ -51,6 +58,13 @@ type MesheryControllersHelper struct {
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
+
+	meshsyncDeploymentMode schemasConnection.MeshsyncDeploymentMode
+
+	// event broadcasting dependencies
+	eventBroadcaster *Broadcast
+	provider         Provider
+	systemID         *uuid.UUID
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -65,7 +79,14 @@ func (mch *MesheryControllersHelper) GetOperatorsStatusMap() controllers.Meshery
 	return mch.ctxOperatorStatus
 }
 
-func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controllers.OperatorDeploymentConfig, dbHandler *database.Handler) *MesheryControllersHelper {
+func NewMesheryControllersHelper(
+	log logger.Handler,
+	operatorDepConfig controllers.OperatorDeploymentConfig,
+	dbHandler *database.Handler,
+	eventBroadcaster *Broadcast,
+	provider Provider,
+	systemID *uuid.UUID,
+) *MesheryControllersHelper {
 	return &MesheryControllersHelper{
 		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
 		log:                   log,
@@ -76,7 +97,16 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
+		meshsyncDeploymentMode: schemasConnection.MeshsyncDeploymentModeOperator,
+		eventBroadcaster:       eventBroadcaster,
+		provider:               provider,
+		systemID:               systemID,
 	}
+}
+
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConnection.MeshsyncDeploymentMode) *MesheryControllersHelper {
+	mch.meshsyncDeploymentMode = value
+	return mch
 }
 
 // initializes Meshsync data handler for the contexts for whom it has not been
@@ -89,54 +119,197 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
-		controllerHandlers := mch.ctxControllerHandlers
+		var brokerHandler broker.Handler
+		var stopFunc func()
 
-		// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
-		// do something if broker is being deployed , maybe try again after sometime
-		brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-		if brokerEndpoint == "" {
+		switch mch.meshsyncDeploymentMode {
+		case schemasConnection.MeshsyncDeploymentModeOperator:
+			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, userID)
+		case schemasConnection.MeshsyncDeploymentModeEmbedded:
+			brokerHandler = channelBroker.NewChannelBrokerHandler()
+			// use a standalone context here context.Background(), as
+			// meshsync run must be stopped only when meshsync data handler is deregistered
+			// and ctx which is passed from above, could be closed earlier
+			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, userID)
 			if err != nil {
-				mch.log.Warn(err)
+				mch.log.Error(err)
+				mch.emitErrorEvent("Failed to start MeshSync library run", err, map[string]any{
+					"k8sContextID":           ctxID,
+					"k8sContextName":         k8scontext.Name,
+					"connectionID":           k8scontext.ConnectionID,
+					"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
+				}, userID)
+				return mch
 			}
-			mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
+			stopFunc = stop
+		default:
+			mch.log.Warnf(
+				"MesheryControllersHelper unsupported meshsyncDeploymentMode %s",
+				mch.meshsyncDeploymentMode,
+			)
+			mch.emitWarningEvent("Unsupported MeshSync deployment mode", nil, map[string]any{
+				"k8sContextID":           ctxID,
+				"k8sContextName":         k8scontext.Name,
+				"connectionID":           k8scontext.ConnectionID,
+				"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
+			}, userID)
 			return mch
 		}
-		brokerHandler, err := nats.New(nats.Options{
-			// URLS: []string{"localhost:4222"},
-			URLS:           []string{brokerEndpoint},
-			ConnectionName: MesheryServerBrokerConnection,
-			Username:       "",
-			Password:       "",
-			ReconnectWait:  2 * time.Second,
-			MaxReconnect:   60,
-		})
-		if err != nil {
-			mch.log.Warn(err)
-			mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+
+		if brokerHandler == nil {
+			mch.log.Warnf("MesheryControllersHelper::AddMeshsynDataHandlers brokerHandler is nil")
+			mch.emitWarningEvent("MeshSync data handler broker is nil", nil, map[string]any{
+				"k8sContextID":   ctxID,
+				"k8sContextName": k8scontext.Name,
+				"connectionID":   k8scontext.ConnectionID,
+			}, userID)
 			return mch
 		}
-		mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
 		token, _ := ctx.Value(TokenCtxKey).(string)
-		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
-		err = msDataHandler.Run()
+		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
+		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
 			mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
+			mch.emitErrorEvent("Unable to connect MeshSync", err, map[string]any{
+				"k8sContextID":   ctxID,
+				"k8sContextName": k8scontext.Name,
+				"connectionID":   k8scontext.ConnectionID,
+			}, userID)
 			return mch
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
-
 	}
 
 	// }(mch)
 
+	// Emit success event for successful MeshSync data handler attachment
+	var description string
+	if mch.meshsyncDeploymentMode != "" {
+		description = fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode))
+	} else {
+		description = "MeshSync connected"
+	}
+	mch.emitEvent(
+		description,
+		events.Informational,
+		map[string]any{
+			"k8sContextID":           k8scontext.ID,
+			"k8sContextName":         k8scontext.Name,
+			"connectionID":           k8scontext.ConnectionID,
+			"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
+		},
+		userID,
+	)
+
 	return mch
 }
 
-func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
+func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
+	k8scontext K8sContext,
+	userID uuid.UUID,
+) broker.Handler {
+	ctxID := k8scontext.ID
+	controllerHandlers := mch.ctxControllerHandlers
 
-	mch.ctxMeshsyncDataHandler = nil
+	// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+	// do something if broker is being deployed , maybe try again after sometime
+	brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
+	if brokerEndpoint == "" {
+		if err != nil {
+			mch.log.Warn(err)
+			mch.emitWarningEvent("Failed to get Meshery Broker endpoint", err, map[string]any{
+				"k8sContextID":   ctxID,
+				"k8sContextName": k8scontext.Name,
+				"connectionID":   k8scontext.ConnectionID,
+			}, userID)
+		}
+		mch.log.Info(
+			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
+		)
+		mch.emitWarningEvent("Meshery Broker unreachable", nil, map[string]any{
+			"k8sContextID":   ctxID,
+			"k8sContextName": k8scontext.Name,
+			"connectionID":   k8scontext.ConnectionID,
+		}, userID)
+		return nil
+	}
+	brokerHandler, err := nats.New(nats.Options{
+		// URLS: []string{"localhost:4222"},
+		URLS:           []string{brokerEndpoint},
+		ConnectionName: MesheryServerBrokerConnection,
+		Username:       "",
+		Password:       "",
+		ReconnectWait:  2 * time.Second,
+		MaxReconnect:   60,
+	})
+
+	if err != nil {
+		mch.log.Warn(err)
+		mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+		mch.emitWarningEvent("Failed to connect to Meshery Broker", err, map[string]any{
+			"k8sContextID":   ctxID,
+			"k8sContextName": k8scontext.Name,
+			"connectionID":   k8scontext.ConnectionID,
+			"brokerEndpoint": brokerEndpoint,
+		}, userID)
+		return nil
+	}
+	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+	return brokerHandler
+}
+
+// meshsynDataHandlersStartLibMeshsyncRun starts the libmeshsync run for the given context.
+// returns stop function to stop goroutine
+func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
+	ctx context.Context,
+	brokerHandler broker.Handler,
+	k8sContext K8sContext,
+	userID uuid.UUID,
+) (func(), error) {
+	kubeConfig, err := k8sContext.GenerateKubeConfig()
+	if err != nil {
+		return nil, fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error generating kubeconfig from context: %v", err)
+	}
+
+	cancelCtx, stopFunc := context.WithCancel(ctx)
+
+	go func() {
+		if err := libmeshsync.Run(
+			mch.log,
+			libmeshsync.WithOutputMode("broker"),
+			libmeshsync.WithBrokerHandler(brokerHandler),
+			libmeshsync.WithKubeConfig(kubeConfig),
+			libmeshsync.WithContext(cancelCtx),
+		); err != nil {
+			meshsyncErr := fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error running meshsync lib: %v", err)
+			mch.log.Error(meshsyncErr)
+			mch.emitErrorEvent("Error running MeshSync library", meshsyncErr, map[string]any{
+				"k8sContextID":           k8sContext.ID,
+				"k8sContextName":         k8sContext.Name,
+				"connectionID":           k8sContext.ConnectionID,
+				"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
+			}, userID)
+		}
+	}()
+
+	return stopFunc, nil
+}
+
+func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
+	if mch.ctxMeshsyncDataHandler != nil {
+		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
+		mch.ctxMeshsyncDataHandler.Stop()
+		mch.ctxMeshsyncDataHandler = nil
+	}
+}
+
+func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
+	if mch.ctxMeshsyncDataHandler != nil {
+		return mch.ctxMeshsyncDataHandler.Resync()
+	}
+	return nil
 }
 
 // attach a MesheryController for each context if
@@ -153,6 +326,11 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	// means that the config is invalid
 	if err != nil {
 		mch.log.Error(err)
+		mch.emitErrorEvent("Failed to create Kubernetes client", err, map[string]any{
+			"k8sContextID":   ctx.ID,
+			"k8sContextName": ctx.Name,
+			"connectionID":   ctx.ConnectionID,
+		}, uuid.Nil)
 	}
 
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
@@ -174,8 +352,12 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
+	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
+		return mch
+	}
 
 	if ot.IsUndeployed(mch.contextID) {
+		// this code is probably never reached as mch.contextID is never set
 		mch.ctxOperatorStatus = controllers.Undeployed
 	} else {
 		if mch.ctxControllerHandlers != nil {
@@ -231,6 +413,9 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
+	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
+		return mch
+	}
 	// go func(mch *MesheryControllersHelper) {
 
 	if mch.ctxOperatorStatus == controllers.NotDeployed {
@@ -241,6 +426,10 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 
 				if err != nil {
 					mch.log.Error(err)
+					mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
+						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
+						"operatorStatus":         mch.ctxOperatorStatus,
+					}, uuid.Nil)
 				}
 			}
 		}
@@ -265,6 +454,10 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 
 				if err != nil {
 					mch.log.Error(err)
+					mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
+						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
+						"operatorStatus":         mch.ctxOperatorStatus,
+					}, uuid.Nil)
 				}
 			}
 		}
@@ -440,4 +633,52 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 	}
 
 	return overrideValues
+}
+
+// General helper method to emit events for system-level operations
+func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, userID uuid.UUID) {
+	if mch.eventBroadcaster != nil && mch.systemID != nil {
+		event := events.NewEvent().
+			FromSystem(*mch.systemID).
+			FromUser(userID).
+			WithCategory("connection").
+			WithAction("update").
+			ActedUpon(userID).
+			WithSeverity(severity).
+			WithDescription(description).
+			WithMetadata(metadata).
+			Build()
+
+		if mch.provider != nil {
+			if err := mch.provider.PersistEvent(*event, nil); err != nil {
+				mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
+			}
+		}
+		go mch.eventBroadcaster.Publish(userID, event)
+	}
+}
+
+// Common helper for both error and warning events with error information
+func (mch *MesheryControllersHelper) emitEventWithError(description string, severity events.EventSeverity, err error, metadata map[string]any, userID uuid.UUID) {
+	eventMetadata := make(map[string]any)
+
+	if metadata != nil {
+		maps.Copy(eventMetadata, metadata)
+	}
+
+	if err != nil {
+		eventMetadata["error"] = err.Error()
+	}
+
+	mch.emitEvent(description, severity, eventMetadata, userID)
+}
+
+// Helper method to emit error events
+func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
+	mch.emitEventWithError(description, events.Error, err, metadata, userID)
+}
+
+// Helper method to emit warning events
+func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]any, userID uuid.UUID) {
+	mch.emitEventWithError(description, events.Warning, err, metadata, userID)
 }

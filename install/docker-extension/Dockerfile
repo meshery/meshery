@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine3.23 AS builder
 ENV CGO_ENABLED=0
 RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
   --mount=type=cache,target=/root/.cache/go-build \
   make bin
 
-FROM node:14.17-alpine3.13 AS client-builder
+FROM node:20-alpine3.23 AS client-builder
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json ui/package-lock.json ./
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY ui /ui
 RUN npm run build
 
-FROM alpine
+FROM alpine:3.23.2
 ARG GIT_STRIPPED_VERSION
 ARG GIT_VERSION
 ARG RELEASE_CHANNEL

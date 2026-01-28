@@ -1450,7 +1450,351 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/workstation-config/icons/color/workstation-config-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation-config/icons/white/workstation-config-white.svg
   description: 
-components-count: 360
+- name: ai-platform-model
+  colorIcon: assets/img/integrations/k8s-config-connector/components/ai-platform-model/icons/color/ai-platform-model-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/ai-platform-model/icons/white/ai-platform-model-white.svg
+  description: 
+- name: app-hub-application
+  colorIcon: assets/img/integrations/k8s-config-connector/components/app-hub-application/icons/color/app-hub-application-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/app-hub-application/icons/white/app-hub-application-white.svg
+  description: 
+- name: app-hub-discovered-service
+  colorIcon: assets/img/integrations/k8s-config-connector/components/app-hub-discovered-service/icons/color/app-hub-discovered-service-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/app-hub-discovered-service/icons/white/app-hub-discovered-service-white.svg
+  description: 
+- name: app-hub-discovered-workload
+  colorIcon: assets/img/integrations/k8s-config-connector/components/app-hub-discovered-workload/icons/color/app-hub-discovered-workload-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/app-hub-discovered-workload/icons/white/app-hub-discovered-workload-white.svg
+  description: 
+- name: asset-feed
+  colorIcon: assets/img/integrations/k8s-config-connector/components/asset-feed/icons/color/asset-feed-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/asset-feed/icons/white/asset-feed-white.svg
+  description: 
+- name: asset-saved-query
+  colorIcon: assets/img/integrations/k8s-config-connector/components/asset-saved-query/icons/color/asset-saved-query-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/asset-saved-query/icons/white/asset-saved-query-white.svg
+  description: 
+- name: backup-dr-backup-plan
+  colorIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-plan/icons/color/backup-dr-backup-plan-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-plan/icons/white/backup-dr-backup-plan-white.svg
+  description: 
+- name: backup-dr-backup-plan-association
+  colorIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-plan-association/icons/color/backup-dr-backup-plan-association-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-plan-association/icons/white/backup-dr-backup-plan-association-white.svg
+  description: 
+- name: backup-dr-backup-vault
+  colorIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-vault/icons/color/backup-dr-backup-vault-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-backup-vault/icons/white/backup-dr-backup-vault-white.svg
+  description: 
+- name: backup-dr-management-server
+  colorIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-management-server/icons/color/backup-dr-management-server-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/backup-dr-management-server/icons/white/backup-dr-management-server-white.svg
+  description: 
+- name: batch-job
+  colorIcon: assets/img/integrations/k8s-config-connector/components/batch-job/icons/color/batch-job-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/batch-job/icons/white/batch-job-white.svg
+  description: 
+- name: batch-task
+  colorIcon: assets/img/integrations/k8s-config-connector/components/batch-task/icons/color/batch-task-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/batch-task/icons/white/batch-task-white.svg
+  description: 
+- name: big-lake-catalog
+  colorIcon: assets/img/integrations/k8s-config-connector/components/big-lake-catalog/icons/color/big-lake-catalog-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/big-lake-catalog/icons/white/big-lake-catalog-white.svg
+  description: 
+- name: big-lake-database
+  colorIcon: assets/img/integrations/k8s-config-connector/components/big-lake-database/icons/color/big-lake-database-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/big-lake-database/icons/white/big-lake-database-white.svg
+  description: 
+- name: big-lake-table
+  colorIcon: assets/img/integrations/k8s-config-connector/components/big-lake-table/icons/color/big-lake-table-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/big-lake-table/icons/white/big-lake-table-white.svg
+  description: 
+- name: big-query-data-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/big-query-data-policy/icons/color/big-query-data-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/big-query-data-policy/icons/white/big-query-data-policy-white.svg
+  description: 
+- name: big-query-reservation-assignment
+  colorIcon: assets/img/integrations/k8s-config-connector/components/big-query-reservation-assignment/icons/color/big-query-reservation-assignment-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/big-query-reservation-assignment/icons/white/big-query-reservation-assignment-white.svg
+  description: 
+- name: bigtable-authorized-view
+  colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-authorized-view/icons/color/bigtable-authorized-view-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-authorized-view/icons/white/bigtable-authorized-view-white.svg
+  description: 
+- name: bigtable-backup
+  colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-backup/icons/color/bigtable-backup-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-backup/icons/white/bigtable-backup-white.svg
+  description: 
+- name: bigtable-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-cluster/icons/color/bigtable-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-cluster/icons/white/bigtable-cluster-white.svg
+  description: 
+- name: cloud-deploy-delivery-pipeline
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-deploy-delivery-pipeline/icons/color/cloud-deploy-delivery-pipeline-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-deploy-delivery-pipeline/icons/white/cloud-deploy-delivery-pipeline-white.svg
+  description: 
+- name: cloud-deploy-deploy-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-deploy-deploy-policy/icons/color/cloud-deploy-deploy-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-deploy-deploy-policy/icons/white/cloud-deploy-deploy-policy-white.svg
+  description: 
+- name: deploy-custom-target-type
+  colorIcon: assets/img/integrations/k8s-config-connector/components/deploy-custom-target-type/icons/color/deploy-custom-target-type-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/deploy-custom-target-type/icons/white/deploy-custom-target-type-white.svg
+  description: 
+- name: cloud-dms-conversion-workspace
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-dms-conversion-workspace/icons/color/cloud-dms-conversion-workspace-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-dms-conversion-workspace/icons/white/cloud-dms-conversion-workspace-white.svg
+  description: 
+- name: cloud-dms-private-connection
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-dms-private-connection/icons/color/cloud-dms-private-connection-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-dms-private-connection/icons/white/cloud-dms-private-connection-white.svg
+  description: 
+- name: api-quota-adjuster-settings
+  colorIcon: assets/img/integrations/k8s-config-connector/components/api-quota-adjuster-settings/icons/color/api-quota-adjuster-settings-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/api-quota-adjuster-settings/icons/white/api-quota-adjuster-settings-white.svg
+  description: 
+- name: api-quota-preference
+  colorIcon: assets/img/integrations/k8s-config-connector/components/api-quota-preference/icons/color/api-quota-preference-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/api-quota-preference/icons/white/api-quota-preference-white.svg
+  description: 
+- name: tasks-queue
+  colorIcon: assets/img/integrations/k8s-config-connector/components/tasks-queue/icons/color/tasks-queue-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/tasks-queue/icons/white/tasks-queue-white.svg
+  description: 
+- name: colab-runtime
+  colorIcon: assets/img/integrations/k8s-config-connector/components/colab-runtime/icons/color/colab-runtime-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/colab-runtime/icons/white/colab-runtime-white.svg
+  description: 
+- name: colab-runtime-template
+  colorIcon: assets/img/integrations/k8s-config-connector/components/colab-runtime-template/icons/color/colab-runtime-template-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/colab-runtime-template/icons/white/colab-runtime-template-white.svg
+  description: 
+- name: composer-environment
+  colorIcon: assets/img/integrations/k8s-config-connector/components/composer-environment/icons/color/composer-environment-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/composer-environment/icons/white/composer-environment-white.svg
+  description: 
+- name: compute-interconnect
+  colorIcon: assets/img/integrations/k8s-config-connector/components/compute-interconnect/icons/color/compute-interconnect-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/compute-interconnect/icons/white/compute-interconnect-white.svg
+  description: 
+- name: compute-network-attachment
+  colorIcon: assets/img/integrations/k8s-config-connector/components/compute-network-attachment/icons/color/compute-network-attachment-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/compute-network-attachment/icons/white/compute-network-attachment-white.svg
+  description: 
+- name: compute-network-edge-security-service
+  colorIcon: assets/img/integrations/k8s-config-connector/components/compute-network-edge-security-service/icons/color/compute-network-edge-security-service-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/compute-network-edge-security-service/icons/white/compute-network-edge-security-service-white.svg
+  description: 
+- name: dataplex-entry-group
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataplex-entry-group/icons/color/dataplex-entry-group-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataplex-entry-group/icons/white/dataplex-entry-group-white.svg
+  description: 
+- name: dataplex-entry-type
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataplex-entry-type/icons/color/dataplex-entry-type-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataplex-entry-type/icons/white/dataplex-entry-type-white.svg
+  description: 
+- name: dataplex-lake
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataplex-lake/icons/color/dataplex-lake-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataplex-lake/icons/white/dataplex-lake-white.svg
+  description: 
+- name: dataplex-task
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataplex-task/icons/color/dataplex-task-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataplex-task/icons/white/dataplex-task-white.svg
+  description: 
+- name: dataplex-zone
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataplex-zone/icons/color/dataplex-zone-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataplex-zone/icons/white/dataplex-zone-white.svg
+  description: 
+- name: dataproc-batch
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataproc-batch/icons/color/dataproc-batch-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataproc-batch/icons/white/dataproc-batch-white.svg
+  description: 
+- name: dataproc-job
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataproc-job/icons/color/dataproc-job-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataproc-job/icons/white/dataproc-job-white.svg
+  description: 
+- name: dataproc-node-group
+  colorIcon: assets/img/integrations/k8s-config-connector/components/dataproc-node-group/icons/color/dataproc-node-group-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/dataproc-node-group/icons/white/dataproc-node-group-white.svg
+  description: 
+- name: datastream-route
+  colorIcon: assets/img/integrations/k8s-config-connector/components/datastream-route/icons/color/datastream-route-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/datastream-route/icons/white/datastream-route-white.svg
+  description: 
+- name: document-ai-processor-version
+  colorIcon: assets/img/integrations/k8s-config-connector/components/document-ai-processor-version/icons/color/document-ai-processor-version-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/document-ai-processor-version/icons/white/document-ai-processor-version-white.svg
+  description: 
+- name: edge-container-machine
+  colorIcon: assets/img/integrations/k8s-config-connector/components/edge-container-machine/icons/color/edge-container-machine-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/edge-container-machine/icons/white/edge-container-machine-white.svg
+  description: 
+- name: eventarc-channel
+  colorIcon: assets/img/integrations/k8s-config-connector/components/eventarc-channel/icons/color/eventarc-channel-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/eventarc-channel/icons/white/eventarc-channel-white.svg
+  description: 
+- name: eventarc-google-channel-config
+  colorIcon: assets/img/integrations/k8s-config-connector/components/eventarc-google-channel-config/icons/color/eventarc-google-channel-config-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/eventarc-google-channel-config/icons/white/eventarc-google-channel-config-white.svg
+  description: 
+- name: gke-backup-backup
+  colorIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-backup/icons/color/gke-backup-backup-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-backup/icons/white/gke-backup-backup-white.svg
+  description: 
+- name: gke-backup-restore
+  colorIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-restore/icons/color/gke-backup-restore-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-restore/icons/white/gke-backup-restore-white.svg
+  description: 
+- name: gke-backup-restore-plan
+  colorIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-restore-plan/icons/color/gke-backup-restore-plan-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-restore-plan/icons/white/gke-backup-restore-plan-white.svg
+  description: 
+- name: kms-import-job
+  colorIcon: assets/img/integrations/k8s-config-connector/components/kms-import-job/icons/color/kms-import-job-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/kms-import-job/icons/white/kms-import-job-white.svg
+  description: 
+- name: logging-link
+  colorIcon: assets/img/integrations/k8s-config-connector/components/logging-link/icons/color/logging-link-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/logging-link/icons/white/logging-link-white.svg
+  description: 
+- name: managed-kafka-consumer-group
+  colorIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-consumer-group/icons/color/managed-kafka-consumer-group-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-consumer-group/icons/white/managed-kafka-consumer-group-white.svg
+  description: 
+- name: managed-kafka-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-cluster/icons/color/managed-kafka-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-cluster/icons/white/managed-kafka-cluster-white.svg
+  description: 
+- name: managed-kafka-topic
+  colorIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-topic/icons/color/managed-kafka-topic-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/managed-kafka-topic/icons/white/managed-kafka-topic-white.svg
+  description: 
+- name: metastore-backup
+  colorIcon: assets/img/integrations/k8s-config-connector/components/metastore-backup/icons/color/metastore-backup-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/metastore-backup/icons/white/metastore-backup-white.svg
+  description: 
+- name: metastore-federation
+  colorIcon: assets/img/integrations/k8s-config-connector/components/metastore-federation/icons/color/metastore-federation-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/metastore-federation/icons/white/metastore-federation-white.svg
+  description: 
+- name: metastore-service
+  colorIcon: assets/img/integrations/k8s-config-connector/components/metastore-service/icons/color/metastore-service-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/metastore-service/icons/white/metastore-service-white.svg
+  description: 
+- name: net-app-backup-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/net-app-backup-policy/icons/color/net-app-backup-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/net-app-backup-policy/icons/white/net-app-backup-policy-white.svg
+  description: 
+- name: net-app-backup-vault
+  colorIcon: assets/img/integrations/k8s-config-connector/components/net-app-backup-vault/icons/color/net-app-backup-vault-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/net-app-backup-vault/icons/white/net-app-backup-vault-white.svg
+  description: 
+- name: network-connectivity-internal-range
+  colorIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-internal-range/icons/color/network-connectivity-internal-range-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-internal-range/icons/white/network-connectivity-internal-range-white.svg
+  description: 
+- name: network-services-service-binding
+  colorIcon: assets/img/integrations/k8s-config-connector/components/network-services-service-binding/icons/color/network-services-service-binding-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/network-services-service-binding/icons/white/network-services-service-binding-white.svg
+  description: 
+- name: notebook-instance
+  colorIcon: assets/img/integrations/k8s-config-connector/components/notebook-instance/icons/color/notebook-instance-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/notebook-instance/icons/white/notebook-instance-white.svg
+  description: 
+- name: org-policy-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/org-policy-policy/icons/color/org-policy-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/org-policy-policy/icons/white/org-policy-policy-white.svg
+  description: 
+- name: pub-sub-snapshot
+  colorIcon: assets/img/integrations/k8s-config-connector/components/pub-sub-snapshot/icons/color/pub-sub-snapshot-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/pub-sub-snapshot/icons/white/pub-sub-snapshot-white.svg
+  description: 
+- name: re-captcha-enterprise-firewall-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/re-captcha-enterprise-firewall-policy/icons/color/re-captcha-enterprise-firewall-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/re-captcha-enterprise-firewall-policy/icons/white/re-captcha-enterprise-firewall-policy-white.svg
+  description: 
+- name: spanner-backup-schedule
+  colorIcon: assets/img/integrations/k8s-config-connector/components/spanner-backup-schedule/icons/color/spanner-backup-schedule-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/spanner-backup-schedule/icons/white/spanner-backup-schedule-white.svg
+  description: 
+- name: spanner-instance-config
+  colorIcon: assets/img/integrations/k8s-config-connector/components/spanner-instance-config/icons/color/spanner-instance-config-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/spanner-instance-config/icons/white/spanner-instance-config-white.svg
+  description: 
+- name: speech-custom-class
+  colorIcon: assets/img/integrations/k8s-config-connector/components/speech-custom-class/icons/color/speech-custom-class-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/speech-custom-class/icons/white/speech-custom-class-white.svg
+  description: 
+- name: speech-phrase-set
+  colorIcon: assets/img/integrations/k8s-config-connector/components/speech-phrase-set/icons/color/speech-phrase-set-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/speech-phrase-set/icons/white/speech-phrase-set-white.svg
+  description: 
+- name: speech-recognizer
+  colorIcon: assets/img/integrations/k8s-config-connector/components/speech-recognizer/icons/color/speech-recognizer-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/speech-recognizer/icons/white/speech-recognizer-white.svg
+  description: 
+- name: storage-anywhere-cache
+  colorIcon: assets/img/integrations/k8s-config-connector/components/storage-anywhere-cache/icons/color/storage-anywhere-cache-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/storage-anywhere-cache/icons/white/storage-anywhere-cache-white.svg
+  description: 
+- name: storage-folder
+  colorIcon: assets/img/integrations/k8s-config-connector/components/storage-folder/icons/color/storage-folder-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/storage-folder/icons/white/storage-folder-white.svg
+  description: 
+- name: storage-managed-folder
+  colorIcon: assets/img/integrations/k8s-config-connector/components/storage-managed-folder/icons/color/storage-managed-folder-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/storage-managed-folder/icons/white/storage-managed-folder-white.svg
+  description: 
+- name: tpu-virtual-machine
+  colorIcon: assets/img/integrations/k8s-config-connector/components/tpu-virtual-machine/icons/color/tpu-virtual-machine-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/tpu-virtual-machine/icons/white/tpu-virtual-machine-white.svg
+  description: 
+- name: v-mware-engine-external-access-rule
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-external-access-rule/icons/color/v-mware-engine-external-access-rule-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-external-access-rule/icons/white/v-mware-engine-external-access-rule-white.svg
+  description: 
+- name: v-mware-engine-external-address
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-external-address/icons/color/v-mware-engine-external-address-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-external-address/icons/white/v-mware-engine-external-address-white.svg
+  description: 
+- name: v-mware-engine-network
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network/icons/color/v-mware-engine-network-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network/icons/white/v-mware-engine-network-white.svg
+  description: 
+- name: v-mware-engine-network-peering
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network-peering/icons/color/v-mware-engine-network-peering-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network-peering/icons/white/v-mware-engine-network-peering-white.svg
+  description: 
+- name: v-mware-engine-network-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network-policy/icons/color/v-mware-engine-network-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-network-policy/icons/white/v-mware-engine-network-policy-white.svg
+  description: 
+- name: v-mware-engine-private-cloud
+  colorIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-private-cloud/icons/color/v-mware-engine-private-cloud-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/v-mware-engine-private-cloud/icons/white/v-mware-engine-private-cloud-white.svg
+  description: 
+- name: workflows-execution
+  colorIcon: assets/img/integrations/k8s-config-connector/components/workflows-execution/icons/color/workflows-execution-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/workflows-execution/icons/white/workflows-execution-white.svg
+  description: 
+- name: bigtable-logical-view
+  colorIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/color/bigtable-logical-view-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/bigtable-logical-view/icons/white/bigtable-logical-view-white.svg
+  description: 
+- name: service-networking-peered-dns-domain
+  colorIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/color/service-networking-peered-dns-domain-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/service-networking-peered-dns-domain/icons/white/service-networking-peered-dns-domain-white.svg
+  description: 
+- name: billing-account
+  colorIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/color/billing-account-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/billing-account/icons/white/billing-account-white.svg
+  description: 
+- name: iam-deny-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/color/iam-deny-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/iam-deny-policy/icons/white/iam-deny-policy-white.svg
+  description: 
+components-count: 446
 relationships: 
 relationship-count: 0
 featureList: [

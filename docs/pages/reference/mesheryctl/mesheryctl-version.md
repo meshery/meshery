@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl version
 
-Version of mesheryctl
+Show Meshery CLI and Server versions
 
 ## Synopsis
 

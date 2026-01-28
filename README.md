@@ -19,16 +19,17 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/release-drafter.yml" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://meshery.io/community#discussion-forums" alt="Discuss Users">
+<a href="https://meshery.io/community#discussion-forums" alt="Discussion Forum">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fmeshery.io/community" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack" /></a>
-<a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
+<a href="https://x.com/intent/follow?screen_name=mesheryio" alt="X Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
 <a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
-  <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>  
-<a href="https://gurubase.io/g/meshery" alt="Meshery Guru">
-  <img src="https://img.shields.io/badge/Gurubase-Ask%20Meshery%20Guru-006BFF" /></a>
+  <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>
+<a href="https://scorecard.dev/viewer/?uri=github.com/meshery/meshery" alt="OpenSSF Scorecard">
+  <img src="https://api.scorecard.dev/projects/github.com/meshery/meshery/badge" /></a> 
+<a href="https://trendshift.io/repositories/888" target="_blank"><img src="https://trendshift.io/api/badge/repositories/888" alt="meshery%2Fmeshery | Trendshift" style="width: 150px;" width="150px" /></a>
 <!-- <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
   <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>  
   -->
@@ -50,11 +51,13 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <br />
 
 <div align="center" width="100%">
- <a href="https://youtu.be/Do7htKrRzDA"><img src=".github/assets/images/readme/thumbnail.png" width="800px" /></a>
- <p><i>Example extension. See other <a href="https://meshery.io/extensions">Meshery Extensions</a>.</i></p>
+<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9"><img src=".github/assets/images/readme/meshery-dashboard-hero-image.png" width="800px" /></a>
  <br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 
+<p align="center">
+<h4 align="center">Open Meshery extension, Kanvas, in your browser: https://kanvas.new</h4>
+</p>
 <br />
 <!--
 - [Functionality](#functionality)
@@ -76,13 +79,14 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
   <br /><br /><br />
 </h3> -->
 
+
 <p style="clear:both;">&nbsp;</p>
 
 # Functionality
 
 ## Infrastructure Lifecycle Management
 
-Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [300+ integrations](https//meshery.io/integrations).
+Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [300+ integrations](https://meshery.io/integrations).
 
 <!--
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
@@ -93,7 +97,7 @@ Meshery manages the configuration, deployment, and operation of your Cloud servi
 
 Find infrastructure configuration patterns in Meshery's <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
-## Multiple Kubernetes Clusters and Multiple Clouds
+### Multiple Kubernetes Clusters and Multiple Clouds
 
 <img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" /><br />
 
@@ -177,7 +181,7 @@ Meshery offers load generation and performance characterization to help you asse
 <details>
 <summary><h4> Manage the performance of your infrastructure and its workloads</h4></summary>
 
-<img src = ".github/assets/images/readme/service-mesh-performance-example.gif">
+<img src = ".github/assets/images/readme/meshery-performance.gif">
 
 Baseline and track your cloud native performance from release to release.
 
@@ -257,7 +261,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## Join the Meshery community
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://meshery.io/community">Contributor Journey Map</a> and <a href="https://meshery.io/community#handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://meshery.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="https://meshery.io/community#discussion-forums">discussion forum</a> to participate.
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://meshery.io/community">Contributor Journey Map</a> and <a href="https://meshery.io/community#handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://meshery.io/community/#handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="https://meshery.io/community#discussion-forums">discussion forum</a> to participate.
 
 <p style="clear:both;">
 <h3>Find your MeshMate</h3>
@@ -320,4 +324,8 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+
+#### Software Bill of Materials (SBOM)
+
+Meshery's [Software Bill of Materials](https://github.com/meshery/meshery/actions/workflows/bom.yaml) (SBOM) is available as a build artifact.
 

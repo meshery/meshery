@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#0550b2",
@@ -189,5 +204,7 @@
     "version": "fabedge.io/v1alpha1",
     "kind": "Cluster",
     "schema": "{\n \"description\": \"Cluster is used to represent a cluster's endpoints of connector and edge nodes\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"cidrs\": {\n     \"description\": \"CIDRs is supposed to contain cluster-cidr and cluster-service-ip-range of a cluster, these are mainly used to create ippools to avoid SNAT in calico environment\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"endpoints\": {\n     \"description\": \"Endpoints of connector and exported edge nodes of a cluster\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"nodeSubnets\": {\n        \"description\": \"internal IPs of kubernetes node\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"port\": {\n        \"description\": \"public UDP port for IKE communication, only used to configure remote_port. Default: 500\",\n        \"type\": \"integer\"\n       },\n       \"publicAddresses\": {\n        \"description\": \"public addresses can be IP, DNS\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"subnets\": {\n        \"description\": \"pod subnets\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"type\": {\n        \"description\": \"Type of endpoints: Connector or EdgeNode\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"token\": {\n     \"description\": \"Token is used by child cluster to access root cluster's apiserver\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

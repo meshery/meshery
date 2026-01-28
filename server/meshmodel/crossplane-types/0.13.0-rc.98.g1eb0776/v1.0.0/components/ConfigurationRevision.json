@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ffcd3c",
@@ -189,5 +204,7 @@
     "version": "pkg.crossplane.io/v1alpha1",
     "kind": "ConfigurationRevision",
     "schema": "{\n \"description\": \"A ConfigurationRevision that has been added to Crossplane.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PackageRevisionSpec specifies the desired state of a PackageRevision.\",\n   \"properties\": {\n    \"desiredState\": {\n     \"description\": \"DesiredState of the PackageRevision. Can be either Active or Inactive.\",\n     \"type\": \"string\"\n    },\n    \"image\": {\n     \"description\": \"Image used for install Pod to extract package contents.\",\n     \"type\": \"string\"\n    },\n    \"installPodRef\": {\n     \"description\": \"Reference to install Pod. PackageRevision reads logs of this Pod to create resources owned by the PackageRevision.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced object.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"revision\": {\n     \"description\": \"Revision number. Indicates when the revision will be garbage collected based on the parent's RevisionHistoryLimit.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"desiredState\",\n    \"image\",\n    \"installPodRef\",\n    \"revision\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Configuration Revision\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

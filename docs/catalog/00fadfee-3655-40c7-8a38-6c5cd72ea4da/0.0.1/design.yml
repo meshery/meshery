@@ -1,0 +1,1637 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "vault-0.30.1.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "e16cb35e-6b19-4eec-9c6e-d1a05a1d885c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector"
+          },
+          "name": "vault-agent-injector",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1eb9a723-d5e7-4200-b211-2a2f14173f1f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault",
+            "helm.sh/chart": "vault-0.30.1"
+          },
+          "name": "vault",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "779a8201-061b-4f1d-9951-98273afb634d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-config",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "extraconfig-from-values.hcl": "ui = true\n\nlistener \"tcp\" {\n  tls_disable = 1\n  address = \"[::]:8200\"\n  cluster_address = \"[::]:8201\"\n  # Enable unauthenticated metrics access (necessary for Prometheus Operator)\n  #telemetry {\n  #  unauthenticated_metrics_access = \"true\"\n  #}\n}\nstorage \"file\" {\n  path = \"/vault/data\"\n}\n\n# Example configuration for using auto-unseal, using Google Cloud KMS. The\n# GKMS keys must already exist, and the cluster must have a service account\n# that is authorized to access GCP KMS.\n#seal \"gcpckms\" {\n#   project     = \"vault-helm-dev\"\n#   region      = \"global\"\n#   key_ring    = \"vault-helm-unseal-kr\"\n#   crypto_key  = \"vault-helm-unseal-key\"\n#}\n\n# Example configuration for enabling Prometheus metrics in your config.\n#telemetry {\n#  prometheus_retention_time = \"30s\"\n#  disable_hostname = true\n#}\ndisable_mlock = true"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault",
+            "helm.sh/chart": "vault-0.30.1"
+          },
+          "name": "vault-config",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8076affe-0b2d-41b4-baff-47c69457f5c3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector-clusterrole",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector"
+          },
+          "name": "vault-agent-injector-clusterrole"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              "admissionregistration.k8s.io"
+            ],
+            "resources": [
+              "mutatingwebhookconfigurations"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch",
+              "patch"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a761b937-a859-4a23-b5cb-c4187222e783",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector-binding",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector"
+          },
+          "name": "vault-agent-injector-binding"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "vault-agent-injector-clusterrole"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "vault-agent-injector",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1557af54-6254-4f36-9d6a-8e61c31a3246",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-server-binding",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault",
+            "helm.sh/chart": "vault-0.30.1"
+          },
+          "name": "vault-server-binding"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "system:auth-delegator"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "vault",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9aad34f6-c752-400e-9089-837d43805302",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector-svc",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector"
+          },
+          "name": "vault-agent-injector-svc",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "https",
+              "port": 443,
+              "targetPort": 8080
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/name": "vault-agent-injector",
+            "component": "webhook"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c2569313-2213-4c1d-980a-e3ee7755c273",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-internal",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": null,
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault",
+            "helm.sh/chart": "vault-0.30.1",
+            "vault-internal": "true"
+          },
+          "name": "vault-internal",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "http",
+              "port": 8200,
+              "targetPort": 8200
+            },
+            {
+              "name": "https-internal",
+              "port": 8201,
+              "targetPort": 8201
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/name": "vault",
+            "component": "server"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9144c54a-4005-44b4-8b6b-169db479166e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": null,
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault",
+            "helm.sh/chart": "vault-0.30.1"
+          },
+          "name": "vault",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 8200,
+              "targetPort": 8200
+            },
+            {
+              "name": "https-internal",
+              "port": 8201,
+              "targetPort": 8201
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/name": "vault",
+            "component": "server"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a6cb2b0e-db1a-4996-b47f-f0155de3aac6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector",
+            "component": "webhook"
+          },
+          "name": "vault-agent-injector",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "vault",
+              "app.kubernetes.io/name": "vault-agent-injector",
+              "component": "webhook"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/instance": "vault",
+                "app.kubernetes.io/name": "vault-agent-injector",
+                "component": "webhook"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "requiredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "labelSelector": {
+                        "matchLabels": {
+                          "app.kubernetes.io/instance": "vault",
+                          "app.kubernetes.io/name": "vault-agent-injector",
+                          "component": "webhook"
+                        }
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "args": [
+                    "agent-inject",
+                    "2\u003e\u00261"
+                  ],
+                  "env": [
+                    {
+                      "name": "AGENT_INJECT_LISTEN",
+                      "value": ":8080"
+                    },
+                    {
+                      "name": "AGENT_INJECT_LOG_LEVEL",
+                      "value": "info"
+                    },
+                    {
+                      "name": "AGENT_INJECT_VAULT_ADDR",
+                      "value": "http://vault.default.svc:8200"
+                    },
+                    {
+                      "name": "AGENT_INJECT_VAULT_AUTH_PATH",
+                      "value": "auth/kubernetes"
+                    },
+                    {
+                      "name": "AGENT_INJECT_VAULT_IMAGE",
+                      "value": "hashicorp/vault:1.20.1"
+                    },
+                    {
+                      "name": "AGENT_INJECT_TLS_AUTO",
+                      "value": "vault-agent-injector-cfg"
+                    },
+                    {
+                      "name": "AGENT_INJECT_TLS_AUTO_HOSTS",
+                      "value": "vault-agent-injector-svc,vault-agent-injector-svc.default,vault-agent-injector-svc.default.svc"
+                    },
+                    {
+                      "name": "AGENT_INJECT_LOG_FORMAT",
+                      "value": "standard"
+                    },
+                    {
+                      "name": "AGENT_INJECT_REVOKE_ON_SHUTDOWN",
+                      "value": "false"
+                    },
+                    {
+                      "name": "AGENT_INJECT_CPU_REQUEST",
+                      "value": "250m"
+                    },
+                    {
+                      "name": "AGENT_INJECT_CPU_LIMIT",
+                      "value": "500m"
+                    },
+                    {
+                      "name": "AGENT_INJECT_MEM_REQUEST",
+                      "value": "64Mi"
+                    },
+                    {
+                      "name": "AGENT_INJECT_MEM_LIMIT",
+                      "value": "128Mi"
+                    },
+                    {
+                      "name": "AGENT_INJECT_DEFAULT_TEMPLATE",
+                      "value": "map"
+                    },
+                    {
+                      "name": "AGENT_INJECT_TEMPLATE_CONFIG_EXIT_ON_RETRY_FAILURE",
+                      "value": "true"
+                    },
+                    {
+                      "name": "POD_NAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    }
+                  ],
+                  "image": "hashicorp/vault-k8s:1.7.0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 2,
+                    "httpGet": {
+                      "path": "/health/ready",
+                      "port": 8080,
+                      "scheme": "HTTPS"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 2,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "sidecar-injector",
+                  "readinessProbe": {
+                    "failureThreshold": 2,
+                    "httpGet": {
+                      "path": "/health/ready",
+                      "port": 8080,
+                      "scheme": "HTTPS"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 2,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 12,
+                    "httpGet": {
+                      "path": "/health/ready",
+                      "port": 8080,
+                      "scheme": "HTTPS"
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  }
+                }
+              ],
+              "hostNetwork": false,
+              "securityContext": {
+                "fsGroup": 1000,
+                "runAsGroup": 1000,
+                "runAsNonRoot": true,
+                "runAsUser": 100
+              },
+              "serviceAccountName": "vault-agent-injector"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "cb38b989-16bf-452c-be8b-5f95a20f1127",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault"
+          },
+          "name": "vault",
+          "namespace": "default"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "vault",
+              "app.kubernetes.io/name": "vault",
+              "component": "server"
+            }
+          },
+          "serviceName": "vault-internal",
+          "template": {
+            "metadata": {
+              "annotations": null,
+              "labels": {
+                "app.kubernetes.io/instance": "vault",
+                "app.kubernetes.io/name": "vault",
+                "component": "server",
+                "helm.sh/chart": "vault-0.30.1"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "requiredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "labelSelector": {
+                        "matchLabels": {
+                          "app.kubernetes.io/instance": "vault",
+                          "app.kubernetes.io/name": "vault",
+                          "component": "server"
+                        }
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  ]
+                }
+              },
+              "containers": [
+                {
+                  "args": [
+                    "cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;\n[ -n \"${HOST_IP}\" ] \u0026\u0026 sed -Ei \"s|HOST_IP|${HOST_IP?}|g\" /tmp/storageconfig.hcl;\n[ -n \"${POD_IP}\" ] \u0026\u0026 sed -Ei \"s|POD_IP|${POD_IP?}|g\" /tmp/storageconfig.hcl;\n[ -n \"${HOSTNAME}\" ] \u0026\u0026 sed -Ei \"s|HOSTNAME|${HOSTNAME?}|g\" /tmp/storageconfig.hcl;\n[ -n \"${API_ADDR}\" ] \u0026\u0026 sed -Ei \"s|API_ADDR|${API_ADDR?}|g\" /tmp/storageconfig.hcl;\n[ -n \"${TRANSIT_ADDR}\" ] \u0026\u0026 sed -Ei \"s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g\" /tmp/storageconfig.hcl;\n[ -n \"${RAFT_ADDR}\" ] \u0026\u0026 sed -Ei \"s|RAFT_ADDR|${RAFT_ADDR?}|g\" /tmp/storageconfig.hcl;\n/usr/local/bin/docker-entrypoint.sh vault server -config=/tmp/storageconfig.hcl \n"
+                  ],
+                  "command": [
+                    "/bin/sh",
+                    "-ec"
+                  ],
+                  "env": [
+                    {
+                      "name": "HOST_IP",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "status.hostIP"
+                        }
+                      }
+                    },
+                    {
+                      "name": "POD_IP",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "status.podIP"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT_K8S_POD_NAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT_K8S_NAMESPACE",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.namespace"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT_ADDR",
+                      "value": "http://127.0.0.1:8200"
+                    },
+                    {
+                      "name": "VAULT_API_ADDR",
+                      "value": "http://$(POD_IP):8200"
+                    },
+                    {
+                      "name": "SKIP_CHOWN",
+                      "value": "true"
+                    },
+                    {
+                      "name": "SKIP_SETCAP",
+                      "value": "true"
+                    },
+                    {
+                      "name": "HOSTNAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "VAULT_CLUSTER_ADDR",
+                      "value": "https://$(HOSTNAME).vault-internal:8201"
+                    },
+                    {
+                      "name": "HOME",
+                      "value": "/home/vault"
+                    }
+                  ],
+                  "image": "hashicorp/vault:1.20.1",
+                  "imagePullPolicy": "IfNotPresent",
+                  "lifecycle": {
+                    "preStop": {
+                      "exec": {
+                        "command": [
+                          "/bin/sh",
+                          "-c",
+                          "sleep 5 \u0026\u0026 kill -SIGTERM $(pidof vault)"
+                        ]
+                      }
+                    }
+                  },
+                  "name": "vault",
+                  "ports": [
+                    {
+                      "containerPort": 8200,
+                      "name": "http"
+                    },
+                    {
+                      "containerPort": 8201,
+                      "name": "https-internal"
+                    },
+                    {
+                      "containerPort": 8202,
+                      "name": "http-rep"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh",
+                        "-ec",
+                        "vault status -tls-skip-verify"
+                      ]
+                    },
+                    "failureThreshold": 2,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 3
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/vault/data",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/vault/config",
+                      "name": "config"
+                    },
+                    {
+                      "mountPath": "/home/vault",
+                      "name": "home"
+                    }
+                  ]
+                }
+              ],
+              "hostNetwork": false,
+              "securityContext": {
+                "fsGroup": 1000,
+                "runAsGroup": 1000,
+                "runAsNonRoot": true,
+                "runAsUser": 100
+              },
+              "serviceAccountName": "vault",
+              "terminationGracePeriodSeconds": 10,
+              "volumes": [
+                {
+                  "configMap": {
+                    "name": "vault-config"
+                  },
+                  "name": "config"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "home"
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "type": "OnDelete"
+          },
+          "volumeClaimTemplates": [
+            {
+              "metadata": {
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "10Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1d37ed84-cbd6-4653-a164-07eeae54b824",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "vault-agent-injector-cfg",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-09-17T17:32:17.981302672Z",
+          "updated_at": "2025-09-17T17:32:17.981302672Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/mutatingwebhookconfiguration-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/mutatingwebhookconfiguration-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "vault",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "vault-agent-injector"
+          },
+          "name": "vault-agent-injector-cfg"
+        },
+        "webhooks": [
+          {
+            "admissionReviewVersions": [
+              "v1",
+              "v1beta1"
+            ],
+            "clientConfig": {
+              "caBundle": "",
+              "service": {
+                "name": "vault-agent-injector-svc",
+                "namespace": "default",
+                "path": "/mutate"
+              }
+            },
+            "failurePolicy": "Ignore",
+            "matchPolicy": "Exact",
+            "name": "vault.hashicorp.com",
+            "objectSelector": {
+              "matchExpressions": [
+                {
+                  "key": "app.kubernetes.io/name",
+                  "operator": "NotIn",
+                  "values": [
+                    "vault-agent-injector"
+                  ]
+                }
+              ]
+            },
+            "rules": [
+              {
+                "apiGroups": [
+                  ""
+                ],
+                "apiVersions": [
+                  "v1"
+                ],
+                "operations": [
+                  "CREATE"
+                ],
+                "resources": [
+                  "pods"
+                ],
+                "scope": "Namespaced"
+              }
+            ],
+            "sideEffects": "None",
+            "timeoutSeconds": 30
+          }
+        ]
+      },
+      "component": {
+        "version": "admissionregistration.k8s.io/v1",
+        "kind": "MutatingWebhookConfiguration",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

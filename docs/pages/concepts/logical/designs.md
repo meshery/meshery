@@ -53,7 +53,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 
 ### Controlling Access to Designs
 
-When creating a new design by default it's visibility level will be set to **public**. Remove providers have the option of offering additional visibility levels like **private** and **published**.
+When creating a new design by default it's visibility level will be set to **public**. [Remote Providers](/extensibility/providers) have the option of offering additional visibility levels like **private** and **published**.
 
 ## Meshery Designs and Models Explained
 

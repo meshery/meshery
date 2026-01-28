@@ -4,6 +4,7 @@ title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 component: Network Service Mesh
 earliest_version: v0.2.1
+adapter_version: v0.5.4
 port: 10004/gRPC
 project_status: stable
 lab: nsm-meshery-adapter

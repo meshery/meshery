@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#eb2318",
@@ -189,5 +204,7 @@
     "version": "scheduling.volcano.sh/v1beta1",
     "kind": "PodGroup",
     "schema": "{\n \"description\": \"PodGroup is a collection of Pod; used for batch workload.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the pod group.\\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"minMember\": {\n     \"description\": \"MinMember defines the minimal number of members/tasks to run the pod group;\\nif there's not enough resources to start all tasks, the scheduler\\nwill not start anyone.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"minResources\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"MinResources defines the minimal resource of members/tasks to run the pod group;\\nif there's not enough resources to start all tasks, the scheduler\\nwill not start anyone.\",\n     \"type\": \"object\"\n    },\n    \"minTaskMember\": {\n     \"additionalProperties\": {\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"description\": \"MinTaskMember defines the minimal number of pods to run each task in the pod group;\\nif there's not enough resources to start each task, the scheduler\\nwill not start anyone.\",\n     \"type\": \"object\"\n    },\n    \"networkTopology\": {\n     \"description\": \"NetworkTopology defines the NetworkTopology config, this field works in conjunction with network topology feature and hyperNode CRD.\",\n     \"properties\": {\n      \"highestTierAllowed\": {\n       \"default\": 1,\n       \"description\": \"HighestTierAllowed specifies the highest tier that a job allowed to cross when scheduling.\",\n       \"type\": \"integer\"\n      },\n      \"mode\": {\n       \"default\": \"hard\",\n       \"description\": \"Mode specifies the mode of the network topology constrain.\",\n       \"enum\": [\n        \"hard\",\n        \"soft\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"priorityClassName\": {\n     \"description\": \"If specified, indicates the PodGroup's priority. \\\"system-node-critical\\\" and\\n\\\"system-cluster-critical\\\" are two special keywords which indicate the\\nhighest priorities with the former being the highest priority. Any other\\nname must be defined by creating a PriorityClass object with that name.\\nIf not specified, the PodGroup priority will be default or zero if there is no\\ndefault.\",\n     \"type\": \"string\"\n    },\n    \"queue\": {\n     \"default\": \"default\",\n     \"description\": \"Queue defines the queue to allocate resource for PodGroup; if queue does not exist,\\nthe PodGroup will not be scheduled. Defaults to `default` Queue with the lowest weight.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Group\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

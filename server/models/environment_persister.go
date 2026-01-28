@@ -21,11 +21,11 @@ type EnvironmentPersister struct {
 }
 
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
+
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
 	}
 }
 
@@ -132,7 +132,7 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 	}
 	err = ep.DB.Delete(environment).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
 	}
 
 	// Marshal the environment to JSON
@@ -190,7 +190,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationId = uuid.FromStringOrNil(payload.OrgId)
+	env.OrganizationID = uuid.FromStringOrNil(payload.OrgId)
 
 	return ep.UpdateEnvironmentByID(env)
 }
@@ -330,7 +330,7 @@ func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, c
 
 	// Delete the connection mapping
 	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
 	}
 
 	envJSON, err := json.Marshal(envConMapping)

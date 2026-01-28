@@ -4,6 +4,7 @@ title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 component: NGINX Service Mesh
 earliest_version: v1.2.0
+adapter_version: v0.8.1
 port: 10010/gRPC
 project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm

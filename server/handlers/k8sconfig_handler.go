@@ -24,9 +24,18 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/utils"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
+
+const MeshsyncDeploymentModeFormKey = "meshsync_deployment_mode"
+const ContextsFormKey = "contexts"
+
+// ContextOptions represents the configuration options for a specific context
+type ContextOptions struct {
+	MeshsyncDeploymentMode string `json:"meshsync_deployment_mode"`
+}
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
@@ -63,7 +72,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -96,16 +105,54 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
-	len := len(contexts)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
+	contextsLen := len(contexts)
+
+	// Parse contexts configuration if provided
+	var contextsConfig map[string]ContextOptions
+	if contextsJSON := req.FormValue(ContextsFormKey); contextsJSON != "" {
+		if err := json.Unmarshal([]byte(contextsJSON), &contextsConfig); err != nil {
+			h.log.Error(fmt.Errorf("failed to parse contexts configuration: %w", err))
+			http.Error(w, fmt.Sprintf("Invalid contexts configuration: %v", err), http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Helper function to get meshsync deployment mode for a context
+	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
+	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
+		// Get global meshsync deployment mode for backward compatibility
+		globalMeshsyncMode := req.FormValue(MeshsyncDeploymentModeFormKey)
+		return func(ctx *models.K8sContext) string {
+			// If contexts config is provided and contains this context, use context-specific setting
+			if contextOpts, exists := contextsConfig[ctx.ID]; exists {
+				if contextOpts.MeshsyncDeploymentMode != "" {
+					return contextOpts.MeshsyncDeploymentMode
+				}
+			}
+			// Fall back to global setting
+			return globalMeshsyncMode
+		}
+	}()
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	// TODO:
+	// when new api with param "contexts" will be addopted,
+	// only take into account contexts from that param
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 
-		connection, err := provider.SaveK8sContext(token, *ctx)
+		// Create context-specific metadata with appropriate meshsync deployment mode
+		k8sContextsMetadata := make(map[string]any, 1)
+		meshsyncMode := getMeshsyncModeForContext(ctx)
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			k8sContextsMetadata,
+			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+		)
+
+		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
@@ -154,7 +201,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
-					_ = provider.PersistEvent(event)
+					_ = provider.PersistEvent(*event, nil)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
 			}(inst)
@@ -162,13 +209,13 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 		eventMetadata[ctx.Name] = metadata
 
-		if idx == len-1 {
+		if idx == contextsLen-1 {
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
@@ -187,7 +234,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
-	// err := provider.RecordPreferences(req, user.UserID, prefObj)
+	// err := provider.RecordPreferences(req, user.UserId, prefObj)
 	// if err != nil {
 	// 	logrus.Error(ErrRecordPreferences(err))
 	// 	http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -213,16 +260,16 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("discovered").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 
 	eventMetadata := map[string]interface{}{}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
@@ -301,8 +348,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID.String(), false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		h.log.Error(ErrWriteResponse(err))
 		http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)
@@ -346,7 +393,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		conn, err := prov.SaveK8sContext(token, *cc)
+		conn, err := prov.SaveK8sContext(token, *cc, nil)
 		if err != nil {
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
 			metadata["error"] = err
@@ -354,7 +401,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			cc.ConnectionID = conn.ID.String()
 			contexts = append(contexts, cc)
 			metadata["context"] = models.RedactCredentialsForContext(cc)
@@ -378,7 +425,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 		ctx.DeploymentType = "out_of_cluster"
-		conn, err := prov.SaveK8sContext(token, *ctx)
+		conn, err := prov.SaveK8sContext(token, *ctx, nil)
 		if err != nil {
 			h.log.Warn(ErrFailToSaveContext(err))
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
@@ -387,7 +434,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			contexts = append(contexts, ctx)
 		}
 	}

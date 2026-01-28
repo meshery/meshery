@@ -32,9 +32,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	availableSubcommands []*cobra.Command
-)
+var availableSubcommands []*cobra.Command
 
 // AdapterCmd represents the Performance Management CLI command
 var (
@@ -45,11 +43,10 @@ var (
 	watch      bool
 	AdapterCmd = &cobra.Command{
 		Use:   "adapter",
-		Short: "Cloud Native Lifecycle Management",
+		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 			// if `mesh` command is ran without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
 				return cmd.Help()
@@ -219,7 +216,7 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	if err != nil {
 		return "", ErrCreatingDeployRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -241,7 +238,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
@@ -251,7 +248,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	eventChan := make(chan string)
 
-	//Run a goroutine to wait for the response
+	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
@@ -299,7 +296,7 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	eventChan := make(chan string)
 
-	//Run a goroutine to wait for the response
+	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {

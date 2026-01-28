@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#2a427f",
@@ -189,5 +204,7 @@
     "version": "cache.kubedl.io/v1alpha1",
     "kind": "CacheBackend",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"cacheEngine\": {\n     \"properties\": {\n      \"fluid\": {\n       \"properties\": {\n        \"alluxioRuntime\": {\n         \"properties\": {\n          \"replicas\": {\n           \"format\": \"int32\",\n           \"type\": \"integer\"\n          },\n          \"tieredStorage\": {\n           \"items\": {\n            \"properties\": {\n             \"cachePath\": {\n              \"type\": \"string\"\n             },\n             \"mediumType\": {\n              \"type\": \"string\"\n             },\n             \"quota\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"dataset\": {\n     \"properties\": {\n      \"dataSources\": {\n       \"items\": {\n        \"properties\": {\n         \"location\": {\n          \"type\": \"string\"\n         },\n         \"subDirName\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"mountPath\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"options\": {\n     \"properties\": {\n      \"idleTime\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cache Backend\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

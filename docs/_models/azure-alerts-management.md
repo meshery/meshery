@@ -13,14 +13,23 @@ components:
 - name: prometheus-rule-group
   colorIcon: assets/img/integrations/azure-alerts-management/components/prometheus-rule-group/icons/color/prometheus-rule-group-color.svg
   whiteIcon: assets/img/integrations/azure-alerts-management/components/prometheus-rule-group/icons/white/prometheus-rule-group-white.svg
-  description: Observability and Analysis
+  description: 
 - name: smart-detector-alert-rule
   colorIcon: assets/img/integrations/azure-alerts-management/components/smart-detector-alert-rule/icons/color/smart-detector-alert-rule-color.svg
   whiteIcon: assets/img/integrations/azure-alerts-management/components/smart-detector-alert-rule/icons/white/smart-detector-alert-rule-white.svg
-  description: Observability and Analysis
+  description: 
 components-count: 2
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 3
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

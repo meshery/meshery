@@ -22,7 +22,7 @@ contexts:
         platform: docker
         channel: stable
         version: latest
-        provider: Meshery
+        provider: Layer5
 current-context: local2
 tokens:
     - name: default

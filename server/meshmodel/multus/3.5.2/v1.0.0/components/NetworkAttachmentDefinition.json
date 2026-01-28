@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +204,7 @@
     "version": "k8s.cni.cncf.io/v1",
     "kind": "NetworkAttachmentDefinition",
     "schema": "{\n \"description\": \"NetworkAttachmentDefinition is a CRD schema specified by the Network Plumbing Working Group to express the intent for attaching pods to one or more logical or physical networks. More information available at: https://github.com/k8snetworkplumbingwg/multi-net-spec\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkAttachmentDefinition spec defines the desired state of a network attachment\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"NetworkAttachmentDefinition config is a JSON-formatted CNI configuration\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network Attachment Definition\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -1020,15 +1020,6 @@
         "probable_cause": "Since the Docker Compose specification does not mandate the version field from version 3 onwards, most sources do not provide them.",
         "suggested_remediation": "Make sure that the compose file has version specified,\nAdd any version less than or equal to 3.3 if you cannot get the exact version from the source"
       },
-      "11233": {
-        "name": "ErrGetCrdNamesCode",
-        "code": "11233",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting crd names",
-        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
-        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
-      },
       "11234": {
         "name": "ErrGetSchemasCode",
         "code": "11234",
@@ -1587,15 +1578,6 @@
         "probable_cause": "The provided file is not present or has an invalid path.",
         "suggested_remediation": "To proceed, provide a valid file path with a valid file."
       },
-      "11305": {
-        "name": "ErrGeneratesModelCode",
-        "code": "11305",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
-        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
-      },
       "11306": {
         "name": "ErrReadCSVRowCode",
         "code": "11306",
@@ -1641,6 +1623,24 @@
         "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
         "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
       },
+      "11311": {
+        "name": "ErrModelTimeoutCode",
+        "code": "11311",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate for this model",
+        "suggested_remediation": "Try increasing the per-model timeout using --timeout flag\nCheck network connectivity\nReview the source URL for the model"
+      },
+      "11312": {
+        "name": "ErrModelSkippedCode",
+        "code": "11312",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Model already exists and LatestVersionOnly is enabled",
+        "suggested_remediation": "This is expected behavior when LatestVersionOnly option is used"
+      },
       "11315": {
         "name": "ErrLoadPatternCode",
         "code": "11315",
@@ -1676,6 +1676,15 @@
         "short_description": "Helm packaging failed",
         "probable_cause": "Issues with the Helm chart structure or configuration",
         "suggested_remediation": "Verify the chart structure is valid for Helm"
+      },
+      "11319": {
+        "name": "ErrGetControllerEndpointForPortCode",
+        "code": "11319",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get endpoint for port of the controller",
+        "probable_cause": "Client configuration may not be valid",
+        "suggested_remediation": "Make sure the client configuration is valid"
       }
     }
   }

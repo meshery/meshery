@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#326CE5",
@@ -189,5 +204,7 @@
     "version": "secretgenerator.mittwald.de/v1alpha1",
     "kind": "SSHKeyPair",
     "schema": "{\n \"description\": \"SSHKeyPair is the Schema for the sshkeypairs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SSHKeyPairSpec defines the desired state of SSHKeyPair\",\n   \"properties\": {\n    \"data\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"forceRegenerate\": {\n     \"type\": \"boolean\"\n    },\n    \"length\": {\n     \"type\": \"string\"\n    },\n    \"privateKey\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"SSH Key Pair\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

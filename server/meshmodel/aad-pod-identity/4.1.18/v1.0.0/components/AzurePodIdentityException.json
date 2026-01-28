@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +204,7 @@
     "version": "aadpodidentity.k8s.io/v1",
     "kind": "AzurePodIdentityException",
     "schema": "{\n \"description\": \"AzurePodIdentityException contains the pod selectors for all pods that don't require NMI to process and request token on their behalf.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AzurePodIdentityExceptionSpec matches pods with the selector defined. If request originates from a pod that matches the selector, nmi will proxy the request and send response back without any validation.\",\n   \"properties\": {\n    \"metadata\": {\n     \"type\": \"object\"\n    },\n    \"podLabels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Pod Identity Exception\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -26,15 +26,17 @@ jobs:
           if [ "${{github.event_name }}" == "release" ];then
             echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.23"
+          go-version: "1.25"
           check-latest: "true"
+      - name: Remove current docs pages for mesheryctl
+        run: rm -rf docs/pages/reference/mesheryctl/*
       - name: Run script 📜
         run: |
           cd mesheryctl
@@ -44,7 +46,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit ✅
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: docs
           commit_user_name: l5io

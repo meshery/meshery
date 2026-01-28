@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { DashboardPage } from './pages/DashboardPage';
 
 const model = {
   MODEL_URL: 'git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm',
@@ -22,8 +23,9 @@ const model_import = {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.getByTestId('settings-button').click();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToSettings();
     await page.getByTestId('settings-tab-registry').click();
   });
 

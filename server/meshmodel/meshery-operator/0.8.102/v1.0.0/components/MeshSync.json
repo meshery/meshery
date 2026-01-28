@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +204,7 @@
     "version": "meshery.io/v1alpha1",
     "kind": "MeshSync",
     "schema": "{\n \"description\": \"MeshSync is the Schema for the meshsyncs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MeshSyncSpec defines the desired state of MeshSync\",\n   \"properties\": {\n    \"broker\": {\n     \"properties\": {\n      \"custom\": {\n       \"properties\": {\n        \"url\": {\n         \"description\": \"This is the URL of an already running instance of the Broker, this is alternative to specifying the native configuration of the Broker instance\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"native\": {\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the Broker instance to be deployed\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace within which the Broker instance to be deployed would run in\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"size\": {\n     \"description\": \"Desired replica count of the MeshSync instance, will be an integer value denoting the number of MeshSync instances that that should be in one cluster, currently only one instance of MeshSync is supported\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"version\": {\n     \"description\": \"The current version of the Meshery application as from its release\",\n     \"type\": \"string\"\n    },\n    \"watch-list\": {\n     \"description\": \"A ConfigMap that sets the resources e.g. pods,deployments and event types e.g. ADDED, MODIFIED… that the MeshSync instance tracks or ignores in the Kubernetes cluster\",\n     \"properties\": {\n      \"data\": {\n       \"properties\": {\n        \"blacklist\": {\n         \"description\": \"Blacklist resources are resources that the MeshSync should ignore its changes, More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties\",\n         \"type\": \"string\"\n        },\n        \"whitelist\": {\n         \"description\": \"Whitelist resources are resources that the MeshSync should track its changes, More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"MeshSync\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

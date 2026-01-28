@@ -95,7 +95,8 @@ func restart() error {
 
 	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
-		return err
+		utils.Log.Error(err)
+		return nil
 	}
 	if !running { // Meshery is not running
 		if err := start(); err != nil {

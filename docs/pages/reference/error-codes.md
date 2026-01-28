@@ -122,9 +122,10 @@ Troubleshooting guides to using Meshery's various features and components.
               {% capture link %}meshery-adapter-for-{{component[1].component_name | lowercase}}{% endcapture %}
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
-            {% else %}
+            {% elsif component[1].component_type == 'client' %}
+               {% capture link %}meshery-client-for-{{component[1].component_name | slugify}}{% endcapture %}
             {% elsif component[1].component_type == 'library' %}
-               {% capture link %}meshkit{% endcapture %}
+               {% capture link %}meshery-library-for-{{component[1].component_name | lowercase}}{% endcapture %}
             {% else %}
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
@@ -153,11 +154,11 @@ Meshery Adapter for {{ component[1].component_name }}
 {% endcapture %}
 {% elsif component[1].component_type == 'client' %}
 {% capture heading %}
-{{ component[1].component_name }} client
+Meshery Client for {{ component[1].component_name }}
 {% endcapture %}
 {% elsif component[1].component_type == 'library' %}
 {% capture heading %}
-{{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+Meshery Library for {{ component[1].component_name }}
 {% endcapture %}
 {% elsif component[1].component_name == 'meshery-server' %}
 {% capture heading %}
@@ -187,7 +188,7 @@ text-orientation: mixed;" %}
         {% assign severity = "background-color: transparent; color: black; writing-mode: vertical-rl;
 text-orientation: mixed;" %}
       {% endif %}
-      <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
+      <tr id="{{err_code[1]['name']}}-{{err_code[1]['code']}}" class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]['name'] }}-more-info');">
         <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
         <td id="{{ heading | slugify }}-{{err_code[1]["code"] }}" class="error-name-code">
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>

@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#FFFFFF",
@@ -189,5 +204,7 @@
     "version": "couchbase.com/v2",
     "kind": "CouchbaseUser",
     "schema": "{\n \"description\": \"CouchbaseUser allows the automation of Couchbase user management.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseUserSpec allows the specification of Couchbase user configuration.\",\n   \"properties\": {\n    \"authDomain\": {\n     \"description\": \"The domain which provides user authentication.\",\n     \"enum\": [\n      \"local\",\n      \"external\"\n     ],\n     \"type\": \"string\"\n    },\n    \"authSecret\": {\n     \"description\": \"Name of Kubernetes secret with password for Couchbase domain.\",\n     \"type\": \"string\"\n    },\n    \"fullName\": {\n     \"description\": \"Full Name of Couchbase user.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authDomain\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

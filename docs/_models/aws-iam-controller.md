@@ -45,10 +45,41 @@ components:
 - name: service-linked-role
   colorIcon: assets/img/integrations/aws-iam-controller/components/service-linked-role/icons/color/service-linked-role-color.svg
   whiteIcon: assets/img/integrations/aws-iam-controller/components/service-linked-role/icons/white/service-linked-role-white.svg
-  description: Security & Compliance
-components-count: 9
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-iam-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-iam-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 10
 relationships: 
-relationship-count: 0
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 9
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",

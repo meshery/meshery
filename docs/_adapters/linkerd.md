@@ -4,6 +4,7 @@ title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 component: Linkerd
 earliest_version: v2.10.2
+adapter_version: v0.8.2
 port: 10001/gRPC
 project_status: stable
 lab: linkerd-meshery-adapter

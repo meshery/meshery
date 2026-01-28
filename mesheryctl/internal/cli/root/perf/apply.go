@@ -29,7 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -71,7 +70,7 @@ mesheryctl perf apply meshery-profile [flags]
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
-// Execute a Performance test creating a new performance profile and pass certificate to be used 
+// Execute a Performance test creating a new performance profile and pass certificate to be used
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
 
 // Execute a performance profile without using the certificate present in the profile
@@ -94,7 +93,7 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --q
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
-// If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options 
+// If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
 // Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
 // Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
 // Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
@@ -109,12 +108,11 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		userResponse := false
 
 		// setting up for error formatting
-		cmdUsed = "apply"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// Importing SMP Configuration from the file
@@ -123,21 +121,18 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			// Read the test configuration file
 			smpConfig, err := os.ReadFile(filePath)
 			if err != nil {
-				utils.Log.Error(ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n")))
-				return nil
+				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
 			}
 
 			testConfig := models.PerformanceTestConfigFile{}
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
-				utils.Log.Error(ErrFailUnmarshalFile(err))
-				return nil
+				return ErrFailUnmarshalFile(err)
 			}
 
 			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
-				utils.Log.Error(ErrInvalidTestConfigFile())
-				return nil
+				return ErrInvalidTestConfigFile()
 			}
 
 			testClient := testConfig.Config.Clients[0]
@@ -178,21 +173,19 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		// Run test based on flags
 		if testName == "" {
-			log.Debug("Test Name not provided")
+			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			log.Debug("Using random test name: ", testName)
+			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			utils.Log.Error(ErrNoProfileName())
-			return nil
+			return ErrNoProfileName()
 		}
 
 		// Invalid number of arguments
 		if len(args) > 1 {
-			utils.Log.Error(ErrorArgumentOverflow())
-			return nil
+			return ErrorArgumentOverflow()
 		}
 
 		// handles spaces in args if quoted args passed
@@ -203,11 +196,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		profileName = strings.Join(args, "%20")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
-		log.Debug("Fetching performance profile")
+		utils.Log.Debug("Fetching performance profile")
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		index := 0
 		if len(profiles) == 0 {
@@ -224,12 +216,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			if userResponse {
 				profileID, profileName, err = createPerformanceProfile(mctlCfg)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			} else {
-				utils.Log.Error(ErrNoProfileFound())
-				return nil
+				return ErrNoProfileFound()
 			}
 		} else {
 			if len(profiles) == 1 { // if single performance profile found set profileID
@@ -238,8 +228,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				data := profilesToStringArrays(profiles)
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				profileID = profiles[index].ID.String()
 			}
@@ -281,23 +270,20 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 
 		if testURL == "" {
-			utils.Log.Error(ErrNoTestURL())
-			return nil
+			return ErrNoTestURL()
 		}
 
-		log.Debugf("performance profile is: %s", profileName)
-		log.Debugf("test-url set to %s", testURL)
+		utils.Log.Debugf("performance profile is: %s", profileName)
+		utils.Log.Debugf("test-url set to %s", testURL)
 
 		// Method to check if the entered Test URL is valid or not
 		if validURL := govalidator.IsURL(testURL); !validURL {
-			utils.Log.Error(ErrNotValidURL())
-			return nil
+			return ErrNotValidURL()
 		}
 
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		q := req.URL.Query()
@@ -322,23 +308,21 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 		req.URL.RawQuery = q.Encode()
 
-		log.Info("Initiating Performance test ...")
+		utils.Log.Info("Initiating Performance test ...")
 
 		resp, err := utils.MakeRequest(req)
-
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		defer utils.SafeClose(resp.Body)
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+			return utils.ErrReadResponseBody(err)
 		}
-		log.Debug(string(data))
+		utils.Log.Debug(string(data))
 
-		log.Info("Test Completed!")
+		utils.Log.Info("Test Completed!")
 		return nil
 	},
 }
@@ -359,7 +343,7 @@ func init() {
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	log.Debug("Creating new performance profile inside function")
+	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -398,7 +382,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if loadTestBody != "" {
 		// Check if the loadTestBody is a filepath or a string
 		if _, err := os.Stat(loadTestBody); err == nil {
-			log.Info("Reading test body from file")
+			utils.Log.Info("Reading test body from file")
 			bodyFile, err := os.ReadFile(loadTestBody)
 			if err != nil {
 				return "", "", ErrReadFilepath(err)
@@ -409,11 +393,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	convReq, err := strconv.Atoi(concurrentRequests)
 	if err != nil {
-		return "", "", errors.New("failed to convert concurrent-request")
+		return "", "", ErrConvertConcurrentRequest()
 	}
 	convQPS, err := strconv.Atoi(qps)
 	if err != nil {
-		return "", "", errors.New("failed to convert qps")
+		return "", "", ErrConvertQPS()
 	}
 	values := map[string]interface{}{
 		"concurrent_request": convReq,
@@ -452,7 +436,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if fileInfo, err := os.Stat(certPath); err == nil {
 		certFile, err := os.ReadFile(certPath)
 		if err != nil {
-			return "", "", errors.New("unable to read certificate file. " + err.Error())
+			return "", "", ErrReadFilepath(errors.New("Unable to read certificate file. " + err.Error()))
 		}
 		certData := string(certFile)
 		certName := fileInfo.Name()
@@ -473,23 +457,21 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrFailMarshal(err)
 	}
 	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
-
 	if err != nil {
 		return "", "", err
 	}
 
 	resp, err := utils.MakeRequest(req)
-
 	if err != nil {
 		return "", "", err
 	}
 
 	var response *models.PerformanceProfile
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return "", "", utils.ErrReadResponseBody(err)
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
@@ -498,6 +480,6 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	log.Debug("New profile created")
+	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
 }

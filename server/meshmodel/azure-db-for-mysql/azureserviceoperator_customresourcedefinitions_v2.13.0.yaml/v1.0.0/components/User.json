@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#2384f1",
@@ -189,5 +204,7 @@
     "version": "dbformysql.azure.com/v1",
     "kind": "User",
     "schema": "{\n \"description\": \"User is a MySQL user\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"aadUser\": {\n     \"description\": \"AADUser contains details for creating an AAD user.\",\n     \"properties\": {\n      \"alias\": {\n       \"description\": \"Alias is the short name associated with the user. This is required if the AzureName is longer than 32 characters.\\nNote that Alias denotes the name used to manage the SQL user in MySQL, NOT the name used to log in to the SQL server.\\nWhen logging in to the SQL server and prompted to provider the username, supply the AzureName.\",\n       \"maxLength\": 32,\n       \"type\": \"string\"\n      },\n      \"serverAdminUsername\": {\n       \"description\": \"ServerAdminUsername is the username of the Server administrator. If your server admin was configured with\\nAzure Service Operator, this should match the value of the Administrator's $.spec.login field. If the\\nadministrator is a group, the ServerAdminUsername should be the group name, not the actual username of the\\nidentity to log in with. For example if the administrator group is \\\"admin-group\\\" and identity \\\"my-identity\\\" is\\na member of that group, the ServerAdminUsername should be \\\"admin-group\\\"\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"serverAdminUsername\"\n     ],\n     \"type\": \"object\"\n    },\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\\nIf not specified, the default is the name of the Kubernetes object.\\nWhen creating a local user, this will be the name of the user created.\\nWhen creating an AAD user, this must have a specific format depending on the type of AAD user being created.\\nFor managed identity: \\\"my-managed-identity-name\\\"\\nFor standard AAD user: \\\"myuser@mydomain.onmicrosoft.com\\\"\\nFor AAD group: \\\"my-group\\\"\",\n     \"type\": \"string\"\n    },\n    \"databasePrivileges\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"The database-level roles assigned to the user (keyed by\\ndatabase name). Privileges include the following: SELECT,\\nINSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX,\\nALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE\\nVIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER\",\n     \"type\": \"object\"\n    },\n    \"hostname\": {\n     \"description\": \"Hostname is the host the user will connect from. If omitted, the default is to allow connection from any hostname.\",\n     \"type\": \"string\"\n    },\n    \"localUser\": {\n     \"description\": \"LocalUser contains details for creating a standard (non-aad) MySQL User\",\n     \"properties\": {\n      \"password\": {\n       \"description\": \"Password is the password to use for the user\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serverAdminPassword\": {\n       \"description\": \"ServerAdminPassword is a reference to a secret containing the servers administrator password.\\nIf specified, the operator uses the ServerAdminUsername and ServerAdminPassword to log into the server\\nas a local administrator.\\nIf NOT specified, the operator uses its identity to log into the server. The operator can only successfully\\nlog into the server if its identity is the administrator of the server or if its identity is a member of a\\ngroup which is the administrator of the server. If the\\nadministrator is a group, the ServerAdminUsername should be the group name, not the actual username of the\\nidentity to log in with. For example if the administrator group is \\\"admin-group\\\" and identity \\\"my-identity\\\" is\\na member of that group, the ServerAdminUsername should be \\\"admin-group\\\"\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serverAdminUsername\": {\n       \"description\": \"ServerAdminUsername is the username of the Server administrator. If the\\nadministrator is a group, the ServerAdminUsername should be the group name, not the actual username of the\\nidentity to log in with. For example if the administrator group is \\\"admin-group\\\" and identity \\\"my-identity\\\" is\\na member of that group, the ServerAdminUsername should be \\\"admin-group\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"password\",\n      \"serverAdminUsername\"\n     ],\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a dbformysql.azure.com/FlexibleServer resource\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"privileges\": {\n     \"description\": \"The server-level roles assigned to the user.\\nPrivileges include the following: RELOAD, PROCESS, SHOW\\nDATABASES, REPLICATION SLAVE, REPLICATION CLIENT, CREATE USER\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"owner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

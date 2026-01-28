@@ -230,7 +230,19 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/color/mesh-tls-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/white/mesh-tls-white.svg
   description: 
-components-count: 55
+- name: mesh-identity
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-identity/icons/color/mesh-identity-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-identity/icons/white/mesh-identity-white.svg
+  description: 
+- name: mesh-trust
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-trust/icons/color/mesh-trust-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-trust/icons/white/mesh-trust-white.svg
+  description: 
+- name: workload
+  colorIcon: assets/img/integrations/kong-mesh/components/workload/icons/color/workload-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/workload/icons/white/workload-white.svg
+  description: 
+components-count: 58
 relationships: 
 relationship-count: 0
 featureList: [

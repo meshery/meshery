@@ -16,9 +16,9 @@ components:
   description: 
 components-count: 1
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A relationship that allows azure resources to be connected to their respective resource group"
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
 relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

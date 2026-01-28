@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#1c77c8",
@@ -189,5 +204,7 @@
     "version": "devices.kubeedge.io/v1alpha2",
     "kind": "DeviceModel",
     "schema": "{\n \"description\": \"DeviceModel is the Schema for the device model API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DeviceModelSpec defines the model / template for a device.It is a blueprint which describes the device capabilities and access mechanism via property visitors.\",\n   \"properties\": {\n    \"properties\": {\n     \"description\": \"Required: List of device properties.\",\n     \"items\": {\n      \"description\": \"DeviceProperty describes an individual device property / attribute like temperature / humidity etc.\",\n      \"properties\": {\n       \"description\": {\n        \"description\": \"The device property description.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Required: The device property name.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"Required: PropertyType represents the type and data validation of the property.\",\n        \"properties\": {\n         \"boolean\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           },\n           \"defaultValue\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"bytes\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"double\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           },\n           \"defaultValue\": {\n            \"type\": \"number\"\n           },\n           \"maximum\": {\n            \"type\": \"number\"\n           },\n           \"minimum\": {\n            \"type\": \"number\"\n           },\n           \"unit\": {\n            \"description\": \"The unit of the property\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"float\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           },\n           \"defaultValue\": {\n            \"type\": \"number\"\n           },\n           \"maximum\": {\n            \"type\": \"number\"\n           },\n           \"minimum\": {\n            \"type\": \"number\"\n           },\n           \"unit\": {\n            \"description\": \"The unit of the property\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"int\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           },\n           \"defaultValue\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"maximum\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"minimum\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"unit\": {\n            \"description\": \"The unit of the property\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"string\": {\n          \"properties\": {\n           \"accessMode\": {\n            \"description\": \"Required: Access mode of property, ReadWrite or ReadOnly.\",\n            \"enum\": [\n             \"ReadWrite\",\n             \"ReadOnly\"\n            ],\n            \"type\": \"string\"\n           },\n           \"defaultValue\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Device Model\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

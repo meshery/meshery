@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/tuf
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 components-count: 0
 relationships: 

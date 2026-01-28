@@ -65,7 +65,7 @@ Events in Meshery are persisted through two distinct mechanisms to ensure reliab
 
 ### Local Event Storage
 
-The `provider.PersistEvent(event)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
+The `provider.PersistEvent(*event,nil)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
 
 ### Remote Event Publishing
 
@@ -98,7 +98,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 				"error": err,
 			})
 			event := eventBuilder.Build()
-		    _ = provider.PersistEvent(event)
+		    _ = provider.PersistEvent(*event,nil)
 		    go h.config.EventBroadcaster.Publish(userID, event)
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
@@ -110,7 +110,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"Server Address": k8sContext.Server,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event,nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		// Remaining code ...

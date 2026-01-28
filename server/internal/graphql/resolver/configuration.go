@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	userID, _ := uuid.FromString(user.ID)
+	userID := user.ID
 
 	chp, unsubscribePatterns := r.Config.PatternChannel.Subscribe(userID)
 	// Filters are not widely used, better to keep the subscription for filters disable.

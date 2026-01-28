@@ -69,8 +69,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
@@ -97,8 +96,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
@@ -148,7 +146,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("design file saved")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -181,7 +179,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 		utils.Log.Debug("Fetched the design from the remote host")
 		var response []*models.MesheryPattern
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {

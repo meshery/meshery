@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#2384f1",
@@ -189,5 +204,7 @@
     "version": "k8s.v6d.io/v1alpha1",
     "kind": "CSIDriver",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clusters\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"default\": \"\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"default\": \"\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"enableToleration\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"enableVerboseLog\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"image\": {\n     \"default\": \"vineyardcloudnative/vineyard-operator\",\n     \"type\": \"string\"\n    },\n    \"imagePullPolicy\": {\n     \"default\": \"IfNotPresent\",\n     \"type\": \"string\"\n    },\n    \"sidecar\": {\n     \"default\": {\n      \"attacherImage\": \"registry.k8s.io/sig-storage/csi-attacher:v4.0.0\",\n      \"enableTopology\": false,\n      \"imagePullPolicy\": \"Always\",\n      \"livenessProbeImage\": \"registry.k8s.io/sig-storage/livenessprobe:v2.8.0\",\n      \"nodeRegistrarImage\": \"registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.0\",\n      \"provisionerImage\": \"registry.k8s.io/sig-storage/csi-provisioner:v3.3.0\"\n     },\n     \"properties\": {\n      \"attacherImage\": {\n       \"default\": \"registry.k8s.io/sig-storage/csi-attacher:v4.0.0\",\n       \"type\": \"string\"\n      },\n      \"enableTopology\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"type\": \"string\"\n      },\n      \"livenessProbeImage\": {\n       \"default\": \"registry.k8s.io/sig-storage/livenessprobe:v2.8.0\",\n       \"type\": \"string\"\n      },\n      \"nodeRegistrarImage\": {\n       \"default\": \"registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.6.0\",\n       \"type\": \"string\"\n      },\n      \"provisionerImage\": {\n       \"default\": \"registry.k8s.io/sig-storage/csi-provisioner:v3.3.0\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"storageClassName\": {\n     \"default\": \"vineyard-csi\",\n     \"type\": \"string\"\n    },\n    \"volumeBindingMode\": {\n     \"default\": \"WaitForFirstConsumer\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"CSI Driver\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

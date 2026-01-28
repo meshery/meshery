@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#009639",
@@ -189,5 +204,7 @@
     "version": "k8s.nginx.org/v1",
     "kind": "GlobalConfiguration",
     "schema": "{\n \"description\": \"GlobalConfiguration defines the GlobalConfiguration resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalConfigurationSpec is the spec of the GlobalConfiguration resource.\",\n   \"properties\": {\n    \"listeners\": {\n     \"items\": {\n      \"description\": \"Listener defines a listener.\",\n      \"properties\": {\n       \"ipv4\": {\n        \"type\": \"string\"\n       },\n       \"ipv6\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"ssl\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }
