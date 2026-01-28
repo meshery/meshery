@@ -18,6 +18,14 @@ func TestDeleteCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	listURL := testContext.BaseURL + "/api/filter?page_size=10000"
+	listResponse := `{"filters":[{"id":"c0c6035a-b1b9-412d-aab2-4ed1f1d51f84","name":"Kuma-Test"},{"id":"d0e09134-acb6-4c71-b051-3d5611653f70","name":"RolloutAndIstio"}]}`
+	// Mock the filter list endpoint (used by ValidId/GetID)
+	filterListResponse := utils.NewGoldenFile(t, "delete.filter.list.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, filterListResponse))
 
 	testcase := []utils.MesheryMultiURLCommamdTest{
 		{
@@ -60,6 +68,20 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 	}
+	for _, tt := range testcase {
+		t.Run(tt.Name, func(t *testing.T) {
+			httpmock.RegisterResponder("GET", listURL,
+				httpmock.NewStringResponder(200, listResponse))
+
+			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			// set token
+			utils.TokenFlag = tt.Token
+			// mock response
+			httpmock.RegisterResponder(tt.Method, tt.URL,
+				httpmock.NewStringResponder(tt.ResponseCode, apiResponse))
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, FilterCmd, testcase, currDir, "filter", func() {})

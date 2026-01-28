@@ -471,6 +471,10 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	serverURL := k8sContext.Server
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
+		allowEmpty, _ := ctx.Value(AllowEmptyK8sContextKey).(bool)
+		if allowEmpty {
+			return
+		}
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
 		err := provider.PersistEvent(*event, nil)
 		if err != nil {

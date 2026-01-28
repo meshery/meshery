@@ -303,6 +303,8 @@ const (
 
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
+	// AllowEmptyK8sContextKey signals that missing Kubernetes context(s) should not emit an error event.
+	AllowEmptyK8sContextKey ContextKey = "allowemptyk8scontext"
 
 	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"

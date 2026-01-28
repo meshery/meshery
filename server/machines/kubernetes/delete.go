@@ -64,7 +64,8 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
 
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
+	ctxWithDeleteFlag := context.WithValue(ctx, models.AllowEmptyK8sContextKey, true)
+	go models.FlushMeshSyncData(ctxWithDeleteFlag, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
 
 	return machines.NoOp, nil, nil
 }
