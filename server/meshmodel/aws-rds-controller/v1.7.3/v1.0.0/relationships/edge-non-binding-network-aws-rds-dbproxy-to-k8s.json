@@ -1,0 +1,96 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "evaluationQuery": "edge_network_relationship",
+  "status": "enabled",
+  "metadata": {
+    "description": "Network relationship from AWS RDS DBProxy to Kubernetes Services and Deployments. Provides connection pooling and IAM authentication for database access from any Kubernetes cluster (EKS, AKS, GKE, OpenShift, self-managed).",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-rds-controller",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "category": {
+      "name": "Provisioning"
+    },
+    "displayName": "AWS RDS Controller"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "DBProxy",
+            "model": {
+              "name": "aws-rds-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ],
+              "description": "DBProxy endpoint provides connection pooling for Kubernetes workloads."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "externalName"]
+              ],
+              "description": "Kubernetes ExternalName Service can point to RDS DBProxy endpoint for connection pooling."
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "template", "spec", "containers", "_", "env", "_", "value"]
+              ],
+              "description": "Deployment pods connect to DBProxy endpoint for managed connection pooling."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
