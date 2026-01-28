@@ -44,15 +44,6 @@
               "model": {
                 "version": "v1.4.1"
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "metricName"
-                ]
-              ]
             }
           }
         ],
@@ -73,15 +64,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "metadata",
-                  "name"
-                ]
-              ]
             }
           }
         ]

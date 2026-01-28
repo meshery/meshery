@@ -46,11 +46,11 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
+              "patchStrategy": "merge",
               "mutatorRef": [
                 [
                   "spec",
-                  "widgets"
+                  "dashboardBody"
                 ]
               ]
             }
@@ -75,13 +75,7 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "metadata",
-                  "name"
-                ]
-              ]
+              "patchStrategy": "none"
             }
           }
         ]
