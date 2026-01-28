@@ -176,7 +176,7 @@ func initConfig() {
 
 		// Only create + mutate config when needed
 		if createDefaultConfig {
-			if err := os.MkdirAll(utils.MesheryFolder, 0775); err != nil {
+			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
 				log.Fatal(err)
 			}
 
