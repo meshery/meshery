@@ -49,7 +49,7 @@ mesheryctl exp organization list --count
 		header := []string{"NAME", "ID", "CREATED-AT"}
 
 		for _, org := range orgs.Organizations {
-			rows = append(rows, []string{org.Name, org.ID.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
+			rows = append(rows, []string{org.Name, org.Id.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
 		}
 
 		count, _ := cmd.Flags().GetBool("count")
