@@ -3,7 +3,6 @@ import {
   Divider,
   CustomTooltip,
   Skeleton,
-  VisibilityChipMenu,
   getRelativeTime,
   getFullFormattedTime,
   AvatarGroup,
@@ -12,6 +11,8 @@ import {
   FormGroup,
   Typography,
 } from '@sistent/sistent';
+// @ts-expect-error - VisibilityChipMenu exists at runtime but types may not be exported
+import { VisibilityChipMenu } from '@sistent/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
@@ -33,6 +34,26 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 import { Grid2 } from '@sistent/sistent';
 import { useGetIconBasedOnMode } from './hooks';
 
+type ActiveUser = {
+  client_id: string;
+  name: string;
+  color?: string;
+  avatar_url?: string;
+};
+
+type DesignViewListItemProps = {
+  selectedItem: any;
+  handleItemClick: any;
+  MenuComponent?: React.ReactNode;
+  onVisibilityChange: (_value: any, _selectedItem: any) => void;
+  canChangeVisibility: boolean;
+  type?: string;
+  activeUsers?: ActiveUser[];
+  isMultiSelectMode?: boolean;
+  showWorkspaceName?: boolean;
+  showOrganizationName?: boolean;
+};
+
 const DesignViewListItem = ({
   selectedItem,
   handleItemClick,
@@ -44,7 +65,7 @@ const DesignViewListItem = ({
   isMultiSelectMode = false,
   showWorkspaceName = true,
   showOrganizationName = true,
-}) => {
+}: DesignViewListItemProps) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
@@ -91,6 +112,7 @@ const DesignViewListItem = ({
                       onClick={(e) => e.stopPropagation()}
                     />
                   }
+                  label=""
                 />
               </FormGroup>
             </Grid2>
@@ -187,10 +209,10 @@ const DesignViewListItem = ({
                 {activeUsers.map((user) => (
                   <CustomTooltip key={user.client_id} title={user.name}>
                     <StyledSmallAvatar
-                      borderColor={user.color}
                       key={user.client_id}
                       alt={user.name}
-                      src={user.avatar_url}
+                      {...(user.color ? { borderColor: user.color } : {})}
+                      {...(user.avatar_url ? { src: user.avatar_url } : {})}
                       imgProps={{ referrerPolicy: 'no-referrer' }}
                     />
                   </CustomTooltip>
@@ -248,7 +270,7 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
             }}
           >
             {Array(4)
-              .fill()
+              .fill(null)
               .map((_, index) => (
                 <Skeleton key={index} variant="circular" animation="wave" {...iconMedium} />
               ))}

@@ -24,7 +24,7 @@ import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
 import { ArrowBack } from '@mui/icons-material';
-import TooltipButton from '../../../utils/TooltipButton';
+import { TooltipIconButton } from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -52,7 +52,7 @@ export default function DesignConfigurator() {
     loadDesign,
     updateDesignData,
   } = useDesignLifecycle();
-  const formReference = useRef();
+  const formReference = useRef<any>(null);
 
   const router = useRouter();
   const { design_id } = router.query;
@@ -66,25 +66,23 @@ export default function DesignConfigurator() {
     [design_id],
   );
 
-  function handleCategoryChange(event) {
+  function handleCategoryChange(event: any) {
     setSelectedCategory(event.target.value);
     getModelFromCategory(event.target.value);
   }
 
-  function handleModelChange(event) {
+  function handleModelChange(event: any) {
     if (event.target.value) {
-      getComponentsFromModel(event.target.value);
+      getComponentsFromModel(event.target.value, undefined);
       setSelectedModel(event.target.value);
     }
   }
 
   return (
     <NoSsr>
-      <TooltipButton title="Back" placement="left">
-        <IconButton onClick={() => router.back()}>
-          <ArrowBack />
-        </IconButton>
-      </TooltipButton>
+      <TooltipIconButton title="Back" onClick={() => router.back()}>
+        <ArrowBack />
+      </TooltipIconButton>
       <AppBarComponent position="static" elevation={0} data-testid="design-configurator-app-bar">
         <Toolbar>
           <div style={{ flexGrow: 1 }}>
@@ -98,19 +96,18 @@ export default function DesignConfigurator() {
                       vertical: 'bottom',
                       horizontal: 'left',
                     },
-                    getContentAnchorEl: null,
                   },
                   renderValue: (selected) => {
-                    if (!selected || selected.length === 0) {
+                    const value = selected as string;
+                    if (!value) {
                       return <em>Select Category</em>;
                     }
 
-                    return selected;
+                    return value;
                   },
                   displayEmpty: true,
                 }}
                 InputProps={{ disableUnderline: true }}
-                labelId="category-selector"
                 id="category-selector"
                 data-testid="category-selector"
                 value={selectedCategory}
@@ -118,7 +115,7 @@ export default function DesignConfigurator() {
                 fullWidth
                 variant="standard"
               >
-                {categories.map((cat) => (
+                {(categories as any[]).map((cat: any) => (
                   <MenuItem data-testid={cat.name} key={cat.name} value={cat.name}>
                     {cat.name}
                   </MenuItem>
@@ -138,19 +135,18 @@ export default function DesignConfigurator() {
                         vertical: 'bottom',
                         horizontal: 'left',
                       },
-                      getContentAnchorEl: null,
                     },
                     renderValue: (selected) => {
-                      if (!selected || selected.length === 0) {
+                      const value = selected as string;
+                      if (!value) {
                         return <em>Select Model</em>;
                       }
 
-                      return removeHyphenAndCapitalise(selected);
+                      return removeHyphenAndCapitalise(value);
                     },
                     displayEmpty: true,
                   }}
                   InputProps={{ disableUnderline: true }}
-                  labelId="model-selector"
                   id="model-selector"
                   data-testid="model-selector"
                   value={selectedModel}
@@ -158,8 +154,11 @@ export default function DesignConfigurator() {
                   fullWidth
                   variant="standard"
                 >
-                  {models?.[selectedCategory] ? (
-                    models[selectedCategory].map(function renderModels(model, idx) {
+                  {models && selectedCategory && (models as any)[selectedCategory] ? (
+                    (models as any)[selectedCategory].map(function renderModels(
+                      model: any,
+                      idx: number,
+                    ) {
                       return (
                         <MenuItem
                           data-testid={`${model.name}`}
@@ -171,7 +170,7 @@ export default function DesignConfigurator() {
                       );
                     })
                   ) : (
-                    <RenderModelNull selectedCategory={selectedCategory} models={models} />
+                    <RenderModelNull selectedCategory={selectedCategory} models={models as any} />
                   )}
                 </TextField>
               </FormControl>
@@ -235,7 +234,7 @@ export default function DesignConfigurator() {
         </Toolbar>
       </AppBarComponent>
       <Grid2 container spacing={3} size="grow">
-        {meshmodelComponents?.[selectedModel] && (
+        {selectedModel && (meshmodelComponents as any)?.[selectedModel] && (
           <Grid2
             size={{ xs: 12, md: 6 }}
             data-testid="model-component-list"
@@ -245,8 +244,8 @@ export default function DesignConfigurator() {
             }}
           >
             <ScrollContainer>
-              {meshmodelComponents[selectedModel]?.[0]?.components?.map(
-                function ShowRjsfComponentsLazily(trimmedComponent, idx) {
+              {(meshmodelComponents as any)[selectedModel]?.[0]?.components?.map(
+                function ShowRjsfComponentsLazily(trimmedComponent: any, idx: number) {
                   const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
                   return (
                     <LazyComponentForm
@@ -268,15 +267,14 @@ export default function DesignConfigurator() {
         >
           <CodeEditor
             yaml={designYaml}
-            onChange={(_val, _view, update) => {
-              updateDesignData({ yamlData: update });
+            onChange={(value) => {
+              updateDesignData({ yamlData: value });
             }}
             saveCodeEditorChanges={(args) => {
               console.log('onSave', args);
             }}
-            fullWidth={!(selectedCategory && selectedModel)}
           />
-          {designJson?.services && Object.keys(designJson.services).length > 0 && (
+          {designJson?.services && Object.keys(designJson.services || {}).length > 0 && (
             <AvatarGroup
               max={10}
               style={{
@@ -285,24 +283,25 @@ export default function DesignConfigurator() {
                 right: 40,
               }}
             >
-              {Object.values(designJson.services).map(
-                function renderAvatarFromServices(service, idx) {
-                  const metadata = service.traits?.['meshmodel-metadata'];
-                  if (metadata) {
-                    const { primaryColor, svgWhite } = metadata;
-                    return (
-                      <Avatar
-                        key={idx}
-                        src={`${getWebAdress()}/${svgWhite}`}
-                        style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
-                        onClick={() => {
-                          console.log('TODO: write function to highlight things on editor');
-                        }}
-                      />
-                    );
-                  }
-                },
-              )}
+              {Object.values(designJson.services || {}).map(function renderAvatarFromServices(
+                service: any,
+                idx: number,
+              ) {
+                const metadata = service.traits?.['meshmodel-metadata'];
+                if (metadata) {
+                  const { primaryColor, svgWhite } = metadata;
+                  return (
+                    <Avatar
+                      key={idx}
+                      src={`${getWebAdress()}/${svgWhite}`}
+                      style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
+                      onClick={() => {
+                        console.log('TODO: write function to highlight things on editor');
+                      }}
+                    />
+                  );
+                }
+              })}
             </AvatarGroup>
           )}
         </Grid2>
@@ -316,7 +315,7 @@ function RenderModelNull({ selectedCategory, models }) {
     return <MenuItem value={undefined}>Select a Category First</MenuItem>;
   }
 
-  if (!models?.[selectedCategory]) {
+  if (!(models as any)?.[selectedCategory as any]) {
     return <CircularProgress />;
   }
 }

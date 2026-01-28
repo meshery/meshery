@@ -45,6 +45,17 @@ const validateSchema = (schema, data, id) => {
     ajv.addSchema(schema, id);
     validate = ajv.getSchema(id);
   }
+  if (!validate) {
+    return {
+      isValid: false,
+      errors: [
+        {
+          message: `Schema validator not found for id: ${String(id)}`,
+        },
+      ],
+    };
+  }
+
   const valid = validate(data);
 
   return {
@@ -96,8 +107,8 @@ const validateDesign = (design, componentDefsStore) => {
   return validationResults;
 };
 
-const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
-  const { validationPayload, prevValidationResults } = input;
+const SchemaValidateDesignActor = fromPromise(async ({ input }: any) => {
+  const { validationPayload, prevValidationResults } = input || {};
   const { validationPayloadType } = validationPayload;
 
   if (validationPayloadType === 'design') {
@@ -126,6 +137,6 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
 
 export const schemaValidatorMachine = dataValidatorMachine.provide({
   actors: {
-    ValidateActor: SchemaValidateDesignActor,
+    ValidateActor: SchemaValidateDesignActor as any,
   },
 });

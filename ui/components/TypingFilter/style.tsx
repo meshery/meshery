@@ -22,7 +22,7 @@ export const DropDown = styled('div')(({ theme }) => ({
   borderRadius: '6px',
   boxShadow:
     '0px 2px 4px 0px rgba(0, 0, 0, 0.20), 0px 1px 10px 0px rgba(0, 0, 0, 0.12), 0px 4px 5px 0px rgba(0, 0, 0, 0.14)',
-  border: `2px solid ${theme.palette.background.brand.secondary}`,
+  border: `2px solid ${theme.palette.background.brand?.secondary || theme.palette.primary.main}`,
   marginTop: '0.2rem',
   maxHeight: '20rem',
   overflowY: 'auto',

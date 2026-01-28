@@ -5,7 +5,8 @@ import { createStyleRegistry } from 'styled-jsx';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
 const registry = createStyleRegistry();
-const flush = registry.flush();
+// styled-jsx typings can mark `flush()` as void; keep runtime value and relax typing.
+const flush = registry.flush() as any;
 class MesheryDocument extends Document {
   render() {
     return (
@@ -112,7 +113,7 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = (ctx) => {
+MesheryDocument.getInitialProps = async (ctx: any) => {
   // resolution order
   //
   // on the server:
@@ -164,7 +165,7 @@ MesheryDocument.getInitialProps = (ctx) => {
         <style
           id="jss-server-side"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: css }}
+          dangerouslySetInnerHTML={{ __html: css || '' }}
         />
         {flush || null}
       </React.Fragment>

@@ -42,7 +42,7 @@ const HeaderText = styled(Typography)(() => ({
 }));
 
 const Info = styled(InfoIcon)(({ theme }) => ({
-  color: theme.palette.type === 'dark' ? theme.palette.background.brand?.default : LIGHT_TEAL,
+  color: theme.palette.mode === 'dark' ? theme.palette.background.brand?.default : LIGHT_TEAL,
 }));
 
 const FooterText = styled(Typography)(() => ({
@@ -58,7 +58,7 @@ const ModalHeader = styled(Typography)(({ theme }) => ({
   paddingBottom: 10,
   padding: '0.5rem',
   paddingTop: 10,
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default || theme.palette.primary.main,
 }));
 
 const ModalFooter = styled('div')(({ theme }) => ({
@@ -68,7 +68,7 @@ const ModalFooter = styled('div')(({ theme }) => ({
   paddingBottom: 10,
   padding: '0.5rem',
   paddingTop: 10,
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default || theme.palette.primary.main,
 }));
 
 const rotateCloseIcon = keyframes`
@@ -153,7 +153,7 @@ const ContactHelpLink = styled('a')({
 });
 
 const TroubleshootingModal = (props) => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
   const [missingData, setMissingData] = React.useState(
     !!props.viewHeaderErrorMessage?.includes('data missing'),
   );
@@ -167,13 +167,8 @@ const TroubleshootingModal = (props) => {
   const handleClose = () => props?.setOpen(false);
 
   return (
-    <Modal
-      open={props?.open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <StyledPaper elevation={6} square="true">
+    <Modal open={props?.open} closeModal={handleClose} title="">
+      <StyledPaper elevation={6} square>
         <ModalContent>
           <ModalHeader>
             <Typography variant="h5"></Typography>

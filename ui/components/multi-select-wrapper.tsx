@@ -41,8 +41,10 @@ const MultiSelectWrapper = (props) => {
               <>
                 <Checkbox
                   key={props.value}
-                  ref={(input) => {
-                    if (input) input.indeterminate = true;
+                  inputRef={(input: HTMLInputElement | null) => {
+                    if (input) {
+                      input.indeterminate = true;
+                    }
                   }}
                   style={{
                     padding: '0',

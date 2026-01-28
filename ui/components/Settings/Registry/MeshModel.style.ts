@@ -24,8 +24,8 @@ export const JustifyAndAlignCenter = styled('div')(
   }),
 );
 
-export const StyledTreeItemRoot = styled(TreeItem)(
-  ({ theme, root, lineColor }: { theme: any; root?: boolean; lineColor: string }) => ({
+export const StyledTreeItemRoot = styled(TreeItem)<{ root?: boolean; lineColor: string }>(
+  ({ theme, root, lineColor }) => ({
     position: 'relative',
     '&:before': {
       pointerEvents: 'none',

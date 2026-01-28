@@ -9,7 +9,9 @@ import {
 } from './constants';
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
-const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
+const StepIconWrapper = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'completed',
+})<{ active?: boolean; completed?: boolean }>(({ theme, active, completed }) => ({
   backgroundColor: theme.palette.background.card,
   zIndex: 1,
   color: '#fff',
@@ -56,8 +58,9 @@ const StepperContent = styled(Box)({
   width: '100%',
 });
 
-function StepperIcon({ active, completed, stepIcons, icon }) {
-  const iconComponent = stepIcons[String(icon)];
+function StepperIcon(props: any) {
+  const { active, completed, stepIcons, icon } = props;
+  const iconComponent = stepIcons[String(icon)] as React.ReactElement;
   const additionalProps = {
     fill: completed ? 'white' : 'currentColor',
   };
@@ -125,7 +128,7 @@ export default function CustomizedSteppers({ sharedData, setSharedData, connecti
       </StepperHeader>
       <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
-        {React.cloneElement(ActiveStepContent, stepProps)}
+        {ActiveStepContent && <ActiveStepContent {...(stepProps || {})} />}
       </StepperContent>
     </StepperLayout>
   );

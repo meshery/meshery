@@ -12,7 +12,7 @@ const RegisterConnectionModal = ({
   connectionData,
   handleRegistrationModalClose,
 }) => {
-  const [sharedData, setSharedData] = React.useState(null);
+  const [sharedData, setSharedData] = React.useState<any>(null);
   const { notify } = useNotification();
   const [cancelConnection] = useCancelConnectionRegisterMutation();
   const [deleteMeshsyncResource] = useDeleteMeshsyncResourceMutation();
@@ -29,7 +29,9 @@ const RegisterConnectionModal = ({
   };
   const handleClose = () => {
     handleRegistrationModalClose();
-    cancelConnectionRegister(sharedData?.connection?.id);
+    if (sharedData?.connection?.id) {
+      cancelConnectionRegister(sharedData.connection.id);
+    }
   };
 
   const handleRegistrationComplete = (resourceId) => {
@@ -54,17 +56,17 @@ const RegisterConnectionModal = ({
       <Modal
         open={openRegistrationModal}
         closeModal={handleClose}
+        title="Register Connection"
         aria-labelledby="form-dialog-title"
         maxWidth="md"
       >
         <ModalBody>
           <CustomizedSteppers
-            formConnectionIdRef
             onClose={handleClose}
+            onRegistrationComplete={handleRegistrationComplete}
             connectionData={connectionData}
             sharedData={sharedData}
             setSharedData={setSharedData}
-            handleRegistrationComplete={handleRegistrationComplete}
           />
         </ModalBody>
       </Modal>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { isNil, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
-import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
+import { ADAPTER_STATUS, adaptersList } from './constants';
+import type { AdaptersListType } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
@@ -13,7 +14,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 interface AdapterPayload {
   status: string;
   adapter: string;
-  targetPort: number;
+  targetPort: string;
 }
 
 interface MeshAdapter {
@@ -71,36 +72,37 @@ const Adapters: React.FC = () => {
     payload: AdapterPayload,
     msg: string,
     selectedAdapter: AdaptersListType[string],
-    adapterId: string,
+    _adapterId: string,
   ): void => {
     updateProgress({ showProgress: true });
 
-    changeAdapterState((response: unknown, errors: unknown) => {
+    changeAdapterState((_response: unknown) => {
       updateProgress({ showProgress: false });
 
-      if (!isNil(errors)) {
-        // Toggle the switch to its previous state if the request fails.
-        setAvailableAdapters({
-          ...availableAdapters,
-          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
-        });
-        handleError(msg);
-      } else {
-        const actionText = payload.status.toLowerCase();
-        notify({
-          message: `${selectedAdapter.name} adapter ${actionText}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      }
+      const actionText = payload.status.toLowerCase();
+      notify({
+        message: `${selectedAdapter.name} adapter ${actionText}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
     }, payload);
   };
 
   const handleError =
     (msg: string) =>
-    (error?: Error): void => {
-      updateProgress({ showProgress: false });
-      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error?.toString() });
-    };
+      (error: Error | null = null): void => {
+        updateProgress({ showProgress: false });
+        if (error) {
+          notify({
+            message: `${msg}: ${error.toString()}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        } else {
+          notify({
+            message: msg,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
+      };
 
   const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
     setAvailableAdapters({
@@ -113,14 +115,14 @@ const Adapters: React.FC = () => {
       payload = {
         status: ADAPTER_STATUS.ENABLED,
         adapter: selectedAdapter.label,
-        targetPort: selectedAdapter.defaultPort,
+        targetPort: String(selectedAdapter.defaultPort ?? ''),
       };
       msg = 'Unable to deploy adapter';
     } else {
       payload = {
         status: ADAPTER_STATUS.DISABLED,
         adapter: selectedAdapter.label,
-        targetPort: selectedAdapter.defaultPort,
+        targetPort: String(selectedAdapter.defaultPort ?? ''),
       };
       msg = 'Unable to undeploy adapter';
     }
@@ -137,7 +139,7 @@ const Adapters: React.FC = () => {
               Meshery Adapter for {adapter.name}
             </Typography>
 
-            <FrontSideDescription variant="body">
+            <FrontSideDescription variant="body1">
               <ImageWrapper src={adapter.imageSrc} />
               <div
                 style={{

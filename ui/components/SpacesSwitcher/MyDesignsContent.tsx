@@ -3,7 +3,10 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import React, { useCallback, useRef, useState } from 'react';
 import MainDesignsContent from './MainDesignsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import { Box, Grid2, PromptComponent, useTheme } from '@sistent/sistent';
+import { Box, Grid2, useTheme } from '@sistent/sistent';
+// @ts-expect-error - PromptComponent exists at runtime but types may not be exported
+import { PromptComponent } from '@sistent/sistent';
+// @ts-expect-error - StyledSearchBar exists at runtime but types may not be exported
 import { StyledSearchBar } from '@sistent/sistent';
 import {
   ImportButton,
@@ -16,12 +19,16 @@ import { useContentDelete, useContentDownload } from './hooks';
 import ExportModal from '../ExportModal';
 import ShareModal from './ShareModal';
 import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/index';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const [shareModal, setShareModal] = useState({ open: false, content: null });
+  const { organization: currentOrganization } = useSelector((state: RootState) => state.ui);
+  const [shareModal, setShareModal] = useState<{ open: boolean; content: any }>({
+    open: false,
+    content: null,
+  });
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
     searchQuery: '',
@@ -138,13 +145,15 @@ const MyDesignsContent = () => {
 
         {/* Import Button */}
         <Grid2 size={{ xs: 4, md: 1 }}>
-          <ImportButton refetch={refetch} />
+          <ImportButton workspaceId={undefined} refetch={refetch} />
         </Grid2>
       </Grid2>
       <MultiContentSelectToolbar
         type={RESOURCE_TYPE.DESIGN}
+        handleContentMove={undefined}
         handleDelete={handleDelete}
         handleDownload={handleDownloadModalOpen}
+        handleViewDownload={() => {}}
         refetch={refetch}
         handleShare={(multiSelectedContent) => {
           setShareModal({
@@ -176,7 +185,7 @@ const MyDesignsContent = () => {
       {shareModal.open && (
         <ShareModal
           resource={shareModal.content}
-          handleClose={() => setShareModal(false)}
+          handleClose={() => setShareModal({ open: false, content: null })}
           type={RESOURCE_TYPE.DESIGN}
         />
       )}

@@ -39,9 +39,9 @@ export default function getMostRecentVersion(versionList) {
  * @param {string} versionB
  * @returns
  */
-export function versionSortComparatorFn(versionA, versionB) {
+export function versionSortComparatorFn(versionA, versionB): number {
   if (!versionA || !versionB) {
-    return;
+    return 0;
   }
 
   if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
@@ -61,11 +61,13 @@ export function versionSortComparatorFn(versionA, versionB) {
       vB = removeVFromVersion(vB);
     }
     // move to next comparison
-    if (vA - vB === 0) {
+    const diff = (vA as any) - (vB as any);
+    if (diff === 0) {
       continue;
     }
-    return vA - vB;
+    return diff;
   }
+  return 0;
 }
 
 function removeVFromVersion(version) {

@@ -23,7 +23,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
-import WorkspaceSwitcher from './WorkspaceSwitcher';
+import WorkspaceSwitcherBase from './WorkspaceSwitcher';
 import { useSelector } from 'react-redux';
 import {
   useGetSelectedOrganization,
@@ -32,6 +32,9 @@ import {
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
 import WorkspaceModal from './WorkspaceModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import type { RootState } from '@/store/index';
+
+const WorkspaceSwitcher = WorkspaceSwitcherBase as any;
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -140,8 +143,8 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
 
 export function OrgMenu(props) {
   const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({});
-  let orgs = orgsResponse?.organizations || [];
-  let uniqueOrgs = _.uniqBy(orgs, 'id');
+  const orgs: any[] = (orgsResponse?.organizations ?? []) as any[];
+  const uniqueOrgs: any[] = _.uniqBy(orgs, 'id');
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery('(max-width:400px)');
@@ -152,10 +155,16 @@ export function OrgMenu(props) {
     ? currentLoadedResource.org
     : selectedOrgFromPref;
 
-  const [updateSelectedOrg, { isLoading: isUpdatingOrg }] = useUpdateSelectedOrganizationMutation();
+  const [updateSelectedOrg, { isLoading: isUpdatingOrg = false }] =
+    useUpdateSelectedOrganizationMutation();
 
   if (isUpdatingOrg) {
-    return <CircularProgress size={24} style={{ color: theme.palette.background.brand.default }} />;
+    return (
+      <CircularProgress
+        size={24}
+        style={{ color: theme.palette.background.brand?.default || theme.palette.primary.main }}
+      />
+    );
   }
 
   if (!selectedOrganization) return null;
@@ -187,6 +196,7 @@ export function OrgMenu(props) {
             <FormGroup>
               <FormControlLabel
                 key="OrgPreferences"
+                label=""
                 control={
                   <Grid2 container spacing={1} alignItems="flex-end" size="grow">
                     <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
@@ -202,7 +212,8 @@ export function OrgMenu(props) {
                             paddingInline: '18px 34px',
                             color: fromMobileView
                               ? theme.palette.text.default
-                              : theme.palette.background.constant.white,
+                              : theme.palette.background.constant?.white ||
+                                theme.palette.common.white,
                           },
                         }}
                         renderValue={() => {
@@ -217,7 +228,6 @@ export function OrgMenu(props) {
                             vertical: 'top',
                             horizontal: 'left',
                           },
-                          getContentAnchorEl: null,
                           style: {
                             fill: theme.palette.text.secondary,
                           },
@@ -260,13 +270,13 @@ function OrganizationAndWorkSpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
 
-  const { DynamicComponent } = useDynamicComponent();
+  const { DynamicComponent } = useDynamicComponent() as any;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
-  const { organization } = useSelector((state) => state.ui);
-  const { isBeta } = useSelector((state) => state.ui.page);
-  const { title } = useSelector((state) => state.ui.page);
+  const { organization } = useSelector((state: RootState) => state.ui);
+  const { isBeta } = useSelector((state: RootState) => state.ui.page);
+  const { title } = useSelector((state: RootState) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
   //->using the wksp cntxt
@@ -293,7 +303,12 @@ function OrganizationAndWorkSpaceSwitcher() {
                   }}
                   style={{ marginRight: orgOpen ? '1rem' : '0' }}
                 >
-                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+                  <OrgOutlinedIcon
+                    {...iconXLarge}
+                    width="28"
+                    height="28"
+                    fill={theme.palette.common.white}
+                  />
                 </Button>
               </div>
             </CustomTooltip>

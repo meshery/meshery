@@ -13,25 +13,25 @@ export const registerConnectionSteps = [
 export const registerConnectionIcons = {
   1: <ConnectionIcon height={26} width={26} />,
   2: <ConnectionIcon height={26} width={26} />,
-  3: <CredentialIcon height={32} width={32} />,
+  3: <CredentialIcon height={32} width={32} fill="currentColor" />,
   4: <FinishFlagIcon width="2rem" />,
 };
 
 export const registerConnectionContent = {
   1: {
-    component: <SelectConnection />,
+    component: SelectConnection,
     props: ['handleNext', 'sharedData', 'setSharedData'],
   },
   2: {
-    component: <ConnectionDetails />,
+    component: ConnectionDetails,
     props: ['handleNext', 'sharedData', 'setSharedData'],
   },
   3: {
-    component: <CredentialDetails />,
+    component: CredentialDetails,
     props: ['handleNext', 'sharedData', 'setSharedData', 'handleRegistrationComplete'],
   },
   4: {
-    component: <Finish />,
+    component: Finish,
     props: ['sharedData', 'setSharedData'],
   },
 };

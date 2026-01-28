@@ -5,6 +5,18 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium } from 'css/icons.styles';
 import React from 'react';
 
+type MenuOption = {
+  key?: string;
+  title: string;
+  icon: React.ReactNode;
+  disabled?: boolean;
+  handler: (_event: React.MouseEvent<HTMLElement>) => void;
+};
+
+type MenuComponentProps = {
+  options?: MenuOption[];
+};
+
 const StyledMenuItem = styled(MenuItem)({
   paddingLeft: '.5rem',
   paddingRight: '.5rem',
@@ -26,18 +38,18 @@ const StyledMenuDiv = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
 }));
 
-export const MenuComponent = ({ options = [] }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+export const MenuComponent = ({ options = [] }: MenuComponentProps) => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('xl'));
 
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
     setAnchorEl(null);
@@ -52,7 +64,7 @@ export const MenuComponent = ({ options = [] }) => {
               sx={{
                 padding: '0.15rem',
               }}
-              disabled={option.disabled}
+              disabled={!!option.disabled}
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
                 event.stopPropagation();
@@ -113,7 +125,7 @@ export const MenuComponent = ({ options = [] }) => {
             <StyledMenuDiv>
               <CustomTooltip key={option.title} title={option.title}>
                 <StyledMenuItem
-                  disabled={option.disabled}
+                  disabled={!!option.disabled}
                   key={option.title}
                   onClick={(event) => {
                     event.stopPropagation();
