@@ -67,6 +67,10 @@ import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
 
+const ICON_MAP = {
+  BellIcon: BellIcon,
+};
+
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
   setDrawerAnchor: () => {},
@@ -216,7 +220,8 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
-  const Icon = uiConfig.icon || BellIcon;
+  // Fix: Resolve the string name from Redux back to a Component
+  const Icon = ICON_MAP[uiConfig.icon] || BellIcon;
   return (
     <NotificationContainer>
       <Title>
