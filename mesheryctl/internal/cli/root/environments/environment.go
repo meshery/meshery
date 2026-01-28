@@ -17,11 +17,10 @@ package environments
 import (
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models/environments"
-
-	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,23 +28,27 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
+	environmentApiPath   = "api/environments"
 )
 
 var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Manage environments",
-	Long: `View list of environments and detailed information of a specific environments
+	Long: `Create, delete, list of view details of environment(s) of a specific organization
 Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
 	`,
 	Example: `
-// To view a list environments
+// Create an environment in an organization
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+
+// Delete an environment in an organization
+mesheryctl environment delete environment-id
+
+// List of registered environments in an organization
 mesheryctl environment list --orgID [orgID]
 
-// To view a particular environment
+// View a particular environment
 mesheryctl environment view --orgID [orgID]
-
-// To create a environment
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -77,11 +80,9 @@ func init() {
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectEnvironmentPrompt(environment []environments.EnvironmentData) environments.EnvironmentData {
+func selectEnvironmentPrompt(environments []environment.Environment) environment.Environment {
 	environmentNames := []string{}
-	environmentArray := []environments.EnvironmentData{}
-
-	environmentArray = append(environmentArray, environment...)
+	environmentArray := environments
 
 	for _, environment := range environmentArray {
 		environmentName := fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)

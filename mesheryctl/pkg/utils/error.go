@@ -51,15 +51,20 @@ var (
 	ErrWalkManifestsCode           = "mesheryctl-1144"
 	ErrGetChannelVersionCode       = "mesheryctl-1145"
 	ErrInvalidModelCode            = "mesheryctl-1150"
-	ErrInvalidOrgIDCode            = "mesheryctl-1152"
+	ErrInvalidUUIDCode             = "mesheryctl-1152"
 	ErrFetchEnvironmentsCode       = "mesheryctl-1153"
 	ErrTableRenderCode             = "mesheryctl-1154"
 	ErrFlagsInvalidCode            = "mesheryctl-1155"
 	ErrMesheryServerNotRunningCode = "mesheryctl-1156"
+	ErrHandlePaginationCode        = "mesheryctl-1172"
 	ErrCreateFileCode              = "mesheryctl-1123"
 	ErrRetrieveHomeDirCode         = "mesheryctl-1124"
 	ErrReadFromBodyCode            = "mesheryctl-1125"
 	ErrMarkFlagRequireCode         = "mesheryctl-1126"
+	ErrGetKubernetesContextsCode   = "mesheryctl-1165"
+	ErrSetKubernetesContextCode    = "mesheryctl-1166"
+	ErrReadInputCode               = "mesheryctl-1193"
+	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -692,12 +697,12 @@ func ErrClearLine(err error) error {
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
 
-func ErrInvalidOrgID(err error) error {
-	return errors.New(ErrInvalidOrgIDCode, errors.Alert,
-		[]string{"Invalid organization ID format"},
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert,
+		[]string{"Invalid ID format"},
 		[]string{err.Error()},
-		[]string{"Organization ID is not a valid UUID format", "Organization ID contains invalid characters"},
-		[]string{"Ensure the organization ID is a valid UUID format", "Check the orgID parameter for typos or formatting issues"})
+		[]string{"ID is not a valid UUID format", "ID contains invalid characters"},
+		[]string{"Ensure the ID is a valid UUID format", "Check the ID parameter for typos or formatting issues"})
 }
 
 func ErrFetchEnvironments(err error) error {
@@ -752,6 +757,17 @@ func ErrMesheryServerNotRunning(platform string) error {
 		[]string{"Start Meshery Server with `mesheryctl system start`", "Verify system readiness with `mesheryctl system check --preflight`", "Check your network connection and firewall settings"})
 }
 
+func ErrHandlePagination(err error) error {
+	return errors.New(ErrHandlePaginationCode, errors.Alert,
+		[]string{"Unable to display paginated results"},
+		[]string{err.Error()},
+		[]string{"Interactive pagination requires keyboard input support"},
+		[]string{
+			"Ensure you are running in an interactive terminal",
+			"If running in a non-interactive environment, use '--page' flag to skip pagination",
+		})
+}
+
 func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
@@ -782,4 +798,45 @@ func ErrReadFromBody(err error) error {
 		[]string{err.Error()},
 		[]string{"The data for the pattern (design) file might be corrupted."},
 		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
+}
+
+func ErrGetKubernetesContexts(err error) error {
+	return errors.New(
+		ErrGetKubernetesContextsCode,
+		errors.Fatal,
+		[]string{"Unable to get kubernetes contexts"},
+		[]string{err.Error()},
+		[]string{"No kubernetes contexts found"},
+		[]string{"Ensure you have at least one valid context in your meshconfig file."})
+}
+
+func ErrSetKubernetesContext(err error) error {
+	return errors.New(
+		ErrSetKubernetesContextCode,
+		errors.Fatal,
+		[]string{"Unable to set kubernetes context"},
+		[]string{err.Error()},
+		[]string{"The specified Kubernetes context does not exist. "},
+		[]string{"Verify that the Kubernetes context provided is valid and try again."})
+}
+
+func ErrReadInput(err error) error {
+	return errors.New(
+		ErrReadInputCode,
+		errors.Fatal,
+		[]string{"Unable to read the input"},
+		[]string{err.Error()},
+		[]string{"The provided input was invalid or could not be read"},
+		[]string{"Validate the input and try again."})
+}
+
+func ErrUploadFileWithParams(err error, fileName string) error {
+	return errors.New(
+		ErrUploadFileWithParamsCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to upload file: %s", fileName)},
+		[]string{err.Error()},
+		[]string{"File upload failed due to network issues or server errors"},
+		[]string{"Check your network connection and ensure the server is reachable."},
+	)
 }
