@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"errors"
+	
 	"github.com/pkg/errors"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
