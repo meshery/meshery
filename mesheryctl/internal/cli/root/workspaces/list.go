@@ -49,6 +49,10 @@ mesheryctl exp workspace list --orgId [orgId] --count
 			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
 		}
 
+		if !utils.IsUUID(orgIdFlag) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid organization ID: %q", orgIdFlag))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
