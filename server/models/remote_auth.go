@@ -137,6 +137,7 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 	// logrus.Debugf("Token string %s", tokenStringB64)
 	tokenString, err := base64.RawStdEncoding.DecodeString(tokenStringB64)
 	if err != nil {
+		// Some providers set raw access tokens in cookies instead of base64-encoded payloads.
 		return &oauth2.Token{AccessToken: tokenStringB64}, nil
 	}
 	err = json.Unmarshal(tokenString, &token)

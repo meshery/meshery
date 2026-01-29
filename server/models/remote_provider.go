@@ -742,6 +742,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	}
 	jwtClaims, err := l.VerifyToken(ts)
 	if err != nil {
+		// If parsing fails but introspection passes, treat the session as valid.
 		if introspectErr := l.introspectToken(ts); introspectErr == nil {
 			return nil
 		} else {
