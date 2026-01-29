@@ -14,7 +14,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'next',
-    'plugin:prettier/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -28,7 +27,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier', 'unused-imports'],
+  plugins: ['react', 'unused-imports'],
   rules: {
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
@@ -54,6 +53,5 @@ module.exports = {
       },
     ],
     'react/prop-types': 'off',
-    'prettier/prettier': ['error', { endOfLine: 'lf' }],
   },
 };
