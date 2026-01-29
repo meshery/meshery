@@ -10,7 +10,7 @@ fix-notification-deletion
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 3 minutes and 46 seconds_
+⌛ _Duration: 3 minutes and 57 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
