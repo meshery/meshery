@@ -40,11 +40,8 @@ setup() {
     assert_output --partial "Logs for the csv generation can be accessed $TESTDATA_DIR/logs"
 }
 
-
-
 @test "given the --register flag is provided when running mesheryctl model generate then the model is generated without registry registration" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
         assert_output --partial "Model can be accessed from $TESTDATA_DIR"
-
 }
