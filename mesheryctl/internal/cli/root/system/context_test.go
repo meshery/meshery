@@ -53,6 +53,15 @@ func TestViewContextCmd(t *testing.T) {
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+			if tt.Name == "Error for viewing a non-existing context" {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+
+				assert.Contains(t, err.Error(), `context "local3" does not exist`)
+				assert.Contains(t, err.Error(), `mesheryctl system context create local3`)
+				return
+			}
 			if err != nil {
 				t.Error(err)
 			}
