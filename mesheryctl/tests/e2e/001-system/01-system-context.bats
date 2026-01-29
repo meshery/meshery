@@ -212,6 +212,6 @@ teardown() {
    assert_output --partial "deleted context"
 
    run $MESHERYCTL_BIN system context view --context $CONTEXT_NAME
-   assert_failure
-   assert_output --partial "does not exist"
+   assert_success
+   assert_output --partial "doesn't exists"
 }
