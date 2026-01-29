@@ -50,7 +50,13 @@
               "mutatorRef": [
                 [
                   "spec",
-                  "widgets"
+                  "widgets",
+                  "[]",
+                  "properties",
+                  "metrics",
+                  "[]",
+                  "dimensions",
+                  "deployment"
                 ]
               ]
             }
