@@ -35,6 +35,7 @@ func TestViewContextCmd(t *testing.T) {
 			Name:             "Error for viewing a non-existing context",
 			Args:             []string{"context", "view", "local3"},
 			ExpectedResponse: "view.notexist.golden",
+			ExpectError:      true,
 		},
 		{
 			Name:             "view with specified context as argument",
@@ -51,17 +52,28 @@ func TestViewContextCmd(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
-			if tt.Name == "Error for viewing a non-existing context" {
+			// if tt.Name == "Error for viewing a non-existing context" {
+			// 	if err == nil {
+			// 		t.Fatalf("expected error, got nil")
+			// 	}
+
+			// 	assert.Contains(t, err.Error(), `context "local3" does not exist`)
+			// 	assert.Contains(t, err.Error(), `mesheryctl system context create local3`)
+			// 	return
+			// }
+			if tt.ExpectError {
 				if err == nil {
 					t.Fatalf("expected error, got nil")
 				}
-
-				assert.Contains(t, err.Error(), `context "local3" does not exist`)
-				assert.Contains(t, err.Error(), `mesheryctl system context create local3`)
-				return
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
 			}
+
 			if err != nil {
 				t.Error(err)
 			}
