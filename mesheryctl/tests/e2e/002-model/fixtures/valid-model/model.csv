@@ -1,0 +1,3 @@
+registrant,modelDisplayName,model,category,subCategory,description,sourceURL,website,docs,shape,primaryColor,secondaryColor,styleOverrides,styles,shapePolygonPoints,defaultData,capabilities,logoURL,svgColor,svgWhite,svgComplete,isAnnotation,publishToRegistry,hasComponents
+Meshery,Test Model,test-model,Orchestration & Management,Application Definition,Test model for E2E,,,,polygon,#FF0000,#FFFFFF,,,,,,,"",false,true
+
