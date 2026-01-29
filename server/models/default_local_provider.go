@@ -146,7 +146,7 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
-	localEmail := types.Email("meshery@localhost")
+	localEmail := types.Email("meshery@meshery.local")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
