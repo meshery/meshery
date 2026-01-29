@@ -26,7 +26,7 @@ Meshery and its components are written using the following languages and technol
 | --- [Extensions](/extensions) ---                                    |                                                                                   |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
 | [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
-| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
+| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)       | Rust and C++                                                                      |
 
 ## Deployments
 
@@ -52,7 +52,7 @@ _Figure: Meshery Adapter Operation Registration_
 
 ### Clients
 
-Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
+Meshery's REST API may be consumed by any number of clients. Clients need to present a valid JWT token.
 
 <a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" width="50%" /></a>
@@ -115,9 +115,9 @@ Meshery's Docker extension provides a simple and flexible way to design and oper
 
 ## Meshery CLI
 
-The Command Line Interface ( also known as [mesheryctl](/guides/mesheryctl/working-with-mesheryctl) ) that is used to manage Meshery. Use `mesheryctl` to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions.
+The command-line interface (also known as [mesheryctl](/guides/mesheryctl/working-with-mesheryctl)) is used to manage Meshery. Use `mesheryctl` to manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions.
 
-### **Statefulness in Meshery components**
+### Statefulness in Meshery components
 
 Some components within Meshery's architecture are concerned with persisting data while others are only
 concerned with a long-lived configuration, while others have no state at all.
@@ -145,8 +145,8 @@ Meshery uses the following list of network ports to interface with its various c
 
 | Component                |   Port   | Purpose                                         |
 | :----------------------- | :------: | :-----------------------------------------------|
-| Meshery Server          | 9081/tcp | UI, REST and GraphQL APIs                           |
-| Meshery Server          | 80/tcp | Websocket                          |
+| Meshery Server          | 9081/tcp | UI, REST, and GraphQL APIs                           |
+| Meshery Server          | 80/tcp | WebSocket                          |
 | [Meshery Broker](/concepts/architecture/broker)           | 4222/tcp | Client communication with Meshery Server        |
 | [Meshery Broker](/concepts/architecture/broker)            | 8222/tcp | HTTP management port for monitoring Meshery Broker. Available as of Meshery v0.5.0 |
 | [Meshery Broker](/concepts/architecture/broker)            | 6222/tcp | Routing port for Broker clustering. Unused as of Meshery v0.6.0-rc-2             |

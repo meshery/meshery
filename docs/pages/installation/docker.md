@@ -17,9 +17,10 @@ abstract: Install Meshery on Docker
 
 ## Deploying Meshery on Docker
 
-Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install *docker*, see [Getting Started with Docker](https://docs.docker.com/get-started/) and if you need to install *docker-compose*, see [Installing Docker Compose](https://docs.docker.com/compose/install/).
+Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install *Docker*, see [Getting Started with Docker](https://docs.docker.com/get-started/), and if you need to install *Docker Compose*, see [Installing Docker Compose](https://docs.docker.com/compose/install/).
 
-Start Meshery by executing:
+
+Start Meshery by executing the following command:
 
 <!-- <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
  <div class="clipboardjs" style="padding: 0">
@@ -63,7 +64,7 @@ This is useful when:
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

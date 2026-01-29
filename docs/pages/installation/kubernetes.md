@@ -15,13 +15,13 @@ abstract: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-cluster](#in-cluster-installation) or outside of kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your kubernetes clusters_**
+Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-cluster](#in-cluster-installation) or outside of Kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your Kubernetes clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
-    <li>Access to an active kubernetes cluster.</li>
+    <li>Access to an active Kubernetes cluster.</li>
   </ol>
 </div>
 
@@ -39,15 +39,15 @@ Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-c
 
 # In-cluster Installation
 
-Follow the steps below to install Meshery in your kubernetes cluster.
+Follow the steps below to install Meshery in your Kubernetes cluster.
 
 ## Preflight Checks
 
-Read through the following considerations prior to deploying Meshery on kubernetes.
+Read through the following considerations prior to deploying Meshery on Kubernetes.
 
 ### Preflight: Cluster Connectivity
 
-Verify your kubeconfig's current context is set the kubernetes cluster you want to deploy Meshery.
+Verify your kubeconfig's current context is set to the Kubernetes cluster you want to deploy Meshery to.
 {% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -55,7 +55,7 @@ Verify your kubeconfig's current context is set the kubernetes cluster you want 
 
 Once configured, execute the following command to start Meshery.
 
-Before executing the below command, go to ~/.meshery/config.yaml and ensure that current platform is set to kubernetes.
+Before executing the below command, go to ~/.meshery/config.yaml and ensure that the current platform is set to Kubernetes.
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -65,7 +65,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
