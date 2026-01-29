@@ -1,0 +1,66 @@
+# Meshery
+mesheryctl/mesheryctl
+mesheryctl/.meshery/
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.DS_Store
+
+.vscode/
+
+config
+
+*.config
+
+Chart.min.js
+
+fortio_chart.js
+
+cmd/wrk2
+cmd/nighthawk-go
+
+**/node_modules/
+
+**/out/
+
+**/.next/
+
+cmd/meshery
+
+log.txt
+
+# Docs
+/public
+resources/
+node_modules/
+.hugo_build.lock
+
+latest_release.json
+.hugo_build.lock
+*.tar.gz
+
+v0.6/
+v0.5/
+v0.4/
+dist/
+
+docs/v0.6/
+docs/v0.5/
+docs/v0.4/
+
+
+*/npm-debug.log
+
+
+**/.idea
