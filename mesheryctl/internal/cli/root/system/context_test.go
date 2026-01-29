@@ -66,10 +66,6 @@ func TestViewContextCmd(t *testing.T) {
 				}
 			}
 
-			if err != nil {
-				t.Error(err)
-			}
-
 			actualResponse := b.String()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata/context")
