@@ -23,7 +23,7 @@ category: project
     <h6>Question: Why was Meshery created?</h6>
 </summary>
 
-<p><strong>Answer:</strong> As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams—all engineers—to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.</p>
+<p><strong>Answer:</strong> As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.</p>
 </details>
 
 <details>
@@ -71,7 +71,7 @@ category: project
 
 <ul>
 <li><a href="/installation/linux-mac/bash">Bash user</a></li>
-<li><a href="/installation/linux-mac/brew">Homebrew user</a></li>
+<li><a href="/installation/linux-mac/brew">Brew user</a></li>
 <li><a href="/installation/windows/scoop">Scoop user</a></li>
 <li><a href="https://github.com/meshery/meshery/releases/latest">Direct download</a></li>
 </ul>

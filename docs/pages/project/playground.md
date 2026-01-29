@@ -11,7 +11,7 @@ list: include
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_
 
-Meshery Playground is a web-based, collaborative environment that lets you explore Meshery as a cloud native manager and the infrastructure it manages, including multiple Kubernetes clusters and the CNCF projects and applications that run on Kubernetes. Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. Its multiplayer plugins allow you to collaborate in real-time with your teammates on infrastructure design and operation.
+Meshery Playground is a web-based, collaborative environment that lets you explore Meshery as a cloud native manager and all of the infrastructure it manages, including multiple Kubernetes clusters, CNCF projects and applications, services, and operators that run on Kubernetes. Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. Its multiplayer plugins allow you to collaborate in real time with your teammates on infrastructure design and operation.
 
 With Meshery Playground, you can:
 

@@ -15,21 +15,21 @@ Meshery is capable of running zero or more adapters. Meshery offers many feature
 
 ### Modifying the default adapter deployment configuration
 
-The number and type of adapters, where they are deployed, how they are named, and which ports they are exposed on are all configurable deployment options. To modify the default configuration, find `~/.meshery/meshery.yaml` on your system. `~/.meshery/meshery.yaml` is a Docker Compose file.
+The number of adapters, type of adapters, where they are deployed, how they are named and what port they are exposed on are all configurable deployment options. To modify the default configuration, find `~/.meshery/meshery.yaml` on your system. `~/.meshery/meshery.yaml` is a Docker Compose file.
 
 #### Configuration: Running fewer Meshery adapters
 
-To customize which Meshery adapters are used in which deployments, customize your contexts in your meshconfig.
+To customize which Meshery Adapters are used in which deployments, customize your contexts in your meshconfig.
 
 *Recommended:*
-Configure your meshconfig using `mesheryctl system context` to customize which Meshery adapters are used in which deployments.
+Configure your meshconfig using `mesheryctl system context` to customize which Meshery Adapters are used in which deployments.
 
 *Alternative:*
 Alternatively, directly modify the `~/.meshery/meshery.yaml` configuration file, removing the entries for any adapters you want to remove from your deployment.
 
 #### Configuration: Running more than one instance of the same Meshery adapter
 
-The default configuration of a Meshery deployment includes one instance of each Meshery adapter (that has reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; for example, two instances of the Meshery Adapter for NGINX Service Mesh. To do so, you can use either of Meshery's clients to modify your Meshery deployment:
+The default configuration of a Meshery deployment includes one instance of each of the Meshery Adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery Adapter; for example, two instances of the Meshery Adapter for NGINX Service Mesh. To do so, you can use either of Meshery's clients to modify your Meshery deployment:
 - Using `mesheryctl`, modify `~/.meshery/meshery.yaml` to include multiple copies of the given adapter.
 - Using Meshery UI, navigate to the Settings page and enter the host and port of your additional adapter.
 

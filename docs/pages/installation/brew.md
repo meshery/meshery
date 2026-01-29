@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Homebrew
+title: Brew
 permalink: installation/linux-mac/brew
 type: installation
 category: mesheryctl

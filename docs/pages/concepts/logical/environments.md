@@ -92,4 +92,4 @@ By following these lifecycle and security practices, you can maintain well-organ
 
 ## Summary
 
-Environments represent a collection of resources in the form of Connections—both managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to [Workspaces](/concepts/logical/workspaces).
+Environments represent a collection of resources in the form of Connections - both managed and unmanaged. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to [Workspaces](/concepts/logical/workspaces).

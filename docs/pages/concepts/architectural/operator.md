@@ -14,7 +14,7 @@ list: include
 
 # Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
 
-Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operation of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management—whether Meshery Server is deployed inside or outside of the clusters under management.
+Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operation of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deployed inside or outside of the clusters under management.
 
 ## Deployments
 
@@ -36,7 +36,7 @@ See [Meshery Broker]({{site.baseurl}}/concepts/architecture/broker) for more inf
 
 ### MeshSync Controller
 
-The MeshSync controller manages the lifecycle of MeshSync, which is deployed for resource synchronization for the cluster.
+MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
 
 See [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) for more information.
 
@@ -88,7 +88,7 @@ The external endpoint is selected as one of the following based on the Service c
 - `ClusterIP` + `clusterPort`
 - `WorkerNodeIP` + `nodePort`
 
-Refer to the [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
+Refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
 
 ### Troubleshooting Meshery Operator and Related Components
 

@@ -39,7 +39,7 @@ Meshery earmarks infrastructure for which it is the original lifecycle manager. 
 
 `designs.meshery.io: <design-id>`
 
-The propagation of the labels and annotations to the native Kubernetes resources would be the responsibility of the workload/trait implementer.
+The propagation of the labels and annotations to the native k8s resources would be the responsibility of the workload/trait implementer.
 The following annotations are added to resources that are created by Meshery Server.
 
 ```yaml

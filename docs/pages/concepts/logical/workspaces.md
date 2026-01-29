@@ -29,7 +29,7 @@ You may create Workspaces to organize project-based work or to create domains of
 - Access to Workspaces may be granted to one or more teams.
 - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
 
-After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+After creating a workspace, one of the next steps is to add resources to it. Similar to a shared drive or collection of files, Workspaces function like your Google Drive, while Meshery Designs are comparable to Google Docs.
 
 ## Key Components
 
@@ -44,7 +44,7 @@ See "[Environments](/concepts/logical/environments)" section for more informatio
 ### Designs
 
 - Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
-- Like a shared drive (or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+- Similar to a shared drive or collection of files, Workspaces function like your Google Drive, while Meshery Designs are comparable to Google Docs.
 - One or more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
