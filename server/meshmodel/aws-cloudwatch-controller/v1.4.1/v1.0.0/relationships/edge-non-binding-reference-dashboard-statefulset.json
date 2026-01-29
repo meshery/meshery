@@ -49,8 +49,8 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "metadata",
-                  "labels"
+                  "spec",
+                  "widgets"
                 ]
               ]
             }
@@ -78,9 +78,14 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  [
                   "metadata",
-                  "labels",
-                  "monitored-by-aws-cloudwatch-dashboard"
+                  "name"
+                ],
+                [
+                  "metadata",
+                  "namespace"
+                ]
                 ]
               ]
             }
