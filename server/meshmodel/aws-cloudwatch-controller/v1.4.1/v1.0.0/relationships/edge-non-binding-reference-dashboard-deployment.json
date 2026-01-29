@@ -46,17 +46,11 @@
               }
             },
             "patch": {
-              "patchStrategy": "merge",
+              "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "spec",
-                  "widgets",
-                  "[]",
-                  "properties",
-                  "metrics",
-                  "[]",
-                  "dimensions",
-                  "deployment"
+                  "metadata",
+                  "name"
                 ]
               ]
             }
@@ -85,11 +79,8 @@
               "mutatedRef": [
                 [
                   "metadata",
-                  "name"
-                ],
-                [
-                  "metadata",
-                  "namespace"
+                  "labels",
+                  "cloudwatch-dashboard"
                 ]
               ]
             }
