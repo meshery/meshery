@@ -1,0 +1,108 @@
+{
+  "id": "b6ae7c3e-0bca-5857-96f0-05785a5fa88c",
+  "evaluationQuery": "$.spec.template.spec.volumes[*].secret.secretName",
+  "kind": "edge",
+  "metadata": {
+    "description": "AWS Secrets Manager Secret provides secrets to Deployment",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-secretsmanager-controller",
+    "displayName": "",
+    "id": "ceeef46c-7ca1-5a0a-9d96-47dc1d3aede2",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.2.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Deployment",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "277532c0-1771-56e5-a825-ea7a3753f342",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Secret",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-secretsmanager-controller",
+              "displayName": "",
+              "id": "f33f8bf0-9a26-5fe5-8a62-ec851896c29c",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "arn"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
