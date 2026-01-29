@@ -60,6 +60,13 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 			return nil, ErrTokenRefresh(err)
 		}
 		l.Log.Info("token refresh successful")
+		if req.GetBody != nil {
+			bodyReader, err := req.GetBody()
+			if err != nil {
+				return nil, ErrDoRequest(err, req.Method, req.URL.String())
+			}
+			req.Body = bodyReader
+		}
 		resp, err := l.doRequestHelper(req, newToken)
 		if err != nil {
 			return nil, ErrDoRequest(err, req.Method, req.URL.String())
@@ -257,7 +264,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	_, ok := jtk["exp"]
 	if ok {
 		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix()  > exp {
+		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
 	}
