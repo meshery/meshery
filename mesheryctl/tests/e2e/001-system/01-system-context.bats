@@ -88,6 +88,10 @@ teardown() {
 
    assert_success
    assert_output --partial "Added"
+
+   run $MESHERYCTL_BIN system context view
+   assert_success
+   assert_line --regexp "Current Context:[[:space:]]+$CONTEXT_NAME_2"
 }
 
 # bats test_tags=system:context
@@ -132,7 +136,7 @@ teardown() {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create "$CONTEXT_NAME"
-   run $MESHERYCTL_BIN system context view  --context $CONTEXT_NAME
+   run $MESHERYCTL_BIN system context view --context $CONTEXT_NAME
 
    assert_success
    assert_line --regexp "^Current Context:[[:space:]]+$CONTEXT_NAME"
@@ -176,6 +180,10 @@ teardown() {
 
    assert_success
    assert_output --partial "switched to context"
+
+   run $MESHERYCTL_BIN system context view
+   assert_success
+   assert_line --regexp "Current Context:[[:space:]]+$CONTEXT_NAME_2"
 }
 
 @test "given no context-name as an argument when running mesheryctl system context delete then the error message displays" {
@@ -202,4 +210,8 @@ teardown() {
 
    assert_success
    assert_output --partial "deleted context"
+
+   run $MESHERYCTL_BIN system context view --context $CONTEXT_NAME
+   assert_failure
+   assert_output --partial "does not exist"
 }
