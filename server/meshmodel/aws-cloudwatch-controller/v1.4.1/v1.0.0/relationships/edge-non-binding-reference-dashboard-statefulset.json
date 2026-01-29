@@ -46,7 +46,7 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
+              "patchStrategy": "merge",
               "mutatorRef": [
                 [
                   "spec",
@@ -78,14 +78,12 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  [
                   "metadata",
                   "name"
                 ],
                 [
                   "metadata",
                   "namespace"
-                ]
                 ]
               ]
             }
