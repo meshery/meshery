@@ -31,6 +31,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -145,10 +146,12 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
+	localEmail := types.Email("meshery@localhost")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
+		Email:     localEmail,
 		AvatarUrl: &avatarUrl,
 	}
 }
