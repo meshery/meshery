@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "",
+  "evaluationQuery": "edge_non_binding_reference_relationship",
   "kind": "edge",
   "metadata": {
     "description": "StatefulSet monitored by CloudWatch Dashboard",
@@ -46,11 +46,12 @@
               }
             },
             "patch": {
-              "patchStrategy": "merge",
+              "patchStrategy": "replace",
               "mutatorRef": [
                 [
+                  "configuration",
                   "spec",
-                  "dashboardBody"
+                  "queries"
                 ]
               ]
             }
@@ -75,7 +76,14 @@
               }
             },
             "patch": {
-              "patchStrategy": "none"
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "metadata",
+                  "labels",
+                  "monitored-by-aws-cloudwatch-dashboard"
+                ]
+              ]
             }
           }
         ]
