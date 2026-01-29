@@ -13,7 +13,7 @@ In Meshery, a **Component** is a fundamental building block used to represent an
 
 ## Components as building blocks
 
-Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this Components are using to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
+Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. Furthermore, Components are used to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
 
 ### Semantic Components
 
@@ -44,11 +44,11 @@ Components have several key properties that define their behavior:
 - **Kind**: The specific type of resource the component represents
 - **Version**: The API version of the component
 - **Spec**: The detailed configuration for the component
-- **Status**: The current state of the component (for semantic components)
+- **Status**: The current state of the component (for semantic components), represented as a Connection object that reflects the component's operational state
 
 Understanding the distinction between semantic and non-semantic components helps you effectively use them to both manage real infrastructure and document your designs clearly.
 
-Once registered with Meshery Server (in the [Registry](./registry)), components are available for inclusion in [Designs](./designs) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community. This fosters a collaborative ecosystem where you can leverage and contribute to the growing collection of Meshery components.
+Once registered with Meshery Server (in the [Registry](./registry)), components are available for inclusion in [Designs](./designs) that you create. Components can be created and published by anyone, allowing you to share your custom extensions with the community. This fosters a collaborative ecosystem where you can leverage and contribute to the growing collection of Meshery components.
 
 Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
@@ -57,11 +57,15 @@ Components having the same `kind`, `apiVersion` and `model.name` attributes are 
 <!-- 
  @leecalcote - This is mumbo jumbo to users and needs to be re-written.
 
+
  ## Component Status
+
 
 Components have a status that is represented as a `Connection` object. Both the administrative and real-time status of a component is a normalized representation of the connection's state. The status is represented as a `Connection` object because the status of a component is a *connection* to the component. For example, the status of a Kubernetes cluster is a direct reflection of a Meshery Server's connection to the cluster.
 
+
 Normalizing and extracting the status of a component as a direct property of the component and putting it into a connection allows multiple systems to share the same component with different states. For example, different Meshery Servers can access the same Kubernetes cluster, but each Meshery Server has its own connection to the cluster with its own status.
+
 
 Learn more about [Connections](/concepts/logical/connections).
 -->
