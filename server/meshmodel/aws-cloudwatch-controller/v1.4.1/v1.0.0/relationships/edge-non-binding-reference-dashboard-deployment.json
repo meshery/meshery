@@ -49,13 +49,11 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "queries"
+                  "metadata",
+                  "labels"
                 ]
               ]
             }
-            
           }
         ],
         "to": [
