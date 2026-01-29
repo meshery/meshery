@@ -8,7 +8,7 @@ setup() {
 
 }
 
-@test "given no orgId is provided as an argument when running mesheryctl exp workspace create --orgId then the error message is displayed" {
+@test "given --orgId without value is provided as an argument when running mesheryctl exp workspace create --orgId then an error message is displayed" {
     run $MESHERYCTL_BIN exp workspace create --orgId
 
     assert_failure 
@@ -16,7 +16,7 @@ setup() {
     assert_output --partial "needs an argument"
 }
 
-@test "given invalid orgId is provided as an argument when running mesheryctl exp workspace create --orgId --name --description then the error message is displayed" {
+@test "given an invalid orgId provided when running mesheryctl exp workspace create --orgId --name --description then an error message is displayed" {
     run $MESHERYCTL_BIN exp workspace create --orgId foo --name name --description description
 
     assert_failure 
