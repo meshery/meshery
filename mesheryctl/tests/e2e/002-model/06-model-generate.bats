@@ -15,10 +15,11 @@ setup() {
     assert_output --partial "Run 'mesheryctl model generate --help' to see detailed help message"
 }
 
-@test "mesheryctl model generate fails with invalid URL" {
-    run $MESHERYCTL_BIN model generate --file "invalid-url"
+@test "mesheryctl model generate fails with invalid path" {
+    run $MESHERYCTL_BIN model generate --file "invalid-path"
     assert_failure
-    assert_output --partial "invalid URL"
+    # When the path doesn't exist, meshkit returns "error reading directory"
+    assert_output --partial "error reading directory"
 }
 
 @test "mesheryctl model generate succeeds with valid URL and template" {
@@ -28,9 +29,11 @@ setup() {
 }
 
 @test "mesheryctl model generate fails with missing template for URL" {
-    run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model"
+    # When using a URL without providing a template file, the command should fail
+    run $MESHERYCTL_BIN model generate --file "https://example.com/model"
     assert_failure
-    assert_output --partial "Template file is not present"
+    # The actual error message from ErrTemplateFileNotPresent is "template file not present"
+    assert_output --partial "template file not present"
 }
 
 @test "mesheryctl model generate succeeds with valid CSV directory" {
@@ -43,7 +46,8 @@ setup() {
 @test "mesheryctl model generate fails with invalid CSV directory" {
     run $MESHERYCTL_BIN model generate --file "invalid-dir"
     assert_failure
-    assert_output --partial "error reading file"
+    # When directory doesn't exist, meshkit returns "error reading directory"
+    assert_output --partial "error reading directory"
 }
 
 @test "mesheryctl model generate skips registration with --register flag" {
