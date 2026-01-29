@@ -2,6 +2,7 @@ package model
 
 import (
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -64,6 +65,14 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.register.output.golden",
 			HttpCode:         200,
 		},
+		{
+			Name:             "model generate: from CSV URL without template",
+			Args:             []string{"generate", "--file", "https://example.com/test.csv"},
+			ExpectedResponse: "generate.url.skip-register.output.golden",
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			HttpCode:         200,
+		},
 	}
 
 	var resetFlags func(*cobra.Command, *testing.T)
@@ -82,6 +91,17 @@ func TestModelGenerate(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			httpmock.Reset()
 			resetFlags(ModelCmd, t)
+
+			// Mock HTTP GET for CSV URL download
+			if tt.Name == "model generate: from CSV URL without template" {
+				// Read actual CSV file content to mock
+				csvContent, err := os.ReadFile(filepath.Join(fixturesDir, "templates", "template-csvs", "Models.csv"))
+				if err != nil {
+					t.Fatal(err)
+				}
+				httpmock.RegisterResponder("GET", "https://example.com/test.csv",
+					httpmock.NewBytesResponder(200, csvContent))
+			}
 
 			if tt.URL != "" {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
