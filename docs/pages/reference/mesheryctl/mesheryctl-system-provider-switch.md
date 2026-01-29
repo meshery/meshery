@@ -12,49 +12,53 @@ subcommand: provider
 
 # mesheryctl system provider switch
 
-switch provider and redeploy
+Switch provider and redeploy
 
 ## Synopsis
 
 Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider switch [provider] [flags]
 
 </div>
-</pre> 
-
-## Examples
-
-Switch provider and redeploy Meshery
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl system provider switch [provider]
-
-</div>
-</pre> 
-
-## Options
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  -h, --help   help for switch
-
-</div>
 </pre>
 
-## Options inherited from parent commands
+## Description
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
-  -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
-  -y, --yes              (optional) assume yes for user interactive prompts.
+A **provider** determines how Meshery handles user identity and authentication. Switching the provider updates the active Meshery context and triggers a redeployment of Meshery.
 
-</div>
-</pre>
+### What changes when you switch providers?
 
-## See Also
+Switching providers affects several core components of your Meshery instance:
+* **Authentication Flow:** Determines if you log in via a remote identity provider (e.g., Meshery Cloud) or bypass authentication (Local mode).
+* **Persistence:** Where your designs, filters, and profiles are stored (locally on your machine or in a remote database).
+* **UI Experience:** After switching, you may be redirected to a different login or landing page.
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+### Local (None) Provider Behavior
+
+The **Local** provider (often specified as `None`) is designed for offline or local-only deployments. 
+* **No Authentication:** It does not require an external login.
+* **Direct Access:** The UI should skip the login screen and redirect you directly to the dashboard.
+
+> **Note:** If you are using the Local provider and are stuck at a `/user/login` screen, this is likely a configuration mismatch. Ensure your `meshconfig` is updated correctly using the troubleshooting steps below.
+
+### Using a provider preset in meshconfig
+
+The active provider is stored in the Meshery configuration file (meshconfig), typically located at:
+
+- `~/.meshery/config.yaml`
+
+If the provider is preset in the meshconfig, `mesheryctl` will use that provider when starting or redeploying Meshery.
+
+---
+
+## Troubleshooting
+
+### I see a blank white page after switching providers
+
+If you see a blank page in the browser after switching providers (commonly at a route like `/user/login`), verify which provider is currently active:
+
+```bash
+mesheryctl system provider view
