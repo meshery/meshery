@@ -24,7 +24,6 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -99,7 +98,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.LogError.Fatal(errors.Wrap(err, "error processing config"))
 		}
 
 		err = cmd.Usage()

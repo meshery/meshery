@@ -7,7 +7,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -35,11 +34,9 @@ func SetupContextEnv(t *testing.T) {
 }
 
 func SetupFunc() {
-	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	utils.SetupLogrusFormatter()
-	SystemCmd.SetOut(b)
+	utils.Log = utils.SetupMeshkitLogger("mesheryctl", true, b)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", true, b)
 }
 
 func BreakupFunc() {
@@ -63,20 +60,25 @@ func TestViewCmd(t *testing.T) {
 		{
 			Name:             "view without any parameter",
 			Args:             []string{"channel", "view"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n",
 		},
 		{
 			Name:             "view with context override",
 			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()
+
+			// Set command output to buffer instead of redirecting stdout
+			SystemCmd.SetOut(b)
+
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
+
 			if err != nil {
 				t.Error(err)
 			}
@@ -106,11 +108,17 @@ func TestSetCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()
+
+			// Set command output to buffer instead of redirecting stdout
+			SystemCmd.SetOut(b)
+
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
+
 			if err != nil {
 				t.Error(err)
 			}
+
 			actualResponse := b.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)

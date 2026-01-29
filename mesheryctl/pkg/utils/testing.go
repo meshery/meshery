@@ -184,6 +184,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	LogError = SetupMeshkitLogger("mesheryctl-error", verbose, b)
 	return b
 }
 

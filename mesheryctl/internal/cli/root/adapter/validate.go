@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -56,17 +55,17 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof("Verifying prerequisites...")
+		utils.Log.Info("Verifying prerequisites...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
-			utils.Log.Error((ErrGettingSessionData(err)))
+			utils.LogError.Error((ErrGettingSessionData(err)))
 		}
 		//resolve adapterUrl to adapter Location
 		for _, adapter := range prefs.MeshAdapters {
@@ -78,33 +77,33 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		}
 		//sync with available adapters
 		if err = validateAdapter(mctlCfg, meshName); err != nil {
-			utils.Log.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
+			utils.LogError.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
 		}
-		log.Info("verified prerequisites")
+		utils.Log.Info("verified prerequisites")
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof("Starting cloud and cloud native infrastructure validation...")
+		utils.Log.Info("Starting cloud and cloud native infrastructure validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
 		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return nil
 		}
 		s.Stop()
 
 		if watch {
-			log.Infof("Verifying Operation")
+			utils.Log.Info("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
-				utils.Log.Error(ErrWaitValidateResponse(err))
+				utils.LogError.Error(ErrWaitValidateResponse(err))
 				return nil
 			}
 		}

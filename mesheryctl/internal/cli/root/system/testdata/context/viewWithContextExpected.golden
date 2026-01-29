@@ -1,6 +1,5 @@
 
 Current Context: local2
-
 endpoint: http://localhost:32242
 token: default2
 token-location: auth.json

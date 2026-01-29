@@ -32,8 +32,8 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -91,11 +91,11 @@ func Execute() error {
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
-		log.Fatal(err)
+		utils.LogError.Fatal(err)
 	}
 
-	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(setupLogger)
+	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
@@ -160,10 +160,10 @@ func initConfig() {
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
 		if !os.IsNotExist(err) && stat.Size() == 0 {
-			log.Println("Empty meshconfig. Please populate it before running a command")
+			utils.Log.Info("Empty meshconfig. Please populate it before running a command")
 		}
 		if os.IsNotExist(err) {
-			log.Printf("Missing Meshery config file.")
+			utils.Log.Info("Missing Meshery config file.")
 		}
 
 		// Create a default meshconfig in each of the above two scenarios.
@@ -173,7 +173,7 @@ func initConfig() {
 				if os.IsNotExist(err) {
 					err = os.MkdirAll(utils.MesheryFolder, 0775)
 					if err != nil {
-						log.Fatal(err)
+						utils.LogError.Fatal(err)
 					}
 				}
 			}
@@ -181,25 +181,22 @@ func initConfig() {
 			// Create config file if not present in meshery folder
 			err = utils.CreateConfigFile()
 			if err != nil {
-				log.Fatal(err)
+				utils.LogError.Fatal(err)
 			}
 
 			// Add Token to context file
 			err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 			if err != nil {
-				log.Fatal(err)
+				utils.LogError.Fatal(err)
 			}
 
 			// Add Context to context file
 			err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 			if err != nil {
-				log.Fatal(err)
+				utils.LogError.Fatal(err)
 			}
 
-			log.Println(
-				fmt.Sprintf("Default config file created at %s",
-					utils.DefaultConfigPath,
-				))
+			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)
 		}
 		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
@@ -208,16 +205,16 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Debug("Using config file:", viper.ConfigFileUsed())
+		utils.Log.Debugf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
 
 // setVerbose sets the log level to debug if the -v flag is set
 func setVerbose() {
-	log.SetLevel(log.InfoLevel)
+	utils.Log.SetLevel(log.InfoLevel)
 
 	if verbose {
-		log.SetLevel(log.DebugLevel)
+		utils.Log.SetLevel(log.DebugLevel)
 	}
 }
 

@@ -20,8 +20,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/meshkit/logger"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -61,6 +61,8 @@ type Context struct {
 	Operator   string         `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
 	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
+
+var Log logger.Handler
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
 func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
@@ -110,7 +112,7 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		Log.Fatal(err)
 	}
 
 	return currentContext.Endpoint
@@ -124,7 +126,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		Log.Fatal(err)
 	}
 
 	return currentContext, err
@@ -134,7 +136,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		log.Fatal(err)
+		Log.Fatal(err)
 	}
 
 	return context, err
@@ -147,8 +149,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf("Error: %v", err.Error())
-
+		Log.Error(err)
 	}
 
 	return err
@@ -255,16 +256,16 @@ func (ctx *Context) ValidateVersion() error {
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
-			log.Error(cerr)
+			Log.Error(cerr)
 		}
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version '" + ctx.Version + "' is not a valid Meshery release.")
+		Log.Fatal(errors.New("version '" + ctx.Version + "' is not a valid Meshery release"))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("failed to validate Meshery release version " + ctx.Version)
+		Log.Fatal(errors.New("failed to validate Meshery release version: " + ctx.Version + ". Response code: " + fmt.Sprint(resp.StatusCode)))
 	}
 
 	return nil
@@ -315,7 +316,7 @@ func (t *Token) GetLocation() string {
 	if strings.HasPrefix(t.Location, "~/") {
 		usr, err := os.UserHomeDir()
 		if err != nil {
-			log.Warn("failed to get user home directory")
+			Log.Warnf("failed to get user home directory: %v", err)
 		}
 		return filepath.Join(usr, t.Location[2:])
 	}
@@ -324,7 +325,7 @@ func (t *Token) GetLocation() string {
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Warn("failed to get user home directory")
+		Log.Warnf("failed to get user home directory: %v", err)
 	}
 
 	return filepath.Join(home, ".meshery", t.Location)
