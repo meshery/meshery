@@ -57,7 +57,7 @@
     "@xstate/react": "^5.0.4",
     "ajv-formats": "^3.0.1",
     "axios": "^1.12.2",
-    "billboard.js": "^3.17.2",
+    "billboard.js": "^3.18.0",
     "cross-env": "^7.0.3",
     "graphql": "^16.11.0",
     "graphql-ws": "^6.0.5",
