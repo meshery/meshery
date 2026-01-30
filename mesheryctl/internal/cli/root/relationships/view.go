@@ -16,7 +16,6 @@ package relationships
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -101,17 +100,12 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 		}
 
 		if relationshipViewFlagsProvided.save {
-			// Get the home directory of user
-			homeDir, err := os.UserHomeDir()
-			if err != nil {
-				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-			}
 
 			shortID := selectedModel.Id.String()[:8]
 			sanitizer := strings.NewReplacer("/", "_")
 			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
 			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)
-			file := filepath.Join(homeDir, ".meshery", fileName)
+			file := filepath.Join(utils.MesheryFolder, fileName)
 
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[relationship.RelationshipDefinition]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(relationshipViewFlagsProvided.outputFormat, outputFormatter)
