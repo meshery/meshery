@@ -108,7 +108,9 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 			}
 
 			shortID := selectedModel.Id.String()[:8]
-			fileName := fmt.Sprintf("relationship_%s_%s", selectedModel.Model.Name, shortID)
+			sanitizer := strings.NewReplacer("/", "_")
+			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
+			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)
 			file := filepath.Join(homeDir, ".meshery", fileName)
 
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[relationship.RelationshipDefinition]{}
