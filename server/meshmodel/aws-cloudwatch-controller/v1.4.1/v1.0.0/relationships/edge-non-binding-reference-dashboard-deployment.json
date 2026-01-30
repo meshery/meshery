@@ -46,13 +46,36 @@
               }
             },
             "patch": {
-              "patchStrategy": "replace",
+              "patchStrategy": "add",
               "mutatorRef": [
                 [
-                  "metadata",
-                  "name"
+                  "spec",
+                  "widgets"
                 ]
-              ]
+              ],
+              "value": {
+                "type": "metric",
+                "properties": {
+                  "metrics": [
+                    {
+                      "metricStat": {
+                        "metric": {
+                          "namespace": "ContainerInsights",
+                          "metricName": "pod_cpu_utilization",
+                          "dimensions": {
+                            "Namespace": "{{ .mutatedRef.namespace }}",
+                            "Service": "{{ .mutatedRef.name }}"
+                          }
+                        },
+                        "period": 300,
+                        "stat": "Average"
+                      }
+                    }
+                  ],
+                  "region": "us-east-1",
+                  "title": "Deployment: {{ .mutatedRef.name }}"
+                }
+              }
             }
           }
         ],
@@ -79,8 +102,11 @@
               "mutatedRef": [
                 [
                   "metadata",
-                  "labels",
-                  "cloudwatch-dashboard"
+                  "name"
+                ],
+                [
+                  "metadata",
+                  "namespace"
                 ]
               ]
             }
