@@ -198,7 +198,9 @@ func initConfig() {
 		}
 	}
 
-	viper.SetConfigFile(utils.DefaultConfigPath)
+	if cfgFile == utils.DefaultConfigPath {
+    viper.SetConfigFile(utils.DefaultConfigPath)
+	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
