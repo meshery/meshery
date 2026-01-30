@@ -1,6 +1,6 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "id": "15277ac5-aa77-4bb7-a2e3-3a75198cd418",
+  "evaluationQuery": "edge_non-binding_reference_relationship",
   "kind": "edge",
   "metadata": {
     "description": "StatefulSet monitored by CloudWatch MetricStream",
@@ -15,7 +15,7 @@
     "version": "",
     "name": "aws-cloudwatch-controller",
     "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
+    "id": "15277ac5-aa77-4bb7-a2e3-3a75198cd418",
     "registrant": {
       "kind": "github"
     },
@@ -37,7 +37,7 @@
               "version": "",
               "name": "aws-cloudwatch-controller",
               "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "id": "f29d0622-4c87-4086-ad70-3ff489b3a9b5",
               "registrant": {
                 "kind": "github"
               },
@@ -45,15 +45,32 @@
                 "version": "v1.4.1"
               }
             },
-              "patch": {
-              "patchStrategy": "replace",
+            "patch": {
+              "patchStrategy": "add",
               "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "includeFilters"
                 ]
-              ]
+              ],
+              "value": {
+                "Namespace": "ContainerInsights",
+                "MetricNames": [
+                  "pod_cpu_utilization",
+                  "pod_memory_utilization"
+                ],
+                "Dimensions": [
+                  {
+                    "Name": "Namespace",
+                    "Value": "{{ .mutatedRef.namespace }}"
+                  },
+                  {
+                    "Name": "Service",
+                    "Value": "{{ .mutatedRef.name }}"
+                  }
+                ]
+              }
             }
           }
         ],
@@ -67,7 +84,7 @@
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "id": "c4a9ad8f-882b-44d7-a5df-522f26ac8b95",
               "registrant": {
                 "kind": "github"
               },
@@ -80,8 +97,11 @@
               "mutatedRef": [
                 [
                   "metadata",
-                  "labels",
-                  "monitored-by-aws-cloudwatch-metricstream"
+                  "name"
+                ],
+                [
+                  "metadata",
+                  "namespace"
                 ]
               ]
             }
