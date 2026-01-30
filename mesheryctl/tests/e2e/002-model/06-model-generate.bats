@@ -50,7 +50,7 @@ setup() {
     assert_output --partial "error reading directory"
 }
 
-@test "mesheryctl model generate skips registration with --register flag" {
+@test "given all requirements met and --register flag is provided when mesheryctl model generate -- file -valid-path --register then a model is generated and registration is skipped" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
