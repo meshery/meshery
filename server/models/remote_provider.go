@@ -189,7 +189,7 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 				break // Successfully fetched response
 			}
 			if i == 0 {
-				l.Log.Warn(fmt.Errorf("failed to fetch capabilities from remote provider, retrying"))
+				l.Log.Warnf("failed to fetch capabilities from remote provider, retrying")
 			}
 			l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in 3 seconds...", i+1, maxRetries, err)
 			time.Sleep(3 * time.Second)
@@ -941,7 +941,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	connection, err := l.SaveConnection(conn, token, true)
 
-	l.Log.Infof("Persisting k8s context to remote_provider, %v %v",connection,err)
+	l.Log.Infof("Persisting k8s context to remote_provider, %v %v", connection, err)
 
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
