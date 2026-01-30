@@ -11,15 +11,15 @@ list: include
 
 ## What are the Meshery Databases?
 
-Meshery Databases function as repositories for [MeshSync](/concepts/architecture/meshsync), user preferences and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of their Meshery Server instance. [Remote Providers](/extensibility/providers) may offer long-term data persistence. Meshery's APIs offer mechanisms for clients, like [`mesheryctl`](/reference/mesheryctl) and Meshery UI to retrieve data.
+Meshery Databases function as repositories for [MeshSync](/concepts/architecture/meshsync), user preferences, and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of the Meshery Server instance. [Remote Providers](/extensibility/providers) may offer long-term data persistence. Meshery's APIs offer mechanisms for clients such as [`mesheryctl`](/reference/mesheryctl) and Meshery UI to retrieve data.
 
-See the figure below for additional details of the data formats supported and type of data stored.
+See the figure below for additional details on the supported data formats and the types of data stored.
 
 [![Architecture Diagram]({{ site.baseurl }}/assets/img/architecture/meshery-database.webp)]({{ site.baseurl }}/assets/img/architecture/meshery-database.webp)
 
 ### Components
 
-Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
+Meshery Database has several kinds of database implementations to support various use cases. They are listed below:
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
 | Component      | Library                               |
