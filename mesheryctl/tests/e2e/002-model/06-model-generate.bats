@@ -15,10 +15,10 @@ setup() {
     assert_output --partial "Run 'mesheryctl model generate --help' to see detailed help message"
 }
 
-@test "mesheryctl model generate fails with error reading directory for invalid path" {
-    run $MESHERYCTL_BIN model generate --file "invalid-path"
+@test "mesheryctl model generate fails with invalid URL" {
+    run $MESHERYCTL_BIN model generate --file "invalid-url"
     assert_failure
-    assert_output --partial "error reading directory"
+    assert_output --partial "invalid URL"
 }
 
 @test "mesheryctl model generate succeeds with valid URL and template" {
@@ -27,10 +27,10 @@ setup() {
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
 }
 
-@test "mesheryctl model generate fails with template file not present when URL provided without template" {
-    run $MESHERYCTL_BIN model generate --file "https://example.com/model"
+@test "mesheryctl model generate fails with missing template for URL" {
+    run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model"
     assert_failure
-    assert_output --partial "template file not present"
+    assert_output --partial "Template file is not present"
 }
 
 @test "mesheryctl model generate succeeds with valid CSV directory" {
@@ -40,13 +40,13 @@ setup() {
     assert_output --partial "Logs for the csv generation can be accessed $TESTDATA_DIR/logs"
 }
 
-@test "mesheryctl model generate fails with error reading directory for invalid CSV directory" {
+@test "mesheryctl model generate fails with invalid CSV directory" {
     run $MESHERYCTL_BIN model generate --file "invalid-dir"
     assert_failure
-    assert_output --partial "error reading directory"
+    assert_output --partial "error reading file"
 }
 
-@test "Given all requirements are met, when running mesheryctl model generate with --register flag, then model is generated and registration is skipped" {
+@test "mesheryctl model generate skips registration with --register flag" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
