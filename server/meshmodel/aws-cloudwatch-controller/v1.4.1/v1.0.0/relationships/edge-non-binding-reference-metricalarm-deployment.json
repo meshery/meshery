@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "evaluationQuery": "edge_non-binding_reference_relationship",
   "kind": "edge",
   "metadata": {
     "description": "Deployment monitored by CloudWatch MetricAlarm",
@@ -44,16 +44,20 @@
               "model": {
                 "version": "v1.4.1"
               }
-            },       
-              "patch": {
-                "patchStrategy": "replace",
-                "mutatorRef": [
+            },
+            "patch": {
+              "patchStrategy": "add",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "dimensions"
                 ]
-              ]
+              ],
+              "value": {
+                "name": "Service",
+                "value": "{{ .mutatedRef.name }}"
+              }
             }
           }
         ],
@@ -80,8 +84,11 @@
               "mutatedRef": [
                 [
                   "metadata",
-                  "labels",
-                  "monitored-by-aws-cloudwatch-metricalarm"
+                  "name"
+                ],
+                [
+                  "metadata",
+                  "namespace"
                 ]
               ]
             }
