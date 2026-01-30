@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "billing.cnrm.cloud.google.com/v1alpha1",
     "kind": "BillingAccount",
     "schema": "{\n \"description\": \"BillingAccount is the Schema for the BillingAccount API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BillingAccountSpec defines the desired state of BillingAccount\",\n   \"properties\": {\n    \"currencyCode\": {\n     \"description\": \"Optional. The currency in which the billing account is billed and charged,\\n represented as an ISO 4217 code such as `USD`.\\n\\n Billing account currency is determined at the time of billing account\\n creation and cannot be updated subsequently, so this field should not be\\n set on update requests. In addition, a subaccount always matches the\\n currency of its parent billing account, so this field should not be set on\\n subaccounts. Clients can read this field to determine the\\n currency of an existing billing account.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The display name given to the billing account, such as `My Billing Account`. This name is displayed in the Google Cloud Console.\",\n     \"type\": \"string\"\n    },\n    \"parentRef\": {\n     \"description\": \"Optional. The billing account's parent resource.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed BillingAccount resource. Should be in the format \\\"billingAccounts/{billingAccountID}\\\".\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The name of a BillingAccount resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of a BillingAccount resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The BillingAccount name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Billing Account\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

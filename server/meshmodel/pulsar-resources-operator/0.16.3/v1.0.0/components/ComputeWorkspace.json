@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "resource.streamnative.io/v1alpha1",
     "kind": "ComputeWorkspace",
     "schema": "{\n \"description\": \"ComputeWorkspace is the Schema for the workspaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ComputeWorkspaceSpec defines the desired state of Workspace\",\n   \"properties\": {\n    \"apiServerRef\": {\n     \"description\": \"APIServerRef is the reference to the StreamNativeCloudConnection\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"flinkBlobStorage\": {\n     \"description\": \"FlinkBlobStorage is the configuration for the Flink blob storage.\",\n     \"properties\": {\n      \"bucket\": {\n       \"description\": \"Bucket is required if you want to use cloud storage.\",\n       \"type\": \"string\"\n      },\n      \"path\": {\n       \"description\": \"Path is the sub path in the bucket.\\nLeave it empty if you want to use the whole bucket.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"bucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"poolRef\": {\n     \"description\": \"PoolRef is the reference to the pool that the workspace will be access to.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name is the name of the pool\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is the namespace of the pool\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"pulsarClusterNames\": {\n     \"description\": \"PulsarClusterNames is the list of Pulsar clusters that the workspace will have access to.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"useExternalAccess\": {\n     \"description\": \"UseExternalAccess is the flag to indicate whether the workspace will use external access.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"apiServerRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Compute Workspace\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EventBridge sends events to SQS for queuing",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

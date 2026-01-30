@@ -22,7 +22,7 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
@@ -41,16 +41,23 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	}
 	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
-	connection, _, err := provider.GetConnectionByIDAndKind(
-		token,
-		connectionID,
-		"kubernetes",
-	)
+	if connectionID == uuid.Nil {
+		errConnection := ErrConnectAction(fmt.Errorf("k8sCtx.ConnectionID is empty or invalid"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
+	}
+
+	connection, _, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		errConnection := ErrConnectAction(err)
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
 		return machines.NoOp, eventBuilder.Build(), errConnection
 
+	}
+	if connection.Kind != "kubernetes" {
+		errConnection := ErrConnectAction(fmt.Errorf("connection is not of kind kubernetes"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
 	}
 
 	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)

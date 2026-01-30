@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -69,50 +71,7 @@
     "svgComplete": "",
     "svgWhite": ""
   },
-  "capabilities": [
-    {
-      "description": "Configure the visual styles for the component",
-      "displayName": "Styling",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "",
-      "type": "style",
-      "version": "0.7.0"
-    },
-    {
-      "description": "Change the shape of the component",
-      "displayName": "Change Shape",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "shape",
-      "type": "style",
-      "version": "0.7.0"
-    },
-    {
-      "description": "Drag and Drop a component into a parent component in graph view",
-      "displayName": "Compound Drag And Drop",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "interaction",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "compoundDnd",
-      "type": "graph",
-      "version": "0.7.0"
-    }
-  ],
+  "capabilities": null,
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
@@ -128,5 +87,7 @@
     "version": "capsule.clastix.io/v1beta2",
     "kind": "TenantOwner",
     "schema": "{\n \"description\": \"TenantOwner is the Schema for the tenantowners API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired state of TenantOwner.\",\n   \"properties\": {\n    \"clusterRoles\": {\n     \"default\": [\n      \"admin\",\n      \"capsule-namespace-deleter\"\n     ],\n     \"description\": \"Defines additional cluster-roles for the specific Owner.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"kind\": {\n     \"description\": \"Kind of entity. Possible values are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\"\",\n     \"enum\": [\n      \"User\",\n      \"Group\",\n      \"ServiceAccount\"\n     ],\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name of the entity.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"kind\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Tenant Owner\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

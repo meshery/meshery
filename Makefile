@@ -104,6 +104,7 @@ server-local: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
@@ -114,6 +115,7 @@ server-kanvas: dep-check
 	PROVIDER=Layer5 \
 	RELEASE_CHANNEL=kanvas \
 	PLAYGROUND=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
 	PORT=9081 \
 	DEBUG=true \
@@ -179,6 +181,7 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
@@ -340,8 +343,9 @@ ui-setup:
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci:
-	cd ui && npm ci && cd ..
-	cd provider-ui && npm ci && cd ..
+	cd ui; npm ci; cd ..
+	cd provider-ui; npm ci; cd ..
+
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
@@ -470,21 +474,92 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install chromium --with-deps; cd ..
 
 test-ui:
-	cd ui; npm run test:e2e; cd ..
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 test-e2e-ci:
-	cd ui; npm run test:e2e:ci; cd ..
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
+.PHONY: rego-eval policy-test
+
 rego-eval:
 	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
+## Run Rego policy unit tests using OPA and Go test runner
+policy-test:
+	@echo "Running OPA Rego policy tests..."
+	@cd server/policies && go test -v ./...
+
+
+#-----------------------------------------------------------------------------
+# Testing - MeshSync Integration Tests (Go)
+#-----------------------------------------------------------------------------
+
+## Runs MeshSync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
+server-integration-tests-meshsync-check-dependencies:
+	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
+
+server-integration-tests-meshsync-setup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
+
+server-integration-tests-meshsync-setup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
+
+## Runs MeshSync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
+## docker compose exposes nats on default ports to host, so they must be available
+server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
+
+server-integration-tests-meshsync-cleanup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
+
+server-integration-tests-meshsync-cleanup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
+
+## Runs MeshSync integration tests clean up (stops docker compose and deletes test cluster)
+server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
+
+## Runs MeshSync integration tests code itself
+server-integration-tests-meshsync-run:
+	RUN_INTEGRATION_TESTS=true \
+	PATH_TO_SQL_FILE="../../../meshery-integration-test-meshsync-mesherydb.sql" \
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
+
+## Runs MeshSync integration tests full cycle (docker build, setup, run, cleanup)
+server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
+
+#-----------------------------------------------------------------------------
+# Testing - UI
+#-----------------------------------------------------------------------------
+.PHONY: ui-test-setup ui-test ui-test-e2e-ci
+## Install Playwright dependencies for UI tests
+ui-test-setup:
+	cd ui; npx playwright install chromium --with-deps; cd ..
+
+## Run Meshery UI End-to-End Tests
+ui-test:
+	 touch .env
+	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
+
+## Run Meshery UI End-to-End Tests in CI environment
+ui-test-e2e-ci:
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
+
+#-----------------------------------------------------------------------------
+# Testing - Meshery CLI 
+#-----------------------------------------------------------------------------
+.PHONY: mesheryctl-tests
+### Run all Mesheryctl integration tests (Golang)
+mesheryctl-tests-int:
+	cd mesheryctl && go test ./...
 #-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------
@@ -505,35 +580,3 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
-
-## Runs meshsync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
-server-integration-tests-meshsync-check-dependencies:
-	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
-
-server-integration-tests-meshsync-setup-cluster:
-	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
-
-server-integration-tests-meshsync-setup-connection:
-	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
-
-## Runs meshsync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
-## docker compose exposes nats on default ports to host, so they must be available
-server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
-
-server-integration-tests-meshsync-cleanup-cluster:
-	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
-
-server-integration-tests-meshsync-cleanup-connection:
-	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
-
-## Runs meshsync integration tests clean up (stops docker compose and deletes test cluster)
-server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
-
-## Runs meshsync integration tests code itself
-server-integration-tests-meshsync-run:
-	RUN_INTEGRATION_TESTS=true \
-	PATH_TO_SQL_FILE="../../../meshery-integration-test-meshsync-mesherydb.sql" \
-	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
-
-## Runs meshsync integration tests full cycle (docker build, setup, run, cleanup)
-server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup

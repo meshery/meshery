@@ -1,4 +1,4 @@
-FROM golang:1.24 AS meshery-server
+FROM golang:1.25.5 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -52,7 +52,7 @@ COPY provider-ui .
 RUN npm run build
 
 # This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.15.3 AS base-alpine
+FROM alpine:3.23.2 AS base-alpine
 
 FROM base-alpine AS wrk2
 RUN apk update \
@@ -100,7 +100,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 
 FROM base-alpine
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
-ENV GLIBC_VERSION=2.34-r0
+ENV GLIBC_VERSION=2.35-r1
 # To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \

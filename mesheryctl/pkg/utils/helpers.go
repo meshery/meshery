@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
@@ -108,9 +109,9 @@ const (
 	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
 	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
 	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
-	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
-	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
-	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/connections/list"
 	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
 	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
 	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
@@ -279,7 +280,7 @@ var TemplateContext = config.Context{
 	Components: ListOfComponents,
 	Channel:    "stable",
 	Version:    "latest",
-	Provider:   "Meshery",
+	Provider:   "Layer5",
 }
 
 var Services = map[string]Service{
@@ -502,10 +503,12 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 func UpdateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
 
-	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
-	start.Stdout = os.Stdout
-	start.Stderr = os.Stderr
-	if err := start.Run(); err != nil {
+	// Use compose library instead of exec.Command
+	composeClient, err := NewComposeClient()
+	if err != nil {
+		return errors.Wrap(err, SystemError("failed to create compose client"))
+	}
+	if err := composeClient.Pull(context.Background(), DockerComposeFile); err != nil {
 		return errors.Wrap(err, SystemError("failed to start meshery"))
 	}
 	return nil
@@ -525,9 +528,10 @@ func AskForConfirmation(s string) bool {
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
-		if response == "y" || response == "yes" {
+		switch response {
+		case "y", "yes":
 			return true
-		} else if response == "n" || response == "no" {
+		case "n", "no":
 			return false
 		}
 	}
@@ -619,7 +623,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return idList, ErrReadResponseBody(err)
@@ -655,7 +659,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nameIdMap, ErrReadResponseBody(err)
@@ -766,15 +770,16 @@ func ParseURLGithub(URL string) (string, string, error) {
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
-	path = strings.Replace(path, "/blob/", "/", 1)
+	path = strings.ReplaceAll(path, "/blob/", "/")
 	paths := strings.Split(path, "/")
-	if host == "github.com" {
+	switch host {
+	case "github.com":
 		if len(paths) < 5 {
 			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
-	} else if host == "raw.githubusercontent.com" {
+	case "raw.githubusercontent.com":
 		if len(paths) < 5 {
 			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
@@ -807,7 +812,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	if err != nil {
 		return nil, ErrRequestResponse(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -1205,9 +1210,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		remaining := len(data) - endIndex
 
 		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		_, _ = whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
 		fmt.Println()
-		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
+		_, _ = whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
 		if len(footer) > 0 {
@@ -1276,7 +1281,7 @@ func DisplayCount(component string, count int64) {
 	if count == 0 {
 		display = fmt.Sprintf("No %ss found", strings.TrimSuffix(component, "s"))
 	}
-	whiteBoardPrinter.Fprintln(os.Stdout, display)
+	_, _ = whiteBoardPrinter.Fprintln(os.Stdout, display)
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where ClusterRoleBinding references a ClusterRole through its roleRef field to determine which cluster-wide permissions to grant to the bound subjects.\n",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

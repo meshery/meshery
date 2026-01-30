@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "lambda.services.k8s.aws/v1alpha1",
     "kind": "CodeSigningConfig",
     "schema": "{\n \"description\": \"CodeSigningConfig is the Schema for the CodeSigningConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CodeSigningConfigSpec defines the desired state of CodeSigningConfig.\\n\\nDetails about a Code signing configuration (https://docs.aws.amazon.com/lambda/latest/dg/configuration-codesigning.html).\",\n   \"properties\": {\n    \"allowedPublishers\": {\n     \"description\": \"Signing profiles for this code signing configuration.\",\n     \"properties\": {\n      \"signingProfileVersionARNs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"codeSigningPolicies\": {\n     \"description\": \"The code signing policies define the actions to take if the validation checks\\nfail.\",\n     \"properties\": {\n      \"untrustedArtifactOnDeployment\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Descriptive name for this code signing configuration.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allowedPublishers\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Code Signing Config\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

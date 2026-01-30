@@ -18,16 +18,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -71,22 +71,31 @@ mesheryctl perf result saturday-profile --page 2
 mesheryctl perf result saturday-profile --view
 `,
 	Annotations: linkDocPerfResult,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
+			}
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString, profileID string
 		// setting up for error formatting
-		cmdUsed = "result"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			utils.Log.Error(ErrNoProfileName())
-			return nil
+			return ErrNoProfileName()
 		}
 
 		// handles spaces in args if quoted args passed
@@ -98,13 +107,11 @@ mesheryctl perf result saturday-profile --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(profiles) == 0 {
-			utils.Log.Info(ErrNoProfileFound())
-			return nil
+			return ErrNoProfileFound()
 		}
 
 		data := profilesToStringArrays(profiles)
@@ -116,8 +123,7 @@ mesheryctl perf result saturday-profile --view
 			// user prompt to select profile
 			selectedProfileIndex, err := userPrompt("profile", "Found multiple profiles with given name, select a profile", data)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return ErrUserPrompt(err)
 			}
 			// ids got shifted with 1 in userPrompt()
 			profileID = data[selectedProfileIndex][2]
@@ -125,8 +131,7 @@ mesheryctl perf result saturday-profile --view
 
 		results, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL(), profileID, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(ErrPerformanceProfileResult(err))
-			return nil
+			return ErrPerformanceProfileResult(err)
 		}
 
 		if len(data) == 0 {
@@ -142,14 +147,13 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(results)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				utils.Log.Error(ErrInvalidOutputChoice())
-				return nil
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
+			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, results)
+			if err != nil {
+				return err
 			}
-			utils.Log.Info(string(body))
+
+			outputFormatter.Display()
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {
@@ -194,10 +198,10 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 		return nil, nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, utils.ErrReadResponseBody(err)
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {

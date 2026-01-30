@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "postgresql.cnpg.io/v1",
     "kind": "FailoverQuorum",
     "schema": "{\n \"description\": \"FailoverQuorum contains the information about the current failover\\nquorum status of a PG cluster. It is updated by the instance manager\\nof the primary node and reset to zero by the operator to trigger\\nan update.\",\n \"properties\": {},\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"Failover Quorum\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

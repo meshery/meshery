@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "kubeovn.io/v1",
     "kind": "IP",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachIps\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachMacs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachSubnets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"containerID\": {\n     \"type\": \"string\"\n    },\n    \"ipAddress\": {\n     \"type\": \"string\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"nodeName\": {\n     \"type\": \"string\"\n    },\n    \"podName\": {\n     \"type\": \"string\"\n    },\n    \"podType\": {\n     \"type\": \"string\"\n    },\n    \"subnet\": {\n     \"type\": \"string\"\n    },\n    \"v4IpAddress\": {\n     \"type\": \"string\"\n    },\n    \"v6IpAddress\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

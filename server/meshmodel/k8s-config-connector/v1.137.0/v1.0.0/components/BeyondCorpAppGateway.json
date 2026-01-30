@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1",
     "kind": "BeyondCorpAppGateway",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"Immutable. An arbitrary user-provided name for the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"hostType\": {\n     \"description\": \"Immutable. The type of hosting used by the AppGateway. Default value: \\\"HOST_TYPE_UNSPECIFIED\\\" Possible values: [\\\"HOST_TYPE_UNSPECIFIED\\\", \\\"GCP_REGIONAL_MIG\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppGateway. Default value: \\\"TYPE_UNSPECIFIED\\\" Possible values: [\\\"TYPE_UNSPECIFIED\\\", \\\"TCP_PROXY\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Gateway\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "pkg.crossplane.io/v1beta1",
     "kind": "Lock",
     "schema": "{\n \"description\": \"Lock is the CRD type that tracks package dependencies.\",\n \"properties\": {\n  \"packages\": {\n   \"items\": {\n    \"description\": \"LockPackage is a package that is in the lock.\",\n    \"properties\": {\n     \"apiVersion\": {\n      \"description\": \"APIVersion of the package.\",\n      \"type\": \"string\"\n     },\n     \"dependencies\": {\n      \"description\": \"Dependencies are the list of dependencies of this package. The order of\\nthe dependencies will dictate the order in which they are resolved.\",\n      \"items\": {\n       \"description\": \"A Dependency is a dependency of a package in the lock.\",\n       \"properties\": {\n        \"apiVersion\": {\n         \"description\": \"APIVersion of the package.\",\n         \"type\": \"string\"\n        },\n        \"constraints\": {\n         \"description\": \"Constraints is a valid semver range or a digest, which will be used to select a valid\\ndependency version.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind of the package (not the kind of the package revision).\",\n         \"type\": \"string\"\n        },\n        \"package\": {\n         \"description\": \"Package is the OCI image name without a tag or digest.\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Type is the type of package. Can be either Configuration or Provider.\\nDeprecated: Specify an apiVersion and kind instead.\",\n         \"enum\": [\n          \"Configuration\",\n          \"Provider\",\n          \"Function\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"constraints\",\n        \"package\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": \"array\"\n     },\n     \"kind\": {\n      \"description\": \"Kind of the package (not the kind of the package revision).\",\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"description\": \"Name corresponds to the name of the package revision for this package.\",\n      \"type\": \"string\"\n     },\n     \"source\": {\n      \"description\": \"Source is the OCI image name without a tag or digest.\",\n      \"type\": \"string\"\n     },\n     \"type\": {\n      \"description\": \"Type is the type of package.\\nDeprecated: Specify an apiVersion and kind instead.\",\n      \"enum\": [\n       \"Configuration\",\n       \"Provider\",\n       \"Function\"\n      ],\n      \"type\": \"string\"\n     },\n     \"version\": {\n      \"description\": \"Version is the tag or digest of the OCI image.\",\n      \"type\": \"string\"\n     }\n    },\n    \"required\": [\n     \"dependencies\",\n     \"name\",\n     \"source\",\n     \"version\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  }\n },\n \"title\": \"Lock\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

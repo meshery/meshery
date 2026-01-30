@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "bigqueryreservation.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigQueryReservationCapacityCommitment",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"edition\": {\n     \"description\": \"Immutable. The edition type. Valid values are STANDARD, ENTERPRISE, ENTERPRISE_PLUS.\",\n     \"type\": \"string\"\n    },\n    \"enforceSingleAdminProjectPerOrg\": {\n     \"description\": \"Immutable. If true, fail the request if another project in the organization has a capacity commitment.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the transfer config should reside.\\nExamples: US, EU, asia-northeast1. The default value is US.\",\n     \"type\": \"string\"\n    },\n    \"plan\": {\n     \"description\": \"Capacity commitment plan. Valid values are at https://cloud.google.com/bigquery/docs/reference/reservations/rpc/google.cloud.bigquery.reservation.v1#commitmentplan.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"renewalPlan\": {\n     \"description\": \"The plan this capacity commitment is converted to after commitmentEndTime passes. Once the plan is changed, committed period is extended according to commitment plan. Only applicable some commitment plans.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The capacityCommitmentId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"slotCount\": {\n     \"description\": \"Immutable. Number of slots in this commitment.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"plan\",\n    \"projectRef\",\n    \"slotCount\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Reservation Capacity Commitment\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

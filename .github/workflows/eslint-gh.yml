@@ -1,9 +1,9 @@
 name: eslint-check
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
+    paths:
+      - 'ui/**'
+      - 'provider-ui/**'
 jobs:
   eslint:
     name: runner / eslint
@@ -25,7 +25,7 @@ jobs:
     # - name: Run eslint Provider UI
     #   run: make ui-provider-lint
     # - name: Commit changes
-    #   uses: stefanzweifel/git-auto-commit-action@v5
+    #   uses: stefanzweifel/git-auto-commit-action@v7
     #   with:
     #     commit_user_name: mesheryci
     #     commit_user_email: ci@meshery.io

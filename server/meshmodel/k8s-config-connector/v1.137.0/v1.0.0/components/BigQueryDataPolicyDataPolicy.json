@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "bigquerydatapolicy.cnrm.cloud.google.com/v1alpha1",
     "kind": "BigQueryDataPolicyDataPolicy",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataMaskingPolicy\": {\n     \"description\": \"The data masking policy that specifies the data masking rule to use.\",\n     \"properties\": {\n      \"predefinedExpression\": {\n       \"description\": \"The available masking rules. Learn more here: https://cloud.google.com/bigquery/docs/column-data-masking-intro#masking_options. Possible values: [\\\"SHA256\\\", \\\"ALWAYS_NULL\\\", \\\"DEFAULT_MASKING_VALUE\\\", \\\"LAST_FOUR_CHARACTERS\\\", \\\"FIRST_FOUR_CHARACTERS\\\", \\\"EMAIL_MASK\\\", \\\"DATE_YEAR_MASK\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"predefinedExpression\"\n     ],\n     \"type\": \"object\"\n    },\n    \"dataPolicyType\": {\n     \"description\": \"The enrollment level of the service. Possible values: [\\\"COLUMN_LEVEL_SECURITY_POLICY\\\", \\\"DATA_MASKING_POLICY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The name of the location of the data policy.\",\n     \"type\": \"string\"\n    },\n    \"policyTag\": {\n     \"description\": \"Policy tag resource name, in the format of projects/{project_number}/locations/{locationId}/taxonomies/{taxonomyId}/policyTags/{policyTag_id}.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The dataPolicyId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataPolicyType\",\n    \"location\",\n    \"policyTag\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Data Policy Data Policy\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -23,6 +23,10 @@ The following is a list of top-level frameworks, libraries, design system used i
 - [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
 - [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
 
+### Build System
+
+Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) for fast builds and optimal performance.
+
 ## Schema-Driven UI Development
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.

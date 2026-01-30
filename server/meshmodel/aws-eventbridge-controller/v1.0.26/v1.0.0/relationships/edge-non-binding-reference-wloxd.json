@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship between rule and Endpoint",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

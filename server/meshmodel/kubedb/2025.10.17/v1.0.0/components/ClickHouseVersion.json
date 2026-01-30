@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "catalog.kubedb.com/v1alpha1",
     "kind": "ClickHouseVersion",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"clickHouseKeeper\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"db\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"initContainer\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"securityContext\": {\n     \"properties\": {\n      \"runAsUser\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ui\": {\n     \"items\": {\n      \"properties\": {\n       \"disable\": {\n        \"type\": \"boolean\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"values\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"updateConstraints\": {\n     \"properties\": {\n      \"allowlist\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"denylist\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clickHouseKeeper\",\n    \"db\",\n    \"initContainer\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Click House Version\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

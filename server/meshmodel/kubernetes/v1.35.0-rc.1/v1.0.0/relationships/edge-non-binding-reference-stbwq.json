@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Deployment creates and manages Pods enabling rolling updates and scaling of replicated Pods.",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

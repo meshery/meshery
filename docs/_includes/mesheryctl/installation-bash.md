@@ -49,3 +49,9 @@ You are ready to deploy Meshery `mesheryctl`. To do so, execute the following co
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system start</div></div>
  </pre>
+
+If you are running Meshery on Docker, execute the following command.
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">mesheryctl system start -p docker</div></div>
+ </pre>

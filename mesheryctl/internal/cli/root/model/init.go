@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -16,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
 )
 
 var initModelCmd = &cobra.Command{
@@ -40,7 +40,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		{
 			// validate model name
 			if len(args) != 1 {
-				return ErrModelInitFromString("must provide only one argument: model name")
+				return ErrModelInitFromString(errInitOneArg)
 			}
 			modelName := args[0]
 			input := map[string]any{"name": modelName}
@@ -63,7 +63,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				validFormatsString := strings.Join(initModelGetValidOutputFormat(), ", ")
 				return ErrModelUnsupportedOutputFormat(
 					fmt.Sprintf(
-						"[ %s ] are the only format supported",
+						errInitUnsupportedFormat,
 						validFormatsString,
 					),
 				)
@@ -75,13 +75,12 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			version, _ := cmd.Flags().GetString("version")
 			if !semver.IsValid(version) {
 				return ErrModelUnsupportedVersion(
-					"version must follow a semver format, f.e. v1.2.3",
+					errInitInvalidVersion,
 				)
 			}
 		}
 
 		return nil
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
@@ -111,7 +110,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			if !os.IsNotExist(err) && info.IsDir() {
 				return ErrModelInitFromString(
 					fmt.Sprintf(
-						"folder %s exists, please specify different model name or version",
+						errInitFolderExists,
 						modelVersionFolder,
 					),
 				)
@@ -160,7 +159,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					if err != nil {
 						return ErrModelInit(err)
 					}
-					defer file.Close() // Ensure the file is closed when the function exits
+					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
 
 					_, err = file.Write(content)
 					if err != nil {
@@ -185,17 +184,16 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			)
 			return nil
 		}()
-
 		if err != nil {
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
 				// if model folder didn'tv exist before -> delete it
 				utils.Log.Infof("Removing %s", modelFolder)
-				os.RemoveAll(modelFolder)
+				_ = os.RemoveAll(modelFolder)
 			} else {
 				// otherwise remove only version folder
 				utils.Log.Infof("Removing %s", modelVersionFolder)
-				os.RemoveAll(modelVersionFolder)
+				_ = os.RemoveAll(modelVersionFolder)
 			}
 			return err
 		}
@@ -217,11 +215,13 @@ func initModelGetValidOutputFormat() []string {
 	// return []string{"json", "yaml", "csv"}
 }
 
-const initModelDirPerm = 0755
-const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
-const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
-const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+const (
+	initModelDirPerm                  = 0o755
+	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
+)
 
 // TODO: Connection templates are temporarily disabled.
 // This constant is not currently in use.
@@ -279,7 +279,7 @@ var initModelData = []struct {
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
-			"relationship": initModelTemplatePathRelathionship,
+			"relationship": initModelTemplatePathRelationship,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Creating sample relationships...")
@@ -378,11 +378,11 @@ func initModelValidateDataOverSchema(schema []byte, data map[string]interface{})
 }
 
 func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode JSON
+	// Generic structure to decode Yaml
 	var schemaMap map[string]interface{}
 
-	// Unmarshal JSON schema into a map
-	if err := json.Unmarshal(schema, &schemaMap); err != nil {
+	// Unmarshal Yaml schema into a map
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
 		return "", err
 	}
 

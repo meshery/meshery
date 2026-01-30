@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship Lambda polls SQS queues as event source for message processing",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

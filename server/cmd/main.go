@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -29,11 +30,13 @@ import (
 	_events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/tracing"
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -120,6 +123,25 @@ func main() {
 	viper.SetDefault("PLAYGROUND", false)
 	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
 	store.Initialize()
+
+	// initialize tracing
+	otelConfigString := viper.GetString("OTEL_CONFIG")
+	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+
+	if err != nil {
+		log.Error(fmt.Errorf("Failed to initialize OpenTelemetry tracing: %v", err))
+	} else {
+		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+	}
+	// Defer shutdown of tracer provider
+	defer func() {
+		if tracingProvider != nil {
+			if err := tracingProvider.Shutdown(context.Background()); err != nil {
+				log.Error(fmt.Errorf("Failed to shutdown OpenTelemetry tracer provider: %v", err))
+			}
+		}
+	}()
 
 	log.Info("Local Provider capabilities are: ", version)
 
@@ -213,7 +235,7 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
-		models.Organization{},
+		schemasOrganization.Organization{},
 		models.Key{},
 		connections.Connection{},
 		environment.Environment{},

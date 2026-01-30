@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EMR containers read input and write output data to S3",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

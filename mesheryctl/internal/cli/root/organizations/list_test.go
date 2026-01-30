@@ -18,14 +18,14 @@ func TestListOrganizations(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List organizations whithout providing organization ID",
 			Args:             []string{"list"},
 			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
 			Fixture:          "list.organization.response.golden",
 			ExpectedResponse: "list.organization.golden",
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 	}
 

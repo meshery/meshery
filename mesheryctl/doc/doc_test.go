@@ -145,10 +145,10 @@ func TestDoc(t *testing.T) {
 		cmd.Run = func(cmd *cobra.Command, args []string) {}
 		cmd.Example = "// test_example"
 		file, _ := os.CreateTemp("", "test.md")
-		defer os.Remove(file.Name())
+		defer func() { _ = os.Remove(file.Name()) }()
 		_, err := file.WriteString("{% include example.md %}")
 		assert.NoError(t, err)
-		file.Close()
+		_ = file.Close()
 		manuallyAddedContent, _ := getManuallyAddedContentMap(file.Name())
 		buf := &bytes.Buffer{}
 		err = GenMarkdownCustom(cmd, buf, manuallyAddedContent)
@@ -176,11 +176,11 @@ func TestDoc(t *testing.T) {
 
 		file, err := os.CreateTemp("", "test.md")
 		assert.NoError(t, err)
-		defer os.Remove(file.Name())
+		defer func() { _ = os.Remove(file.Name()) }()
 
 		_, err = file.WriteString("{% include example.md %}")
 		assert.NoError(t, err)
-		file.Close()
+		_ = file.Close()
 
 		contentMap, err := getManuallyAddedContentMap(file.Name())
 		assert.NoError(t, err)

@@ -2,8 +2,10 @@ package display
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
@@ -13,6 +15,8 @@ import (
 )
 
 var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+var nextPageKeyboardKeys = []keyboard.Key{keyboard.KeyEnter, keyboard.KeyArrowDown, keyboard.KeySpace}
+var escapeKeyboardKeys = []keyboard.Key{keyboard.KeyEsc, keyboard.KeyCtrlC}
 
 var serverAndNetworkErrors = []string{
 	utils.ErrUnauthenticatedCode,
@@ -36,10 +40,29 @@ func HandlePaginationAsync[T any](
 
 	for {
 		// Clear the terminal screen
-		utils.ClearLine()
+		if currentPage > 0 {
+			utils.ClearLine()
+		}
 
-		// Fetch data for the current page
-		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
+		urlPath := ""
+
+		pagesQuerySearch := url.Values{}
+		if !strings.Contains(displayData.UrlPath, "page") {
+			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		}
+
+		if !strings.Contains(displayData.UrlPath, "pagesize") {
+			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
+		}
+
+		if strings.Contains(displayData.UrlPath, "?") {
+			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		} else {
+			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		}
+
+		utils.Log.Debug("Fetching data from URL: ", urlPath)
+
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			if meshkitErr, ok := err.(*errors.Error); ok {
@@ -66,13 +89,17 @@ func HandlePaginationAsync[T any](
 		}
 
 		// Display the current page number to be one-based
-		whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
+		_, _ = whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
 		fmt.Println()
 
 		// Display the data in a table
 		utils.PrintToTable(displayData.Header, rows, nil)
 
 		if displayData.IsPage {
+			break
+		}
+
+		if int64(startIndex+pageSize) >= totalCount {
 			break
 		}
 
@@ -92,11 +119,11 @@ func HandlePaginationAsync[T any](
 			break
 		}
 
-		if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+		if slices.Contains(escapeKeyboardKeys, event.Key) {
 			break
 		}
 
-		if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+		if slices.Contains(nextPageKeyboardKeys, event.Key) {
 			currentPage++
 			startIndex += pageSize
 		} else {
