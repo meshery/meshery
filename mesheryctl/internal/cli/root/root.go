@@ -172,7 +172,7 @@ func initConfig() {
 			createDefaultConfig = true
 
 		case err != nil:
-			log.Printf("Unable to stat config file: %v", err)
+			log.Printf("Cannot access Meshery config file. Please check permissions. Error: %v", err)
 			return
 		}
 
@@ -203,9 +203,9 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	if err := viper.ReadInConfig(); err != nil {
-    log.Debugf("unable to read config file: %v", err)
+		log.Debugf("unable to read config file: %v", err)
 	} else {
-    log.Debug("Using config file:", viper.ConfigFileUsed())
+		log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
 }
 
