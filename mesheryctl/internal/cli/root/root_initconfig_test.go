@@ -24,7 +24,7 @@ func TestInitConfigUseCases(t *testing.T) {
 			},
 		},
 		{
-			name: "empty config",
+			name: "given an empty config file when calling initConfig then xxx",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-empty")
 				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
