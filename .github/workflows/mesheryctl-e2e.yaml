@@ -45,6 +45,8 @@ jobs:
       - name: Setup BATS and BATS libs
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
       - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
