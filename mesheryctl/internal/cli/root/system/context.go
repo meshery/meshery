@@ -325,7 +325,7 @@ mesheryctl system context view --all
 		if !ok {
 			return ErrContextNotExists(
 				fmt.Errorf(
-					`context "%s" does not exist.`,
+					"context `%s` does not exist \n",
 					currContext,
 				),
 			)
