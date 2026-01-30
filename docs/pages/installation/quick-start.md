@@ -5,18 +5,18 @@ permalink: installation/quick-start
 # redirect_from: installation/quick-start/
 language: en
 type: installation
-abstract: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
+abstract: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or a Kubernetes cluster.
 ---
 
 <a name="getting-started"></a>
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
 
-{% include alert.html type="warning" title="Quick Start Assumptions" content="This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='/installation'>supported platforms</a> for more specific (and less presumptious) instructions." %}
+{% include alert.html type="warning" title="Quick Start Assumptions" content="This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='/installation'>supported platforms</a> for more specific (and less presumptuous) instructions." %}
 
 ## 1. Download, install, and run Meshery
 
-If you are on macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server by executing the following command.
+If you are on a macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server by executing the following command.
 
 <!-- <pre class="codeblock-pre" style="padding: 0; font-size:0px;">
 <div class="codeblock" style="display: block;">
@@ -47,9 +47,9 @@ Your default browser will be opened and directed to Meshery's web-based user int
 
 {% include alert.html type="light" title="Accessing Meshery Server with Meshery CLI" content="Meshery's command line interface is a client of Meshery Server's REST API (just as Meshery UI is). Choose to use <code>mesheryctl</code> as an alternative client as it suits your needs." %}
 
-### 3. Select a Provider
+## 3. Select a Provider
 
-Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to login to Meshery. Authenticate with your chosen Provider.
+Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) in order to log in to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />
@@ -69,7 +69,7 @@ Visit <i class="fas fa-cog"></i> Settings:
   <img class="center" style="width:min(100%,650px);" src="/assets/img/platforms/meshery-settings.png" />
 </a>
 
-If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See Managing Kubernetes Clusters for more information.
+If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See [Managing Kubernetes Clusters](/installation/kubernetes) for more information.
 
 ## 5. Verify Deployment
 
@@ -79,15 +79,15 @@ Run connectivity tests and verify the health of your Meshery system. Verify Mesh
   <img class="center" style="width:min(100%,350px);" src="{{site.baseurl}}/assets/img/platforms/k8s-context-switcher.png" />
 </a>
 
-## 5. Design and operate Kubernetes clusters and their workloads
+## 6. Design and operate Kubernetes clusters and their workloads
 
-You may now proceed to managed any cloud native infrastructure supported by Meshery. See all integrations for a complete list of supported infrastructure.
+You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{ site.baseurl }}/extensibility/integrations) for a complete list of supported infrastructure.
 
 <a href="{{site.baseurl}}/assets/img/platforms/meshery-designs.png">
   <img class="center" style="width:min(100%,650px);" src="{{site.baseurl}}/assets/img/platforms/meshery-designs.png" />
 </a>
 
-# Explore Tutorials
+## Explore Tutorials
 
 🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure.
 
@@ -97,7 +97,7 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
   {% if group.name != "" %}
- <strong>{{ group.name | upcase }}></strong>
+ <strong>{{ group.name | upcase }}</strong>
 
   {% capture tutorials %}
   {% for item in group.items %}
@@ -114,7 +114,7 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 
 </div>
 
-# Additional Guides
+## Additional Guides
 
 <div class="section">
     <ul>

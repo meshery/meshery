@@ -29,8 +29,10 @@ import (
 	"github.com/meshery/meshkit/utils/walker"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -145,10 +147,12 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
+	localEmail := types.Email("meshery@meshery.local")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
+		Email:     localEmail,
 		AvatarUrl: &avatarUrl,
 	}
 }
@@ -1282,8 +1286,8 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	// Seed default organization
 	go func() {
 		id, _ := uuid.NewV4()
-		org := &Organization{
-			ID:          &id,
+		org := &organization.Organization{
+			Id:          id,
 			Name:        "My Org",
 			Country:     "",
 			Region:      "",
@@ -1515,7 +1519,7 @@ func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId s
 }
 
 // SaveOrganization saves given organization with the provider
-func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *Organization) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveOrganization(_ string, organization *organization.Organization) ([]byte, error) {
 	return l.OrganizationPersister.SaveOrganization(organization)
 }
 
