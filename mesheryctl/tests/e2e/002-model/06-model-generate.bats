@@ -21,13 +21,13 @@ setup() {
     assert_output --partial "no such file or directory"
 }
 
-@test "given a valid CSV directory is provided when running mesheryctl model generate --file valid-csv-directory then the model is generated" {
+@test @test "given a valid model directory is provided when running mesheryctl model generate --file valid-model-directory then a model is generated" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model" --template "$FIXTURES_DIR/valid-template.json"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
 }
 
-@test "given a valid URL without a template when running mesheryctl model generate then an error is returned" {
+@test "given a valid model directory without a template when running mesheryctl model generate --file path-model-without-template then an error message is displayed" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model"
     assert_failure
     assert_output --partial "error reading csv file"
