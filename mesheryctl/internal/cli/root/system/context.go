@@ -323,12 +323,10 @@ mesheryctl system context view --all
 
 		contextData, ok := configuration.Contexts[currContext]
 		if !ok {
-			return utils.ErrInvalidArgument(
+			return ErrContextNotExists(
 				fmt.Errorf(
-					`context "%s" does not exist. Run the following command to create it:
-
-mesheryctl system context create %s`,
-					currContext, currContext,
+					`context "%s" does not exist.`,
+					currContext,
 				),
 			)
 		}

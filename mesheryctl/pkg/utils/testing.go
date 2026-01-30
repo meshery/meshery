@@ -56,6 +56,7 @@ type CmdTestInput struct {
 	ExpectedResponseYaml string
 	ExpectError          bool
 	ErrorStringContains  []string
+	ExpectedError        error `default:"nil"`
 }
 
 type GoldenFile struct {
