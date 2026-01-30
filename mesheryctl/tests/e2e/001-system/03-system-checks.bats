@@ -12,7 +12,7 @@ setup() {
    export CHECK_PREREQUISISTE_RESULT="Meshery prerequisites met"
 }
 
-@test "mesheryctl system check succeeds displaying required sections" {
+@test "Given all requirement met when running mesheryctl system check then required sections are displayed" {
    run $MESHERYCTL_BIN system check
    # Note: The command may fail with exit code 1 if auth token is missing,
    # but it should still output all sections. We verify the sections are displayed.
