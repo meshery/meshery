@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-## Install docs.layer5.io dependencies on your local machine.
+## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
 setup:
 	npm install
@@ -24,7 +24,7 @@ site: check-go
 	
 ## Run docs.meshery.io on your local machine. Alternate method.
 site-fast:
-	gatsby develop
+	hugo server
 
 ## Build docs.meshery.io on your local machine.
 build:

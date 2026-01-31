@@ -6,7 +6,7 @@ command = "npm run build:preview"
 publish = "public"
 
 [build.environment]
-GO_VERSION = "1.23.8"
+GO_VERSION = "1.23"
 HUGO_VERSION = "0.148.1"
 
 [context.production]

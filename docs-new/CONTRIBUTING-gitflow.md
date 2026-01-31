@@ -123,7 +123,7 @@ If any commits to the upstream master branch have been made during the period yo
 <br><br>
 Now, it may be desirable to squash some of your smaller commits down into a small number of larger more cohesive commits. You can do this with an interactive rebase:
 <br><br>
-<li><h3>Rebase all commits on your development branch</li></h3>
+<li><h3>Rebase all commits on your development branch</h3></li>
 <br>
 
 `git checkout`<br>

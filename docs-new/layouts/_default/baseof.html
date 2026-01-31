@@ -2,12 +2,12 @@
 <html lang="{{ .Site.Language.Lang }}" class="no-js">
   <head>
     {{ partialCached "head.html" (dict "Title" .Title "Description" .Params.abstract "Site" .Site) .RelPermalink }}
-    {{ partialCached "header.html" . .RelPermalink }}
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-    <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script>
+    {{/* <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script> */}}
   </head>
 
   <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
+    {{ partialCached "header.html" . .RelPermalink }}
     <script>
       if (localStorage.getItem("mode") === "light-mode") {
         document.body.classList.remove("dark-mode");
@@ -17,7 +17,7 @@
       }
     </script>
 
-    {{ partialCached "scripts/google-tagmanager-body.html" . }}
+    {{/* partialCached "scripts/google-tagmanager-body.html" . */}}
 
     <div class="flex-container">
       <div class="left-container">
@@ -28,7 +28,7 @@
         </div>
 
         <div class="icon-container">
-          {{ partial "nav-toggle.html" . }}
+          {{/* partial "nav-toggle.html" . */}}
         </div>
       </div>
 
@@ -48,13 +48,15 @@
         </div>
       </main>
 
+      {{/* TODO: Add toc.html partial
       {{ if ne (.Params.display_toc | default true) false }}
         {{ partial "toc.html" . }}
       {{ end }}
+      */}}
     </div>
 
     {{ partialCached "footer.html" . }}
-    {{ partialCached "scripts.html" . }}
-    {{ partialCached "scripts/google-analytics.html" . }}
+    {{/* partialCached "scripts.html" . */}}
+    {{/* partialCached "scripts/google-analytics.html" . */}}
   </body>
 </html>
