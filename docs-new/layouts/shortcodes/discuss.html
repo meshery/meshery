@@ -1,4 +1,21 @@
-<div class="alert alert-dark" role="alert">
+{{/*
+  discuss.html - Discussion forum callout
+
+  Usage:
+    {{< discuss >}}
+
+  Replaces Jekyll include:
+    {% include discuss.html %}
+
+  CSS Dependencies (in assets/scss/_alert.scss):
+    - .alert
+    - .alert-dark
+    - .alert-heading
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+<div class="alert alert-dark">
   <h4 class="alert-heading">Discussion Forum</h4>
-  <p>Don't find an answer to your question here? Ask on the <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.</p>
+  Don't find an answer to your question here? Ask on the
+  <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.
 </div>
