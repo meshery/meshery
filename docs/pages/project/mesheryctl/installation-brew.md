@@ -1,12 +1,10 @@
-
-
 ### Prerequisites
 
 You need to have `Brew` installed on your **Linux** or **macOS** system to perform these actions.
 
 ### Install `mesheryctl` using Brew
 
-To install `mesheryctl` using homebrew, execute the following commands.
+To install `mesheryctl` using Homebrew, execute the following command.
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -23,7 +21,7 @@ You're ready to run Meshery. To do so, execute the following command.
 </div></div>
 </pre>
 
-Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+Meshery Server supports customizing the authentication flow callback URL, which can be configured in the following way.
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
@@ -32,7 +30,7 @@ Meshery server supports customizing authentication flow callback URL, which can 
 </div></div>
 </pre>
 
-`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
+`mesheryctl` uses your current Kubernetes context (the `KUBECONFIG` environment variable; `~/.kube/config` by default). Confirm that this is the Kubernetes cluster you want Meshery to interact with by running: `kubectl config get-contexts`.
 
 If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
 
