@@ -1,0 +1,111 @@
+name: Build and Preview Hugo Docs
+
+on:
+  pull_request_target:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened, closed ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  pull-requests: write
+
+concurrency:
+  group: "pages-${{ github.event.pull_request.number || github.run_id }}"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy-preview:
+    runs-on: ubuntu-24.04
+
+    steps:
+
+      - name: Checkout PR code 🛎️
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Checkout gh-pages for cleanup
+        if: github.event.action == 'closed'
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        if: github.event.action != 'closed'
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.154.5'
+          extended: true
+
+  
+      - name: Setup Node.js
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+   
+      - name: Install dependencies
+        if: github.event.action != 'closed'
+        run: |
+          make setup
+
+  
+      - name: Build site with dynamic BaseURL 🔧
+        if: github.event.action != 'closed'
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          ORG_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+
+          PR_BASE_URL="https://${ORG_NAME}.github.io/${REPO_NAME}/pr-preview/pr-${{ github.event.pull_request.number }}/"
+
+          echo "Building for BaseURL: ${PR_BASE_URL}"
+
+          hugo \
+            --gc \
+            --minify \
+            --buildDrafts \
+            --buildFuture \
+            --baseURL "${PR_BASE_URL}"
+
+      - name: Deploy PR Preview 🚀
+        if: github.event.action != 'closed'
+        id: deploy-preview
+        uses: rossjrw/pr-preview-action@v1.6.3
+        with:
+          source-dir: ./public
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+          comment: false
+
+      - name: Comment PR with Preview URL 💬
+        if: github.event.action != 'closed'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview
+          message: |
+            🚀 **Preview deployment for PR #${{ github.event.pull_request.number }}**
+
+            🌐 **Preview URL**: ${{ steps.deploy-preview.outputs.preview-url }}
+
+            _This preview updates automatically when new commits are pushed._
+
+  
+      - name: Cleanup PR Preview 🧹
+        if: github.event.action == 'closed'
+        uses: rossjrw/pr-preview-action@v1.6.3
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
