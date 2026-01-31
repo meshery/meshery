@@ -54,11 +54,10 @@ mesheryctl exp relationship view [model-name] --output-format json
 mesheryctl exp relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[model-name] isn't specified%s", errMsg))
+			return utils.ErrInvalidArgument(errNoModelNameProvided)
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("Too many arguments only [model-name] is expected%s", errMsg))
+			return utils.ErrInvalidArgument(errTooManyArgs)
 		}
 
 		// Validate output-format
