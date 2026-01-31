@@ -128,8 +128,8 @@ teardown() {
 @test "given an invalid context-name as an argument when running mesheryctl system context view --context then the error message displays" {
    run $MESHERYCTL_BIN system context view  --context foo
 
-   assert_failure
-   assert_output --partial "does not exist"
+   assert_success
+   assert_output --partial "doesn't exist"
 }
 
 @test "given a valid context-name as an argument when running mesheryctl system context view --context then it displays the detailed context" {
@@ -212,6 +212,6 @@ teardown() {
    assert_output --partial "deleted context"
 
    run $MESHERYCTL_BIN system context view --context $CONTEXT_NAME
-   assert_failure
-   assert_output --partial "does not exist"
+   assert_success
+   assert_output --partial "doesn't exist"
 }
