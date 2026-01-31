@@ -1,23 +1,9 @@
-FROM jekyll/jekyll:4.0
+FROM ghcr.io/gohugoio/hugo:v0.148.1-ext
 
-RUN apk update && apk add --no-cache \
-    build-base \
-    libffi-dev \
-    readline-dev \
-    zlib-dev \
-    openssl-dev \
-    bash \
-    wget \
-    curl
+WORKDIR /src
 
-ENV RUBY_BASE_VERSION=3.2
-ENV RUBY_VERSION=3.2.6
+COPY . /src
 
-RUN wget https://cache.ruby-lang.org/pub/ruby/${RUBY_BASE_VERSION}/ruby-${RUBY_VERSION}.tar.gz && \
-    tar -xzf ruby-${RUBY_VERSION}.tar.gz && \
-    cd ruby-${RUBY_VERSION} && \
-    ./configure && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf ruby-${RUBY_VERSION} ruby-${RUBY_VERSION}.tar.gz
+EXPOSE 1313
+
+CMD ["server", "--bind", "0.0.0.0", "--baseURL", "http://localhost", "-D"]
