@@ -189,7 +189,7 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 				break // Successfully fetched response
 			}
 			if i == 0 {
-				l.Log.Warnf("Failed to fetch capabilities from remote provider. Retrying (%s)... ", i)
+				l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s). Retrying (%d)... ", remoteProviderURL.String(), i)
 			}
 			l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in 3 seconds...", i+1, maxRetries, err)
 			time.Sleep(3 * time.Second)
