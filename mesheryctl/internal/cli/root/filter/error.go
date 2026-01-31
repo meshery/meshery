@@ -34,7 +34,7 @@ const (
 )
 
 const (
-	errFilterNameOrIDNotProvided = "Filter Name or ID not provided"
+	errFilterNameOrIDNotProvided = "filter Name or ID not provided"
 )
 
 func formatErrorWithReference(subCmdUsed string) string {
