@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const ConnectionID = "11111111-1111-1111-1111-111111111111"
+const connectionId = "11111111-1111-1111-1111-111111111111"
 
 func TestConnectionDeleteCmd(t *testing.T) {
 	// create a test helper
@@ -26,38 +26,38 @@ func TestConnectionDeleteCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:          "Delete connection without ID",
+			Name:          "given no connectionID provided when running mesheryctl connection delete then an error message is displayed",
 			Args:          []string{"delete"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidArgument(errors.New(errMsg)),
 		},
 		{
-			Name:          "Delete connection with invalid UUID",
+			Name:          "given an invalid connectionID provided when running mesheryctl connection delete invalid-id then an error message is displayed",
 			Args:          []string{"delete", "invalid-id"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %q", "invalid-id")),
 		},
 		{
-			Name: "Delete connection not found",
-			Args: []string{"delete", ConnectionID},
+			Name: "given a non-existent connectionID provided when running mesheryctl connection delete then an error message is displayed",
+			Args: []string{"delete", connectionId},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/integrations/connections/" + ConnectionID,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionId,
 					Response:     "delete.connection.notfound.response.golden",
 					ResponseCode: 500,
 				},
 			},
 			ExpectError:   true,
-			ExpectedError: errConnectionNotFound(fmt.Errorf("No connection with id %q found", ConnectionID)),
+			ExpectedError: errConnectionNotFound(fmt.Errorf("No connection with id %q found", connectionId)),
 		},
 		{
-			Name: "Delete connection successfully",
-			Args: []string{"delete", ConnectionID},
+			Name: "given a valid connectionID provided when running mesheryctl connection delete then the connection is deleted",
+			Args: []string{"delete", connectionId},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/integrations/connections/" + ConnectionID,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionId,
 					Response:     "delete.connection.success.response.golden",
 					ResponseCode: 200,
 				},

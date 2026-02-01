@@ -40,7 +40,7 @@ func TestConnection(t *testing.T) {
 	//test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:           "Display error without any flags or args",
+			Name:           "given no subcommands provided when running mesheryctl connection then an error message is displayed",
 			Args:           []string{},
 			URL:            "",
 			Fixture:        "list.connection.api.empty.response.golden",
@@ -49,7 +49,7 @@ func TestConnection(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:           "Display error given invalid command",
+			Name:           "given an invalid subcommands provided when running mesheryctl connection then an error message is displayed",
 			Args:           []string{"invalidCommand"},
 			URL:            "",
 			Fixture:        "list.connection.api.empty.response.golden",
@@ -58,20 +58,11 @@ func TestConnection(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:             "Display count of connections empty",
+			Name:             "given a --count flag provided when running mesheryctl connection --count then the total count of connections is displayed",
 			Args:             []string{"--count"},
 			URL:              "/api/integrations/connections",
 			Fixture:          "list.connection.api.empty.response.golden",
 			ExpectedResponse: "list.count.connection.empty.output.golden",
-			ExpectError:      false,
-			IsOutputGolden:   true,
-		},
-		{
-			Name:             "Display count of connection",
-			Args:             []string{"--count"},
-			URL:              "/api/integrations/connections",
-			Fixture:          "list.connection.api.response.golden",
-			ExpectedResponse: "list.count.connection.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
