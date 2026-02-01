@@ -105,7 +105,6 @@ teardown() {
    assert_line --regexp "$PROVIDER_REGEX_MATCH"
 }
 
-# bats test_tags=system:context
 @test "running mesheryctl system context view displays the current context" {
    run $MESHERYCTL_BIN system context view
    assert_success
