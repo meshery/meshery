@@ -69,6 +69,16 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{
+		applyCmd,
+		deleteCmd,
+		viewCmd,
+		listCmd,
+		importCmd,
+		onboardCmd,
+		exportCmd,
+		offboardCmd,
+		validateCmd,
+	}
 	DesignCmd.AddCommand(availableSubcommands...)
 }
