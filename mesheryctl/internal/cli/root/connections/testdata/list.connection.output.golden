@@ -1,6 +1,6 @@
-[90;47;1mTotal number of connections: 6[0;0;22m
-[90;47;1mPage: 1[0m
-[1mID[22m                                    [1mNAME[22m         [1mTYPE[22m      [1mKIND[22m     [1mSTATUS[22m     
+Total number of connections: 6
+Page: 1
+ID                                    NAME         TYPE      KIND     STATUS     
 f3c8b9b1-3d1a-4d8b-9e92-123456789333  meshery-ex1  platform  meshery  connected  
 f3c8b9b1-3d1a-4d8b-9e92-123456789444  meshery-ex2  platform  meshery  connected  
 f3c8b9b1-3d1a-4d8b-9e92-123456789777  meshery-ex5  platform  meshery  connected  
