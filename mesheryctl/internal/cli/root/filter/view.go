@@ -20,18 +20,26 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"slices"
 	"strings"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+type filterViewFlags struct {
+	viewAllFlag  bool
+	outputFormat string
+	save         bool
+}
+
 var (
-	viewAllFlag   bool
-	outFormatFlag string
+	filterViewFlagsProvided filterViewFlags
+	validOutputFormat       = []string{"json", "yaml"}
 )
 
 var viewCmd = &cobra.Command{
@@ -50,9 +58,17 @@ mesheryctl filter view --all
 mesheryctl filter view "filter name"
         `,
 	Args: cobra.ArbitraryArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Validate output-format
+		if !slices.Contains(validOutputFormat, strings.ToLower(filterViewFlagsProvided.outputFormat)) {
+			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
-		subCmdUsed := cmd.Use
+		subCmdUsed := cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -64,7 +80,7 @@ mesheryctl filter view "filter name"
 		var filterArg string
 		// if filter name/id available
 		if len(args) > 0 {
-			if viewAllFlag {
+			if filterViewFlagsProvided.viewAllFlag {
 				return ErrViewAllWithName(subCmdUsed)
 			}
 			fullArg := strings.Join(args, " ")
@@ -89,7 +105,7 @@ mesheryctl filter view "filter name"
 
 		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
-			if viewAllFlag {
+			if filterViewFlagsProvided.viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
 				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
@@ -126,7 +142,7 @@ mesheryctl filter view "filter name"
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
 				return utils.ErrMarshalIndent(err)
 			}
-		} else if viewAllFlag {
+		} else if filterViewFlagsProvided.viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
 				return utils.ErrMarshalIndent(err)
@@ -143,19 +159,23 @@ mesheryctl filter view "filter name"
 			}
 		}
 
-		if outFormatFlag == "yaml" {
-			if body, err = yaml.JSONToYAML(body); err != nil {
-				return utils.ErrJSONToYAML(err)
-			}
-		} else if outFormatFlag != "json" {
-			return utils.ErrOutFormatFlag()
+		outputFormatterFactory := display.OutputFormatterFactory[map[string]interface{}]{}
+		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.outputFormat, dat)
+		if err != nil {
+			return err
 		}
-		utils.Log.Info(string(body))
+
+		err = outputFormatter.Display()
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }
 
 func init() {
-	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.viewAllFlag, "all", "a", false, "(optional) view all filters available")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
