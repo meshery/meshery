@@ -32,12 +32,12 @@ var validateCmd = &cobra.Command{
 
 		errs := validator.ValidateRequiredFields(filePath)
 		if len(errs) == 0 {
-			color.Green("✔ Design is valid")
+			fmt.Fprintln(cmd.OutOrStdout(), color.GreenString("✔ Design is valid"))
 			return nil
 		}
 
 		for _, err := range errs {
-			color.Red("✘ [ERROR] %s", err)
+			fmt.Fprintln(cmd.ErrOrStderr(), color.RedString("✘ [ERROR] %s", err))
 		}
 
 		return fmt.Errorf("design validation failed with %d error(s)", len(errs))
