@@ -87,7 +87,7 @@
                                     "template",
                                     "spec",
                                     "volumes",
-                                    "0",
+                                    "_",
                                     "csi",
                                     "volumeHandle"
                                 ],

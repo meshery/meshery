@@ -85,7 +85,7 @@
                                     "configuration",
                                     "spec",
                                     "volumes",
-                                    "0",
+                                    "_",
                                     "csi",
                                     "volumeHandle"
                                 ],
