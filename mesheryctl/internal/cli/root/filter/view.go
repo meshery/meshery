@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -170,6 +171,44 @@ mesheryctl filter view "filter name"
 			return err
 		}
 
+		if filterViewFlagsProvided.save {
+			var fileName string
+
+			if filterViewFlagsProvided.viewAllFlag {
+				fileName = "filters_all"
+			} else {
+				// Get the actual filter from the response
+				var filterData map[string]interface{}
+
+				if isID {
+					// Direct fetch by ID - dat IS the filter
+					filterData = dat
+				} else {
+					// Search by name - filter is in dat["filters"][0]
+					arr := dat["filters"].([]interface{})
+					filterData = arr[0].(map[string]interface{})
+				}
+				filterID := filterData["id"].(string)
+				filterName := filterData["name"].(string)
+
+				shortID := filterID[:8]
+				sanitizer := strings.NewReplacer("/", "_", " ", "_")
+				sanitizedName := sanitizer.Replace(filterName)
+				fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
+			}
+
+			file := filepath.Join(utils.MesheryFolder, fileName)
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[map[string]interface{}]{}
+			outputFormatterSaver, err := outputFormatterSaverFactory.New(filterViewFlagsProvided.outputFormat, outputFormatter)
+			if err != nil {
+				return err
+			}
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+			err = outputFormatterSaver.Save()
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	},
 }
