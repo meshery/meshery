@@ -54,13 +54,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json
 mesheryctl connection view [connection-name|connection-id] --output-format json --save
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified\n"))
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n"))
 		}
 
 		return display.ValidateOutputFormat(connectionViewFlagsProvided.outputFormat)

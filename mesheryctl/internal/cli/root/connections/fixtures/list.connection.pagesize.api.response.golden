@@ -1,0 +1,49 @@
+{
+  "page": 0,
+  "page_size": 10,
+  "total_count": 3,
+  "connections": [
+    {
+      "id": "f3c8b9b1-3d1a-4d8b-9e92-123456789111",
+      "name": "minikube",
+      "kind": "kubernetes",
+      "type": "platform",
+      "sub_type": "cluster",
+      "status": "connected",
+      "metadata": {
+        "server_version": "v1.29.0",
+        "context": "local-1"
+      },
+      "created_at": "2025-01-01T10:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "f3c8b9b1-3d1a-4d8b-9e92-123456789222",
+      "name": "playground-context",
+      "kind": "kubernetes",
+      "type": "platform",
+      "sub_type": "cluster",
+      "status": "deleted",
+      "metadata": {
+        "server_version": "v1.29.0",
+        "context": "local-2"
+      },
+      "created_at": "2025-01-01T10:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "f3c8b9b1-3d1a-4d8b-9e92-123456789333",
+      "name": "meshery-ex1",
+      "kind": "meshery",
+      "type": "platform",
+      "sub_type": "cluster",
+      "status": "connected",
+      "metadata": {
+        "server_version": "v1.29.0",
+        "context": "local-3"
+      },
+      "created_at": "2025-01-01T10:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  ]
+}
