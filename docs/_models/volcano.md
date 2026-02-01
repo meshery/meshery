@@ -38,7 +38,15 @@ components:
   colorIcon: assets/img/integrations/volcano/components/cron-job/icons/color/cron-job-color.svg
   whiteIcon: assets/img/integrations/volcano/components/cron-job/icons/white/cron-job-white.svg
   description: 
-components-count: 7
+- name: colocation-configuration
+  colorIcon: assets/img/integrations/volcano/components/colocation-configuration/icons/color/colocation-configuration-color.svg
+  whiteIcon: assets/img/integrations/volcano/components/colocation-configuration/icons/white/colocation-configuration-white.svg
+  description: 
+- name: node-shard
+  colorIcon: assets/img/integrations/volcano/components/node-shard/icons/color/node-shard-color.svg
+  whiteIcon: assets/img/integrations/volcano/components/node-shard/icons/white/node-shard-white.svg
+  description: 
+components-count: 9
 relationships: 
 relationship-count: 0
 featureList: [
