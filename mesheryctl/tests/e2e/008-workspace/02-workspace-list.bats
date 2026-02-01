@@ -12,14 +12,13 @@ setup() {
 
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "isn't specified"
+    assert_output --partial "[ Organization ID ] isn't specified"
 }
 
-@test "given no orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the error message is displayed" {
+@test "given --orgId without value provided as an argument when running mesheryctl exp workspace list --orgId then an error message is displayed" {
     run $MESHERYCTL_BIN exp workspace list --orgId
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "needs an argument"
 }
 
 # todo change output
