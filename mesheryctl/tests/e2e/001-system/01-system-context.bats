@@ -94,7 +94,6 @@ teardown() {
    assert_line --regexp "Current Context:[[:space:]]+$CONTEXT_NAME_2"
 }
 
-# bats test_tags=system:context
 @test "given an --all flag to view when running mesheryctl system context view displays all the context with it's details" {
    run $MESHERYCTL_BIN system context view --all
    assert_success
