@@ -59,7 +59,7 @@ teardown() {
    assert_output --partial "Added"
 }
 
-@test "given a invalid url as an argument when running mesheryctl system context create --url then the error message displays" {
+@test "given a invalid url as an argument when running mesheryctl system context create --url invalid-url then an error message is displayed" {
    CONTEXT_NAME="example-context"
 
    run $MESHERYCTL_BIN system context create $CONTEXT_NAME --url foo
