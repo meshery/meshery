@@ -1762,7 +1762,7 @@ func downloadContent(comp string, downloadpath string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintf(file, "%s", content)
+			_, _ = fmt.Fprintf(file, "%s", content)
 			return nil
 		}).Walk()
 	case "Filter":
