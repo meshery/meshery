@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: February 2nd 2026, 12:58:26 am
+- Testing started at: February 2nd 2026, 2:07:21 am
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 3 failed
+- ✅ 68 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 4 minutes and 5 seconds_
+⌛ _Duration: 3 minutes and 55 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -55,7 +55,7 @@
 | 32 | Meshery | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ✅ |
 | 33 | Meshery | chromium-meshery-provider | Verify Meshery Catalog Section Details |  | ✅ |
 | 34 | Meshery | chromium-meshery-provider | Verify Meshery Design Embed Details |  | ✅ |
-| 35 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ❌ |
+| 35 | Meshery | chromium-meshery-provider | Verify Meshery Docker Extension Details |  | ✅ |
 | 36 | Meshery | chromium-meshery-provider | Verify Performance Analysis Details |  | ✅ |
 | 37 | Meshery | chromium-meshery-provider | Verify that UI components are displayed |  | ✅ |
 | 38 | None | chromium-local-provider | Action buttons on adapters tab |  | ✅ |
@@ -143,20 +143,6 @@ Error: No connected Kubernetes cluster found to delete. Ensure a connection exis
  [90m 190 |[39m       )[33m;[39m
  [90m 191 |[39m     }[0m
 ```
-
-</details>
-
-<details>
-<summary>❌ Verify Meshery Docker Extension Details (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
 
 </details>
 
