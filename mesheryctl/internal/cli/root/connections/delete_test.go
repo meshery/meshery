@@ -26,19 +26,19 @@ func TestConnectionDeleteCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:          "Delete connection without ID",
+			Name:          "given no connectionID provided when running mesheryctl connection delete then an error message is displayed",
 			Args:          []string{"delete"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidArgument(errors.New(errMsg)),
 		},
 		{
-			Name:          "Delete connection with invalid UUID",
+			Name:          "given an invalid connectionID provided when running mesheryctl connection delete invalid-id then an error message is displayed",
 			Args:          []string{"delete", "invalid-id"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %q", "invalid-id")),
 		},
 		{
-			Name: "Delete connection not found",
+			Name: "given a non-existent connectionID provided when running mesheryctl connection delete then an error message is displayed",
 			Args: []string{"delete", ConnectionID},
 			URLs: []utils.MockURL{
 				{
@@ -52,7 +52,7 @@ func TestConnectionDeleteCmd(t *testing.T) {
 			ExpectedError: errConnectionNotFound(fmt.Errorf("No connection with id %q found", ConnectionID)),
 		},
 		{
-			Name: "Delete connection successfully",
+			Name: "given a valid connectionID provided when running mesheryctl connection delete then the connection is deleted",
 			Args: []string{"delete", ConnectionID},
 			URLs: []utils.MockURL{
 				{
