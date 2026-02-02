@@ -305,7 +305,9 @@ func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]stri
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var name string
