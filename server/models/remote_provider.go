@@ -936,7 +936,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	connection, err := l.SaveConnection(conn, token, true)
 
-	l.Log.Infof("Persisting k8s context to remote_provider, %v %v",connection,err)
+	l.Log.Infof("Persisting k8s context to remote_provider, %v %v", connection, err)
 
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
@@ -2071,7 +2071,7 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 		l.Log.Info("Deleted design from remote provider.")
 		return nil
 	}
-	err = ErrDelete(fmt.Errorf("Error while deleting design."), "design: "+resourceID, resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while deleting design"), "design: "+resourceID, resp.StatusCode)
 	l.Log.Error(err)
 	return err
 }
@@ -2163,16 +2163,16 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	default:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	}
 }
