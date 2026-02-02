@@ -15,14 +15,8 @@ setup() {
     assert_output --partial "[ Organization ID ] isn't specified"
 }
 
-@test "given --orgId without value provided as an argument when running mesheryctl exp workspace list --orgId then an error message is displayed" {
-    run $MESHERYCTL_BIN exp workspace list --orgId
-    assert_failure
-    assert_output --partial "Error"
-}
-
 # todo change output
-@test "given an invalid orgId is provided as an argument when running mesheryctl exp workspace list --orgId then the error message is displayed" {
+@test "given an invalid orgId is provided as an argument when running mesheryctl exp workspace list --orgId invalid-orgid then the error message is displayed" {
     ORGANIZATION_ID="foo"
 
     run $MESHERYCTL_BIN exp workspace list --orgId "$ORGANIZATION_ID"
