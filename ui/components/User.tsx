@@ -34,7 +34,7 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.open(profileUrl, '_blank', 'noopener,noreferrer');
       return;
     }
   };
