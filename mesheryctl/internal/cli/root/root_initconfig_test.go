@@ -17,14 +17,14 @@ func TestInitConfigUseCases(t *testing.T) {
 		setup func(t *testing.T)
 	}{
 		{
-			name: "missing config",
+			name: "given missing config file when calling initConfig then default config is created",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-missing")
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 			},
 		},
 		{
-			name: "given an empty config file when calling initConfig then xxx",
+			name: "given an empty config file when calling initConfig then empty config creates default",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-empty")
 				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
@@ -38,7 +38,7 @@ func TestInitConfigUseCases(t *testing.T) {
 			},
 		},
 		{
-			name: "permission error",
+			name: "given config path without permission when calling initconfig then returns error",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-permission")
 				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
@@ -60,7 +60,7 @@ func TestInitConfigUseCases(t *testing.T) {
 			},
 		},
 		{
-			name: "existing config",
+			name: "given permission denied when calling initconfig then returns error",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-existing")
 				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
