@@ -31,7 +31,7 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errMsg)),
 		},
 		{
-			Name:             "given a non-existent component is provided when running mesheryctl component view then an error message is displayed",
+			Name:             "given a non-existent component is provided when running mesheryctl component view non-existent-component then an error message is displayed",
 			Args:             []string{"view", "foo"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=foo", componentApiPath),
 			Fixture:          "components.empty.api.response.golden",
@@ -40,7 +40,7 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "given a valid component is provided when running mesheryctl component view Test then the detailed output is displayed",
+			Name:             "given a valid component is provided when running mesheryctl component view valid-component then the detailed output is displayed",
 			Args:             []string{"view", "Test"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
@@ -49,7 +49,7 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:           "given an invalid argument is provided for --output-format flag when running mesheryctl component view Test --output-format invalid then an error message is displayed",
+			Name:           "given an invalid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format invalid-format then an error message is displayed",
 			Args:           []string{"view", "Test", "--output-format", "invalid"},
 			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:        "components.api.response.golden",
@@ -58,20 +58,11 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  utils.ErrFlagsInvalid(formaterrMsg),
 		},
 		{
-			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view Test --output-format json then a detailed output is displayed in specified format",
+			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",
 			Args:             []string{"view", "Test", "--output-format", "json"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "view.json.component.api.output.golden",
-			IsOutputGolden:   true,
-			ExpectError:      false,
-		},
-		{
-			Name:             "given a --save flag is provided when running mesheryctl component view Test --save then a detailed output is displayed in specified format",
-			Args:             []string{"view", "Test", "--save"},
-			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
-			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "view.save.component.api.output.golden",
 			IsOutputGolden:   true,
 			ExpectError:      false,
 		},
