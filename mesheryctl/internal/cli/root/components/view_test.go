@@ -1,0 +1,82 @@
+package components
+
+import (
+	"fmt"
+	"path/filepath"
+	"runtime"
+	"testing"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+func TestComponentView(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	formaterrMsg := utils.ComponentSubError(fmt.Sprintf("output-format %q is invalid. Available options [json|yaml]", "invalid"), "view")
+	const errMsg = "Usage: mesheryctl component view [component-name]\nRun 'mesheryctl component view --help' to see detailed help message"
+
+	componentApiPath := "api/meshmodels/components"
+
+	tests := []utils.MesheryListCommandTest{
+		{
+			Name:           "given no component is provided when running mesheryctl component view then an error message is displayed",
+			Args:           []string{"view"},
+			URL:            "/api/meshmodels/components",
+			Fixture:        "components.empty.api.response.golden",
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errMsg)),
+		},
+		{
+			Name:             "given a non-existent component is provided when running mesheryctl component view then an error message is displayed",
+			Args:             []string{"view", "foo"},
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=foo", componentApiPath),
+			Fixture:          "components.empty.api.response.golden",
+			ExpectedResponse: "view.empty.component.api.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+		{
+			Name:             "given a valid component is provided when running mesheryctl component view Test then the detailed output is displayed",
+			Args:             []string{"view", "Test"},
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "view.component.api.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+		{
+			Name:           "given an invalid argument is provided for --output-format flag when running mesheryctl component view Test --output-format invalid then an error message is displayed",
+			Args:           []string{"view", "Test", "--output-format", "invalid"},
+			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			Fixture:        "components.api.response.golden",
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  utils.ErrFlagsInvalid(formaterrMsg),
+		},
+		{
+			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view Test --output-format json then a detailed output is displayed in specified format",
+			Args:             []string{"view", "Test", "--output-format", "json"},
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "view.json.component.api.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+		{
+			Name:             "given a --save flag is provided when running mesheryctl component view Test --save then a detailed output is displayed in specified format",
+			Args:             []string{"view", "Test", "--save"},
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "view.save.component.api.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+	}
+
+	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
+
+}
