@@ -1,5 +1,5 @@
 {
-  "id": "3b952a9a-5203-4e11-b007-697556f486de",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "edge_non-binding_reference_relationship",
   "kind": "edge",
   "metadata": {
@@ -15,7 +15,7 @@
     "version": "",
     "name": "aws-cloudwatch-controller",
     "displayName": "",
-    "id": "3b952a9a-5203-4e11-b007-697556f486de",
+    "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
       "kind": "github"
     },
@@ -37,7 +37,7 @@
               "version": "",
               "name": "aws-cloudwatch-controller",
               "displayName": "",
-              "id": "027361e6-1658-4efb-9321-fd61621c73cc",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
               },
@@ -89,7 +89,7 @@
               "version": "",
               "name": "kubernetes",
               "displayName": "",
-              "id": "79488562-1d55-4022-ac17-5d009b8cd348",
+              "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
               },
