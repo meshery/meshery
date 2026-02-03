@@ -620,7 +620,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("Error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2038,7 +2038,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if err != nil {
 		return nil, ErrDataRead(err, "design Page Resource")
 	}
-	err = ErrFetch(fmt.Errorf("Failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2397,7 +2397,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		return bdr, errors.New(string(bdr))
 	}
 
-	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
+	err = fmt.Errorf("failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
 	return bdr, err
 }
