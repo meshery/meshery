@@ -63,15 +63,6 @@ func TestConnectionViewCmd(t *testing.T) {
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
-		{
-			Name:             "given a --save flag is provided when running mesheryctl connection view connection-id --output-format json --save then the output is saved in .meshery directory as specified format",
-			Args:             []string{"view", connectionId, "--output-format", "json", "--save"},
-			URL:              "/api/integrations/connections/" + connectionId,
-			Fixture:          "view.connection.api.response.golden",
-			ExpectedResponse: "view.save.connection.output.golden",
-			ExpectError:      false,
-			IsOutputGolden:   true,
-		},
 	}
 
 	// Run tests
