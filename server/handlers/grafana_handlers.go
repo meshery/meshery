@@ -332,7 +332,9 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}
 
 	defer func() {
-		_ = req.Body.Close()
+		if err := req.Body.Close(); err != nil {
+			h.log.Warn(models.ErrCloseIoReader(err))
+		}
 	}()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {

@@ -112,7 +112,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 
 	defer func() {
-		_ = req.Body.Close()
+		if err := req.Body.Close(); err != nil {
+			h.log.Warn(models.ErrCloseIoReader(err))
+		}
 	}()
 
 	// read user preferences from JSON request body
