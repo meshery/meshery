@@ -141,7 +141,7 @@ teardown() {
    assert_output --partial "Available contexts"
 }
 
-@test "given invalid context-name provided when running mesheryctl system context switch then an error message is displayed" {
+@test "given an invalid context-name provided when running mesheryctl system context switch then an error message is displayed" {
    run $MESHERYCTL_BIN system context switch foo
 
    assert_failure
