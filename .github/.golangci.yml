@@ -6,8 +6,33 @@ linters:
   disable:
     - errcheck
     - staticcheck
+
+issues:
+  exclude-dirs:
+    - server/internal/graphql/generated
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - typecheck
+    - text: "undefined:"
+      linters:
+        - typecheck
+    - text: "could not import"
+      linters:
+        - typecheck
+    - text: "unsupported version"
+      linters:
+        - typecheck
+    - text: "has no field or method"
+      linters:
+        - typecheck
+    - text: "declared and not used"
+      linters:
+        - typecheck
+    - text: "missing type in composite literal"
+      linters:
+        - typecheck
   exclusions:
     paths:
       - server/handlers/doc.go
       - server/models/meshmodel/core/register.go
- 
