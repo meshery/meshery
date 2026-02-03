@@ -363,15 +363,13 @@ var switchContextCmd = &cobra.Command{
 mesheryctl system context switch sample
 	`,
 	Annotations: linkDocContextSwitch,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
 Example: mesheryctl system context switch k8s-sample
 Description: Configures mesheryctl to actively use one one context vs. the another context`
 
 		if len(args) != 1 {
-			cmd.PrintErr(errMsg)
-
-			return fmt.Errorf("please provide exactly one context name")
+			return fmt.Errorf("please provide exactly one context name\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -387,8 +385,7 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 			const errMsg = `Try running the following to create the context:
 mesheryctl system context create `
 
-			cmd.Printf("%s%s\n", errMsg, args[0])
-			return fmt.Errorf("requested context does not exist")
+			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, args[0])
 		}
 		if viper.GetString("current-context") == args[0] {
 			return errors.New("already using context '" + args[0] + "'")
