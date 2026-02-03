@@ -10,8 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const ConnectionId = "11111111-1111-1111-1111-111111111111"
-
 func TestConnectionViewCmd(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -31,7 +29,7 @@ func TestConnectionViewCmd(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:           "given multiple connection-id provided when running mesheryctl connection view foo bar then an error message is displayed",
+			Name:           "given multiple arguments provided when running mesheryctl connection view arg1 arg2 then an error message is displayed",
 			Args:           []string{"view", "foo", "bar"},
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
@@ -39,38 +37,38 @@ func TestConnectionViewCmd(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
-			Name:           "given an invalid argument for --output-format flag provided when running mesheryctl connection view connection-id --output-format foo then an error message is displayed",
-			Args:           []string{"view", ConnectionID, "--output-format", "foo"},
-			URL:            "/api/integrations/connections/" + ConnectionID,
+			Name:           "given an invalid argument for --output-format flag provided when running mesheryctl connection view connection-id --output-format invalid-output-format then an error message is displayed",
+			Args:           []string{"view", connectionId, "--output-format", "foo"},
+			URL:            "/api/integrations/connections/" + connectionId,
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
 			ExpectedError:  utils.ErrInvalidArgument(errors.New(invalidOutputFormatMsg)),
 			IsOutputGolden: false,
 		},
 		{
-			Name:             "given a valid connection-id provided when running mesheryctl connection view connection-id then the detailed output is displayed",
-			Args:             []string{"view", ConnectionID},
-			URL:              "/api/integrations/connections/" + ConnectionID,
+			Name:             "given a valid connection-id provided when running mesheryctl connection view connection-id then a detailed connection information is displayed",
+			Args:             []string{"view", connectionId},
+			URL:              "/api/integrations/connections/" + connectionId,
 			Fixture:          "view.connection.api.response.golden",
 			ExpectedResponse: "view.connection.yaml.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
 		{
-			Name:             "given a valid --output-format argument provided when running mesheryctl connection view connection-id --output-format yaml then the output is displayed as specified format",
-			Args:             []string{"view", ConnectionID, "--output-format", "yaml"},
-			URL:              "/api/integrations/connections/" + ConnectionID,
+			Name:             "given a valid --output-format argument provided when running mesheryctl connection view connection-id --output-format yaml then a detailed connection information output is displayed in the specified format",
+			Args:             []string{"view", connectionId, "--output-format", "yaml"},
+			URL:              "/api/integrations/connections/" + connectionId,
 			Fixture:          "view.connection.api.response.golden",
 			ExpectedResponse: "view.connection.yaml.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
 		{
-			Name:             "given a valid --output-format argument provided when running mesheryctl connection view connection-id --output-format json then the output is displayed as specified format",
-			Args:             []string{"view", ConnectionID, "--output-format", "json"},
-			URL:              "/api/integrations/connections/" + ConnectionID,
+			Name:             "given a --save flag is provided when running mesheryctl connection view connection-id --output-format json --save then the output is saved in .meshery directory as specified format",
+			Args:             []string{"view", connectionId, "--output-format", "json", "--save"},
+			URL:              "/api/integrations/connections/" + connectionId,
 			Fixture:          "view.connection.api.response.golden",
-			ExpectedResponse: "view.connection.output.golden",
+			ExpectedResponse: "view.save.connection.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
