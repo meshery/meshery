@@ -18,12 +18,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -70,11 +71,22 @@ mesheryctl perf result saturday-profile --page 2
 mesheryctl perf result saturday-profile --view
 `,
 	Annotations: linkDocPerfResult,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			outputFormatFlag = strings.ToLower(outputFormatFlag)
+			if !slices.Contains(validOutputFormats, outputFormatFlag) {
+				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
+			}
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString, profileID string
 		// setting up for error formatting
-		cmdUsed = "result"
+		cmdUsed = cmd.Name()
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -135,13 +147,13 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(results)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
+			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, results)
+			if err != nil {
+				return err
 			}
-			utils.Log.Info(string(body))
+
+			outputFormatter.Display()
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {

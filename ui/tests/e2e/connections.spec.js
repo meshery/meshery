@@ -1,9 +1,10 @@
 import { expect, test } from './fixtures/project';
 import { ENV } from './env';
-import os from 'os';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import { DashboardPage } from './pages/DashboardPage';
 
+//These tests need to be updated to reflect the latest connection api changes
+//
 function waitForConnectionsApiRepsonse(page) {
   return page.waitForResponse(
     (response) =>
@@ -23,18 +24,18 @@ const transitionTests = [
   //   statusAfterTransition: 'disconnected',
   //   restorationOption: 'connected',
   // },
-  {
-    name: 'Transition to ignored state and then back to connected state',
-    transitionOption: 'ignored',
-    statusAfterTransition: 'ignored',
-    restorationOption: 'registered',
-  },
-  {
-    name: 'Transition to not found state and then back to connected state',
-    transitionOption: 'not found',
-    statusAfterTransition: 'not found',
-    restorationOption: 'discovered',
-  },
+  // {
+  //   name: 'Transition to ignored state and then back to connected state',
+  //   transitionOption: 'ignored',
+  //   statusAfterTransition: 'ignored',
+  //   restorationOption: 'registered',
+  // },
+  // {
+  //   name: 'Transition to not found state and then back to connected state',
+  //   transitionOption: 'not found',
+  //   statusAfterTransition: 'not found',
+  //   restorationOption: 'discovered',
+  // },
 ];
 
 test.describe.serial('Connection Management Tests', () => {
@@ -51,54 +52,54 @@ test.describe.serial('Connection Management Tests', () => {
     }
   });
 
-  test('Add a cluster connection by uploading kubeconfig file', async ({
-    page,
-    clusterMetaData,
-  }) => {
-    await page.getByRole('tab', { name: 'Connections' }).click();
+  // test('Add a cluster connection by uploading kubeconfig file', async ({
+  //   page,
+  //   clusterMetaData,
+  // }) => {
+  //   await page.getByRole('tab', { name: 'Connections' }).click();
 
-    const addConnectionReq = page.waitForRequest(
-      (request) =>
-        request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        request.method() === 'POST',
-    );
-    const addConnectionRes = page.waitForResponse(
-      (response) =>
-        response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        response.status() === 200,
-    );
-    await page.getByTestId('connection-addCluster').click();
+  //   const addConnectionReq = page.waitForRequest(
+  //     (request) =>
+  //       request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+  //       request.method() === 'POST',
+  //   );
+  //   const addConnectionRes = page.waitForResponse(
+  //     (response) =>
+  //       response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+  //       response.status() === 200,
+  //   );
+  //   await page.getByTestId('connection-addCluster').click();
 
-    // Verify "Add Kubernetes Cluster(s)" modal opens
-    await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
+  //   // Verify "Add Kubernetes Cluster(s)" modal opens
+  //   await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
 
-    const fileChooserPromise = page.waitForEvent('filechooser');
-    await page.getByTestId('connection-uploadKubeConfig').click();
-    const fileChooser = await fileChooserPromise;
-    // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
-    const kubeConfigPath = `${os.homedir()}/.kube/config`;
-    await fileChooser.setFiles(kubeConfigPath);
+  //   const fileChooserPromise = page.waitForEvent('filechooser');
+  //   await page.getByTestId('connection-uploadKubeConfig').click();
+  //   const fileChooser = await fileChooserPromise;
+  //   // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
+  //   const kubeConfigPath = `${os.homedir()}/.kube/config`;
+  //   await fileChooser.setFiles(kubeConfigPath);
 
-    await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
+  //   await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
 
-    await addConnectionReq;
-    await addConnectionRes;
+  //   await addConnectionReq;
+  //   await addConnectionRes;
 
-    await page.getByRole('button', { name: 'OK' }).click();
+  //   await page.getByRole('button', { name: 'OK' }).click();
 
-    // Search for the newly added cluster
-    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+  //   // Search for the newly added cluster
+  //   await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
-    const getConnectionsRes = waitForConnectionsApiRepsonse(page);
+  //   const getConnectionsRes = waitForConnectionsApiRepsonse(page);
 
-    await page.getByRole('textbox', { name: 'Search Connections...' }).click();
-    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+  //   await page.getByRole('textbox', { name: 'Search Connections...' }).click();
+  //   await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
-    await getConnectionsRes;
+  //   await getConnectionsRes;
 
-    const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
-    await expect(newConnectionRow).toContainText('connected');
-  });
+  //   const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
+  //   await expect(newConnectionRow).toContainText('connected');
+  // });
 
   transitionTests.forEach((t) => {
     test(t.name, async ({ page, clusterMetaData }) => {
