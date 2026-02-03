@@ -92,6 +92,9 @@ mesheryctl filter view "filter name"
 			}
 
 			filterArg, err := parseQuotedArg(args, subCmdUsed)
+			if err != nil {
+				return err
+			}
 
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
 			if err != nil {
