@@ -16,8 +16,8 @@ func TestViewCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenrios for fetching data
-	tests := []utils.MesheryListCommandTest{
+	// test scenarios for fetching filter data
+	ListTests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Fetch Filter View",
 			Args:             []string{"view", "KumaTest"},
@@ -34,16 +34,24 @@ func TestViewCmd(t *testing.T) {
 			URL:              "/api/filter/957fbc9b-a655-4892-823d-375102a9587c",
 			ExpectError:      false,
 		},
+	}
+
+	loggerTests := []utils.MesheryCommandTest{
 		{
 			Name:             "Fetch Filter View for non existing filter",
 			Args:             []string{"view", "xyz"},
 			ExpectedResponse: "view.nonexisting.filter.output.golden",
 			Fixture:          "view.nonexisting.filter.api.response.golden",
 			URL:              "/api/filter",
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
 			ExpectError:      false,
 		},
 	}
 
-	// Run tests
-	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, tests, currDir, "filter")
+	// Run tests that capture stdout output
+	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, ListTests, currDir, "filter")
+
+	// Run tests that capture logger output
+	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
 }
