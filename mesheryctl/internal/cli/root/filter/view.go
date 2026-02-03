@@ -102,16 +102,16 @@ mesheryctl filter view "filter name"
 		urlString := ""
 		if len(filter) == 0 {
 			if filterViewFlagsProvided.viewAllFlag {
-				urlString = "/api/filter?pagesize=10000"
+				urlString = "api/filter?pagesize=10000"
 			} else {
 				return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			urlString = "/api/filter/" + filter
+			urlString = "api/filter/" + filter
 		} else {
 			// else search filter by name
-			urlString = "/api/filter?search=" + url.QueryEscape(filter)
+			urlString = "api/filter?search=" + url.QueryEscape(filter)
 		}
 
 		var selectedFilter *models.MesheryFilter
@@ -130,7 +130,11 @@ mesheryctl filter view "filter name"
 			}
 			filterPage = page
 
-			if !filterViewFlagsProvided.viewAllFlag && len(page.Filters) > 0 {
+			if !filterViewFlagsProvided.viewAllFlag {
+				if len(filterPage.Filters) == 0 {
+					utils.Log.Info(fmt.Sprintf("filter with name: %q not found", filter))
+					return nil
+				}
 				selectedFilter = page.Filters[0]
 			}
 		}
