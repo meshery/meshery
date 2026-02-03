@@ -43,7 +43,7 @@ mesheryctl connection delete [connection_id]
 			return err
 		}
 
-		utils.Log.Info(fmt.Sprintf("Connection with ID: %q is deleted", args[0]))
+		utils.Log.Infof("Connection with ID: %q is deleted", args[0])
 		return nil
 	},
 }
