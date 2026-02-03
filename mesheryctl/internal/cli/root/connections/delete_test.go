@@ -11,6 +11,7 @@ import (
 )
 
 const connectionId = "11111111-1111-1111-1111-111111111111"
+const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
 
 func TestConnectionDeleteCmd(t *testing.T) {
 	// create a test helper

@@ -25,8 +25,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
-
 var update = flag.Bool("update", false, "update golden files")
 
 func TestConnection(t *testing.T) {
