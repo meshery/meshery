@@ -1606,8 +1606,17 @@
         "suggested_remediation": "Start Meshery server and try again\nProvide a valid organization ID"
       },
       "1196": {
-        "name": "ErrConnectionNotFoundCode",
+        "name": "ErrContextNotExistsCode",
         "code": "1196",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get context details",
+        "probable_cause": "Non exists context name is provided",
+        "suggested_remediation": "Run `mesheryctl system context list` to see available context name"
+      },
+      "1197": {
+        "name": "ErrConnectionNotFoundCode",
+        "code": "1197",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Connection not found",
