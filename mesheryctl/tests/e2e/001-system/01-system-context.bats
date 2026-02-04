@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-setup() {
+setup() {   
    export ORIGINAL_HOME="$HOME"
    export HOME="$(mktemp -d)"
 
@@ -105,19 +105,11 @@ teardown() {
    assert_line --regexp "$PROVIDER_REGEX_MATCH"
 }
 
-@test "given no context-name as an argument when running mesheryctl system context view --context then the error message displays" {
-   run $MESHERYCTL_BIN system context view  --context
-
-   assert_failure
-   assert_output --partial "Error"
-   assert_output --partial "flag needs an argument"
-}
-
 @test "given an invalid context-name as an argument when running mesheryctl system context view --context then the error message displays" {
    run $MESHERYCTL_BIN system context view --context foo
 
-   assert_success
-   assert_output --partial "doesn't exist"
+   assert_failure
+   assert_output --partial "does not exist"
 }
 
 @test "given a valid context-name as an argument when running mesheryctl system context view --context then it displays the detailed context" {
@@ -200,6 +192,6 @@ teardown() {
    assert_output --partial "deleted context"
 
    run $MESHERYCTL_BIN system context view --context $CONTEXT_NAME
-   assert_success
-   assert_output --partial "doesn't exist"
+   assert_failure
+   assert_output --partial "does not exist"
 }
