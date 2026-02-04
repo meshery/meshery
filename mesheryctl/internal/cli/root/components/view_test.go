@@ -14,6 +14,7 @@ func TestComponentView(t *testing.T) {
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
+
 	currDir := filepath.Dir(filename)
 	formaterrMsg := utils.ComponentSubError(fmt.Sprintf("output-format %q is invalid. Available options [json|yaml]", "invalid"), "view")
 	const errMsg = "Usage: mesheryctl component view [component-name]\nRun 'mesheryctl component view --help' to see detailed help message"
