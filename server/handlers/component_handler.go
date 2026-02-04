@@ -1336,7 +1336,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
 			return
 		}
-		defer os.RemoveAll(tempDir)
+		defer func() {
+			_ = os.RemoveAll(tempDir)
+		}()
 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
@@ -1452,7 +1454,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}
-		defer os.Remove(tempFile.Name())
+		defer func() {
+			_ = os.Remove(tempFile.Name())
+		}()
 
 		dir = registration.NewDir(tempFile.Name())
 		if importRequest.Register {
