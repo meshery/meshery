@@ -23,7 +23,7 @@ func TestViewModel(t *testing.T) {
 
 	currDir := filepath.Dir(filename)
 	modelsApiPath = "api/meshmodels/models"
-	// testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", modelsApiPath)
+
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
