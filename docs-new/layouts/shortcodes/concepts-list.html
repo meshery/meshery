@@ -1,0 +1,11 @@
+{{- $type := .Get "type" -}}
+{{- $lang := .Get "lang" | default "en" -}}
+{{- range where (where .Site.RegularPages "Type" $type) "Lang" $lang -}}
+  {{- if ne .Params.list "exclude" -}}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  {{- if .Params.abstract }}
+    - {{ .Params.abstract }}
+  {{- end }}
+  </li>
+  {{- end -}}
+{{- end -}}
