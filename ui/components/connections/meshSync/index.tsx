@@ -1,15 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
+import * as Sistent from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { TableCell, TableRow } from '@sistent/sistent';
-// @ts-expect-error: Custom tools are available at runtime but missing in Sistent typings
-import {
-  CustomColumnVisibilityControl,
-  ResponsiveDataTable,
-  SearchBar,
-  UniversalFilter,
-} from '@sistent/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
@@ -36,6 +30,17 @@ import type { RootState } from '@/store/index';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
 
+// Custom tools are available at runtime but missing in Sistent typings
+const CustomColumnVisibilityControl = (Sistent as any).CustomColumnVisibilityControl;
+const ResponsiveDataTable = (Sistent as any).ResponsiveDataTable;
+const SearchBar = (Sistent as any).SearchBar;
+const UniversalFilter = (Sistent as any).UniversalFilter;
+
+type MeshSyncTableProps = {
+  selectedResourceId?: string;
+  updateUrlWithResourceId?: (id: string) => void;
+};
+
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
     name: 'FETCH_MESHSYNC_RESOURCES',
@@ -43,8 +48,10 @@ const ACTION_TYPES = {
   },
 };
 
-export default function MeshSyncTable(props) {
-  const { selectedResourceId, updateUrlWithResourceId } = props;
+export default function MeshSyncTable({
+  selectedResourceId,
+  updateUrlWithResourceId,
+}: MeshSyncTableProps) {
   const callbackRef = useRef<((_tableMeta: any) => void) | null>(null);
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -353,7 +360,7 @@ export default function MeshSyncTable(props) {
             componentMetadata?.capabilities?.connection === true ? MESHSYNC_STATES : DISCOVERED;
           const disabled =
             componentMetadata?.capabilities?.connection === true &&
-              value !== CONNECTION_STATES.REGISTERED
+            value !== CONNECTION_STATES.REGISTERED
               ? false
               : true;
           return (
@@ -396,7 +403,7 @@ export default function MeshSyncTable(props) {
                   <MenuItem
                     disabled={
                       meshSyncStates[s] === value ||
-                        meshSyncStates[s] === CONNECTION_STATES.REGISTERED
+                      meshSyncStates[s] === CONNECTION_STATES.REGISTERED
                         ? true
                         : false
                     }
@@ -452,9 +459,9 @@ export default function MeshSyncTable(props) {
     sortOrder:
       typeof sortOrder === 'string'
         ? {
-          name: sortOrder.split(' ')[0]?.replace('metadata.', '') || '',
-          direction: sortOrder.split(' ')[1] || 'asc',
-        }
+            name: sortOrder.split(' ')[0]?.replace('metadata.', '') || '',
+            direction: sortOrder.split(' ')[1] || 'asc',
+          }
         : { name: '', direction: 'asc' as const },
     textLabels: {
       selectedRows: {
@@ -572,7 +579,12 @@ export default function MeshSyncTable(props) {
   }, [meshSyncError]);
 
   // Consolidate multiple useRef hooks into a single object
-  const expansionFlags = useRef({
+  const expansionFlags = useRef<{
+    isHandlingExpansion: boolean;
+    isInitialLoad: boolean;
+    isUrlExpansion: boolean;
+    lastProcessedId: string | null;
+  }>({
     isHandlingExpansion: false,
     isInitialLoad: true,
     isUrlExpansion: false,
@@ -591,7 +603,9 @@ export default function MeshSyncTable(props) {
       if (index !== -1) {
         setRowsExpanded([index]);
       } else {
-        updateUrlWithResourceId('');
+        if (updateUrlWithResourceId) {
+          updateUrlWithResourceId('');
+        }
       }
 
       expansionFlags.current.isUrlExpansion = false;

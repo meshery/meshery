@@ -24,7 +24,6 @@ function HandleError() {
     return notify({
       message: `${prefixMessage}: ${message}`,
       event_type: EVENT_TYPES.ERROR,
-      // @ts-expect-error - details type definition is incorrect, should accept string
       details: errorDetails,
     });
   };

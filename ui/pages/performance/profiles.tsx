@@ -16,7 +16,7 @@ function Results() {
       <Head>
         <title>Performance Profiles | Meshery</title>
       </Head>
-      <PerformanceProfiles />
+      <PerformanceProfiles handleDelete={() => {}} />
     </NoSsr>
   );
 }

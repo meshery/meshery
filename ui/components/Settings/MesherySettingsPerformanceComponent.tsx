@@ -119,7 +119,6 @@ const MesherySettingsPerformanceComponent = () => {
       finalMsg = `${msg}: ${error}`;
     }
     const errorDetails = error instanceof Error ? error.toString() : String(error);
-    // @ts-expect-error - details type definition is incorrect, should accept string
     notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: errorDetails });
   };
 

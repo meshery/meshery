@@ -1,9 +1,26 @@
 import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
 import { SnackbarContent } from 'notistack';
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 
 const drawerWidth = 256;
+
+type StyledAppContentProps = {
+  canShowNav?: boolean;
+};
+
+type StyledDrawerProps = {
+  isDrawerCollapsed?: boolean;
+};
+
+type SnackbarVariant = 'error' | 'success' | 'warning' | 'info' | 'loading';
+
+type ThemeResponsiveSnackbarProps = {
+  variant: SnackbarVariant;
+  message: string;
+  action?: (key: string | number) => ReactNode;
+  key?: string | number;
+};
 
 export const StyledFooterText = styled('span')({
   cursor: 'pointer',
@@ -34,7 +51,7 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   },
 }));
 
-export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
+export const StyledAppContent = styled('div')<StyledAppContentProps>(({ theme, canShowNav }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
@@ -56,7 +73,7 @@ export const StyledContentWrapper = styled('div')({
 
 export const StyledDrawer = styled('nav', {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }) => ({
+})<StyledDrawerProps>(({ theme, isDrawerCollapsed }) => ({
   [theme.breakpoints.up('sm')]: {
     width: isDrawerCollapsed ? theme.spacing(8.4) + 1 : drawerWidth,
     flexShrink: 0,
@@ -82,7 +99,10 @@ export const StyledDrawer = styled('nav', {
   },
 }));
 
-const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
+const StyledSnackbarContent = styled(SnackbarContent)<{ variant: SnackbarVariant }>(({
+  theme,
+  variant,
+}) => {
   const notificationColors = {
     success: theme.palette.text.success,
     info: theme.palette.text.info,
@@ -90,13 +110,14 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
     error: theme.palette.text.error,
   };
 
-  const baseColor = notificationColors[variant] || notificationColors.info;
+  const baseColor = variant !== 'loading' ? notificationColors[variant] : notificationColors.info;
 
-  const backgroundColor = theme.palette.mode === 'light' ? lighten(baseColor, 0.95) : '#323232';
+  const safeBaseColor: string = baseColor || (theme.palette.text.info as string);
+  const backgroundColor = theme.palette.mode === 'light' ? lighten(safeBaseColor, 0.95) : '#323232';
 
   return {
     backgroundColor,
-    color: baseColor,
+    color: safeBaseColor,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
     boxShadow: `0 0px 4px ${theme.palette.background.tabs}`,
@@ -110,47 +131,49 @@ const StyledCircularProgress = styled(CircularProgress)(({ theme }) => ({
   width: '24px !important',
 }));
 
-export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
-  const { variant, message, action, key, theme } = props;
+export const ThemeResponsiveSnackbar = forwardRef<HTMLDivElement, ThemeResponsiveSnackbarProps>(
+  (props, forwardedRef) => {
+    const { variant, message, action, key: snackbarKey } = props;
 
-  // Function to determine the icon based on variant
-  const getIcon = () => {
-    const iconProps = { style: { marginRight: '0.5rem' } };
-    switch (variant) {
-      case 'error':
-        return <Error {...iconProps} />;
-      case 'success':
-        return <CheckCircle {...iconProps} />;
-      case 'warning':
-        return <Warning {...iconProps} />;
-      case 'info':
-        return <Info {...iconProps} />;
-      case 'loading':
-        return <StyledCircularProgress />;
-      default:
-        return null;
-    }
-  };
+    // Function to determine the icon based on variant
+    const getIcon = () => {
+      const iconProps = { style: { marginRight: '0.5rem' } };
+      switch (variant) {
+        case 'error':
+          return <Error {...iconProps} />;
+        case 'success':
+          return <CheckCircle {...iconProps} />;
+        case 'warning':
+          return <Warning {...iconProps} />;
+        case 'info':
+          return <Info {...iconProps} />;
+        case 'loading':
+          return <StyledCircularProgress />;
+        default:
+          return null;
+      }
+    };
 
-  return (
-    <StyledSnackbarContent ref={forwardedRef} variant={variant} theme={theme}>
-      <div
-        data-testid={`SnackbarContent-${variant}`}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0.5rem 1rem',
-          width: '100%',
-        }}
-      >
-        {getIcon()}
-        <BasicMarkdown content={message} />
-        <Box marginLeft={'auto'} paddingLeft={'0.5rem'}>
-          {action && action(key)}
-        </Box>
-      </div>
-    </StyledSnackbarContent>
-  );
-});
+    return (
+      <StyledSnackbarContent ref={forwardedRef} variant={variant}>
+        <div
+          data-testid={`SnackbarContent-${variant}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0.5rem 1rem',
+            width: '100%',
+          }}
+        >
+          {getIcon()}
+          <BasicMarkdown content={message} />
+          <Box marginLeft={'auto'} paddingLeft={'0.5rem'}>
+            {action && action(snackbarKey!)}
+          </Box>
+        </div>
+      </StyledSnackbarContent>
+    );
+  },
+);
 
 ThemeResponsiveSnackbar.displayName = 'ThemeResponsiveSnackbar';

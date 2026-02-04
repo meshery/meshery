@@ -58,6 +58,14 @@ const StepperContent = styled(Box)({
   width: '100%',
 });
 
+type CustomizedSteppersProps = {
+  sharedData: any;
+  setSharedData: React.Dispatch<React.SetStateAction<any>>;
+  connectionData: any;
+  onClose: () => void;
+  handleRegistrationComplete: (resourceId: string) => void;
+};
+
 function StepperIcon(props: any) {
   const { active, completed, stepIcons, icon } = props;
   const iconComponent = stepIcons[String(icon)] as React.ReactElement;
@@ -72,7 +80,13 @@ function StepperIcon(props: any) {
   );
 }
 
-export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+export default function CustomizedSteppers({
+  sharedData,
+  setSharedData,
+  connectionData,
+  onClose,
+  handleRegistrationComplete,
+}: CustomizedSteppersProps) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
     stepContent: registerConnectionContent,

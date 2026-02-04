@@ -270,8 +270,6 @@ export const Navigation = ({ setHeaderInfo }: any) => {
   };
 
   const handleItemSelect = (id: string) => {
-    setSelectedId(id);
-    // @ts-expect-error - setSelectedView accepts a parameter at runtime but TypeScript definition shows () => {}
     registryContext.setSelectedView(id);
     updateHeaderInfo(id);
   };

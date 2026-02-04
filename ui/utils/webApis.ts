@@ -32,7 +32,7 @@ export function getWebAdress() {
  * @param {string} queryKey
  * @returns {string} queryVal
  */
-export function getQueryParam(queryKey) {
+export function getQueryParam(queryKey: string): string {
   let queryParamString = window.location.search;
   queryParamString = queryParamString.replace('?', '');
 
@@ -41,7 +41,7 @@ export function getQueryParam(queryKey) {
   queryParamString.split('&').forEach((query) => {
     if (query.split('=')[0] === queryKey) {
       if (!queryVal) {
-        queryVal = query.split('=')[1];
+        queryVal = query.split('=')[1] || '';
       }
     }
   });

@@ -2,8 +2,10 @@
 
 import React from 'react';
 
+type HasClassElement = HTMLElement | null | undefined;
+
 // recursively check if element or any of its parent has the class
-export const hasClass = (element, className) => {
+export const hasClass = (element: HasClassElement, className: string): boolean => {
   try {
     if (typeof element?.className == 'string' && element?.className?.includes(className)) {
       return true;
@@ -17,16 +19,33 @@ export const hasClass = (element, className) => {
   return false;
 };
 
-// recursively got throught component and its children and add the class to each of them
-// This is required to prevent the clickaway listner from blocking the click event
-// on the notification center IconButton create it as a HOC and use react.cloneElement to add the class
-export const AddClassRecursively = ({ children, className }) => {
+// recursively go through component and its children and add the class to each of them
+// This is required to prevent the clickaway listener from blocking the click event
+// on the notification center IconButton. Create it as a HOC and use React.cloneElement to add the class.
+type AddClassRecursivelyProps = {
+  children: React.ReactNode;
+  className: string;
+};
+
+export const AddClassRecursively = ({
+  children,
+  className,
+}: AddClassRecursivelyProps): React.ReactNode => {
   return React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, {
-        className: `${child.props.className} ${className}`,
-        children: AddClassRecursively({ children: child.props.children, className }),
-      });
+      const element = child as React.ReactElement<any>;
+      const existingClassName = (element.props as any).className || '';
+
+      return React.cloneElement(
+        element,
+        {
+          className: `${existingClassName} ${className}`.trim(),
+        } as any,
+        AddClassRecursively({
+          children: (element.props as any).children,
+          className,
+        }),
+      );
     }
 
     // if child is a svg or animated svg string

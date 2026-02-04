@@ -75,7 +75,12 @@ function Connections() {
   const tabParam = Array.isArray(query.tab)
     ? query.tab[0]?.toLowerCase()
     : query.tab?.toLowerCase();
-  const connectionId = query.connectionId;
+  const connectionId =
+    typeof query.connectionId === 'string'
+      ? query.connectionId
+      : Array.isArray(query.connectionId)
+        ? query.connectionId[0]
+        : undefined;
   const selectedFilter =
     typeof query.kind === 'string'
       ? query.kind
@@ -109,7 +114,7 @@ function Connections() {
     }
   };
   // Update URL with connection ID
-  const updateUrlWithConnectionId = (id) => {
+  const updateUrlWithConnectionId = (id: string | undefined) => {
     if (id && id === connectionId) return;
 
     updateUrlParams({ connectionId: id || undefined });
@@ -159,7 +164,7 @@ function Connections() {
           )}
           {tab === 1 && (
             <MeshSyncTable
-              selectedResourceId={connectionId}
+              {...(connectionId ? { selectedResourceId: connectionId } : {})}
               updateUrlWithResourceId={updateUrlWithConnectionId}
             />
           )}

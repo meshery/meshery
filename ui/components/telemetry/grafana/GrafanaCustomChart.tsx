@@ -327,9 +327,9 @@ function GrafanaCustomChart(props) {
         bindto: chartRef.current,
         size: isSparkline
           ? {
-            // width: 150,
-            height: 50,
-          }
+              // width: 150,
+              height: 50,
+            }
           : undefined,
         data: {
           x: 'x',
@@ -368,8 +368,8 @@ function GrafanaCustomChart(props) {
 
         const dataLength =
           chartConfig.data.columns &&
-            Array.isArray(chartConfig.data.columns) &&
-            chartConfig.data.columns.length > 1
+          Array.isArray(chartConfig.data.columns) &&
+          chartConfig.data.columns.length > 1
             ? chartConfig.data.columns[1].length
             : 0; // 0 is for x axis
         if (dataLength > 0) {

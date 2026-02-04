@@ -7,7 +7,7 @@ import { api as mesheryApi } from '../rtk-query';
 import { PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
 
 type NotifyFn = (_args: any) => void;
-const noopNotify: NotifyFn = () => { };
+const noopNotify: NotifyFn = () => {};
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',

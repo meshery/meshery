@@ -7,17 +7,23 @@ import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
+type RegisterConnectionModalProps = {
+  openRegistrationModal: boolean;
+  connectionData: any;
+  handleRegistrationModalClose: () => void;
+};
+
 const RegisterConnectionModal = ({
   openRegistrationModal,
   connectionData,
   handleRegistrationModalClose,
-}) => {
+}: RegisterConnectionModalProps) => {
   const [sharedData, setSharedData] = React.useState<any>(null);
   const { notify } = useNotification();
   const [cancelConnection] = useCancelConnectionRegisterMutation();
   const [deleteMeshsyncResource] = useDeleteMeshsyncResourceMutation();
 
-  const cancelConnectionRegister = (id) => {
+  const cancelConnectionRegister = (id: string) => {
     cancelConnection({ body: JSON.stringify({ id }) })
       .unwrap()
       .then(() => {
@@ -34,7 +40,7 @@ const RegisterConnectionModal = ({
     }
   };
 
-  const handleRegistrationComplete = (resourceId) => {
+  const handleRegistrationComplete = (resourceId: string) => {
     deleteMeshsyncResource({ resourceId: resourceId })
       .unwrap()
       .then(() => {
@@ -63,7 +69,7 @@ const RegisterConnectionModal = ({
         <ModalBody>
           <CustomizedSteppers
             onClose={handleClose}
-            onRegistrationComplete={handleRegistrationComplete}
+            handleRegistrationComplete={handleRegistrationComplete}
             connectionData={connectionData}
             sharedData={sharedData}
             setSharedData={setSharedData}

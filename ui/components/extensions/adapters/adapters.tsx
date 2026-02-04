@@ -89,20 +89,20 @@ const Adapters: React.FC = () => {
 
   const handleError =
     (msg: string) =>
-      (error: Error | null = null): void => {
-        updateProgress({ showProgress: false });
-        if (error) {
-          notify({
-            message: `${msg}: ${error.toString()}`,
-            event_type: EVENT_TYPES.ERROR,
-          });
-        } else {
-          notify({
-            message: msg,
-            event_type: EVENT_TYPES.ERROR,
-          });
-        }
-      };
+    (error: Error | null = null): void => {
+      updateProgress({ showProgress: false });
+      if (error) {
+        notify({
+          message: `${msg}: ${error.toString()}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      } else {
+        notify({
+          message: msg,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      }
+    };
 
   const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
     setAvailableAdapters({

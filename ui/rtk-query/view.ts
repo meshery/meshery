@@ -32,7 +32,7 @@ export const viewsApi = api
           method: 'PUT',
           body: body,
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       fetchViews: builder.query({
         query: (queryArg) =>

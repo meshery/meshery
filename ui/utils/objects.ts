@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export function isEmptyAtAllDepths(input) {
+export function isEmptyAtAllDepths(input: unknown): boolean {
   if (_.isArray(input)) {
     // If the input is an array, check if all items are empty at all depths
     return input.every(isEmptyAtAllDepths);
@@ -20,18 +20,17 @@ export function isEmptyAtAllDepths(input) {
  * @param {Function} condition - A function that takes an object as an argument and returns a boolean indicating if the condition is met.
  * @returns {Object|null} - The first object that satisfies the condition, or null if no matching object is found.
  */
-export const findNestedObject = (object, condition) => {
-  const stack = [object];
+export const findNestedObject = (object: unknown, condition: (obj: any) => boolean): any | null => {
+  const stack: any[] = [object];
   while (stack.length) {
     const currentObject = stack.pop();
     if (condition(currentObject)) {
       return currentObject;
     }
     if (_.isObject(currentObject) || _.isArray(currentObject)) {
-      if (_.isObject(currentObject) || _.isArray(currentObject)) {
-        const values = _.values(currentObject).filter((value) => value !== currentObject.models);
-        stack.push(...values);
-      }
+      const anyObject = currentObject as any;
+      const values = _.values(anyObject).filter((value) => value !== anyObject.models);
+      stack.push(...values);
     }
   }
   return null;
@@ -39,15 +38,16 @@ export const findNestedObject = (object, condition) => {
 /**
  * Accept object and removes empty properties from object.
  **/
-export const filterEmptyFields = (data) => {
+export const filterEmptyFields = <T extends Record<string, any>>(data: T | null | undefined): T => {
   if (!data) {
-    return {};
+    return {} as T;
   }
 
   return Object.keys(data).reduce((acc, key) => {
-    if (data[key] !== undefined && data[key] !== '') {
-      acc[key] = data[key];
+    const value = (data as any)[key];
+    if (value !== undefined && value !== '') {
+      (acc as any)[key] = value;
     }
     return acc;
-  }, {});
+  }, {} as T);
 };
