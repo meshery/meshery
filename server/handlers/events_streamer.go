@@ -152,8 +152,9 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	}
 
 	if err := json.Unmarshal(body, &reqBody); err != nil {
-		h.log.Error(models.ErrUnmarshal(err, "event status request body"))
-		http.Error(w, models.ErrUnmarshal(err, "event status request body").Error(), http.StatusBadRequest)
+		errMsg := models.ErrUnmarshal(err, "event status request body")
+		h.log.Error(errMsg)
+		http.Error(w, errMsg.Error(), http.StatusBadRequest)
 		return
 	}
 	status, ok := reqBody["status"].(string)
@@ -196,8 +197,9 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	}
 
 	if err := json.Unmarshal(body, &reqBody); err != nil {
-		h.log.Error(models.ErrUnmarshal(err, "bulk event status request body"))
-		http.Error(w, models.ErrUnmarshal(err, "bulk event status request body").Error(), http.StatusBadRequest)
+		errMsg := models.ErrUnmarshal(err, "bulk delete event request body")
+		h.log.Error(errMsg)
+		http.Error(w, errMsg.Error(), http.StatusBadRequest)
 		return
 	}
 	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
