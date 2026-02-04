@@ -20,7 +20,10 @@ export function isEmptyAtAllDepths(input: unknown): boolean {
  * @param {Function} condition - A function that takes an object as an argument and returns a boolean indicating if the condition is met.
  * @returns {Object|null} - The first object that satisfies the condition, or null if no matching object is found.
  */
-export const findNestedObject = (object: unknown, condition: (obj: any) => boolean): any | null => {
+export const findNestedObject = (
+  object: unknown,
+  condition: (_obj: any) => boolean,
+): any | null => {
   const stack: any[] = [object];
   while (stack.length) {
     const currentObject = stack.pop();

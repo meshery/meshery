@@ -67,7 +67,7 @@ export function isEqualArr(arr1, arr2, orderMatters = true) {
  *
  * @param {ScrollBehavior} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
  */
-export function scrollToTop(behavior: ScrollBehavior = 'smooth') {
+export function scrollToTop(behavior: 'auto' | 'smooth' = 'smooth') {
   setTimeout(() => {
     window.scrollTo({
       top: 0,

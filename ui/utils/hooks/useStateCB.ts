@@ -1,11 +1,11 @@
 import React from 'react';
 
-type StateUpdater<S> = (state: S) => void;
+type StateUpdater<S> = (_state: S) => void;
 
 function useStateCB<S>(
   initState: S,
   changeTrackCB?: StateUpdater<S>,
-): [S, (state: S, callback?: StateUpdater<S>) => void, () => S] {
+): [S, (_state: S, _callback?: StateUpdater<S>) => void, () => S] {
   const [state, _setState] = React.useState<S>(initState);
   const stateRef = React.useRef<S>(initState);
 

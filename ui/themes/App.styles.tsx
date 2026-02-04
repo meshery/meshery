@@ -18,7 +18,7 @@ type SnackbarVariant = 'error' | 'success' | 'warning' | 'info' | 'loading';
 type ThemeResponsiveSnackbarProps = {
   variant: SnackbarVariant;
   message: string;
-  action?: (key: string | number) => ReactNode;
+  action?: (_key: string | number) => ReactNode;
   key?: string | number;
 };
 

@@ -10,13 +10,13 @@ type RegistryModalContextValue = {
   open: boolean;
   openModal: () => void;
   closeModal: () => void;
-  openModalWithParams: (params?: RegistryModalParams) => void;
+  openModalWithParams: (_params?: RegistryModalParams) => void;
   selectedView: string;
-  setSelectedView: (view: string) => void;
+  setSelectedView: (_view: string) => void;
   searchText: string;
-  setSearchText: (text: string) => void;
+  setSearchText: (_text: string) => void;
   selectedItemUUID: string;
-  setSelectedItemUUID: (id: string) => void;
+  setSelectedItemUUID: (_id: string) => void;
 };
 
 export const RegistryModalContext = React.createContext<RegistryModalContextValue>({

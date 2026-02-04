@@ -2,10 +2,10 @@ import { useCallback, useRef, useEffect } from 'react';
 
 type TimeoutId = ReturnType<typeof setTimeout> | null;
 
-const useDebouncedCallback = <T extends (...args: any[]) => void>(
+const useDebouncedCallback = <T extends (..._args: any[]) => void>(
   callback: T,
   delay = 300,
-): ((...args: Parameters<T>) => void) => {
+): ((..._args: Parameters<T>) => void) => {
   const timeoutRef = useRef<TimeoutId>(null);
 
   const debouncedFunction = useCallback(

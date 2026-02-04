@@ -63,7 +63,7 @@ type CustomizedSteppersProps = {
   setSharedData: React.Dispatch<React.SetStateAction<any>>;
   connectionData: any;
   onClose: () => void;
-  handleRegistrationComplete: (resourceId: string) => void;
+  handleRegistrationComplete: (_resourceId: string) => void;
 };
 
 function StepperIcon(props: any) {
@@ -85,7 +85,7 @@ export default function CustomizedSteppers({
   setSharedData,
   connectionData,
   onClose,
-  handleRegistrationComplete,
+  handleRegistrationComplete: _handleRegistrationComplete,
 }: CustomizedSteppersProps) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {

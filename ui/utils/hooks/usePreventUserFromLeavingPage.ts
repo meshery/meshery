@@ -21,7 +21,7 @@ export default function usePreventUserFromLeavingPage(preventLeave: boolean) {
       window.onbeforeunload = () => {};
     }
 
-    let originalChange: ((...args: any[]) => any) | undefined;
+    let originalChange: ((..._args: any[]) => any) | undefined;
 
     if (shouldPreventLeaving && SingletonRouter.router) {
       // Prevents next routing by monkey-patching the internal change method

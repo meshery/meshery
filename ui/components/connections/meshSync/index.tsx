@@ -38,7 +38,7 @@ const UniversalFilter = (Sistent as any).UniversalFilter;
 
 type MeshSyncTableProps = {
   selectedResourceId?: string;
-  updateUrlWithResourceId?: (id: string) => void;
+  updateUrlWithResourceId?: (_id: string) => void;
 };
 
 const ACTION_TYPES = {

@@ -4,7 +4,7 @@ type DynamicComponentType = React.ComponentType<any> | null;
 
 type DynamicComponentContextValue = {
   DynamicComponent: DynamicComponentType;
-  setComponent: (component: DynamicComponentType) => void;
+  setComponent: (_component: DynamicComponentType) => void;
 };
 
 // Create a context to hold the dynamic component

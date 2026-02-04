@@ -65,7 +65,7 @@ type WorkspaceSelection = {
 };
 
 type WorkspacesPageProps = {
-  onSelectWorkspace?: (workspace: WorkspaceSelection) => void;
+  onSelectWorkspace?: (_workspace: WorkspaceSelection) => void;
 };
 
 const columnList = [
