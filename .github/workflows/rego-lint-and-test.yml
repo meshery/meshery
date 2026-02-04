@@ -59,7 +59,7 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_message: "chore: auto-format Rego files"
           commit_options: "--no-verify"
-
+          branch: ${{ github.head_ref || github.ref_name }}
       - name: Setup Regal
         uses: StyraInc/setup-regal@v1
         with:
