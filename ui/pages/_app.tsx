@@ -42,11 +42,10 @@ import {
   ErrorBoundary,
   useTheme,
   SistentThemeProvider,
-  CssBaseline,
-  Typography,
-  Hidden,
-  NoSsr,
 } from '@sistent/sistent';
+// Using MUI components directly for better React 18 compatibility
+import { CssBaseline, Typography, NoSsr } from '@mui/material';
+import { Hidden } from '@mui/material';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';

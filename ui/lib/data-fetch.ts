@@ -1,5 +1,4 @@
-import fetch from 'isomorphic-unfetch';
-
+// Note: Using global fetch (built-in to Next.js 15+)
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
   // const signal = controller.signal;

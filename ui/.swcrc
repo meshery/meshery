@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": false,
+      "dynamicImport": true
+    },
+    "transform": {
+      "react": {
+        "runtime": "automatic",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": true
+      },
+      "optimizer": {
+        "globals": {
+          "vars": {
+            "__DEV__": "false"
+          }
+        }
+      }
+    },
+    "target": "es2022",
+    "loose": false,
+    "externalHelpers": true,
+    "keepClassNames": true,
+    "minify": {
+      "compress": {
+        "unused": true,
+        "dead_code": true,
+        "conditionals": true,
+        "comparisons": true,
+        "evaluate": true,
+        "booleans": true,
+        "loops": true,
+        "if_return": true,
+        "join_vars": true,
+        "drop_console": false,
+        "drop_debugger": true,
+        "pure_getters": true,
+        "passes": 3
+      },
+      "mangle": {
+        "toplevel": false,
+        "keep_classnames": true,
+        "keep_fnames": false
+      }
+    }
+  },
+  "minify": true,
+  "sourceMaps": true,
+  "module": {
+    "type": "es6",
+    "strict": true,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  }
+}
