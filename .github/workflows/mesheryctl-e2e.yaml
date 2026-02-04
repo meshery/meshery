@@ -38,15 +38,28 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['kubernetes']
     steps:
+      # Cleaning up pre-installed SDKs and language runtimes to free up disk space
+      # This ensures that the runner has enough space for Docker, Minikube, and other heavy dependencies
+      # These cleanups speed up subsequent setup steps and reduce the risk of disk-full errors
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
+      # E2E tests only need the latest code, not full git history
       - name: Checkout Code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3.12.0
       - name: Setup BATS and BATS libs
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
       - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
@@ -85,13 +98,11 @@ jobs:
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
-
       - name: Convert TAP to Allure results
         if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: ./mesheryctl
         run: |
           node bats-to-allure.js tests/e2e/bats.tap
-
       - name: Checkout QA
         uses: actions/checkout@v6
         if: ${{ !cancelled() && github.event_name == 'push' }}
@@ -99,13 +110,11 @@ jobs:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-
       - name: Sync results with qa
         if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: qa
         run: |
           make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
-
       - name: Commit & push to qa
         if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -128,6 +137,15 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
@@ -139,20 +157,19 @@ jobs:
           mkdir -p $HOME/.minikube
           sudo chown -R $USER $HOME/.kube
           sudo chown -R $USER $HOME/.minikube
-
       - name: Run minikube tunnel
         run: |
           echo 'Running minikube tunnel'
           minikube tunnel &> /dev/null &
         shell: bash
-
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
-
+      # Performance tests only need latest code
       - name: Checkout Code
         uses: actions/checkout@master
-
+        with:
+          fetch-depth: 1
       - name: Run Performance Tests
         uses: layer5io/meshery-smp-action@master
         with:
@@ -161,14 +178,12 @@ jobs:
           profile_name: ${{ github.event.inputs.profile_name }}
           profile_filename: ${{ github.event.inputs.profile_filename }}
           test_name: '${{ steps.date.outputs.date }}'
-
       - name: Deploy Service Mesh
         run: |
           cat ~/auth.json
           echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
-
       - name: Apply Pattern
         uses: layer5io/meshery-service-mesh-patterns-action@master
         with:
@@ -187,26 +202,34 @@ jobs:
         k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
       - name: Setup Kubernetes
         uses: manusa/actions-setup-minikube@v2.14.0
         with:
           minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
-
       - name: Run minikube tunnel
         run: |
           echo 'Running minikube tunnel'
           minikube tunnel &> /dev/null &
         shell: bash
-
       - name: Get Date
         id: date
         run: echo "date=(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
-
+      # Scheduled tests only need latest code, not full git history
       - name: Checkout Code
         uses: actions/checkout@master
-
+        with:
+          fetch-depth: 1 
       - name: Run Performance Tests
         uses: layer5io/meshery-smp-action@master
         with:
@@ -215,27 +238,23 @@ jobs:
           profile_name: integration-e2e-workflow
           profile_filename: integration-test-config.yaml
           test_name: '${{ steps.date.outputs.date }}'
-
       - name: Deploy Service Mesh
         run: |
           echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
-
       # - name: Apply BookInfo Pattern
       #   uses: layer5io/mesheryctl-service-mesh-patterns-action@master
       #   with:
       #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
       #     platform: ${{ matrix.platform }}
       #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
-
       - name: Apply Kubernetes Metrics Service Pattern
         uses: layer5io/mesheryctl-service-mesh-patterns-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
           pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
-
       - name: Load "Serve An LLM With Multiple GPUs In GKE" design
         uses: layer5io/mesheryctl-service-mesh-patterns-action@master
         with:

@@ -17,6 +17,10 @@ jobs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-24.04
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo apt-get clean
       - name: Skip if needed
         run: |
           echo "this is it ${{ needs.SkipIfNeeded.outputs.skipdocupdate }} "
@@ -26,10 +30,14 @@ jobs:
           if [ "${{github.event_name }}" == "release" ];then
             echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@v6
+      # This workflow only needs the latest code to generate CLI documentation
+      # Full git history is not required for documentation generation
+      - name: Checkout repository
+        uses: actions/checkout@v6
         with:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1  
       - name: Setup go
         uses: actions/setup-go@v6
         with:
@@ -41,10 +49,12 @@ jobs:
         run: |
           cd mesheryctl
           make docs
-
-      - name: Pull changes from remote
-        run: git pull origin master
-
+      # Using shallow fetch to save disk space
+      # The documentation update only needs the latest remote state
+      - name: Pull latest changes from remote
+        run: |
+          git fetch origin master --depth=1
+          git reset --hard origin/master
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

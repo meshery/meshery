@@ -1,4 +1,5 @@
 name: Meshery UI and Server
+
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -29,7 +30,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - uses: actions/setup-node@v6
         with:
@@ -51,24 +52,33 @@ jobs:
           name: provider-ui
           retention-days: 30
           path: /home/runner/work/meshery/meshery/provider-ui/out
-  tests-ui-e2e:
+
+  prepare-test-env:
     needs: [ui-build]
-    name: UI end-to-end tests
+    name: Prepare test environment
     environment: staging-playground
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
     steps:
+      - name: Aggressive Disk Cleanup (start)
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
+          df -h
       - name: Check out code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
-
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.13.0
-        with:
-          cluster_name: "kind-cluster"
       - name: Setup Go
         uses: actions/setup-go@master
         with:
@@ -91,6 +101,28 @@ jobs:
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
+      - name: Upload prepared workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-workspace
+          path: .
+          retention-days: 1
+
+  tests-ui-e2e:
+    needs: [prepare-test-env]
+    name: UI end-to-end tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Download prepared workspace
+        uses: actions/download-artifact@v7
+        with:
+          name: test-workspace
+          path: .
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.13.0
+        with:
+          cluster_name: "kind-cluster"
       - name: Run Meshery UI and Server
         run: |
           make server &
@@ -103,37 +135,71 @@ jobs:
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
           REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
         run: make ui-test-e2e-ci
+      - name: Remove Playwright browsers
+        if: always()
+        run: rm -rf ~/.cache/ms-playwright
       - name: Save PR metadata
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
         run: |
           mkdir -p ./pr
           echo "${{ github.event.number }}" > ./pr/number
           echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+      - name: Upload test artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-outputs
+          path: |
+            ui/test-report.md
+            ui/test-results/
+            ui/playwright-report/
+            ui/allure-results/
+            pr/
+          retention-days: 14
+      - name: Clean language caches
+        if: always()
+        run: |
+          npm cache clean --force 2>/dev/null || true
+          go clean -modcache 2>/dev/null || true
+      - name: Aggressive Disk Cleanup (end)
+        if: always()
+        run: |
+          kind delete cluster --name kind-cluster 2>/dev/null || true
+          docker system prune -af --volumes
+          docker rmi $(docker images -q) 2>/dev/null || true
+          sudo rm -rf ui/test-results/ ui/playwright-report/
+          df -h
 
+  publish-test-results:
+    needs: [tests-ui-e2e]
+    name: Publish test results
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download test artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: test-outputs
+          path: .
       - name: Checkout QA
         uses: actions/checkout@v6
-        # run only for pushes to master
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' }}
         with:
           repository: meshery/qa
           path: ./qa
           file_pattern: meshery-results
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-
       - name: Sync results with qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' }}
         working-directory: qa
         run: |
           ls 
           ls ..
           make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
-
       - name: Commit & push academy to qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
@@ -143,7 +209,6 @@ jobs:
           commit_user_email: ci@meshery.io
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-
       - name: Upload Test Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
@@ -176,7 +241,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -203,6 +268,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
+  
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
@@ -210,6 +276,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1 
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v3
         id: changes
@@ -228,7 +296,7 @@ jobs:
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
-
+  
   # validate graphQL schema
   graphql_validate:
     name: Validate GraphQL schema
@@ -238,7 +306,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter
@@ -275,6 +343,7 @@ jobs:
       (
         github.event_name == 'pull_request_target' &&
         (
+        contains(toJson(github.event.pull_request), '.rego') ||
         contains(toJson(github.event.pull_request), '.rego') ||
         contains(toJson(github.event.pull_request), 'server/policies/') ||
         contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')

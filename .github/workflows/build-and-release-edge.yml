@@ -21,13 +21,15 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1  
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
             modified:
-              - added|modified: "server/handlers/**"
+              - added|modified: "server/handlers/**" 
       - name: Setup go-swagger
         if: steps.changes.outputs.modified == 'true'
         uses: minchao/setup-go-swagger@v1
@@ -41,10 +43,8 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         run: |
           make swagger-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
@@ -83,10 +83,8 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
@@ -108,19 +106,19 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/ghc 
           sudo rm -rf /opt/hostedtoolcache
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
-          docker system prune -af
+          docker system prune -af  
       - name: Fetch latest tag
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
       - name: Check out code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 1
-          ref: ${{ inputs.branch }} 
+          fetch-depth: 1  
+          ref: ${{ inputs.branch }}
       - name: Docker login
         uses: azure/docker-login@v2
         with:
@@ -136,6 +134,18 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+          # This cleanup step is crucial even though it may seem minor. 
+      # Docker builds, especially for multi-tag and multi-architecture images like the "edge" build,
+      # can leave behind a lot of intermediate images, layers, and cache. Over time, these consume
+      # significant disk space on the GitHub runner. Running `docker system prune -af` ensures:
+      # 1. All stopped containers, unused networks, dangling images, and build cache are removed.
+      # 2. Subsequent Docker builds won't fail due to "no space left on device" errors.
+      # 3. The runner environment is kept clean and consistent for other jobs or future workflow runs.
+      # Using if: always() guarantees this cleanup runs even if the job fails preventing
+      # disk space issues from propagating.
+      - name: Clean up disk space
+        if: always()
+        run: docker system prune -af
 
   update-staging-playground:
     needs:

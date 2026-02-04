@@ -8,7 +8,7 @@ jobs:
   reset:
     name: reset
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04  
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
       uses: appleboy/ssh-action@master

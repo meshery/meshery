@@ -30,25 +30,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af 2>/dev/null || true
+      
       - name: Checkout code
         uses: actions/checkout@v6
-
+        with:
+          fetch-depth: 1 
       - name: Build Docker image
         run: make docker-build
-      
       - name: Run Trivy scan on built image
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'meshery/meshery'
           format: 'json'
           output: 'trivy-scan-results.json'
-
       - name: Upload scan results
         uses: actions/upload-artifact@v6
         with:
           name: trivy-scan-results
           path: trivy-scan-results.json
-
+      
       - name: Parse Trivy Results
         id: parse_trivy
         run: |
@@ -60,7 +66,7 @@ jobs:
             | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' trivy-scan-results.json >> issue_body.txt
           echo '```' >> issue_body.txt
           echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
-          
+      
       - name: Check for existing Trivy issue
         id: check_issue
         env:
@@ -69,7 +75,7 @@ jobs:
           existing_issue=$(gh issue list --label "security" --state open --limit 100 --json title,number | \
             jq -r '.[] | select(.title | contains("Trivy Scan")) | .number' | head -n 1)
           echo "existing_issue=$existing_issue" >> $GITHUB_OUTPUT
-
+      
       - name: Create or update GitHub issue
         if: steps.parse_trivy.outputs.vuln_count != '0'
         env:
@@ -83,3 +89,11 @@ jobs:
           else
             gh issue comment ${{ steps.check_issue.outputs.existing_issue }} --body "$(cat issue_body.txt)"
           fi
+      
+      - name: Cleanup Docker and scan artifacts
+        if: always()
+        run: |
+          docker system prune -af --volumes 2>/dev/null || true
+          rm -f trivy-scan-results.json issue_body.txt 2>/dev/null || true
+          rm -rf /tmp/.buildx-cache 2>/dev/null || true
+          df -h

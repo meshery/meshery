@@ -27,15 +27,29 @@ jobs:
     outputs:
       resource_url: ${{ steps.test_result.outputs.resource_url }}
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+      
       - name: Set PR number # To comment the final status on the Pull-request opened in any repository
         run: |
           export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PULL_NO=$pull_number" >> $GITHUB_ENV
-      - uses: actions/checkout@v6
-      - uses: actions/checkout@v6 #this step would go away
+      
+      - name: Checkout Meshery repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1  
+      
+      - name: Checkout Kanvas Snapshot action
+        uses: actions/checkout@v6
         with:
           path: action
           repository: layer5labs/kanvas-snapshot
+          fetch-depth: 1 
+      
       - id: test_result
         uses: layer5labs/Kanvas-Snapshot@v0.2.43
         with:
@@ -44,3 +58,9 @@ jobs:
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
           application_type: Kubernetes Manifest # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+      
+      - name: Cleanup temporary files
+        if: always()
+        run: |
+          rm -rf action 2>/dev/null || true
+          df -h

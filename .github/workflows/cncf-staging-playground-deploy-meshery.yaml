@@ -1,19 +1,21 @@
 name: Staging Playground CNCF - Deploy
+
 on:
   workflow_call:
   workflow_dispatch:
+
 jobs:
-    cncf-staging-playground-rollout:
-        name: Update Meshery on CNCF staging playground
-        if: github.repository == 'meshery/meshery'
-        runs-on: ubuntu-24.04 
-        steps:
-        - name: Upgrade Meshery Helm Release
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-              host: ${{ secrets.OCI_BASTION_HOST }}
-              username: ${{ secrets.OCI_BASTION_USERNAME }}
-              key: ${{ secrets.OCI_BASTION_KEY }}
-              script: |
-                kubectl config use-context staging
-                kubectl -n staging rollout restart deployment/playground
+  cncf-staging-playground-rollout:
+    name: Update Meshery on CNCF staging playground
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Upgrade Meshery Helm Release
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.OCI_BASTION_HOST }}
+          username: ${{ secrets.OCI_BASTION_USERNAME }}
+          key: ${{ secrets.OCI_BASTION_KEY }}
+          script: |
+            kubectl config use-context staging
+            kubectl -n staging rollout restart deployment/playground

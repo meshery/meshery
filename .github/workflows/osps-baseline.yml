@@ -7,16 +7,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          docker system prune -af
+      # Security scans only need the latest code and configuration files
       - name: Checkout repository
         uses: actions/checkout@v6
-
+        with:
+          fetch-depth: 1
       - name: Pull the pvtr-github-repo image
-        run: docker pull eddieknight/pvtr-github-repo:latest
-
+        run: |
+          # Check if image already exists to avoid redundant pulls
+          if ! docker image inspect eddieknight/pvtr-github-repo:latest >/dev/null 2>&1; then
+            docker pull eddieknight/pvtr-github-repo:latest
+          else
+            echo "Docker image already exists, skipping pull"
+          fi
       - name: Add GitHub Secret to config file so it is protected in outputs
         run: |
           sed -i 's/{{ GH_ACCESS_TOKEN }}/${{ secrets.GH_ACCESS_TOKEN }}/g' ${{ github.workspace }}/.github/pvtr-config.yml
-
       - name: Scan all repos specified in .github/pvtr-config.yml
         run: |
           docker run --rm \

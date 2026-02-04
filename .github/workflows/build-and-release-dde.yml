@@ -1,9 +1,6 @@
 name: Docker Extension for Meshery
 on:
   workflow_call:
-  # push:
-  #   tags:
-  #     - "v*"
   workflow_dispatch:
     inputs:
       release-ver:
@@ -39,9 +36,28 @@ jobs:
 
   docker-extension:
     runs-on: ubuntu-24.04
+    needs: print-inputs
     steps:
+      # This cleanup step is essential even if it looks minor. 
+      # GitHub runners come preloaded with many SDKs and tools (Android, .NET, Java, Swift, GHC, PowerShell, etc.) 
+      # that consume tens of GBs of disk space. For Docker multi-architecture builds, 
+      # especially when building and pushing large images, insufficient disk space can cause builds to fail 
+      # unpredictably. This proactive cleanup ensures the workflow has a clean environment and prevents 
+      # "no space left on device" errors, making CI runs more reliable.
+      - name: Clean up disk space before checkout
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
+          docker system prune -af 
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
@@ -60,7 +76,6 @@ jobs:
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
           echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -83,7 +98,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and Push
+      - name: Build and Push Docker Extension
         uses: docker/build-push-action@v6
         with:
           context: "{{defaultContext}}:install/docker-extension"
@@ -94,8 +109,17 @@ jobs:
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Clean up after Docker build
+        if: always()
+        run: |
+          if command -v docker &> /dev/null; then
+            docker system prune -af 2>/dev/null || true
+            docker builder prune -af 2>/dev/null || true
+          fi
+          df -h
 
-      # -
       #   name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3
       #   with:

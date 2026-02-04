@@ -9,6 +9,15 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: macos-latest
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /Users/runner/.dotnet
+          sudo rm -rf /Users/runner/.ghcup
+          sudo rm -rf /Users/runner/Library/Android
+          sudo rm -rf /Users/runner/.rustup
+          sudo rm -rf /Users/runner/Library/Caches/Homebrew
+          sudo rm -rf /Users/runner/Library/Developer/Xcode/DerivedData
+          df -h
       - name: Check out code
         uses: actions/checkout@v6
         with:

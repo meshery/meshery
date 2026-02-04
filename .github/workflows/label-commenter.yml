@@ -18,12 +18,14 @@ jobs:
   comment:
     runs-on: ubuntu-24.04
     steps:
+      # This workflow only needs to check for label configurations
+      # No source code compilation or deep git history is required
       - name: Checkout repo 🛎️
         uses: actions/checkout@master
         with:
           ref: master # Set your default branch
+          fetch-depth: 1  
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Label Commenter
         uses: peaceiris/actions-label-commenter@v1.10.0
-
