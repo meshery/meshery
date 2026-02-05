@@ -31,6 +31,7 @@ var (
 	searchType      string
 	searchSubType   string
 	searchKind      string
+	page            int
 )
 
 // represents the mesheryctl exp relationship search [query-text] subcommand.
@@ -53,7 +54,9 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl())
+		isPaged := cmd.Flags().Changed("page")
+
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(isPaged))
 
 		if err != nil {
 			return err
@@ -91,9 +94,10 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().IntVar(&page, "page", 1, "returns page number")
 }
 
-func buildSearchUrl() string {
+func buildSearchUrl(isPaged bool) string {
 	var searchUrl strings.Builder
 
 	if searchModelName == "" {
@@ -118,7 +122,11 @@ func buildSearchUrl() string {
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
 
-	searchUrl.WriteString("pagesize=all")
+	if isPaged {
+		searchUrl.WriteString(fmt.Sprintf("page=%d", page))
+	} else {
+		searchUrl.WriteString("page=all")
+	}
 
 	return searchUrl.String()
 }
