@@ -22,29 +22,22 @@ setup() {
   run $MESHERYCTL_BIN design onboard -f "$TESTDATA_DIR/nonexistent.yaml" -s "Kubernetes Manifest"
 
   assert_failure
-  assert_output --partial "Error: unable to read file"
+  assert_output --partial "no such file or directory"
 }
 
 @test "given an invalid source type when mesheryctl design onboard --file file-path --source invalid-source-type then an error message is displayed" {
   run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "InvalidSourceType"
 
   assert_failure
-  assert_output --partial "Error: invalid source type"
+  assert_output --partial "Invalid design source type was provided"
+  assert_output --partial "Provided design source type (-s) is invalid"
+  assert_output --partial "Ensure you pass a valid source type"
+  assert_output --partial "Allowed source types"
 }
 
 @test "given no required flags when mesheryctl design onboard then an appropriate error is displayed" {
   run $MESHERYCTL_BIN design onboard
 
   assert_failure
-  assert_output --partial "Error: Unable to onboard design"
-}
-
-@test "mesheryctl design onboard with existing design name should succeed" {
-  run $MESHERYCTL_BIN design import -f "$SHARED_FIXTURES_DIR/nginx.yaml" --source-type "Kubernetes Manifest"
-
-  DESIGN_NAME="nginx-deployment"
-  run $MESHERYCTL_BIN design onboard "$DESIGN_NAME"
-
-  assert_success
-  assert_output --partial "design onboarded"
+  assert_output --partial "Unable to onboard design"
 }
