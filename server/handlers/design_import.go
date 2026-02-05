@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
@@ -39,13 +40,17 @@ type FileToImport struct {
 
 func GetFileToImportFromPayload(payload MesheryDesignImportPayload) (FileToImport, error) {
 	if payload.URL != "" {
-		resp, err := http.Get(payload.URL)
+		// Validate URL to prevent SSRF attacks
+		resp, err := helpers.SafeGet(payload.URL)
 		if err != nil {
 			return FileToImport{}, models.ErrDoRequest(err, "GET", payload.URL)
 		}
 		defer func() {
 			if resp != nil {
-				_ = resp.Body.Close()
+				if closeErr := resp.Body.Close(); closeErr != nil {
+					// Log error but don't fail the operation
+					fmt.Printf("Warning: failed to close response body: %v\n", closeErr)
+				}
 			}
 		}()
 		body, err := io.ReadAll(resp.Body)

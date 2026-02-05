@@ -1461,11 +1461,16 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 	case "urlImport":
 		downloadFile := func(url string) ([]byte, error) {
-			resp, err := http.Get(url)
+			// Use SafeGet to prevent SSRF attacks
+			resp, err := helpers.SafeGet(url)
 			if err != nil {
 				return nil, fmt.Errorf("error downloading file from URL: %v", err)
 			}
-			defer resp.Body.Close()
+			defer func() {
+				if closeErr := resp.Body.Close(); closeErr != nil {
+					fmt.Printf("Warning: failed to close response body: %v\n", closeErr)
+				}
+			}()
 
 			if resp.StatusCode != http.StatusOK {
 				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
