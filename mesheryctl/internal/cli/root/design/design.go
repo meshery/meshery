@@ -81,8 +81,8 @@ func getDesignSourceTypes() ([]string, error) {
 	}
 
 	sourceTypes := make([]string, 0, len(*apiResponse))
-	for _, apiResponse := range *apiResponse {
-		sourceTypes = append(sourceTypes, apiResponse.DesignType)
+	for _, sourceTypeResponse := range *apiResponse {
+		sourceTypes = append(sourceTypes, sourceTypeResponse.DesignType)
 	}
 
 	return sourceTypes, nil
