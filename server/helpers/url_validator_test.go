@@ -255,6 +255,82 @@ func TestSafeHTTPClientRedirectValidation(t *testing.T) {
 	}
 }
 
+// TestDNSRebindingProtection tests that hostnames resolving to blocked IPs are rejected.
+// This simulates a DNS rebinding attack where an attacker controls a domain that
+// resolves to internal IPs.
+func TestDNSRebindingProtection(t *testing.T) {
+	// These domains are known to resolve to 127.0.0.1 for testing purposes
+	// They simulate an attacker-controlled domain pointing to internal IPs
+	rebindingDomains := []struct {
+		name   string
+		domain string
+	}{
+		{"localtest.me resolves to 127.0.0.1", "http://localtest.me/"},
+		{"vcap.me resolves to 127.0.0.1", "http://vcap.me/"},
+		{"127.0.0.1.nip.io resolves to 127.0.0.1", "http://127.0.0.1.nip.io/"},
+	}
+
+	for _, tt := range rebindingDomains {
+		t.Run(tt.name, func(t *testing.T) {
+			// First verify the domain actually resolves to a blocked IP
+			// Skip test if DNS doesn't work as expected (network issues, etc.)
+			ips, err := net.LookupIP(tt.domain[7 : len(tt.domain)-1]) // Extract hostname
+			if err != nil {
+				t.Skipf("Skipping test: DNS lookup failed for %s: %v", tt.domain, err)
+				return
+			}
+
+			// Check if any resolved IP is blocked (should be 127.0.0.1)
+			hasBlockedIP := false
+			for _, ip := range ips {
+				if isBlockedIP(ip) {
+					hasBlockedIP = true
+					break
+				}
+			}
+
+			if !hasBlockedIP {
+				t.Skipf("Skipping test: %s does not resolve to a blocked IP", tt.domain)
+				return
+			}
+
+			// Now test that ValidateExternalURL blocks this domain
+			err = ValidateExternalURL(tt.domain)
+			if err == nil {
+				t.Errorf("ValidateExternalURL(%s) should have blocked DNS rebinding attack, got nil error", tt.domain)
+			}
+		})
+	}
+}
+
+// TestIPv4MappedIPv6Blocking tests that IPv4-mapped IPv6 addresses are properly blocked.
+// Attackers may try to bypass filters using ::ffff:127.0.0.1 notation.
+func TestIPv4MappedIPv6Blocking(t *testing.T) {
+	tests := []struct {
+		name    string
+		ip      string
+		blocked bool
+	}{
+		{"IPv4-mapped loopback", "::ffff:127.0.0.1", true},
+		{"IPv4-mapped private 10.x", "::ffff:10.0.0.1", true},
+		{"IPv4-mapped private 192.168.x", "::ffff:192.168.1.1", true},
+		{"IPv4-mapped metadata", "::ffff:169.254.169.254", true},
+		{"IPv4-mapped public", "::ffff:8.8.8.8", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ip := net.ParseIP(tt.ip)
+			if ip == nil {
+				t.Fatalf("Failed to parse IP: %s", tt.ip)
+			}
+			if got := isBlockedIP(ip); got != tt.blocked {
+				t.Errorf("isBlockedIP(%s) = %v, want %v", tt.ip, got, tt.blocked)
+			}
+		})
+	}
+}
+
 // Helper function to parse IP for tests
 func parseIP(s string) net.IP {
 	return net.ParseIP(s)

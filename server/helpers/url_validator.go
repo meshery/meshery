@@ -73,6 +73,10 @@ var blockedCIDRs = []string{
 // parsedBlockedCIDRs holds the parsed CIDR networks
 var parsedBlockedCIDRs []*net.IPNet
 
+// safeClient is a reusable HTTP client configured for SSRF protection.
+// Using a shared client enables TCP connection reuse and prevents socket exhaustion.
+var safeClient *http.Client
+
 func init() {
 	// Parse CIDRs at init time to avoid repeated parsing
 	for _, cidr := range blockedCIDRs {
@@ -83,6 +87,29 @@ func init() {
 			continue
 		}
 		parsedBlockedCIDRs = append(parsedBlockedCIDRs, network)
+	}
+
+	// Initialize the shared safe HTTP client
+	safeClient = &http.Client{
+		Timeout: 30 * time.Second,
+		Transport: &http.Transport{
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 10,
+			IdleConnTimeout:     90 * time.Second,
+		},
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// Limit redirect chain length
+			if len(via) >= 10 {
+				return fmt.Errorf("stopped after 10 redirects")
+			}
+
+			// Validate each redirect URL
+			if err := ValidateExternalURL(req.URL.String()); err != nil {
+				return fmt.Errorf("redirect blocked: %w", err)
+			}
+
+			return nil
+		},
 	}
 }
 
@@ -183,12 +210,12 @@ func SafeHTTPClient(timeout time.Duration) *http.Client {
 
 // SafeGet performs an HTTP GET request with SSRF protection.
 // It validates the URL before making the request and prevents redirects to internal IPs.
+// Uses a shared HTTP client for connection reuse and efficiency.
 func SafeGet(urlStr string) (*http.Response, error) {
 	// Validate URL before making request
 	if err := ValidateExternalURL(urlStr); err != nil {
 		return nil, err
 	}
 
-	client := SafeHTTPClient(30 * time.Second)
-	return client.Get(urlStr)
+	return safeClient.Get(urlStr)
 }
