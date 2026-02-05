@@ -17,14 +17,15 @@ package design
 import (
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	validSourceTypes     []string
 )
 
 // DesignCmd represents the root command for design commands
@@ -71,4 +72,30 @@ func init() {
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
+}
+
+func getDesignSourceTypes() ([]string, error) {
+	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
+	if err != nil {
+		return nil, err
+	}
+
+	sourceTypes := []string{}
+	for _, apiResponse := range *apiResponse {
+		sourceTypes = append(sourceTypes, apiResponse.DesignType)
+	}
+
+	return sourceTypes, nil
+}
+
+func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
+	for _, validType := range validDesignSourceTypes {
+		lowerType := strings.ToLower(validType)
+		sType = strings.ToLower(sType)
+		if strings.Contains(lowerType, sType) {
+			return validType, nil
+		}
+	}
+
+	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }
