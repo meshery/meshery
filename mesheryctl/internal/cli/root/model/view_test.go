@@ -17,8 +17,6 @@ func TestViewModel(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 
-	const errMsg = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
-	const formaterrMsg = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
 	const modelName = "model-test-0"
 
 	currDir := filepath.Dir(filename)
