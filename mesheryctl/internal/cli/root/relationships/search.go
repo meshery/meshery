@@ -125,7 +125,7 @@ func buildSearchUrl(isPaged bool) string {
 	if isPaged {
 		searchUrl.WriteString(fmt.Sprintf("page=%d&", page))
 	} else {
-		searchUrl.WriteString("page=all&")
+		searchUrl.WriteString("pagesize=all&")
 	}
 
 	return searchUrl.String()
