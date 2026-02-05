@@ -5,11 +5,11 @@ import { CustomTooltip, IconButton } from '@sistent/sistent';
 export default function TooltipButton({ children, onClick, title, variant, ...props }) {
   return (
     <CustomTooltip title={title} placement="top" interactive>
-      <span>
+      <div>
         <Button sx={{ fontSize: '0.875rem' }} variant={variant} onClick={onClick} {...props}>
           {children}
         </Button>
-      </span>
+      </div>
     </CustomTooltip>
   );
 }
@@ -17,11 +17,11 @@ export default function TooltipButton({ children, onClick, title, variant, ...pr
 export const TooltipIconButton = ({ children, onClick, title, ...props }) => {
   return (
     <CustomTooltip title={title} placement="top" interactive>
-      <span>
+      <div>
         <IconButton onClick={onClick} {...props}>
           {children}
         </IconButton>
-      </span>
+      </div>
     </CustomTooltip>
   );
 };
