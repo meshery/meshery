@@ -1467,7 +1467,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				return nil, fmt.Errorf("error downloading file from URL: %v", err)
 			}
 			defer func() {
-				if resp != nil && resp.Body != nil {
+				if resp != nil {
 					if closeErr := resp.Body.Close(); closeErr != nil {
 						fmt.Printf("Warning: failed to close response body: %v\n", closeErr)
 					}
