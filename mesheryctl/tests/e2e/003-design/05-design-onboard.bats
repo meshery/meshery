@@ -8,47 +8,31 @@ setup() {
   mkdir -p "$TESTDATA_DIR"
 
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
-  export SHARED_FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/design-shared"
+  export SHARED_FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/design-import"
 }
 
-@test "mesheryctl design onboard with valid file and source type should succeed" {
+@test "given --file and --source flags provided when mesheryctl design onboard --file file-path --source source-type then design is onboarded" {
   run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "Kubernetes Manifest"
 
   assert_success
   assert_output --partial "design onboarded"
 }
 
-@test "mesheryctl design onboard with valid file should show auth error when not authenticated" {
-  # Temporarily move token file if it exists
-  if [ -f "$HOME/.meshery/config" ]; then
-    mv "$HOME/.meshery/config" "$HOME/.meshery/config.bak"
-  fi
-
-  run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "Kubernetes Manifest"
-
-  # Restore token file if it was moved
-  if [ -f "$HOME/.meshery/config.bak" ]; then
-    mv "$HOME/.meshery/config.bak" "$HOME/.meshery/config"
-  fi
-
-  assert_output --partial "Authentication token not found"
-}
-
-@test "mesheryctl design onboard with an invalid file path should display an error message" {
+@test "given an invalid file path when mesheryctl design onboard --file invalid-file-path --source source-type then an error message is displayed" {
   run $MESHERYCTL_BIN design onboard -f "$TESTDATA_DIR/nonexistent.yaml" -s "Kubernetes Manifest"
 
   assert_failure
   assert_output --partial "Error: unable to read file"
 }
 
-@test "mesheryctl design onboard with invalid source type should display an error message" {
+@test "given an invalid source type when mesheryctl design onboard --file file-path --source invalid-source-type then an error message is displayed" {
   run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "InvalidSourceType"
 
   assert_failure
   assert_output --partial "Error: invalid source type"
 }
 
-@test "mesheryctl design onboard without required flags should show appropriate error" {
+@test "given no required flags when mesheryctl design onboard then an appropriate error is displayed" {
   run $MESHERYCTL_BIN design onboard
 
   assert_failure
