@@ -323,8 +323,12 @@ mesheryctl system context view --all
 
 		contextData, ok := configuration.Contexts[currContext]
 		if !ok {
-			log.Printf("context \"%s\" doesn't exists, run the following to create:\n\nmesheryctl system context create %s", currContext, currContext)
-			return nil
+			return ErrContextNotExists(
+				fmt.Errorf(
+					"context `%s` does not exist \n",
+					currContext,
+				),
+			)
 		}
 
 		if contextData.Token == "" {
