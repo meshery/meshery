@@ -80,7 +80,7 @@ func getDesignSourceTypes() ([]string, error) {
 		return nil, err
 	}
 
-	sourceTypes := []string{}
+	sourceTypes := make([]string, 0, len(*apiResponse))
 	for _, apiResponse := range *apiResponse {
 		sourceTypes = append(sourceTypes, apiResponse.DesignType)
 	}
@@ -89,9 +89,9 @@ func getDesignSourceTypes() ([]string, error) {
 }
 
 func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
+	sType = strings.ToLower(sType)
 	for _, validType := range validDesignSourceTypes {
 		lowerType := strings.ToLower(validType)
-		sType = strings.ToLower(sType)
 		if strings.Contains(lowerType, sType) {
 			return validType, nil
 		}
