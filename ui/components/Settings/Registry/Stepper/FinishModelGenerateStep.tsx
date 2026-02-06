@@ -21,15 +21,15 @@ const FinishModelGenerateStep = ({
 }) => {
   const [generateEvent, setGenerateEvent] = React.useState<any>();
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-  const [importMeshModel, { isLoading, error }] = useImportMeshModelMutation();
+  const [registerMeshmodels, { isLoading, error }] = useImportMeshModelMutation();
 
   useEffect(() => {
     const performImport = async () => {
-      await importMeshModel({ importBody: requestBody });
+      await registerMeshmodels({ body: requestBody });
     };
 
     performImport();
-  }, []);
+  }, [registerMeshmodels, requestBody]);
 
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
