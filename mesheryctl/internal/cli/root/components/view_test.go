@@ -28,7 +28,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errViewCmdMsg)),
 		},
 		{
 			Name:             "given a non-existent component is provided when running mesheryctl component view non-existent-component then it displays empty output",
