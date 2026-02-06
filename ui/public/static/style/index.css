@@ -14,7 +14,7 @@ svg.css-19bqh2r:hover {
 .app-error {
   /* yellow[20] = #C98300 */
   /* saffron[30] = #C4990A  */
-  background-color: #c4990a !important;
+  background-color: #f7b900 !important;
 }
 /* Handle arrow indicators */
 .react-grid-item > .react-resizable-handle::after {
