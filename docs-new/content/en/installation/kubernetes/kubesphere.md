@@ -59,4 +59,6 @@ Perform the following steps in order:
 
     ![meshery-dashboard](/images/platforms/meshery-dashboard.png)
 
+4. For more information about Meshery, see the [official documentation of Meshery](https://docs.meshery.io/).
+
 {{< related-discussions tag="meshery" >}}

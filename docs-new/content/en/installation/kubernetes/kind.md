@@ -14,7 +14,7 @@ Manage your KinD clusters with Meshery. Deploy Meshery in your [KinD cluster](#i
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+<li>Install the Meshery command-line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
 <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
 <li>Install <a href="https://kind.sigs.k8s.io/docs/user/quick-start/#installation">KinD</a> on your local machine.</li>
 </ol>
@@ -22,13 +22,26 @@ Manage your KinD clusters with Meshery. Deploy Meshery in your [KinD cluster](#i
 
 Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
+## Available Deployment Methods
+
+- [In-cluster Installation](#in-cluster-installation)
+  - [Preflight Checks](#preflight-checks)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+  - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
+  - [Alternative Installation: Using Helm](#alternative-installation-using-helm)
+  - [Post-Installation Steps](#post-installation-steps)
+
 ## In-cluster Installation
 
 Follow the steps below to install Meshery in your KinD cluster.
 
-### Preflight: Cluster Connectivity
+### Preflight Checks
 
-Start KinD if it is not already running:
+Read through the following considerations prior to deploying Meshery on KinD.
+
+#### Preflight: Cluster Connectivity
+
+Start KinD if it is not already started using the following command:
 
 {{< code >}}
 kind create cluster
@@ -51,12 +64,14 @@ kubectl config current-context
 With your KIND cluster configured as your `current-context`, start Meshery:
 
 {{< code >}}
-$ mesheryctl system start -p kubernetes
+mesheryctl system start -p kubernetes
 {{< /code >}}
+
+Meshery server supports customizing authentication system. To learn more, refer to the [customizing authentication](/extensibility/providers) guide.
 
 ### Alternative Installation: Using Helm
 
-See [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
 ### Post-Installation Steps
 
