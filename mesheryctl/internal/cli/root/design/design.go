@@ -15,6 +15,7 @@
 package design
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -82,7 +83,7 @@ func getDesignSourceTypes() ([]string, error) {
 
 	sourceTypes := make([]string, 0, len(*apiResponse))
 	for _, sourceTypeResponse := range *apiResponse {
-		sourceTypes = append(sourceTypes, sourceTypeResponse.DesignType)
+		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
 	}
 
 	return sourceTypes, nil
@@ -90,12 +91,8 @@ func getDesignSourceTypes() ([]string, error) {
 
 func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
 	sType = strings.ToLower(sType)
-	for _, validType := range validDesignSourceTypes {
-		lowerType := strings.ToLower(validType)
-		if strings.Contains(lowerType, sType) {
-			return validType, nil
-		}
+	if slices.Contains(validDesignSourceTypes, sType) {
+		return sType, nil
 	}
-
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }
