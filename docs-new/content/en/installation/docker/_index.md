@@ -8,8 +8,6 @@ image: /images/platforms/docker.svg
 display_title: "false"
 ---
 
-<h1>Quick Start with Docker <img src="/images/platforms/docker.svg" style="width:35px;height:35px;" /></h1>
-
 {{< installation-prerequisites >}}
 
 ## Deploying Meshery on Docker

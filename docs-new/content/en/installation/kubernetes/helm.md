@@ -4,6 +4,7 @@ description: "Install Meshery on Kubernetes using Helm. Deploy Meshery in-cluste
 weight: 10
 aliases:
   - /installation/platforms/helm
+display_title: "false"
 ---
 
 # Install Meshery on Kubernetes Using Helm

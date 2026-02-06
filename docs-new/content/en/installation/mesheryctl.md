@@ -5,7 +5,7 @@ weight: 25
 aliases:
   - /installation/mesheryctl/
   - /installation/platforms/mesheryctl
-display_title: "true"
+display_title: "false"
 ---
 
 # Install mesheryctl
