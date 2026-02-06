@@ -38,7 +38,7 @@ const User = (props) => {
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
         notify({
           message: 'Redirect Blocked',
-          details: 'Your browser blocked the new tab. Please allow popups to view your profile.',
+          details: `Your browser blocked the new tab. Please allow popups to view your profile or manually open: ${profileUrl}`,
           event_type: EVENT_TYPES.WARNING,
         });
       }
