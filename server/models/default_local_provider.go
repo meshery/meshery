@@ -140,7 +140,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 	}
 }
 
-// InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
+// InitiateLogin - initiates login flow and redirects to home for local provider
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
