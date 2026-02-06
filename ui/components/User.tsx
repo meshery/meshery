@@ -34,7 +34,14 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      const newWindow = window.open(profileUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        notify({
+          message: 'Redirect Blocked',
+          details: 'Your browser blocked the new tab. Please allow popups to view your profile.',
+          event_type: EVENT_TYPES.WARNING,
+        });
+      }
       return;
     }
   };
