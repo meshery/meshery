@@ -158,7 +158,6 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-
 		createDefaultConfig := false
 
 		switch {
