@@ -40,6 +40,15 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name:           "given multiple component name is provided when running mesheryctl component view component-1 component-2 then an error message is displayed",
+			Args:           []string{"view", "Test", "ACL"},
+			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test&search=ACL", componentApiPath),
+			Fixture:        "components.empty.api.response.golden",
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg)),
+		},
+		{
 			Name:             "given a valid component is provided when running mesheryctl component view valid-component then the detailed output of the component is displayed",
 			Args:             []string{"view", "Test"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
