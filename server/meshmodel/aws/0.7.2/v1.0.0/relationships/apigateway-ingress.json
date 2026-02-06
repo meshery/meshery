@@ -1,0 +1,18 @@
+{
+  "kind": "edge",
+  "type": "parent",
+  "subType": "network",
+  "metadata": {
+    "name": "aws-apigateway-to-k8s-ingress"
+  },
+  "selectors": {
+    "from": {
+      "kind": "AWS API Gateway",
+      "model": "aws"
+    },
+    "to": {
+      "kind": "Ingress",
+      "model": "kubernetes"
+    }
+  }
+}
