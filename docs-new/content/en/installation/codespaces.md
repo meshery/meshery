@@ -8,7 +8,7 @@ image: /images/platforms/codespaces.png
 display_title: "false"
 ---
 
-<h1>Quick Start with {{ .Page.Title }} <img src="{{ .Page.Params.image }}" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with GitHub Codespaces <img src="/images/platforms/codespaces.png" style="width:35px;height:35px;" /></h1>
 
 Use Minikube in GitHub Codespaces to setup your development environment for Meshery.
 
@@ -29,7 +29,8 @@ Use Minikube in GitHub Codespaces to setup your development environment for Mesh
   - [Installation: Manual Steps](#installation-manual-steps)
 - [Post-Installation Steps](#post-installation-steps)
 
-# In-cluster Installation
+
+## In-cluster Installation
 
 Follow the steps below to install Meshery in your Minikube cluster.
 
@@ -127,7 +128,7 @@ kubectl config view --minify --flatten > config_minikube.yaml
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/guides) for advanced usage tips.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
 Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
