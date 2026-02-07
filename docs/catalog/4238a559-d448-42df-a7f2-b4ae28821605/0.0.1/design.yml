@@ -1,0 +1,234 @@
+name: Guestbook App
+services:
+  redis-master:
+    name: redis-master
+    type: Deployment.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: redis
+            role: master
+            tier: backend
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: master
+              tier: backend
+          spec:
+            containers:
+            - name: master
+              image: registry.k8s.io/redis:e2e
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+              ports:
+              - containerPort: 6379
+    traits:
+      meshmap:
+        edges: []
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-master
+        label: redis-master
+        position:
+          posX: 100
+          posY: 100
+
+  redis-master-service:
+    name: redis-master
+    type: Service.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    settings:
+      spec:
+        ports:
+        - port: 6379
+          targetPort: 6379
+        selector:
+          app: redis
+          role: master
+          tier: backend
+    traits:
+      meshmap:
+        edges: []
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-master-svc
+        label: redis-master
+        position:
+          posX: 100
+          posY: 200
+
+  redis-replica:
+    name: redis-replica
+    type: Deployment.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: redis
+      role: replica
+      tier: backend
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          matchLabels:
+            app: redis
+            role: replica
+            tier: backend
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: replica
+              tier: backend
+          spec:
+            containers:
+            - name: replica
+              image: gcr.io/google_samples/gb-redisslave:v3
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+              env:
+              - name: GET_HOSTS_FROM
+                value: dns
+              ports:
+              - containerPort: 6379
+    traits:
+      meshmap:
+        edges:
+          - data:
+              id: A4146497-B9CA-4E18-8940-59B68F71E065
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-replica
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-master-svc
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-replica
+        label: redis-replica
+        position:
+          posX: 300
+          posY: 100
+
+  redis-replica-service:
+    name: redis-replica
+    type: Service.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: redis
+      role: replica
+      tier: backend
+    settings:
+      spec:
+        ports:
+        - port: 6379
+          targetPort: 6379
+        selector:
+          app: redis
+          role: replica
+          tier: backend
+    traits:
+      meshmap:
+        edges: []
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-replica-svc
+        label: redis-replica
+        position:
+          posX: 300
+          posY: 200
+
+  frontend:
+    name: frontend
+    type: Deployment.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: guestbook
+      tier: frontend
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          matchLabels:
+            app: guestbook
+            tier: frontend
+        template:
+          metadata:
+            labels:
+              app: guestbook
+              tier: frontend
+          spec:
+            containers:
+            - name: php-redis
+              image: gcr.io/google_samples/gb-frontend:v5
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+              env:
+              - name: GET_HOSTS_FROM
+                value: dns
+              ports:
+              - containerPort: 80
+    traits:
+      meshmap:
+        edges:
+          - data:
+              id: 4ACCC4C0-C404-4B71-A24B-46B21D71F373
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-master-svc
+          - data:
+              id: FCDF808E-EC42-4B59-B4B4-5DBC3F13D7AA
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-replica-svc
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
+        label: frontend
+        position:
+          posX: 500
+          posY: 100
+
+  frontend-service:
+    name: frontend
+    type: Service.K8s
+    apiVersion: core.oam.dev/v1beta1
+    namespace: default
+    version: v1.25.2
+    model: kubernetes
+    labels:
+      app: guestbook
+      tier: frontend
+    settings:
+      spec:
+        type: NodePort
+        ports:
+        - port: 80
+          targetPort: 80
+        selector:
+          app: guestbook
+          tier: frontend
+    traits:
+      meshmap:
+        edges: []
+        id: 4238a559-d448-42df-a7f2-b4ae28821605-frontend-svc
+        label: frontend
+        position:
+          posX: 500
+          posY: 200
