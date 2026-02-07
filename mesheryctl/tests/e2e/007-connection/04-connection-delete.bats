@@ -28,9 +28,9 @@ teardown_file() {
 }
 
 @test "given an invalid connection-id is provided as an argument when running mesheryctl connection delete invalid-connection-id then an error message is displayed" {
-    NONEXISTENT_ID="0000"
+    INVALID_ID="0000"
 
-    run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
+    run $MESHERYCTL_BIN connection delete "$INVALID_ID"
     assert_failure
     assert_output --partial "Invalid ID format" 
     assert_output --partial "Error"
