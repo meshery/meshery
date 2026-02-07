@@ -17,8 +17,12 @@ package design
 import (
 	"encoding/json"
 	"io"
+	neturl "net/url"
+	"slices"
+	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -27,9 +31,11 @@ import (
 )
 
 var (
-	viewAllFlag   bool
-	outFormatFlag string
+	viewAllFlag      bool
+	outputFormatFlag string
 )
+
+var validOutputFormat = []string{"json", "yaml"}
 
 var linkDocPatternView = map[string]string{
 	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
@@ -40,17 +46,21 @@ var viewCmd = &cobra.Command{
 	Use:   "view design name",
 	Short: "Display a design content",
 	Long:  `Display the content of a specific design based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
-	Example: `
-// view a design
-mesheryctl design view [design-name | ID]
-	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		// Validate output-format
+		if !slices.Contains(validOutputFormat, strings.ToLower(outputFormatFlag)) {
+			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
+		}
+		return nil
+	},
+
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
 		}
+
 		pattern := ""
 		isID := false
 		// if pattern name/id available
@@ -63,6 +73,7 @@ mesheryctl design view [design-name | ID]
 				return utils.ErrInvalidNameOrID(err)
 			}
 		}
+
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
@@ -75,7 +86,8 @@ mesheryctl design view [design-name | ID]
 			url += "/api/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			url += "/api/pattern?populate=pattern_file&search=" + pattern
+			escapedPattern := neturl.QueryEscape(pattern)
+			url += "/api/pattern?populate=pattern_file&search=" + escapedPattern
 		}
 
 		req, err := utils.NewRequest("GET", url, nil)
@@ -99,6 +111,8 @@ mesheryctl design view [design-name | ID]
 			return utils.ErrUnmarshal(err)
 		}
 
+		var output any
+
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
 				return utils.ErrMarshalIndent(err)
@@ -119,19 +133,28 @@ mesheryctl design view [design-name | ID]
 			}
 		}
 
-		if outFormatFlag == "yaml" {
+		if outputFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
 				return utils.ErrJSONToYAML(err)
 			}
-		} else if outFormatFlag != "json" {
+		} else if outputFormatFlag != "json" {
 			return utils.ErrOutFormatFlag()
 		}
 		utils.Log.Info(string(body))
 		return nil
+
+		outputFormatterFactory := display.OutputFormatterFactory[any]{}
+		outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, output)
+
+		if err != nil {
+			return err
+		}
+
+		return outputFormatter.Display()
 	},
 }
 
 func init() {
 	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all designs available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }

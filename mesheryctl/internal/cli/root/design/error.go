@@ -49,6 +49,12 @@ Description: Onboard pattern`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
+var (
+	viewUsageMsg           = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
+	errNoModelNameProvided = fmt.Errorf("[model-name] isn't specified")
+	errTooManyArgs         = fmt.Errorf("too many arguments, only [model-name] is expected")
+)
+
 func ErrDesignNotFound() error {
 	return errors.New(ErrDesignsNotFoundCode, errors.Fatal, []string{"Design Not Found"}, []string{"No Design found with the given name or ID"}, []string{"Design with the given name or ID is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list'"})
 }
