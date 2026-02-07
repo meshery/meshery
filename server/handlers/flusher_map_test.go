@@ -28,11 +28,21 @@ func (m *mockFlusher) Write(b []byte) (int, error) {
 
 func (m *mockFlusher) WriteHeader(statusCode int) {}
 
-func TestSetFlusher(t *testing.T) {
-	// Clean up before test
+// resetFlusherMap is a helper to reset the global flusherMap for testing
+func resetFlusherMap(t *testing.T) {
+	t.Cleanup(func() {
+		flusherMapMu.Lock()
+		flusherMap = make(map[string]http.Flusher)
+		flusherMapMu.Unlock()
+	})
+	// Also reset at start of test
 	flusherMapMu.Lock()
-	flusherMap = nil
+	flusherMap = make(map[string]http.Flusher)
 	flusherMapMu.Unlock()
+}
+
+func TestSetFlusher(t *testing.T) {
+	resetFlusherMap(t)
 
 	flusher := &mockFlusher{}
 	setFlusher("test-client", flusher)
@@ -47,10 +57,7 @@ func TestSetFlusher(t *testing.T) {
 }
 
 func TestGetFlusher_NotFound(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	_, ok := getFlusher("nonexistent-client")
 	if ok {
@@ -58,26 +65,20 @@ func TestGetFlusher_NotFound(t *testing.T) {
 	}
 }
 
-func TestGetFlusher_NilMap(t *testing.T) {
-	// Set map to nil
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+func TestGetFlusher_EmptyMap(t *testing.T) {
+	resetFlusherMap(t)
 
 	flusher, ok := getFlusher("any-client")
 	if ok {
-		t.Error("Expected flusher not to be found when map is nil")
+		t.Error("Expected flusher not to be found in empty map")
 	}
 	if flusher != nil {
-		t.Error("Expected nil flusher when map is nil")
+		t.Error("Expected nil flusher from empty map")
 	}
 }
 
 func TestDeleteFlusher(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	flusher := &mockFlusher{}
 	setFlusher("test-client", flusher)
@@ -98,21 +99,8 @@ func TestDeleteFlusher(t *testing.T) {
 	}
 }
 
-func TestDeleteFlusher_NilMap(t *testing.T) {
-	// Set map to nil
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
-
-	// Should not panic when deleting from nil map
-	deleteFlusher("any-client")
-}
-
 func TestDeleteFlusher_NonexistentKey(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = make(map[string]http.Flusher)
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	// Should not panic when deleting nonexistent key
 	deleteFlusher("nonexistent-client")
@@ -121,10 +109,7 @@ func TestDeleteFlusher_NonexistentKey(t *testing.T) {
 // TestConcurrentFlusherAccess verifies thread-safety of flusher operations.
 // This test should be run with -race flag: go test -race ./...
 func TestConcurrentFlusherAccess(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	const numGoroutines = 100
 	const numOperations = 100
@@ -168,10 +153,7 @@ func TestConcurrentFlusherAccess(t *testing.T) {
 
 // TestConcurrentReadWrite specifically tests read-write races
 func TestConcurrentReadWrite(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	const iterations = 1000
 	var wg sync.WaitGroup
@@ -210,10 +192,7 @@ func TestConcurrentReadWrite(t *testing.T) {
 
 // TestMultipleClients tests operations with multiple different clients
 func TestMultipleClients(t *testing.T) {
-	// Clean up before test
-	flusherMapMu.Lock()
-	flusherMap = nil
-	flusherMapMu.Unlock()
+	resetFlusherMap(t)
 
 	clients := []string{"ui", "cli", "api", "mobile", "web"}
 	flushers := make(map[string]*mockFlusher)

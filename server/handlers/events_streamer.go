@@ -24,7 +24,8 @@ import (
 var (
 	// flusherMap stores HTTP flushers for SSE streaming connections.
 	// Protected by flusherMapMu for thread-safe concurrent access.
-	flusherMap   map[string]http.Flusher
+	// Initialized at declaration to avoid nil checks in helper functions.
+	flusherMap   = make(map[string]http.Flusher)
 	flusherMapMu sync.RWMutex
 )
 
@@ -32,9 +33,6 @@ var (
 func setFlusher(client string, flusher http.Flusher) {
 	flusherMapMu.Lock()
 	defer flusherMapMu.Unlock()
-	if flusherMap == nil {
-		flusherMap = make(map[string]http.Flusher)
-	}
 	flusherMap[client] = flusher
 }
 
@@ -42,9 +40,6 @@ func setFlusher(client string, flusher http.Flusher) {
 func getFlusher(client string) (http.Flusher, bool) {
 	flusherMapMu.RLock()
 	defer flusherMapMu.RUnlock()
-	if flusherMap == nil {
-		return nil, false
-	}
 	flusher, ok := flusherMap[client]
 	return flusher, ok
 }
@@ -53,9 +48,7 @@ func getFlusher(client string) (http.Flusher, bool) {
 func deleteFlusher(client string) {
 	flusherMapMu.Lock()
 	defer flusherMapMu.Unlock()
-	if flusherMap != nil {
-		delete(flusherMap, client)
-	}
+	delete(flusherMap, client)
 }
 
 type eventStatusPayload struct {
