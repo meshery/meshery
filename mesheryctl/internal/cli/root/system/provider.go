@@ -370,6 +370,16 @@ var providerCmd = &cobra.Command{
 	Use:   "provider",
 	Short: "Switch between providers",
 	Long:  `Enforce a provider. Choose between available Meshery providers`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		)
+	},
+
 	Example: `
 // To view provider
 mesheryctl system provider view
@@ -383,6 +393,7 @@ mesheryctl system provider switch [provider]
 mesheryctl system provider reset
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		if len(args) == 0 {
 			return errors.New(utils.SystemProviderSubError("please specify a flag or subcommand. Use 'mesheryctl system provider --help' to display user guide.\n", "provider"))
 		}

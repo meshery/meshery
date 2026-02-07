@@ -21,7 +21,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/environments"
@@ -96,7 +95,10 @@ func init() {
 
 	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(setupLogger)
-	cobra.OnInitialize(initConfig)
+	// Only prepare config globally (read-only safe)
+	cobra.OnInitialize(func() {
+		_ = prepareConfig()
+	})
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
@@ -147,66 +149,27 @@ func TreePath() *cobra.Command {
 	return RootCmd
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
+// prepareConfig loads the config into Viper without mutating any state.
+// This is safe for read-only commands (status, version, help, etc).
+func prepareConfig() error {
+	// Copy Cobra flag value into Meshery utils (internal consumers depend on this)
 	utils.CfgFile = cfgFile
-	// initialize the path to the kubeconfig file
-	utils.SetKubeConfig()
-	// Allow user to override config file with use of --config global flag
-	if cfgFile != utils.DefaultConfigPath {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-		// Otherwise, use the default `config.yaml` config file
-	} else {
-		stat, err := os.Stat(utils.DefaultConfigPath)
 
-		createDefaultConfig := false
-
-		switch {
-		case os.IsNotExist(err):
-			log.Printf("Missing Meshery config file.")
-			createDefaultConfig = true
-
-		case err == nil && stat.Size() == 0:
-			log.Println("Empty meshconfig. Please populate it before running a command")
-			createDefaultConfig = true
-
-		case err != nil:
-			log.Printf("Cannot access Meshery config file. Please check permissions. Error: %v", err)
-			return
-		}
-
-		// Only create + mutate config when needed
-		if createDefaultConfig {
-			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
-				log.Fatal(err)
-			}
-
-			if err := utils.CreateConfigFile(); err != nil {
-				log.Fatal(err)
-			}
-
-			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
-				log.Fatal(err)
-			}
-
-			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
-				log.Fatal(err)
-			}
-
-			log.Printf("Default config file created at %s", utils.DefaultConfigPath)
-		}
-	}
-
+	// Tell Viper exactly which config file to use
 	viper.SetConfigFile(cfgFile)
 
-	viper.AutomaticEnv() // read in environment variables that match
+	// Enable reading configuration from environment variables
+	viper.AutomaticEnv()
 
+	// Attempt to read config file (no filesystem mutation here)
 	if err := viper.ReadInConfig(); err != nil {
-		log.Debugf("unable to read config file: %v", err)
-	} else {
-		log.Debug("Using config file:", viper.ConfigFileUsed())
+		return err
 	}
+
+	// Log config file being used (visible only with --verbose)
+	log.Debug("Using config file:", viper.ConfigFileUsed())
+
+	return nil
 }
 
 // setVerbose sets the log level to debug if the -v flag is set

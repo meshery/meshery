@@ -64,6 +64,7 @@ var createContextCmd = &cobra.Command{
 	Use:   "create context-name",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
+
 	Example: `
 // Create new context
 mesheryctl system context create [context-name]
@@ -73,6 +74,15 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	`,
 	Annotations: linkDocContextCreate,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		if len(args) == 0 {
 			const errMsg = `Please provide a context name.
 Usage: mesheryctl system context create [context-name]`
@@ -103,7 +113,7 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
+		err := config.AddContextToConfig(args[0], tempCntxt, utils.DefaultConfigPath, set, false)
 		if err != nil {
 			return err
 		}
@@ -124,6 +134,17 @@ mesheryctl system context delete [context name]
 	`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		_ = viper.ReadInConfig()
+
 		if len(args) == 0 {
 			const errMsg = `Please provide a context name to delete:
 mesheryctl system context delete [context name]`
@@ -371,6 +392,17 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 	},
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		_ = viper.ReadInConfig()
+
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			utils.Log.Error(ErrUnmarshallConfig(err))

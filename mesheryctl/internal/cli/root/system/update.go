@@ -61,6 +61,16 @@ mesheryctl system update --skip-reset
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
 		if len(args) != 0 {
 			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
 		}

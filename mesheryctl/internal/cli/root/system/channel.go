@@ -249,6 +249,16 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		)
+	},
+
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel

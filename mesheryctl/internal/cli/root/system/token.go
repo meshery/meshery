@@ -72,6 +72,15 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		tokenName := args[0]
 		if tokenPath == "" {
 			tokenPath = "auth.json"
@@ -106,6 +115,15 @@ mesheryctl system token delete [token-name]
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		tokenName := args[0]
 
 		if err = config.DeleteTokenFromConfig(tokenName, utils.DefaultConfigPath); err != nil {
@@ -124,6 +142,15 @@ mesheryctl system token set [token-name]
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		tokenName := args[0]
 		if ctx == "" {
 			ctx = viper.GetString("current-context")

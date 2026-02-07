@@ -52,6 +52,16 @@ mesheryctl system reset
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		utils.TemplateToken,
+		utils.TemplateContext,
+	); err != nil {
+		return err
+	}
 	userResponse := false
 	if utils.SilentFlag {
 		userResponse = true
