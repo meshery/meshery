@@ -8,8 +8,6 @@ image: /images/platforms/kubesphere.png
 display_title: "false"
 ---
 
-<h1>Quick Start with KubeSphere <img src="/images/platforms/kubesphere.png" style="width:35px;height:35px;" /></h1>
-
 {{< installation-prerequisites >}}
 
 [Meshery](https://meshery.io/) is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, all kinds of cloud native infrastructure, and their workloads.

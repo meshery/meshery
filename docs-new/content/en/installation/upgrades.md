@@ -128,46 +128,4 @@ To upgrade `mesheryctl`, execute the following command:
 scoop update mesheryctl
 {{< /code >}}
 
-### Direct Download
-
-Download the latest release from [GitHub Releases](https://github.com/meshery/meshery/releases/latest).
-
-## Upgrading Meshery Server
-
-### Kubernetes (Helm)
-
-{{< code >}}
-helm repo update
-helm upgrade meshery meshery/meshery --namespace meshery
-{{< /code >}}
-
-### Docker
-
-Stop the current instance and start with the latest version:
-
-{{< code >}}
-mesheryctl system stop
-mesheryctl system start -p docker
-{{< /code >}}
-
-### Using mesheryctl
-
-{{< code >}}
-mesheryctl system update
-{{< /code >}}
-
-## Verify Upgrade
-
-Check the version after upgrading:
-
-{{< code >}}
-mesheryctl version
-{{< /code >}}
-
-Verify system health:
-
-{{< code >}}
-mesheryctl system check
-{{< /code >}}
-
 {{< related-discussions tag="meshery" >}}

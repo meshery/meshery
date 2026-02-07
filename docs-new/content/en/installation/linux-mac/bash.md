@@ -8,30 +8,56 @@ aliases:
 
 # Install mesheryctl using Bash
 
-The fastest way to install `mesheryctl` on Linux or macOS is using the Bash installation script.
+To install or upgrade `mesheryctl` using `bash`, execute anyone of the following commands.
 
-## Installation
-
-Run the following command to install `mesheryctl`:
+#### Option 1: Only install `mesheryctl` binary
 
 {{< code >}}
-curl -L https://meshery.io/install | bash -
+$ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
 {{< /code >}}
 
-## Start Meshery
+<br />
+<br />
 
-After installing `mesheryctl`, you can start Meshery with:
+#### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker
+
+{{< code >}}
+$ curl -L https://meshery.io/install | PLATFORM=docker bash -
+{{< /code >}}
+
+<br />
+<br />
+
+#### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes
+
+{{< code >}}
+$ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+{{< /code >}}
+
+<br />
+<br />
+
+#### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
+
+Install `mesheryctl` binary and include one or more [adapters](/concepts/architecture/adapters) to be deployed
+
+{{< code >}}
+$ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
+{{< /code >}}
+
+<br />
+<br />
+
+### Start Meshery
+
+You are ready to deploy Meshery `mesheryctl`. To do so, execute the following command.
 
 {{< code >}}
 mesheryctl system start
 {{< /code >}}
 
-## Verify Installation
-
-Verify your installation by checking the version:
+If you are running Meshery on Docker, execute the following command.
 
 {{< code >}}
-mesheryctl version
+mesheryctl system start -p docker
 {{< /code >}}
-
-{{< related-discussions tag="mesheryctl" >}}

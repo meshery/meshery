@@ -6,46 +6,50 @@ aliases:
   - /installation/platforms/scoop
 ---
 
-# Install mesheryctl using Scoop
+# Install Meshery CLI with Scoop
 
-Install `mesheryctl` using Scoop on Windows.
+## Prerequisites
 
-## Installation
+You need to have `scoop` installed on your Windows system to perform these actions.
 
-First, add the mesheryctl bucket:
+### Install `mesheryctl` with Scoop
+
+To install `mesheryctl` using Scoop, execute the following commands.
 
 {{< code >}}
 scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
-{{< /code >}}
-
-Then install mesheryctl:
-
-{{< code >}}
 scoop install mesheryctl
 {{< /code >}}
 
-## Start Meshery
-
-After installing `mesheryctl`, you can start Meshery with:
+You're ready to run Meshery. To do so, execute the following command.
 
 {{< code >}}
 mesheryctl system start
 {{< /code >}}
 
-## Upgrade mesheryctl
+If you are running Meshery on Docker, execute the following command.
 
-To upgrade to the latest version:
+{{< code >}}
+mesheryctl system start -p docker
+{{< /code >}}
+
+### Upgrade `mesheryctl` with Scoop
+
+To upgrade `mesheryctl`, execute the following command.
 
 {{< code >}}
 scoop update mesheryctl
 {{< /code >}}
 
-## Verify Installation
+## Related Reading
 
-Verify your installation by checking the version:
+### Mesheryctl Guides
 
-{{< code >}}
-mesheryctl version
-{{< /code >}}
+Guides to using Meshery's various features and components.
 
-{{< related-discussions tag="mesheryctl" >}}
+- [Authenticating Meshery via CLI](/guides/mesheryctl/authenticate-with-meshery-via-cli)
+- [Configuring Autocompletion for `mesheryctl`](/guides/mesheryctl/configuring-autocompletion-for-mesheryctl)
+- [Running system checks using Meshery CLI](/guides/mesheryctl/running-system-checks-using-mesheryctl)
+- [Mesheryctl system commands](/guides/mesheryctl/system-commands)
+- [Using Meshery CLI](/guides/mesheryctl)
+- [Upgrading Meshery CLI](/installation/upgrades#upgrading-meshery-cli)
