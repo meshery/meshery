@@ -34,13 +34,14 @@ const (
 )
 
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+const RELATIONSHIP_SUBTYPE_INVENTORY = "inventory"
 
 // Aliasses Are not resolved
 func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
 
 	alias := core.NonResolvedAlias{}
 
-	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
+	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS && relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_INVENTORY {
 		return alias, false
 	}
 
