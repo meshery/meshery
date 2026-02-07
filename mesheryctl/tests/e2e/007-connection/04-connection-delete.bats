@@ -11,7 +11,7 @@ teardown_file() {
     rm -rf "$TESTDATA_DIR"
 }
 
-@test "given no connection-id is provided as an argument when running mesheryctl connection delete then an error message is displayed" {
+@test "given no connection-id provided as an argument when running mesheryctl connection delete then an error message is displayed" {
     run $MESHERYCTL_BIN connection delete
     assert_failure
     assert_output --partial "[ connection-id ] is required" 
