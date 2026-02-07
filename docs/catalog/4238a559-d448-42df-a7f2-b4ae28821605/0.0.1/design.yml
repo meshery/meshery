@@ -3,7 +3,7 @@ services:
   redis-master:
     name: redis-master
     type: Deployment.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
@@ -47,7 +47,7 @@ services:
   redis-master-service:
     name: redis-master
     type: Service.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
@@ -76,7 +76,7 @@ services:
   redis-replica:
     name: redis-replica
     type: Deployment.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
@@ -123,7 +123,7 @@ services:
   redis-replica-service:
     name: redis-replica
     type: Service.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
@@ -151,7 +151,7 @@ services:
   frontend:
     name: frontend
     type: Deployment.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
@@ -195,7 +195,7 @@ services:
   frontend-service:
     name: frontend
     type: Service.K8s
-    apiVersion: core.oam.dev/v1alpha1
+    apiVersion: core.oam.dev/v1beta1
     namespace: default
     version: v1.25.2
     model: kubernetes
