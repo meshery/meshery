@@ -1,0 +1,11 @@
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <ul>
+      {{ range .Site.RegularPages }}
+      <li>
+        <a href="{{ .Permalink }}">{{ .Title }}</a>
+      </li>
+      {{ end }}
+    </ul>
+  </nav>
+</aside>
