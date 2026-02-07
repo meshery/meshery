@@ -113,7 +113,11 @@ services:
               - containerPort: 6379
     traits:
       meshmap:
-        edges: []
+        edges:
+          - data:
+              id: A4146497-B9CA-4E18-8940-59B68F71E065
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-replica
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-master-svc
         id: 4238a559-d448-42df-a7f2-b4ae28821605-replica
         label: redis-replica
         position:
@@ -135,6 +139,7 @@ services:
       spec:
         ports:
         - port: 6379
+          targetPort: 6379
         selector:
           app: redis
           role: replica
@@ -185,7 +190,15 @@ services:
               - containerPort: 80
     traits:
       meshmap:
-        edges: []
+        edges:
+          - data:
+              id: 4ACCC4C0-C404-4B71-A24B-46B21D71F373
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-master-svc
+          - data:
+              id: FCDF808E-EC42-4B59-B4B4-5DBC3F13D7AA
+              source: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
+              target: 4238a559-d448-42df-a7f2-b4ae28821605-replica-svc
         id: 4238a559-d448-42df-a7f2-b4ae28821605-frontend
         label: frontend
         position:
@@ -207,6 +220,7 @@ services:
         type: NodePort
         ports:
         - port: 80
+          targetPort: 80
         selector:
           app: guestbook
           tier: frontend
