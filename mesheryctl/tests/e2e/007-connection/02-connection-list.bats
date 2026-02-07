@@ -6,7 +6,7 @@ setup() {
 }
 
 @test "given all requirements met when mesheryctl connection list then header of total number of connections followed by a list are displayed" {
-    run $MESHERYCTL_BIN connection list
+    run $MESHERYCTL_BIN connection list --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
