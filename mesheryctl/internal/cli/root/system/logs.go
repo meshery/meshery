@@ -85,6 +85,7 @@ mesheryctl system logs meshery-istio
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			utils.Log.Error(err)
+			return err
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()

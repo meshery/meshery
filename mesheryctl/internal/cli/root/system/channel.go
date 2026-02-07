@@ -55,7 +55,7 @@ mesheryctl system channel view
 			return errors.New(utils.SystemChannelSubError("this command takes no arguments.\n", "view"))
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
+		if err != nil || mctlCfg == nil {
 			utils.Log.Error(err)
 			return nil
 		}
@@ -80,7 +80,7 @@ mesheryctl system channel view
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
+		if err != nil || currCtx == nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}

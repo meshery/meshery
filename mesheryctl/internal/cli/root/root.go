@@ -21,6 +21,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/environments"
@@ -161,8 +162,38 @@ func prepareConfig() error {
 	// Enable reading configuration from environment variables
 	viper.AutomaticEnv()
 
-	// Attempt to read config file (no filesystem mutation here)
+	// Check if config file exists and is readable
+	stat, statErr := os.Stat(cfgFile)
+
+	// For permission denied or other access errors, return immediately
+	if statErr != nil && !os.IsNotExist(statErr) {
+		// Permission denied or other access error - must fail fast
+		return statErr
+	}
+
+	// File doesn't exist - create default config
+	if os.IsNotExist(statErr) {
+		if err := config.MutateConfigIfNeeded(cfgFile, utils.MesheryFolder, utils.TemplateToken, utils.TemplateContext); err != nil {
+			log.Debug("Config mutation error:", err)
+		}
+	} else if stat != nil && stat.Size() == 0 {
+		// File exists but is empty - mutate to create default config
+		if err := config.MutateConfigIfNeeded(cfgFile, utils.MesheryFolder, utils.TemplateToken, utils.TemplateContext); err != nil {
+			log.Debug("Config mutation error:", err)
+		}
+	}
+
+	// Attempt to read config file
 	if err := viper.ReadInConfig(); err != nil {
+		// Permission errors must always fail, even if file has content
+		if os.IsPermission(err) {
+			return err
+		}
+		// For files that exist with content, tolerate parse errors (respect user files)
+		if stat != nil && stat.Size() > 0 {
+			log.Debug("Config file exists but may not be valid YAML:", err)
+			return nil
+		}
 		return err
 	}
 
