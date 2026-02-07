@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils/events"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
@@ -32,6 +33,7 @@ type Handler struct {
 	registryManager                         *meshmodel.RegistryManager
 	EventsBuffer                            *events.EventStreamer
 	Rego                                    *policies.Rego
+	GoEngine                                *gopolicies.GoEngine
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           schemasConnection.MeshsyncDeploymentMode
 }
@@ -65,6 +67,7 @@ func NewHandlerInstance(
 		registryManager:                         regManager,
 		Provider:                                provider,
 		Rego:                                    rego,
+		GoEngine:                                gopolicies.NewGoEngine(logger),
 		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
