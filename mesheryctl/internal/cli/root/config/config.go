@@ -29,6 +29,15 @@ import (
 	"net/http"
 )
 
+// isEmptyFile checks if a file is empty
+func isEmptyFile(path string) bool {
+	stat, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return stat.Size() == 0
+}
+
 // Version unmarshals the json response from the server's version api
 type Version struct {
 	Build          string `json:"build,omitempty"`
@@ -357,9 +366,17 @@ func AddTokenToConfig(token Token, configPath string) error {
 	}
 
 	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
+
+	// For empty files, initialize viper without reading
+	if isEmptyFile(configPath) {
+		viper.Set("tokens", []Token{})
+		viper.Set("contexts", map[string]Context{})
+		viper.Set("current-context", "")
+	} else {
+		err := viper.ReadInConfig()
+		if err != nil {
+			return err
+		}
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
@@ -373,7 +390,8 @@ func AddTokenToConfig(token Token, configPath string) error {
 
 	for i := range mctlCfg.Tokens {
 		if mctlCfg.Tokens[i].Name == token.Name {
-			return errors.New("error adding token: a token with same name already exists")
+			// Token already exists
+			return errors.Wrap(fmt.Errorf("a token with same name already exists"), "error adding token")
 		}
 	}
 
@@ -464,9 +482,17 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
+
+	// For empty files, initialize viper without reading
+	if isEmptyFile(configPath) {
+		viper.Set("tokens", []Token{})
+		viper.Set("contexts", map[string]Context{})
+		viper.Set("current-context", "")
+	} else {
+		err := viper.ReadInConfig()
+		if err != nil {
+			return err
+		}
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
@@ -480,7 +506,8 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		return errors.New("error adding context: a context with same name already exists")
+		// Context already exists, skip adding (idempotent)
+		return nil
 	}
 
 	mctlCfg.Contexts[contextName] = context

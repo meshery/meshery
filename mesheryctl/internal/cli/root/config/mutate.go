@@ -44,7 +44,7 @@ func MutateConfigIfNeeded(
 			return err
 		}
 
-		log.Printf("Default config file created at %s", configPath)
+		log.Debugf("Default config file created at %s", configPath)
 	}
 
 	return nil
