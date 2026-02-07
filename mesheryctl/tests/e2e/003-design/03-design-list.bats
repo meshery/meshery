@@ -11,7 +11,7 @@ setup() {
 }
 
 @test "given all requirements met when running mesheryctl design list --page 1 then the total numbers of designs and a list of designs are displayed" {
-  run $MESHERYCTL_BIN design list --page 1 
+  run $MESHERYCTL_BIN design list --page 1
   assert_success
 
   assert_line --regexp "$DESIGN_LIST_OUTPUT__HEADER_REGEX_PATTERN"
