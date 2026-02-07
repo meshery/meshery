@@ -1,5 +1,5 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
+  "id": "8f6c2e41-1b9a-4f3e-9d72-5a8c3e9b7f10",
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "edge",
@@ -12,7 +12,7 @@
     "name": "aws",
     "version": "0.7.2",
     "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
+    "id": "4e9c8b71-2d5a-4f1e-8a63-9b7c2d6e5f44",
     "registrant": {
       "kind": "github"
     },
@@ -22,7 +22,7 @@
   },
 
   "metadata": {
-    "description": "Traffic flow from AWS API Gateway to Kubernetes Ingress",
+    "description": "Traffic flow from AWS API Gateway to Kubernetes Service",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -36,7 +36,7 @@
       "allow": {
         "from": [
           {
-            "id": null,
+            "id": "d2a6c9f4-7e1b-4a53-8f92-3b6e5d1c9a88",
             "kind": "AWS API Gateway",
             "match": {},
             "match_strategy_matrix": null,
@@ -44,7 +44,7 @@
               "name": "aws",
               "version": "",
               "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "id": "6f1b9d2e-5c8a-4a7f-9e63-1d4b8c5a2e77",
               "registrant": {
                 "kind": "github"
               },
@@ -56,7 +56,7 @@
         ],
         "to": [
           {
-            "id": null,
+            "id": "9a5c3f6e-8b41-4d92-9e17-2c6b5a8d4f33",
             "kind": "Service",
             "match": {},
             "match_strategy_matrix": null,
@@ -64,7 +64,7 @@
               "name": "kubernetes",
               "version": "",
               "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "id": "1c7a9d8e-3f4b-4e52-8b96-5a2d6c9f1e66",
               "registrant": {
                 "kind": "github"
               },
