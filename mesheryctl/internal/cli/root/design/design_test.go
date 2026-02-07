@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	update          = flag.Bool("update", false, "update golden files")
-	invalidFilePath = "/invalid/path/design.yaml"
+	update                 = flag.Bool("update", false, "update golden files")
+	invalidFilePath        = "/invalid/path/design.yaml"
+	validDesignSourceTypes = []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
 )
 
 func TestDesignCmd(t *testing.T) {
