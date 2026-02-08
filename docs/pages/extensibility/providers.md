@@ -49,9 +49,9 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 ### Default Installation Configuration
 
-By default, Meshery installations **do not have a provider pre-selected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
+By default, Meshery installations **do not have a provider preselected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
 
-{% include alert.html type="info" title="Why no default provider?" content="It might be tempting to pre-select the Local provider (\"None\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users—whether individual or team-based—are presented with the full range of available providers on first use." %}
+{% include alert.html type="info" title="Why no default provider?" content="It might be tempting to preselect the Local provider (\"None\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users (whether individual or team-based) are presented with the full range of available providers on first use." %}
 
 ### Recommended Production Deployment Settings
 
