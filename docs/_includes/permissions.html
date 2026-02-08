@@ -46,6 +46,9 @@
 </style>
 <div id="tablesContainer"></div>
 
+<!-- Load XLSX library BEFORE the module that depends on it -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
+
 <script type="module">
   import { keys } from '../../assets/js/permission_constants.js';
 
@@ -183,5 +186,3 @@
   }
 
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
