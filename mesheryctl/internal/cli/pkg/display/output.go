@@ -204,7 +204,7 @@ func (y *YAMLOutputFormatterSaver[T]) Save() error {
 }
 
 func writeFile(filePath string, data []byte) error {
-	err := os.WriteFile(filePath, data, 0o644)
+	err := os.WriteFile(filePath, data, 0644)
 	if err != nil {
 		return utils.ErrCreateFile(filePath, errors.Wrap(err, "failed to write data to file"))
 	}
@@ -236,7 +236,7 @@ var validOutputFormat = []string{"json", "yaml"}
 
 func ValidateOutputFormat(outputFormat string) error {
 	if !slices.Contains(validOutputFormat, strings.ToLower(outputFormat)) {
-		return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
+		return ErrInvalidOutputFormat(outputFormat)
 	}
 	return nil
 }
