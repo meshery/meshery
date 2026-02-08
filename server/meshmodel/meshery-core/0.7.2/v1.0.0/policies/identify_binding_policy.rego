@@ -44,8 +44,6 @@ identify_relationship(
 		match_selector[0].kind != "self"
 		type = match_selector[0].kind
 	}
-	deny_selectors := object.get(selector_set, "deny", [])
-
 	# This is a set of set,
 	# It contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
 	evaluation_results := union({result |
@@ -53,7 +51,7 @@ identify_relationship(
 		binding_declarations := extract_components(design_file.components, [{"kind": comp}])
 
 		count(binding_declarations) > 0
-		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, deny_selectors)
+		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors)
 	})
 }
 
@@ -63,7 +61,7 @@ evaluate_bindings(
 	relationship,
 	from, to,
 	from_selectors,
-	to_selectors, deny_selectors,
+	to_selectors,
 ) := {result |
 	some i, from_declaration in from
 	some j, binding_declaration in binding_declarations
@@ -79,8 +77,6 @@ evaluate_bindings(
 	to_declaration.id != binding_declaration.id
 
 	to_selector := to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
-
-	not is_relationship_denied(from_declaration, to_declaration, deny_selectors)
 
 	is_valid_binding(binding_declaration, to_declaration, to_selector)
 	match_selector_for_from := json.patch(selector, [

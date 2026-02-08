@@ -158,8 +158,8 @@ test_mixed_components_only_valid_relationships if {
 # ================================================================================
 # ENHANCED TESTS: Extended registrant objects (as used in real component definitions)
 # ================================================================================
-# These tests verify the deny logic works with extended registrant objects
-# that include additional fields like id, name, status, type - matching the
+# These tests verify the deny behavior works with extended registrant objects
+# that include additional fields like id, name, status, type, matching the
 # actual structure of component declarations from the Kubernetes model.
 # ================================================================================
 
@@ -378,109 +378,7 @@ test_sample_design_fixture_deployment_to_namespace_only if {
 	to_comp.component.kind == "Namespace"
 }
 
-# Test 8: Verify is_relationship_denied with extended registrant structure
-test_is_relationship_denied_extended_registrant if {
-	from_declaration := {
-		"id": "from-id",
-		"component": {"kind": "Namespace"},
-		"model": {
-			"name": "kubernetes",
-			"registrant": {
-				"id": "00000000-0000-0000-0000-000000000001",
-				"kind": "github",
-				"name": "github",
-				"status": "discovered",
-				"type": "registry",
-			},
-		},
-	}
-
-	to_declaration := {
-		"id": "to-id",
-		"component": {"kind": "Namespace"},
-		"model": {
-			"name": "kubernetes",
-			"registrant": {
-				"id": "00000000-0000-0000-0000-000000000002",
-				"kind": "github",
-				"name": "github",
-				"status": "discovered",
-				"type": "registry",
-			},
-		},
-	}
-
-	deny_selectors := {
-		"from": [{
-			"kind": "Namespace",
-			"model": {
-				"name": "kubernetes",
-				"registrant": {"kind": "github"},
-			},
-		}],
-		"to": [{
-			"kind": "Namespace",
-			"model": {
-				"name": "kubernetes",
-				"registrant": {"kind": "github"},
-			},
-		}],
-	}
-
-	# This should return true (relationship IS denied)
-	relationship_evaluation_policy.is_relationship_denied(from_declaration, to_declaration, deny_selectors)
-}
-
-# Test 9: Verify is_relationship_denied allows non-matching kinds
-test_is_relationship_not_denied_different_kinds if {
-	from_declaration := {
-		"id": "from-id",
-		"component": {"kind": "Deployment"},
-		"model": {
-			"name": "kubernetes",
-			"registrant": {
-				"id": "00000000-0000-0000-0000-000000000001",
-				"kind": "github",
-				"status": "discovered",
-			},
-		},
-	}
-
-	to_declaration := {
-		"id": "to-id",
-		"component": {"kind": "Namespace"},
-		"model": {
-			"name": "kubernetes",
-			"registrant": {
-				"id": "00000000-0000-0000-0000-000000000002",
-				"kind": "github",
-				"status": "discovered",
-			},
-		},
-	}
-
-	deny_selectors := {
-		"from": [{
-			"kind": "Namespace",
-			"model": {
-				"name": "kubernetes",
-				"registrant": {"kind": "github"},
-			},
-		}],
-		"to": [{
-			"kind": "Namespace",
-			"model": {
-				"name": "kubernetes",
-				"registrant": {"kind": "github"},
-			},
-		}],
-	}
-
-	# This should return false (relationship is NOT denied - Deployment to Namespace is allowed)
-	not relationship_evaluation_policy.is_relationship_denied(from_declaration, to_declaration, deny_selectors)
-}
-
-# Test 10: Multiple deployments in different namespaces - all should have relationships
+# Test 8: Multiple deployments in different namespaces - all should have relationships
 test_multiple_deployments_in_namespaces if {
 	design_file := {"components": [
 		{
