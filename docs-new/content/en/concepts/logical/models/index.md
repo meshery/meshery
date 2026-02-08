@@ -1,10 +1,6 @@
 ---
 title: Models
-linkTitle: Models
-url: /concepts/logical/models/
-type: concepts
-abstract: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
-list: include
+description: Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.
 aliases:
 - /concepts/models/
 ---
@@ -22,7 +18,9 @@ Models serve as the foundational packaging units for Meshery's logical object re
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
 * **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
 
-{% include alert.html title="Creating your own models" type="light" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the <a href='/project/contributing/contributing-models'>Contributing to Models</a> guide." %}
+{{< alert title="Creating your own models" type="light" >}}
+If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide.
+{{< /alert >}}
 
 See [Contributing to Models](/project/contributing/contributing-models).
 
@@ -43,7 +41,7 @@ Models are stored in Meshery's [registry](/concepts/logical/registry) where they
 
 The registry provides a central location for managing and distributing your infrastructure models.
 
-Every entity type is implemented by a [registrant]({{site.baseurl}}/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
+Every entity type is implemented by a [registrant](/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
 Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons. Others registrants offer specific services. For example, the Meshery Adapter for Nighthawk offers load generation and service performance characteriazation.
 
@@ -60,16 +58,18 @@ Meshery Models adhere to several design principles, including establishing a set
 
 Each model package can be imported and exported from the system as OCI-compatible images, making them portable (a design goal), abstracting their complexity, and encapsulating potential intellectual property that users might have invested into their models. Model packages are versioned and bundle any number of components, relationships, policies, connections and credentials. For example:
 
-{% include alert.html title="Model Packaging" type="info" content="Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments." %}
+{{< alert title="Model Packaging" type="info" >}}
+Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments.
+{{< /alert >}}
 
-![Meshery Models]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
+![Meshery Models](./images/meshery-models.png)
 _Figure: Model Construct Classification_
 
 ## Key aspects and characteristics
 
 You might not fully comprehend the Meshery Models figure above. The following analogy offers an alternative viewpoint from which to comprehend the Capabilities Registry (where Models are imported and their capabilities registered for use).  
 
-![Meshery Models Analogy]({{ site.baseurl }}/assets/img/concepts/meshery-models-analogy.svg)
+![Meshery Models Analogy](./images/meshery-models-analogy.svg)
 _Figure: Registrar's Office and Meshery Models Analogy_
 
 ### Models
@@ -78,35 +78,39 @@ Models introduce various core constructs that form the foundation of the model. 
 
 ### Component
 
-[Component]({{site.baseurl}}/concepts/logical/components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
+[Component](/concepts/logical/components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
 ### Policy
 
-[Policies]({{site.baseurl}}/concepts/logical/policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem.
+[Policies](/concepts/logical/policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem.
 
 ### Relationships
 
-[Relationships]({{site.baseurl}}/concepts/logical/relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
+[Relationships](/concepts/logical/relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
 
 #### Evaluation of Relationships
 
 Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
-{% include alert.html title="Model Schema" type="info" content="Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs." %}
+{{< alert title="Model Schema" type="info" >}}
+Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs.
+{{< /alert >}}
 
 ### Designs
 
-[Designs]({{site.baseurl}}/concepts/logical/designs) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
+[Designs](/concepts/logical/designs) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
 
 ### Patterns
 
 [Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
-{% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
+{{< alert title="Metadata" type="info" >}}
+Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior.
+{{< /alert >}}
 
 ## Versioning
 
-![Versioning Models](/assets/img/concepts/logical/versioning-meshery-entities.svg)
+![Versioning Models](./images/versioning-meshery-entities.svg)
 
 ## Summary
 

@@ -1,11 +1,7 @@
 ---
 title: Registry
-linkTitle: Registry
-url: /concepts/logical/registry/
-type: concepts
-abstract: Meshery Registry is a database acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including models, components, relationships, and policies.
+description: Meshery Registry is a database acting as the central repository for all capabilities known to Meshery. These capabilities encompass various entities, including models, components, relationships, and policies.
 display_title: false
-list: include
 ---
 
 # Meshery Registry: A Central Hub for Capabilities
@@ -36,7 +32,7 @@ As the central repository for all capabilities known to Meshery, the registry co
 Entity (Registree): An individual capability stored in the registry (e.g., model, component).
 - **Registrant** *(Host)*: A Meshery Connection responsible for sourcing and registering entities. A registrant can perform registration for their own entities, or a registrant can act as a proxy on behalf of a third-party entity source.
 - **Entity** *(registree)* - an entry in the Meshery Registry; e.g. a model, component, relationship, or policy. Sometimes referred to as a capability.
-- **Entity Source**: an entity’s original location from which it was sourced; e.g. (source_uri is used as the flag by Meshery Server to assess whether additional support). The Entity Source should have all the information that Meshery needs to generate the components.  
+<!-- - **Entity Source**: an entity’s original location from which it was sourced; e.g. (source_uri is used as the flag by Meshery Server to assess whether additional support). The Entity Source should have all the information that Meshery needs to generate the components.   -->
 
 ## Models in the Registry
 
@@ -65,7 +61,7 @@ See [`mesheryctl registry generate`](/reference/mesheryctl/registry/generate) fo
 
 Once registered in the Meshery Registry, Models and their entities are available for use within that specific Meshery Server.
 
-Meshery [Adapters]({{ site.baseurl }}/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+Meshery [Adapters](/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
 
 #### Using Meshery CLI to Register a Model
 
@@ -80,4 +76,3 @@ Visit the Settings Registry page and click the "Import" button to import a model
 ### Ignoring an Entity
 
 You have control over whether a registered entity (model and all that the model contains) this can be an individual or team-level preference. Use the "Ignore" action to designate whether a given model is allowed to be used within a given Meshery Server deployment. Models that are ignored remain in the Meshery Registry but are not available for use within a given Meshery Server deployment.
- -->

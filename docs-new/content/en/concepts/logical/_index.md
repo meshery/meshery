@@ -1,38 +1,24 @@
 ---
 title: Logical
-linkTitle: Logical
-url: /concepts/logical/
-type: concepts
-list: exclude
-abstract: Concepts for understanding Meshery's various features and components.
+description: Concepts for understanding Meshery's various features and components.
 ---
 
 As an extensible platform, Meshery empowers you with a wide range of logical constructs that provide support for the majority of the systems in the cloud and cloud native ecosystems. Meshery abstracts away the system specific requirements and help you focus on getting things done.
 
-{% assign sorted_pages = site.pages | sort: "name" %}
-
 ## Logical Concepts
 
 <ul>
-    {% for item in sorted_pages %}
-    {% if item.type=="concepts" and item.language=="en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.abstract != " " %}
-        -  {{ item.abstract }}
-      {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
+  {{< concepts-list section="concepts" subsection="logical" lang="en" >}}
 </ul>
 
 The logical concepts included in Meshery establish a set of foundational constructs. Each logical construct is:
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
 2. Extensible (see [Extension Points](/extensibility))
-3. Composable (see [Patterns]({{ site.baseurl }}/concepts/logical/patterns))
-4. Portable (see Export/Import of [Designs]({{ site.baseurl }}/concepts/logical/designs) and [Models]({{ site.baseurl }}/concepts/logical/models))
-5. Interoperable (see [Compatibility Matrix]({{ site.baseurl }}/installation/compatibility-matrix))
-6. Configurable (see [Lifecycle Management]({{ site.baseurl }}/guides/infrastructure-management/lifecycle-management))
+3. Composable (see [Patterns](/concepts/logical/patterns))
+4. Portable (see Export/Import of [Designs](/concepts/logical/designs) and [Models](/concepts/logical/models))
+5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
+6. Configurable (see [Lifecycle Management](/guides/infrastructure-management/lifecycle-management))
 7. Documented (_you are here_)
 8. Testable
 9. Maintainable

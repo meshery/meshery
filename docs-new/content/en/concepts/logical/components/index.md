@@ -1,10 +1,6 @@
 ---
 title: Components
-linkTitle: Components
-url: /concepts/logical/components/
-type: concepts
-abstract: "Meshery Components identify and characterize infrastructure under management."
-list: include
+description: "Meshery Components identify and characterize infrastructure under management."
 aliases:
 - /concepts/components/
 ---

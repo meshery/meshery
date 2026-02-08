@@ -1,10 +1,6 @@
 ---
 title: Credentials
-linkTitle: Credentials
-url: /concepts/logical/credentials/
-type: concepts
-abstract: Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
-list: include
+description: Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
 aliases:
 - /concepts/credentials/
 ---

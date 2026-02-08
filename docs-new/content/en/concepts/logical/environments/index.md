@@ -1,10 +1,6 @@
 ---
 title: Environments
-linkTitle: Environments
-url: /concepts/logical/environments/
-type: concepts
-abstract: "Environments are how you organize your deployment targets (whether on-premises servers or cloud services) into resource groups."
-list: include
+description: "Environments are how you organize your deployment targets (whether on-premises servers or cloud services) into resource groups."
 aliases:
 - /concepts/environments/
 ---
@@ -21,7 +17,7 @@ Environments can share resources. For example, you might create an environment n
 
 ### Deleting an Environment
 
-Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. Learn more about the behavior of [lifecycle of connections]({{site.baseurl}}/concepts/logical/connections).
+Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment. Resources that belong to others environments will continue to belong to those other environments. Learn more about the behavior of [lifecycle of connections](/concepts/logical/connections).
 
 ## Key Features
 

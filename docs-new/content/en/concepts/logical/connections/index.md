@@ -1,24 +1,24 @@
 ---
 title: Connections
-linkTitle: Connections
-url: /concepts/logical/connections/
-type: concepts
-abstract: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments."
-list: include
+description: "Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments."
 aliases:
 - /concepts/connections/
 ---
 Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment. 
 
-{% include alert.html type="info" title="Connections as resources in Environments" content="Meshery Environments allow you to logically group related <a href='/concepts/logical/connections'>Connections</a> and their associated <a href='/concepts/logical/credentials'>Credentials</a>. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis." %}
+{{< alert type="info" title="Connections as resources in Environments" >}}
+Meshery Environments allow you to logically group related [Connections](/concepts/logical/connections) and their associated [Credentials](/concepts/logical/credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.
+{{< /alert >}}
 
-{% include alert.html type="dark" title="Managed vs Unmanaged Connections" content="Managed Connections are those that are discovered by MeshSync and are managed by Meshery. Unmanaged Connections are those that are manually added by the user and are not managed by Meshery." %}
+{{< alert type="dark" title="Managed vs Unmanaged Connections" >}}
+Managed Connections are those that are discovered by MeshSync and are managed by Meshery. Unmanaged Connections are those that are manually added by the user and are not managed by Meshery.
+{{< /alert >}}
 
 ## States and the Lifecycle of Connections
 
 Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you a `Kubernetes` cluster with `Prometheus` installed.
 
-![]({{site.baseurl}}/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)
+![States for Kubernetes Cluster Connections](./images/states-for-kubernetes-cluster-connections.svg)
 
 ### State: Discovered
 
@@ -50,7 +50,9 @@ The connection is administratively processed to be ignored from Meshery's view o
 
 > Example: Meshery server will stop/not scrape metrics from Prometheus. Though, the previous data (if connected previously) will continue to exist and user needs to manually delete.
 
-{% include alert.html type="info" title="Ignored versus Disconnected" content="You might intentionally choose to have Meshery ignore a given Prometheus connection, explicitly leaving in Meshery’s field of view, but identifying it as a connection not to manage. This is distinctly different than a Prometheus that Meshery was managing, but has been turned off/uninstalled and now Meshery is disconnected from the Prometheus." %}
+{{< alert type="info" title="Ignored versus Disconnected" >}}
+You might intentionally choose to have Meshery ignore a given Prometheus connection, explicitly leaving in Meshery's field of view, but identifying it as a connection not to manage. This is distinctly different than a Prometheus that Meshery was managing, but has been turned off/uninstalled and now Meshery is disconnected from the Prometheus.
+{{< /alert >}}
 
 ### State: Maintenance
 
@@ -62,7 +64,9 @@ The connection was previously [discovered](#state-discovered)/[registered](#stat
 
 > Example: Prometheus crashed/API token provided at time of registration is revoked.
 
-{% include alert.html type="info" title="Disconnected vs Deleted" content="The connection was previously connected but is unreachable due to connectivity issue/AuthN-AuthZ/connection was **deleted outside Meshery** i.e. Connection was deleted beyond the Meshery's view of management." %}
+{{< alert type="info" title="Disconnected vs Deleted" >}}
+The connection was previously connected but is unreachable due to connectivity issue/AuthN-AuthZ/connection was **deleted outside Meshery** i.e. Connection was deleted beyond the Meshery's view of management.
+{{< /alert >}}
 
 ### State: Deleted
 
@@ -74,7 +78,9 @@ The connection is administratively processed to be deleted and removed from Mesh
 
 User tried registering the connection **manually** but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.
 
-{% include alert.html type="info" title="Not Found vs Disconnected" content="You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue." %}
+{{< alert type="info" title="Not Found vs Disconnected" >}}
+You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
+{{< /alert >}}
 
 _Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
 
@@ -94,7 +100,7 @@ Note that some connections, such as the registration of Meshery server with remo
 
 For more information on the different states and the lifecycle of connections, refer to the documentation above.
 
-![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
+![Meshery Server Registration with Remote Providers](./images/meshery-server-registration-with-remote-providers.svg)
 
 
 
