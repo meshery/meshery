@@ -17,6 +17,7 @@ import {
   FileIcon,
   useTheme,
 } from '@sistent/sistent';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
 import GrafanaComponent from '../telemetry/grafana/GrafanaComponent';
@@ -41,6 +42,7 @@ import {
   PROMETHEUS,
   OVERVIEW,
   REGISTRY,
+  PROVIDER,
 } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
 import MeshModelComponent from './Registry/MeshModelComponent';
@@ -273,7 +275,7 @@ const MesherySettings = () => {
                     label="Overview"
                     // tab="Overview"
                     value={OVERVIEW}
-                    // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
                   />
                 </CustomTooltip>
                 <CustomTooltip
@@ -316,6 +318,15 @@ const MesherySettings = () => {
                   />
                 </CustomTooltip>
 
+                <CustomTooltip title="Provider" placement="top" value={PROVIDER}>
+                  <Tab
+                    icon={<SettingsCellIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    label="Provider"
+                    data-testid="settings-tab-provider"
+                    value={PROVIDER}
+                  />
+                </CustomTooltip>
+
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
                     icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
@@ -323,7 +334,7 @@ const MesherySettings = () => {
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
-                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                   />
                 </CustomTooltip>
               </Tabs>
@@ -407,6 +418,28 @@ const MesherySettings = () => {
             {tabVal === REGISTRY && (
               <TabContainer>
                 <MeshModelComponent settingsRouter={settingsRouter} />
+              </TabContainer>
+            )}
+
+            {tabVal === PROVIDER && (
+              <TabContainer>
+                <Paper style={{ padding: '2rem' }}>
+                  <Typography variant="h6" gutterBottom>
+                    Current Provider
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {/* Placeholder for provider info - in a real scenario this might come from state or props */}
+                    {/* Since we don't have direct access to provider state here, we might need to fetch it or pass it down */}
+                    Provider: None
+                  </Typography>
+                  <Typography variant="body2">
+                    <Link href="https://docs.meshery.io/reference/mesheryctl/system/provider">
+                      <a target="_blank" rel="noopener noreferrer">
+                        Learn more about Providers
+                      </a>
+                    </Link>
+                  </Typography>
+                </Paper>
               </TabContainer>
             )}
 

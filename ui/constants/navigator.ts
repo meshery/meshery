@@ -58,6 +58,7 @@ export const RESET = 'Reset';
 export const METRICS = 'Metrics';
 export const GRAFANA = 'Grafana';
 export const PROMETHEUS = 'Prometheus';
+export const PROVIDER = 'Provider';
 export const INCLUSTER_CONFIG = 'Inclusterconfig';
 export const OUTCLUSTER_CONFIG = 'Outclusterconfig';
 export const ENDPOINTURL = 'https://playground.meshery.io/';
