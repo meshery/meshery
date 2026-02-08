@@ -24,6 +24,7 @@ Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 
 ## Available Deployment Methods
 
+- [Available Deployment Methods](#available-deployment-methods)
 - [In-cluster Installation](#in-cluster-installation)
   - [Preflight Checks](#preflight-checks)
     - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
@@ -61,13 +62,34 @@ kubectl config current-context
 
 ### Installation: Using `mesheryctl`
 
+<details>
+<summary>Verify your Meshery context</summary>
+<p>
+Verify that your current Meshery context is set for an in-cluster deployment (<code>platform: kubernetes</code>) by executing:
+</p>
+
+{{< code >}}
+mesheryctl system context view
+{{< /code >}}
+
+<p>
+If the context is not set to <code>platform: kubernetes</code>, you can create a new context with Kubernetes as the platform using the following command.
+</p>
+
+{{< code >}}
+mesheryctl system context create context-name --platform kubernetes --url http://localhost:9081 --set --yes
+{{< /code >}}
+
+<br/>
+</details>
+
 With your KIND cluster configured as your `current-context`, start Meshery:
 
 {{< code >}}
 mesheryctl system start -p kubernetes
 {{< /code >}}
 
-Meshery server supports customizing authentication system. To learn more, refer to the [customizing authentication](/extensibility/providers) guide.
+Meshery server supports customizing authentication flow callback URL. To learn more, refer to the [customizing authentication](/extensibility/providers) guide.
 
 ### Alternative Installation: Using Helm
 
@@ -75,9 +97,23 @@ For detailed instructions on installing Meshery using Helm, please refer to the 
 
 ### Post-Installation Steps
 
-Meshery deploys with LoadBalancer service type by default. If you are using KinD, you may need to expose the Meshery service using `mesheryctl system dashboard --port-forward`.
+Meshery deploys with LoadBalancer service type by default. If you are using KinD, you may need to expose the Meshery service. A universal option is to use `mesheryctl system dashboard --port-forward`. A KIND-specific option is to use the [Cloud Provider KIND](https://kind.sigs.k8s.io/docs/user/loadbalancer/). Cloud Provider KIND runs as a standalone binary in your host and connects to your KIND cluster and provisions new LoadBalancer containers for your Services.
 
-Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check](/reference/mesheryctl/system/check).
+**mesheryctl system dashboard**
+
+To open the Meshery UI in your browser, use the following command:
+
+{{< code >}}
+mesheryctl system dashboard
+{{< /code >}}
+
+To port-forward to Meshery UI, use the following command:
+
+{{< code >}}
+mesheryctl system dashboard --port-forward
+{{< /code >}}
+
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

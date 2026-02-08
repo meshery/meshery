@@ -24,10 +24,13 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
 
 - [In-cluster Installation](#in-cluster-installation)
   - [Preflight Checks](#preflight-checks)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
+  - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
+  - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
 
 # In-cluster Installation
 
@@ -52,7 +55,7 @@ Once configured, execute the following command to start Meshery.
 Before executing the below command, go to ~/.meshery/config.yaml and ensure that the current platform is set to Kubernetes.
 
 {{< code >}}
-$ mesheryctl system start
+mesheryctl system start
 {{< /code >}}
 
 ## Installation: Using Helm
@@ -61,7 +64,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check](/reference/mesheryctl/system/check).
+Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
@@ -90,7 +93,7 @@ kubectl get pods -n ingress-nginx
 Run the below command to install cert-manager for your cluster:
 
 {{< code >}}
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
 {{< /code >}}
 
 {{< related-discussions tag="meshery" >}}

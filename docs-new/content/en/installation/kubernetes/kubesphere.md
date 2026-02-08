@@ -28,34 +28,34 @@ Perform the following steps in order:
 1. On the **Overview** page of the project `demo-project`, click **App Store** in the upper-left corner.
 2. Search for **Meshery** in the App Store, and click on the search result to open the app.
 
-    ![meshery-app](/images/platforms/meshery-app.png)
+![meshery-app](/images/platforms/meshery-app.png)
 
 3. In the **App Information** page, click **Install** on the upper right corner.
 
-    ![meshery-install](/images/platforms/Meshery-install.png)
+![meshery-install](/images/platforms/Meshery-install.png)
 
 4. In the App Settings page, set the application **Name**, **Location** (as your namespace), and **App Version**, then click **Next** on the upper right corner.
 
-    ![meshery-info](/images/platforms/Meshery-info.png)
+![meshery-info](/images/platforms/Meshery-info.png)
 
 5. Configure the **values.yaml** file as needed, or click **Install** to use the default configuration.
 
-    ![meshery-yaml](/images/platforms/Meshery-yaml.png)
+![meshery-yaml](/images/platforms/Meshery-yaml.png)
 
 6. Wait for the deployment to be finished. Upon completion, **Meshery** will be shown as **Running** in KubeSphere.
 
-    ![meshery-app-running](/images/platforms/Meshery-app-running.png)
+![meshery-app-running](/images/platforms/Meshery-app-running.png)
 
 ### 2. **Access the Meshery Dashboard**
 
 1. Go to **Services** and click the service name of Meshery.
 2. In the **Resource Status** page, copy the **NodePort** of Meshery.
 
-    ![meshery-service](/images/platforms/Meshery-service.png)
+![meshery-service](/images/platforms/Meshery-service.png)
 
 3. Access the Meshery Dashboard by entering **${NodeIP}:${NODEPORT}** in your browser.
 
-    ![meshery-dashboard](/images/platforms/meshery-dashboard.png)
+![meshery-dashboard](/images/platforms/meshery-dashboard.png)
 
 4. For more information about Meshery, see the [official documentation of Meshery](https://docs.meshery.io/).
 

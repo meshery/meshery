@@ -6,42 +6,45 @@ aliases:
   - /installation/platforms/multiple-of-the-same-adapter
 ---
 
-# Using Multiple Meshery Adapters
+## Advanced Configuration
 
-You can run multiple instances of the same Meshery adapter to manage multiple service mesh instances or for high availability.
+Meshery is capable of running zero or more adapters. Meshery offers many features without the need for adapters. Adapters are optional components that enhance and extend Meshery's core functionality.
 
-## Configuring Multiple Adapters
+### Modifying the default adapter deployment configuration
 
-### Using mesheryctl
+The number of adapters, type of adapters, where they are deployed, how they are named and what port they are exposed on are all configurable deployment options. To modify the default configuration, find `~/.meshery/meshery.yaml` on your system. `~/.meshery/meshery.yaml` is a Docker Compose file.
 
-When starting Meshery, you can specify multiple adapter instances in your configuration:
+#### Configuration: Running fewer Meshery adapters
 
-{{< code >}}
-mesheryctl system config --adapter-urls "localhost:10000,localhost:10001"
-{{< /code >}}
+To customize which Meshery Adapters are used in which deployments, customize your contexts in your meshconfig.
 
-### Using Helm
+*Recommended:*
+Configure your meshconfig using `mesheryctl system context` to customize which Meshery Adapters are used in which deployments.
 
-Modify your Helm values to include multiple adapter deployments:
+*Alternative:*
+Alternatively, directly modify the `~/.meshery/meshery.yaml` configuration file, removing the entries for any adapters you want to remove from your deployment.
 
-{{< code >}}
-helm install meshery meshery/meshery \
-  --set adapters.replicas=2 \
-  --namespace meshery
-{{< /code >}}
+#### Configuration: Running more than one instance of the same Meshery adapter
 
-## Use Cases
+The default configuration of a Meshery deployment includes one instance of each of the Meshery Adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery Adapter; for example, two instances of the Meshery Adapter for NGINX Service Mesh. To do so, you can use either of Meshery's clients to modify your Meshery deployment:
+- Using `mesheryctl`, modify `~/.meshery/meshery.yaml` to include multiple copies of the given adapter.
+- Using Meshery UI, navigate to the Settings page and enter the host and port of your additional adapter.
 
-- **Multi-cluster management**: Connect different adapters to different clusters
-- **High availability**: Run redundant adapter instances for fault tolerance
-- **Testing**: Test different adapter configurations simultaneously
+#### Configuration: Choosing an adapter while installing Mesheryctl
 
-## Verifying Configuration
+When installing `mesheryctl` using the Bash installation script, you can choose which adapters to load.
+Do so by passing the `ADAPTERS` environment variable to the Meshery Bash script.
 
-Check the running adapters:
+*For example:*
 
 {{< code >}}
-mesheryctl system status
+curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
 {{< /code >}}
 
-{{< related-discussions tag="meshery" >}}
+This installs `mesheryctl` and starts Meshery Server in your connected Kubernetes cluster, deploying only the Meshery Adapter for Consul and not the rest of Meshery's adapters.
+
+##### Demo of Meshery managing deployments across multiple Kubernetes clusters:
+
+<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/yWPu3vq4vEs?start=5041" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+See on YouTube: [Cloud Native Austin Virtual Meetup: April 2020](https://youtu.be/yWPu3vq4vEs?t=5041&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)

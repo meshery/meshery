@@ -14,9 +14,7 @@ Meshery deploys as a set of Docker containers to either a Docker host or a Kuber
 
 - [Bash](/installation/linux-mac/bash) - Install Meshery CLI on Linux or MacOS with Bash
 - [Brew](/installation/linux-mac/brew) - Install Meshery CLI on Linux or macOS with Homebrew
-- [Install Meshery CLI on Linux or macOS](/installation/linux-mac) - Install Meshery CLI on Linux or macOS
 - [Scoop](/installation/windows/scoop) - Install Meshery CLI on Windows with Scoop
-- [Install Meshery CLI on Windows](/installation/windows) - Install Meshery CLI on Windows
 
 <h3>Install on Kubernetes</h3>
 

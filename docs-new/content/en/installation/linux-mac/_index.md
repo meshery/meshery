@@ -23,25 +23,25 @@ You need to have `Brew` installed on your **Linux** or **macOS** system to perfo
 To install `mesheryctl` using homebrew, execute the following commands.
 
 {{< code >}}
-$ brew install mesheryctl
+brew install mesheryctl
 {{< /code >}}
 
 You're ready to run Meshery. To do so, execute the following command.
 
 {{< code >}}
-$ mesheryctl system start
+mesheryctl system start
 {{< /code >}}
 
 If you are running Meshery on Docker, execute the following command.
 
 {{< code >}}
-$ mesheryctl system start -p docker
+mesheryctl system start -p docker
 {{< /code >}}
 
 Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
 
 {{< code >}}
-$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
 {{< /code >}}
 
 `mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
@@ -53,7 +53,7 @@ If there are multiple contexts in your kubeconfig file, specify the one you want
 To upgrade `mesheryctl`, execute the following command.
 
 {{< code >}}
-$ brew upgrade mesheryctl
+brew upgrade mesheryctl
 {{< /code >}}
 
 <details>
@@ -85,7 +85,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
 #### Option 1: Only install `mesheryctl` binary
 
 {{< code >}}
-$ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
+curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
 {{< /code >}}
 
 <br />
@@ -94,7 +94,7 @@ $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
 #### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker
 
 {{< code >}}
-$ curl -L https://meshery.io/install | PLATFORM=docker bash -
+curl -L https://meshery.io/install | PLATFORM=docker bash -
 {{< /code >}}
 
 <br />
@@ -103,7 +103,7 @@ $ curl -L https://meshery.io/install | PLATFORM=docker bash -
 #### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes
 
 {{< code >}}
-$ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
 {{< /code >}}
 
 <br />
@@ -114,7 +114,7 @@ $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
 Install `mesheryctl` binary and include one or more [adapters](/concepts/architecture/adapters) to be deployed
 
 {{< code >}}
-$ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
+curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
 {{< /code >}}
 
 <br />

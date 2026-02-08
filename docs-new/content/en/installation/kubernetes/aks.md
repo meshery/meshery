@@ -26,12 +26,19 @@ Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
 ## Available Deployment Methods
 
 - [In-cluster Installation](#in-cluster-installation)
-- [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
-- [Installation: Using Helm](#installation-using-helm)
+    - [Preflight Checks](#preflight-checks)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+    - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
+    - [Installation: Using Helm](#installation-using-helm)
+  - [Post-Installation Steps](#post-installation-steps)
 
 # In-cluster Installation
 
 Follow the steps below to install Meshery in your AKS cluster.
+
+### Preflight Checks
+
+Read through the following considerations prior to deploying Meshery on AKS.
 
 ### Preflight: Cluster Connectivity
 
@@ -51,17 +58,19 @@ az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAM
 
 ### Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your AKS cluster:
+Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
 
 {{< code >}}
-$ mesheryctl system config aks
+mesheryctl system config aks
 {{< /code >}}
 
 Once configured, execute the following command to start Meshery:
 
 {{< code >}}
-$ mesheryctl system start
+mesheryctl system start
 {{< /code >}}
+
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
 
 ### Installation: Using Helm
 
@@ -69,7 +78,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check](/reference/mesheryctl/system/check).
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

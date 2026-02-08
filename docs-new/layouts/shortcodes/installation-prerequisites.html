@@ -1,9 +1,22 @@
-{{- $title := .Page.Title -}}
-{{- $image := .Page.Params.image -}}
-<h1>Quick Start with {{ $title }}{{ with $image }} <img src="{{ . }}" style="width:35px;height:35px;" />{{ end }}</h1>
+{{- $title := .Page.Title -}} {{- $image := .Page.Params.image -}}
+
+<h1>
+    Quick Start with {{ $title }}{{ with $image }}
+    <img
+        src="{{ . }}"
+        class="platform-icon"
+        style="width: 35px; height: 35px"
+    />{{ end }}
+</h1>
 
 <div class="prereqs">
     <h4>Prerequisites</h4>
-
-    1. Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.
+    <ol>
+        <li>
+            Install the Meshery command line client,
+            <a href="/installation/mesheryctl" class="meshery-light"
+                >mesheryctl</a
+            >.
+        </li>
+    </ol>
 </div>

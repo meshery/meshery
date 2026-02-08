@@ -13,7 +13,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
 #### Option 1: Only install `mesheryctl` binary
 
 {{< code >}}
-$ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
+curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
 {{< /code >}}
 
 <br />
@@ -22,7 +22,7 @@ $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
 #### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker
 
 {{< code >}}
-$ curl -L https://meshery.io/install | PLATFORM=docker bash -
+curl -L https://meshery.io/install | PLATFORM=docker bash -
 {{< /code >}}
 
 <br />
@@ -31,7 +31,7 @@ $ curl -L https://meshery.io/install | PLATFORM=docker bash -
 #### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes
 
 {{< code >}}
-$ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
 {{< /code >}}
 
 <br />
@@ -42,7 +42,7 @@ $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
 Install `mesheryctl` binary and include one or more [adapters](/concepts/architecture/adapters) to be deployed
 
 {{< code >}}
-$ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
+curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
 {{< /code >}}
 
 <br />

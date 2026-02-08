@@ -21,9 +21,11 @@ The Docker Extension for Meshery extends Docker Desktop's position as the develo
 
 Select one of the following three options to install the Docker Meshery Extension:
 
-- [Using Docker Desktop](#using-docker-desktop)
-- [Using Docker Hub](#using-docker-hub)
-- [Using Docker CLI](#using-docker-cli)
+- [Install the Docker Meshery Extension](#install-the-docker-meshery-extension)
+  - [Using Docker Desktop](#using-docker-desktop)
+  - [Using Docker Hub](#using-docker-hub)
+  - [Using Docker CLI](#using-docker-cli)
+- [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
 
 ### Using Docker Desktop
 
@@ -78,23 +80,27 @@ Navigate to **Manage** under Extensions, click the ellipsis button (three vertic
 To remove the extension from the command line, use the `docker extension rm` command.
 
 {{< code >}}
-$ docker extension rm meshery/docker-extension-meshery
+docker extension rm meshery/docker-extension-meshery
 {{< /code >}}
 
 ### Additional Cleanup
 
-There could be residual images and networks to remove after removing/uninstalling the extension.
+There could be residual images and networks to remove after removing/uninstalling the extension. Follow the steps below to do so.
 
 **Remove Meshery Images (if necessary)**
 
+Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
+
 {{< code >}}
-$ docker rmi meshery/meshery:stable-latest
+docker rmi meshery/meshery:stable-latest
 {{< /code >}}
 
 **Remove Meshery Docker Networks (if necessary)**
 
+Meshery creates custom Docker networks, and they could still be left after the extension uninstall. These can be removed using the `docker network rm` command. For example:
+
 {{< code >}}
-$ docker network rm meshery_default
+docker network rm meshery_default
 {{< /code >}}
 
 {{< related-discussions tag="meshery" >}}
