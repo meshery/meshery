@@ -47,4 +47,6 @@ teardown_file() {
     run $MESHERYCTL_BIN connection delete "$CONNECTION_ID"
     assert_success
     assert_output --partial "deleted"
+
+    run $MESHERYCTL_BIN connection create --minikube
 }

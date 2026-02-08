@@ -16,7 +16,7 @@ setup() {
 
     CONNECTION_ID=$(
         echo "$output" \
-        | awk 'NR>4 && $5=="connected" {print $1; exit}'
+        | awk 'NR>4 && $2=="minikube" && $5=="connected" {print $1; exit}'
     )
     [ -n "$CONNECTION_ID" ] || "No connected connection found"
 
