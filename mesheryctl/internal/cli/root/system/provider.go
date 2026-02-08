@@ -316,10 +316,10 @@ mesheryctl system provider switch [provider]
 // resetProviderCmd represents the reset command
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
-	Short: "reset provider to default (unset)",
-	Long:  "Reset provider for current context to default (unset). This clears the enforced provider so that users are presented with the provider selection UI on next start.",
+	Short: "Clear the configured provider",
+	Long:  "Clear the configured provider for the current context. This allows users to select a provider on the next Meshery start. This clears the enforced provider so that users are presented with the provider selection UI on next start.",
 	Example: `
-// Reset provider to default (clear provider selection)
+// Clear the configured provider
 mesheryctl system provider reset
 	`,
 	SilenceUsage: true,
