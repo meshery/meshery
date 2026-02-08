@@ -52,7 +52,7 @@ mesheryctl system status --verbose
 	`,
 	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+		// Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
@@ -111,6 +111,7 @@ mesheryctl system status --verbose
 
 		switch currPlatform {
 		case "docker":
+			fmt.Println("============= docker ==================")
 			// List the running Meshery containers using compose library
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
@@ -118,6 +119,8 @@ mesheryctl system status --verbose
 			}
 
 			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
+			fmt.Println("============ outputString ==============")
+			fmt.Println(outputString)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}
@@ -149,14 +152,12 @@ mesheryctl system status --verbose
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
-
 			if err != nil {
 				return err
 			}
 
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
-
 			if err != nil {
 				return err
 			}

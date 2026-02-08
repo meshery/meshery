@@ -28,12 +28,35 @@ import (
 	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/docker/compose/v2/pkg/compose"
+	"github.com/docker/docker/client"
 )
 
 // ComposeClient is a wrapper around the docker compose library
 type ComposeClient struct {
 	service api.Compose
 	cli     *dockerCmd.DockerCli
+}
+
+// NewDockerCliClient creates a client.APIClient instance which can be used to
+// talk to docker client API, eg: client.ContainerList(...)
+// NOT NEEDED -- DELETE
+func NewDockerCliClient() (client.APIClient, error) {
+	// Create Docker CLI with combined streams going to discard
+	dockerCli, err := dockerCmd.NewDockerCli(
+		dockerCmd.WithCombinedStreams(io.Discard),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create docker cli: %w", err)
+	}
+
+	// Initialize the Docker CLI with default options
+	clientOpts := cliflags.NewClientOptions()
+	err = dockerCli.Initialize(clientOpts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize docker cli: %w", err)
+	}
+
+	return dockerCli.Client(), nil
 }
 
 // NewComposeClient creates a new ComposeClient instance
