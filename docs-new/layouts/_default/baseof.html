@@ -41,6 +41,9 @@
           </ol>
         </nav>
         <div class="td-content">
+          {{ if ne (.Params.display_title | default true) false }}
+            <h1>{{ .Title }}</h1>
+          {{ end }}
           {{ block "main" . }}{{ end }}
         </div>
       </main>
