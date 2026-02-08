@@ -1,9 +1,7 @@
 ---
 title: Concepts
-linkTitle: Concepts
-abstract: Concepts for understanding Meshery's various features and components.
+description: Concepts for understanding Meshery's various features and components.
 display_title: true
-list: exclude
 ---
 
 Concepts for understanding Meshery's various features and components.
@@ -21,7 +19,7 @@ Concepts for understanding Meshery's various features and components.
       </p>
     </summary>
     <ul class="section-title">
-      {{< concepts-list type="concepts" lang="en" >}}
+      {{< concepts-list section="concepts" subsection="logical" lang="en" >}}
     </ul>
   </details>
   <details>
@@ -31,7 +29,7 @@ Concepts for understanding Meshery's various features and components.
       </p>
     </summary>
     <ul>
-      {{< concepts-list type="components" lang="en" >}}
+      {{< concepts-list section="concepts" subsection="architectural" lang="en" >}}
     </ul>
   </details>
 </div>
