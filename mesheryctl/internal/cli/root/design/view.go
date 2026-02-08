@@ -32,11 +32,7 @@ type designViewFlags struct {
 	All          bool
 }
 
-var (
-	designViewFlagsProvided designViewFlags
-	design                  = ""
-	isID                    = false
-)
+var designViewFlagsProvided designViewFlags
 
 var linkDocPatternView = map[string]string{
 	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
@@ -68,6 +64,9 @@ mesheryctl design view [design-name | ID]
 		if err != nil {
 			return err
 		}
+
+		design := ""
+		isID := false
 
 		if len(args) > 0 { // if design name or ID is provided
 			design, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
