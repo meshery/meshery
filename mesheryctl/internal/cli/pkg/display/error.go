@@ -2,6 +2,7 @@ package display
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -39,8 +40,8 @@ func ErrInvalidOutputFormat(format string) error {
 		ErrInvalidOutputFormatCode,
 		errors.Alert,
 		[]string{"Invalid Output Format"},
-		[]string{fmt.Sprintf("output-format %q is invalid, use [json|yaml]", format)},
+		[]string{fmt.Sprintf("output-format %q is invalid, use [%s]", format, strings.Join(validOutputFormat, "|"))},
 		[]string{"The specified output format is not supported"},
-		[]string{"Use either 'json' or 'yaml' as the output format: --output-format json"},
+		[]string{fmt.Sprintf("Use [%s] as the output format: --output-format json", strings.Join(validOutputFormat, "|"))},
 	)
 }
