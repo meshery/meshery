@@ -76,10 +76,7 @@ mesheryctl design view [design-name | ID]
 			}
 		}
 
-		urlPath, err := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
-		if err != nil {
-			return err
-		}
+		urlPath := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
 
 		apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
 		if err != nil {
@@ -97,7 +94,14 @@ mesheryctl design view [design-name | ID]
 		}
 
 		if !isID && !designViewFlagsProvided.All { // only the first match will be returned when searching by name
-			arr := (*apiResponse)["patterns"].([]interface{})
+			patterns, ok := (*apiResponse)["patterns"]
+			if !ok {
+				return ErrDesignInvalidApiResponse("'patterns' field missing")
+			}
+			arr, ok := patterns.([]interface{})
+			if !ok {
+				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+			}
 			if len(arr) == 0 {
 				return ErrDesignNotFound()
 			}
@@ -114,25 +118,23 @@ mesheryctl design view [design-name | ID]
 	},
 }
 
-func getDesignViewUrlPath(design string, isID bool, viewAll bool) (string, error) {
+func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 	if isID {
-		return fmt.Sprintf("/api/pattern/%s", url.QueryEscape(design)), nil
+		return fmt.Sprintf("/api/pattern/%s", url.PathEscape(design))
 	}
 
 	queryParams := url.Values{}
 	queryParams.Add("populate", "pattern_file")
 
-	designNotFound := len(design) == 0
-	if designNotFound {
-		if viewAll {
-			queryParams.Add("pagesize", "10000")
-			return fmt.Sprintf("/api/pattern?%s", queryParams.Encode()), nil
-		}
-		return "", ErrDesignNameOrIDNotSpecified()
+	if viewAll {
+		queryParams.Add("pagesize", "10000")
 	}
 
-	queryParams.Add("search", design)
-	return fmt.Sprintf("/api/pattern?%s", queryParams.Encode()), nil
+	if !viewAll {
+		queryParams.Add("search", design)
+	}
+
+	return fmt.Sprintf("/api/pattern?%s", queryParams.Encode())
 }
 
 func init() {
