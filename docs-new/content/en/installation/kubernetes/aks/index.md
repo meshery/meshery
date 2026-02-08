@@ -4,11 +4,11 @@ description: "Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cl
 weight: 20
 aliases:
   - /installation/platforms/aks
-image: /images/platforms/aks.svg
+image: images/aks.svg
 display_title: false
 ---
 
-<h1>Quick Start with AKS <img src="/images/platforms/aks.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with AKS <img src="images/aks.svg" style="width:35px;height:35px;" /></h1>
 
 Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your AKS clusters_**
 

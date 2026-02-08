@@ -4,11 +4,11 @@ description: "Install Meshery on KinD. Deploy Meshery in-cluster or out-of-clust
 weight: 50
 aliases:
   - /installation/platforms/kind
-image: /images/platforms/kind.png
+image: images/kind.png
 display_title: false
 ---
 
-<h1>Quick Start with KinD <img src="/images/platforms/kind.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with KinD <img src="images/kind.png" style="width:35px;height:35px;" /></h1>
 
 Manage your KinD clusters with Meshery. Deploy Meshery in your [KinD cluster](#in-cluster-installation).
 

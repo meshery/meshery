@@ -4,11 +4,11 @@ description: "Build and contribute to Meshery using GitHub Codespaces"
 weight: 30
 aliases:
   - /installation/platforms/codespaces
-image: /images/platforms/codespaces.png
+image: images/codespaces.png
 display_title: false
 ---
 
-<h1>Quick Start with GitHub Codespaces <img src="/images/platforms/codespaces.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with GitHub Codespaces <img src="images/codespaces.png" style="width:35px;height:35px;" /></h1>
 
 Use Minikube in GitHub Codespaces to setup your development environment for Meshery.
 

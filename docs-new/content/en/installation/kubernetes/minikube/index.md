@@ -4,11 +4,11 @@ description: "Install Meshery on Minikube. Deploy Meshery in-cluster or out-of-c
 weight: 60
 aliases:
   - /installation/platforms/minikube
-image: /images/platforms/minikube.png
+image: images/minikube.png
 display_title: false
 ---
 
-<h1>Quick Start with Minikube <img src="/images/platforms/minikube.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Minikube <img src="images/minikube.png" style="width:35px;height:35px;" /></h1>
 
 Meshery can manage your minikube clusters and is particularly useful for multi-cluster management and deployments.
 
@@ -117,7 +117,7 @@ mesheryctl system config minikube
 
 The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
 
-<a href="/images/applications/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="/images/applications/minikube-upload.png" /></a>
+<a href="images/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="images/minikube-upload.png" /></a>
 
 ## Installation: Using Helm
 

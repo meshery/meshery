@@ -4,11 +4,11 @@ description: "Install Meshery on Google Kubernetes Engine. Deploy Meshery in-clu
 weight: 40
 aliases:
   - /installation/platforms/gke
-image: /images/platforms/gke.png
+image: images/gke.png
 display_title: false
 ---
 
-<h1>Quick Start with GKE <img src="/images/platforms/gke.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with GKE <img src="images/gke.png" style="width:35px;height:35px;" /></h1>
 
 Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cluster-installation) or outside of GKE [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your GKE clusters_**
 

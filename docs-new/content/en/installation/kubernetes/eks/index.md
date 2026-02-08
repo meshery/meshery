@@ -4,11 +4,11 @@ description: "Install Meshery on Elastic Kubernetes Service. Deploy Meshery in-c
 weight: 30
 aliases:
   - /installation/platforms/eks
-image: /images/platforms/eks.png
+image: images/eks.png
 display_title: false
 ---
 
-<h1>Quick Start with EKS <img src="/images/platforms/eks.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with EKS <img src="images/eks.png" style="width:35px;height:35px;" /></h1>
 
 Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cluster-installation) or outside of EKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your EKS clusters_**
 
