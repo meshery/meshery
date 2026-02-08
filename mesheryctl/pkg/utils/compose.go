@@ -252,6 +252,9 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		return "", err
 	}
 
+	// If this is true then meshery is not spun up using:
+	// `mesheryctl system start -p docker`. So check for meshery extension in
+	// docker desktop.
 	if len(containers) == 0 {
 		dockerClient := c.cli.Client()
 		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
@@ -266,6 +269,11 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 			if strings.Contains(mesheryContainer.Name, "meshery") {
 				containers = append(containers, mesheryContainer)
 			}
+		}
+
+		// If this is true then meshery extension is not installed or running.
+		if len(containers) == 0 {
+			return "", nil
 		}
 	}
 

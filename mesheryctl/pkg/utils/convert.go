@@ -14,6 +14,8 @@ type containerInspector interface {
 	ContainerInspect(ctx context.Context, containerID string) (container.InspectResponse, error)
 }
 
+// ToComposeSummaries takes takes []container.Sumamry type and returns
+// a []api.ContainerSummary.
 func ToComposeSummaries(ctx context.Context, inspector containerInspector, containersSummary []container.Summary) ([]api.ContainerSummary, error) {
 	out := make([]api.ContainerSummary, 0, len(containersSummary))
 
