@@ -4,11 +4,11 @@ description: "Install Meshery on Kubernetes. Deploy Meshery in-cluster or out-of
 weight: 20
 aliases:
   - /installation/platforms/kubernetes
-image: /images/platforms/kubernetes.svg
+image: images/kubernetes.svg
 display_title: false
 ---
 
-<h1>Quick Start with Kubernetes <img src="/images/platforms/kubernetes.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Kubernetes <img src="images/kubernetes.svg" style="width:35px;height:35px;" /></h1>
 
 Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-cluster](#in-cluster-installation) or outside of Kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your Kubernetes clusters_**
 

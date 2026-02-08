@@ -4,7 +4,7 @@ description: "Install mesheryctl on Windows"
 weight: 40
 aliases:
   - /installation/platforms/windows
-image: /images/platforms/wsl2.png
+image: images/wsl2.png
 display_title: true
 ---
 

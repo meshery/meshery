@@ -4,7 +4,7 @@ description: "Install Meshery on Docker"
 weight: 10
 aliases:
   - /installation/platforms/docker
-image: /images/platforms/docker.svg
+image: images/docker.svg
 display_title: false
 ---
 

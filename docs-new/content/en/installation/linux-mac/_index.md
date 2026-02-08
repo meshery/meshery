@@ -4,7 +4,7 @@ description: "Install mesheryctl on Linux or macOS"
 weight: 30
 aliases:
   - /installation/platforms/linux-mac
-image: /images/platforms/linux_mac.png
+image: images/linux_mac.png
 display_title: false
 ---
 
