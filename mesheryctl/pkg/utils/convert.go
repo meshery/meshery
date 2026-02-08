@@ -15,8 +15,6 @@ type containerInspector interface {
 }
 
 func ToComposeSummaries(ctx context.Context, inspector containerInspector, containersSummary []container.Summary) ([]api.ContainerSummary, error) {
-	fmt.Println("============== containersSummary ================")
-	fmt.Printf("%+v\n", containersSummary)
 	out := make([]api.ContainerSummary, 0, len(containersSummary))
 
 	for _, containerSummary := range containersSummary {

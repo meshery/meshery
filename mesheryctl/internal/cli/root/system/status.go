@@ -111,7 +111,6 @@ mesheryctl system status --verbose
 
 		switch currPlatform {
 		case "docker":
-			fmt.Println("============= docker ==================")
 			// List the running Meshery containers using compose library
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
@@ -119,8 +118,6 @@ mesheryctl system status --verbose
 			}
 
 			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
-			fmt.Println("============ outputString ==============")
-			fmt.Println(outputString)
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}

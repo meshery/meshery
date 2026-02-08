@@ -28,6 +28,7 @@ import (
 	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/docker/compose/v2/pkg/compose"
+	"github.com/docker/docker/api/types/container"
 )
 
 // ComposeClient is a wrapper around the docker compose library
@@ -252,7 +253,20 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 	}
 
 	if len(containers) == 0 {
-		return "", nil
+		dockerClient := c.cli.Client()
+		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+		if err != nil {
+			return "", err
+		}
+		allContainers, err := ToComposeSummaries(context.Background(), dockerClient, containersSummary)
+		if err != nil {
+			return "", err
+		}
+		for _, mesheryContainer := range allContainers {
+			if strings.Contains(mesheryContainer.Name, "meshery") {
+				containers = append(containers, mesheryContainer)
+			}
+		}
 	}
 
 	output := "NAME\tIMAGE\tCOMMAND\tSERVICE\tCREATED\tSTATUS\tPORTS\n"
