@@ -15,7 +15,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-// swagger:route GET /api/user/login UserAPI idGetUserLogin
+// swagger:route GET /user/login UserAPI idGetUserLogin
 // Handlers GET request for User login
 //
 // Redirects user for auth or issues session
