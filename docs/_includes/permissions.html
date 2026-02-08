@@ -24,9 +24,11 @@
       width: 100%;
       table-layout: fixed;
     }
+
     td {
       word-wrap: break-word;
     }
+
     #tablesContainer {
       max-width: 1200px;
       margin: auto;
@@ -37,37 +39,38 @@
     display: none;
   }
 
-  tr:nth-child(4n+1), tr:nth-child(4n+2) {
+  tr:nth-child(4n+1),
+  tr:nth-child(4n+2) {
     background-color: var(--color-primary-medium) !important;
-}
+  }
 </style>
 <div id="tablesContainer"></div>
 
 <script type="module">
   import { keys } from '../../assets/js/permission_constants.js';
 
-  window.onload = function() {
+  const initPermissionsTable = function () {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '../../assets/excel/keys.csv', true);
     xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         const data = new Uint8Array(xhr.response);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const colHeaders = jsonData[1];  
-        
+        const colHeaders = jsonData[1];
+
         const categoryIdx = colHeaders.indexOf("Category");
         const functionIdx = colHeaders.indexOf("Function");
         const featureIdx = colHeaders.indexOf("Feature");
         const keyIdIdx = colHeaders.indexOf("Key ID");
 
         if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
-            console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
-            return;
+          console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
+          return;
         };
 
         // Remove the first two rows
@@ -81,7 +84,11 @@
         // Group rows by category
         const categories = {};
         processedData.forEach(row => {
-          const category = row[0].replace(/\s+/g, '');
+          const categoryValue = row[0];
+          // Skip rows with null/undefined/empty category
+          if (!categoryValue) return;
+
+          const category = categoryValue.replace(/\s+/g, '');
           if (!categories[category]) {
             categories[category] = [];
           }
@@ -161,12 +168,19 @@
       }
     };
 
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       console.error('Failed to load Excel file!');
     };
 
     xhr.send();
   };
+
+  // Proper initialization that works with ES6 modules
+  if (document.readyState === 'complete') {
+    initPermissionsTable();
+  } else {
+    window.addEventListener('load', initPermissionsTable);
+  }
 
 </script>
 
