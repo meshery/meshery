@@ -96,6 +96,11 @@ func ToComposeSummaries(ctx context.Context, inspector containerInspector, conta
 	return out, nil
 }
 
+// canonicalContainerName resolves a human-readable identifier for a container.
+// It prioritizes a "canonical" name (a single-level name starting with a slash),
+// then falls back to the first available name with the prefix trimmed.
+// If no names are present, it returns a 12-character short ID or the full ID
+// if the ID is shorter than 12 characters.
 func canonicalContainerName(containerSummary container.Summary) string {
 	if len(containerSummary.Names) == 0 {
 		if len(containerSummary.ID) > 12 {
