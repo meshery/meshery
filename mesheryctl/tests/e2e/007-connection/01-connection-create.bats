@@ -50,7 +50,7 @@ setup() {
         | head -n1 \
         | cut -d'"' -f4
 )
-    [ -n "$CONNECTION_ID" ] || "No connected connection found"
+    [ -n "$CONNECTION_ID" ] || skip "No connected connection found"
 
     echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
 }
