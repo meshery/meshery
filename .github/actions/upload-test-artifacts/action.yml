@@ -18,7 +18,7 @@ runs:
         name: e2e-test-report
         path: |
           ui/test-report.md
-          ${{ inputs.include-pr-metadata == 'true' && 'pr/' || '' }}
+          ${{ github.event_name == 'pull_request' && 'pr/' || '' }}
         retention-days: 14
         if-no-files-found: ignore
 
