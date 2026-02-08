@@ -1,10 +1,6 @@
 ---
 title: Catalog
-linkTitle: Catalog
-url: /concepts/architecture/catalog/
-type: components
-abstract: Browsing and using cloud native patterns
-list: include
+description: Browsing and using cloud native patterns
 aliases:
 - /catalog/
 - /concepts/catalog/
@@ -25,8 +21,8 @@ It also supports a collaborative environment, where DevOps engineers can share t
 3. Verify that your design has the appropriate technologies, description, and any cavaets or other considerations of its purpose of use listed.
 4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
 
-<a href="{{ site.baseurl }}/assets/img/configuration-management/publish-to-catalog-screenshot.png" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/configuration-management/publish-to-catalog-screenshot.png" width="70%" /></a>
+<a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">
+<img src="./images/publish-to-catalog-screenshot.png" width="70%" /></a>
 <figure>
   <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
 </figure>
@@ -37,12 +33,12 @@ It also supports a collaborative environment, where DevOps engineers can share t
 2. Open a terminal or command prompt.
 3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl design`
 4. Follow the prompts or instructions provided by the Meshery CLI help.
-* Apply [design file](https://docs.meshery.io/guides/configuration-management):  `mesheryctl design apply --file [path to design file | URL of the file]`
-* Delete design file:  `mesheryctl design delete --file [path to design file]`
-* View design file:  `mesheryctl design view [design name | ID]`
-* List all designs: `mesheryctl design list`
-5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
-6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+    - Apply [design file](/guides/configuration-management):  `mesheryctl design apply --file [path to design file | URL of the file]`
+    - Delete design file:  `mesheryctl design delete --file [path to design file]`
+    - View design file:  `mesheryctl design view [design name | ID]`
+    - List all designs: `mesheryctl design list`
+5. [Importing](/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
+6. Applying [WASM Filter](/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
 
 ### Publishing a Design to Meshery Catalog
@@ -57,8 +53,8 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. **Notification for Changes**: If the design no longer adds value to the Meshery Catalog, a prior notification is sent to the author, and the design may be unpublished.
 6. **GitHub Workflow Integration**: Once approved, a GitHub workflow is triggered to publish the design to the Meshery.io Catalog.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" width="70%" /></a>
+<a href="./images/Catalog-Publishing-Workflow.svg" class="lightbox-image">
+<img src="./images/Catalog-Publishing-Workflow.svg" width="70%" /></a>
 <figure>
   <figcaption>Figure: Approval workflow for reviewing design publishing requests in catalog</figcaption>
 </figure>
@@ -71,7 +67,6 @@ It also supports a collaborative environment, where DevOps engineers can share t
 <p><strong>Answer:</strong> In certain instances, the images of published designs in <a href="https://meshery.io/catalog">Meshery Catalog</a> may not be visible due to bandwidth issues. This can occur when there are network constraints affecting the retrieval of image data. However, rest assured that the design information and other relevant details are still accessible.</p>
 </details>
 
-{% include alert.html
-    type="info"
-    title="Help with Meshery Catalog"
-    content="If you have any questions or need assistance, reach out on the <a href='https://meshery.io/community#discussion-forums'>discussion forum</a>." %}
+{{< alert type="info" title="Help with Meshery Catalog" >}}
+If you have any questions or need assistance, reach out on the [discussion forum](https://meshery.io/community#discussion-forums).
+{{< /alert >}}

@@ -1,18 +1,14 @@
 ---
 title: Broker
-linkTitle: Broker
-url: /concepts/architecture/broker/
-type: components
-abstract: "Meshery broker component facilitates data streaming between kubernetes cluster components and outside world."
-list: include
+description: "Meshery broker component facilitates data streaming between kubernetes cluster components and outside world."
 aliases:
 - /architecture/broker/
 ---
 
 Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.
 
-[![Meshery Log Viewer]({{ site.baseurl }}/assets/img/architecture/meshery-log-viewer.svg
-)]({{ site.baseurl }}/assets/img/architecture/meshery-log-viewer.svg)
+[![Meshery Log Viewer](./images/meshery-log-viewer.svg
+)](./images/meshery-log-viewer.svg)
 
 ### Broker FAQs
 

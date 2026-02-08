@@ -1,10 +1,6 @@
 ---
 title: Architecture
-linkTitle: Architecture
-url: /concepts/architecture/
-type: components
-abstract: overview of different individual components of Meshery architecture and how they interact as a system.
-list: include
+description: overview of different individual components of Meshery architecture and how they interact as a system.
 aliases:
 - /architecture/
 ---
@@ -36,8 +32,8 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 
 In Meshery v0.6.0, Adapters will register with Meshery Server over HTTP POST. If Meshery Server is not available, Meshery Adapters will backoff and retry to connect to Meshery Server perpetually.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" width="50%" /></a>
+<a href="./images/meshery-architecture.webp" class="lightbox-image">
+<img src="./images/meshery-architecture.webp" width="50%" /></a>
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
@@ -45,8 +41,8 @@ _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
 Each Meshery Adapter delivers its own unique specific functionality. As such, at time of deployment, the Meshery Adapter will register its cloud native infrastructure-specific capabilities (its operations) with Meshery Server's capability registry.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg" width="50%" /></a>
+<a href="./images/meshery-adapter-operation-registration.svg" class="lightbox-image">
+<img src="./images/meshery-adapter-operation-registration.svg" width="50%" /></a>
 
 _Figure: Meshery Adapter Operation Registration_
 
@@ -54,8 +50,8 @@ _Figure: Meshery Adapter Operation Registration_
 
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.webp" width="50%" /></a>
+<a href="./images/Meshery-client-architecture.webp" class="lightbox-image">
+<img src="./images/Meshery-client-architecture.webp" width="50%" /></a>
 
 _Figure: Clients use Meshery's [REST API](/extensibility/api#rest), [GraphQL API](/extensibility/api#graphql), or a combination of both._
 
@@ -63,8 +59,8 @@ _Figure: Clients use Meshery's [REST API](/extensibility/api#rest), [GraphQL API
 
 As a point of extensibility, Meshery supports two types of [providers](/extensibility/providers): _Local_ and _Remote_.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.webp" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.webp" width="50%" /></a>
+<a href="./images/Meshery-provider-architecture.webp" class="lightbox-image">
+<img src="./images/Meshery-provider-architecture.webp" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Provider architecture</figcaption>
 </figure>
@@ -73,8 +69,8 @@ As a point of extensibility, Meshery supports two types of [providers](/extensib
 
 This diagram outlines logical constructs within Meshery and their relationships.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery_extension_points.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery_extension_points.svg" width="50%" /></a>
+<a href="./images/meshery_extension_points.svg" class="lightbox-image">
+<img src="./images/meshery_extension_points.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Object Model</figcaption>
 </figure>
@@ -83,13 +79,13 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 Meshery Operator is the multi-cluster Kubernetes operator that manages MeshSync and Meshery Broker.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg" width="50%" /></a>
+<a href="./images/meshery-operator-and-meshsync.svg" class="lightbox-image">
+<img src="./images/meshery-operator-and-meshsync.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Operator and MeshSync</figcaption>
 </figure>
 
-See the [**Operator**]({{ site.baseurl }}/concepts/architecture/operator) section for more information on the function of an operator and [**MeshSync**]({{ site.baseurl }}/concepts/architecture/meshsync) section for more information on the function of meshsync.
+See the [**Operator**](/concepts/architecture/operator) section for more information on the function of an operator and [**MeshSync**](/concepts/architecture/meshsync) section for more information on the function of meshsync.
 
 ## Database
 

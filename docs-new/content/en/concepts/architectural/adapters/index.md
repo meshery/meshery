@@ -1,10 +1,6 @@
 ---
 title: Adapters
-linkTitle: Adapters
-url: /concepts/architecture/adapters/
-type: components
-abstract: "Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity..."
-list: include
+description: "Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity..."
 aliases:
 - /architecture/adapters/
 ---
@@ -18,15 +14,8 @@ Part of Meshery's extensibility as a platform, Meshery Adapters are purpopse-bui
 Adapters that extend Meshery's lifecycle management capabilities for infrastructure do so, by offering an infrastructure-specific interface to increase the depth of control that Meshery has over a particular technology. Meshery uses adapters to offer choice of load generator (for performance management) and for managing different layers of your infrastructure. Lifecycle adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.
 
 Meshery has lifecycle adapters for managing the following cloud native infrastructure.
-{% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
-| Adapter Status | Adapter | Port | Earliest Version supported |
-| :------------: | :----------: | :--: | :------------------------: |
-{% for adapter in sorted -%}
-{% if adapter.project_status -%}
-| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
-{% endif -%}
-{% endfor %}
+{{< adapters-table >}}
 
 ## Meshery Adapters for Performance Management
 
@@ -48,11 +37,11 @@ Like every Meshery component, Meshery Adapters use MeshKit.
 
 #### Is each Meshery adapter made equal?
 
-No, different Meshery adapters are written to expose the unique value of each cloud native infrastructure. Consequently, they are not equally capable just as each cloud native infrastructure is not equally capable as the other. Each Adapter has a set of operations which are grouped based on predefined operation types. See the [extensibility]({{site.baseurl}}/extensibility) page for more details on adapter operations.
+No, different Meshery adapters are written to expose the unique value of each cloud native infrastructure. Consequently, they are not equally capable just as each cloud native infrastructure is not equally capable as the other. Each Adapter has a set of operations which are grouped based on predefined operation types. See the [extensibility](/extensibility) page for more details on adapter operations.
 
 #### How can I create a new adapter?
 
-Yes, see the [extensibility]({{site.baseurl}}/extensibility) documentation for details how to create a new Meshery Adapter. See the Meshery Adapter Template repository as boilerplate for your new adapter.
+Yes, see the [extensibility](/extensibility) documentation for details how to create a new Meshery Adapter. See the Meshery Adapter Template repository as boilerplate for your new adapter.
 
 #### Do adapters have to be written in Golang?
 
@@ -62,4 +51,4 @@ No. Adapters much interface with Meshery Server via gRPC. What language is used 
 
 Yes. The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the `meshery-istio` adapter. To do so, modify ~/.meshery/meshery.yaml to include multiple copies of the given adapter.
 
-See the "[Multiple Adapters]({{site.baseurl}}/installation/multiple-adapters)" guide for more information.
+See the "[Multiple Adapters](/installation/multiple-adapters)" guide for more information.

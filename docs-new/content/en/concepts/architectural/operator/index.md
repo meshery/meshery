@@ -1,18 +1,12 @@
 ---
 title: Operator
-linkTitle: Operator
-url: /concepts/architecture/operator/
-type: components
-abstract: "Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster"
+description: "Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster"
 display_title: false
-list: include
 aliases:
 - /architecture/operator/
 ---
 
-<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/_sass/operator.css">
-
-# Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
+# Meshery Operator <img src="./images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
 
 Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operations of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deploy inside or outside of the clusters under management. 
 
@@ -20,13 +14,13 @@ Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle
 
 It is recommended to deploy one Meshery Operator per cluster.
 
-[![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
-)]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
+[![Meshery Operator and MeshSync](./images/meshery-operator-and-meshsync.svg
+)](./images/meshery-operator-and-meshsync.svg)
 
 ### Initialization Sequence
 
-[![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-deployment-sequence.svg
-)]({{ site.baseurl }}/assets/img/architecture/meshery-operator-deployment-sequence.svg)
+[![Meshery Operator and MeshSync](./images/meshery-operator-deployment-sequence.svg
+)](./images/meshery-operator-deployment-sequence.svg)
 
 ## Controllers managed by Meshery Operator
 
@@ -34,13 +28,13 @@ It is recommended to deploy one Meshery Operator per cluster.
 
 Meshery broker is one of the core components of the meshery architecture. This controller manages the lifecycle of broker that meshery uses for data streaming across the cluster and the outside world.
 
-See [Meshery Broker]({{site.baseurl}}/concepts/architecture/broker) for more information.
+See [Meshery Broker](/concepts/architecture/broker) for more information.
 
 ### MeshSync Controller
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
 
-See [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) for more information.
+See [MeshSync](/concepts/architecture/meshsync) for more information.
 
 ## Operator FAQs
 
@@ -100,6 +94,6 @@ To verify that your Meshery Operator and related components are functioning prop
 - Confirm that your cluster has appropriate RBAC permissions set.
 - Validate that Meshery Server is able to communicate with Meshery Operator.
 
-If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync).
+If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](/guides/troubleshooting/meshery-operator-meshsync).
 
 Whether you're facing installation issues, resource syncing failures, or Broker communication problems, the guide walks you through how to identify and fix them effectively.

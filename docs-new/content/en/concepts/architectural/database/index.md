@@ -1,10 +1,6 @@
 ---
 title: Database
-linkTitle: Database
-url: /concepts/architecture/database/
-type: components
-abstract: "Meshery offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats."
-list: include
+description: "Meshery offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats."
 aliases:
 - /architecture/database/
 ---
@@ -15,7 +11,7 @@ Meshery Databases function as repositories for [MeshSync](/concepts/architecture
 
 See the figure below for additional details of the data formats supported and type of data stored.
 
-[![Architecture Diagram]({{ site.baseurl }}/assets/img/architecture/meshery-database.webp)]({{ site.baseurl }}/assets/img/architecture/meshery-database.webp)
+[![Architecture Diagram](./images/meshery-database.webp)](./images/meshery-database.webp)
 
 ### Components
 
