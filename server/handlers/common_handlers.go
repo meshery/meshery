@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
@@ -44,13 +43,20 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     h.config.ProviderCookieName,
-		Value:    p.Name(),
-		Expires:  time.Now().Add(-time.Hour),
-		Path:     "/",
-		HttpOnly: true,
-	})
+	// Clear all Meshery cookies to ensure complete logout
+	for _, cookieName := range []string{
+		h.config.ProviderCookieName,
+		models.TokenCookieName,
+		models.ProviderSessionCookieName,
+	} {
+		http.SetCookie(w, &http.Cookie{
+			Name:     cookieName,
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			MaxAge:   -1,
+		})
+	}
 	_ = p.DeleteCapabilitiesForUser(user.ID.String())
 	err := p.Logout(w, req)
 	if err != nil {
