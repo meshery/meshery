@@ -101,7 +101,7 @@ const ImportModelModal = React.memo(
   ({ isImportModalOpen, setIsImportModalOpen }: ImportModelModalProps) => {
     const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
-    const [importModelReq] = useImportMeshModelMutation();
+    const [registerMeshmodels] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
 
     const handleNext = () => {
@@ -124,14 +124,14 @@ const ImportModelModal = React.memo(
 
       switch (uploadType) {
         case 'File Import': {
-          const fileName = fileElement.files[0].name;
+          const fileName = fileElement?.files?.[0]?.name;
           const fileData = getUnit8ArrayDecodedFile(file);
-          if (fileData) {
+          if (fileData && fileName) {
             requestBody = {
               importBody: {
                 model_file: fileData,
                 url: '',
-                filename: fileName,
+                file_name: fileName,
               },
               uploadType: 'file',
               register: true,
@@ -146,9 +146,9 @@ const ImportModelModal = React.memo(
           if (url) {
             requestBody = {
               importBody: {
-                url: url,
+                url,
               },
-              uploadType: 'urlImport',
+              uploadType: 'url',
               register: true,
             };
           } else {
@@ -168,7 +168,7 @@ const ImportModelModal = React.memo(
         }
       }
       updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
+      await registerMeshmodels({ body: requestBody });
       updateProgress({ showProgress: false });
     };
 
