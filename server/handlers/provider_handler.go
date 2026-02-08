@@ -27,10 +27,6 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				HttpOnly: true,
 			})
 			redirectURL := "/user/login?" + r.URL.RawQuery
-			if provider == "None" {
-				redirectURL = "/"
-			}
-
 			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
 		}

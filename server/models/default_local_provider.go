@@ -140,9 +140,17 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 	}
 }
 
-// InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
-	// l.issueSession(w, r, fromMiddleWare)
+// InitiateLogin - initiates login flow and redirects to home for local provider.
+// When a ref query param is present (base64-encoded original URL), redirects
+// there instead of / so that deep-links survive provider selection.
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+	redirectURL := "/"
+	if ref := r.URL.Query().Get("ref"); ref != "" {
+		if decoded, err := base64.RawURLEncoding.DecodeString(ref); err == nil && len(decoded) > 0 {
+			redirectURL = string(decoded)
+		}
+	}
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
