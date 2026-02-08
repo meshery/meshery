@@ -26,7 +26,7 @@ mesheryctl system provider reset [flags]
 
 ## Examples
 
-Reset provider to default (clear provider selection)
+Clear the configured provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset
