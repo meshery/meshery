@@ -60,7 +60,7 @@ For production deployments, consider the following security best practices regar
 - **Do not pre-select a provider** in the default installation configuration. Allow users to choose their provider at startup.
 - **Use a Remote Provider** for production deployments to enforce user authentication and authorization, especially for public-facing Meshery instances.
 - **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
-- **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed, rather than relying on defaults.
+- **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed.
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
 
 ### Remote Providers
