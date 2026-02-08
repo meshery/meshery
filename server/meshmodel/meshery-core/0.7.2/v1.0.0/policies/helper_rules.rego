@@ -130,7 +130,6 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 	selector := selectors[_]
 	declaration := declarations[_]
 	is_relationship_feasible(selector, declaration.component.kind)
-	component := declaration
 }
 
 # Extracts components of a specific type from declarations.

@@ -61,8 +61,6 @@ import data.eval_rules
 #    - Remove alias component from design file
 #    - Clean up aliased configuration in parent component
 
-MAX_ALIASES := 20
-
 # It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"

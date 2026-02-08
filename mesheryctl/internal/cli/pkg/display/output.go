@@ -156,7 +156,7 @@ func (j *JSONOutputFormatterSaver[T]) Save() error {
 		return utils.ErrCreateFile(j.FilePath, errors.Wrap(err, "failed to save output as JSON file"))
 	}
 
-	utils.Log.Info("Connection saved to file: ", j.FilePath)
+	utils.Log.Info("Data saved to file: ", j.FilePath)
 	return nil
 }
 
@@ -197,7 +197,7 @@ func (y *YAMLOutputFormatterSaver[T]) Save() error {
 		return utils.ErrCreateFile(y.FilePath, errors.Wrap(err, "failed to save output as yaml file"))
 	}
 
-	utils.Log.Info("Connection saved to file: ", y.FilePath)
+	utils.Log.Info("Data saved to file: ", y.FilePath)
 	return nil
 }
 

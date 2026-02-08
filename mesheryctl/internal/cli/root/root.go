@@ -159,55 +159,52 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-		if !os.IsNotExist(err) && stat.Size() == 0 {
-			log.Println("Empty meshconfig. Please populate it before running a command")
-		}
-		if os.IsNotExist(err) {
+
+		createDefaultConfig := false
+
+		switch {
+		case os.IsNotExist(err):
 			log.Printf("Missing Meshery config file.")
+			createDefaultConfig = true
+
+		case err == nil && stat.Size() == 0:
+			log.Println("Empty meshconfig. Please populate it before running a command")
+			createDefaultConfig = true
+
+		case err != nil:
+			log.Printf("Cannot access Meshery config file. Please check permissions. Error: %v", err)
+			return
 		}
 
-		// Create a default meshconfig in each of the above two scenarios.
-		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
-			// Check for Meshery existence and permission of application folder
-			if _, err := os.Stat(utils.MesheryFolder); err != nil {
-				if os.IsNotExist(err) {
-					err = os.MkdirAll(utils.MesheryFolder, 0775)
-					if err != nil {
-						log.Fatal(err)
-					}
-				}
-			}
-
-			// Create config file if not present in meshery folder
-			err = utils.CreateConfigFile()
-			if err != nil {
+		// Only create + mutate config when needed
+		if createDefaultConfig {
+			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
 				log.Fatal(err)
 			}
 
-			// Add Token to context file
-			err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
-			if err != nil {
+			if err := utils.CreateConfigFile(); err != nil {
 				log.Fatal(err)
 			}
 
-			// Add Context to context file
-			err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
-			if err != nil {
+			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
 				log.Fatal(err)
 			}
 
-			log.Println(
-				fmt.Sprintf("Default config file created at %s",
-					utils.DefaultConfigPath,
-				))
+			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
+				log.Fatal(err)
+			}
+
+			log.Printf("Default config file created at %s", utils.DefaultConfigPath)
 		}
-		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
+
+	viper.SetConfigFile(cfgFile)
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	if err := viper.ReadInConfig(); err != nil {
+		log.Debugf("unable to read config file: %v", err)
+	} else {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
 }

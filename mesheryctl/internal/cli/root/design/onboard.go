@@ -30,7 +30,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -58,9 +57,6 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			return ErrOnboardDesign()
 		}
 		return nil
-	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return getSourceTypes()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -114,10 +110,15 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
 			}
 		} else {
-			// Check if a valid source type is set
-			if sourceType, err = getFullSourceType(sourceType); err != nil {
-				return ErrInValidSource(sourceType, validSourceTypes)
+			validSourceTypes, err := getDesignSourceTypes()
+			if err != nil {
+				return err
 			}
+
+			if sourceType, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
+				return err
+			}
+
 			pattern, err := importPattern(sourceType, file, patternURL+"/import", !skipSave)
 			if err != nil {
 				return err
@@ -157,6 +158,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 		utils.Log.Info(string(body))
 		return nil
+
 	},
 }
 
@@ -191,63 +193,6 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 			return index
 		}
 	}
-}
-
-func getSourceTypes() error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
-	req, err := utils.NewRequest("GET", validTypesURL, nil)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-
-	defer func() { _ = resp.Body.Close() }()
-
-	var response []*models.PatternSourceTypesAPIResponse
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
-		return nil
-	}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
-		return nil
-	}
-
-	for _, apiResponse := range response {
-		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
-	}
-
-	return nil
-}
-
-// returns full source name e.g. helm -> `Helm Chart`
-// user passes only helm, compose or manifest but server accepts full source type
-// e.g `Heml Chart`, `Docker Compose`, `Kubernetes Manifest`
-func getFullSourceType(sType string) (string, error) {
-	for _, validType := range validSourceTypes {
-		lowerType := strings.ToLower(validType)
-		// user may pass Pascal Case source e.g Helm
-		sType = strings.ToLower(sType)
-		if strings.Contains(lowerType, sType) {
-			return validType, nil
-		}
-	}
-
-	return sType, fmt.Errorf("no matching source type found")
 }
 
 func init() {

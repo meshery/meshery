@@ -1,0 +1,146 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "kubernetes",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.36.0-alpha.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "roleRef",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "roleRef",
+                      "name"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ServiceAccount",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

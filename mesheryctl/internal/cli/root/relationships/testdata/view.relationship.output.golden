@@ -1,0 +1,24 @@
+id: 00000000-0000-0000-0000-000000000000
+capabilities: null
+evaluationQuery: null
+kind: edge
+metadata:
+    description: A relationship that defines network edges between components.
+    styles: null
+    isAnnotation: null
+    additionalproperties: {}
+model:
+    version: ""
+    name: ""
+    displayName: ""
+    id: 00000000-0000-0000-0000-000000000000
+    registrant:
+        kind: ""
+    model:
+        version: ""
+modelid: 00000000-0000-0000-0000-000000000000
+schemaVersion: ""
+subType: Mount
+status: null
+type: network
+version: v1.0.0

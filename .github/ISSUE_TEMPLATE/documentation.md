@@ -12,8 +12,6 @@ assignees: ''
 
 
 
-_NOTE: If this issue involves adding a new page or moving the location of an existing page, please make sure the sidebar and homepage navigation are updated accordingly. As appropriate, update `_data/toc.yml` and `pages/index.md`._
-
 ---
 
 ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook)

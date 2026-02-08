@@ -1,0 +1,110 @@
+.content-table-wrapper {
+  padding: 0rem;
+  background: var(--background-grey);
+  box-shadow: var(--box-shadow-primary);
+  z-index: 9;
+  height: fit-content;
+  top: calc(var(--navbar-height) + 5rem);
+  position: sticky;
+  margin: 0 0 0 auto;
+  margin-right: 2rem;
+  border-radius: 7px;
+  width: 90%;
+  max-width: 200px;
+}
+
+.content-table {
+  height: fit-content;
+  padding: 1rem 1.25rem;
+  transition: all 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: .9rem;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+
+  @media (max-width: 75em) {
+    flex: 0 0 23%;
+    // overflow-x: scroll;
+  }
+  @media (max-width: 56.25em) {
+    display: none;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 0.5rem;
+    border-radius: 11px;
+    overflow: hidden;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    width: 0.2rem;
+    border-radius: 11px;
+  }
+
+  & strong {
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  &__editable {
+    display: flex;
+    flex-direction: column;
+    
+    & a:first-of-type {
+      margin-bottom: 4px;
+    }
+    & a:last-of-type {
+      margin-top: 4px;
+    }
+    & a {
+      color: var(--color-secondary-medium);
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  & #TableOfContents {
+    display: flex;
+    flex-direction: column;
+
+    // gap: 10px;
+    .selected {
+      font-weight: 600;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+    & ul {
+      font-size: .9rem;
+      padding-inline-start: 0px;
+      margin-bottom: 0;
+      & li {
+        list-style: none !important;
+
+        & a {
+          color: var(--color-secondary-medium) !important;
+
+          &:hover {
+            color: var(--color-secondary-dark) !important;
+            text-decoration: underline;
+          }
+
+      }
+    }
+
+    & .md-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    }
+  }
+}
