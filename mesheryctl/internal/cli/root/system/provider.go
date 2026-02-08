@@ -379,7 +379,7 @@ mesheryctl system provider list
 mesheryctl system provider set [provider]
 // To switch provider and redeploy Meshery
 mesheryctl system provider switch [provider]
-// To reset provider to default (clear provider selection)
+// To clear the configured provider
 mesheryctl system provider reset
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
