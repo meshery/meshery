@@ -1,11 +1,11 @@
 ---
-title: "Meshery Playground"
+title: Meshery Playground
 description: "Details about Meshery Playground"
 weight: 15
 aliases:
   - /installation/platforms/playground
   - /installation/playground
-display_title: "false"
+display_title: false
 ---
 
 <h1>Meshery Playground</h1>

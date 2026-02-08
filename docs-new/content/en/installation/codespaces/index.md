@@ -1,11 +1,11 @@
 ---
-title: "GitHub Codespaces"
+title: GitHub Codespaces
 description: "Build and contribute to Meshery using GitHub Codespaces"
 weight: 30
 aliases:
   - /installation/platforms/codespaces
 image: /images/platforms/codespaces.png
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with GitHub Codespaces <img src="/images/platforms/codespaces.png" style="width:35px;height:35px;" /></h1>

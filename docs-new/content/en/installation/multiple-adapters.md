@@ -1,5 +1,5 @@
 ---
-title: "Using Multiple Meshery Adapters"
+title: Using Multiple Meshery Adapters
 description: "Running multiple instances of the same Meshery adapter"
 weight: 60
 aliases:

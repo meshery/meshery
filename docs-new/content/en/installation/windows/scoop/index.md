@@ -1,5 +1,5 @@
 ---
-title: "Scoop"
+title: Scoop
 description: "Install mesheryctl using Scoop on Windows"
 weight: 10
 aliases:

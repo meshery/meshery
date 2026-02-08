@@ -1,11 +1,11 @@
 ---
-title: "Install mesheryctl"
+title: Install mesheryctl
 description: "Install Meshery CLI"
 weight: 25
 aliases:
   - /installation/mesheryctl/
   - /installation/platforms/mesheryctl
-display_title: "false"
+display_title: false
 ---
 
 # Install mesheryctl

@@ -1,11 +1,11 @@
 ---
-title: "AKS"
+title: AKS
 description: "Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster."
 weight: 20
 aliases:
   - /installation/platforms/aks
 image: /images/platforms/aks.svg
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with AKS <img src="/images/platforms/aks.svg" style="width:35px;height:35px;" /></h1>

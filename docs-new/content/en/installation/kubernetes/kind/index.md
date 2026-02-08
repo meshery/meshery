@@ -1,11 +1,11 @@
 ---
-title: "KinD"
+title: KinD
 description: "Install Meshery on KinD. Deploy Meshery in-cluster or out-of-cluster."
 weight: 50
 aliases:
   - /installation/platforms/kind
 image: /images/platforms/kind.png
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with KinD <img src="/images/platforms/kind.png" style="width:35px;height:35px;" /></h1>

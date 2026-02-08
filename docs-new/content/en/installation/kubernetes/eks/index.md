@@ -1,11 +1,11 @@
 ---
-title: "EKS"
+title: EKS
 description: "Install Meshery on Elastic Kubernetes Service. Deploy Meshery in-cluster or out-of-cluster."
 weight: 30
 aliases:
   - /installation/platforms/eks
 image: /images/platforms/eks.png
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with EKS <img src="/images/platforms/eks.png" style="width:35px;height:35px;" /></h1>

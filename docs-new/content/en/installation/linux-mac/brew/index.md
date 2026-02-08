@@ -1,5 +1,5 @@
 ---
-title: "Brew"
+title: Brew
 description: "Install mesheryctl using Homebrew"
 weight: 20
 aliases:

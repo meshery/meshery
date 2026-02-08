@@ -1,10 +1,10 @@
 ---
-title: "Compatibility Matrix"
+title: Compatibility Matrix
 description: "Meshery Server and Adapter compatibility with infrastructure platforms"
 weight: 55
 aliases:
   - /installation/compatibility-matrix/
-display_title: "false"
+display_title: false
 ---
 
 <a name="compatibility-matrix"></a>

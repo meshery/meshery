@@ -1,5 +1,5 @@
 ---
-title: "Installation"
+title: Installation
 description: "Installation procedures for deploying Meshery with mesheryctl"
 weight: 20
 ---

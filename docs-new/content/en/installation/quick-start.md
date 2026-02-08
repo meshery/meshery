@@ -1,5 +1,5 @@
 ---
-title: "Quick Start Guide"
+title: Quick Start Guide
 description: "Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes"
 weight: 1
 aliases:

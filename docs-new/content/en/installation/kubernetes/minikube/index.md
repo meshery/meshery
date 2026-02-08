@@ -1,11 +1,11 @@
 ---
-title: "Minikube"
+title: Minikube
 description: "Install Meshery on Minikube. Deploy Meshery in-cluster or out-of-cluster."
 weight: 60
 aliases:
   - /installation/platforms/minikube
 image: /images/platforms/minikube.png
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with Minikube <img src="/images/platforms/minikube.png" style="width:35px;height:35px;" /></h1>

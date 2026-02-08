@@ -1,10 +1,10 @@
 ---
-title: "Upgrading Meshery"
+title: Upgrading Meshery
 description: "How to upgrade Meshery and all of its components"
 weight: 50
 aliases:
   - /installation/platforms/upgrades
-display_title: "false"
+display_title: false
 ---
 
 # Upgrade Guide

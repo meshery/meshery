@@ -1,11 +1,11 @@
 ---
-title: "Install Meshery CLI on Linux or macOS"
+title: Install Meshery CLI on Linux or macOS
 description: "Install mesheryctl on Linux or macOS"
 weight: 30
 aliases:
   - /installation/platforms/linux-mac
 image: /images/platforms/linux_mac.png
-display_title: "false"
+display_title: false
 ---
 
 # Overview

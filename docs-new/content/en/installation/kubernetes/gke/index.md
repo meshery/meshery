@@ -1,11 +1,11 @@
 ---
-title: "GKE"
+title: GKE
 description: "Install Meshery on Google Kubernetes Engine. Deploy Meshery in-cluster or out-of-cluster."
 weight: 40
 aliases:
   - /installation/platforms/gke
 image: /images/platforms/gke.png
-display_title: "false"
+display_title: false
 ---
 
 <h1>Quick Start with GKE <img src="/images/platforms/gke.png" style="width:35px;height:35px;" /></h1>
