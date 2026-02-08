@@ -3,9 +3,41 @@ setup() {
     _load_bats_libraries
 
     load "$E2E_HELPERS_PATH/constants"
+
+    export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
+    mkdir -p "$TESTDATA_DIR"
 }
 
-@test "given all requirements met when mesheryctl connection list then header of total number of connections followed by a list are displayed" {
+@test "given all requirements met when running mesheryctl connection list --status status then the conections of specified status is displayed" {
+    run $MESHERYCTL_BIN connection list --status connected --page 1
+
+    assert_success
+    assert_output --partial "Total number of connection"
+
+    CONNECTION_ID=$(
+        echo "$output" \
+        | awk 'NR>4 && $5=="connected" {print $1; exit}'
+    )
+    [ -n "$CONNECTION_ID" ] || "No connected connection found"
+
+    echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
+}
+
+@test "given all requirements met when running mesheryctl connection list --kind kind-name then the connections of specified kind is displayed" {
+    run $MESHERYCTL_BIN connection list --kind kubernetes --page 1
+
+    assert_success
+    assert_output --partial "Total number of connection"
+}
+
+@test "given all requirements met when running mesheryctl connection list --pagesize size then the conections of specified size is displayed" {
+    run $MESHERYCTL_BIN connection list --pagesize 10000
+
+    assert_success
+    assert_output --partial "Total number of connection"
+}
+
+@test "given all requirements met when running mesheryctl connection list then header of total number of connections followed by a list are displayed" {
     run $MESHERYCTL_BIN connection list --page 1
 
     assert_success
