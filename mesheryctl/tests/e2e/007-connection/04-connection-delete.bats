@@ -36,3 +36,17 @@ teardown_file() {
     assert_output --partial "Error"
 }
 
+@test "given a valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then the existing connection is deleted" {
+    if [ ! -f "$TESTDATA_DIR/id" ]; then
+        skip "No connection ID available to delete"
+    fi
+
+    CONNECTION_ID="$(cat "$TESTDATA_DIR/id")"
+    [ -n "$CONNECTION_ID" ] || skip "Empty connection ID"
+
+    run $MESHERYCTL_BIN connection delete "$CONNECTION_ID"
+    assert_success
+    assert_output --partial "deleted"
+
+    run $MESHERYCTL_BIN connection create --type minikube
+}
