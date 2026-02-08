@@ -1,11 +1,18 @@
-{{- $type := .Get "type" -}}
+{{- $section := .Get "section" -}}
+{{- $subsection := .Get "subsection" -}}
 {{- $lang := .Get "lang" | default "en" -}}
-{{- range where (where .Site.RegularPages "Type" $type) "Lang" $lang -}}
-  {{- if ne .Params.list "exclude" -}}
+
+{{- $pages := where .Site.RegularPages "Section" $section -}}
+{{- $pages = where $pages "Lang" $lang -}}
+{{- $prefix := "" -}}
+{{- if $subsection -}}
+  {{- $prefix = printf "%s/%s/" $section $subsection -}}
+{{- end -}}
+
+{{- range $pages -}}
+  {{- if or (not $subsection) (hasPrefix .File.Dir $prefix) -}}
   <li><a href="{{ .RelPermalink }}">{{ .Title }}</a>
-  {{- if .Params.abstract }}
-    - {{ .Params.abstract }}
-  {{- end }}
+  {{- with .Params.description }} - {{ . }}{{ end -}}
   </li>
   {{- end -}}
 {{- end -}}
