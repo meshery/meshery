@@ -2,8 +2,7 @@
 title: Helm Kanvas Snapshot
 description: Helm CLI plugin to visually render a snapshot of your Helm charts.
 display_title: false
-categories:
-  - kanvas
+categories: [kanvas]
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="/extensions/images/helm-chart-color.svg" /> Helm Kanvas Snapshot

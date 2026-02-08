@@ -2,8 +2,7 @@
 title: Kanvas Snapshot
 description: Screenshot service provided via Kanvas to capture a snapshot of your infrastructure at any given time.
 display_title: false
-categories:
-  - kanvas
+categories: [kanvas]
 aliases: 
 - extensions/snapshot
 ---

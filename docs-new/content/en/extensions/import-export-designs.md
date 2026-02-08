@@ -6,8 +6,8 @@ aliases:
 - /extensions/importing-a-design
 - /extensions/importing-an-application
 display_title: false
-categories:
-  - kanvas
+categories: [kanvas]
+
 ---
 
 # Import and Export Designs

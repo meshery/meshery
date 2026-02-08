@@ -4,8 +4,7 @@ aliases:
 - extensions/meshmap
 description: Collaborative cloud native visual designer to design and manage infrastructure and applications.
 display_title: false
-categories:
-  - kanvas
+categories: [kanvas]
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="/extensions/images/kanvas-icon-color.svg" /> Kanvas <sup style="font-size: 1.8rem; vertical-align: top;">BETA</sup>

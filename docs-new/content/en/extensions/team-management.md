@@ -2,8 +2,7 @@
 title: Team Management in Layer5 Cloud
 description: Learn how to efficiently add team members to Meshery Cloud, assign roles and permissions, and facilitate collaboration within the platform.
 display_title: false
-categories:
-  - provider-layer5
+categories: [provider-layer5]
 draft: true
 ---
 
