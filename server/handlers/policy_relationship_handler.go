@@ -45,6 +45,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if relationshipDeclaration.Selectors == nil {
+		return alias, false
+	}
+
 	selectors := *relationshipDeclaration.Selectors
 
 	if len(selectors) == 0 {
@@ -61,6 +65,11 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
+
+	if from.Id == nil || to.Id == nil {
+		return alias, false
+	}
+
 	if from.Patch == nil || from.Patch.MutatedRef == nil {
 		return alias, false
 	}
@@ -122,7 +131,11 @@ func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved cor
 	// slicing from 1 to remove "configuration" prefix when building the resolved ref
 	// so we dont get something like configuration,spec,configuration , containers , _
 	// appending to aprentAlias.ImmediateReffiled , than path , because this a recursive function it will otherwise build the path in reverse
-	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
+	var childPath []string
+	if len(path) > 1 {
+		childPath = path[1:]
+	}
+	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, childPath...), design)
 }
 
 func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
