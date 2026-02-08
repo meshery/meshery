@@ -103,9 +103,9 @@ func canonicalContainerName(containerSummary container.Summary) string {
 		}
 		return containerSummary.ID
 	}
-	for _, n := range containerSummary.Names {
-		if strings.LastIndex(n, "/") == 0 {
-			return n[1:]
+	for _, name := range containerSummary.Names {
+		if strings.LastIndex(name, "/") == 0 {
+			return name[1:]
 		}
 	}
 	return strings.TrimPrefix(containerSummary.Names[0], "/")
