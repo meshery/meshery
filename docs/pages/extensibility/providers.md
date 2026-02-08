@@ -60,6 +60,16 @@ Name: **"Layer5"** (default)
 - Save environment setup.
 - Retrieve performance test results.
 - Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
+
+#### Example remote provider
+
+Name: **"Acme"** (default)
+
+- Enforces user authentication.
+- Long-term term persistence.
+- Save environment setup.
+- Retrieve performance test results.
+- Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
 ### Local Provider
