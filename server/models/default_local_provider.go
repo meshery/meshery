@@ -20,6 +20,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -146,11 +147,38 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	redirectURL := "/"
 	if ref := r.URL.Query().Get("ref"); ref != "" {
-		if decoded, err := base64.RawURLEncoding.DecodeString(ref); err == nil && len(decoded) > 0 {
-			redirectURL = string(decoded)
+		if decoded, err := core.DecodeRefURL(ref); err == nil && decoded != "" {
+			redirectURL = validateLocalRedirectPath(decoded)
 		}
 	}
 	http.Redirect(w, r, redirectURL, http.StatusFound)
+}
+
+// validateLocalRedirectPath validates that the provided path is a safe, in-app
+// relative URL. It requires the path to start with a single "/", rejects "//"
+// (protocol-relative URLs), and ensures url.Parse yields an empty scheme/host.
+// If the path is invalid, it falls back to "/".
+func validateLocalRedirectPath(path string) string {
+	if path == "" {
+		return "/"
+	}
+
+	// Require a leading "/" and reject protocol-relative URLs ("//...").
+	if !strings.HasPrefix(path, "/") || strings.HasPrefix(path, "//") {
+		return "/"
+	}
+
+	u, err := url.Parse(path)
+	if err != nil {
+		return "/"
+	}
+
+	// Disallow absolute URLs with scheme or host.
+	if u.Scheme != "" || u.Host != "" {
+		return "/"
+	}
+
+	return path
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {

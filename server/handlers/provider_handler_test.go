@@ -12,7 +12,10 @@ import (
 // newTestHandler returns a minimal Handler wired with the given providers and provider override.
 func newTestHandler(t *testing.T, providers map[string]models.Provider, providerOverride string) *Handler {
 	t.Helper()
-	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
 	return &Handler{
 		config: &models.HandlerConfig{
 			Providers:          providers,
@@ -80,8 +83,8 @@ func TestProviderUIHandler_NoneEnvVarRedirectsThroughLogin(t *testing.T) {
 	}
 
 	loc := resp.Header.Get("Location")
-	if loc != "/user/login?" {
-		t.Errorf("expected redirect to /user/login?, got %s", loc)
+	if loc != "/user/login" {
+		t.Errorf("expected redirect to /user/login, got %s", loc)
 	}
 }
 
