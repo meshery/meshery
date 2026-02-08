@@ -58,7 +58,7 @@ mesheryctl system provider switch [provider]
 </div>
 </pre> 
 
-To reset provider to default
+To reset provider to default (clear provider selection)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset

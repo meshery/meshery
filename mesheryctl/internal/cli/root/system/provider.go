@@ -316,10 +316,10 @@ mesheryctl system provider switch [provider]
 // resetProviderCmd represents the reset command
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
-	Short: "reset provider to default",
-	Long:  "Reset provider for current context to default (Layer5)",
+	Short: "reset provider to default (unset)",
+	Long:  "Reset provider for current context to default (unset). This clears the enforced provider so that users are presented with the provider selection UI on next start.",
 	Example: `
-// Reset provider to default
+// Reset provider to default (clear provider selection)
 mesheryctl system provider reset
 	`,
 	SilenceUsage: true,
@@ -350,7 +350,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		currCtx.Provider = MesheryProvider
+		currCtx.Provider = ""
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)
@@ -360,7 +360,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		log.Infof("Provider reset to %s", MesheryProvider)
+		log.Info("Provider has been reset. Users will be prompted to select a provider on next Meshery start.")
 		return nil
 	},
 }
@@ -379,7 +379,7 @@ mesheryctl system provider list
 mesheryctl system provider set [provider]
 // To switch provider and redeploy Meshery
 mesheryctl system provider switch [provider]
-// To reset provider to default
+// To reset provider to default (clear provider selection)
 mesheryctl system provider reset
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

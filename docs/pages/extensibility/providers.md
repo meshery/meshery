@@ -47,6 +47,22 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 - The **Local** provider is built-into Meshery.
 - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
+### Default Installation Configuration
+
+By default, Meshery installations **do not have a provider pre-selected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
+
+{% include alert.html type="info" title="Why no default provider?" content="It might be tempting to pre-select the Local provider (\"None\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users—whether individual or team-based—are presented with the full range of available providers on first use." %}
+
+### Recommended Production Deployment Settings
+
+For production deployments, consider the following security best practices regarding provider selection:
+
+- **Do not pre-select a provider** in the default installation configuration. Allow users to choose their provider at startup.
+- **Use a Remote Provider** for production deployments to enforce user authentication and authorization, especially for public-facing Meshery instances.
+- **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
+- **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed, rather than relying on defaults.
+- **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
+
 ### Remote Providers
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
