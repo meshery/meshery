@@ -233,8 +233,8 @@ evaluate := eval_results if {
 	})
 
 	design_file_with_identified_rels := actions.apply_all_actions_to_design(
-		design_file_to_evaluate,
-		validation_actions,
+		design_file_with_validated_rels,
+		new_identified_rels_actions,
 	)
 
 	print("New identified rels", count(new_identified_rels_actions))
