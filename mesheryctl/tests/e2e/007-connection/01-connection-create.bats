@@ -4,7 +4,8 @@ setup() {
 
     load "$E2E_HELPERS_PATH/constants"
 
-    
+    export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
+    mkdir -p "$TESTDATA_DIR"
 }
 
 @test "given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
@@ -43,6 +44,13 @@ setup() {
     assert_output --partial "Token set in context minikube"
 
     #Extract connection ID if present and store it in temp dir
-    
+    CONNECTION_ID=$(
+        mesheryctl connection create --type minikube \
+        | grep -o '"connection_id":"[^"]*"' \
+        | head -n1 \
+        | cut -d'"' -f4
+)
+    [ -n "$CONNECTION_ID" ] || "No connected connection found"
 
+    echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
 }

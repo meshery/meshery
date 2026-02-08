@@ -3,9 +3,6 @@ setup() {
     _load_bats_libraries
 
     load "$E2E_HELPERS_PATH/constants"
-
-    export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/connection"
-    mkdir -p "$TESTDATA_DIR"
 }
 
 @test "given all requirements met when running mesheryctl connection list --status status then the conections of specified status is displayed" {
@@ -13,14 +10,6 @@ setup() {
 
     assert_success
     assert_output --partial "Total number of connection"
-
-    CONNECTION_ID=$(
-        echo "$output" \
-        | awk 'NR>4 && $2=="minikube" && $5=="connected" {print $1; exit}'
-    )
-    [ -n "$CONNECTION_ID" ] || "No connected connection found"
-
-    echo "$CONNECTION_ID" > "$TESTDATA_DIR/id"
 }
 
 @test "given all requirements met when running mesheryctl connection list --kind kind-name then the connections of specified kind is displayed" {
