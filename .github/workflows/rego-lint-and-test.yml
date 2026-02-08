@@ -48,7 +48,7 @@ jobs:
         run: opa fmt --write .
 
       - name: Commit formatted Rego files
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: "**/*.rego"
@@ -202,7 +202,7 @@ jobs:
           fi
 
       - name: Comment on PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v8
         with:
           script: |
