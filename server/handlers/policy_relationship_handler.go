@@ -200,13 +200,13 @@ func (h *Handler) EvaluateDesign(
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
 
-		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
+		if doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
 			break
 		}
-		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
+		if evalIterations == i+1 || i == (MAX_RE_EVALUATION_DEPTH-1) {
 			h.log.Info("Evaluation depth exceeded")
-			return lastEvaluationResponse, fmt.Errorf("Evaluation depth exceeded")
+			return lastEvaluationResponse, fmt.Errorf("evaluation depth exceeded")
 		}
 
 	}
