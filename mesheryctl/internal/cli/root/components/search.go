@@ -26,7 +26,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+var (
+	usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+	pageflag          int
+)
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -48,7 +51,14 @@ mesheryctl component search [query-text]
 		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
 		searchValue.Add("search", componentName)
-		searchValue.Add("pagesize", "all")
+
+		var isPaged = cmd.Flags().Changed("page")
+		if isPaged {
+			searchValue.Add("page", fmt.Sprintf("%d", pageflag))
+			searchValue.Add("pagesize", "10") // choose a default page size
+		} else {
+			searchValue.Add("pagesize", "all")
+		}
 
 		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
 
@@ -66,7 +76,7 @@ mesheryctl component search [query-text]
 			Rows:             rows,
 			Count:            componentsCount,
 			DisplayCountOnly: false,
-			IsPage:           false,
+			IsPage:           isPaged,
 		}
 
 		err = display.List(dataToDisplay)
@@ -76,4 +86,9 @@ mesheryctl component search [query-text]
 
 		return nil
 	},
+}
+
+func init() {
+	// Add the new components commands to the ComponentsCmd
+	searchComponentsCmd.Flags().IntVarP(&pageflag, "page", "p", 0, "(optional) List next set of components with --page (default = 1)")
 }
