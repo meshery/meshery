@@ -55,8 +55,9 @@ mesheryctl design view [design-name | ID]
 		}
 
 		if len(args) == 0 && !designViewFlagsProvided.All {
-			return utils.ErrInvalidArgument(errors.New("either [design-name|design-id] or --all flag must be specified"))
+			return ErrDesignNameOrIDNotSpecified()
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -118,8 +119,9 @@ mesheryctl design view [design-name | ID]
 }
 
 func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
+	baseApiPath := "api/pattern"
 	if isID {
-		return fmt.Sprintf("/api/pattern/%s", url.PathEscape(design))
+		return fmt.Sprintf("%s/%s", baseApiPath, url.PathEscape(design))
 	}
 
 	queryParams := url.Values{}
@@ -133,7 +135,7 @@ func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 		queryParams.Add("search", design)
 	}
 
-	return fmt.Sprintf("/api/pattern?%s", queryParams.Encode())
+	return fmt.Sprintf("%s?%s", baseApiPath, queryParams.Encode())
 }
 
 func init() {
