@@ -55,7 +55,7 @@ mesheryctl component search [query-text]
 		var isPaged = cmd.Flags().Changed("page")
 		if isPaged {
 			searchValue.Add("page", fmt.Sprintf("%d", pageflag))
-			searchValue.Add("pagesize", "10") // choose a default page size
+			searchValue.Add("pagesize", "10")
 		} else {
 			searchValue.Add("pagesize", "all")
 		}
