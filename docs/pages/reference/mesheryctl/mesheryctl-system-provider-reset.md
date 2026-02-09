@@ -12,7 +12,7 @@ subcommand: provider
 
 # mesheryctl system provider reset
 
-reset provider to default (unset)
+Clear the configured provider
 
 ## Synopsis
 
