@@ -41,7 +41,7 @@ jobs:
           version: v2.7
           args: --config=.github/.golangci.yml --timeout=10m
   unit-tests-server:
-    name: Unit tests
+    name: server Unit tests
     runs-on: ubuntu-24.04
     needs: golangci
     steps:
@@ -55,13 +55,15 @@ jobs:
       - name: Run coverage
         run: go test --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic
   unit-tests-cli:
-    name: Unit tests
+    name: mesheryctl Unit tests
     runs-on: ubuntu-24.04
     needs: golangci
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
+      - name: Install lynx for xdg-open support
+        run: sudo apt-get install lynx
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
