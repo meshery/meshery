@@ -40,8 +40,8 @@ func ErrInvalidOutputFormat(format string) error {
 		ErrInvalidOutputFormatCode,
 		errors.Alert,
 		[]string{"Invalid Output Format"},
-		[]string{fmt.Sprintf("output-format %q is invalid, use [%s]", format, strings.Join(validOutputFormat, "|"))},
+		[]string{fmt.Sprintf("Provided output format %q is invalid", format)},
 		[]string{"The specified output format is not supported"},
-		[]string{fmt.Sprintf("Use [%s] as the output format: --output-format json", strings.Join(validOutputFormat, "|"))},
+		[]string{fmt.Sprintf("Ensure using [%s] as the output format", strings.Join(validOutputFormat, "|"))},
 	)
 }
