@@ -57,24 +57,7 @@
                 }
               ]
             },
-            "match_strategy_matrix": [
-              [
-                "to_contains_from"
-              ]
-            ],
-            "model": {
-              "version": "",
-              "name": "aws-rds-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
+              "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
