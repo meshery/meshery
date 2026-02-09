@@ -16,8 +16,12 @@
     "name": "aws-rds-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
-    "registrant": { "kind": "" },
-    "model": { "version": "v1.7.5" }
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.7.5"
+    }
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -33,11 +37,12 @@
                   "id": null,
                   "kind": "DBSnapshot",
                   "mutatedRef": [
-                    ["configuration",
-                     "spec",
-                     "dbInstanceIdentifier"
+                    [
+                      "configuration",
+                      "spec",
+                      "dbInstanceIdentifier"
                     ]
-                 ]
+                  ]
                 }
               ],
               "to": [
@@ -48,7 +53,7 @@
                     [
                       "displayName"
                     ]
-                 ]
+                  ]
                 }
               ]
             },
@@ -77,7 +82,7 @@
                   "spec",
                   "dbInstanceIdentifier"
                 ]
-             ]
+              ]
             }
           }
         ],
@@ -96,7 +101,7 @@
                       "spec",
                       "dbInstanceIdentifier"
                     ]
-                 ]
+                  ]
                 }
               ],
               "to": [

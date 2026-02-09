@@ -53,7 +53,7 @@
                     [
                       "displayName"
                     ]
-                 ]
+                  ]
                 }
               ]
             },
@@ -77,12 +77,12 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec", 
-                      "dbParameterGroupName"
-                    ]
-                  ]
+                [
+                  "configuration",
+                  "spec",
+                  "dbParameterGroupName"
+                ]
+              ]
             }
           }
         ],
@@ -98,13 +98,13 @@
                   "mutatedRef": [
                     [
                       "configuration",
-                      "spec", 
+                      "spec",
                       "dbParameterGroupName"
                     ]
                   ]
                 }
               ],
-             "to": [
+              "to": [
                 {
                   "id": null,
                   "kind": "self",

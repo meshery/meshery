@@ -57,7 +57,7 @@
                 }
               ]
             },
-             "match_strategy_matrix": [
+            "match_strategy_matrix": [
               [
                 "to_contains_from"
               ]
@@ -79,17 +79,17 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec", 
+                  "spec",
                   "dbClusterIdentifier"
                 ]
-             ]
+              ]
             }
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "DBCluster",
+            "kind": "GlobalCluster",
             "match": {
               "from": [
                 {
