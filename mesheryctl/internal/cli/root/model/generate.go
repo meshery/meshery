@@ -122,6 +122,15 @@ func (u *UrlModelGenerator) Generate() error {
 		return utils.ErrFileRead(err)
 	}
 
+	if u.SkipRegister {
+		utils.Log.Info("Skipping model registration as --register flag is set")
+
+		locationForModel := utils.MesheryFolder + "/models"
+		utils.Log.Info("Model can be accessed from ", locationForModel)
+
+		return nil
+	}
+
 	err = registerModel(fileData, nil, nil, "", "url", u.Url, !u.SkipRegister)
 	if err != nil {
 		return err
@@ -153,6 +162,18 @@ func (c *CsvModelGenerator) Generate() error {
 		if err != nil {
 			return utils.ErrFileRead(err)
 		}
+	}
+
+	if c.SkipRegister {
+		utils.Log.Info("Skipping model registration as --register flag is set")
+
+		locationForModel := utils.MesheryFolder + "/models"
+		utils.Log.Info("Model can be accessed from ", locationForModel)
+
+		locationForLogs := utils.MesheryFolder + "/logs/registry"
+		utils.Log.Info("Logs for the csv generation can be accessed ", locationForLogs)
+
+		return nil
 	}
 
 	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !c.SkipRegister)
