@@ -598,10 +598,10 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				os.Stdout = originalStdout
 			}()
 
-			_ = SetupMeshkitLoggerTesting(t, false)
+			b := SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(originalStdout)
+			cmd.SetOut(b)
 			err := cmd.Execute()
 
 			// Close write end before reading
@@ -643,6 +643,10 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			}
 
 			actualResponse := buf.String()
+
+			if actualResponse == "" {
+				actualResponse = b.String()
+			}
 
 			if *updateGoldenFile {
 				golden.Write(actualResponse)
