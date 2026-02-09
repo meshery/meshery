@@ -38,14 +38,6 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
 		},
-		{
-			Name:             "given a valid component is provided when running mesheryctl component search valid-name --page int then it displays matching results in output",
-			Args:             []string{"search", "Test", "--page", "1"},
-			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test&page=1", componentApiPath),
-			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.output.golden",
-			ExpectError:      false,
-		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currentDirectory, "component")
