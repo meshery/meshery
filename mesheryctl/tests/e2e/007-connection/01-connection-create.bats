@@ -45,7 +45,7 @@ setup() {
 
     #Extract connection ID if present and store it in temp dir
     CONNECTION_ID=$(
-        mesheryctl connection create --type minikube \
+        echo "$output" \
         | grep -o '"connection_id":"[^"]*"' \
         | head -n1 \
         | cut -d'"' -f4
