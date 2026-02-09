@@ -68,9 +68,9 @@ func ErrImportDesign(err error) error {
 func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
 	return errors.New(ErrInValidSourceCode, errors.Fatal,
 		[]string{fmt.Sprintf("Invalid design source type: `%s`", invalidSourceType)},
-		[]string{"Invalid design source type due to wrong type/passing"},
-		[]string{"design source type (-s) is invalid or not passed."},
-		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})
+		[]string{"Invalid design source type was provided"},
+		[]string{"Provided design source type (-s) is invalid"},
+		[]string{"Ensure you pass a valid source type", fmt.Sprintf("\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))})
 }
 
 func ErrDesignManifest() error {

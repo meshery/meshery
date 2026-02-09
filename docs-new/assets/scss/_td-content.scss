@@ -1,0 +1,173 @@
+// FONT styles in td-content section
+
+.td-content {
+  & > h1 {
+    font-weight: 700;
+    margin-bottom: 1.6rem;
+  }
+
+  & > h2 {
+    font-weight: 400;
+    margin: 1.2rem 0 1.6rem;
+  }
+
+  & h3 {
+    margin: 1.2rem 0 1.6rem;
+    font-weight: 400;
+  }
+
+  blockquote {
+    padding: 0.8em 1.2em;
+    margin: 1.2em 0;
+    border-left: 4px solid var(--color-secondary-medium);
+    background-color: var(--color-primary-dark);     
+    color: var(--color-grey-medium);                 
+  }  
+
+  @media (max-width: 320px) {
+    & > h1 {
+      font-size: 1.5rem;
+    }
+
+    & > h2 {
+      font-size: 1.3rem;
+      margin: 1rem 0 1.2rem;
+    }
+
+    & > h3 {
+      font-size: 1.1rem;
+      margin: 0.8rem 0 1rem;
+    }
+    & > h4 {
+      font-size: 1rem;
+    }
+  }
+}
+
+///////////////// Code Terminal /////////////////////////////
+:root {
+  --color-bg: #111;
+  --color-text: #eee;
+  --color-text-subtle: #a2a2a2;
+}
+
+[data-termynal] {
+  width: 100% !important;
+  max-width: 100%;
+  background: linear-gradient(
+    to right top,
+    #3d3d3d,
+    #343434,
+    #2b2b2b,
+    #222222,
+    #1a1a1a,
+    #181818,
+    #161616,
+    #141414,
+    #181818,
+    #1c1c1c,
+    #212121,
+    #252525
+  );
+  // color: var(--color-text);
+  box-shadow: var(--box-shadow-primary);
+  font-size: 16px;
+  font-family: "Fira Mono", Consolas, Menlo, Monaco, "Courier New", Courier, monospace;
+  border-radius: 0px;
+  padding: 4rem;
+  position: relative;
+  overflow: hidden;
+  overflow-x: auto;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  height: auto !important;
+  min-height: 21rem !important;
+
+  & > * {
+    color: #fff;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    // background: #343a40;
+    border-radius: 6px;
+    height: 2px;
+    padding: 1px;
+  }
+}
+
+.window-buttons {
+  content: "";
+  position: relative;
+  top: -2.8rem;
+  left: 1.5rem;
+  margin-bottom: -2rem;
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  /* A little hack to display the window buttons in one pseudo element. */
+  background: #d9515d;
+  -webkit-box-shadow: 25px 0 0 #f4c025, 50px 0 0 #3ec930;
+  box-shadow: 25px 0 0 #f4c025, 50px 0 0 #3ec930;
+}
+
+.clipboardjs::after {
+  /* position: absolute; */
+  color: var(--color-grey-medium);
+  margin-top: 0.75rem;
+  /* left: 0%; */
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+[data-ty] {
+  display: block;
+  line-height: 2;
+  /* overflow: auto; */
+}
+
+[data-ty]:before {
+  /* Set up defaults and ensure empty lines are displayed. */
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+}
+
+[data-ty="input"]:before,
+[data-ty-prompt]:before {
+  margin-right: 0.75em;
+  color: var(--color-grey-dark);
+}
+
+[data-ty="input"]:before {
+  content: "$";
+}
+
+[data-ty][data-ty-prompt]:before {
+  content: attr(data-ty-prompt);
+}
+
+[data-ty-cursor]:after {
+  content: attr(data-ty-cursor);
+  font-family: monospace;
+  margin-left: 0.5em;
+  -webkit-animation: blink 1s infinite;
+  animation: blink 1s infinite;
+}
+
+/* Cursor animation */
+
+@-webkit-keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
