@@ -1,0 +1,152 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "RDS Database Snapshot is logically owned by its source DB Instance",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-rds-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": { "kind": "" },
+    "model": { "version": "v1.7.5" }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "DBSnapshot",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "DBSnapshot",
+                  "mutatedRef": [
+                    ["configuration",
+                     "spec",
+                     "dbInstanceIdentifier"
+                    ]
+                 ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "DBInstance",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                 ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
+            "model": {
+              "version": "",
+              "name": "aws-rds-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "dbInstanceIdentifier"
+                ]
+             ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "DBInstance",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "DBSnapshot",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "dbInstanceIdentifier"
+                    ]
+                 ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": [
+              [
+                "to_contains_from"
+              ]
+            ],
+            "model": {
+              "version": "",
+              "name": "aws-rds-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
+}
