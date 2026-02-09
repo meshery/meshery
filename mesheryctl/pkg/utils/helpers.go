@@ -472,7 +472,8 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
-	request.Header.Add("Content-Type", writer.FormDataContentType())
+	// Use Set instead of Add to ensure Content-Type overwrites any existing header
+	request.Header.Set("Content-Type", writer.FormDataContentType())
 	return request, nil
 }
 

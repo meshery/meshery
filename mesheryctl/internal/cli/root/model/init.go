@@ -49,9 +49,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				return ErrModelInit(err)
 			}
 			if err := initModelValidateDataOverSchema(schema, input); err != nil {
-				return ErrModelInit(
-					fmt.Errorf("invalid model name: %v", err),
-				)
+				return ErrModelInitFromString(errInitInvalidModelName)
 			}
 		}
 

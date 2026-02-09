@@ -53,7 +53,7 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
-	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrContextNotExistsCode              = "mesheryctl-1198"
 )
 
 var (
