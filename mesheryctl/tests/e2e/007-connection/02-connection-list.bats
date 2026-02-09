@@ -20,7 +20,7 @@ setup() {
 }
 
 @test "given all requirements met when running mesheryctl connection list --pagesize size then the conections of specified size is displayed" {
-    run $MESHERYCTL_BIN connection list --pagesize 10000
+    run $MESHERYCTL_BIN connection list --pagesize 1 --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
