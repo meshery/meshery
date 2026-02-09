@@ -90,5 +90,5 @@ mesheryctl component search [query-text]
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
-	searchComponentsCmd.Flags().IntVarP(&pageflag, "page", "p", 0, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&pageflag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
 }
