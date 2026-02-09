@@ -21,7 +21,7 @@ func TestSearchComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "Search components without query parameter",
+			Name:             "given no valid-component is provided when running mesheryctl component search no-valid-component then an error message is displays",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
@@ -31,9 +31,17 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage)),
 		},
 		{
-			Name:             "Search components with query parameter",
+			Name:             "given a valid component is provided when running mesheryctl component search valid-name then it displays every matching results in output",
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given a valid component is provided when running mesheryctl component search valid-name --page int then it displays matching results in output",
+			Args:             []string{"search", "Test", "--page", "1"},
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test&page=1", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
