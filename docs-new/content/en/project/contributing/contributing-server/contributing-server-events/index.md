@@ -53,9 +53,7 @@ _Note: In certain conditions you must add some fields with specific keys:_
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
 - `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
 
-<a href="/assets/img/events-table.png">
-    <img src="/assets/img/events-table.png" alt="Event Schema" style="width:50%;">
-</a>
+[![Event Schema](images/events-table.png)](images/events-table.png)
 
 ## Event Persistence in Meshery
 

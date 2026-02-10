@@ -226,5 +226,5 @@ To filter and view only UI-related tests using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "UI"
 
-![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](images/meshery-test-plan-v0.8.0-ui.png)
 

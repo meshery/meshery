@@ -458,7 +458,7 @@ After cloning the Meshery repository
 - Look for `href="/` and replace with `href="/0.x/`
 - Look for `src="/`and replace with `src="/0.x/`
 
-![search-and-replace](https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/versioning-guide/search-and-replace.png)
+![search-and-replace](images/search-and-replace.png)
 
 ### For old release
 
@@ -468,7 +468,7 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 
 1. Copy the commit ID for that release.
 
-   ![commit-ID](https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/versioning-guide/commit-ID.png)
+   ![commit-ID](images/commit-ID.png)
 
 1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make docs`
 1. On executing `make docs` a `_site` folder is created which has static html files.

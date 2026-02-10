@@ -477,7 +477,7 @@ Control image display in documentation pages using the following methods.
 Using the Markdown image syntax:
 
 ```
-[![Image Title](/assets/img/your-image.png)](/assets/img/your-image.png)
+[![Image Title](images/your-image.png)](images/your-image.png)
 ```
 
 This renders as:

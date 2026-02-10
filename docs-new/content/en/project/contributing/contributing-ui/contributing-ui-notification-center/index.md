@@ -193,7 +193,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 />
 ```
 
-<a href="/assets/img/notification-center/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="/assets/img/notification-center/error-formatter.png" /></a>
+[![Error Formatter](images/error-formatter.png)](images/error-formatter.png)
 
 **When to Use:**
 
@@ -220,7 +220,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
    - `modelDetails` (object) – Contains model import data.
 
-<a href="/assets/img/notification-center/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="/assets/img/notification-center/model-register-formatter.png" /></a>
+[![Model Register Formatter](images/model-register-formatter.png)](images/model-register-formatter.png)
 
 ### Relationship Evaluation Formatter
 
@@ -245,7 +245,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
     - `relationshipsUpdated` (Array)
     - `relationshipsRemoved` (Array)
 
-<a href="/assets/img/notification-center/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="/assets/img/notification-center/relationship-evaluation-formatter.png" /></a>
+[![Relationship Evaluation Formatter](images/relationship-evaluation-formatter.png)](images/relationship-evaluation-formatter.png)
 
 #### When to Use
 
@@ -310,7 +310,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 - **validationMachine** (object): The state machine handling the dry run validation process.
 - **currentComponentName** (string): The name of the component currently being validated.
 
-<a href="/assets/img/notification-center/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="/assets/img/notification-center/dry-run-formatter.png" /></a>
+[![Dry Run Formatter](images/dry-run-formatter.png)](images/dry-run-formatter.png)
 
 #### When to Use
 

@@ -65,7 +65,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 
 {{< code >}}
 var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
+	"link":    "![pattern-apply-usage](images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 ...
