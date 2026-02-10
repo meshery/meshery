@@ -58,11 +58,6 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
-		return
-	}
-
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
@@ -131,7 +126,11 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
+	} else if req.Method == http.MethodDelete {
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
 	}
+
 }
 
 // swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing

@@ -48,7 +48,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_, _ = fmt.Fprint(w, string(resp))
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route GET /api/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler
@@ -71,7 +71,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_, _ = fmt.Fprint(w, string(resp))
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route POST /api/environments PostEnvironment idSaveEnvironment
@@ -109,7 +109,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	h.log.Info(description)
 	w.Header().Set("Content-Type", "application/json")
-	_, _ = fmt.Fprint(w, string(resp))
+	fmt.Fprint(w, string(resp))
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -129,7 +129,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_, _ = fmt.Fprint(w, string(resp))
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route PUT /api/environments/{id} PostEnvironment idUpdateEnvironmentHandler
