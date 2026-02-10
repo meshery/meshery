@@ -57,6 +57,24 @@ In order to pull in these environment metrics, you can also manually configure M
     
 </main>
 
+## Managing Performance
+
+Meshery provides capabilities to manage and analyze performance data collected
+from infrastructure and workloads. This includes performance profiles,
+benchmarking, and performance analysis workflows.
+
+For more details, see the
+[Managing Performance](./managing-performance.md) guide.
+
+## Interpreting Performance Test Results
+
+Performance test results in Meshery help users understand latency, throughput,
+and resource utilization across different configurations and environments.
+
+Learn how to analyze and draw insights from these results in the
+[Interpreting Performance Test Results](./interpreting-performance-test-results.md)
+guide.
+
 <!-- ## Tutorial Guide
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
