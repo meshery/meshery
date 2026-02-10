@@ -1761,3 +1761,31 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	}
 	return meshkitutils.ErrInvalidSchemaVersion
 }
+
+// swagger:route DELETE /api/meshmodels/models/{id} MeshmodelAPI idDeleteModel
+// Handle DELETE request for a model by ID
+//
+// Deletes a model and its associated registry entries from the database.
+// responses:
+//
+//	200: noContentWrapper
+func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	modelID := mux.Vars(r)["id"]
+
+	err := h.dbHandler.Where("entity = ? AND type = ?", modelID, "model").Delete(&registry.Registry{}).Error
+	if err != nil {
+		h.log.Error(models.ErrDelete(err, "registry entry", http.StatusInternalServerError))
+		http.Error(rw, models.ErrDelete(err, "registry entry", http.StatusInternalServerError).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = h.dbHandler.Where("id = ?", modelID).Delete(&_model.ModelDefinition{}).Error
+	if err != nil {
+		h.log.Error(models.ErrDelete(err, "model", http.StatusInternalServerError))
+		http.Error(rw, models.ErrDelete(err, "model", http.StatusInternalServerError).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(rw, `{"message":"Model with ID %s deleted successfully"}`, modelID)
+}
