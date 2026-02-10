@@ -1,0 +1,197 @@
+{
+  "errors_export": {
+    "component_name": "meshery-nginx-sm",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrInstallBinaryCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to change permission of the binary",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch release info",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to extract release names",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrStatusCheckCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error Bad Status",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrUnmarshalCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to unmarshal the : ",
+        "probable_cause": "Object is not a valid json object",
+        "suggested_remediation": "Make sure if the object passed is a valid json"
+      },
+      "1006": {
+        "name": "ErrCustomOperationCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with applying custom operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrInstallNginxCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with Nginx installation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrMeshConfigCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error configuration mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrClientConfigCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting client config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1010": {
+        "name": "ErrStreamEventCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error streaming events",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrSampleAppCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrOpInvalidCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrNilClientCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "kubernetes client not initialized",
+        "probable_cause": "kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adaptor to Meshery server"
+      },
+      "1014": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying Helm Chart",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery Server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1016": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1017": {
+        "name": "ErrProcessOAMCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrNginxCoreComponentFailCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in NGINX Service Mesh core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1019": {
+        "name": "ErrParseNginxCoreComponentCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failure to parse core component manifest for NGINX Service Mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1020": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
+      }
+    }
+  }
+}
