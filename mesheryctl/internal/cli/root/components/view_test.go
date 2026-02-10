@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -16,7 +17,6 @@ func TestComponentView(t *testing.T) {
 	}
 
 	currDir := filepath.Dir(filename)
-	formaterrMsg := utils.ComponentSubError(fmt.Sprintf("output-format %q is invalid. Available options [json|yaml]", "invalid"), "view")
 
 	componentApiPath := "api/meshmodels/components"
 
@@ -64,7 +64,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrFlagsInvalid(formaterrMsg),
+			ExpectedError:  display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
 			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",
