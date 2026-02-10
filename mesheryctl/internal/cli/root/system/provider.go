@@ -360,7 +360,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		log.Info("Provider has been reset. Users may need to log out or clear existing browser sessions to see the provider selection UI on the next Meshery start.")
+		log.Info("Provider has been reset. Users will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
 		return nil
 	},
 }
