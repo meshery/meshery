@@ -13,20 +13,24 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.repository == 'meshery/meshery'
     steps:
+      # This workflow needs only the latest code to run the meeting minutes script
+      # Historical git data is not required for fetching current meeting minutes
       - name: Checkout
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
-      
+          fetch-depth: 1 
       - name: Fetch latest meeting minutes
         env:
           DISCOURSE_URL: ${{ secrets.DISCOURSE_URL }}
         run: |
           bash .github/scripts/fetch_meeting_minutes.sh
-      
-      - name: Pull changes from remote
-        run: git pull origin master
-      
+      # Using shallow fetch to save disk space
+      # The workflow only needs to sync with the latest remote state
+      - name: Pull latest changes from remote
+        run: |
+          git fetch origin master --depth=1
+          git merge origin/master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

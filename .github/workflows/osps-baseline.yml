@@ -7,8 +7,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          docker system prune -af
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
 
       - name: Pull the pvtr-github-repo image
         run: docker pull eddieknight/pvtr-github-repo:latest

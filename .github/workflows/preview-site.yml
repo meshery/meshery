@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+        with:
+          fetch-depth: 1
 
       - name: Download Site dir
         uses: dawidd6/action-download-artifact@v11
@@ -45,5 +47,4 @@ jobs:
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           deploy_url: "${{ steps.netlify.outputs.deploy-url }}"
-
 
