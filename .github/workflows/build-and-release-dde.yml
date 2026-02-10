@@ -40,6 +40,18 @@ jobs:
   docker-extension:
     runs-on: ubuntu-24.04
     steps:
+      # GitHub runners include many preinstalled SDKs that consume large disk space
+      # Cleaning them prevents unpredictable build failures due to low disk space
+      - name: Clean up disk space before checkout
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /opt/ghc
+          docker system prune -af 
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
       - name: Identify Release Values
@@ -60,7 +72,6 @@ jobs:
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
           echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -94,8 +105,15 @@ jobs:
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+      - name: Clean up after Docker build
+        if: always()
+        run: |
+          if command -v docker &> /dev/null; then
+            docker system prune -af 2>/dev/null || true
+            docker builder prune -af 2>/dev/null || true
+          fi
+          df -h
 
-      # -
       #   name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3
       #   with:
