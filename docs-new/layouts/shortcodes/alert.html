@@ -1,0 +1,28 @@
+{{/*
+  alert.html - Alert/callout box shortcode
+
+  Usage (paired, with inner content):
+    {{< alert type="info" title="My Title" >}}
+    This is the alert content. HTML is supported.
+    {{< /alert >}}
+
+  Parameters:
+    - type: Alert type (info, warning, danger, success, dark). Defaults to "info".
+    - title: Optional heading text. If omitted, the type is used as the heading.
+
+  Replaces Jekyll include:
+    {% include alert.html type="info" title="My Title" content="..." %}
+
+  CSS Dependencies (in assets/scss/_alert.scss):
+    - .alert
+    - .alert-info, .alert-warning, .alert-danger, .alert-success, .alert-dark
+    - .alert-heading
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+{{- $type := .Get "type" | default "info" -}}
+{{- $title := .Get "title" | default $type -}}
+<div class="alert alert-{{ $type }}">
+  <h4 class="alert-heading">{{ $title }}</h4>
+  {{ .Inner }}
+</div>
