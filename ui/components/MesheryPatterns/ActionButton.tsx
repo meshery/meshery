@@ -96,7 +96,7 @@ export default function ActionButton({ options }) {
                     if (interactiveMode) {
                       option.onClick(event, index);
                     } else {
-                      option.onDirectClick?.(event, index) || option.onClick(event, index);
+                      option.onDirectClick ? option.onDirectClick(event, index) : option.onClick(event, index);
                     }
                   }}
                 >
