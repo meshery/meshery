@@ -1,5 +1,4 @@
 Total number of components: 1
-[H[2J[3J
-
-NAME  MODEL             KIND  VERSION                             
-Test  component-test-0  Test  memorydb.aws.kubeform.com/v1alpha1  
+Page: 1
+NAME  MODEL             CATEGORY  VERSION                             
+Test  component-test-0  Test      memorydb.aws.kubeform.com/v1alpha1  

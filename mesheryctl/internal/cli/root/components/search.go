@@ -17,19 +17,23 @@ package components
 import (
 	"fmt"
 	"net/url"
-	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var (
 	usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
-	pageflag          int
 )
+
+type componentSearchFlag struct {
+	Count    bool
+	Page     int
+	PageSize int
+}
+
+var cmdComponentSearchFlag componentSearchFlag
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -48,47 +52,27 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
-		searchValue.Add("search", componentName)
+		searchValue.Add("search", args[0])
 
-		var isPaged = cmd.Flags().Changed("page")
-		if isPaged {
-			searchValue.Add("page", fmt.Sprintf("%d", pageflag))
-			searchValue.Add("pagesize", "10")
-		} else {
-			searchValue.Add("pagesize", "all")
+		modelData := display.DisplayDataAsync{
+			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
+			DataType: "component",
+			Header:   []string{"Name", "Model", "Category", "Version"},
+			Page:     cmdComponentSearchFlag.Page,
+			PageSize: cmdComponentSearchFlag.PageSize,
+			IsPage:   cmd.Flags().Changed("page"),
 		}
 
-		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
-
+		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 		if err != nil {
 			return err
 		}
-
-		header := []string{"Name", "Model", "kind", "Version"}
-
-		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		dataToDisplay := display.DisplayedData{
-			DataType:         "components",
-			Header:           header,
-			Rows:             rows,
-			Count:            componentsCount,
-			DisplayCountOnly: false,
-			IsPage:           isPaged,
-		}
-
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
-
 		return nil
 	},
 }
 
 func init() {
-	// Add the new components commands to the ComponentsCmd
-	searchComponentsCmd.Flags().IntVarP(&pageflag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
 }
