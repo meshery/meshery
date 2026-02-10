@@ -1631,6 +1631,15 @@
         "short_description": "Invalid Output Format",
         "probable_cause": "The specified output format is not supported",
         "suggested_remediation": ""
+      },
+      "1199": {
+        "name": "ErrDesignInvalidApiResponseCode",
+        "code": "1199",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API response",
+        "probable_cause": "The API response is missing expected fields or has an unexpected format",
+        "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
       }
     }
   }
