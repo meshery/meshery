@@ -15,10 +15,11 @@
 package design
 
 import (
-	"encoding/json"
-	"io"
+	"fmt"
+	"net/url"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -26,10 +27,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	viewAllFlag   bool
-	outFormatFlag string
-)
+type designViewFlags struct {
+	OutputFormat string
+	All          bool
+}
+
+var designViewFlagsProvided designViewFlags
 
 var linkDocPatternView = map[string]string{
 	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
@@ -46,92 +49,96 @@ var viewCmd = &cobra.Command{
 mesheryctl design view [design-name | ID]
 	`,
 	Annotations: linkDocPatternView,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 && designViewFlagsProvided.All {
+			return utils.ErrInvalidArgument(errors.New("--all flag cannot be used when [design-name|design-id] is specified"))
+		}
+
+		if len(args) == 0 && !designViewFlagsProvided.All {
+			return ErrDesignNameOrIDNotSpecified()
+		}
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
 		}
-		pattern := ""
+
+		design := ""
 		isID := false
-		// if pattern name/id available
-		if len(args) > 0 {
-			if viewAllFlag {
-				return errors.New("-a cannot be used when [design-name|design-id] is specified")
-			}
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+
+		if len(args) > 0 { // if design name or ID is provided
+			design, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return utils.ErrInvalidNameOrID(err)
 			}
 		}
-		url := mctlCfg.GetBaseMesheryURL()
-		if len(pattern) == 0 {
-			if viewAllFlag {
-				url += "/api/pattern?populate=pattern_file&pagesize=10000"
-			} else {
-				return ErrDesignNameOrIDNotSpecified()
-			}
-		} else if isID {
-			// if pattern is a valid uuid, then directly fetch the pattern
-			url += "/api/pattern/" + pattern
-		} else {
-			// else search pattern by name
-			url += "/api/pattern?populate=pattern_file&search=" + pattern
-		}
 
-		req, err := utils.NewRequest("GET", url, nil)
+		urlPath := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
+
+		apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
 		if err != nil {
 			return err
 		}
 
-		res, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
+		var designData interface{}
+
+		if isID { // Only one design will be returned when searching by ID
+			designData = apiResponse
 		}
 
-		defer func() { _ = res.Body.Close() }()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return utils.ErrReadFromBody(err)
+		if designViewFlagsProvided.All { // all designs will be returned when --all flag is provided
+			designData = map[string]interface{}{"patterns": (*apiResponse)["patterns"]}
 		}
 
-		var dat map[string]interface{}
-		if err = json.Unmarshal(body, &dat); err != nil {
-			return utils.ErrUnmarshal(err)
-		}
-
-		if isID {
-			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+		if !isID && !designViewFlagsProvided.All { // only the first match will be returned when searching by name
+			patterns, ok := (*apiResponse)["patterns"]
+			if !ok {
+				return ErrDesignInvalidApiResponse("'patterns' field missing")
 			}
-		} else if viewAllFlag {
-			// only keep the pattern key from the response when viewing all the patterns
-			if body, err = json.MarshalIndent(map[string]interface{}{"patterns": dat["patterns"]}, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+			arr, ok := patterns.([]interface{})
+			if !ok {
+				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
 			}
-		} else {
-			// use the first match from the result when searching by pattern name
-			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
 				return ErrDesignNotFound()
 			}
-			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
-			}
+			designData = arr[0]
 		}
 
-		if outFormatFlag == "yaml" {
-			if body, err = yaml.JSONToYAML(body); err != nil {
-				return utils.ErrJSONToYAML(err)
-			}
-		} else if outFormatFlag != "json" {
-			return utils.ErrOutFormatFlag()
+		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
+		outputFormatter, err := outputFormatFactory.New(designViewFlagsProvided.OutputFormat, designData)
+		if err != nil {
+			return err
 		}
-		utils.Log.Info(string(body))
-		return nil
+
+		return outputFormatter.Display()
 	},
 }
 
+func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
+	baseApiPath := "api/pattern"
+	if isID {
+		return fmt.Sprintf("%s/%s", baseApiPath, url.PathEscape(design))
+	}
+
+	queryParams := url.Values{}
+	queryParams.Add("populate", "pattern_file")
+
+	if viewAll {
+		queryParams.Add("pagesize", "10000")
+	}
+
+	if !viewAll {
+		queryParams.Add("search", design)
+	}
+
+	return fmt.Sprintf("%s?%s", baseApiPath, queryParams.Encode())
+}
+
 func init() {
-	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all designs available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&designViewFlagsProvided.All, "all", "a", false, "(optional) view all designs available")
+	viewCmd.Flags().StringVarP(&designViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }
