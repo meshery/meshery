@@ -37,7 +37,7 @@ const (
 	ErrDeleteDesignCode               = "mesheryctl-1164"
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
-	ErrDesignInvalidApiResponseCode   = "mesheryctl-1198"
+	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 )
 
 const (
