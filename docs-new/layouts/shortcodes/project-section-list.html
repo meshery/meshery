@@ -1,0 +1,22 @@
+{{- $title := .Get "title" }}
+{{- $category := .Get "category" }}
+{{- $link := .Get "link" }}
+{{- $sectionFilter := .Get "section-filter" }}
+
+<div class="wrapper">
+  <a href="{{ $link }}"><div class="overview">{{ $title }}</div></a>
+</div>
+
+<ul>
+  {{- if eq $sectionFilter "type-or" }}
+    {{- range where .Site.RegularPages ".Params.categories" "intersect" (slice $category) }}
+      {{- if or (eq .Section "project") (eq .Section "installation") }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    {{- range where (where .Site.RegularPages ".Section" "project") ".Params.categories" "intersect" (slice $category) }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  {{- end }}
+</ul>

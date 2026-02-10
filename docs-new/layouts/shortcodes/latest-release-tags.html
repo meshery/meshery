@@ -1,0 +1,5 @@
+{{- $releases := where (where .Site.RegularPages ".Section" "releases") ".Params.prerelease" false }}
+{{- $sorted := sort $releases "Date" "desc" }}
+{{- with index $sorted 0 }}
+  {{ .Params.tag }}
+{{- end }}

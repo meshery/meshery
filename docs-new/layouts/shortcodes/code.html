@@ -1,5 +1,5 @@
 <pre class="codeblock-pre" style="font-size: 1.75rem !important;">
 <div class="codeblock">
-<code class="clipboardjs">{{ .Get "code" | html }}</code>
+<code class="clipboardjs">{{ if .Get "code" }}{{ .Get "code" | html }}{{ else }}{{ .Inner | html }}{{ end }}</code>
 </div>
 </pre>
