@@ -1,0 +1,153 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "kubernetes",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": "v1.36.0-alpha.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "DeviceClass",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "ResourceClaim",
+                  "mutatorRef": [
+                    [
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "deviceClassName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "ResourceClaim",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "deviceClassName"
+                    ],
+                    [
+                      "metadata",
+                      "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "resourceClaims",
+                      "_",
+                      "source",
+                      "resourceClaimName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "mount",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

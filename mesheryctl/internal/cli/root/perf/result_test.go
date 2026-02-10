@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -42,9 +43,6 @@ func TestResultCmd(t *testing.T) {
 			ExpectedResponse: "result.list.output.golden",
 			ExpectError:      false,
 		},
-	}
-
-	loggerTests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name: "standard results in json output",
 			Args: []string{"result", "abhishek", "-o", "json"},
@@ -65,17 +63,17 @@ func TestResultCmd(t *testing.T) {
 			ExpectedResponse: "result.yaml.output.golden",
 			ExpectError:      false,
 		},
+	}
+
+	loggerTests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name: "invalid output format",
-			Args: []string{"result", "abhishek", "-o", "invalid"},
-			URLs: []utils.MockURL{
-				{Method: "GET", URL: profileURL, Response: "result.profile.response.golden", ResponseCode: 200},
-				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
-			},
+			Name:             "invalid output format",
+			Args:             []string{"result", "abhishek", "-o", "invalid"},
+			URLs:             []utils.MockURL{},
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    ErrInvalidOutputChoice(),
+			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
 			Name: "Unmarshal error",
