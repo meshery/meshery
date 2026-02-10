@@ -149,7 +149,6 @@ Use Meshery Playground to visualize the changes and observe the impact on the sc
 2. Select the CronJob Component:
     Click on the CronJob component to open the tooltip. This action will enable access to the delete icon. Click to delete the CronJob.
     [![Save CronJob]({{site.baseurl}}/assets/img/kanvas/delete.png)]({{site.baseurl}}/assets/img/kanvas/delete.png)
-    
 3. Save Changes:
     After deleting the CronJob, save the changes made within the Kanvas Designer interface to reflect the cleanup.
     [![Save CronJob]({{site.baseurl}}/assets/img/kanvas/save-app.png)]({{site.baseurl}}/assets/img/kanvas/save-app.png)
