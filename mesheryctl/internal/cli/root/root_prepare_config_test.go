@@ -9,25 +9,24 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestPrepareConfigUseCases(t *testing.T) {
+func TestPrepareConfig_ReadOnlyBehavior(t *testing.T) {
 	tmp := t.TempDir()
 
 	tests := []struct {
-		name         string
-		setup        func(t *testing.T)
-		expectError  bool
-		expectCreate bool
+		name        string
+		setup       func(t *testing.T)
+		expectError bool
 	}{
 		{
-			name: "given missing config file when prepareConfig then default config is created",
+			name: "given missing config file when prepareConfig then error returned",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-missing")
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 			},
-			expectCreate: true,
+			expectError: true,
 		},
 		{
-			name: "given empty config file when prepareConfig then default config is created",
+			name: "given empty config file when prepareConfig then error returned",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-empty")
 				_ = os.MkdirAll(utils.MesheryFolder, 0o755)
@@ -35,7 +34,7 @@ func TestPrepareConfigUseCases(t *testing.T) {
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 				_ = os.WriteFile(utils.DefaultConfigPath, []byte(""), 0o644)
 			},
-			expectCreate: true,
+			expectError: false,
 		},
 		{
 			name: "given permission denied config when prepareConfig then error returned",
@@ -54,7 +53,7 @@ func TestPrepareConfigUseCases(t *testing.T) {
 			expectError: true,
 		},
 		{
-			name: "given existing config when prepareConfig then untouched",
+			name: "given existing config when prepareConfig then loads successfully without mutation",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-existing")
 				_ = os.MkdirAll(utils.MesheryFolder, 0o755)
@@ -62,6 +61,7 @@ func TestPrepareConfigUseCases(t *testing.T) {
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 				_ = os.WriteFile(utils.DefaultConfigPath, []byte("test"), 0o644)
 			},
+			expectError: false,
 		},
 	}
 
@@ -93,13 +93,6 @@ func TestPrepareConfigUseCases(t *testing.T) {
 
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if tt.expectCreate {
-				data, err := os.ReadFile(utils.DefaultConfigPath)
-				if err != nil || len(data) == 0 {
-					t.Fatal("expected config to be created")
-				}
 			}
 		})
 	}
