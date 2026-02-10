@@ -11,10 +11,17 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@master
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
+      - name: Checkout code
+        uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           ref: "master"
+          fetch-depth: 1
       - name: Setup go-swagger
         uses: minchao/setup-go-swagger@v1
         with:
@@ -23,10 +30,12 @@ jobs:
         run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
-
-      - name: Pull changes from remote
-        run: git pull origin master
-
+      # Using shallow fetch to save disk space
+      # Swagger update only needs the latest remote state
+      - name: Pull latest changes from remote
+        run: |
+          git fetch origin master --depth=1
+          git merge origin/master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

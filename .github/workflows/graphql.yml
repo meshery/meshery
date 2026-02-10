@@ -13,26 +13,30 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.repository == 'meshery/meshery'
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
       - name: Checkout repo 🛎️
         uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-
+          fetch-depth: 1
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.5
           bundler-cache: true
-
       - name: graphql-docs
         run: |
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
-
       - name: Pull changes from remote
-        run: git pull origin master
-
+        run: |
+          git fetch origin master --depth=1
+          git merge origin/master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
