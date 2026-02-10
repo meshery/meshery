@@ -56,6 +56,8 @@ type CmdTestInput struct {
 	ExpectedResponseYaml string
 	ExpectError          bool
 	ErrorStringContains  []string
+	ExpectedError        error `default:"nil"`
+	IsOutputGolden       bool  `default:"true"`
 }
 
 type GoldenFile struct {
@@ -586,14 +588,25 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
+			// Properly save and restore stdout using defer
 			originalStdout := os.Stdout
-			b := SetupMeshkitLoggerTesting(t, false)
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			// Ensure stdout is always restored
 			defer func() {
 				os.Stdout = originalStdout
 			}()
+
+			Log = SetupMeshkitLogger("mesheryctl", false, w)
+
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(b)
+			cmd.SetOut(w)
 			err := cmd.Execute()
+
+			// Close write end before reading
+			_ = w.Close()
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -619,7 +632,17 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				t.Fatalf("expected an error but command succeeded")
 			}
 
-			actualResponse := b.String()
+			var buf bytes.Buffer
+			_, errCopy := io.Copy(&buf, r)
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
+			actualResponse := buf.String()
 
 			if *updateGoldenFile {
 				golden.Write(actualResponse)

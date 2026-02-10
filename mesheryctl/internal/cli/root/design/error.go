@@ -37,6 +37,7 @@ const (
 	ErrDeleteDesignCode               = "mesheryctl-1164"
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
+	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 )
 
 const (
@@ -68,9 +69,9 @@ func ErrImportDesign(err error) error {
 func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
 	return errors.New(ErrInValidSourceCode, errors.Fatal,
 		[]string{fmt.Sprintf("Invalid design source type: `%s`", invalidSourceType)},
-		[]string{"Invalid design source type due to wrong type/passing"},
-		[]string{"design source type (-s) is invalid or not passed."},
-		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})
+		[]string{"Invalid design source type was provided"},
+		[]string{"Provided design source type (-s) is invalid"},
+		[]string{"Ensure you pass a valid source type", fmt.Sprintf("\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))})
 }
 
 func ErrDesignManifest() error {
@@ -159,4 +160,12 @@ func ErrDesignNameOrIDNotSpecified() error {
 		[]string{"No design name or ID was provided"},
 		[]string{"Command requires a design name or ID as argument"},
 		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
+}
+
+func ErrDesignInvalidApiResponse(message string) error {
+	return errors.New(ErrDesignInvalidApiResponseCode, errors.Alert,
+		[]string{"Invalid API response"},
+		[]string{message},
+		[]string{"The API response is missing expected fields or has an unexpected format"},
+		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
 }

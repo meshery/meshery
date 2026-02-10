@@ -16,36 +16,48 @@ package relationships
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
-
-	"gopkg.in/yaml.v2"
 
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
+
+type relationshipViewFlags struct {
+	outputFormat string
+	save         bool
+}
+
+var relationshipViewFlagsProvided relationshipViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view relationships of a model by its name",
 	Long:  "view a relationship queried by the model name",
 	Example: `
-// View relationships of a model
+// View relationships of a model in default format yaml
 mesheryctl exp relationship view [model-name]
+
+// View relationships of a model in JSON format
+mesheryctl exp relationship view [model-name] --output-format json
+
+// View relationships of a model in json format and save it to a file
+mesheryctl exp relationship view [model-name] --output-format json --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
 		if len(args) == 0 {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("[model-name] isn't specified%s", errMsg), "view"))
+			return utils.ErrInvalidArgument(errNoModelNameProvided)
 		} else if len(args) > 1 {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("Too many arguments only [model-name] is expected%s", errMsg), "view"))
+			return utils.ErrInvalidArgument(errTooManyArgs)
 		}
-		return nil
+
+		return display.ValidateOutputFormat(relationshipViewFlagsProvided.outputFormat)
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
@@ -65,23 +77,38 @@ mesheryctl exp relationship view [model-name]
 		default:
 			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
-		var output []byte
 
-		// user may pass flag in lower or upper case but we have to keep it lower
-		// in order to make it consistent while checking output format
-		outpoutFormat, _ := cmd.Flags().GetString("output-format")
-		outFormatFlag := strings.ToLower(outpoutFormat)
-		switch outFormatFlag {
-		case "yaml", "yml":
-			if output, err = yaml.Marshal(selectedModel); err != nil {
-				return errors.Wrap(err, "failed to format output in YAML")
+		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
+		outputFormatter, err := outputFormatterFactory.New(relationshipViewFlagsProvided.outputFormat, *selectedModel)
+		if err != nil {
+			return err
+		}
+
+		err = outputFormatter.Display()
+		if err != nil {
+			return err
+		}
+
+		if relationshipViewFlagsProvided.save {
+
+			shortID := selectedModel.Id.String()[:8]
+			sanitizer := strings.NewReplacer("/", "_")
+			sanitizedName := sanitizer.Replace(selectedModel.Model.Name)
+			fileName := fmt.Sprintf("relationship_%s_%s", sanitizedName, shortID)
+			file := filepath.Join(utils.MesheryFolder, fileName)
+
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[relationship.RelationshipDefinition]{}
+			outputFormatterSaver, err := outputFormatterSaverFactory.New(relationshipViewFlagsProvided.outputFormat, outputFormatter)
+			if err != nil {
+				return err
 			}
-			utils.Log.Info(string(output))
-		case "json":
-			// return outputRelationshipJson(selectedModel)
-			return format.OutputJson(selectedModel)
-		default:
-			return errors.New("output-format choice invalid, use [json|yaml]")
+
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
+			err = outputFormatterSaver.Save()
+			if err != nil {
+				return err
+			}
+
 		}
 
 		return nil
@@ -114,5 +141,6 @@ func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition
 }
 
 func init() {
-	viewCmd.Flags().StringP("output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().StringVarP(&relationshipViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&relationshipViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
