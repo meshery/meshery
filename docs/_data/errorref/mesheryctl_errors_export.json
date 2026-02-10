@@ -1622,6 +1622,15 @@
         "short_description": "Connection not found",
         "probable_cause": "The specified connection ID does not exist",
         "suggested_remediation": "Verify the connection ID using `mesheryctl connection list`"
+      },
+      "1198": {
+        "name": "ErrInvalidOutputFormatCode",
+        "code": "1198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Output Format",
+        "probable_cause": "The specified output format is not supported",
+        "suggested_remediation": ""
       }
     }
   }
