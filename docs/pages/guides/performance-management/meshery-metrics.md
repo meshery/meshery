@@ -63,8 +63,7 @@ Meshery provides capabilities to manage and analyze performance data collected
 from infrastructure and workloads. This includes performance profiles,
 benchmarking, and performance analysis workflows.
 
-For more details, see the
-[Managing Performance](./managing-performance.md) guide.
+For more details, see the [Managing Performance guide](./managing-performance.md).
 
 ## Interpreting Performance Test Results
 
@@ -72,8 +71,7 @@ Performance test results in Meshery help users understand latency, throughput,
 and resource utilization across different configurations and environments.
 
 Learn how to analyze and draw insights from these results in the
-[Interpreting Performance Test Results](./interpreting-performance-test-results.md)
-guide.
+[Interpreting Performance Test Results guide](./interpreting-performance-test-results.md).
 
 <!-- ## Tutorial Guide
 
