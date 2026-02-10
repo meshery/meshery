@@ -227,7 +227,7 @@ mesheryctl system context list
 		if currContext == "" {
 			log.Print("Current context not set\n")
 		} else {
-			log.Printf("Current context: %s\n", currContext)
+			log.Printf("Current context: %s", currContext)
 		}
 		log.Print("Available contexts:\n")
 
