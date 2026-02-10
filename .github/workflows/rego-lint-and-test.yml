@@ -29,24 +29,26 @@ jobs:
       test-failed: ${{ steps.test-results.outputs.failed }}
       test-total: ${{ steps.test-results.outputs.total }}
     steps:
+      - name: Disk Cleanup
+        run: |
+          docker system prune -af
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
       - name: Check out repository code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-
+          fetch-depth: 1  # Shallow clone is sufficient for this workflow since git history is not used and This reduces checkout time and disk usage.
       - name: Setup Go
         uses: actions/setup-go@master
         with:
           go-version: "1.25.5"
-
       - name: Setup OPA
         uses: open-policy-agent/setup-opa@v2
         with:
           version: 1.0.1
-
       - name: Auto-format Rego files
         run: opa fmt --write .
-
       - name: Commit formatted Rego files
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: stefanzweifel/git-auto-commit-action@v7
@@ -57,12 +59,11 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_message: "chore: auto-format Rego files"
           commit_options: "--no-verify"
-
+          branch: ${{ github.head_ref || github.ref_name }}
       - name: Setup Regal
         uses: StyraInc/setup-regal@v1
         with:
           version: 0.25.0
-
       - name: Lint Rego files
         id: lint
         run: |
@@ -73,28 +74,22 @@ jobs:
           if [ $LINT_EXIT_CODE -ne 0 ]; then
             echo "::warning::Regal lint found issues"
           fi
-
       - name: Run Rego unit tests with OPA
         id: opa-test
         run: |
           echo "Running OPA tests..."
           POLICIES_DIR="./server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"
-          
           # Ensure that failures in any part of a pipeline are detected
           set -o pipefail
-          
           # Run OPA tests and capture output, handle tee failures separately
           OPA_EXIT_CODE=0
           if ! opa test "$POLICIES_DIR" -v > opa-test-results.txt 2>&1; then
             OPA_EXIT_CODE=$?
             echo "OPA tests reported failures (exit code: $OPA_EXIT_CODE), continuing to collect results."
           fi
-          
           # Display results (tee failure here is non-critical)
           cat opa-test-results.txt || echo "Warning: Could not display OPA test results"
-          
           echo "opa-exit-code=$OPA_EXIT_CODE" >> $GITHUB_OUTPUT
-          
           # Parse results
           PASSED=0
           FAILED=0
@@ -103,11 +98,9 @@ jobs:
             FAILED=$(grep -c "FAIL" opa-test-results.txt 2>/dev/null || true)
           fi
           TOTAL=$((PASSED + FAILED))
-          
           echo "passed=$PASSED" >> $GITHUB_OUTPUT
           echo "failed=$FAILED" >> $GITHUB_OUTPUT
           echo "total=$TOTAL" >> $GITHUB_OUTPUT
-
       - name: Run Go-based Rego tests
         id: go-test
         run: |
@@ -116,18 +109,15 @@ jobs:
           go test -v ./... 2>&1 | tee go-test-results.txt
           GO_EXIT_CODE=${PIPESTATUS[0]}
           echo "go-exit-code=$GO_EXIT_CODE" >> $GITHUB_OUTPUT
-
       - name: Generate test results
         id: test-results
         run: |
           OPA_PASSED="${{ steps.opa-test.outputs.passed }}"
           OPA_FAILED="${{ steps.opa-test.outputs.failed }}"
           OPA_TOTAL="${{ steps.opa-test.outputs.total }}"
-          
           echo "passed=$OPA_PASSED" >> $GITHUB_OUTPUT
           echo "failed=$OPA_FAILED" >> $GITHUB_OUTPUT
           echo "total=$OPA_TOTAL" >> $GITHUB_OUTPUT
-
       - name: Create test summary
         id: summary
         run: |
@@ -199,7 +189,6 @@ jobs:
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "Test summary could not be generated from test outputs." >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Comment on PR
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v8
@@ -207,19 +196,16 @@ jobs:
           script: |
             const fs = require('fs');
             const summary = fs.readFileSync('test-summary.md', 'utf8');
-            
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            
             const botComment = comments.find(comment => 
               comment.user.type === 'Bot' && 
               comment.body.includes('### REGO POLICY TESTS')
             );
-            
             if (botComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -235,7 +221,6 @@ jobs:
                 body: summary
               });
             }
-
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -247,24 +232,20 @@ jobs:
             server/policies/go-test-results.txt
             test-summary.md
           retention-days: 14
-
       - name: Check for failures
         run: |
           FAILED="${{ steps.test-results.outputs.failed }}"
           LINT_EXIT="${{ steps.lint.outputs.lint-exit-code }}"
           GO_EXIT="${{ steps.go-test.outputs.go-exit-code }}"
-          
           if [ "$FAILED" -gt 0 ]; then
             echo "::error::$FAILED Rego tests failed"
             exit 1
           fi
-          
           # Check Go test exit code
           if [ "$GO_EXIT" -ne 0 ]; then
             echo "::error::Go-based Rego tests failed"
             exit 1
           fi
-          
           # Lint warnings are non-blocking but reported
           if [ "$LINT_EXIT" -ne 0 ]; then
             echo "::warning::Regal lint reported issues"

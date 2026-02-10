@@ -35,6 +35,8 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1    
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
@@ -63,13 +65,14 @@ jobs:
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
-        run: sudo apt-get install lynx
+        run: sudo apt-get install lynx    
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: "1.25"
       - name: Run mesheryctl coverage
         run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
+
   build-mesheryctl:
     name: Build Meshery Binaries
     runs-on: ubuntu-24.04
@@ -92,6 +95,7 @@ jobs:
           name: mesheryctl-binary
           path: ./mesheryctl/mesheryctl
           retention-days: 1
+
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-24.04
@@ -101,6 +105,12 @@ jobs:
       matrix:
         platform: [docker, kubernetes]
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          docker system prune -af 2>/dev/null || true
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
@@ -114,7 +124,7 @@ jobs:
         run: |
           docker version
           docker compose ps
-        working-directory: ./install/docker
+        working-directory: ./install/docker    
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Create k8s Kind Cluster
@@ -133,4 +143,16 @@ jobs:
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with ${{ matrix.platform }} completed."
         working-directory: ./mesheryctl
-
+        
+        # Cleanup runs with `if: always()` to ensure test resources (Kind, Docker) are removed even on failure
+        # This keeps the runner clean and prevents disk issues from affecting later steps
+      - name: Cleanup integration test resources
+        if: always()
+        run: |
+          if [ "${{ matrix.platform }}" = "kubernetes" ]; then
+            kind delete cluster --name kind-cluster 2>/dev/null || true
+          fi
+          docker system prune -af --volumes 2>/dev/null || true
+          go clean -modcache 2>/dev/null || true
+          rm -f ./mesheryctl/mesheryctl 2>/dev/null || true
+          df -h
