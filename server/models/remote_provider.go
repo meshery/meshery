@@ -625,7 +625,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("Error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2043,7 +2043,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if err != nil {
 		return nil, ErrDataRead(err, "design Page Resource")
 	}
-	err = ErrFetch(fmt.Errorf("Failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2076,7 +2076,7 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 		l.Log.Info("Deleted design from remote provider.")
 		return nil
 	}
-	err = ErrDelete(fmt.Errorf("Error while deleting design."), "design: "+resourceID, resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("error while deleting design"), "design: "+resourceID, resp.StatusCode)
 	l.Log.Error(err)
 	return err
 }
@@ -2168,16 +2168,16 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	default:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	}
 }
@@ -2402,7 +2402,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		return bdr, errors.New(string(bdr))
 	}
 
-	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
+	err = fmt.Errorf("failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
 	return bdr, err
 }
