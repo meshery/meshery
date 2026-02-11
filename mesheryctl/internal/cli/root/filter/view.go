@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/server/models"
@@ -39,10 +38,7 @@ type filterViewFlags struct {
 	save         bool
 }
 
-var (
-	filterViewFlagsProvided filterViewFlags
-	validOutputFormat       = []string{"json", "yaml"}
-)
+var filterViewFlagsProvided filterViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
@@ -68,10 +64,7 @@ mesheryctl filter view "filter name"
 	Args: cobra.ArbitraryArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Validate output-format
-		if !slices.Contains(validOutputFormat, strings.ToLower(filterViewFlagsProvided.outputFormat)) {
-			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
-		}
-		return nil
+		return display.ValidateOutputFormat(filterViewFlagsProvided.outputFormat)
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
