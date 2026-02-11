@@ -3,9 +3,13 @@ run:
   timeout: 5m
 
 linters:
+  settings:
+    staticcheck:
+      checks: 
+        - ST1005
+        - QF1004
   disable:
     - errcheck
-    - staticcheck
   exclusions:
     paths:
       - server/handlers/doc.go
