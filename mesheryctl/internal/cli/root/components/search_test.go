@@ -38,7 +38,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n%v", usageErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("multi-word filter names must be enclosed in double quotes\n\n%v", usageErrorMessage)),
 		},
 		{
 			Name:             "given a valid component is provided when running mesheryctl component search valid-name then it displays every matching results in output",

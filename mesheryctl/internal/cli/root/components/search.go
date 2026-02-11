@@ -52,7 +52,7 @@ mesheryctl component search [query-text]
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n%v", usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("multi-word filter names must be enclosed in double quotes\n\n%v", usageErrorMessage))
 		}
 		return nil
 	},
