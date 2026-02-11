@@ -40,6 +40,19 @@ Start Meshery by executing the following command:
 {% capture code_content %}mesheryctl system start -p docker{% endcapture %}
 {% include code.html code=code_content %}
 
+## Docker Compose v2 on Debian 13
+
+On Debian 13 and newer Linux distributions, Docker Compose is installed as a
+Docker plugin and is available via the `docker compose` command instead of the
+legacy `docker-compose` binary.
+
+You can verify Docker Compose v2 installation using:
+
+```bash
+docker compose version
+```
+
+
 ## Advanced Configuration
 
 ### Customizing Kubernetes Configuration Location
