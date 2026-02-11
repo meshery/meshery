@@ -53,7 +53,7 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentName := strings.Join(args, " ")
+		componentName := strings.Join(args, "_")
 		searchValue := url.Values{}
 		searchValue.Add("search", componentName)
 
