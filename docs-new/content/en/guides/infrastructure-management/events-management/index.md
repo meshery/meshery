@@ -2,6 +2,8 @@
 title: Managing Events with Notification Center
 description: Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on.
 weight: 15
+aliases:
+    - /guides/infrastructure-management/notification-management
 ---
 
 Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.

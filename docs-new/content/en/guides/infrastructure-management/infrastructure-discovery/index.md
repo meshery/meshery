@@ -2,6 +2,8 @@
 title: Infrastructure Discovery
 description: "MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure."
 weight: 30
+aliases:
+    - /guides/infrastructure-management/registering-a-connection
 ---
 
 {{< alert type="info" title="MeshSync" >}} 

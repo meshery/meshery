@@ -3,8 +3,9 @@ title: Envoy WASM Filter Management
 description: Meshery provides the ability to manage WASM filters for data plane proxies for agility, maintainability, diversity, reliability and isolation, security, and speed.
 weight: 20
 aliases: 
-- /tasks/filter-management
-- configuration-management/filter-management
+  - /guides/infrastructure-management/filter-management
+  - /tasks/filter-management
+  - configuration-management/filter-management
 ---
 
 Meshery offers powerful features that simplify the management of Envoy WASM filters in Istio.
