@@ -50,6 +50,10 @@ mesheryctl component search [query-text]
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage))
 		}
+
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n%v", usageErrorMessage))
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

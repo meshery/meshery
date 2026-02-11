@@ -31,6 +31,16 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage)),
 		},
 		{
+			Name:             "given a multiple argument is provided when running mesheryctl component search arg1 arg2 then an error message is displayed",
+			Args:             []string{"search", "args1", "args2"},
+			URL:              "",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n%v", usageErrorMessage)),
+		},
+		{
 			Name:             "given a valid component is provided when running mesheryctl component search valid-name then it displays every matching results in output",
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?search=Test&page=0&pagesize=10", componentApiPath),
