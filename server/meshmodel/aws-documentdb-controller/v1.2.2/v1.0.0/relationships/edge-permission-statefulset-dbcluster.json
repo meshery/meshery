@@ -1,0 +1,80 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "status": "enabled",
+  "metadata": {
+    "description": "Reference relationship from AWS DocumentDB DBCluster to Kubernetes StatefulSet. This represents applications referencing DocumentDB connection strings or credentials via StatefulSet configuration while targeting a given DocumentDB cluster.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.2.2",
+    "name": "aws-documentdb-controller",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "category": {
+      "name": "Database"
+    },
+    "displayName": "AWS DocumentDB Controller"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "DBCluster",
+            "model": {
+              "name": "aws-documentdb-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ],
+              "description": "DocumentDB DBCluster endpoint can be referenced by Kubernetes StatefulSet configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "StatefulSet",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["spec", "template", "spec", "containers", "_", "env"]
+              ],
+              "description": "StatefulSet containers can store DocumentDB connection strings or credentials used for accessing the database cluster."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
