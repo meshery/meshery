@@ -45,6 +45,9 @@ Documentation for components can be found at https://docs.meshery.io/reference/m
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]
+
+// Search for multi-word component names (must be quoted)
+mesheryctl component search "Component name"
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
