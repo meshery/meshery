@@ -182,6 +182,7 @@ func (h *Handler) EvaluateDesign(
 
 		if useGoEngine && h.GoEngine != nil {
 			// Use native Go policy engine
+			// GetEntities returns (entities, totalCount, uniqueCount, error); counts are unused here.
 			registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 			if relErr != nil {
 				return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
