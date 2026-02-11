@@ -62,10 +62,10 @@ func (e *GoEngine) EvaluateDesign(
 		return resp, ErrConvertResult(err)
 	}
 
-	for _, a := range allActions {
+	for _, action := range allActions {
 		resp.Actions = append(resp.Actions, pattern.Action{
-			Op:    a.Op,
-			Value: a.Value,
+			Op:    action.Op,
+			Value: action.Value,
 		})
 	}
 
