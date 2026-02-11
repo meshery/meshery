@@ -31,8 +31,6 @@
 package handlers
 
 import (
-	"bytes"
-
 	"github.com/go-openapi/strfmt"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
@@ -336,36 +334,6 @@ type mesheryVersionRespWrapper struct {
 	Body Version
 }
 
-// Returns the response of the application files
-// swagger:response applicationFilesResponseWrapper
-type applicationFilesResponseWrapper struct {
-	// in: body
-	Body *models.MesheryApplication
-}
-
-// Parameters for uploading a yaml file
-// swagger:parameters idPostDeployApplicationFile idPostDeployPattern typeGetApplication typePutApplication
-type applicationFileParamsWrapper struct {
-	// in: formData
-	//
-	// swagger:file
-	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
-}
-
-// Fetches a single Meshery Application
-// swagger:response mesheryApplicationResponseWrapper
-type mesheryApplicationResponseWrapper struct {
-	// in: body
-	Body models.MesheryApplication
-}
-
-// Returns all meshery applications
-// swagger:response mesheryApplicationsResponseWrapper
-type mesheryApplicationsResponseWrapper struct {
-	// in: body
-	Body models.ApplicationsAPIResponse
-}
-
 // Returns all the meshery adapters
 // swagger:response mesheryAdaptersRespWrapper
 type mesheryAdaptersRespWrapper struct {
@@ -493,13 +461,6 @@ type systemK8sContextsResponseWrapper struct {
 type smiResultsResponseWrapper struct {
 	// in: body
 	Body *models.SmiResultPage
-}
-
-// Returns Meshery application types
-// swagger:response mesheryApplicationTypesResponseWrapper
-type mesheryApplicationTypesResponseWrapper struct {
-	// in: body
-	Body []models.ApplicationTypeResponse
 }
 
 // Returns a single connection

@@ -269,28 +269,6 @@ definitions:
                 x-go-name: SupportedExtensions
         type: object
         x-go-package: github.com/meshery/meshery/server/models
-    ApplicationsAPIResponse:
-        description: ApplicationsAPIResponse response retruned by patternfile endpoint on meshery server
-        properties:
-            applications:
-                items:
-                    $ref: '#/definitions/MesheryApplication'
-                type: array
-                x-go-name: Applications
-            page:
-                format: uint64
-                type: integer
-                x-go-name: Page
-            page_size:
-                format: uint64
-                type: integer
-                x-go-name: PageSize
-            total_count:
-                format: uint64
-                type: integer
-                x-go-name: TotalCount
-        type: object
-        x-go-package: github.com/meshery/meshery/server/models
     AuthenticateOKBody:
         description: AuthenticateOKBody authenticate o k body
         properties:
@@ -7216,102 +7194,6 @@ info:
     title: Meshery API.
     version: 0.4.27
 paths:
-    /api/application:
-        get:
-            description: |-
-                Fetches the list of all applications saved by the current user
-
-                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-
-                ```?order={field}``` orders on the passed field
-
-                ```?search=<application name>``` A string matching is done on the specified application name
-
-                ```?page={page-number}``` Default page number is 0
-
-                ```?pagesize={pagesize}``` Default pagesize is 10
-            operationId: idGetMesheryApplications
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationsResponseWrapper'
-            summary: Handle GET request for Application Files
-            tags:
-                - ApplicationsAPI
-    /api/application/{id}:
-        delete:
-            description: 'Deletes a meshery application file with ID: id'
-            operationId: idDeleteMesheryApplicationFile
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete for a Meshery Application File
-            tags:
-                - ApplicationsAPI
-    /api/application/{sourcetype}:
-        post:
-            description: Updates the design for the provided application
-            operationId: idPutApplicationFileRequest
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle POST request for Application Files
-            tags:
-                - ApplicationsAPI
-    /api/application/deploy:
-        delete:
-            description: Delete a deployed application file with the request
-            operationId: idDeleteApplicationFile
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE request for Application File Deploy
-            tags:
-                - ApplicationsAPI
-        post:
-            description: Deploy an attached application file with the request
-            operationId: idPostDeployApplicationFile
-            parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses:
-                "200":
-                    $ref: '#/responses/applicationFilesResponseWrapper'
-            summary: Handle POST request for Application File Deploy
-            tags:
-                - ApplicationsAPI
-    /api/application/download/{id}/{sourcetype}:
-        get:
-            description: Get the application source-content
-            operationId: typeGetApplication
-            parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses: {}
-            summary: Handle GET request for Meshery Application with of source content
-            tags:
-                - ApplicationsAPI
-    /api/application/types:
-        get:
-            description: Get application file types
-            operationId: typeGetMesheryApplication
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationTypesResponseWrapper'
-            summary: Handle GET request for Meshery Application types
-            tags:
-                - ApplicationsAPI
     /api/content/design/share:
         post:
             description: Used to share designs with others
@@ -9914,10 +9796,6 @@ responses:
             items:
                 $ref: '#/definitions/ApplicationTypeResponse'
             type: array
-    mesheryApplicationsResponseWrapper:
-        description: Returns all meshery applications
-        schema:
-            $ref: '#/definitions/ApplicationsAPIResponse'
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
         schema:

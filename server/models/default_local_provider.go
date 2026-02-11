@@ -53,7 +53,6 @@ type DefaultLocalProvider struct {
 	PerformanceProfilesPersister    *PerformanceProfilePersister
 	MesheryPatternPersister         *MesheryPatternPersister
 	MesheryPatternResourcePersister *PatternResourcePersister
-	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	OrganizationPersister           *OrganizationPersister
@@ -84,7 +83,6 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
-		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
 	}
@@ -968,56 +966,6 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	return json.Marshal(ffs)
 }
 
-// SaveMesheryApplication saves given application with the provider
-func (l *DefaultLocalProvider) SaveMesheryApplication(_ string, application *MesheryApplication) ([]byte, error) {
-	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
-}
-
-// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(_, _ string, _ []byte) error {
-	return nil
-}
-
-// GetApplicationSourceContent returns application source-content from provider
-func (l *DefaultLocalProvider) GetApplicationSourceContent(_ *http.Request, applicationID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(applicationID)
-	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
-}
-
-// GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
-	if page == "" {
-		page = "0"
-	}
-	if pageSize == "" {
-		pageSize = "10"
-	}
-
-	pg, err := strconv.ParseUint(page, 10, 32)
-	if err != nil {
-		return nil, ErrPageNumber(err)
-	}
-
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
-	}
-
-	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs, updatedAfter)
-}
-
-// GetMesheryApplication gets application for the given applicationID
-func (l *DefaultLocalProvider) GetMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(applicationID)
-	return l.MesheryApplicationPersister.GetMesheryApplication(id)
-}
-
-// DeleteMesheryApplication deletes a meshery application with the given id
-func (l *DefaultLocalProvider) DeleteMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(applicationID)
-	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
-}
-
 func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
@@ -1340,9 +1288,6 @@ func (l *DefaultLocalProvider) Cleanup() error {
 		return err
 	}
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
-		return err
-	}
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
 		return err
 	}
 
