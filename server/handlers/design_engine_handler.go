@@ -69,7 +69,7 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		_, _ = fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func (h *Handler) PatternFileHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to unmarshal request body: %s", err)
+		_, _ = fmt.Fprintf(rw, "failed to unmarshal request body: %s", err)
 		return
 	}
 
