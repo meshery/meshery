@@ -1,2 +1,4 @@
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCGTC98C"
+{{ with .Site.Params.googleTagManager }}
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ . }}"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+{{ end }}
