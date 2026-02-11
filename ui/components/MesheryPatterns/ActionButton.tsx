@@ -8,6 +8,7 @@ import {
   MenuList,
   ClickAwayListener,
   CustomTooltip,
+  Box,
 } from '@sistent/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -88,15 +89,17 @@ export default function ActionButton({ options }) {
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
                 <MenuItem
-                  key={option.label}
+                  key={index}
                   data-testid={`action-btn-option-${option.label}`}
                   disabled={option.disabled}
                   onClick={(event) => {
                     handleMenuItemClick(event);
                     if (interactiveMode) {
                       option.onClick(event, index);
+                    } else if (option.onDirectClick) {
+                      option.onDirectClick(event, index);
                     } else {
-                      option.onDirectClick ? option.onDirectClick(event, index) : option.onClick(event, index);
+                      option.onClick(event, index);
                     }
                   }}
                 >
@@ -105,10 +108,10 @@ export default function ActionButton({ options }) {
                     placement="left"
                     disableHoverListener={interactiveMode}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                      <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                      <Box sx={{ marginRight: '0.5rem' }}>{option.icon}</Box>
                       {interactiveMode && option.label}
-                    </div>
+                    </Box>
                   </CustomTooltip>
                 </MenuItem>
               ))}
