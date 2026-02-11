@@ -92,6 +92,7 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 
 		outputFormatterFactory := display.OutputFormatterFactory[component.ComponentDefinition]{}
 		outputFormatter, err := outputFormatterFactory.New(cmdComponentViewFlags.OutputFormat, selectedComponent)
+		outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		if err != nil {
 			return err
