@@ -35,15 +35,17 @@ const RelationshipTree = ({
   return (
     <TreeView
       aria-label="controlled"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      defaultExpandedItems={['3']}
+      slots={{
+        collapseIcon: MinusSquare,
+        expandIcon: PlusSquare,
+        endIcon: DotSquare,
+      }}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data.map((relationshipByKind, index) => {
         const idForKind =
