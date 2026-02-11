@@ -34,15 +34,6 @@ type componentViewFlags struct {
 	Save         bool
 }
 
-func (c *componentViewFlags) validate() error {
-	c.OutputFormat = strings.ToLower(c.OutputFormat)
-	if err := display.ValidateOutputFormat(c.OutputFormat); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 var cmdComponentViewFlags componentViewFlags
 
 // represents the mesheryctl component view [component-name] subcommand.
