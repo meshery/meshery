@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM node:20-alpine3.23 AS client-builder
 WORKDIR /ui
 # cache packages in layer
-COPY ui/package.json ui/package-lock.json ./
+COPY ui/package.json ui/package-lock.json ui/.npmrc ./
 ARG TARGETARCH
 RUN --mount=type=cache,target=/root/.npm \
   npm ci --legacy-peer-deps
