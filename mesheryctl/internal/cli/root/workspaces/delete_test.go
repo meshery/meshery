@@ -55,7 +55,6 @@ func TestDeleteWorkspace(t *testing.T) {
 			ExpectError:      false,
 		},
 	}
-	fmt.Printf("%s/%s", workspacesApiPath, workspaceID)
 
 	utils.InvokeMesheryctlTestCommand(t, update, WorkSpaceCmd, tests, currDir, "workspace")
 }
