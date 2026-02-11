@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: February 10th 2026, 11:37:21 pm
+- Testing started at: February 11th 2026, 11:24:02 am
 
 **📦 Test Result Summary**
 
-- ✅ 68 passed
-- ❌ 2 failed
+- ✅ 67 passed
+- ❌ 3 failed
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 3 minutes and 32 seconds_
+⌛ _Duration: 4 minutes and 21 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -67,7 +67,7 @@
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
 | 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ❌ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
-| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
+| 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
 | 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
 | 49 | None | chromium-local-provider | Import a Model via Url Import |  | ✅ |
 | 50 | None | chromium-local-provider | Logout from current user session |  | ✅ |
@@ -143,6 +143,20 @@ Error: No connected Kubernetes cluster found to delete. Ensure a connection exis
  [90m 190 |[39m       )[33m;[39m
  [90m 191 |[39m     }[0m
 ```
+
+</details>
+
+<details>
+<summary>❌ Import a Model via CSV Import (None - chromium-local-provider)</summary>
+
+**File Location:** `Not Found`
+
+**Error Message:**
+```
+[31mTest timeout of 60000ms exceeded.[39m
+```
+
+
 
 </details>
 
