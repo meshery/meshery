@@ -1,20 +1,14 @@
 import React from 'react';
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-  DocumentInitialProps,
-} from 'next/document';
+import Document, { Head, Main, NextScript, Html, DocumentContext, DocumentInitialProps } from 'next/document';
+import { createStyleRegistry } from 'styled-jsx';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
-class MesheryDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
-    const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
-  }
 
+
+const registry = createStyleRegistry();
+const flush = registry.flush();
+
+class MesheryDocument extends Document {
   render() {
     return (
       <Html lang="en" dir="ltr">
@@ -25,7 +19,6 @@ class MesheryDocument extends Document {
            */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
-
           {/* Preload Qanelas Soft font for loading screen */}
           <link
             rel="preload"
@@ -69,14 +62,16 @@ class MesheryDocument extends Document {
            * Only applicable for Chrome, safari and newest version of Opera
            */}
           <style type="text/css">
-            {`
-              .hide-scrollbar::-webkit-scrollbar {
-                width: 0 !important;
-              }
-              .reduce-scrollbar-width::-webkit-scrollbar {
-                width: 0.3em !important;
-              }
-            `}
+            {
+              '\
+            .hide-scrollbar::-webkit-scrollbar {\
+              width: 0 !important;\
+            }\
+          .reduce-scrollbar-width::-webkit-scrollbar {\
+              width: 0.3em !important;\
+            }\
+          '
+            }
           </style>
         </Head>
         <body style={{ margin: 0 }}>
@@ -88,7 +83,6 @@ class MesheryDocument extends Document {
           />
           {/* End Google Tag Manager (noscript) */}
           {/* Pre-React script */}
-          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/loadingMessages.js"></script>
 
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
@@ -98,19 +92,19 @@ class MesheryDocument extends Document {
           <script
             dangerouslySetInnerHTML={{
               __html: `
-                (function () {
-                  const loaderId = "PRE_REACT_LOADER-text-message"
+                  (function () {
+                    const loaderId = "PRE_REACT_LOADER-text-message"
 
-                  try {
-                    var el = document.getElementById(loaderId)
-                    if (!el) return;
+                    try {
+                      var el = document.getElementById(loaderId)
+                      if (!el) return;
 
-                    el.textContent = window.Loader.PersistedRandomLoadingMessage()
-                  } catch (e) {
-                    console.log("Failed to set loading message",e)
-                  }
-                })();
-              `,
+                      el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                    } catch (e) {
+                      console.log("Failed to set loading message",e)
+                    }
+                  })();
+                `,
             }}
           />
         </body>
@@ -118,5 +112,65 @@ class MesheryDocument extends Document {
     );
   }
 }
+
+MesheryDocument.getInitialProps = (ctx) => {
+  // resolution order
+  //
+  // on the server:
+  // 1. app.getInitialProps
+  // 2. page.getInitialProps
+  // 3. document.getInitialProps
+  // 4. app.render
+  // 5. page.render
+  // 6. document.render
+  //
+  // on the server with error:
+  // 1. document.getInitialProps
+  // 2. app.render
+  // 3. page.render
+  // 4. document.render
+  //
+  // on the client
+  // 1. app.getInitialProps
+  // 2. page.getInitialProps
+  // 3. app.render
+  // 4. page.render
+
+  // render app and page and get the context of the page with collected side effects.
+  let pageContext;
+  const page = ctx.renderPage((Component) => {
+    const WrappedComponent = (props) => {
+      pageContext = props.pageContext;
+      return <Component {...props} />;
+    };
+
+    WrappedComponent.propTypes = {
+      pageContext: PropTypes.object.isRequired,
+    };
+
+    return WrappedComponent;
+  });
+
+  let css;
+  // it might be undefined, e.g. after an error.
+  if (pageContext) {
+    css = pageContext.sheetsRegistry.toString();
+  }
+  return {
+    ...page,
+    pageContext,
+    // styles fragment is rendered after the app and page rendering finish.
+    styles: (
+      <React.Fragment>
+        <style
+          id="jss-server-side"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: css }}
+        />
+        {flush || null}
+      </React.Fragment>
+    ),
+  };
+};
 
 export default MesheryDocument;

@@ -39,9 +39,9 @@ const nextConfig = {
       '/configuration/catalog': { page: '/configuration/catalog' },
       '/configuration/designs': { page: '/configuration/designs' },
       '/configuration/designs/configurator': { page: '/configuration/designs/configurator' },
-      // /extension/[...component] handled via getStaticPaths
+      '/extension/[...component]': { page: '/extension/[...component]' },
       '/extensions': { page: '/extensions' },
-      '/': { page: '/' },
+      '/': { page: '/', query: { __nextDefaultLocale: 'en' } },
       '/management/adapter': { page: '/management/adapter' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
