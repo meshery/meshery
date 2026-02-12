@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Establishes a firewall relationship allowing an S3 Bucket to send notifications to an SNS Topic.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
