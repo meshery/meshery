@@ -102,7 +102,7 @@ Validation Questions:
   
 - Are we using a supported subtype?
   - Never invent new subtypes
-  - Only use: inventory, parent, network, mount, binding, sibling
+  - Only use supported Meshery subTypes (examples: inventory, parent, network, mount, binding, sibling, reference, permission, firewall, alias, wallet, matchlabels)
 ```
 
 **Logic & Cyclic Checks:**
@@ -110,6 +110,19 @@ Validation Questions:
 - Does this create infinite loops in graph visualization?
 - Are there conflicting relationships (A→B and B→A with wrong types)?
 - Does the relationship make semantic sense?
+```
+
+**Model Packaging Validation (Required for new/updated relationships):**
+```
+Follow: Using mesheryctl to modify and verify a relationship.md
+
+From the Meshery repo root, package the model using mesheryctl:
+mesheryctl model build <model-name>/<model-version> --path server/meshmodel
+
+Example:
+mesheryctl model build aws-s3-controller/v1.3.0 --path server/meshmodel
+
+This step should fail fast if the model folder structure and/or model artifacts are invalid, and serves as a functional validation that the relationship definitions are packageable into a model artifact.
 ```
 
 ### 3. Generation Workflow
