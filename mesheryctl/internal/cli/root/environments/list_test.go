@@ -1,6 +1,7 @@
 package environments
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -28,6 +29,14 @@ func TestListEnvironment(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message")),
+		},
+		{
+			Name:             "List environments when server returns non-UUID organization_id",
+			Args:             []string{"list", "--orgID", testConstants["orgID"]},
+			URL:              fmt.Sprintf("/%s?orgID=%s&page=0&pagesize=10", environmentApiPath, testConstants["orgID"]),
+			Fixture:          "list.environment.non_uuid_orgid.response.golden",
+			ExpectedResponse: "list.environment.non_uuid_orgid.success.golden",
+			ExpectError:      false,
 		},
 		// TODO: Enable this test case after other opened PR is merged
 		// {

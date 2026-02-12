@@ -15,8 +15,10 @@
 package environments
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/environment"
@@ -33,6 +35,60 @@ type environmentListFlags struct {
 }
 
 var environmentListFlagsProvided environmentListFlags
+
+type environmentListPage environment.EnvironmentPage
+
+// UnmarshalJSON keeps schema-driven decoding while recovering from invalid
+// organization_id values returned by the API (for example org names).
+func (e *environmentListPage) UnmarshalJSON(data []byte) error {
+	type strictEnvironmentPage environment.EnvironmentPage
+
+	var strict strictEnvironmentPage
+	if err := json.Unmarshal(data, &strict); err == nil {
+		*e = environmentListPage(strict)
+		return nil
+	}
+
+	var raw map[string]interface{}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	fallbackOrgID := uuid.FromStringOrNil(environmentListFlagsProvided.orgID).String()
+	if fallbackOrgID == uuid.Nil.String() {
+		fallbackOrgID = uuid.Nil.String()
+	}
+
+	envs, ok := raw["environments"].([]interface{})
+	if !ok {
+		return json.Unmarshal(data, &strict)
+	}
+
+	for _, env := range envs {
+		envMap, ok := env.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		orgID, ok := envMap["organization_id"].(string)
+		if !ok {
+			continue
+		}
+		if _, err := uuid.FromString(orgID); err != nil {
+			envMap["organization_id"] = fallbackOrgID
+		}
+	}
+
+	normalized, err := json.Marshal(raw)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(normalized, &strict); err != nil {
+		return err
+	}
+
+	*e = environmentListPage(strict)
+	return nil
+}
 
 var listEnvironmentCmd = &cobra.Command{
 	Use:   "list",
@@ -81,7 +137,7 @@ mesheryctl environment list --orgID [orgID] --pagesize [pagesize]
 	},
 }
 
-func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
+func processEnvironmentData(environmentResponse *environmentListPage) ([][]string, int64) {
 	rows := [][]string{}
 	for _, environment := range environmentResponse.Environments {
 		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
