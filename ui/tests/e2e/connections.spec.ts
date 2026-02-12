@@ -1,11 +1,20 @@
-import { expect, test } from './fixtures/project';
+/* eslint-disable */
+import { expect, Page, Response } from '@playwright/test';
+import { test } from './fixtures/project';
 import { ENV } from './env';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import { DashboardPage } from './pages/DashboardPage';
 
-//These tests need to be updated to reflect the latest connection api changes
-//
-function waitForConnectionsApiRepsonse(page) {
+// Define the shape of the transition test objects
+interface TransitionTest {
+  name: string;
+  transitionOption: string;
+  statusAfterTransition: string;
+  restorationOption: string;
+}
+
+// These tests need to be updated to reflect the latest connection api changes
+function waitForConnectionsApiRepsonse(page: Page): Promise<Response> {
   return page.waitForResponse(
     (response) =>
       response.url().includes('/api/integrations/connections') && response.status() === 200,
@@ -16,7 +25,7 @@ function waitForConnectionsApiRepsonse(page) {
 // transitionOption: Option to be chosen from dropdown to transition to another state
 // statusAfterTransition: Text shown in current state after transition
 // restorationOption: Option to be chosen from dropdown to transition back to connected state
-const transitionTests = [
+const transitionTests: TransitionTest[] = [
   // skip: this is broken
   // {
   //   name: 'Transition to disconnected state and then back to connected state',
@@ -45,9 +54,11 @@ test.describe.serial('Connection Management Tests', () => {
     await dashboardPage.navigateToConnections();
     await page.getByTestId('connection-addCluster').waitFor();
   });
+
   test('Verify that UI components are displayed', async ({ page }) => {
     // Verify that connections table is displayed (by checking for table headings)
-    for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
+    const headings = ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions'];
+    for (const heading of headings) {
       await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
     }
   });
@@ -168,6 +179,7 @@ test.describe.serial('Connection Management Tests', () => {
       await waitForSnackBar(page, 'Connection status updated');
     });
   });
+
   test('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
     // Navigate to 'Connections' tab
     await page.getByRole('tab', { name: 'Connections' }).click();
@@ -190,7 +202,7 @@ test.describe.serial('Connection Management Tests', () => {
       );
     }
 
-    //find the checkbox in the row
+    // find the checkbox in the row
     const checkbox = row.getByRole('checkbox').first();
     await checkbox.setChecked(true);
 
