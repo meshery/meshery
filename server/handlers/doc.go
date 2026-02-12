@@ -39,6 +39,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/v1beta1/user"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -91,8 +92,7 @@ type mesheryPatternResponseWrapper struct {
 }
 
 // swagger:response noContentWrapper
-type noContentWrapper struct {
-}
+type noContentWrapper struct{}
 
 // swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile idGetMesheryApplication idDeleteMesheryFilter idGetMesheryFilter
 type IDParameterWrapper struct {
@@ -220,7 +220,7 @@ type userLoadTestPrefsRespWrapper struct {
 type anonymousStatsParamsWrapper struct {
 	// in: body
 	Body                *models.PreferenceParams
-	LoadTestPreferences *models.LoadTestPreferences
+	LoadTestPreferences *user.LoadTestPreferences
 }
 
 // Returns load test preferences
@@ -581,7 +581,7 @@ type eventsResponseWrapper struct {
 
 // swagger:response loadTestPreferencesWrapper
 type possibleTransitions struct {
-	//in: body
+	// in: body
 	Body map[string]map[connections.ConnectionStatus][]connections.ConnectionStatus
 }
 

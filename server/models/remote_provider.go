@@ -33,6 +33,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
@@ -118,7 +119,6 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
-
 	l.Log.Info("Loading provider capabilities from local file: ", filePath)
 
 	file, err := os.Open(filePath)
@@ -153,7 +153,6 @@ func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (Provide
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
 func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
-
 	if viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV) != "" {
 		return l.loadCapabilitiesFromLocalFile(viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV))
 	}
@@ -283,7 +282,6 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
-
 	// If the provider properties are not loaded yet, load them
 	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
 		providerProperties, err := l.loadCapabilities("")
@@ -323,7 +321,6 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties, err := l.loadCapabilities(tokenString)
-
 	if err != nil {
 		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
 		http.Error(w, fmt.Sprintf("failed to load capabilities from remote provider: %v", err), http.StatusInternalServerError)
@@ -477,7 +474,6 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-
 	_, supportsAnonymousUserSessions := l.GetProviderProperties().Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 
@@ -950,6 +946,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	return *connection, nil
 }
+
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
@@ -1525,7 +1522,6 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 // IF the remote provider supports persisting events, this function will persist the event
 // The token is used to authenticate the request to the remote provider. if the token is nil, it uses the GlobalTokenForAnonymousResults
 func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
-
 	var tokenString string
 	if token == nil {
 		l.Log.Debug("No token provided, using GlobalTokenForAnonymousResults")
@@ -1632,11 +1628,9 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 	eventsResponse.ReadCount = response.ReadCount
 
 	return eventsResponse, nil
-
 }
 
 func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
-
 	eventTypes := EventTypesResponse{}
 
 	if !l.Capabilities.IsSupported(PersistEvents) {
@@ -1683,7 +1677,6 @@ func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uui
 	eventTypesResponse := []Response{}
 
 	err = json.Unmarshal(bdr, &eventTypesResponse)
-
 	if err != nil {
 		return eventTypes, ErrUnmarshal(err, "Events Response")
 	}
@@ -1698,11 +1691,9 @@ func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uui
 	eventTypes.Category = slices.Compact(eventTypes.Category)
 
 	return eventTypes, nil
-
 }
 
 func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
-
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -1716,7 +1707,6 @@ func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, stat
 	}
 
 	data, err := json.Marshal(payload)
-
 	if err != nil {
 		return ErrMarshal(err, "update event status")
 	}
@@ -1736,7 +1726,6 @@ func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, stat
 }
 
 func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
-
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -2124,7 +2113,6 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		"pattern_data": pattern,
 		"save":         true,
 	})
-
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -2136,7 +2124,6 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
 	if err != nil {
 		err = ErrDoRequest(err, http.MethodPost, remoteProviderURL.String())
 		l.Log.Error(err)
@@ -2387,7 +2374,6 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
-
 	if err != nil {
 		l.Log.Error(ErrDataRead(err, "respone body"))
 		return bdr, ErrDataRead(err, "design:"+patternID)
@@ -2624,7 +2610,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 }
 
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
-func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns pattern.MesheryPatternDeleteRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -2692,7 +2678,6 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		"save": save,
 		"path": path,
 	})
-
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, ErrMarshal(err, "meshery metrics for shipping")
@@ -2752,7 +2737,6 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		"filter_data": filter,
 		"save":        true,
 	})
-
 	if err != nil {
 		return nil, ErrMarshal(err, "Meshery Filters")
 	}
@@ -3218,7 +3202,6 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 			FilterResource: resource,
 		},
 	})
-
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -3276,7 +3259,6 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		"application_data": application,
 		"save":             true,
 	})
-
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -4011,7 +3993,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// Get new capabilities
 	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
 	providerProperties, err := l.loadCapabilities(tokenString)
-
 	// error out if capabilities could not be fetched
 	if err != nil {
 		l.Log.Error(fmt.Errorf("[TokenHandler] error loading capabilities from remote provider: %v", err))
@@ -4723,7 +4704,7 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 //
 // If the destination doesn't exists, it will create it
 func TarXZ(gzipStream io.Reader, destination string) error {
-	if err := os.MkdirAll(destination, 0755); err != nil {
+	if err := os.MkdirAll(destination, 0o755); err != nil {
 		return err
 	}
 
@@ -4756,7 +4737,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path.Join(destination, header.Name), 0755); err != nil {
+			if err := os.MkdirAll(path.Join(destination, header.Name), 0o755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
@@ -4764,7 +4745,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			// creating parent dirs.
 			// #nosec
 			if _, err := os.Stat(path.Join(destination, path.Dir(header.Name))); err != nil {
-				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0750); err != nil {
+				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0o750); err != nil {
 					return err
 				}
 			}
@@ -5137,7 +5118,6 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 }
 
 func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
-
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
@@ -5570,7 +5550,6 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 }
 
 func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
-
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
