@@ -10,3 +10,6 @@ tests/samples/
 **/__generated__/**
 playwright-report/
 test-results/
+tests/e2e/utils/waitFor.ts
+tests/e2e/utils/inspectXstate.ts
+tests/e2e/utils/waitForSnackBar.ts
