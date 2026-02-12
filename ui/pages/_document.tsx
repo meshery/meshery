@@ -7,51 +7,12 @@ import Document, {
   DocumentContext,
   DocumentInitialProps,
 } from 'next/document';
-import createEmotionServer from '@emotion/server/create-instance';
-import createCache from '@emotion/cache';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
-// Create emotion cache for SSR
-const createEmotionCache = () => {
-  return createCache({ key: 'css', prepend: true });
-};
-
-interface MyDocumentProps extends DocumentInitialProps {
-  emotionStyleTags: React.ReactElement[];
-}
-
-class MesheryDocument extends Document<MyDocumentProps> {
-  static async getInitialProps(ctx: DocumentContext): Promise<MyDocumentProps> {
-    const originalRenderPage = ctx.renderPage;
-
-    // Create emotion cache for this request
-    const cache = createEmotionCache();
-    const { extractCriticalToChunks } = createEmotionServer(cache);
-
-    ctx.renderPage = () =>
-      originalRenderPage({
-        enhanceApp: (App: React.ComponentType<any>) =>
-          function EnhanceApp(props) {
-            return <App emotionCache={cache} {...props} />;
-          },
-      });
-
+class MesheryDocument extends Document {
+  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
     const initialProps = await Document.getInitialProps(ctx);
-
-    // Extract critical CSS from the rendered page
-    const emotionStyles = extractCriticalToChunks(initialProps.html);
-    const emotionStyleTags = emotionStyles.styles.map((style) => (
-      <style
-        data-emotion={`${style.key} ${style.ids.join(' ')}`}
-        key={style.key}
-        dangerouslySetInnerHTML={{ __html: style.css }}
-      />
-    ));
-
-    return {
-      ...initialProps,
-      emotionStyleTags,
-    };
+    return { ...initialProps };
   }
 
   render() {
@@ -64,9 +25,6 @@ class MesheryDocument extends Document<MyDocumentProps> {
            */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
-
-          {/* Inject Emotion styles for SSR - prevents FOUC */}
-          {this.props.emotionStyleTags}
 
           {/* Preload Qanelas Soft font for loading screen */}
           <link
@@ -129,7 +87,7 @@ class MesheryDocument extends Document<MyDocumentProps> {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
-          {/* Pre-React script - must be sync to run before React hydration */}
+          {/* Pre-React script */}
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/loadingMessages.js"></script>
 

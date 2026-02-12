@@ -22,32 +22,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
-/**
- * Define static paths for the extension routes
- * These are the known extension paths that should be pre-rendered
- */
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [
-      // Pre-render the meshmap extension path
-      { params: { component: ['meshmap'] } },
-    ],
-    // fallback: false means other routes will 404
-    // Use 'blocking' if you want to generate pages on-demand
+    paths: [{ params: { component: ['meshmap'] } }],
     fallback: false,
   };
 };
 
-/**
- * Static props for extension pages
- * Required for static export with dynamic routes
- */
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  return {
-    props: {
-      component: params?.component || [],
-    },
-  };
+  return { props: { component: params?.component || [] } };
 };
 
 /**
