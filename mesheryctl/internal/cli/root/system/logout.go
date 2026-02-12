@@ -39,6 +39,17 @@ This command removes the authentication token from the user's filesystem`,
 mesheryctl system logout
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)

@@ -65,6 +65,16 @@ mesheryctl system delete -y
 }
 
 func deleteContainers() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		utils.TemplateToken,
+		utils.TemplateContext,
+	); err != nil {
+		return err
+	}
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {

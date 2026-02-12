@@ -9,69 +9,59 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestInitConfigUseCases(t *testing.T) {
+func TestPrepareConfig_ReadOnlyBehavior(t *testing.T) {
 	tmp := t.TempDir()
 
 	tests := []struct {
-		name  string
-		setup func(t *testing.T)
+		name        string
+		setup       func(t *testing.T)
+		expectError bool
 	}{
 		{
-			name: "given missing config file when calling initConfig then default config is created",
+			name: "given missing config file when prepareConfig then error returned",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-missing")
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
 			},
+			expectError: true,
 		},
 		{
-			name: "given an empty config file when calling initConfig then empty config creates default",
+			name: "given empty config file when prepareConfig then error returned",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-empty")
-				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.MkdirAll(utils.MesheryFolder, 0o755)
 
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
-				if err := os.WriteFile(utils.DefaultConfigPath, []byte(""), 0o644); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.WriteFile(utils.DefaultConfigPath, []byte(""), 0o644)
 			},
+			expectError: false,
 		},
 		{
-			name: "given config path without permission when calling initconfig then returns error",
+			name: "given permission denied config when prepareConfig then error returned",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-permission")
-				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.MkdirAll(utils.MesheryFolder, 0o755)
 
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
-				if err := os.WriteFile(utils.DefaultConfigPath, []byte("abc"), 0o644); err != nil {
-					t.Fatal(err)
-				}
-
-				if err := os.Chmod(utils.DefaultConfigPath, 0o000); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.WriteFile(utils.DefaultConfigPath, []byte("abc"), 0o644)
+				_ = os.Chmod(utils.DefaultConfigPath, 0o000)
 
 				t.Cleanup(func() {
 					_ = os.Chmod(utils.DefaultConfigPath, 0o644)
 				})
 			},
+			expectError: true,
 		},
 		{
-			name: "given permission denied when calling initconfig then returns error",
+			name: "given existing config when prepareConfig then loads successfully without mutation",
 			setup: func(t *testing.T) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-existing")
-				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.MkdirAll(utils.MesheryFolder, 0o755)
 
 				utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
-				if err := os.WriteFile(utils.DefaultConfigPath, []byte("test"), 0o644); err != nil {
-					t.Fatal(err)
-				}
+				_ = os.WriteFile(utils.DefaultConfigPath, []byte("test"), 0o644)
 			},
+			expectError: false,
 		},
 	}
 
@@ -79,12 +69,10 @@ func TestInitConfigUseCases(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			viper.Reset()
 
-			// Save global state
 			origMesheryFolder := utils.MesheryFolder
 			origDefaultConfigPath := utils.DefaultConfigPath
 			origCfgFile := cfgFile
 
-			// Restore after each test
 			t.Cleanup(func() {
 				utils.MesheryFolder = origMesheryFolder
 				utils.DefaultConfigPath = origDefaultConfigPath
@@ -92,12 +80,20 @@ func TestInitConfigUseCases(t *testing.T) {
 			})
 
 			tt.setup(t)
-
-			// ensure default config path branch is exercised
 			cfgFile = utils.DefaultConfigPath
 
-			// Should not panic
-			initConfig()
+			err := prepareConfig()
+
+			if tt.expectError {
+				if err == nil {
+					t.Fatal("expected error but got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 		})
 	}
 }

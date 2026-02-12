@@ -113,12 +113,21 @@ mesheryctl system start --provider Meshery
 }
 
 func start() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		utils.TemplateToken,
+		utils.TemplateContext,
+	); err != nil {
+		return err
+	}
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 			return ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {

@@ -55,7 +55,7 @@ mesheryctl system channel view
 			return errors.New(utils.SystemChannelSubError("this command takes no arguments.\n", "view"))
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
+		if err != nil || mctlCfg == nil {
 			utils.Log.Error(err)
 			return nil
 		}
@@ -80,7 +80,7 @@ mesheryctl system channel view
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
+		if err != nil || currCtx == nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
@@ -249,6 +249,16 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		)
+	},
+
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel
