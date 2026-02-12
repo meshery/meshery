@@ -36,7 +36,7 @@ jobs:
           production-deploy: false
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           enable-commit-comment: false
-          alias: pr-${{ github.event.workflow_run.pull_requests[0].number }}
+          alias: pr-${{ steps.pr.outputs.number }}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
