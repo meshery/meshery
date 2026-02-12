@@ -56,7 +56,7 @@
     "@uiw/react-md-editor": "^4.0.5",
     "@xstate/react": "^5.0.4",
     "ajv-formats": "^3.0.1",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "billboard.js": "^3.17.2",
     "cross-env": "^7.0.3",
     "graphql": "^16.11.0",
