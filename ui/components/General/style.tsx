@@ -30,9 +30,8 @@ export const TryAgainButton = styled(Button)(({ theme }) => ({
 
 export const EditButton = styled(Button)(({ theme }) => ({
   backgroundImage: theme.palette.background.brand.prominent,
-  backgroundColor: `${
-    theme.palette.background.brand.prominent || theme.palette.background.brand.default
-  }`,
+  backgroundColor: `${theme.palette.background.brand.prominent || theme.palette.background.brand.default
+    }`,
   '@media (max-width: 768px)': {
     minWidth: '50px',
   },
@@ -159,6 +158,10 @@ export const NavigatorListItem = styled(ListItemButton, {
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
   fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -229,6 +232,10 @@ export const SideBarListItem = styled(ListItemButton, {
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
   fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     ...(link && {
       backgroundColor: 'rgba(0, 187, 166, 0.5)',

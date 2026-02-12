@@ -2,6 +2,8 @@ import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
@@ -146,7 +148,7 @@ const KubernetesSubscription = ({ setAppState }) => {
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
-      return () => {};
+      return () => { };
     }
 
     return subscribeK8sContext(
@@ -188,7 +190,7 @@ const KubernetesSubscription = ({ setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
+const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelector((state) => state.ui);
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
@@ -307,7 +309,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
-        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
+        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => { } }));
         return;
       }
 
@@ -598,7 +600,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
     <DynamicFullScreenLoader isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
-          <MesheryThemeProvider>
+          <MesheryThemeProvider emotionCache={emotionCache}>
             <NoSsr>
               <ErrorBoundary customFallback={CustomErrorFallback}>
                 <LoadSessionGuard>
@@ -699,23 +701,33 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
   return { pageProps };
 };
 
-const MesheryThemeProvider = ({ children }) => {
+// Client-side Emotion cache with prepend: true ensures CSS-in-JS styles
+// are inserted before other stylesheets for correct specificity
+const clientSideEmotionCache = createCache({ key: 'css', prepend: true });
+
+const MesheryThemeProvider = ({ children, emotionCache }) => {
   const themePref = useThemePreference();
   const mode = themePref?.data?.mode || 'dark';
-  return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
+  return (
+    <SistentThemeProvider initialMode={mode} emotionCache={emotionCache}>
+      {children}
+    </SistentThemeProvider>
+  );
 };
 
-const MesheryAppWrapper = (props) => {
+const MesheryAppWrapper = ({ emotionCache = clientSideEmotionCache, ...props }) => {
   return (
-    <ProviderStoreWrapper>
-      <Head>
-        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-        <title>Meshery</title>
-      </Head>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <MesheryApp {...props} />
-      </LocalizationProvider>
-    </ProviderStoreWrapper>
+    <CacheProvider value={emotionCache}>
+      <ProviderStoreWrapper>
+        <Head>
+          <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+          <title>Meshery</title>
+        </Head>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <MesheryApp {...props} emotionCache={emotionCache} />
+        </LocalizationProvider>
+      </ProviderStoreWrapper>
+    </CacheProvider>
   );
 };
 
