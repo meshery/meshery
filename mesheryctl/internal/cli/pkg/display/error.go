@@ -2,14 +2,18 @@ package display
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshkit/errors"
 )
 
-var ErrListPaginationCode = "mesheryctl-1157"
-var ErrEncodingDataCode = "mesheryctl-1183"
-var ErrUnsupportedFormatCode = "mesheryctl-1184"
-var ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
+var (
+	ErrListPaginationCode         = "mesheryctl-1157"
+	ErrEncodingDataCode           = "mesheryctl-1183"
+	ErrUnsupportedFormatCode      = "mesheryctl-1184"
+	ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
+	ErrInvalidOutputFormatCode    = "mesheryctl-1198"
+)
 
 func ErrorListPagination(err error, currentPage int) error {
 	return errors.New(ErrListPaginationCode, errors.Alert,
@@ -29,4 +33,15 @@ func ErrUnsupportedFormat(format string) error {
 
 func ErrOutputFileNotSpecified() error {
 	return errors.New(ErrOutputFileNotSpecifiedCode, errors.Alert, []string{"Output file path is not specified."}, []string{"The output file path was not provided."}, []string{"An output file path must be specified to save the output."}, []string{"Provide a valid file path."})
+}
+
+func ErrInvalidOutputFormat(format string) error {
+	return errors.New(
+		ErrInvalidOutputFormatCode,
+		errors.Alert,
+		[]string{"Invalid Output Format"},
+		[]string{fmt.Sprintf("Provided output format %q is invalid", format)},
+		[]string{"The specified output format is not supported"},
+		[]string{fmt.Sprintf("Ensure using [%s] as the output format", strings.Join(validOutputFormat, "|"))},
+	)
 }

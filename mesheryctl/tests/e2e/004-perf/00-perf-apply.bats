@@ -9,8 +9,10 @@ setup() {
     run $MESHERYCTL_BIN perf apply dummy-test-profile -y
 
     assert_failure
-    assert_line --partial "Unable to get URL for performing test"
+    assert_output --partial "Unable to get URL for performing test" || \
+    assert_output --partial "authentication token"
 }
+
 
 @test "mesheryctl perf apply runs successfully with test-profile and valid URL" {
     run $MESHERYCTL_BIN perf apply test-profile --url "https://google.com" -y

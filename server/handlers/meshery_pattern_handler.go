@@ -961,7 +961,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(*event, nil)
 
-		pretifiedName := strings.ToLower(strings.Replace(pattern.Name, " ", "", -1)) // ensures that tag validation passes
+		pretifiedName := strings.ToLower(strings.ReplaceAll(pattern.Name, " ", "")) // ensures that tag validation passes
 		tmpOCITarFilePath := filepath.Join(tmpDir, pretifiedName+".tar")
 		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pretifiedName)
 		if err != nil {

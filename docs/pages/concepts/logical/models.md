@@ -27,7 +27,7 @@ Models serve as the foundational packaging units for Meshery's logical object re
 
 See [Contributing to Models](/project/contributing/contributing-models).
 
-As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
+As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities used to represent and manage cloud and cloud native systems.
 
 Using Meshery Models, users can define and manage cloud-native systems, including applications, services, and infrastructure. Models provide a way to represent the desired state of the system, and they can be used to deploy, monitor, and manage cloud-native applications. Models are designed to be extensible, allowing users to define new constructs as needed. They are also machine-readable, allowing them to be used by automation tools.
 
@@ -46,11 +46,11 @@ The registry provides a central location for managing and distributing your infr
 
 Every entity type is implemented by a [registrant]({{site.baseurl}}/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
-Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons. Others registrants offer specific services. For example, the Meshery Adapter for Nighthawk offers load generation and service performance characteriazation.
+Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed, and others of which represent additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example, the Meshery Adapter for Istio offers integration with each of Istio's addons. Other registrants offer specific services. For example, the Meshery Adapter for Nighthawk offers load generation and service performance characterization.
 
 ## Design Principles
 
-Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
+Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models are designed to meet the following goals:
 
 * **Comprehensive:** The model should be able to represent a wide range of cloud and cloud native resources.
 * **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
@@ -87,7 +87,7 @@ Models introduce various core constructs that form the foundation of the model. 
 
 ### Relationships
 
-[Relationships]({{site.baseurl}}/concepts/logical/relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
+[Relationships]({{site.baseurl}}/concepts/logical/relationships) define the nature of interaction between interconnected components in a Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
 
 #### Evaluation of Relationships
 
@@ -101,7 +101,7 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 
 ### Patterns
 
-[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns](patterns) are reusable configurations that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 {% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
