@@ -609,7 +609,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 
 // RecordPreferences - records the user preference
 func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
-	return l.MapPreferencePersister.WriteToPersister(userID, data)
+	return l.WriteToPersister(userID, data)
 }
 
 // UpdateToken - specific to remote auth

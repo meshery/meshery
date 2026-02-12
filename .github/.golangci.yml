@@ -3,11 +3,6 @@ run:
   timeout: 5m
 
 linters:
-  settings:
-    staticcheck:
-      checks: 
-        - ST1005
-        - QF1004
   disable:
     - errcheck
   exclusions:

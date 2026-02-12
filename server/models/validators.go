@@ -24,7 +24,7 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		if testClient.Protocol.String() == "" {
 			return ErrProtocol
 		}
-		if !(testClient.LoadGenerator == Wrk2LG.Name() || testClient.LoadGenerator == FortioLG.Name()) {
+		if testClient.LoadGenerator != Wrk2LG.Name() && testClient.LoadGenerator != FortioLG.Name() {
 			return ErrLoadgenerator
 		}
 		if len(testClient.EndpointUrls) < 1 {
