@@ -1,4 +1,4 @@
-name: Deploy Docs New Preview
+name: Deploy Docs Preview
 on:
   workflow_run:
     workflows:

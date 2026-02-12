@@ -1,4 +1,4 @@
-name: Build and Preview Docs New
+name: Build and Preview Docs
 on:
   pull_request:
     branches: [ master ]
