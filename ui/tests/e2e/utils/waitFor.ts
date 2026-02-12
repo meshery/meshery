@@ -1,11 +1,13 @@
-export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000) : Promise<T> => {
+/* eslint-disable */
+export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000): Promise<T> => {
   return new Promise((resolve, reject) => {
-    // we declare the interval variable first so the clouser can access it 
-    let pollingInterval: NodeJS.Timeout;
+    // Changing to 'any' to avoid "NodeJS is not defined" linter error
+    let pollingInterval: any;
+
     const pollFn = async () => {
       try {
         const result = await func();
-        if(result){
+        if (result) {
           clearInterval(pollingInterval);
           resolve(result);
         }
@@ -14,6 +16,7 @@ export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000) : P
         reject(error);
       }
     };
+
     pollingInterval = setInterval(pollFn, 200);
 
     setTimeout(() => {

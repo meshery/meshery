@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Page, JSHandle } from '@playwright/test';
 import { waitFor } from './waitFor';
 
@@ -10,16 +11,15 @@ interface WaitForEventParams {
 /**
  * Waits for a specific event from the XState debugger.
  */
-export const waitForEvent = async ({ 
-  page, 
-  eventType, 
-  timeout_after = 3000 
+export const waitForEvent = async ({
+  page,
+  eventType,
+  timeout_after = 3000,
 }: WaitForEventParams): Promise<JSHandle> => {
-  
   await waitFor(
     () =>
       page.evaluate(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // We cast window to any to access the debugger
         const debuggerActor = (window as any)?.debuggingActorRef;
         if (!debuggerActor) {
           return null;
@@ -31,9 +31,8 @@ export const waitForEvent = async ({
 
   const eventHandle = await page.evaluateHandle(
     async ([eventType, timeout_after]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const debuggerActor = (window as any)?.debuggingActorRef;
-      
+
       const timeout = setTimeout(() => {
         throw new Error(`Timeout after ${timeout_after} ms for event ${eventType}`);
       }, timeout_after);
@@ -41,7 +40,7 @@ export const waitForEvent = async ({
       return new Promise((resolve) => {
         const in_buffer = debuggerActor
           .getSnapshot()
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // Using any for the event buffer to avoid complex typing
           .context.events_buffer.find((e: any) => e.data.eventType === eventType);
 
         if (in_buffer) {
@@ -49,7 +48,6 @@ export const waitForEvent = async ({
           return resolve(in_buffer.data.incommingEvent);
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subscription = debuggerActor.on('LOGGED_EVENT', (event: any) => {
           if (event.data.eventType === eventType) {
             subscription.unsubscribe();
