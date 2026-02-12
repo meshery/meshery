@@ -1,12 +1,57 @@
 import React from 'react';
-import Document, { Head, Main, NextScript, Html, DocumentContext } from 'next/document';
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+  DocumentInitialProps,
+} from 'next/document';
+import createEmotionServer from '@emotion/server/create-instance';
+import createCache from '@emotion/cache';
 import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
 
-class MesheryDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext) {
-    // Call parent's getInitialProps to get the default html, head, and styles
+// Create emotion cache for SSR
+const createEmotionCache = () => {
+  return createCache({ key: 'css', prepend: true });
+};
+
+interface MyDocumentProps extends DocumentInitialProps {
+  emotionStyleTags: React.ReactElement[];
+}
+
+class MesheryDocument extends Document<MyDocumentProps> {
+  static async getInitialProps(ctx: DocumentContext): Promise<MyDocumentProps> {
+    const originalRenderPage = ctx.renderPage;
+
+    // Create emotion cache for this request
+    const cache = createEmotionCache();
+    const { extractCriticalToChunks } = createEmotionServer(cache);
+
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: (App: React.ComponentType<any>) =>
+          function EnhanceApp(props) {
+            return <App emotionCache={cache} {...props} />;
+          },
+      });
+
     const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
+
+    // Extract critical CSS from the rendered page
+    const emotionStyles = extractCriticalToChunks(initialProps.html);
+    const emotionStyleTags = emotionStyles.styles.map((style) => (
+      <style
+        data-emotion={`${style.key} ${style.ids.join(' ')}`}
+        key={style.key}
+        dangerouslySetInnerHTML={{ __html: style.css }}
+      />
+    ));
+
+    return {
+      ...initialProps,
+      emotionStyleTags,
+    };
   }
 
   render() {
@@ -19,6 +64,10 @@ class MesheryDocument extends Document {
            */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
+
+          {/* Inject Emotion styles for SSR - prevents FOUC */}
+          {this.props.emotionStyleTags}
+
           {/* Preload Qanelas Soft font for loading screen */}
           <link
             rel="preload"
@@ -62,16 +111,14 @@ class MesheryDocument extends Document {
            * Only applicable for Chrome, safari and newest version of Opera
            */}
           <style type="text/css">
-            {
-              '\
-            .hide-scrollbar::-webkit-scrollbar {\
-              width: 0 !important;\
-            }\
-          .reduce-scrollbar-width::-webkit-scrollbar {\
-              width: 0.3em !important;\
-            }\
-          '
-            }
+            {`
+              .hide-scrollbar::-webkit-scrollbar {
+                width: 0 !important;
+              }
+              .reduce-scrollbar-width::-webkit-scrollbar {
+                width: 0.3em !important;
+              }
+            `}
           </style>
         </Head>
         <body style={{ margin: 0 }}>
@@ -82,7 +129,8 @@ class MesheryDocument extends Document {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
-          {/* Pre-React script */}
+          {/* Pre-React script - must be sync to run before React hydration */}
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/loadingMessages.js"></script>
 
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
@@ -92,19 +140,19 @@ class MesheryDocument extends Document {
           <script
             dangerouslySetInnerHTML={{
               __html: `
-                  (function () {
-                    const loaderId = "PRE_REACT_LOADER-text-message"
+                (function () {
+                  const loaderId = "PRE_REACT_LOADER-text-message"
 
-                    try {
-                      var el = document.getElementById(loaderId)
-                      if (!el) return;
+                  try {
+                    var el = document.getElementById(loaderId)
+                    if (!el) return;
 
-                      el.textContent = window.Loader.PersistedRandomLoadingMessage()
-                    } catch (e) {
-                      console.log("Failed to set loading message",e)
-                    }
-                  })();
-                `,
+                    el.textContent = window.Loader.PersistedRandomLoadingMessage()
+                  } catch (e) {
+                    console.log("Failed to set loading message",e)
+                  }
+                })();
+              `,
             }}
           />
         </body>

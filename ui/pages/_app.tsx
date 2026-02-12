@@ -2,12 +2,17 @@ import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+// Client-side emotion cache (created once)
+const clientSideEmotionCache = createCache({ key: 'css', prepend: true });
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -38,11 +43,7 @@ import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import {
-  ErrorBoundary,
-  useTheme,
-  SistentThemeProvider,
-} from '@sistent/sistent';
+import { ErrorBoundary, useTheme, SistentThemeProvider } from '@sistent/sistent';
 // Using MUI components directly for better React 18 compatibility
 import { CssBaseline, Typography, NoSsr } from '@mui/material';
 import { Hidden } from '@mui/material';
@@ -704,17 +705,28 @@ const MesheryThemeProvider = ({ children }) => {
   return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
 };
 
-const MesheryAppWrapper = (props) => {
+interface MesheryAppWrapperProps {
+  emotionCache?: EmotionCache;
+  Component: React.ComponentType<any>;
+  pageProps: Record<string, any>;
+}
+
+const MesheryAppWrapper = ({
+  emotionCache = clientSideEmotionCache,
+  ...props
+}: MesheryAppWrapperProps) => {
   return (
-    <ProviderStoreWrapper>
-      <Head>
-        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-        <title>Meshery</title>
-      </Head>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <MesheryApp {...props} />
-      </LocalizationProvider>
-    </ProviderStoreWrapper>
+    <CacheProvider value={emotionCache}>
+      <ProviderStoreWrapper>
+        <Head>
+          <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+          <title>Meshery</title>
+        </Head>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <MesheryApp {...props} />
+        </LocalizationProvider>
+      </ProviderStoreWrapper>
+    </CacheProvider>
   );
 };
 

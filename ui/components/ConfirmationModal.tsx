@@ -17,8 +17,8 @@ import {
   Modal,
   ModalBody,
   useTheme,
+  SearchIcon as Search,
 } from '@sistent/sistent';
-import  SearchIcon  from '@mui/icons-material/Search';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
