@@ -35,6 +35,8 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1    
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
@@ -70,6 +72,7 @@ jobs:
           go-version: "1.25"
       - name: Run mesheryctl coverage
         run: go test --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic
+
   build-mesheryctl:
     name: Build Meshery Binaries
     runs-on: ubuntu-24.04
@@ -101,6 +104,12 @@ jobs:
       matrix:
         platform: [docker, kubernetes]
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          docker system prune -af 2>/dev/null || true
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
@@ -133,4 +142,16 @@ jobs:
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with ${{ matrix.platform }} completed."
         working-directory: ./mesheryctl
-
+        
+        # Cleanup runs with `if: always()` to ensure test resources (Kind, Docker) are removed even on failure
+        # This keeps the runner clean and prevents disk issues from affecting later steps
+      - name: Cleanup integration test resources
+        if: always()
+        run: |
+          if [ "${{ matrix.platform }}" = "kubernetes" ]; then
+            kind delete cluster --name kind-cluster 2>/dev/null || true
+          fi
+          docker system prune -af --volumes 2>/dev/null || true
+          go clean -modcache 2>/dev/null || true
+          rm -f ./mesheryctl/mesheryctl 2>/dev/null || true
+          df -h

@@ -58,6 +58,12 @@ jobs:
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
+      - name: Clean disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          docker system prune -af
       - name: Setting up minikube
         id: setk8s
         uses: manusa/actions-setup-minikube@v2.11.0
@@ -66,9 +72,12 @@ jobs:
           kubernetes version: '"${{ matrix.k8s_version }}"'
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
+      # Adapter integration tests only need the latest adapter code
+      # Full git history is not required for testing
       - name: Checkout Code
         uses: actions/checkout@master
-
+        with:
+          fetch-depth: 1  
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
@@ -93,12 +102,10 @@ jobs:
             echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
           fi
           cat ~/.meshery/auth.json
-
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
           curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
-
       # Start the adapter using yamls
       - name: Start adapter
         run: |
@@ -109,11 +116,9 @@ jobs:
           cat testimagedep.yaml
           kubectl apply -f testimagedep.yaml --namespace=meshery
           kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
-
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling
         run: minikube tunnel &> /dev/null &
-
       # Checking meshery server logs
       - name: Check Meshery pod logs
         run: |
@@ -148,7 +153,7 @@ jobs:
           name: patternfile
       - name: Wait for Meshery pods to come up
         run: sleep 100
-      # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
+      # This pattern will try to install service mesh (the first attempt can fail currently for k8s components so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
       - name: Pattern apply
         run: |
           cat ./${{ inputs.patternfile_name }}
@@ -182,9 +187,7 @@ jobs:
           resources=(${resourcenames//,/ })
           types=(${resourcetypes//,/ })
           ns=(${nsnames//,/ })
-
           breakout=1
-
           while [ $SECONDS -lt $end ]; do
               for i in "${!resources[@]}"
               do
@@ -240,6 +243,25 @@ jobs:
         with:
           name: ${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}
+          retention-days: 1 
+      # Proactively frees disk space to avoid runner storage exhaustion.
+      # The added execution time is minimal compared to the cost of rerunning
+      # the workflow after a failure caused by leftover Docker/Minikube artifacts.
+      - name: Cleanup Kubernetes and Docker resources
+        if: always()
+        run: |
+          # Stop minikube tunnel
+          pkill -f "minikube tunnel" 2>/dev/null || true
+          # Delete minikube cluster
+          minikube stop 2>/dev/null || true
+          minikube delete --all --purge 2>/dev/null || true
+          # Clean Docker system
+          docker system prune -af --volumes
+          # Clean temporary files
+          rm -f testimagedep.yaml data.json 2>/dev/null || true
+          rm -rf ~/.meshery 2>/dev/null || true
+          # Show disk usage
+          df -h
       - name: exit
         run: |
           if [ "$exitstatus" -eq 1 ];then
