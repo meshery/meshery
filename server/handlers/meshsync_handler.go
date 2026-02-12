@@ -377,7 +377,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 		if error != nil {
 			design = rawDesign
-			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
+			h.log.Error(fmt.Errorf("error evaluating design: %v", error))
 		} else {
 			design = evalResponse.Design // use the evaluated design
 		}
@@ -525,7 +525,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
-		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
 		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}

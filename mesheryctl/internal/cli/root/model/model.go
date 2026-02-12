@@ -152,7 +152,7 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		if modelName == "" {
 			modelName = "N/A"
 		}
-		rows = append(rows, []string{modelName, string(model.Category.Name), model.Version})
+		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
 	return rows, int64(modelsResponse.Count)
