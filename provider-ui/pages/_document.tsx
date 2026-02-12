@@ -1,15 +1,26 @@
-import * as React from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
-import createEmotionServer from "@emotion/server/create-instance";
-import createEmotionCache from "../lib/createEmotionCache";
+import * as React from 'react';
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+  DocumentInitialProps,
+} from 'next/document';
+import createEmotionServer from '@emotion/server/create-instance';
+import createEmotionCache from '../lib/createEmotionCache';
 
-export default class MyDocument extends Document {
-  render() {
+interface MyDocumentProps extends DocumentInitialProps {
+  emotionStyleTags: React.ReactElement[];
+}
+
+export default class MyDocument extends Document<MyDocumentProps> {
+  render(): React.ReactElement {
     return (
       <Html lang="en">
         <Head>
           {/* PWA primary color */}
-          <meta name="theme-color" content={"#607d8b"} />
+          <meta name="theme-color" content={'#607d8b'} />
           <link rel="shortcut icon" href="/provider/favicon.ico" />
           <meta name="emotion-insertion-point" content="" />
           {this.props.emotionStyleTags}
@@ -25,7 +36,7 @@ export default class MyDocument extends Document {
 
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with static-site generation (SSG).
-MyDocument.getInitialProps = async (ctx) => {
+MyDocument.getInitialProps = async (ctx: DocumentContext): Promise<MyDocumentProps> => {
   // Resolution order
   //
   // On the server:
@@ -59,6 +70,7 @@ MyDocument.getInitialProps = async (ctx) => {
     originalRenderPage({
       enhanceApp: (App) =>
         function EnhanceApp(props) {
+          // @ts-expect-error - emotionCache is a custom prop for MUI/Emotion integration
           return <App emotionCache={cache} {...props} />;
         },
     });
@@ -69,9 +81,8 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
-      data-emotion={`${style.key} ${style.ids.join(" ")}`}
+      data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
-
       dangerouslySetInnerHTML={{ __html: style.css }}
     />
   ));
