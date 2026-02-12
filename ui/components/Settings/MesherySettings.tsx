@@ -51,6 +51,7 @@ import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import type { RootState } from '@/store/index';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -144,11 +145,11 @@ const MesherySettings = () => {
   const router = useRouter();
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus } = useSelector((state) => state.telemetry);
-  const { grafana } = useSelector((state) => state.telemetry);
-  const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { k8sConfig } = useSelector((state: RootState) => state.ui);
+  const { prometheus } = useSelector((state: RootState) => state.telemetry);
+  const { grafana } = useSelector((state: RootState) => state.telemetry);
+  const { meshAdapters } = useSelector((state: RootState) => state.adapter);
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery(undefined);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -159,7 +160,7 @@ const MesherySettings = () => {
     componentsCount: 0,
     relationshipsCount: 0,
     registrantCount: 0,
-    isMeshConfigured: k8sConfig.clusterConfigured,
+    isMeshConfigured: k8sConfig.length > 0,
     scannedPrometheus: [],
     scannedGrafana: [],
   });
@@ -238,7 +239,7 @@ const MesherySettings = () => {
 
   const { tabVal, subTabVal } = state;
   let backToPlay: React.ReactNode = null;
-  if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
+  if (k8sConfig.length > 0 && meshAdapters.length > 0) {
     backToPlay = (
       <div>
         <Link href="/management">
@@ -357,16 +358,18 @@ const MesherySettings = () => {
                             : ''}
                         </Typography>
                       </div>
-                      <Typography
-                        variant="body2"
-                        component="a"
+                      <a
                         href="https://docs.meshery.io/extensibility/providers"
                         target="_blank"
                         rel="noopener noreferrer"
-                        sx={{ color: theme.palette.primary.main }}
+                        style={{
+                          color: theme.palette.primary.main,
+                          fontSize: '0.875rem',
+                          textDecoration: 'none',
+                        }}
                       >
                         Learn about providers
-                      </Typography>
+                      </a>
                     </Paper>
                     <DashboardMeshModelGraph />
                     <Grid2 container spacing={2} size="grow">
