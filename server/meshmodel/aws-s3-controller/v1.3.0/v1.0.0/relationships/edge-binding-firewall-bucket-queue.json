@@ -35,7 +35,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "s3-controller",
+              "name": "aws-s3-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
