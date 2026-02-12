@@ -43,8 +43,7 @@ jobs:
       - name: Build Hugo site
         run: |
           cd docs-new
-          PREVIEW_URL="https://pr-${{ github.event.pull_request.number }}-meshery-docs-preview.netlify.app"
-          hugo --cleanDestinationDir -e production -DFE --minify --baseURL "$PREVIEW_URL"
+          hugo --cleanDestinationDir -e production -DFE --minify --baseURL "/"
 
       - name: Zip Site
         run: |
