@@ -114,7 +114,7 @@ func (l *RemoteProvider) Initialize() {
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
-	l.ProviderProperties.ProviderURL = l.GetProviderURL()
+	l.ProviderURL = l.GetProviderURL()
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
@@ -285,7 +285,7 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 
 	// If the provider properties are not loaded yet, load them
-	if (l.ProviderProperties.PackageVersion == "" || l.ProviderProperties.PackageURL == "" || len(l.ProviderProperties.Capabilities) == 0) && l.RemoteProviderURL != "" {
+	if (l.PackageVersion == "" || l.PackageURL == "" || len(l.Capabilities) == 0) && l.RemoteProviderURL != "" {
 		providerProperties, err := l.loadCapabilities("")
 		if err != nil {
 			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
@@ -1181,7 +1181,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 		l.Log.Info("Retrieved results from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1241,7 +1241,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 		l.Log.Info("Retrieved results from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1405,9 +1405,9 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*Mesher
 		}
 		return res, nil
 	}
-	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(err, string(bdr), resp.StatusCode)
 	l.Log.Error(err)
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(err, string(bdr), resp.StatusCode)
 }
 
 // PublishResults - publishes results to the provider backend synchronously
@@ -3987,7 +3987,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		l.Log.Error(ErrOperationNotAvaibale)
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.SessionPreferencePersister.WriteToPersister(userID, data); err != nil {
+	if err := l.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
