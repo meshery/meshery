@@ -95,13 +95,12 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(setupLogger)
-
 	err := utils.SetFileLocation()
 	if err != nil {
 		utils.LogError.Fatal(err)
 	}
 
+	cobra.OnInitialize(setupLogger)
 	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
