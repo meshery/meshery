@@ -280,7 +280,6 @@ var TemplateContext = config.Context{
 	Components: ListOfComponents,
 	Channel:    "stable",
 	Version:    "latest",
-	Provider:   "Layer5",
 }
 
 var Services = map[string]Service{
