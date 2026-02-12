@@ -1,0 +1,42 @@
+{{/*
+  training-video.html - Embed a training video from page frontmatter
+
+  Usage:
+    {{< training-video >}}
+
+  The shortcode reads the `training-video` parameter from the page's
+  frontmatter and embeds a YouTube iframe if a valid YouTube URL is found.
+
+  Frontmatter example:
+    ---
+    title: Build & Release (CI)
+    training-video: "https://www.youtube.com/watch?v=dlr_nzJV16Q"
+    ---
+
+  Replaces Jekyll include:
+    {% include training-video.html %}
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+{{- $videoURL := .Page.Params.training_video | default (.Page.Params.trainingVideo | default "") -}}
+{{- if $videoURL -}}
+  {{- $videoID := "" -}}
+  {{- if findRE `youtube\.com/watch\?v=` $videoURL -}}
+    {{- $videoID = index (split (index (split $videoURL "v=") 1) "&") 0 -}}
+  {{- else if findRE `youtu\.be/` $videoURL -}}
+    {{- $videoID = index (split (index (split $videoURL "youtu.be/") 1) "?") 0 -}}
+  {{- end -}}
+  {{- if $videoID -}}
+    <div class="training-video">
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/{{ $videoID }}"
+        title="Training Video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  {{- end -}}
+{{- end -}}

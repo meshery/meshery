@@ -1,0 +1,23 @@
+{{/*
+  member-form.html - Community member form callout shortcode
+
+  Usage:
+    {{< member-form >}}
+
+  Renders a dark alert box prompting users to fill in the community
+  member form to gain access to community resources.
+
+  Replaces Jekyll include:
+    {% include member-form.html %}
+
+  CSS Dependencies (in assets/scss/_alert.scss):
+    - .alert
+    - .alert-dark
+    - .alert-heading
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+<div class="alert alert-dark" role="alert">
+  <h4 class="alert-heading">Resource Access</h4>
+  Fill-in a <a href="https://meshery.io/newcomers">community member form</a> to gain access to community resources.
+</div>
