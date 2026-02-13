@@ -55,7 +55,7 @@ require (
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.1.2
 	github.com/olekukonko/tablewriter v1.1.0
-	github.com/open-policy-agent/opa v1.11.0
+	github.com/open-policy-agent/opa v1.12.3
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
