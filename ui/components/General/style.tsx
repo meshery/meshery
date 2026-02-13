@@ -30,8 +30,9 @@ export const TryAgainButton = styled(Button)(({ theme }) => ({
 
 export const EditButton = styled(Button)(({ theme }) => ({
   backgroundImage: theme.palette.background.brand.prominent,
-  backgroundColor: `${theme.palette.background.brand.prominent || theme.palette.background.brand.default
-    }`,
+  backgroundColor: `${
+    theme.palette.background.brand.prominent || theme.palette.background.brand.default
+  }`,
   '@media (max-width: 768px)': {
     minWidth: '50px',
   },
