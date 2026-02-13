@@ -47,11 +47,11 @@ mesheryctl component search "Component name"
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, searchUsageMessage))
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errMultiArg, usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errMultiArg, searchUsageMessage))
 		}
 		return nil
 	},
