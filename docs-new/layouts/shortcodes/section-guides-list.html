@@ -1,0 +1,18 @@
+{{ $currentPath := .Page.File.Dir }}
+<ul class="section-title">
+{{ range where .Site.RegularPages "Section" .Page.Section }}
+  {{ if and (ne .Kind "section") (ne .Permalink $.Page.Permalink) }}
+    {{ $childPath := .File.Dir }}
+    {{ if (strings.HasPrefix $childPath $currentPath) }}
+      {{ if (ne .File.Dir $currentPath) }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ if and .Params.description (ne .Params.description "") }}
+        - {{ .Params.description }}
+      {{ end }}
+    </li>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+</ul>
