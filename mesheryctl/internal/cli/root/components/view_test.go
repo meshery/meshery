@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -16,7 +17,6 @@ func TestComponentView(t *testing.T) {
 	}
 
 	currDir := filepath.Dir(filename)
-	formaterrMsg := utils.ComponentSubError(fmt.Sprintf("output-format %q is invalid. Available options [json|yaml]", "invalid"), "view")
 
 	componentApiPath := "api/meshmodels/components"
 
@@ -35,7 +35,7 @@ func TestComponentView(t *testing.T) {
 			Args:             []string{"view", "foo"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=foo", componentApiPath),
 			Fixture:          "components.empty.api.response.golden",
-			ExpectedResponse: "view.empty.component.api.output.golden",
+			ExpectedResponse: "components.view.empty.output.golden",
 			IsOutputGolden:   true,
 			ExpectError:      false,
 		},
@@ -53,7 +53,7 @@ func TestComponentView(t *testing.T) {
 			Args:             []string{"view", "Test"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "view.component.api.output.golden",
+			ExpectedResponse: "components.view.output.golden",
 			IsOutputGolden:   true,
 			ExpectError:      false,
 		},
@@ -64,14 +64,14 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrFlagsInvalid(formaterrMsg),
+			ExpectedError:  display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
 			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",
 			Args:             []string{"view", "Test", "--output-format", "json"},
 			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "view.json.component.api.output.golden",
+			ExpectedResponse: "components.view.json.output.golden",
 			IsOutputGolden:   true,
 			ExpectError:      false,
 		},
