@@ -261,3 +261,14 @@ export const selectSeverity = (state) => {
   const currentSeverityList = state.events?.current_view?.filters?.severity;
   return currentSeverityList ? currentSeverityList[0] : undefined;
 };
+
+export const selectCurrentFilters = (state) => {
+  const filters = state.events?.current_view?.filters || {};
+  const cleaned = {};
+  Object.entries(filters).forEach(([key, value]) => {
+    if (key !== 'initial') {
+      cleaned[key] = value;
+    }
+  });
+  return cleaned;
+};
