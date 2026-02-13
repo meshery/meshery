@@ -24,10 +24,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
-)
-
 type componentSearchFlag struct {
 	Count    bool
 	Page     int
@@ -51,11 +47,11 @@ mesheryctl component search "Component name"
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, usageErrorMessage))
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("multi-word filter names must be enclosed in double quotes\n\n%v", usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errMultiArg, usageErrorMessage))
 		}
 		return nil
 	},

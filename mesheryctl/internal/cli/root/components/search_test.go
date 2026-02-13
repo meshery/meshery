@@ -28,7 +28,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, usageErrorMessage)),
 		},
 		{
 			Name:             "given a multiple argument is provided when running mesheryctl component search arg1 arg2 then an error message is displayed",
@@ -38,7 +38,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("multi-word filter names must be enclosed in double quotes\n\n%v", usageErrorMessage)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errMultiArg, usageErrorMessage)),
 		},
 		{
 			Name:             "given a valid component is provided when running mesheryctl component search valid-name then it displays every matching results in output",

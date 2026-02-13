@@ -28,7 +28,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errViewCmdMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n\n%s", errNoArg, errViewCmdMsg)),
 		},
 		{
 			Name:             "given a non-existent component is provided when running mesheryctl component view non-existent-component then it displays empty output",
@@ -46,7 +46,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n\n%s", errMultiArg, errViewCmdMsg)),
 		},
 		{
 			Name:             "given a valid component is provided when running mesheryctl component view valid-component then the detailed output of the component is displayed",
