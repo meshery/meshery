@@ -3,6 +3,8 @@ setup() {
     _load_bats_libraries
 
     load "$E2E_HELPERS_PATH/constants"
+
+    export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/model"
 }
 
 @test "given no model-id provided as an argument when running mesheryctl model delete then an error message is displayed" {
@@ -28,4 +30,17 @@ setup() {
     assert_failure
     assert_output --partial "Failed to delete model"
     assert_output --partial "Error"
+}
+
+@test "given a valid model-id is provided as an argument when running mesheryctl model delete then the model is deleted successfully" {
+    if [ ! -f "$TESTDATA_DIR/id" ]; then
+        skip "No model ID available to delete"
+    fi
+
+    MODEL_ID="$(cat "$TESTDATA_DIR/id")"
+    [ -n "$MODEL_ID" ] || skip "Empty model ID"
+
+    run $MESHERYCTL_BIN model delete "$MODEL_ID"
+    assert_success
+    assert_output --partial "has been deleted"
 }
