@@ -10,8 +10,8 @@ display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/homebrew.png
-abstract: Install Meshery CLI on Linux or MacOS with Brew
+abstract: Install Meshery CLI on Linux or macOS with Homebrew
 ---
-# Install Meshery CLI with Brew
+# Install Meshery CLI with Homebrew
 
 {% include mesheryctl/installation-brew.md %}
