@@ -21,7 +21,7 @@ func TestDeleteModel(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "Delete model without arguments",
+			Name:             "given no model-id provided as an argument when running mesheryctl model delete then an error is returned",
 			Args:             []string{"delete"},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
@@ -33,7 +33,7 @@ func TestDeleteModel(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ model-id ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message")),
 		},
 		{
-			Name:             "Delete model with invalid UUID",
+			Name:             "given an invalid model-id is provided as an argument when running mesheryctl model delete then an error is returned",
 			Args:             []string{"delete", "not-a-uuid"},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
@@ -45,7 +45,7 @@ func TestDeleteModel(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", "not-a-uuid")),
 		},
 		{
-			Name:             "Delete model successfully",
+			Name:             "given a valid model-id when running mesheryctl model delete then the model is deleted successfully",
 			Args:             []string{"delete", modelId},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
