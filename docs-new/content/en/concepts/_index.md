@@ -2,6 +2,7 @@
 title: Concepts
 description: Concepts for understanding Meshery's various features and components.
 display_title: true
+display_toc: false
 ---
 
 Concepts for understanding Meshery's various features and components.
