@@ -196,6 +196,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
+	if req.Method == http.MethodDelete {
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
+	}
+
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
 		promKey := req.FormValue("prometheusKey")
@@ -264,9 +269,6 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
-		return
 	}
 
 	err := provider.RecordPreferences(req, user.UserId, prefObj)
