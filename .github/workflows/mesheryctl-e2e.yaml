@@ -34,10 +34,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: ['1.25']
-        k8s_version: ['v1.33.0', 'v1.34.3']
-        platform: ['kubernetes']
-        publish_to_qa: true
+        include:
+          - go: '1.25'
+            k8s_version: 'v1.33.0'
+            platform: 'kubernetes'
+            publish_to_qa: false
+          - go: '1.25'
+            k8s_version: 'v1.34.3'
+            platform: 'kubernetes'
+            publish_to_qa: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
