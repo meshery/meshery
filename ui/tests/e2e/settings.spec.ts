@@ -2,7 +2,23 @@ import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 import { DashboardPage } from './pages/DashboardPage';
 
-const verifyAdapterResBody = (body) => {
+// Define the shape of an Adapter operation
+interface AdapterOp {
+  key: string;
+  value: string;
+  category?: number;
+}
+
+// Define the shape of the Adapter API response
+interface AdapterResponse {
+  adapter_location: string;
+  name: string;
+  version: string;
+  git_commit_sha: string;
+  ops: AdapterOp[] | null;
+}
+
+const verifyAdapterResBody = (body: AdapterResponse[]) => {
   expect(body).toBeInstanceOf(Array);
   body.forEach(({ adapter_location, name, version, git_commit_sha, ops }) => {
     expect(adapter_location).toMatch(/localhost:\d+/);
@@ -16,7 +32,7 @@ const verifyAdapterResBody = (body) => {
         expect(key).toEqual(expect.any(String));
         expect(value).toEqual(expect.any(String));
         // category may or may not be present, if present its an integer
-        if (category) {
+        if (category !== undefined && category !== null) {
           expect(category).toEqual(expect.any(Number));
         } else {
           expect(category).toBeUndefined();
