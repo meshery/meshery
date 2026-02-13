@@ -249,7 +249,7 @@ Example configuration in the capabilities response:
 {{< code code=`"redirects": {
   "/": "/extension/meshmap",
   "/dashboard": "/extension/meshmap/dashboard"
-}` />}}
+}` >}}
 
 ### Use Cases
 
@@ -426,7 +426,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
         "endpoint": "/api/connection"
     }
   ]
-}` />}}
+}` >}}
 </details>
 
 #### Meshery Server Registration
@@ -441,7 +441,7 @@ Example of the request body:
   "server_version": "vx.x.x",
   "server_build-sha": "xxxx-xxxxx",
   "server_location": "<protocol>://<hostname>:<port>"
-}` />}}
+}` >}}
 
 ## Configurable OAuth Callback URL
 
@@ -473,7 +473,7 @@ Callback URL is not the same as Provider URL. In scenarios where Meshery server 
 
 Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
 
-{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token" />}}
+{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token" >}}
 
 **NOTE**
 

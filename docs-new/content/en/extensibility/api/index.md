@@ -61,7 +61,7 @@ Using Meshery UI, you can get a copy of your authentication token by following t
 
 Using Meshery CLI, you can get a copy of your authentication token by executing this command:
 
-{{< code code="mesheryctl system login" />}}
+{{< code code="mesheryctl system login" >}}
 
 In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).
 
@@ -69,7 +69,7 @@ In order to use this command, you must have a web browser available on your syst
 Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication.
 {{< /alert >}}
 {{< code code=`meshery-provider: Meshery
-token: your token` />}}
+token: your token` >}}
 {{< alert type="dark" >}}
 Navigate to the cookies section your API testing platform, to set the appropriate name and value for the cookie, then make sure to save the configured cookies to initiate the request. 
 

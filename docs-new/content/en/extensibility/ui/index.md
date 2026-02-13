@@ -18,7 +18,7 @@ RJSFWrapperComponent provides customizations for RJSF forms, overriding the defa
     }}
     jsonSchema={jsonSchema}
   />
-</RJSFWrapperComponent>` />}}
+</RJSFWrapperComponent>` >}}
 See this [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91) as an example of how these properties are received.
 
 ### Extensibility: User Accounts
@@ -104,7 +104,7 @@ customComponent: YOUR_NEW_CUSTOM_COMPONENT_OR_PROP
 });
 
 return children
-}` />}}
+}` >}}
 Extract the props in the [RJSFForm Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
 
 _Extensibility documentation missing?_
@@ -144,7 +144,7 @@ namespace={namespace}
     	);
     }}
 
-</PatternServiceFormCore>` />}}
+</PatternServiceFormCore>` >}}
 
 Meshery UI's RJSF form accepts two props:
 
@@ -154,4 +154,4 @@ Meshery UI's RJSF form accepts two props:
 With both of these props, Remote Providers can customize the wrapper and can also customize the body of the form. This allows full customization of the form.
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
-{{< code code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" />}}
+{{< code code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" >}}
