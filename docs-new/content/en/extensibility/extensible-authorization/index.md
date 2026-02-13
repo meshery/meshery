@@ -30,7 +30,7 @@ An example of how CASL evaluate permission in UI.
 	{!CAN(keys.DELETE_CONNECTION.action, keys.DELETE_CONNECTION.subject) && (
 		<Button id="delete-connection">Delete<Button/>
 	)}
-</React.Fragment>` >}}
+</React.Fragment>` />}}
 
  Once a user has logged in, the backend will send a response with the permissions that the user has. Those permissions will be used to create abilities on the frontend, CASL gets updated with those abilities. The UI maintains a constant file containing all allowed permissions, referred to as keys. With the help of these keys, CAN function evaluates the permissions during runtime and renders UI.
 
