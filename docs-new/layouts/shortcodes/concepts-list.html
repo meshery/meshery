@@ -1,0 +1,18 @@
+{{- $section := .Get "section" -}}
+{{- $subsection := .Get "subsection" -}}
+{{- $lang := .Get "lang" | default "en" -}}
+
+{{- $pages := where .Site.RegularPages "Section" $section -}}
+{{- $pages = where $pages "Lang" $lang -}}
+{{- $prefix := "" -}}
+{{- if $subsection -}}
+  {{- $prefix = printf "%s/%s/" $section $subsection -}}
+{{- end -}}
+
+{{- range $pages -}}
+  {{- if or (not $subsection) (hasPrefix .File.Dir $prefix) -}}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  {{- with .Params.description }} - {{ . }}{{ end -}}
+  </li>
+  {{- end -}}
+{{- end -}}

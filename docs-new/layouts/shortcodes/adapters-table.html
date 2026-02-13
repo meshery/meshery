@@ -1,0 +1,14 @@
+{{- $adapters := slice -}}
+{{- range where site.Pages "Type" "adapter" -}}
+  {{- $adapters = $adapters | append . -}}
+{{- end -}}
+
+{{- $sorted := sort $adapters "Params.project_status" "desc" -}}
+
+| Adapter Status | Adapter | Port | Earliest Version supported |
+| :------------: | :----------: | :--: | :------------------------: |
+{{- range $adapter := $sorted -}}
+  {{- if $adapter.Params.project_status }}
+| {{ $adapter.Params.project_status }} | <img src="{{ $adapter.Params.image }}" style="width:20px" data-logo-for-dark="{{ $adapter.Params.white_image }}" data-logo-for-light="{{ $adapter.Params.image }}" id="logo-dark-light" loading="lazy"/> [{{ $adapter.Title }}]({{ $adapter.RelPermalink }}) | {{ $adapter.Params.port }} | {{ $adapter.Params.earliest_version }} |
+  {{- end -}}
+{{- end -}}
