@@ -177,7 +177,7 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
 
         <UnifiedDescription data-testid="kanvas-snapshot-description" variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshmap-snapshot-logo.svg"
+            src="/static/img/extensions/meshmap-snapshot-logo.svg"
             alt="Kanvas Snapshot Logo"
             testId="kanvas-snapshot-image"
           />
@@ -221,7 +221,7 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/smp-dark.svg"
+            src="/static/img/extensions/smp-dark.svg"
             alt="Meshery Performance Logo"
             testId="performance-analysis-icon"
           />
@@ -343,7 +343,7 @@ const MesheryDesignEmbedExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshmap.svg"
+            src="/static/img/extensions/meshmap.svg"
             alt="Meshery Design Logo"
             testId="design-embed-icon"
           />
@@ -425,7 +425,7 @@ const KubectlPluginExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/kubectl.svg"
+            src="/static/img/extensions/kubectl.svg"
             alt="Kubectl Plugin Logo"
             testId="kubectl-plugin-image"
           />
@@ -466,7 +466,7 @@ const KubectlMeshSyncExtension = () => {
 
         <UnifiedDescription variant="body" hasIcon={true}>
           <ResponsiveImage
-            src="/static/img/meshsync.svg"
+            src="/static/img/extensions/meshsync.svg"
             alt="MeshSync Logo"
             testId="kubectl-meshsync-image"
           />
