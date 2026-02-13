@@ -233,7 +233,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 	// Get the kubehandler from the context
 	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), opts.Pattern.Name)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("meshery server failed to interact with the Kubernetes cluster due to the cluster not being available"), opts.Pattern.Name)
 	}
 
 	var ctxToconfig = make(map[string]string)

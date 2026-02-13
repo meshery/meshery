@@ -126,7 +126,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	defer os.RemoveAll(tempDir)
 
 	if err != nil {
-		return emptyDesign, "", fmt.Errorf("Failed to create tmp directory %w", err)
+		return emptyDesign, "", fmt.Errorf("failed to create tmp directory %w", err)
 	}
 
 	now := time.Now()
@@ -255,7 +255,7 @@ func (h *Handler) DesignFileImportHandler(
 	fileToImport, err := GetFileToImportFromPayload(importDesignPayload)
 
 	if err != nil {
-		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
+		h.log.Error(fmt.Errorf("conversion: failed to get file from payload  %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(*event, nil)
@@ -266,7 +266,7 @@ func (h *Handler) DesignFileImportHandler(
 	design, sourceFileType, err := ConvertFileToDesign(fileToImport, h.registryManager, h.log)
 
 	if err != nil {
-		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
+		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(*event, nil)

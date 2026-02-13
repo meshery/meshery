@@ -24,7 +24,7 @@
     "@xstate/react": "^6.0.0",
     "ajv": "^8.17.1",
     "assert": "^2.1.0",
-    "axios": "^1.13.4",
+    "axios": "^1.13.5",
     "billboard.js": "^3.18.0",
     "fs": "^0.0.1-security",
     "https-browserify": "^1.0.0",
