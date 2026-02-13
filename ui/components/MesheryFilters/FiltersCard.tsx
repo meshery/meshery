@@ -39,6 +39,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+// @ts-expect-error - VisibilityChipMenu exists at runtime but types may not be exported
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
@@ -201,7 +202,10 @@ function FiltersCard_({
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
+                <GetAppIcon
+                  fill={theme.palette.background.constant?.white || '#fff'}
+                  style={iconMedium}
+                />
                 <GridBtnText>Download</GridBtnText>
               </TooltipButton>
 
@@ -217,7 +221,10 @@ function FiltersCard_({
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
-                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
+                  <CloneIcon
+                    fill={theme.palette.background.constant?.white || '#fff'}
+                    style={iconMedium}
+                  />
                   <GridCloneBtnText>Clone</GridCloneBtnText>
                 </TooltipButton>
               ) : null}
@@ -235,7 +242,7 @@ function FiltersCard_({
                 }
               >
                 <InfoOutlinedIcon
-                  fill={theme.palette.background.constant.white}
+                  fill={theme.palette.background.constant?.white || '#fff'}
                   style={iconMedium}
                 />
                 <GridBtnText> Info </GridBtnText>
@@ -272,9 +279,9 @@ function FiltersCard_({
               <Divider variant="fullWidth" light />
 
               {catalogContentKeys.length === 0 ? (
-                <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+                <StyledCodeMirrorWrapper {...({ fullScreen } as any)}>
                   <CodeMirror
-                    value={showCode && filter_resource}
+                    value={showCode ? filter_resource : ''}
                     options={{
                       theme: 'material',
                       lineNumbers: true,
@@ -284,7 +291,7 @@ function FiltersCard_({
                       lint: true,
                       mode: 'text/x-yaml',
                     }}
-                    onChange={(_, data, val) => setYaml(val)}
+                    onChange={(val) => setYaml(val)}
                   />
                 </StyledCodeMirrorWrapper>
               ) : (

@@ -1,9 +1,14 @@
-// @ts-nocheck
+import React from 'react';
 import { CustomTooltip, IconButton, useTheme } from '@sistent/sistent';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import TableChartIcon from '@mui/icons-material/TableChart';
 
-function ViewSwitch({ view, changeView }) {
+type ViewSwitchProps = {
+  view: 'grid' | 'table';
+  changeView: (_view: 'grid' | 'table') => void;
+};
+
+function ViewSwitch({ view, changeView }: ViewSwitchProps) {
   const theme = useTheme();
   return (
     <IconButton

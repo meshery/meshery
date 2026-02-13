@@ -4,9 +4,32 @@ import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
 
+type DesignComponent = {
+  id: string;
+  schemaVersion: string;
+  version: string;
+  component: any;
+  displayName: string;
+  model: {
+    name: string;
+    version: string;
+    category?: string;
+    registrant?: string;
+  };
+  configuration: any;
+};
+
+type DesignJson = {
+  id?: string;
+  name: string;
+  components: DesignComponent[];
+  schemaVersion: string;
+  services?: Record<string, any>;
+};
+
 export default function useDesignLifecycle() {
-  const [designId, setDesignId] = useState();
-  const [designJson, setDesignJson] = useState({
+  const [designId, setDesignId] = useState<string | undefined>(undefined);
+  const [designJson, setDesignJson] = useState<DesignJson>({
     name: 'Untitled Design',
     components: [],
     schemaVersion: 'designs.meshery.io/v1beta1',
@@ -65,7 +88,7 @@ export default function useDesignLifecycle() {
           },
           ...configuration,
         },
-      };
+      } as DesignComponent;
       setDesignJson((prev) => {
         let newestKey = false;
         const currentJson =
@@ -99,7 +122,8 @@ export default function useDesignLifecycle() {
       method: 'POST',
     })
       .then((data) => {
-        setDesignId(data[0].id);
+        const createdId = (data as any)?.[0]?.id as string | undefined;
+        setDesignId(createdId);
         notify({
           message: `"${designJson.name}" saved`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -162,9 +186,9 @@ export default function useDesignLifecycle() {
 
   const loadDesign = async (design_id) => {
     try {
-      const data = await promisifiedDataFetch('/api/pattern/' + design_id);
+      const data = (await promisifiedDataFetch('/api/pattern/' + design_id)) as any;
       setDesignId(design_id);
-      setDesignJson(jsYaml.load(data.pattern_file));
+      setDesignJson(jsYaml.load(data.pattern_file) as DesignJson);
     } catch (err) {
       notify({
         message: `failed to load design file`,
@@ -177,7 +201,7 @@ export default function useDesignLifecycle() {
   const updateDesignData = ({ yamlData }) => {
     try {
       const designData = jsYaml.load(yamlData);
-      setDesignJson(designData);
+      setDesignJson(designData as DesignJson);
     } catch (err) {
       notify({
         message: `Invalid Yaml Data`,

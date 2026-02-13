@@ -28,7 +28,10 @@ const ContentBody = styled(Box)({
 });
 
 const CancelButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.background.neutral.default,
+  backgroundColor:
+    theme.palette.background.neutral?.default ||
+    theme.palette.grey?.[700] ||
+    theme.palette.primary.main,
   color: 'white',
   margin: 0,
 }));
@@ -36,9 +39,9 @@ const CancelButton = styled(Button)(({ theme }) => ({
 const StepperButton = styled(Button)(({ theme }) => ({
   marginTop: '1rem',
   color: 'white',
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default || theme.palette.primary.main,
   '&:hover': {
-    backgroundColor: theme.palette.background.brand.default,
+    backgroundColor: theme.palette.background.brand?.default || theme.palette.primary.main,
   },
   '&.Mui-disabled': {
     cursor: 'not-allowed',

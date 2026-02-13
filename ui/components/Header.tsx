@@ -24,7 +24,6 @@ import {
   CustomTooltip,
   Typography,
   styled,
-  PROMPT_VARIANTS,
   TextField,
   ClickAwayListener,
   IconButton,
@@ -35,6 +34,8 @@ import {
   useTheme,
   useMediaQuery,
 } from '@sistent/sistent';
+// @ts-expect-error - PROMPT_VARIANTS exists at runtime but types may not be exported
+import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
@@ -63,12 +64,13 @@ import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
+// @ts-expect-error - ErrorBoundary exists at runtime but types may not be exported
 import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 async function loadActiveK8sContexts() {
   try {
-    const res = await promisifiedDataFetch('/api/system/sync');
+    const res = (await promisifiedDataFetch('/api/system/sync')) as { k8sConfig?: any };
     if (res?.k8sConfig) {
       return res.k8sConfig;
     } else {
@@ -98,7 +100,9 @@ const K8sContextConnectionChip_ = ({
 
   const connectionStatus = useMemo(() => {
     if (!connections || !ctx.connection_id) return null;
-    const connection = connections.find((conn) => conn.id === ctx.connection_id);
+    const connection = (connections as Array<{ id: string; status: string }>).find(
+      (conn) => conn.id === ctx.connection_id,
+    );
     return connection?.status || null;
   }, [connections, ctx.connection_id]);
 
@@ -136,6 +140,7 @@ const K8sContextConnectionChip_ = ({
                 : '/static/img/kubernetes.svg'
             }
             status={connectionStatus}
+            width="auto"
           />
         </div>
       </CustomTooltip>
@@ -148,17 +153,17 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  setActiveContexts = () => {},
-  searchContexts = () => {},
+  setActiveContexts = (_arg?: any) => {},
+  searchContexts = (_arg?: any) => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const [transformProperty, setTransformProperty] = useState(100);
-  const deleteCtxtRef = React.createRef();
+  const deleteCtxtRef = React.createRef<{ show: (_args: any) => Promise<string> }>();
   const { notify } = useNotification();
-  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state: any) => state.ui);
   const dispatch = useDispatch();
-  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state: any) => state.ui);
 
   // ->using same data source as we use in conn.table
   const { data: connectionData } = useGetConnectionsQuery({
@@ -172,7 +177,7 @@ function K8sContextMenu({
 
   const connections = connectionData?.connections || [];
 
-  const styleSlider = {
+  const styleSlider: React.CSSProperties = {
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
@@ -187,11 +192,12 @@ function K8sContextMenu({
     textAlign: 'left',
   }));
   const handleKubernetesDelete = async (name, connectionID) => {
+    if (!deleteCtxtRef.current) return;
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete Kubernetes connection?`,
       subtitle: (
         <>
-          <Typography variant="body">
+          <Typography variant="body1">
             {' '}
             Are you sure you want to delete Kubernetes connection &quot;{name}&quot; and associated
             credential?
@@ -235,8 +241,8 @@ function K8sContextMenu({
         successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
         errorHandlerGenerator(
           notify,
-          `Failed to remove Kubernetes connection "
-          ${name}"`,
+          `Failed to remove Kubernetes connection "${name}"`,
+          undefined,
         ),
         connectionID,
       );
@@ -250,9 +256,9 @@ function K8sContextMenu({
 
   useEffect(() => {
     setTransformProperty(
-      (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
+      (prev) => prev + ((contexts as any)?.total_count ? (contexts as any).total_count * 3.125 : 0),
     );
-  }, []);
+  }, [contexts]);
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
@@ -290,7 +296,7 @@ function K8sContextMenu({
                     : '/static/img/kubernetes.svg'
                 }
                 onError={(e) => {
-                  e.target.src = '/static/img/kubernetes.svg';
+                  (e.target as HTMLImageElement).src = '/static/img/kubernetes.svg';
                 }}
                 width="24px"
                 height="24px"
@@ -310,7 +316,7 @@ function K8sContextMenu({
                   setAnchorEl(false);
                 }}
               >
-                {contexts?.total_count || 0}
+                {(contexts as any)?.total_count || 0}
               </CBadge>
             </CBadgeContainer>
           </IconButton>
@@ -328,11 +334,13 @@ function K8sContextMenu({
             <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
               <ClickAwayListener
                 onClickAway={(e) => {
+                  const target = e.target as HTMLElement;
                   if (
-                    typeof e.target.className == 'string' &&
-                    !e.target.className?.includes('cbadge') &&
-                    e.target?.className != 'k8s-image' &&
-                    !e.target.className.includes('k8s-icon-button')
+                    target &&
+                    typeof target.className === 'string' &&
+                    !target.className?.includes('cbadge') &&
+                    target.className !== 'k8s-image' &&
+                    !target.className.includes('k8s-icon-button')
                   ) {
                     setAnchorEl(false);
                     setShowFullContextMenu(false);
@@ -346,7 +354,7 @@ function K8sContextMenu({
                       label="Search"
                       size="small"
                       variant="outlined"
-                      onChange={(ev) => searchContexts(ev.target.value)}
+                      onChange={(ev) => searchContexts((ev.target as HTMLInputElement).value)}
                       style={{
                         width: '100%',
                         backgroundColor: 'rgba(102, 102, 102, 0.12)',
@@ -358,7 +366,7 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count > 0 && (
+                    {(contexts as any)?.total_count > 0 && (
                       <div
                         style={{
                           display: 'flex',
@@ -370,11 +378,11 @@ function K8sContextMenu({
                         <div>
                           <>
                             <Checkbox
-                              checked={activeContexts.includes('all')}
+                              checked={(activeContexts as string[]).includes('all')}
                               onChange={() =>
-                                activeContexts.includes('all')
+                                (activeContexts as string[]).includes('all')
                                   ? setActiveContexts([])
-                                  : setActiveContexts('all')
+                                  : setActiveContexts(['all'])
                               }
                             />
                           </>
@@ -389,15 +397,15 @@ function K8sContextMenu({
                         </CustomTooltip>
                       </div>
                     )}
-                    {contexts?.contexts?.map((ctx) => {
+                    {((contexts as any)?.contexts || []).map((ctx: any) => {
                       return (
                         <K8sContextConnectionChip
                           key={ctx.id}
                           ctx={ctx}
                           selectable
                           onDelete={handleKubernetesDelete}
-                          selected={activeContexts.includes(ctx.id)}
-                          onSelectChange={() => setActiveContexts(ctx.id)}
+                          selected={(activeContexts as string[]).includes(ctx.id)}
+                          onSelectChange={() => setActiveContexts([ctx.id])}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
                           connections={connections}
@@ -435,7 +443,7 @@ const Header = ({
   // eslint-disable-next-line no-unused-vars
   abilityUpdated,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -444,15 +452,17 @@ const Header = ({
     data: providerCapabilities,
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
-  } = useGetProviderCapabilitiesQuery();
+  } = useGetProviderCapabilitiesQuery(undefined);
 
-  if (isProviderCapabilitiesError) {
-    notify({
-      message: 'Error fetching provider capabilities',
-      event_type: EVENT_TYPES.ERROR,
-      details: providerCapabilitiesError?.data,
-    });
-  }
+  useEffect(() => {
+    if (isProviderCapabilitiesError) {
+      notify({
+        message: 'Error fetching provider capabilities',
+        event_type: EVENT_TYPES.ERROR,
+        details: (providerCapabilitiesError as any)?.data,
+      });
+    }
+  }, [isProviderCapabilitiesError, providerCapabilitiesError, notify]);
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
@@ -462,7 +472,7 @@ const Header = ({
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-          <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
+          <StyledToolbar disableGutters {...({ isDrawerCollapsed: onDrawerCollapse } as any)}>
             <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
                 <Grid2 style={{ display: 'none' }}>

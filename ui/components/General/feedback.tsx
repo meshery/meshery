@@ -1,5 +1,6 @@
 import { useHandleFeedbackFormSubmissionMutation } from '@/rtk-query/user';
 import { useNotification } from '@/utils/hooks/useNotification';
+// @ts-expect-error
 import { FeedbackButton, styled } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import _ from 'lodash';

@@ -1,6 +1,6 @@
 import { Box, styled, Button, Typography } from '@sistent/sistent';
 
-export const CreatAtContainer = styled(Typography)(({ isBold }) => ({
+export const CreatAtContainer = styled(Typography)<{ isBold?: boolean }>(({ isBold }) => ({
   fontWeight: isBold ? 'bold' : '',
   whiteSpace: 'wrap',
   fontSize: '0.8rem',
@@ -14,7 +14,7 @@ export const ActionContainer = styled(Box)({
 });
 
 export const CopyLinkButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.white || theme.palette.common.white,
 }));
 
 export const ResourceName = styled(Typography)(() => ({

@@ -48,7 +48,7 @@ const ChartContainer = styled('div')({
 
 const ChartWrapper = styled('div')({
   display: 'flex',
-  flexWrap: 'no-wrap',
+  flexWrap: 'nowrap',
   justifyContent: 'center',
   alignItems: 'center',
 });
@@ -87,11 +87,11 @@ function NonRecursiveConstructDisplayCells(data) {
   });
 }
 
-function MesheryChart(props) {
-  const chartRef = useRef(null);
-  const chart = useRef(null);
-  const percentileRef = useRef(null);
-  const titleRef = useRef(null);
+function MesheryChart(props: any) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chart = useRef<any>(null);
+  const percentileRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   const [socialExpand, setSocialExpand] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -120,17 +120,17 @@ function MesheryChart(props) {
     return makeChart(fortioResultToJsChartData(rawdata, data));
   };
 
-  const processChartData = (chartData) => {
+  const processChartData = (chartData: any) => {
     if (chartRef.current && chartRef.current !== null) {
       if (chartData && chartData.data && chartData.options) {
-        const xAxes = [];
-        const yAxes = [];
-        const colors = {};
-        const types = {};
-        const axes = {};
-        const axis = {};
-        const yAxisTracker = {};
-        const xAxisTracker = {};
+        const xAxes: any[] = [];
+        const yAxes: any[] = [];
+        const colors: Record<string, string> = {};
+        const types: Record<string, any> = {};
+        const axes: Record<string, string> = {};
+        const axis: Record<string, any> = {};
+        const yAxisTracker: Record<string, string> = {};
+        const xAxisTracker: Record<string, string> = {};
 
         if (chartData.data && chartData.data.datasets) {
           chartData.data.datasets.forEach((ds, ind) => {
@@ -167,22 +167,28 @@ function MesheryChart(props) {
           });
         }
         if (chartData.options.scales.yAxes) {
-          chartData.options.scales.yAxes.forEach((ya) => {
-            axis[yAxisTracker[ya.id]] = {
-              show: true,
-              label: { text: ya.scaleLabel.labelString, position: 'outer-middle' },
-            };
+          chartData.options.scales.yAxes.forEach((ya: any) => {
+            const axisKey = yAxisTracker[ya.id];
+            if (axisKey) {
+              axis[axisKey] = {
+                show: true,
+                label: { text: ya.scaleLabel.labelString, position: 'outer-middle' },
+              };
+            }
           });
         }
 
-        const grid = {};
+        const grid: Record<string, any> = {};
 
         if (chartData.percentiles && chartData.percentiles.length > 0) {
           // position: "middle"
           // position: "start"
           let reTrack = 0;
-          const percentiles = chartData.percentiles.map(({ Percentile, Value }) => {
-            const re = { value: (Value * 1000).toFixed(2), text: `p${Percentile}` };
+          const percentiles = chartData.percentiles.map(({ Percentile, Value }: any) => {
+            const re: { value: string; text: string; position?: string } = {
+              value: (Value * 1000).toFixed(2),
+              text: `p${Percentile}`,
+            };
             switch (reTrack % 3) {
               case 0:
                 // re.position
@@ -222,17 +228,22 @@ function MesheryChart(props) {
         };
         if (!props.hideTitle) {
           if (props.data.length == 4) {
-            titleRef.current.innerText =
-              chartData.options.title.text.slice(0, 2).join('\n') +
-              '\n' +
-              chartData.options.title.text[2].split('\n')[0];
-            if (chartData.options.title.text[2])
+            if (titleRef.current) {
+              titleRef.current.innerText =
+                chartData.options.title.text.slice(0, 2).join('\n') +
+                '\n' +
+                chartData.options.title.text[2].split('\n')[0];
+            }
+            if (chartData.options.title.text[2] && percentileRef.current) {
               percentileRef.current.innerText = chartData.options.title.text[2]
                 .split('\n')[1]
                 .split('|')
                 .join('\n');
+            }
           } else {
-            titleRef.current.innerText = chartData.options.title.text.join('\n');
+            if (titleRef.current) {
+              titleRef.current.innerText = chartData.options.title.text.join('\n');
+            }
           }
         }
 
@@ -242,29 +253,29 @@ function MesheryChart(props) {
           type: line(),
           data: { columns: [] },
           bindto: chartRef.current,
-        });
+        } as any);
       }
     }
   };
 
-  const processMultiChartData = (chartData) => {
+  const processMultiChartData = (chartData: any) => {
     // >= 3 datasets
 
     if (chartData && chartData.data && chartData.options) {
-      const xAxes = [];
-      const categories = [];
-      const yAxes = [];
-      const colors = [];
-      const axes = {};
-      const axis = {};
+      const xAxes: any[] = [];
+      const categories: string[] = [];
+      const yAxes: any[] = [];
+      const colors: Record<string, string> = {};
+      const axes: Record<string, string> = {};
+      const axis: Record<string, any> = {};
       let yTrack = 1;
-      const yAxisTracker = {};
+      const yAxisTracker: Record<string, string> = {};
       // const xAxisTracker = {};
 
       if (chartData.data && chartData.data.datasets) {
-        chartData.data.datasets.forEach((ds) => {
+        chartData.data.datasets.forEach((ds: any) => {
           // xAxis.push('x');
-          const yAxis = [ds.label];
+          const yAxis: any[] = [ds.label];
           // xAxisTracker[ds.label] = `x${ind+1}`;
           if (
             typeof ds.yAxisID !== 'undefined' &&
@@ -276,13 +287,13 @@ function MesheryChart(props) {
           }
           // axes[ds.label] = `y${ind>0?ind+1:''}`;
 
-          ds.data.forEach((d) => yAxis.push(d));
+          ds.data.forEach((d: any) => yAxis.push(d));
           yAxes.push(yAxis);
           colors[ds.label] = ds.borderColor; // not sure which is better border or background
         });
       }
       if (chartData.data && chartData.data.labels) {
-        chartData.data.labels.forEach((l) => {
+        chartData.data.labels.forEach((l: any) => {
           categories.push(l.join(' '));
         });
       }
@@ -320,12 +331,12 @@ function MesheryChart(props) {
             axes,
           },
           axis,
-          legend: { show: true, position: 'right' },
+          legend: { show: true, position: 'right' as const },
           point: { r: 0, focus: { expand: { r: 5 } } },
           tooltip: { show: true },
-        };
-        if (!props.hideTitle) {
-          titleRef.current = chartData.options.title.text;
+        } as any;
+        if (!props.hideTitle && titleRef.current) {
+          titleRef.current.innerText = chartData.options.title.text;
         }
         chart.current = bb.generate(chartConfig);
       }
@@ -405,11 +416,13 @@ function MesheryChart(props) {
           <ChartContainer ref={chartRef}></ChartContainer>
           <ChartPercentiles
             ref={(ch) => {
-              percentileRef.current = ch;
-              if (props.data.length > 2) {
-                processMultiChartData(chartData);
-              } else {
-                processChartData(chartData);
+              if (ch) {
+                percentileRef.current = ch;
+                if (props.data.length > 2) {
+                  processMultiChartData(chartData);
+                } else {
+                  processChartData(chartData);
+                }
               }
             }}
           >

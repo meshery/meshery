@@ -8,18 +8,38 @@
  * @property {NavigatorSchema[]} children
  * @property {string} type
  */
+export type NavigatorSchema = {
+  title: string;
+  onClickCallback: number;
+  href: string;
+  component: string;
+  icon: string;
+  children: NavigatorSchema[];
+  type: string;
+  show?: boolean;
+  full_page?: boolean;
+  isBeta?: boolean;
+};
 
 /**
  * @typedef {Object} UserPrefSchema
  * @property {string} component
  * @property {string} type
  */
+export type UserPrefSchema = {
+  component: string;
+  type?: string;
+};
 
 /**
  * @typedef {Object} CollaboratorSchema
  * @property {string} component
  * @property {string} type
  */
+export type CollaboratorSchema = {
+  component: string;
+  type?: string;
+};
 
 /**
  * @typedef {Object} AccountSchema
@@ -30,6 +50,17 @@
  * @property {AccountSchema[]} children
  * @property {string} type
  */
+export type AccountSchema = {
+  title: string;
+  onClickCallback: number;
+  href: string;
+  component: string;
+  children: AccountSchema[];
+  type: string;
+  show?: boolean;
+  full_page?: boolean;
+  isHtmlLink?: boolean;
+};
 
 /**
  * @typedef {Object} FullPageExtensionSchema
@@ -40,6 +71,15 @@
  * @property {AccountSchema[]} children
  * @property {string} type
  */
+export type FullPageExtensionSchema = {
+  title: string;
+  onClickCallback: number;
+  href: string;
+  component: string;
+  children: AccountSchema[];
+  type: string;
+  isBeta?: boolean;
+};
 
 /**
  * ExtensionPointSchemaValidator returns the schema validator based on the

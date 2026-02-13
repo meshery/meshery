@@ -14,7 +14,7 @@ export const useGetSystemTheme = () => {
 };
 
 export const useThemePreference = () => {
-  const { data, ...res } = useGetUserPrefQuery();
+  const { data, ...res } = useGetUserPrefQuery(undefined);
   const systemPref = useGetSystemTheme();
   const mode = data?.remoteProviderPreferences?.theme || systemPref || 'dark';
 
@@ -29,7 +29,7 @@ export const useThemePreference = () => {
 const ThemeTogglerCore_ = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
-  const { data: userPrefs } = useGetUserPrefQuery();
+  const { data: userPrefs } = useGetUserPrefQuery(undefined);
   const [mode, setMode] = useState(themePref?.data?.mode);
 
   useEffect(() => {

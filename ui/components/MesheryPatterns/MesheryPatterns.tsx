@@ -1,10 +1,13 @@
 /* eslint-disable react/display-name */
 
 import {
+  // @ts-expect-error
   CustomColumnVisibilityControl,
   CustomTooltip,
   OutlinedPatternIcon,
+  // @ts-expect-error
   SearchBar,
+  // @ts-expect-error
   UniversalFilter,
   importDesignSchema,
   importDesignUiSchema,
@@ -17,9 +20,11 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  // @ts-expect-error
   ResponsiveDataTable,
   Typography,
   styled,
+  // @ts-expect-error
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
@@ -200,7 +205,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
     >
       <YamlDialogTitle
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}
-        disableTypography
+        {...({ disableTypography: true } as any)}
         id="pattern-dialog-title"
       >
         <div>
@@ -234,7 +239,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
               mode: 'text/x-yaml',
               readOnly: isReadOnly,
             }}
-            onChange={(_, data, val) => setYaml(val)}
+            onChange={(val: string) => setYaml(val)}
           />
         </FullScreenCodeMirrorWrapper>
       </DialogContent>
@@ -300,28 +305,30 @@ function MesheryPatterns({
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const modalRef = useRef();
-  const [patterns, setPatterns] = useState([]);
-  const [selectedRowData, setSelectedRowData] = useState(null);
+  const modalRef = useRef<any>(null);
+  const [patterns, setPatterns] = useState<any[]>([]);
+  const [selectedRowData, setSelectedRowData] = useState<any | null>(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const router = useRouter();
-  const [meshModels, setMeshModels] = useState([]);
+  const [meshModels, setMeshModels] = useState<any[]>([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
   const [canPublishPattern, setCanPublishPattern] = useState(false);
-  const [publishSchema, setPublishSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState<any>({});
   const [infoModal, setInfoModal] = useState({
     open: false,
     ownerID: '',
-    selectedResource: {},
+    selectedResource: {} as any,
   });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { view } = router.query;
-  const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
+  const [viewType, setViewType] = useState(
+    (view === 'table' ? 'table' : 'grid') as 'table' | 'grid',
+  );
   const { notify } = useNotification();
-  const [visibilityFilter, setVisibilityFilter] = useState(null);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { catalogVisibility } = useSelector((state) => state.ui);
-  const { user } = useSelector((state) => state.ui);
+  const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
+  const { selectedK8sContexts } = useSelector((state: any) => state.ui);
+  const { catalogVisibility } = useSelector((state: any) => state.ui);
+  const { user } = useSelector((state: any) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -377,11 +384,11 @@ function MesheryPatterns({
   const designValidationActorRef = useActorRef(designValidationMachine);
 
   const designLifecycleModal = useModal({
-    headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
-  });
+    headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} color="#fff" />,
+  } as any);
   const sistentInfoModal = useModal({
     headerIcon: OutlinedPatternIcon,
-  });
+  } as any);
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await deployPatternMutation({
@@ -423,8 +430,8 @@ function MesheryPatterns({
   const { width } = useWindowDimensions();
 
   const catalogVisibilityRef = useRef(false);
-  const catalogContentRef = useRef();
-  const disposeConfSubscriptionRef = useRef(null);
+  const catalogContentRef = useRef<any[]>([]);
+  const disposeConfSubscriptionRef = useRef<any>(null);
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
@@ -473,7 +480,7 @@ function MesheryPatterns({
    * Checking whether users are signed in under a provider that doesn't have
    * publish pattern capability and setting the canPublishPattern state accordingly
    */
-  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery(undefined);
 
   useEffect(() => {
     if (capabilitiesData) {
@@ -485,7 +492,7 @@ function MesheryPatterns({
     }
   }, []);
 
-  const searchTimeout = useRef(null);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   /**
    * fetch patterns when the page loads
    */
@@ -560,7 +567,7 @@ function MesheryPatterns({
   useEffect(() => {
     const fetchMeshModels = async () => {
       try {
-        const { models } = await getMeshModels();
+        const { models } = (await getMeshModels()) as any;
         const modelNames = _.uniqBy(
           models?.map((model) => {
             if (model.displayName && model.displayName !== '') {
@@ -633,80 +640,80 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  const openDeployModal = (e, pattern_file, name) => {
+  const openDeployModal = (e: any, pattern_file: any, name: string, _id?: string) => {
     const design = parseDesignFile(pattern_file);
     e.stopPropagation();
     designLifecycleModal.openModal({
       title: `Deploy design "${name}"`,
-      headerIcon: <DoneAllIcon fill="#fff" height={'2rem'} width={'2rem'} />,
+      ...({ headerIcon: <DoneAllIcon fill="#fff" height={'2rem'} width={'2rem'} /> } as any),
       reactNode: (
         <DeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
           design={design}
           handleDeploy={handleDeploy}
-          deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-          selectedK8sContexts={selectedK8sContexts}
+          {...({ deployment_type: DEPLOYMENT_TYPE.DEPLOY, selectedK8sContexts } as any)}
         />
       ),
     });
   };
 
-  const openUndeployModal = (e, pattern_file, name) => {
+  const openUndeployModal = (e: any, pattern_file: any, name: string, _id?: string) => {
     e.stopPropagation();
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Undeploy design "${name}"`,
-      headerIcon: <UndeployIcon fill="#fff" height={'2rem'} width={'2rem'} />,
+      ...({ headerIcon: <UndeployIcon fill="#fff" height={'2rem'} width={'2rem'} /> } as any),
       reactNode: (
         <UnDeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
           design={design}
           handleUndeploy={handleUndeploy}
-          deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
-          selectedK8sContexts={selectedK8sContexts}
+          {...({ deployment_type: DEPLOYMENT_TYPE.UNDEPLOY, selectedK8sContexts } as any)}
         />
       ),
     });
   };
 
-  const openDryRunModal = (e, pattern_file, name) => {
+  const openDryRunModal = (e: any, pattern_file: any, name: string, _id?: string) => {
     e.stopPropagation();
 
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Dryrun design "${name}"`,
-      headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} />,
+      ...({ headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} /> } as any),
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <DryRunDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
             design={design}
-            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-            selectedK8sContexts={selectedK8sContexts}
+            {...({
+              deployment_type: DEPLOYMENT_TYPE.DEPLOY,
+              selectedK8sContexts,
+              currentComponentName: '',
+              includeDependencies: false,
+            } as any)}
           />
         </ModalBody>
       ),
     });
   };
 
-  const openValidateModal = (e, pattern_file, name) => {
+  const openValidateModal = (e: any, pattern_file: any, name: string, _id?: string) => {
     e.stopPropagation();
 
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Validate design "${name}"`,
-      headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} />,
+      ...({ headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} /> } as any),
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <ValidateDesign
-            handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
             design={design}
-            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-            selectedK8sContexts={selectedK8sContexts}
+            {...({ deployment_type: DEPLOYMENT_TYPE.DEPLOY, selectedK8sContexts } as any)}
           />
         </ModalBody>
       ),
@@ -729,6 +736,8 @@ function MesheryPatterns({
     sistentInfoModal.closeModal();
     setInfoModal({
       open: false,
+      ownerID: '',
+      selectedResource: {},
     });
   };
 
@@ -1000,6 +1009,8 @@ function MesheryPatterns({
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -1019,6 +1030,8 @@ function MesheryPatterns({
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -1041,6 +1054,8 @@ function MesheryPatterns({
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -1057,7 +1072,7 @@ function MesheryPatterns({
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -1069,10 +1084,10 @@ function MesheryPatterns({
         sort: false,
         searchable: false,
         customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
         customBodyRender: function CustomBody(_, tableMeta) {
-          const rowData = patterns[tableMeta.rowIndex];
+          const rowData = patterns[tableMeta.rowIndex] as any;
           const visibility = patterns[tableMeta.rowIndex]?.visibility;
           const actions = [
             {
@@ -1080,7 +1095,9 @@ function MesheryPatterns({
               icon: <EditIcon fill="currentColor" />,
               onClick: (e) => {
                 e.stopPropagation();
-                handleOpenInConfigurator(rowData.id);
+                if (rowData) {
+                  handleOpenInConfigurator(rowData.id);
+                }
               },
               disabled: !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
               condition: userCanEdit(rowData),
@@ -1090,7 +1107,9 @@ function MesheryPatterns({
               icon: <CloneIcon fill="currentColor" />,
               onClick: (e) => {
                 e.stopPropagation();
-                handleClone(rowData.id, rowData.name);
+                if (rowData) {
+                  handleClone(rowData.id, rowData.name);
+                }
               },
               disabled: !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject),
               condition: visibility === VISIBILITY.PUBLISHED,
@@ -1109,7 +1128,9 @@ function MesheryPatterns({
               label: 'Validate Design',
               icon: <CheckIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                if (rowData) {
+                  openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                }
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1117,7 +1138,9 @@ function MesheryPatterns({
               label: 'Dry Run',
               icon: <DryRunIcon data-cy="verify-button" />,
               onClick: (e) => {
-                openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                if (rowData) {
+                  openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                }
               },
               disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
             },
@@ -1125,7 +1148,9 @@ function MesheryPatterns({
               label: 'Undeploy',
               icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
               onClick: (e) => {
-                openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                if (rowData) {
+                  openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                }
               },
               disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
             },
@@ -1133,7 +1158,9 @@ function MesheryPatterns({
               label: 'Deploy',
               icon: <DoneAllIcon data-cy="deploy-button" />,
               onClick: (e) => {
-                openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                if (rowData) {
+                  openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+                }
               },
               disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
             },
@@ -1149,7 +1176,9 @@ function MesheryPatterns({
               label: 'Design Information',
               icon: <InfoOutlinedIcon data-cy="information-button" />,
               onClick: (e) => {
-                genericClickHandler(e, () => handleInfoModal(rowData));
+                if (rowData) {
+                  genericClickHandler(e, () => handleInfoModal(rowData));
+                }
               },
               disabled: !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject),
             },
@@ -1203,8 +1232,11 @@ function MesheryPatterns({
   ];
 
   columns.forEach((column, idx) => {
-    if (column.name === sortOrder.split(' ')[0]) {
-      columns[idx].options.sortDirection = sortOrder.split(' ')[1];
+    if (column.name === sortOrder.split(' ')[0] && columns[idx]) {
+      const sortDir = sortOrder.split(' ')[1];
+      if (sortDir) {
+        (columns[idx].options as any).sortDirection = sortDir;
+      }
     }
   });
 
@@ -1262,7 +1294,7 @@ function MesheryPatterns({
     customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
       <CustomToolbarSelect
         selectedRows={selectedRows}
-        displayData={displayData}
+        {...({ displayData } as any)}
         setSelectedRows={setSelectedRows}
         patterns={patterns}
         deletePatterns={deletePatterns}
@@ -1294,7 +1326,9 @@ function MesheryPatterns({
     },
 
     onCellClick: (_, meta) =>
-      meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(patterns[meta.rowIndex]),
+      meta.colIndex !== 3 &&
+      meta.colIndex !== 4 &&
+      setSelectedRowData(patterns[meta.rowIndex] || null),
 
     onRowsDelete: async function handleDelete(row) {
       const toBeDeleted = Object.keys(row.lookup).map((idx) => ({
@@ -1315,8 +1349,12 @@ function MesheryPatterns({
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn) {
-        order = `${columns[tableState.activeColumn].name} desc`;
+      if (
+        tableState.activeColumn !== undefined &&
+        tableState.activeColumn !== null &&
+        columns[tableState.activeColumn]
+      ) {
+        order = `${columns[tableState.activeColumn]?.name} desc`;
       }
 
       switch (action) {
@@ -1339,16 +1377,23 @@ function MesheryPatterns({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              setSearch(tableState.searchText);
+              setSearch(tableState.searchText || '');
             }
-          }, 500);
+          }, 500) as any;
           break;
         case 'sort':
-          if (sortInfo.length === 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
+          if (
+            sortInfo.length === 2 &&
+            tableState.activeColumn !== undefined &&
+            tableState.activeColumn !== null
+          ) {
+            const activeCol = columns[tableState.activeColumn];
+            if (activeCol && sortInfo[1]) {
+              if (sortInfo[1] === 'ascending') {
+                order = `${activeCol.name} asc`;
+              } else {
+                order = `${activeCol.name} desc`;
+              }
             }
           }
           if (order !== sortOrder) {
@@ -1392,11 +1437,11 @@ function MesheryPatterns({
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file } = data;
 
-    let requestBody = null;
+    let requestBody: string | null = null;
     switch (uploadType) {
       case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
+        const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
+        const fileName = fileElement?.files?.[0]?.name || '';
         requestBody = JSON.stringify({
           name,
           file_name: fileName,
@@ -1640,9 +1685,9 @@ function MesheryPatterns({
               publishModal.open &&
               CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
                 <PublishModal
-                  publishFormSchema={publishSchema}
+                  {...({ publishFormSchema: publishSchema } as any)}
                   handleClose={handlePublishModalClose}
-                  title={publishModal.pattern?.name}
+                  title={(publishModal.pattern as any)?.name || ''}
                   handleSubmit={handlePublish}
                 />
               )}
@@ -1662,7 +1707,7 @@ function MesheryPatterns({
   );
 }
 
-export const ImportDesignModal = React.memo((props) => {
+export const ImportDesignModal = React.memo((props: any) => {
   const { handleClose, handleImportDesign } = props;
 
   return (
@@ -1672,7 +1717,12 @@ export const ImportDesignModal = React.memo((props) => {
           open={true}
           closeModal={handleClose}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern
+              fill="#fff"
+              color="#fff"
+              className=""
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            />
           }
           maxWidth="sm"
           title="Import Design"
@@ -1684,6 +1734,9 @@ export const ImportDesignModal = React.memo((props) => {
             handleSubmit={handleImportDesign}
             submitBtnText="Import"
             handleClose={handleClose}
+            handleNext={() => {}}
+            title="Import Design"
+            helpText=""
           />
         </SistentModal>
       </>
@@ -1691,7 +1744,7 @@ export const ImportDesignModal = React.memo((props) => {
   );
 });
 
-const PublishModal = React.memo((props) => {
+const PublishModal = React.memo((props: any) => {
   const { handleClose, handleSubmit, title } = props;
 
   return (
@@ -1703,7 +1756,12 @@ const PublishModal = React.memo((props) => {
           aria-label="catalog publish"
           title={title}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern
+              fill="#fff"
+              color="#fff"
+              className=""
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            />
           }
           maxWidth="sm"
         >
@@ -1713,6 +1771,8 @@ const PublishModal = React.memo((props) => {
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}
+            handleNext={() => {}}
+            title={title || 'Publish Pattern'}
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           />
         </SistentModal>

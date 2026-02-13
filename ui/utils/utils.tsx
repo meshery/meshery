@@ -11,6 +11,8 @@ import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
 import { useSelector } from 'react-redux';
+import type { RootState } from '../store';
+import type { CSSProperties } from 'react';
 
 /**
  * Check if an object is empty
@@ -63,16 +65,9 @@ export function isEqualArr(arr1, arr2, orderMatters = true) {
 /**
  * ScrollToTop scrolls the window to top
  *
- * @param {(
- * "auto"
- * |"smooth"
- * |"inherit"
- * |"initial"
- * |"revert"
- * |"unset"
- * )} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
+ * @param {ScrollBehavior} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
  */
-export function scrollToTop(behavior = 'smooth') {
+export function scrollToTop(behavior: 'auto' | 'smooth' = 'smooth') {
   setTimeout(() => {
     window.scrollTo({
       top: 0,
@@ -194,8 +189,8 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
  * @returns {array} - return array of uint8Array
  *
  * */
-export const getUnit8ArrayForDesign = (design) => {
-  const uint8Array = Uint8Array.from(design, (char) => char.charCodeAt(0));
+export const getUnit8ArrayForDesign = (design: string) => {
+  const uint8Array = Uint8Array.from(design, (char: string) => char.charCodeAt(0));
 
   return Array.from(uint8Array);
 };
@@ -344,14 +339,14 @@ export const formatToTitleCase = (value) => {
   return '';
 };
 
-const cellStyle = {
+const cellStyle: CSSProperties = {
   boxSizing: 'border-box',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 };
 
-const customBodyRenderStyle = {
+const customBodyRenderStyle: CSSProperties = {
   position: 'absolute',
   top: 0,
   right: 0,
@@ -460,9 +455,9 @@ export const urlEncodeParams = (params) => {
       return;
     }
     if (Array.isArray(value)) {
-      value.forEach((val) => urlSearchParams.append(key, val));
+      value.forEach((val) => urlSearchParams.append(key, String(val)));
     } else {
-      urlSearchParams.append(key, value);
+      urlSearchParams.append(key, String(value));
     }
   });
 
@@ -492,7 +487,7 @@ export const isOperatorEnabled = isKanvasEnabled;
 export const isKanvasDesignerEnabled = isKanvasEnabled;
 
 export const useIsKanvasEnabled = () => {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
 
   return isKanvasEnabled(capabilitiesRegistry);
 };

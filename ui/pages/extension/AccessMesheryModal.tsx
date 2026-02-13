@@ -11,18 +11,19 @@ import {
   CloseIcon,
   styled,
 } from '@sistent/sistent';
+import type { TransitionProps } from '@mui/material/transitions';
 
 const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
   margin: 0,
   padding: theme.spacing(2),
   textAlign: 'center',
   backgroundColor: '#252E31',
-  color: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.white || theme.palette.common.white,
 }));
 
 const CloseButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
-  color: theme.palette.background.constant.white,
+  color: theme.palette.background.constant?.white || theme.palette.common.white,
   right: theme.spacing(1),
   top: theme.spacing(1),
   transform: 'rotate(-90deg)',
@@ -55,8 +56,11 @@ const InstallButton = styled(Button)({
   marginBottom: '1rem',
 });
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children: React.ReactElement<any, any> },
+  ref: React.Ref<HTMLDivElement>,
+) {
+  return <Slide direction="up" ref={ref} {...(props as any)} />;
 });
 
 export default function PlaygroundMeshDeploy(props) {

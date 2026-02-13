@@ -10,6 +10,7 @@ import {
 } from '@/rtk-query/user';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
+// @ts-expect-error - ShareModal exists at runtime but types may not be exported
 import { ShareModal as CatalogShare } from '@sistent/sistent';
 import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
@@ -34,7 +35,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
     });
 
   const { notify } = useNotification();
-  const { data: currentUser } = useGetLoggedInUserQuery();
+  const { data: currentUser } = useGetLoggedInUserQuery({});
   const [updatePatterns] = useUpdatePatternFileMutation();
   const [handleResourceShare] = useCreateAndRevokeResourceAccessRecordMutation();
   const [updateView] = useUpdateViewVisibilityMutation();
@@ -67,7 +68,8 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
       },
     });
     return {
-      error: res?.error?.error,
+      // RTK Query mutation error can be multiple shapes (FetchBaseQueryError | SerializedError)
+      error: (res as any)?.error?.error ?? (res as any)?.error,
     };
   };
 
@@ -79,7 +81,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
       },
     });
     return {
-      error: res.error?.error,
+      error: (res as any)?.error?.error ?? (res as any)?.error,
     };
   };
 
