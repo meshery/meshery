@@ -49,7 +49,7 @@ Use this skill when the user:
   - Use when: RBAC, policy application, or configuration selection
 
 **Sibling Relationships (Peer Components)**
-- **Default Subtype**: General peer relationships
+- **Sibling Subtype**: General peer relationships
   - Examples: Components sharing parent, representing same entity in different states
   - Indicators: "related to", "peer of", "associated with"
   - Use when: Logical relationship without dependency or hierarchy
