@@ -22,7 +22,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 <a href="images/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul/consul-sample-app.png" /></a>
 
 3. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed.
-<a href="images/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul/consul-imagehub-success.png" /></a>
+<a href="images/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul/consul-imagehub-success.png" /></a>
 
 ---
 
