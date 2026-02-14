@@ -1,3 +1,5 @@
+#!/usr/bin/env bats
+
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
@@ -5,6 +7,8 @@ setup() {
     load "$E2E_HELPERS_PATH/constants"
 
     export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/model"
+    mkdir -p "$TESTDATA_DIR"
+    export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import"
 }
 
 @test "given no model-id provided as an argument when running mesheryctl model delete then an error message is displayed" {
@@ -33,12 +37,13 @@ setup() {
 }
 
 @test "given a valid model-id is provided as an argument when running mesheryctl model delete then the model is deleted successfully" {
-    if [ ! -f "$TESTDATA_DIR/id" ]; then
-        skip "No model ID available to delete"
-    fi
+    run $MESHERYCTL_BIN model import -f "$FIXTURES_DIR/valid-model"
+    assert_success
 
-    MODEL_ID="$(cat "$TESTDATA_DIR/id")"
-    [ -n "$MODEL_ID" ] || skip "Empty model ID"
+    run bash -c "printf '\n' | $MESHERYCTL_BIN model view model-import_cli-e2e-test -o json | jq -r '.id'"
+    assert_success
+    MODEL_ID="$output"
+    [ -n "$MODEL_ID" ]
 
     run $MESHERYCTL_BIN model delete "$MODEL_ID"
     assert_success
