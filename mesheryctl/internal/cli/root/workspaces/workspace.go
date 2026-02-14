@@ -31,7 +31,7 @@ var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Managge workspaces under an organization",
 	Long: `Create, list, delete of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
+Documentation for workspace can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
 	Example: `
 
 // To view a list workspaces

@@ -13,7 +13,7 @@ var deleteWorkspaceCmd = &cobra.Command{
 	Use:   "delete [workspace-id]",
 	Short: "Delete a workspace under an organization",
 	Long: `Delete a workspace by providing the workspace ID
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/delete`,
+Documentation for workspace can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/delete`,
 	Example: `
 // delete an existing workspace by providing the workspaceID
 mesheryctl exp workspace delete [workspaceID]
