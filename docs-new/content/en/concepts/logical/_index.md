@@ -1,5 +1,6 @@
 ---
 title: Logical
+display_toc: false
 description: Concepts for understanding Meshery's various features and components.
 ---
 
