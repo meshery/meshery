@@ -20,7 +20,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -81,7 +80,7 @@ mesheryctl adapter deploy linkerd --watch
 			s.Stop()
 
 			if watch {
-				log.Infof("Verifying Operation")
+				utils.Log.Info("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
 					utils.Log.Error(err)
