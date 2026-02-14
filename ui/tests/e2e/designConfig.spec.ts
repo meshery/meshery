@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { DesignConfiguratorPage } from './pages/DesignConfiguratorPage';
 
 test.describe('Design Configurator Tests', () => {
-  let designConfigPage;
+  let designConfigPage: DesignConfiguratorPage;
 
   test.beforeEach(async ({ page }) => {
     await page.route('**/api/pattern', async (route) => {
