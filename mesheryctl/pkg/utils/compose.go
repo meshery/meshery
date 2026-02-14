@@ -29,6 +29,7 @@ import (
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/docker/compose/v2/pkg/compose"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 )
 
 // ComposeClient is a wrapper around the docker compose library
@@ -257,7 +258,10 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 	// docker desktop.
 	if len(containers) == 0 {
 		dockerClient := c.cli.Client()
-		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+		filters := filters.NewArgs()
+		filters.Add("name", "meshery")
+		filters.Add("label", "com.docker.compose.project")
+		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: filters})
 		if err != nil {
 			return "", err
 		}

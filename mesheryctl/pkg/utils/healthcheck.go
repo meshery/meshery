@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -182,6 +183,14 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
+func SetContainerListOptionsFilter(filterMap map[string]string) filters.Args {
+	filters := filters.NewArgs()
+	for key, value := range filterMap {
+		filters.Add(key, value)
+	}
+	return filters
+}
+
 // AreMesheryComponentsRunning checks if the meshery containers are up and running
 func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	// If not, use the platforms to check if Meshery is running or not
@@ -204,12 +213,16 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return ContainsMesheryContainer(containers), nil
 			}
 
-			dockerClient := composeClient.cli.Client()
-			containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+			dockerCliClient := composeClient.cli.Client()
+			listOptionFilters := map[string]string{
+				"name":  "meshery",
+				"label": "com.docker.compose.project",
+			}
+			containersSummary, err := dockerCliClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: SetContainerListOptionsFilter(listOptionFilters)})
 			if err != nil {
 				return false, err
 			}
-			containers, err = ToComposeSummaries(context.Background(), dockerClient, containersSummary)
+			containers, err = ToComposeSummaries(context.Background(), dockerCliClient, containersSummary)
 			if err != nil {
 				return false, err
 			}
