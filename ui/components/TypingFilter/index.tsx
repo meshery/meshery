@@ -84,14 +84,42 @@ function transformData(data) {
  * @param {object[]} defaultFilters - An array of default filters to initialize the component.
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters }) => {
+const TypingFilter = ({
+  filterSchema,
+  placeholder,
+  handleFilter,
+  defaultFilters,
+  currentFilters,
+}) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
 
   useEffect(() => {
-    setSelectedFilters(defaultFilters);
-  }, [defaultFilters.length]);
+    if (currentFilters && Object.keys(currentFilters).length > 0) {
+      const newFilters = [];
+      Object.entries(currentFilters).forEach(([filterType, values]) => {
+        const schemaKey = Object.keys(filterSchema).find(
+          (key) => filterSchema[key].value.toLowerCase() === filterType.toLowerCase(),
+        );
+
+        if (schemaKey) {
+          const schema = filterSchema[schemaKey];
+          const filterValues = Array.isArray(values) ? values : [values];
+          filterValues.forEach((value) => {
+            newFilters.push({
+              type: schemaKey,
+              value,
+              label: `${schema.value}: ${value}`,
+            });
+          });
+        }
+      });
+      setSelectedFilters(newFilters);
+    } else if (!currentFilters || Object.keys(currentFilters).length === 0) {
+      setSelectedFilters(defaultFilters);
+    }
+  }, [currentFilters, filterSchema]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {
@@ -160,13 +188,15 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
         return;
       }
 
+      let updatedFilters;
       if (filterSchema[option.type].multiple === false) {
-        setSelectedFilters((prev) => [...prev.filter((f) => f.type !== option.type), newFilter]);
+        updatedFilters = [...selectedFilters.filter((f) => f.type !== option.type), newFilter];
       } else {
-        setSelectedFilters((prev) => [...prev, newFilter]);
+        updatedFilters = [...selectedFilters, newFilter];
       }
 
-      handleFilter(transformData([...selectedFilters, newFilter]));
+      setSelectedFilters(updatedFilters);
+      handleFilter(transformData(updatedFilters));
       setInputValue('');
     }
   };
@@ -194,8 +224,9 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
   };
 
   const handleDeleteChip = (details) => {
-    setSelectedFilters((prev) => prev.filter((filter) => filter !== details?.option));
-    handleFilter(transformData(selectedFilters.filter((filter) => filter !== details?.option)));
+    const updatedFilters = selectedFilters.filter((filter) => filter !== details?.option);
+    setSelectedFilters(updatedFilters);
+    handleFilter(transformData(updatedFilters));
   };
 
   const theme = useTheme();
