@@ -1,6 +1,8 @@
-export const waitFor = async (func, timeout = 5000) => {
+export const waitFor = async <T>(func: () => T | Promise<T>, timeout = 5000): Promise<T> => {
   return new Promise((resolve, reject) => {
-    const pollFn = async (pollingInterval) => {
+    let pollingInterval: ReturnType<typeof setInterval>;
+
+    const pollFn = async () => {
       try {
         const result = await func();
         if (result) {
@@ -13,12 +15,11 @@ export const waitFor = async (func, timeout = 5000) => {
       }
     };
 
-    const pollingInterval = setInterval(function () {
-      pollFn(this);
-    }, 200);
+    pollingInterval = setInterval(pollFn, 200);
+
     setTimeout(() => {
       clearInterval(pollingInterval);
-      reject(`Timeout after ${timeout} ms for condition ${func}`);
+      reject(`Timeout after ${timeout} ms for condition ${func.toString()}`);
     }, timeout);
   });
 };
