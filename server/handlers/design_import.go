@@ -274,7 +274,16 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 
-	design.Name = importDesignPayload.Name
+	if importDesignPayload.Name != "" {
+		design.Name = importDesignPayload.Name
+	} else if design.Name == "" {
+		// Use filename without extension as the design name
+		name := fileToImport.FileName
+		name = strings.TrimSuffix(name, path.Ext(name))
+		if name != "" {
+			design.Name = name
+		}
+	}
 	patternFile, err := encoding.Marshal(design)
 
 	if err != nil {
