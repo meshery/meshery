@@ -52,13 +52,15 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	if req.Method == http.MethodGet {
+	switch req.Method {
+	case http.MethodGet:
 		req = mux.SetURLVars(req, map[string]string{"connectionKind": "grafana"})
 		h.GetConnectionsByKind(w, req, prefObj, user, p)
-		return
-	}
 
-	if req.Method == http.MethodPost {
+	case http.MethodDelete:
+		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+
+	case http.MethodPost:
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
 		credName := req.FormValue("grafanaCredentialName")
@@ -126,11 +128,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
-	} else if req.Method == http.MethodDelete {
-		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
-		return
 	}
-
 }
 
 // swagger:route GET /api/telemetry/metrics/grafana/ping/{connectionID} GrafanaAPI idGetGrafanaPing
