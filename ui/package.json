@@ -50,7 +50,7 @@
     "@rjsf/utils": "^5.24.8",
     "@rjsf/validator-ajv8": "^5.24.8",
     "@sistent/mui-datatables": "^5.1.4",
-    "@sistent/sistent": "^0.16.4",
+    "@sistent/sistent": "^0.16.10",
     "@uiw/codemirror-theme-material": "^4.25.4",
     "@uiw/react-codemirror": "^4.25.4",
     "@uiw/react-md-editor": "^4.0.5",
