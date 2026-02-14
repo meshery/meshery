@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { expect, test } from '@playwright/test';
 import { ExtensionsPage } from './pages/ExtensionsPage';
 
@@ -17,7 +16,6 @@ const URLS = {
 };
 
 test.describe('Extensions Section Tests', () => {
- 
   let extensionsPage: ExtensionsPage;
 
   test.beforeEach(async ({ page }) => {
