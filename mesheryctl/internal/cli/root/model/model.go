@@ -57,6 +57,9 @@ mesheryctl model import -f [Uri]
 // List available model(s)
 mesheryctl model list
 
+// Delete avaialbe model(s)
+mesheryctl model delete [model-id]
+
 // Search for a specific model
 mesheryctl model search [model-name]
 
@@ -95,7 +98,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
