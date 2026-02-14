@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { expect, Page, Response } from '@playwright/test';
 import { test } from './fixtures/project';
 import { ENV } from './env';
