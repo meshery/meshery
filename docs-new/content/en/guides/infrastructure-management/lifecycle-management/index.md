@@ -3,8 +3,8 @@ title: Managing Connections
 description: Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery.
 weight: 40
 aliases: 
-- tasks/lifecycle-management
-- guides/infrastructure-management/managing-connections
+    - tasks/lifecycle-management
+    - guides/infrastructure-management/managing-connections
 ---
 
 Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations](/extensibility/integrations).
@@ -15,7 +15,7 @@ Meshery manages hundreds of different types of cloud native infrastructure. See 
 
 Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure, so that you can learn and compare different infrastructure functionality. Once you have selected to operate a given infrastructure, Meshery will assist you with ongoing operations.
 
-Meshery automates the provisioning of various infrastructurees, allowing users to select different configuration profiles in order to support a variety of deployment models.
+Meshery automates the provisioning of various infrastructures, allowing users to select different configuration profiles in order to support a variety of deployment models.
 
 Meshery adapters will dynamically retrieve the specific infrastructure's release package upon initial deployment of a given infrastructure. Meshery adapters cache (in `.meshery/bin`) the infrastructure installation package.
 
@@ -35,7 +35,7 @@ Meshery provides the ability for you as a infrastructure manager to customize yo
 
 ## Notifications
 
-Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on.
+Meshery tracks operations that you perform on infrastructures and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on.
 
 #### Acknowledging and dismissing notifications
 

@@ -10,7 +10,7 @@ aliases:
 Managed by the [Meshery Operator](/concepts/architecture/operator), MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads. Learn more about [MeshSync](/concepts/architecture/meshsync).
 {{< /alert >}}
 
-MeshSync is your tool for efficient management and synchronization of Kubernetes clusters! This user guide will walk you through how to establish a connection with any element that Meshery is able to connect to and manage. Use the MeshSync page to register connections, view connection metadata, and perform connectivity tests, as weel as to manage credentials and environments.
+MeshSync is your tool for efficient management and synchronization of Kubernetes clusters! This user guide will walk you through how to establish a connection with any element that Meshery is able to connect to and manage. Use the MeshSync page to register connections, view connection metadata, and perform connectivity tests, as well as to manage credentials and environments.
 
 ## MeshSync Discovery
 

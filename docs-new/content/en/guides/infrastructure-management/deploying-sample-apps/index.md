@@ -6,7 +6,7 @@ aliases:
   - /guides/infrastructure-management/sample-apps
 ---
 
-Meshery includes a few sample applications to help you explore cloud native infrastructure. Each is a collection of microservices for experimental purposes of learning about running workloads in Kubernetes clusters both on and off of cloud native infrastructure. When deploying a sample app onto your cloud native infrastructure, your sample application needs will need to be externaally exposed from the cluster, if you would like to access it externally. There are a myriad of ways to do this, specific to the infrastructure you are using.
+Meshery includes a few sample applications to help you explore cloud native infrastructure. Each is a collection of microservices for experimental purposes of learning about running workloads in Kubernetes clusters both on and off of cloud native infrastructure. When deploying a sample app onto your cloud native infrastructure, your sample application needs will need to be externally exposed from the cluster, if you would like to access it externally. There are a myriad of ways to do this, specific to the infrastructure you are using.
 
 A popular way of exposing your cluster is by using [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/), an API object that defines rules which allow external access to services in a cluster.
 
