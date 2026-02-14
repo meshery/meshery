@@ -1,0 +1,24 @@
+{{- $title := .Get "title" -}}
+{{- $category := .Get "category" -}}
+{{- $icon := .Get "icon" | default "" -}}
+{{- $link := .Get "link" -}}
+
+<details>
+  <summary>
+    <p style="display:inline">
+      <a href="{{ $link }}" class="text-black">{{ $icon }} {{ $title }}</a>
+    </p>
+  </summary>
+  <ul class="section-title">
+{{- range where .Site.RegularPages ".Params.categories" "intersect" (slice $category) }}
+{{- if and (ne .Kind "section") (ne .Params.list "exclude") }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+{{- if and .Params.description (ne .Params.description "") }}
+      - {{ .Params.description }}
+{{- end }}
+    </li>
+{{- end }}
+{{- end }}
+  </ul>
+</details>
