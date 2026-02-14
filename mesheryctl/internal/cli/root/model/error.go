@@ -15,6 +15,7 @@ const (
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
+	ErrDeleteModelCode                  = "mesheryctl-1200"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
@@ -65,4 +66,8 @@ func ErrModelBuildFromStrings(message ...string) error {
 
 func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
+}
+
+func ErrDeleteModel(err error, id string) error {
+	return errors.New(ErrDeleteModelCode, errors.Alert, []string{"Failed to delete model"}, []string{fmt.Sprintf("failed to delete model with ID %s: %s", id, err.Error())}, []string{"The specified model ID may not exist"}, []string{"Verify the model ID using `mesheryctl model list`"})
 }
