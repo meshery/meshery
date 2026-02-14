@@ -57,9 +57,9 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errViewCmdMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n\n%s", errNoArg, viewUsageMessage))
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n\n%s", errMultiArg, viewUsageMessage))
 		}
 		return nil
 	},
