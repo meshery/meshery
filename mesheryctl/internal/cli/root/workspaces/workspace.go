@@ -30,7 +30,7 @@ var (
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Managge workspaces under an organization",
-	Long: `Create, list of workspaces under an organization
+	Long: `Create, list, delete of workspaces under an organization
 Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace`,
 	Example: `
 
@@ -39,6 +39,9 @@ mesheryctl exp workspace list --orgId [orgId]
 
 // To create a workspace
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+
+// To delete a workspace
+mesheryctl exp workspace delete [workspaceId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
@@ -49,7 +52,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl exp workspace --help' to display usage guide", args[0]))
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list, delete]. Use 'mesheryctl exp workspace --help' to display usage guide", args[0]))
 		}
 
 		return nil

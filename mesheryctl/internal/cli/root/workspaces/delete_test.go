@@ -31,7 +31,7 @@ func TestDeleteWorkspace(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[ Workspace ID ] not specified")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("needed a [ Workspace ID ] to delete the workspace")),
 		},
 		{
 			Name:             "given an invalid workspace-id is provided when running mesheryctl exp workspace delete invalid-id then an error message is displayed",

@@ -12,9 +12,15 @@ import (
 var deleteWorkspaceCmd = &cobra.Command{
 	Use:   "delete [workspace-id]",
 	Short: "Delete a workspace under an organization",
+	Long: `Delete a workspace by providing the workspace ID
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/delete`,
+	Example: `
+// delete an existing workspace by providing the workspaceID
+mesheryctl exp workspace delete [workspaceID]
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[ Workspace ID ] not specified"))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("needed a [ Workspace ID ] to delete the workspace"))
 		}
 
 		if !utils.IsUUID(args[0]) {
