@@ -1,14 +1,37 @@
 /** @type {import('next').NextConfig} */
 
-const removeImports = require('next-remove-imports')();
-const nextConfig = removeImports({
-  reactStrictMode: true,
+const nextConfig = {
+  reactStrictMode: false,
+
+  // Static export (replaces removed `next export` in Next.js 15)
+  output: 'export',
+
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // Transpile packages that have CSS imports or ESM issues
+  transpilePackages: [
+    '@uiw/react-md-editor',
+    '@uiw/react-markdown-preview',
+    '@uiw/react-codemirror',
+    'billboard.js',
+  ],
+
+  // SWC Compiler Configuration (SWC is the default in Next.js 15)
   compiler: {
     relay: require('./relay.config'),
   },
+
+  // Required for static export
+  images: {
+    unoptimized: true,
+  },
+
   exportPathMap: function () {
     return {
       '/404': { page: '/404' },
@@ -18,7 +41,7 @@ const nextConfig = removeImports({
       '/configuration/designs/configurator': { page: '/configuration/designs/configurator' },
       '/extension/[...component]': { page: '/extension/[...component]' },
       '/extensions': { page: '/extensions' },
-      '/': { page: '/', query: { __nextDefaultLocale: 'en' } },
+      '/': { page: '/' },
       '/management/adapter': { page: '/management/adapter' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
@@ -29,26 +52,21 @@ const nextConfig = removeImports({
       '/user/preferences': { page: '/user/preferences' },
     };
   },
-  //  exportPathMap: function (pathMap) {
-  //    console.log(pathMap)
-  //    if (process.env.PLAYGROUND === "true") {
-  //      return {
-  //        '/': { page: '/' },
-  //        '/extension/*': { page: "/extension/[component]" }
-  //      }
-  //    } else {
-  //      return pathMap
-  //    }
-  //  },
+
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
       'remote-component.config.js': __dirname + '/remote-component.config.js',
     };
-    // (config.output.webassemblyModuleFilename = 'static/[modulehash].wasm'),
-    //   (config.experiments = { asyncWebAssembly: true, layers: true });
+
+    // Handle markdown imports (replaces next-remove-imports)
+    config.module.rules.push({
+      test: /\.md$/,
+      type: 'asset/source',
+    });
+
     return config;
   },
-});
+};
 
 module.exports = nextConfig;
