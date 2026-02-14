@@ -265,14 +265,9 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		if err != nil {
 			return "", err
 		}
-		allContainers, err := ToComposeSummaries(context.Background(), dockerClient, containersSummary)
+		containers, err = ToComposeSummaries(context.Background(), dockerClient, containersSummary)
 		if err != nil {
 			return "", err
-		}
-		for _, mesheryContainer := range allContainers {
-			if strings.Contains(mesheryContainer.Name, "meshery") {
-				containers = append(containers, mesheryContainer)
-			}
 		}
 
 		// If this is true then meshery extension is not installed or running.
