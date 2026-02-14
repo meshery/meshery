@@ -2,14 +2,16 @@ import { expect, test } from '@playwright/test';
 import { DashboardPage } from './pages/DashboardPage';
 
 test.describe('Logout Page Tests', () => {
-  let dashboardPage;
+  let dashboardPage: DashboardPage;
+
   test.beforeEach(async ({ page }) => {
     dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
   });
+
   test('Logout from current user session', async ({ page }) => {
-    await page.route('/user/logout', (route) => {
-      route.fulfill({
+    await page.route('/user/logout', async (route) => {
+      await route.fulfill({
         status: 302,
         headers: {
           Location: '/provider',
