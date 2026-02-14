@@ -78,7 +78,7 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 		}
 
 		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found with the name: ", componentDefinition)
+			fmt.Println("No component(s) found with the name:", componentDefinition)
 			return nil
 		}
 
