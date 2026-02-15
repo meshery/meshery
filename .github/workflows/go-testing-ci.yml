@@ -110,6 +110,13 @@ jobs:
         if: matrix.platform == 'kubernetes'
         with:
           cluster_name: "kind-cluster"
+
+      - name: Initialize Meshery context
+        run: |
+          chmod +x ./mesheryctl/mesheryctl
+          ./mesheryctl/mesheryctl system context create local --set
+
+
       - name: Run mesheryctl integration tests
         run: |
           chmod +x ./mesheryctl;
