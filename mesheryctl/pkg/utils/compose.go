@@ -28,6 +28,7 @@ import (
 	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/compose/v2/pkg/api"
 	"github.com/docker/compose/v2/pkg/compose"
+	"github.com/docker/docker/api/types/container"
 )
 
 // ComposeClient is a wrapper around the docker compose library
@@ -251,8 +252,28 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		return "", err
 	}
 
+	// If this is true then meshery is not spun up using:
+	// `mesheryctl system start -p docker`. So check for meshery extension in
+	// docker desktop.
 	if len(containers) == 0 {
-		return "", nil
+		dockerClient := c.cli.Client()
+		listOptionFilters := map[string]string{
+			"name":  "meshery",
+			"label": "com.docker.compose.project",
+		}
+		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: SetContainerListOptionsFilter(listOptionFilters)})
+		if err != nil {
+			return "", err
+		}
+		containers, err = ToComposeSummaries(context.Background(), dockerClient, containersSummary)
+		if err != nil {
+			return "", err
+		}
+
+		// If this is true then meshery extension is not installed or running.
+		if len(containers) == 0 {
+			return "", nil
+		}
 	}
 
 	output := "NAME\tIMAGE\tCOMMAND\tSERVICE\tCREATED\tSTATUS\tPORTS\n"

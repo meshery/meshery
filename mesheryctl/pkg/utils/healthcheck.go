@@ -14,6 +14,8 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -21,8 +23,10 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 )
 
-var minAPIVersion = [3]int{1, 12, 0}
-var minKubectlVersion = minAPIVersion
+var (
+	minAPIVersion     = [3]int{1, 12, 0}
+	minKubectlVersion = minAPIVersion
+)
 
 // GetK8sVersionInfo returns version.Info for the Kubernetes cluster.
 func GetK8sVersionInfo() (*version.Info, error) {
@@ -51,7 +55,7 @@ func CheckK8sVersion(versionInfo *version.Info) error {
 
 func getK8sVersion(versionString string) ([3]int, error) {
 	var version [3]int
-	var revisionSeparator = regexp.MustCompile("[^0-9.]")
+	revisionSeparator := regexp.MustCompile("[^0-9.]")
 
 	justTheVersionString := strings.TrimPrefix(versionString, "v")
 	justTheMajorMinorRevisionNumbers := revisionSeparator.Split(justTheVersionString, -1)[0]
@@ -137,7 +141,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		return true, nil
 	}
 
-	//If not, use the platforms to check if Meshery is running or not
+	// If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
 		{
@@ -155,16 +159,14 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	case "kubernetes":
 		{
 			client, err := meshkitkube.New([]byte(""))
-
 			if err != nil {
 				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 
-			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			// podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
-
 			if err != nil {
 				return false, err
 			}
@@ -181,9 +183,17 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
+func SetContainerListOptionsFilter(filterMap map[string]string) filters.Args {
+	filters := filters.NewArgs()
+	for key, value := range filterMap {
+		filters.Add(key, value)
+	}
+	return filters
+}
+
 // AreMesheryComponentsRunning checks if the meshery containers are up and running
 func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
-	//If not, use the platforms to check if Meshery is running or not
+	// If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
 		{
@@ -196,19 +206,37 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			if err != nil {
 				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
 			}
+
+			// containers will be empty slice if meshery is spun up using the
+			// meshery/docker-extension-meshery extension in docker desktop.
+			if len(containers) != 0 {
+				return ContainsMesheryContainer(containers), nil
+			}
+
+			dockerCliClient := composeClient.cli.Client()
+			listOptionFilters := map[string]string{
+				"name":  "meshery",
+				"label": "com.docker.compose.project",
+			}
+			containersSummary, err := dockerCliClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: SetContainerListOptionsFilter(listOptionFilters)})
+			if err != nil {
+				return false, err
+			}
+			containers, err = ToComposeSummaries(context.Background(), dockerCliClient, containersSummary)
+			if err != nil {
+				return false, err
+			}
 			return ContainsMesheryContainer(containers), nil
 		}
 	case "kubernetes":
 		{
 			client, err := meshkitkube.New([]byte(""))
-
 			if err != nil {
 				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
 			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
-
 			if err != nil {
 				return false, err
 			}
@@ -229,14 +257,12 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 func AreAllPodsRunning() (bool, error) {
 	// create an kubernetes client
 	client, err := meshkitkube.New([]byte(""))
-
 	if err != nil {
 		return false, err
 	}
 
 	// List the pods in the MesheryNamespace
 	podList, err := GetPodList(client, MesheryNamespace)
-
 	if err != nil {
 		return false, err
 	}
