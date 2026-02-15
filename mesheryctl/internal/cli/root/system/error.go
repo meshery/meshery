@@ -54,6 +54,7 @@ const (
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
 	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrInvalidLowerCaseCode              = "mesheryctl-1202"
 )
 
 var (
@@ -336,5 +337,14 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+}
 
+func ErrInvalidLowerCase(err error) error {
+	return errors.New(
+		ErrInvalidLowerCaseCode,
+		errors.Fatal,
+		[]string{"Invalid case"},
+		[]string{err.Error()},
+		[]string{"Context name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character"},
+		[]string{"Provide a valid context name using only lowercase alphanumeric characters or '-'."})
 }
