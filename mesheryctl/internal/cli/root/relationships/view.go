@@ -70,7 +70,7 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 		switch relationshipsResponse.Count {
 		case 0:
-			utils.Log.Info("No relationship(s) found for the given name ", model)
+			fmt.Println("No relationship(s) found for the model with name:", model)
 			return nil
 		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
