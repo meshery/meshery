@@ -1,0 +1,99 @@
+---
+title: Operator
+description: "Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster"
+display_title: false
+aliases:
+- /architecture/operator/
+---
+
+# Meshery Operator <img src="./images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
+
+Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operations of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deploy inside or outside of the clusters under management. 
+
+## Deployments
+
+It is recommended to deploy one Meshery Operator per cluster.
+
+[![Meshery Operator and MeshSync](./images/meshery-operator-and-meshsync.svg
+)](./images/meshery-operator-and-meshsync.svg)
+
+### Initialization Sequence
+
+[![Meshery Operator and MeshSync](./images/meshery-operator-deployment-sequence.svg
+)](./images/meshery-operator-deployment-sequence.svg)
+
+## Controllers managed by Meshery Operator
+
+### Broker Controller
+
+Meshery broker is one of the core components of the meshery architecture. This controller manages the lifecycle of broker that meshery uses for data streaming across the cluster and the outside world.
+
+See [Meshery Broker](/concepts/architecture/broker) for more information.
+
+### MeshSync Controller
+
+MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
+
+See [MeshSync](/concepts/architecture/meshsync) for more information.
+
+## Operator FAQs
+
+### When is Meshery Operator deployed and when is it deleted?  
+As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisioned when Meshery Server is connected to or disconnected from Kubernetes cluster. Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+
+**Meshery CLI**
+
+`mesheryctl` initiates connection to Kubernetes cluster when `mesheryctl system start` is executed and disconnects when `mesheryctl system stop` is executed. This behavior is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+
+**Meshery UI**
+
+Meshery UI offers more granular control over the deployment of Meshery Operator in that you can remove Meshery Operator from a Kubernetes cluster without disconnecting Meshery Server from the Kubernetes cluster. You can control the deployment of Meshery Operator using the on/off switch found in the Meshery Operator section of  Settings.
+
+### Does the Meshery Operator use an SDK or framework? 
+Yes, Meshery Operator used the Operator SDK.
+
+### How does the operator expose information about broker endpoints?
+
+During the broker reconciliation step (a concept from the Operator SDK), the operator reads the deployed broker Service and populates the `status` field of the `brokers/meshery-broker` Custom Resource (CR) with endpoint information:
+
+For example, for an in-cluster Meshery deployment:
+
+```yaml
+status:
+  endpoint:
+    external: localhost:31670
+    internal: 10.96.49.130:4222
+```
+
+For example, for an out-of-cluster Meshery deployment:
+
+```yaml
+status:
+  endpoint:
+    external: 1e2cd15619524f569e695f648ae7c74e-0123456789.us-south-3.elb.cloud-provider.com:4222
+    internal: 10.96.49.130:4222
+```
+
+The internal endpoint is always set up to the Service's `ClusterIP` + `clusterPort`.
+
+The external endpoint is selected as one of the following based on Service configuration and network accessibility: 
+
+- LoadBalancer hostname (if available and not an IP) + `clusterPort`
+- LoadBalancer IP (if valid and not the ClusterIP) + `clusterPort`
+- `kubeconfig` host + `nodePort`
+- `ClusterIP` + `clusterPort`
+- `WorkerNodeIP` + `nodePort`
+
+Refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
+
+### Troubleshooting Meshery Operator and Related Components
+
+To verify that your Meshery Operator and related components are functioning properly, perform the following checks:
+
+- Ensure the Operator pods are running.
+- Confirm that your cluster has appropriate RBAC permissions set.
+- Validate that Meshery Server is able to communicate with Meshery Operator.
+
+If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](/guides/troubleshooting/meshery-operator-meshsync).
+
+Whether you're facing installation issues, resource syncing failures, or Broker communication problems, the guide walks you through how to identify and fix them effectively.

@@ -1,0 +1,15 @@
+{{ $section := .Page.Section }}
+<ul>
+{{ range where .Site.RegularPages "Section" $section }}
+  {{ if ne .Language "es" }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ if and .Params.description (ne .Params.description "") }}
+        - {{ .Params.description }}
+      {{ end }}
+    </li>
+  {{ end }}
+{{ end }}
+</ul>
+
+
