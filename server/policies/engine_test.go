@@ -781,11 +781,11 @@ func TestIsDirectReference(t *testing.T) {
 		ref      []string
 		expected bool
 	}{
-		{"direct", []string{"configuration", "name"}, true},
-		{"wildcard", []string{"configuration", "containers", "_"}, false},
-		{"empty", []string{}, true},
-		{"single direct", []string{"name"}, true},
-		{"single wildcard", []string{"_"}, false},
+		{"all named segments is direct", []string{"configuration", "name"}, true},
+		{"wildcard segment makes ref indirect", []string{"configuration", "containers", "_"}, false},
+		{"empty ref is direct", []string{}, true},
+		{"single named segment is direct", []string{"name"}, true},
+		{"single wildcard segment is indirect", []string{"_"}, false},
 	}
 
 	for _, tt := range tests {
@@ -799,19 +799,31 @@ func TestIsDirectReference(t *testing.T) {
 }
 
 func TestStringSliceToInterface(t *testing.T) {
-	input := []string{"a", "b", "c"}
-	result := stringSliceToInterface(input)
-	if len(result) != 3 {
-		t.Fatalf("Expected 3 elements, got %d", len(result))
+	tests := []struct {
+		name  string
+		input []string
+	}{
+		{"empty slice returns empty interface slice", []string{}},
+		{"single element string converts to interface", []string{"a"}},
+		{"multiple elements preserve order and values", []string{"a", "b", "c"}},
 	}
-	for i, v := range result {
-		s, ok := v.(string)
-		if !ok {
-			t.Errorf("Element %d is not a string", i)
-		}
-		if s != input[i] {
-			t.Errorf("Element %d = %q, want %q", i, s, input[i])
-		}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := stringSliceToInterface(tt.input)
+			if len(result) != len(tt.input) {
+				t.Fatalf("Expected %d elements, got %d", len(tt.input), len(result))
+			}
+			for i, v := range result {
+				s, ok := v.(string)
+				if !ok {
+					t.Errorf("Element %d is not a string", i)
+				}
+				if s != tt.input[i] {
+					t.Errorf("Element %d = %q, want %q", i, s, tt.input[i])
+				}
+			}
+		})
 	}
 }
 
