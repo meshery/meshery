@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 import _ from 'lodash';
 
-const DESIGNS_TO_TEST = [
+// Strongly typed inline to dodge JS linter rules
+const DESIGNS_TO_TEST: { id?: string; name: string }[] = [
   {
     id: '13e803b7-596c-4620-bdc4-4d3a28a027a2',
     name: 'Container-Hierarchical-Parent-Alias-Relationship',
@@ -39,8 +40,15 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       const designResponse = await request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
       );
-      const responseJson = await designResponse.json();
-      const design = JSON.parse(responseJson.pattern_file);
+      // Cast the response so TS knows pattern_file is a string
+      const responseJson = (await designResponse.json()) as { pattern_file: string };
+
+      // Cast the parsed design so TS understands its shape
+      const design = JSON.parse(responseJson.pattern_file) as {
+        name: string;
+        relationships: any[];
+        [key: string]: unknown;
+      };
 
       const designToTest = { ...design, relationships: [] };
 
@@ -58,7 +66,13 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       );
 
       expect(response.ok()).toBeTruthy();
-      const responseBody = await response.json();
+
+      // Cast the evaluate response body
+      const responseBody = (await response.json()) as {
+        design: {
+          relationships?: any[];
+        };
+      };
 
       const actualRelationships = responseBody.design.relationships || [];
 
@@ -73,7 +87,8 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         ) {
           continue;
         }
-        const found = actualRelationships.find((actualRel) => {
+
+        const found = actualRelationships.find((actualRel: any) => {
           const expectedSelector = expectedRel.selectors[0];
           const actualSelector = actualRel.selectors[0];
 
