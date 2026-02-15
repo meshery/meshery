@@ -330,11 +330,8 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 
 func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
 	if fileName != "" {
-		// Strip extension from the filename for use as the design name
-		ext := filepath.Ext(fileName)
-		if ext != "" {
-			fileName = strings.TrimSuffix(fileName, ext)
-		}
+		fileName = strings.TrimSuffix(fileName, ".tar.gz")
+		fileName = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	}
 
 	registryCache := &registry.RegistryEntityCache{}
