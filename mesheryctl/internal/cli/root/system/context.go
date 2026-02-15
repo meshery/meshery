@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -103,12 +104,14 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
+		componentName := strings.ToLower(args[0])
+
+		err := config.AddContextToConfig(componentName, tempCntxt, viper.ConfigFileUsed(), set, false)
 		if err != nil {
 			return err
 		}
 
-		log.Printf("Added `%s` context", args[0])
+		log.Printf("Added `%s` context", componentName)
 		return nil
 	},
 }
