@@ -27,7 +27,7 @@ var deleteModelCmd = &cobra.Command{
 	Use:   "delete [model-id]",
 	Short: "Delete a model",
 	Long: `Delete a model by ID
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model/delete`,
+Find more information at https://docs.meshery.io/reference/mesheryctl/model/delete`,
 	Example: `
 // Delete a model by ID
 mesheryctl model delete [model-id]
