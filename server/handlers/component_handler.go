@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/helpers"
@@ -39,6 +40,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"gorm.io/gorm"
 )
 
 /**Meshmodel endpoints **/
@@ -1808,4 +1810,83 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		return nil
 	}
 	return meshkitutils.ErrInvalidSchemaVersion
+}
+
+// swagger:route DELETE /api/meshmodels/models/{id} MeshmodelAPI idDeleteModel
+// Handle DELETE request for a model by ID
+//
+// Deletes a model and its associated registry entries from the database.
+// responses:
+//
+//	204: noContentWrapper
+func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	modelID := mux.Vars(r)["id"]
+	modelUUID, err := uuid.FromString(modelID)
+	if err != nil {
+		http.Error(rw, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
+		var modelDef _model.ModelDefinition
+		if err := tx.First(&modelDef, "id = ?", modelUUID).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for components belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+			entity.ComponentDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for relationships belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+			entity.RelationshipDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for policies belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
+			entity.PolicyDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the model's own registry entry
+		if err := tx.Where("entity = ? AND type = ?", modelUUID, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete components, relationships, and policies
+		if err := tx.Where("model_id = ?", modelUUID).Delete(&component.ComponentDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the model itself
+		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+	})
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			http.Error(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
+			return
+		}
+		mesheryErr := models.ErrDBDelete(err, "")
+		h.log.Error(mesheryErr)
+		http.Error(rw, mesheryErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusNoContent)
 }
