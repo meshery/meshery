@@ -137,12 +137,15 @@ mesheryctl system context delete [context name]`
 			utils.Log.Error(ErrUnmarshallConfig(err))
 			return nil
 		}
-		_, exists := configuration.Contexts[args[0]]
+
+		componentName := strings.ToLower(args[0])
+
+		_, exists := configuration.Contexts[componentName]
 		if !exists {
-			return fmt.Errorf("no context name found : %s", args[0])
+			return fmt.Errorf("no context name found : %s", componentName)
 		}
 
-		if viper.GetString("current-context") == args[0] {
+		if viper.GetString("current-context") == componentName {
 			var res bool
 			if utils.SilentFlag {
 				res = true
@@ -163,7 +166,7 @@ mesheryctl system context delete [context name]`
 					return errors.New("new context wrongly set")
 				}
 
-				if newContext == args[0] {
+				if newContext == componentName {
 					return errors.New("choose a new context other than the context being deleted")
 				}
 
@@ -171,7 +174,7 @@ mesheryctl system context delete [context name]`
 			} else {
 				var listContexts []string
 				for context := range configuration.Contexts {
-					if context != args[0] {
+					if context != componentName {
 						listContexts = append(listContexts, context)
 					}
 				}
@@ -192,9 +195,9 @@ mesheryctl system context delete [context name]`
 			fmt.Printf("The current context is now %q\n", result)
 			viper.Set("current-context", result)
 		}
-		delete(configuration.Contexts, args[0])
+		delete(configuration.Contexts, componentName)
 		viper.Set("contexts", configuration.Contexts)
-		log.Printf("deleted context %s", args[0])
+		log.Printf("deleted context %s", componentName)
 		err = viper.WriteConfig()
 		return err
 	},
@@ -314,7 +317,7 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			currContext = args[0]
+			currContext = strings.ToLower(args[0])
 		}
 		if currContext == "" {
 			currContext = viper.GetString("current-context")
@@ -383,15 +386,18 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 			utils.Log.Error(ErrUnmarshallConfig(err))
 			return nil
 		}
-		_, exists := configuration.Contexts[args[0]]
+
+		componentName := strings.ToLower(args[0])
+
+		_, exists := configuration.Contexts[componentName]
 		if !exists {
 			const errMsg = `Try running the following to create the context:
 mesheryctl system context create `
 
-			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, args[0])
+			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, componentName)
 		}
-		if viper.GetString("current-context") == args[0] {
-			return errors.New("already using context '" + args[0] + "'")
+		if viper.GetString("current-context") == componentName {
+			return errors.New("already using context '" + componentName + "'")
 		}
 		//check if meshery is running
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -410,9 +416,9 @@ mesheryctl system context create `
 			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
 
-		configuration.CurrentContext = args[0]
+		configuration.CurrentContext = componentName
 		viper.Set("current-context", configuration.CurrentContext)
-		log.Printf("switched to context '%s'", args[0])
+		log.Printf("switched to context '%s'", componentName)
 		err = viper.WriteConfig()
 
 		return err
@@ -435,8 +441,10 @@ mesheryctl system context
 			os.Exit(0)
 		}
 
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
+		componentName := strings.ToLower(args[0])
+
+		if ok := utils.IsValidSubcommand(availableSubcommands, componentName); !ok {
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", componentName), "context"))
 		}
 		return nil
 	},
