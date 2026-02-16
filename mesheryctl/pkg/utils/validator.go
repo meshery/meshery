@@ -23,7 +23,7 @@ func ValidateSemver(fl validator.FieldLevel) bool {
 	return vSemverRegex.MatchString(fl.Field().String())
 }
 
-func ValidationErrorMessage(structField string, err validator.ValidationErrors) string {
+func ValidationErrorMessage(err validator.ValidationErrors) string {
 
 	if len(err) == 0 {
 		return ""
@@ -41,5 +41,6 @@ func ValidationErrorMessage(structField string, err validator.ValidationErrors) 
 			return fmt.Sprintf("Invalid value '%v' for flag --%s", e.Value(), strings.ToLower(e.Field()))
 		}
 	}
+
 	return ""
 }

@@ -60,10 +60,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		err := validate.Struct(exportModelFlagsProvided)
 		if err != nil {
 			vErr := err.(validator.ValidationErrors)
-
-			for _, fieldErr := range vErr {
-				return utils.ErrFlagsInvalid(utils.ValidationErrorMessage(fieldErr.StructField(), vErr))
-			}
+			return utils.ErrFlagsInvalid(utils.ValidationErrorMessage(vErr))
 		}
 		return nil
 	},
