@@ -1,0 +1,10 @@
+<ul>
+{{ range where .Site.RegularPages ".Params.categories" "intersect" (slice "mesheryctl") }}
+  {{ if and (ne .Kind "section") (ne .Permalink $.Page.Permalink) }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    </li>
+  {{ end }}
+{{ end }}
+  <li><a href="/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+</ul>
