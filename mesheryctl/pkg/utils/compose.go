@@ -366,7 +366,7 @@ func canonicalContainerName(containerSummary container.Summary) string {
 	return strings.TrimPrefix(containerSummary.Names[0], "/")
 }
 
-// SetContainerListOptionsFilter sets filters used in container.ListOptions{}
+// setContainerListOptionsFilter sets filters used in container.ListOptions{}
 func setContainerListOptionsFilter(filterMap map[string]string) filters.Args {
 	filters := filters.NewArgs()
 	for key, value := range filterMap {
