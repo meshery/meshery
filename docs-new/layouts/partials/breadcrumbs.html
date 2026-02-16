@@ -1,0 +1,20 @@
+<div id="breadcrumbs">
+  {{ $root := . }}
+  {{ $url := $root.RelPermalink }}
+  {{ $crumbs := split $url "/" }}
+
+  {{ if ne $url "/" }}
+    <a href="{{ $root.Site.BaseURL }}">home</a>
+  {{ end }}
+
+  {{ range $index, $crumb := $crumbs }}
+    {{ if and $crumb (gt (len $crumb) 0) (gt $index 0) }}
+      {{ if eq (add $index 1) (len $crumbs) }}
+        / {{ lower $root.Page.Title }}
+      {{ else }}
+        {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
+        / <a href="{{ $root.Site.BaseURL }}{{ $path }}/">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+</div>
