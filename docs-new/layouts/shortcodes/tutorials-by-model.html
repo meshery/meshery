@@ -1,0 +1,17 @@
+{{- $tutorials := where .Site.RegularPages ".Params.categories" "intersect" (slice "tutorials") -}}
+{{- $sorted := sort $tutorials "Params.model" -}}
+
+{{- $currentModel := "" -}}
+{{- range $sorted -}}
+{{- if and (ne .Kind "section") .Params.model -}}
+{{- if ne .Params.model $currentModel -}}
+{{- if ne $currentModel "" }}</ol>
+{{- end }}
+<h2>{{ .Params.model | humanize }}</h2>
+<ol>
+{{- $currentModel = .Params.model }}
+{{- end }}
+<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+{{- end -}}
+{{- end }}
+</ol>
