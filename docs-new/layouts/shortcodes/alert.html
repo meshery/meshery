@@ -1,0 +1,7 @@
+{{- $type := .Get "type" | default "info" -}}
+{{- $title := .Get "title" -}}
+<div class="alert alert-{{ $type }}">
+  {{ if $title }}<h4 class="alert-heading">{{ $title }}</h4>{{ end }}
+  {{ .Inner | markdownify }}
+</div>
+
