@@ -19,6 +19,7 @@ jobs:
           go-version: "1.25"
       - run: |
           GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
         with:
@@ -40,8 +41,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Install dependencies
-        run: |
-          make ui-build
+        run: make ui-build
       - name: upload meshery-ui artifact
         uses: actions/upload-artifact@v6
         with:
