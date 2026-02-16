@@ -263,11 +263,11 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 			"name":  "meshery",
 			"label": "com.docker.compose.project",
 		}
-		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: SetContainerListOptionsFilter(listOptionFilters)})
+		containersSummary, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: setContainerListOptionsFilter(listOptionFilters)})
 		if err != nil {
 			return "", err
 		}
-		containers, err = ConvertToComposeSummaries(containersSummary)
+		containers, err = convertToComposeSummaries(containersSummary)
 		if err != nil {
 			return "", err
 		}
@@ -315,7 +315,7 @@ func ContainsMesheryContainer(containers []api.ContainerSummary) bool {
 
 // ConvertToComposeSummaries takes takes []container.Sumamry type and returns
 // a []api.ContainerSummary.
-func ConvertToComposeSummaries(containersSummary []container.Summary) ([]api.ContainerSummary, error) {
+func convertToComposeSummaries(containersSummary []container.Summary) ([]api.ContainerSummary, error) {
 	out := make([]api.ContainerSummary, 0, len(containersSummary))
 
 	for _, containerSummary := range containersSummary {
@@ -367,7 +367,7 @@ func canonicalContainerName(containerSummary container.Summary) string {
 }
 
 // SetContainerListOptionsFilter sets filters used in container.ListOptions{}
-func SetContainerListOptionsFilter(filterMap map[string]string) filters.Args {
+func setContainerListOptionsFilter(filterMap map[string]string) filters.Args {
 	filters := filters.NewArgs()
 	for key, value := range filterMap {
 		filters.Add(key, value)

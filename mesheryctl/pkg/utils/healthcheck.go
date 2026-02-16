@@ -209,11 +209,11 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				"name":  "meshery",
 				"label": "com.docker.compose.project",
 			}
-			containersSummary, err := dockerCliClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: SetContainerListOptionsFilter(listOptionFilters)})
+			containersSummary, err := dockerCliClient.ContainerList(context.Background(), container.ListOptions{All: true, Filters: setContainerListOptionsFilter(listOptionFilters)})
 			if err != nil {
 				return false, err
 			}
-			containers, err = ConvertToComposeSummaries(containersSummary)
+			containers, err = convertToComposeSummaries(containersSummary)
 			if err != nil {
 				return false, err
 			}
