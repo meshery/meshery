@@ -83,10 +83,6 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
 
-		if exportModelFlagsProvided.Version != "" {
-			queryParams.Set("version", exportModelFlagsProvided.Version)
-		}
-
 		urlPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
 
 		output := &outputDetail{
