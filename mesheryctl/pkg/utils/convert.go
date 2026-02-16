@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"context"
-	"fmt"
 	"sort"
 	"strings"
 
@@ -10,13 +8,9 @@ import (
 	"github.com/docker/docker/api/types/container"
 )
 
-type containerInspector interface {
-	ContainerInspect(ctx context.Context, containerID string) (container.InspectResponse, error)
-}
-
 // ToComposeSummaries takes takes []container.Sumamry type and returns
 // a []api.ContainerSummary.
-func ToComposeSummaries(ctx context.Context, inspector containerInspector, containersSummary []container.Summary) ([]api.ContainerSummary, error) {
+func ToComposeSummaries(containersSummary []container.Summary) ([]api.ContainerSummary, error) {
 	out := make([]api.ContainerSummary, 0, len(containersSummary))
 
 	for _, containerSummary := range containersSummary {
@@ -33,63 +27,14 @@ func ToComposeSummaries(ctx context.Context, inspector containerInspector, conta
 			})
 		}
 
-		mounts := make([]string, 0, len(containerSummary.Mounts))
-		localVolumes := 0
-		for _, mount := range containerSummary.Mounts {
-			name := mount.Name
-			if name == "" {
-				name = mount.Source
-			}
-			if mount.Driver == "local" {
-				localVolumes++
-			}
-			mounts = append(mounts, name)
-		}
-
-		networks := []string{}
-		if containerSummary.NetworkSettings != nil {
-			for n := range containerSummary.NetworkSettings.Networks {
-				networks = append(networks, n)
-			}
-			sort.Strings(networks)
-		}
-
-		inspect, err := inspector.ContainerInspect(ctx, containerSummary.ID)
-		if err != nil {
-			return nil, fmt.Errorf("inspect container %s: %w", containerSummary.ID, err)
-		}
-
-		health := ""
-		exitCode := 0
-		if inspect.State != nil {
-			if inspect.State.Health != nil {
-				health = inspect.State.Health.Status
-			}
-			if inspect.State.Status == container.StateExited || inspect.State.Status == container.StateDead {
-				exitCode = int(inspect.State.ExitCode)
-			}
-		}
-
 		out = append(out, api.ContainerSummary{
-			ID:           containerSummary.ID,
-			Name:         canonicalContainerName(containerSummary),
-			Names:        containerSummary.Names,
-			Image:        containerSummary.Image,
-			Command:      containerSummary.Command,
-			Project:      containerSummary.Labels[api.ProjectLabel],
-			Service:      containerSummary.Labels[api.ServiceLabel],
-			Created:      containerSummary.Created,
-			State:        string(containerSummary.State),
-			Status:       containerSummary.Status,
-			Health:       health,
-			ExitCode:     exitCode,
-			Publishers:   publishers,
-			Labels:       containerSummary.Labels,
-			SizeRw:       containerSummary.SizeRw,
-			SizeRootFs:   containerSummary.SizeRootFs,
-			Mounts:       mounts,
-			Networks:     networks,
-			LocalVolumes: localVolumes,
+			Name:       canonicalContainerName(containerSummary),
+			Image:      containerSummary.Image,
+			Command:    containerSummary.Command,
+			Service:    containerSummary.Labels[api.ServiceLabel],
+			Created:    containerSummary.Created,
+			State:      string(containerSummary.State),
+			Publishers: publishers,
 		})
 	}
 

@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"context"
-	"errors"
 	"strings"
 	"testing"
 
@@ -13,32 +11,12 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
-type fakeInspector struct {
-	resp map[string]container.InspectResponse
-	errs map[string]error
-}
-
-func (f fakeInspector) ContainerInspect(ctx context.Context, containerID string) (container.InspectResponse, error) {
-	if err, ok := f.errs[containerID]; ok {
-		return container.InspectResponse{}, err
-	}
-	if r, ok := f.resp[containerID]; ok {
-		return r, nil
-	}
-	return container.InspectResponse{
-		ContainerJSONBase: &container.ContainerJSONBase{
-			State: &container.State{Status: container.StateRunning},
-		},
-	}, nil
-}
-
 func Test_ToComposeSummaries(t *testing.T) {
 	tests := []struct {
-		name                    string
-		inputContainerSummary   []container.Summary
-		inputContainerInspector containerInspector
-		wantContainerSummary    []api.ContainerSummary
-		wantErrContains         string
+		name                  string
+		inputContainerSummary []container.Summary
+		wantContainerSummary  []api.ContainerSummary
+		wantErrContains       string
 	}{
 		{
 			name: "compose container with labels health exitcode ports mounts networks",
@@ -72,42 +50,18 @@ func Test_ToComposeSummaries(t *testing.T) {
 					},
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"0123456789abcdef0123456789abcdef": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: &container.State{
-								Status: container.StateRunning,
-								Health: &container.Health{Status: container.Healthy},
-							},
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:       "0123456789abcdef0123456789abcdef",
-					Name:     "meshery",
-					Names:    []string{"/meshery", "/meshery_alias"},
-					Image:    "meshery/meshery:stable",
-					Command:  "meshery-server",
-					Project:  "meshery",
-					Service:  "meshery",
-					Created:  1700000000,
-					State:    "running",
-					Status:   "Up 10 seconds",
-					Health:   "healthy",
-					ExitCode: 0,
+					Name:    "meshery",
+					Image:   "meshery/meshery:stable",
+					Command: "meshery-server",
+					Service: "meshery",
+					Created: 1700000000,
+					State:   "running",
 					Publishers: api.PortPublishers{
 						{URL: "0.0.0.0", TargetPort: 9081, PublishedPort: 9081, Protocol: "tcp"},
 						{URL: "0.0.0.0", TargetPort: 9443, PublishedPort: 9443, Protocol: "tcp"},
 					},
-					Labels:       map[string]string{api.ProjectLabel: "meshery", api.ServiceLabel: "meshery"},
-					SizeRw:       100,
-					SizeRootFs:   200,
-					Mounts:       []string{"meshery-data", "/tmp/meshery"},
-					Networks:     []string{"bridge"},
-					LocalVolumes: 1,
 				},
 			},
 		},
@@ -125,31 +79,13 @@ func Test_ToComposeSummaries(t *testing.T) {
 					Status:  "Up 2 minutes",
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"abcdef1234567890abcdef1234567890": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: &container.State{Status: container.StateRunning},
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:           "abcdef1234567890abcdef1234567890",
-					Name:         "standalone-nginx",
-					Names:        []string{"/standalone-nginx"},
-					Image:        "nginx:latest",
-					Command:      "nginx -g 'daemon off;'",
-					Project:      "",
-					Service:      "",
-					Created:      1700001000,
-					State:        "running",
-					Status:       "Up 2 minutes",
-					Health:       "",
-					ExitCode:     0,
-					Labels:       map[string]string{},
-					LocalVolumes: 0,
+					Name:    "standalone-nginx",
+					Image:   "nginx:latest",
+					Command: "nginx -g 'daemon off;'",
+					Created: 1700001000,
+					State:   "running",
 				},
 			},
 		},
@@ -167,27 +103,13 @@ func Test_ToComposeSummaries(t *testing.T) {
 					Status:  "Exited (137) 1 minute ago",
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"oa7jFYpO239rZS6La05mrQpPHLlxAXUf": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: &container.State{Status: container.StateExited, ExitCode: 137},
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:       "oa7jFYpO239rZS6La05mrQpPHLlxAXUf",
-					Name:     "job-runner",
-					Names:    []string{"/job-runner"},
-					Image:    "busybox",
-					Command:  "sh -c 'exit 137'",
-					Created:  1700002000,
-					State:    "exited",
-					Status:   "Exited (137) 1 minute ago",
-					ExitCode: 137,
-					Labels:   map[string]string{},
+					Name:    "job-runner",
+					Image:   "busybox",
+					Command: "sh -c 'exit 137'",
+					Created: 1700002000,
+					State:   "exited",
 				},
 			},
 		},
@@ -202,23 +124,12 @@ func Test_ToComposeSummaries(t *testing.T) {
 					State:   container.StateRunning,
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"11112222333344445555666677778888": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: &container.State{Status: container.StateRunning},
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:      "11112222333344445555666677778888",
 					Name:    "111122223333",
 					Image:   "redis:7",
 					Command: "redis-server",
 					State:   "running",
-					Labels:  map[string]string{},
 				},
 			},
 		},
@@ -233,23 +144,12 @@ func Test_ToComposeSummaries(t *testing.T) {
 					State:   container.StateRunning,
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"shortid7": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: &container.State{Status: container.StateRunning},
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:      "shortid7",
 					Name:    "shortid7",
 					Image:   "alpine",
 					Command: "sleep 10",
 					State:   "running",
-					Labels:  map[string]string{},
 				},
 			},
 		},
@@ -266,61 +166,25 @@ func Test_ToComposeSummaries(t *testing.T) {
 					Status:  "Up 5 seconds",
 				},
 			},
-			inputContainerInspector: fakeInspector{
-				resp: map[string]container.InspectResponse{
-					"deadbeefdeadbeefdeadbeefdeadbeef": {
-						ContainerJSONBase: &container.ContainerJSONBase{
-							State: nil,
-						},
-					},
-				},
-			},
 			wantContainerSummary: []api.ContainerSummary{
 				{
-					ID:       "86myXcLitwGNarOO15jqbyAejTM04UP7",
-					Name:     "state-nil",
-					Names:    []string{"/state-nil"},
-					Image:    "alpine",
-					Command:  "sleep 5",
-					State:    "running",
-					Status:   "Up 5 seconds",
-					Health:   "",
-					ExitCode: 0,
-					Labels:   map[string]string{},
+					Name:    "state-nil",
+					Image:   "alpine",
+					Command: "sleep 5",
+					State:   "running",
 				},
 			},
 		},
 		{
-			name: "inspect error returns failure",
-			inputContainerSummary: []container.Summary{
-				{
-					ID:      "oa7jFYpO239rZS6La05mrQpPHLlxAXUf",
-					Names:   []string{"/inspect-fail"},
-					Image:   "busybox",
-					Command: "sleep 1",
-					Labels:  map[string]string{},
-					State:   container.StateRunning,
-					Status:  "Up 1 second",
-				},
-			},
-			inputContainerInspector: fakeInspector{
-				errs: map[string]error{
-					"oa7jFYpO239rZS6La05mrQpPHLlxAXUf": errors.New("inspect failed for test"),
-				},
-			},
-			wantErrContains: "inspect failed for test",
-		},
-		{
-			name:                    "empty input returns empty output",
-			inputContainerSummary:   []container.Summary{},
-			inputContainerInspector: fakeInspector{},
-			wantContainerSummary:    []api.ContainerSummary{},
+			name:                  "empty input returns empty output",
+			inputContainerSummary: []container.Summary{},
+			wantContainerSummary:  []api.ContainerSummary{},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotContainerSummary, gotErr := ToComposeSummaries(context.Background(), test.inputContainerInspector, test.inputContainerSummary)
+			gotContainerSummary, gotErr := ToComposeSummaries(test.inputContainerSummary)
 			if gotErr != nil {
 				if !(strings.Contains(gotErr.Error(), test.wantErrContains)) {
 					t.Errorf("Got Err: (%v) does not contain (%v)", gotErr, test.wantErrContains)

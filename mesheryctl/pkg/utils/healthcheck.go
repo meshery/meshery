@@ -222,7 +222,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			if err != nil {
 				return false, err
 			}
-			containers, err = ToComposeSummaries(context.Background(), dockerCliClient, containersSummary)
+			containers, err = ToComposeSummaries(containersSummary)
 			if err != nil {
 				return false, err
 			}

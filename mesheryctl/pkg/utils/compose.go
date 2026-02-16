@@ -265,7 +265,7 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		if err != nil {
 			return "", err
 		}
-		containers, err = ToComposeSummaries(context.Background(), dockerClient, containersSummary)
+		containers, err = ToComposeSummaries(containersSummary)
 		if err != nil {
 			return "", err
 		}
