@@ -15,7 +15,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -183,14 +182,6 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
-func SetContainerListOptionsFilter(filterMap map[string]string) filters.Args {
-	filters := filters.NewArgs()
-	for key, value := range filterMap {
-		filters.Add(key, value)
-	}
-	return filters
-}
-
 // AreMesheryComponentsRunning checks if the meshery containers are up and running
 func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	// If not, use the platforms to check if Meshery is running or not
@@ -222,7 +213,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			if err != nil {
 				return false, err
 			}
-			containers, err = ToComposeSummaries(containersSummary)
+			containers, err = ConvertToComposeSummaries(containersSummary)
 			if err != nil {
 				return false, err
 			}
