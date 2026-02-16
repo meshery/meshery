@@ -127,9 +127,9 @@ MeshSync is managed by [Meshery Operator](/concepts/architecture/operator), whic
 - Apply the new definition with kubectl apply -f meshsync.yaml
 
 
-{{< alert type="info" title="Still seeing issues?" >}}
-Check the [**Meshery Troubleshooting Guide**](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync) for help with common issues.
-{{< /alert >}}
+{{% alert color="info" title="Still seeing issues?" %}}
+Check the [**Meshery Troubleshooting Guide**](/guides/troubleshooting/meshery-operator-meshsync) for help with common issues.
+{{% /alert %}}
 
 
 # Roadmap

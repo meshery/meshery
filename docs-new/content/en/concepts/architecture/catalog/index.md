@@ -67,6 +67,6 @@ It also supports a collaborative environment, where DevOps engineers can share t
 <p><strong>Answer:</strong> In certain instances, the images of published designs in <a href="https://meshery.io/catalog">Meshery Catalog</a> may not be visible due to bandwidth issues. This can occur when there are network constraints affecting the retrieval of image data. However, rest assured that the design information and other relevant details are still accessible.</p>
 </details>
 
-{{< alert type="info" title="Help with Meshery Catalog" >}}
+{{% alert color="info" title="Help with Meshery Catalog" %}}
 If you have any questions or need assistance, reach out on the [discussion forum](https://meshery.io/community#discussion-forums).
-{{< /alert >}}
+{{% /alert %}}

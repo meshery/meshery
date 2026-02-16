@@ -28,4 +28,4 @@ To check if your Broker instance is running smoothly (it's deployed as a Kuberne
 - Verify your cluster supports `LoadBalancer` or `NodePort` service types.
 - Make sure the Meshery Server can reach the Broker service.
 
-Still seeing issues? The **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)** covers common problems with the Broker, MeshSync, and Operator — and offers clear steps to resolve them.
+Still seeing issues? The **[Meshery Troubleshooting Guide](/guides/troubleshooting/meshery-operator-meshsync)** covers common problems with the Broker, MeshSync, and Operator — and offers clear steps to resolve them.

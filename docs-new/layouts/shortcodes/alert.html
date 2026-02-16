@@ -1,7 +1,0 @@
-{{- $type := .Get "type" | default "info" -}}
-{{- $title := .Get "title" | default $type -}}
-<div class="alert alert-{{ $type }}">
-  <h4 class="alert-heading">{{ $title }}</h4>
-  {{ .Inner | markdownify }}
-</div>
-
