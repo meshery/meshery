@@ -1,6 +1,6 @@
 ---
 title: Designs
-description: "Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured."
+description: Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured.
 aliases:
 - /concepts/designs/
 ---
@@ -68,6 +68,6 @@ Designs are the blueprints for your deployments, while Meshery Models are the in
 
 See the following tutorials on how to use Meshery Designs for collaboratively managing infrastructure.
 
-{{< design-tutorials >}}
+<details><summary>🧑‍🔬 Tutorials</summary></details>
 
 Try the [Meshery Playground](/installation/playground) for a hands-on experience with Meshery Designs.
