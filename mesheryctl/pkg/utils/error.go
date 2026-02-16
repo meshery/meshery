@@ -745,8 +745,8 @@ func ErrFlagsInvalid(msg string) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
 		[]string{"Invalid flag provided"},
 		[]string{msg},
-		[]string{"The flag provided is invalid."},
-		[]string{"Provide a valid flag"})
+		[]string{"The value for the flag provided is invalid."},
+		[]string{"Provide a valid flag value and try again."})
 }
 
 func ErrMesheryServerNotRunning(platform string) error {

@@ -15,10 +15,14 @@
 package root
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
+	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -64,6 +68,10 @@ mesheryctl system start --help
 // For viewing verbose output:
 mesheryctl -v [or] --verbose
 `,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		initValidators(cmd)
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -221,4 +229,26 @@ func setVerbose() {
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
 	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
+}
+
+func initValidators(cmd *cobra.Command) {
+	validate := validator.New()
+
+	// Register the custom validation function with a tag name (e.g., "semver")
+	err := validate.RegisterValidation("semver", utils.ValidateSemver)
+	if err != nil {
+		log.Fatalf("Error registering validation: %v", err)
+	}
+
+	// Register a custom function to use the json tags as field names in errors
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	ctx := context.WithValue(context.Background(), "validators", validate)
+	cmd.SetContext(ctx)
 }
