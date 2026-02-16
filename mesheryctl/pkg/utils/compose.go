@@ -313,7 +313,7 @@ func ContainsMesheryContainer(containers []api.ContainerSummary) bool {
 	return false
 }
 
-// ConvertToComposeSummaries takes takes []container.Sumamry type and returns
+// convertToComposeSummaries takes takes []container.Sumamry type and returns
 // a []api.ContainerSummary.
 func convertToComposeSummaries(containersSummary []container.Summary) ([]api.ContainerSummary, error) {
 	out := make([]api.ContainerSummary, 0, len(containersSummary))
