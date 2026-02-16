@@ -1,7 +1,6 @@
 package root
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -74,8 +73,7 @@ func TestRootCmdIntegration(t *testing.T) {
 			resetFlags()
 			viper.Reset()
 
-			b := bytes.NewBufferString("")
-			utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, b)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			RootCmd.SetOut(b)
 			RootCmd.SetArgs(tt.Args)
 

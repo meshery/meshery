@@ -97,7 +97,7 @@ func Execute() error {
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
-		utils.LogError.Fatal(err)
+		utils.Log.Fatal(err)
 	}
 
 	cobra.OnInitialize(setupLogger)
@@ -226,5 +226,4 @@ func setVerbose() {
 
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
-	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }
