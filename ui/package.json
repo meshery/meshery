@@ -8,7 +8,7 @@
     "lint": "npx --yes eslint@8.57.1 --ext .js,.jsx .",
     "lint:fix": "npx --yes eslint@8.57.1 --fix --ext .js,.jsx .",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
-    "build": "npm run clean && cross-env next build",
+    "build": "npm run clean && cross-env NODE_OPTIONS=--max-old-space-size=8192 next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "echo 'Static export is handled by next build with output: export in next.config.js'",
     "export-playground": "cross-env PLAYGROUND=true next build",
