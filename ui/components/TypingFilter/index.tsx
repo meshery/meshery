@@ -82,6 +82,7 @@ function transformData(data) {
  * @param {function} handleFilter - A callback function to handle filter changes.
  * @param {string} placeholder - Placeholder text for the input field.
  * @param {object[]} defaultFilters - An array of default filters to initialize the component.
+ * @param {object} currentFilters - The current active filters from Redux state (external state). When provided, overrides selectedFilters to sync UI with store. Format: { [filterType]: value | value[] }.
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
 const TypingFilter = ({
@@ -97,29 +98,28 @@ const TypingFilter = ({
 
   useEffect(() => {
     if (currentFilters && Object.keys(currentFilters).length > 0) {
-      const newFilters = [];
-      Object.entries(currentFilters).forEach(([filterType, values]) => {
+      const newFilters = Object.entries(currentFilters).flatMap(([filterType, values]) => {
         const schemaKey = Object.keys(filterSchema).find(
           (key) => filterSchema[key].value.toLowerCase() === filterType.toLowerCase(),
         );
 
-        if (schemaKey) {
-          const schema = filterSchema[schemaKey];
-          const filterValues = Array.isArray(values) ? values : [values];
-          filterValues.forEach((value) => {
-            newFilters.push({
-              type: schemaKey,
-              value,
-              label: `${schema.value}: ${value}`,
-            });
-          });
+        if (!schemaKey) {
+          return [];
         }
+
+        const schema = filterSchema[schemaKey];
+        const filterValues = Array.isArray(values) ? values : [values];
+        return filterValues.map((value) => ({
+          type: schemaKey,
+          value,
+          label: `${schema.value}: ${value}`,
+        }));
       });
       setSelectedFilters(newFilters);
-    } else if (!currentFilters || Object.keys(currentFilters).length === 0) {
+    } else {
       setSelectedFilters(defaultFilters);
     }
-  }, [currentFilters, filterSchema]);
+  }, [currentFilters, defaultFilters]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {
