@@ -56,9 +56,11 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	case http.MethodGet:
 		req = mux.SetURLVars(req, map[string]string{"connectionKind": "grafana"})
 		h.GetConnectionsByKind(w, req, prefObj, user, p)
+		return
 
 	case http.MethodDelete:
 		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
+		return
 
 	case http.MethodPost:
 		grafanaURL := req.FormValue("grafanaURL")
@@ -128,6 +130,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
+		return
 	}
 }
 
