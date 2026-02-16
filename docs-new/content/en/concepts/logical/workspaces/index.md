@@ -1,6 +1,6 @@
 ---
 title: Workspaces
-description: "Meshery Workspaces act as central collaboration point for teams."
+description: Meshery Workspaces act as central collaboration point for teams.
 aliases:
 - /concepts/workspaces/
 ---
@@ -9,9 +9,9 @@ Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-b
 
 You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity.
 
-{{< alert type="dark" title="Your team collaboration point" >}}
+{{% alert color="dark" title="Your team collaboration point" %}}
 Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events.
-{{< /alert >}}
+{{% /alert %}}
 
 ## Key Features
 
