@@ -1,0 +1,13 @@
+{{- $category := .Get "category" -}}
+<ul class="section-title">
+{{ range where .Site.RegularPages ".Params.categories" "intersect" (slice $category) }}
+  {{ if and (ne .Kind "section") (ne .Permalink $.Page.Permalink) }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ if and .Params.description (ne .Params.description "") }}
+        - {{ .Params.description }}
+      {{ end }}
+    </li>
+  {{ end }}
+{{ end }}
+</ul>
