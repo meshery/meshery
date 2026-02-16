@@ -62,7 +62,7 @@ mesheryctl connection delete [connection_id]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage.\n", args[0]))
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

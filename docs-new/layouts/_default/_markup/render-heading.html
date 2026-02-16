@@ -1,5 +1,3 @@
-<h{{ .Level }} {{- range $key, $value :=.Attributes -}} {{ printf " %s=%q" $key (string $value) | safeHTMLAttr -}} {{
-  end -}}>
-  {{- .Text | safeHTML -}}
-  <a class="td-heading-self-link" href="#{{ .Anchor | safeURL }}" aria-label="Heading self-link"></a>
+<h{{ .Level }} id="{{ .Anchor }}">
+	{{ .Text | safeHTML }}
 </h{{ .Level }}>

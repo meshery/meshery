@@ -28,7 +28,7 @@ on:
 
 jobs:
   manual-bats:
-    name: Manual BATS Test
+    name: BATS Test
     runs-on: ubuntu-24.04
     if: ${{ (github.event_name == 'push' && github.repository == 'meshery/meshery') || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true') }} 
     strategy:

@@ -16,10 +16,10 @@
         "name": "ErrInValidSourceCode",
         "code": "1002",
         "severity": "Fatal",
-        "long_description": "Invalid design source type due to wrong type/passing",
+        "long_description": "Invalid design source type was provided",
         "short_description": "",
-        "probable_cause": "design source type (-s) is invalid or not passed.",
-        "suggested_remediation": "Ensure you pass a valid source type. \\nAllowed source types: %s"
+        "probable_cause": "Provided design source type (-s) is invalid",
+        "suggested_remediation": "Ensure you pass a valid source type"
       },
       "1003": {
         "name": "ErrOnboardDesignCode",
@@ -1622,6 +1622,24 @@
         "short_description": "Connection not found",
         "probable_cause": "The specified connection ID does not exist",
         "suggested_remediation": "Verify the connection ID using `mesheryctl connection list`"
+      },
+      "1198": {
+        "name": "ErrInvalidOutputFormatCode",
+        "code": "1198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Output Format",
+        "probable_cause": "The specified output format is not supported",
+        "suggested_remediation": ""
+      },
+      "1199": {
+        "name": "ErrDesignInvalidApiResponseCode",
+        "code": "1199",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API response",
+        "probable_cause": "The API response is missing expected fields or has an unexpected format",
+        "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
       }
     }
   }
