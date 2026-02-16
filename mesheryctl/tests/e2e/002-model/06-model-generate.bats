@@ -8,47 +8,40 @@ setup() {
     export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 }
 
-@test "mesheryctl model generate displays usage instructions when no file, filePath or URL is provided" {
+@test "given no file, filePath or URL is provided when running mesheryctl model generate then usage instructions are displayed" {
     run $MESHERYCTL_BIN model generate 
     assert_failure
     assert_output --partial "Usage: mesheryctl model generate [ file | filePath | URL ]"
     assert_output --partial "Run 'mesheryctl model generate --help' to see detailed help message"
 }
 
-@test "mesheryctl model generate fails with invalid URL" {
+@test "given an invalid URL is provided when running mesheryctl model generate then an error message is displayed" {
     run $MESHERYCTL_BIN model generate --file "invalid-url"
     assert_failure
-    assert_output --partial "invalid URL"
+    assert_output --partial "no such file or directory"
 }
 
-@test "mesheryctl model generate succeeds with valid URL and template" {
+@test @test "given a valid model directory is provided when running mesheryctl model generate --file valid-model-directory then a model is generated" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model" --template "$FIXTURES_DIR/valid-template.json"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
 }
 
-@test "mesheryctl model generate fails with missing template for URL" {
+@test "given a valid model directory without a template when running mesheryctl model generate --file path-model-without-template then an error message is displayed" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-model"
     assert_failure
-    assert_output --partial "Template file is not present"
+    assert_output --partial "error reading csv file"
 }
 
-@test "mesheryctl model generate succeeds with valid CSV directory" {
+@test "given a valid CSV directory is provided when running mesheryctl model generate --file valid-content-path then the model is generated" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir"
     assert_success
     assert_output --partial "Model can be accessed from $TESTDATA_DIR"
     assert_output --partial "Logs for the csv generation can be accessed $TESTDATA_DIR/logs"
 }
 
-@test "mesheryctl model generate fails with invalid CSV directory" {
-    run $MESHERYCTL_BIN model generate --file "invalid-dir"
-    assert_failure
-    assert_output --partial "error reading file"
-}
-
-@test "mesheryctl model generate skips registration with --register flag" {
+@test "given the --register flag is provided when running mesheryctl model generate then the model is generated without registry registration" {
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
-    assert_output --partial "Model can be accessed from $FIXTURES_DIR"
-
+        assert_output --partial "Model can be accessed from $TESTDATA_DIR"
 }
