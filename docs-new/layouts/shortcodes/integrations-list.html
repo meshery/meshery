@@ -1,0 +1,13 @@
+{{ $section := .Page.Section }}
+<ul>
+{{ range where .Site.RegularPages "Params.categories" "intersect" (slice "integrations") }}
+  {{ if eq .Section $section }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ if and .Params.description (ne .Params.description "") }}
+        - {{ .Params.description }}
+      {{ end }}
+    </li>
+  {{ end }}
+{{ end }}
+</ul>

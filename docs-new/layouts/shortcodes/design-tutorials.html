@@ -1,0 +1,18 @@
+<details>
+  <summary>
+    <p style="display:inline">
+      <a href="/guides/infrastructure-management" class="text-black">🧑‍🔬 Tutorials</a>
+    </p>
+  </summary>
+  <ul class="section-title">
+    {{- $tutorials := where site.Pages "Params.category" "tutorials" -}}
+    {{- range $tutorials -}}
+      {{- if and (eq .Params.type "guides") (eq .Params.category "tutorials") (or (eq .Params.language "en") (eq .Language.Lang "en")) -}}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- if and .Params.abstract (ne .Params.abstract " ") }} - {{ .Params.abstract }}{{ end -}}
+        </li>
+      {{- end -}}
+    {{- end -}}
+  </ul>
+</details>
