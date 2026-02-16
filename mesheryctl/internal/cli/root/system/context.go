@@ -81,7 +81,7 @@ Usage: mesheryctl system context create [context-name]`
 		}
 
 		if args[0] != strings.ToLower(args[0]) {
-			return ErrInvalidLowerCase(fmt.Errorf("Context name %s is invalid\n", args[0]))
+			return ErrInvalidLowerCase(fmt.Errorf("Context name %s is invalid", args[0]))
 		}
 
 		return nil
