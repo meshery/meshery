@@ -34,9 +34,17 @@ export class ModelsPage {
     this.searchIcon = page.getByTestId('search-icon');
     this.searchInput = page.locator('#searchClick');
     this.exportModelButton = page.getByTestId('export-model-button');
-    this.statusCombobox = page.getByRole('combobox', { name: 'enabled' });
+    this.statusCombobox = page.locator('[aria-labelledby="entity-status-select-label"]');
 
     this.fileInput = page.locator('input[type="file"]');
+
+    this.importFileHeading = page.getByRole('heading', { name: 'File Import' });
+    this.importUrlHeading = page.getByRole('heading', { name: 'URL Import' });
+    this.importCsvHeading = page.getByRole('heading', { name: 'CSV Import' });
+    this.importUrlInput = page.getByRole('textbox', { name: 'URL' });
+    this.importNextButton = page.getByRole('button', { name: 'Next' });
+    this.importGenerateButton = page.getByRole('button', { name: 'Generate' });
+    this.importFinishButton = page.getByRole('button', { name: 'Finish' });
   }
 
   async navigateToRegistrySettings() {
@@ -97,49 +105,48 @@ export class ModelsPage {
   async setModelStatus(statusLabel) {
     await this.statusCombobox.click();
     await this.page.getByRole('option', { name: statusLabel }).click();
-    await expect(this.page.getByRole('combobox', { name: statusLabel })).toBeVisible();
+    await expect(this.statusCombobox).toHaveText(new RegExp(statusLabel, 'i'));
   }
 
   async importModelViaFile(filePath, modelName) {
     await this.importModelButton.click();
-    await this.page.getByRole('heading', { name: 'File Import' }).click();
+    await this.importFileHeading.click();
 
     await this.fileInput.setInputFiles(filePath);
-    await this.page.getByRole('button', { name: 'Next' }).click();
+    await this.importNextButton.click();
 
     await this.expectModelImportSuccess(modelName);
-    await this.page.getByRole('button', { name: 'Finish' }).click();
+    await this.importFinishButton.click();
   }
 
   async importModelViaUrl(modelUrl, modelName) {
     await this.importModelButton.click();
-    await this.page.getByRole('heading', { name: 'URL Import' }).click();
+    await this.importUrlHeading.click();
 
-    await this.page.getByRole('textbox', { name: 'URL' }).click();
-    await this.page.getByRole('textbox', { name: 'URL' }).fill(modelUrl);
+    await this.importUrlInput.fill(modelUrl);
 
-    await this.page.getByRole('button', { name: 'Next' }).click();
+    await this.importNextButton.click();
 
     await this.expectModelImportSuccess(modelName);
-    await this.page.getByRole('button', { name: 'Finish' }).click();
+    await this.importFinishButton.click();
   }
 
   async importModelViaCsv(csvImport) {
     await this.importModelButton.click();
-    await this.page.getByRole('heading', { name: 'CSV Import' }).click();
+    await this.importCsvHeading.click();
 
-    await this.page.getByRole('button', { name: 'Next' }).click();
+    await this.importNextButton.click();
 
     await this.fileInput.setInputFiles(csvImport.Models);
-    await this.page.getByRole('button', { name: 'Next' }).click();
+    await this.importNextButton.click();
     await this.fileInput.setInputFiles(csvImport.Components);
-    await this.page.getByRole('button', { name: 'Next' }).click();
+    await this.importNextButton.click();
     await this.fileInput.setInputFiles(csvImport.Relationships);
 
-    await this.page.getByRole('button', { name: 'Generate' }).click();
+    await this.importGenerateButton.click();
 
     await this.expectModelImportSuccess(csvImport.Model_Name);
-    await this.page.getByRole('button', { name: 'Finish' }).click();
+    await this.importFinishButton.click();
   }
 
   async expectModelImportSuccess(modelName) {
