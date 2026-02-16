@@ -152,7 +152,7 @@ Visit [https://go.dev/doc/install](https://go.dev/doc/install) to download and i
 
 #### - Git Bash
 
-Git Bash is a terminal emulator which provides git command line experience along with Linux-like command line experience. You can download it from: https://git-scm.com/downloads.
+Git Bash is a terminal emulator which provides git and Linux-like command line experience. You can download it from: https://git-scm.com/downloads.
 
 ### Verify prerequisites
 
