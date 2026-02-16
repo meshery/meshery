@@ -1,6 +1,6 @@
 ---
 title: Components
-description: "Meshery Components identify and characterize infrastructure under management."
+description: Meshery Components identify and characterize infrastructure under management.
 aliases:
 - /concepts/components/
 ---

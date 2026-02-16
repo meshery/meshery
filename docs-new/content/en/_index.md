@@ -1,6 +1,7 @@
 ---
 title: Meshery Documentation
 display_title: false
+display_toc: false
 linkTitle: Documentation
 ---
 
