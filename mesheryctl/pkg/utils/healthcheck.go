@@ -213,7 +213,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			if err != nil {
 				return false, err
 			}
-			containers, err = convertToComposeSummaries(containersSummary)
+			containers = convertToComposeSummaries(containersSummary)
 			if err != nil {
 				return false, err
 			}

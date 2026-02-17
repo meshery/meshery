@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/docker/compose/v2/pkg/api"
@@ -16,7 +15,6 @@ func Test_convertToComposeSummaries(t *testing.T) {
 		name                  string
 		inputContainerSummary []container.Summary
 		wantContainerSummary  []api.ContainerSummary
-		wantErrContains       string
 	}{
 		{
 			name: "compose container with labels health exitcode ports mounts networks",
@@ -184,12 +182,7 @@ func Test_convertToComposeSummaries(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotContainerSummary, gotErr := convertToComposeSummaries(test.inputContainerSummary)
-			if gotErr != nil {
-				if !(strings.Contains(gotErr.Error(), test.wantErrContains)) {
-					t.Errorf("Got Err: (%v) does not contain (%v)", gotErr, test.wantErrContains)
-				}
-			}
+			gotContainerSummary := convertToComposeSummaries(test.inputContainerSummary)
 			if diff := cmp.Diff(gotContainerSummary, test.wantContainerSummary, cmpopts.EquateEmpty()); diff != "" {
 				t.Errorf("ToComposeSummaries() mismatch (-want +got):\n%s", diff)
 			}

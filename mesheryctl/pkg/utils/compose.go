@@ -267,10 +267,7 @@ func (c *ComposeClient) GetPsOutput(ctx context.Context, composefile string) (st
 		if err != nil {
 			return "", err
 		}
-		containers, err = convertToComposeSummaries(containersSummary)
-		if err != nil {
-			return "", err
-		}
+		containers = convertToComposeSummaries(containersSummary)
 
 		// If this is true then meshery extension is not installed or running.
 		if len(containers) == 0 {
@@ -313,10 +310,10 @@ func ContainsMesheryContainer(containers []api.ContainerSummary) bool {
 	return false
 }
 
-// convertToComposeSummaries takes takes []container.Sumamry type and returns
+// convertToComposeSummaries takes []container.Sumamry type and returns
 // a []api.ContainerSummary.
-func convertToComposeSummaries(containersSummary []container.Summary) ([]api.ContainerSummary, error) {
-	out := make([]api.ContainerSummary, 0, len(containersSummary))
+func convertToComposeSummaries(containersSummary []container.Summary) []api.ContainerSummary {
+	containerSummaries := make([]api.ContainerSummary, 0, len(containersSummary))
 
 	for _, containerSummary := range containersSummary {
 		ports := append([]container.Port(nil), containerSummary.Ports...)
@@ -332,7 +329,7 @@ func convertToComposeSummaries(containersSummary []container.Summary) ([]api.Con
 			})
 		}
 
-		out = append(out, api.ContainerSummary{
+		containerSummaries = append(containerSummaries, api.ContainerSummary{
 			Name:       canonicalContainerName(containerSummary),
 			Image:      containerSummary.Image,
 			Command:    containerSummary.Command,
@@ -343,7 +340,7 @@ func convertToComposeSummaries(containersSummary []container.Summary) ([]api.Con
 		})
 	}
 
-	return out, nil
+	return containerSummaries
 }
 
 // canonicalContainerName resolves a human-readable identifier for a container.
@@ -368,9 +365,9 @@ func canonicalContainerName(containerSummary container.Summary) string {
 
 // setContainerListOptionsFilter sets filters used in container.ListOptions{}
 func setContainerListOptionsFilter(filterMap map[string]string) filters.Args {
-	filters := filters.NewArgs()
+	filterArgs := filters.NewArgs()
 	for key, value := range filterMap {
-		filters.Add(key, value)
+		filterArgs.Add(key, value)
 	}
-	return filters
+	return filterArgs
 }
