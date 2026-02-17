@@ -2,7 +2,31 @@ import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 import _ from 'lodash';
 
-// Strongly typed inline to dodge JS linter rules
+interface RelationshipSelector {
+  allow?: {
+    from?: { kind?: string }[];
+    to?: { kind?: string }[];
+  };
+  from?: unknown;
+  to?: unknown;
+}
+
+interface Relationship {
+  kind: string;
+  type: string;
+  subType: string;
+  status?: string;
+  selectors?: RelationshipSelector[];
+  metadata?: { isAnnotation?: boolean };
+  model?: { name?: string };
+}
+
+interface DesignPattern {
+  name: string;
+  relationships: Relationship[];
+  [key: string]: unknown;
+}
+
 const DESIGNS_TO_TEST: { id?: string; name: string }[] = [
   {
     id: '13e803b7-596c-4620-bdc4-4d3a28a027a2',
@@ -43,12 +67,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       // Cast the response so TS knows pattern_file is a string
       const responseJson = (await designResponse.json()) as { pattern_file: string };
 
-      // Cast the parsed design so TS understands its shape
-      const design = JSON.parse(responseJson.pattern_file) as {
-        name: string;
-        relationships: any[];
-        [key: string]: unknown;
-      };
+      const design = JSON.parse(responseJson.pattern_file) as DesignPattern;
 
       const designToTest = { ...design, relationships: [] };
 
@@ -67,10 +86,9 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
 
       expect(response.ok()).toBeTruthy();
 
-      // Cast the evaluate response body
       const responseBody = (await response.json()) as {
         design: {
-          relationships?: any[];
+          relationships?: Relationship[];
         };
       };
 
@@ -88,7 +106,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
           continue;
         }
 
-        const found = actualRelationships.find((actualRel: any) => {
+        const found = actualRelationships.find((actualRel) => {
           const expectedSelector = expectedRel.selectors[0];
           const actualSelector = actualRel.selectors[0];
 
