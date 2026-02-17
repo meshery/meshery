@@ -741,10 +741,10 @@ func ErrTableRender(err error) error {
 		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
 
-func ErrFlagsInvalid(messages []string) error {
+func ErrFlagsInvalid(err error) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
 		[]string{"Invalid flag(s) provided"},
-		messages,
+		[]string{err.Error()},
 		[]string{"The value for one or more flags provided is invalid."},
 		[]string{"Provide valid flag value and try again."})
 }

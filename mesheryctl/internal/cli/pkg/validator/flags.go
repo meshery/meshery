@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -26,7 +27,7 @@ func validateBoolean(fl validator.FieldLevel) bool {
 
 // ReadValidationErrorMessages reads the validation error and returns a slice of error messages for each validation error encountered
 // This is a centralized function to read validation error messages for all the commands in mesheryctl and return user friendly error messages based on the type of validation error encountered
-func ReadValidationErrorMessages(err validator.ValidationErrors) []string {
+func ReadValidationErrorMessages(err validator.ValidationErrors) error {
 
 	if len(err) == 0 {
 		return nil
@@ -34,25 +35,19 @@ func ReadValidationErrorMessages(err validator.ValidationErrors) []string {
 
 	errorMessages := make([]string, 0, len(err))
 	for _, e := range err {
-		// extra space is added before the message if there are multiple validation errors to improve readability of the error message
-		// this is needed due to how meshkit error handler displays multiple messages.
-		extraSpace := ""
-		if len(errorMessages) > 0 {
-			extraSpace = " "
-		}
 		switch e.Tag() {
 		case "semver":
-			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': version must be in format vX.X.X", extraSpace, strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': version must be in format vX.X.X", strings.ToLower(e.Field()), e.Value()))
 		case "oneof":
-			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': valid values are %s", extraSpace, strings.ToLower(e.Field()), e.Value(), e.Param()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", strings.ToLower(e.Field()), e.Value(), e.Param()))
 		case "dir", "dirpath":
-			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': directory does not exist", extraSpace, strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", strings.ToLower(e.Field()), e.Value()))
 		default:
-			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v'", extraSpace, strings.ToLower(e.Field()), e.Value()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v'", strings.ToLower(e.Field()), e.Value()))
 		}
 	}
 
-	return errorMessages
+	return errors.New(strings.Join(errorMessages, ", "))
 }
 
 func NewValidator() *validator.Validate {
