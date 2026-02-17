@@ -47,6 +47,19 @@ code::-webkit-scrollbar {
   background-color: var(--color-primary-medium);
   overflow: hidden;
 }
+
+  .td-content pre > div {
+    position: absolute;
+    top: auto;        
+    right: 10px;      
+    width: auto; 
+
+    & button{
+      border: none;
+      background: transparent;
+      font-size: 1.1rem;
+    }
+  }
 .td-content pre > code {
   padding: 10px 0;
   margin: 0;
@@ -77,14 +90,9 @@ pre::-webkit-scrollbar {
 }
 
 .td-content {
-  .highlight pre {
-    margin: 0;
-    padding: 0;
-  }
   pre {
     word-wrap: normal;
-    background-color: var(--color-primary-medium);
-    padding: 1rem;
+    background-color: var(--color-primary-medium) !important;
     overflow: hidden;
     
     & ::-webkit-scrollbar {
