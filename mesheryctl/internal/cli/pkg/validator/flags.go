@@ -1,0 +1,83 @@
+package validator
+
+import (
+	"fmt"
+	"log"
+	"reflect"
+	"regexp"
+	"strings"
+
+	"github.com/go-playground/validator/v10"
+)
+
+// Based on https://github.com/go-playground/validator/blob/dede3413a22993dd5a091707c6764b6e9724df17/regexes.go#L75 adding `v` prefix
+var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+
+func validateSemver(fl validator.FieldLevel) bool {
+	return vSemverRegex.MatchString(fl.Field().String())
+}
+
+func validateBoolean(fl validator.FieldLevel) bool {
+	if val, ok := fl.Field().Interface().(bool); ok {
+		return val == true || val == false
+	}
+	return false
+}
+
+// ReadValidationErrorMessages reads the validation error and returns a slice of error messages for each validation error encountered
+// This is a centralized function to read validation error messages for all the commands in mesheryctl and return user friendly error messages based on the type of validation error encountered
+func ReadValidationErrorMessages(err validator.ValidationErrors) []string {
+
+	if len(err) == 0 {
+		return nil
+	}
+
+	errorMessages := make([]string, 0, len(err))
+	for _, e := range err {
+		// extra space is added before the message if there are multiple validation errors to improve readability of the error message
+		// this is needed due to how meshkit error handler displays multiple messages.
+		extraSpace := ""
+		if len(errorMessages) > 0 {
+			extraSpace = " "
+		}
+		switch e.Tag() {
+		case "semver":
+			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': version must be in format vX.X.X", extraSpace, strings.ToLower(e.Field()), e.Value()))
+		case "oneof":
+			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': valid values are %s", extraSpace, strings.ToLower(e.Field()), e.Value(), e.Param()))
+		case "dir", "dirpath":
+			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v': directory does not exist", extraSpace, strings.ToLower(e.Field()), e.Value()))
+		default:
+			errorMessages = append(errorMessages, fmt.Sprintf("%sInvalid value for --%s '%v'", extraSpace, strings.ToLower(e.Field()), e.Value()))
+		}
+	}
+
+	return errorMessages
+}
+
+func NewValidator() *validator.Validate {
+	validate := validator.New()
+
+	// Register the custom validation function with a tag name "semver"
+	err := validate.RegisterValidation("semver", validateSemver)
+	if err != nil {
+		log.Fatalf("Error registering validation: %v", err)
+	}
+
+	// Register a custom validation function for boolean values that accepts "true", "false", "1", and "0"
+	err = validate.RegisterValidation("boolean", validateBoolean)
+	if err != nil {
+		log.Fatalf("Error registering validation: %v", err)
+	}
+
+	// Register a custom function to use the json tags as field names in errors
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	return validate
+}

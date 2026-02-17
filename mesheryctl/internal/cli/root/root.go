@@ -19,10 +19,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
-	"strings"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/validator"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -231,24 +229,10 @@ func setupLogger() {
 	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }
 
+// Initialize a validator and add it to the command context
+// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 func initValidators(cmd *cobra.Command) {
-	validate := validator.New()
-
-	// Register the custom validation function with a tag name (e.g., "semver")
-	err := validate.RegisterValidation("semver", utils.ValidateSemver)
-	if err != nil {
-		log.Fatalf("Error registering validation: %v", err)
-	}
-
-	// Register a custom function to use the json tags as field names in errors
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
-		}
-		return name
-	})
-
+	validate := validator.NewValidator()
 	ctx := context.WithValue(context.Background(), "validators", validate)
 	cmd.SetContext(ctx)
 }

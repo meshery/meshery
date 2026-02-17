@@ -84,8 +84,20 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrUnauthenticated()
 	}
 
+	// failsafe for data not found on the server
+	if resp.StatusCode == http.StatusNotFound {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+	}
+
 	// failsafe for bad api call
-	if resp.StatusCode != 200 && resp.StatusCode != 201 && resp.StatusCode != 204 {
+	isNotSuccess := resp.StatusCode != http.StatusOK &&
+		resp.StatusCode != http.StatusCreated &&
+		resp.StatusCode != http.StatusNoContent
+	if isNotSuccess {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)

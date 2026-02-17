@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	mValidator "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/validator"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -15,7 +16,7 @@ import (
 
 type exportModelFlags struct {
 	OutputFormat         string `json:"output-format" validate:"required,oneof=json yaml"`
-	OutputLocation       string `json:"output-location" validate:"required,dir"`
+	OutputLocation       string `json:"output-location" validate:"required,dirpath"`
 	OutputType           string `json:"output-type" validate:"required,oneof=oci tar"`
 	DiscardComponents    bool   `json:"discard-components" validate:"boolean"`
 	DiscardRelationships bool   `json:"discard-relationships" validate:"boolean"`
@@ -30,7 +31,6 @@ type outputDetail struct {
 
 var (
 	exportModelFlagsProvided exportModelFlags
-	// validOutputTypes         = []string{"oci", "tar"}
 )
 
 // mesheryctl model export <designname>
@@ -60,7 +60,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		err := validate.Struct(exportModelFlagsProvided)
 		if err != nil {
 			vErr := err.(validator.ValidationErrors)
-			return utils.ErrFlagsInvalid(utils.ValidationErrorMessage(vErr))
+			return utils.ErrFlagsInvalid(mValidator.ReadValidationErrorMessages(vErr))
 		}
 		return nil
 	},
@@ -111,8 +111,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 		err = os.WriteFile(exportedModelPath, exportedModelData, 0o644)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreateFile(exportedModelPath, err)
 		}
 
 		utils.Log.Infof("Exported model to %s", exportedModelPath)

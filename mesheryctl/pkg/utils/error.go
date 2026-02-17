@@ -494,7 +494,7 @@ func ErrParsingUrl(err error) error {
 }
 
 func ErrNotFound(err error) error {
-	return errors.New(ErrNotFoundCode, errors.Fatal,
+	return errors.New(ErrNotFoundCode, errors.Alert,
 		[]string{"Item Not Found"},
 		[]string{err.Error()},
 		[]string{"The item you are searching for is not present."},
@@ -741,12 +741,12 @@ func ErrTableRender(err error) error {
 		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
 
-func ErrFlagsInvalid(msg string) error {
+func ErrFlagsInvalid(messages []string) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
-		[]string{"Invalid flag provided"},
-		[]string{msg},
-		[]string{"The value for the flag provided is invalid."},
-		[]string{"Provide a valid flag value and try again."})
+		[]string{"Invalid flag(s) provided"},
+		messages,
+		[]string{"The value for one or more flags provided is invalid."},
+		[]string{"Provide valid flag value and try again."})
 }
 
 func ErrMesheryServerNotRunning(platform string) error {
@@ -772,8 +772,8 @@ func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
 		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
-		[]string{"Insufficient disk page, filepath could be invalid."},
-		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+		[]string{"Insufficient disk page", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
+		[]string{"Verify that the file path is valid", " Ensure there is sufficient disk space available", " Check your permissions for the specified path"})
 }
 
 func ErrRetrieveHomeDir(err error) error {
