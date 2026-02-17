@@ -1,0 +1,56 @@
+.toc-pagination-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.toc-card {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  border: 1px solid #3a3f44;
+  border-radius: 12px;
+  background: transparent;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: var(--brand-color-primary);
+  }
+}
+
+.toc-label {
+  color: var(--color-white);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.toc-title {
+  color: var(--brand-color-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .fa-chevron-right::before, .fa-chevron-left::before {
+    color: var(--brand-color-primary);
+    font-size: 0.8rem;
+  }
+  &:hover {
+    .fa-chevron-right::before, .fa-chevron-left::before {
+        color: var(--color-white);
+    }
+    color: var(--color-white);
+  }
+}
+
+.toc-card.next {
+  text-align: right;
+
+  .toc-title {
+    justify-content: flex-end;
+  }
+}
