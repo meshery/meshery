@@ -7,13 +7,11 @@ interface WaitForEventParams {
   timeout_after?: number;
 }
 
-
-export const waitForEvent = async ({ 
-  page, 
-  eventType, 
-  timeout_after = 3000 
+export const waitForEvent = async ({
+  page,
+  eventType,
+  timeout_after = 3000,
 }: WaitForEventParams): Promise<JSHandle> => {
-  
   await waitFor(
     () =>
       page.evaluate(() => {
@@ -28,10 +26,9 @@ export const waitForEvent = async ({
 
   const eventHandle = await page.evaluateHandle(
     async ([eventType, timeout_after]) => {
- 
       return new Promise((resolve, reject) => {
         const debuggerActor = (window as any)?.debuggingActorRef;
-        
+
         const timeout = setTimeout(() => {
           reject(new Error(`Timeout after ${timeout_after} ms for event ${eventType}`));
         }, timeout_after);
