@@ -1,6 +1,6 @@
 ---
 title: GKE
-description: "Install Meshery on Google Kubernetes Engine. Deploy Meshery in-cluster or out-of-cluster."
+description: Install Meshery on Google Kubernetes Engine. Deploy Meshery in-cluster or out-of-cluster.
 weight: 40
 aliases:
   - /installation/platforms/gke

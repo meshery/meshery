@@ -1,6 +1,6 @@
 ---
 title: Bash
-description: "Install mesheryctl using Bash"
+description: Install mesheryctl using Bash
 weight: 10
 aliases:
   - /installation/platforms/bash

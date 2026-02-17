@@ -1,6 +1,6 @@
 ---
 title: KubeSphere
-description: "Install Meshery on KubeSphere"
+description: Install Meshery on KubeSphere
 weight: 70
 aliases:
   - /installation/platforms/kubesphere

@@ -1,6 +1,6 @@
 ---
 title: Kubernetes
-description: "Install Meshery on Kubernetes. Deploy Meshery in-cluster or out-of-cluster."
+description: Install Meshery on Kubernetes. Deploy Meshery in-cluster or out-of-cluster.
 weight: 20
 aliases:
   - /installation/platforms/kubernetes

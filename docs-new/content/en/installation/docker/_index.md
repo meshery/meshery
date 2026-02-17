@@ -1,6 +1,6 @@
 ---
 title: Docker
-description: "Install Meshery on Docker"
+description: Install Meshery on Docker
 weight: 10
 aliases:
   - /installation/platforms/docker

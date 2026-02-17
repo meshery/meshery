@@ -1,6 +1,6 @@
 ---
 title: Brew
-description: "Install mesheryctl using Homebrew"
+description: Install mesheryctl using Homebrew
 weight: 20
 aliases:
   - /installation/platforms/brew

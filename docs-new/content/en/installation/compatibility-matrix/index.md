@@ -1,6 +1,6 @@
 ---
 title: Compatibility Matrix
-description: "Meshery Server and Adapter compatibility with infrastructure platforms"
+description: Meshery Server and Adapter compatibility with infrastructure platforms
 weight: 55
 aliases:
   - /installation/compatibility-matrix/

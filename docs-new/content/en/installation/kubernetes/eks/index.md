@@ -1,6 +1,6 @@
 ---
 title: EKS
-description: "Install Meshery on Elastic Kubernetes Service. Deploy Meshery in-cluster or out-of-cluster."
+description: Install Meshery on Elastic Kubernetes Service. Deploy Meshery in-cluster or out-of-cluster.
 weight: 30
 aliases:
   - /installation/platforms/eks

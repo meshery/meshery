@@ -1,6 +1,6 @@
 ---
 title: KinD
-description: "Install Meshery on KinD. Deploy Meshery in-cluster or out-of-cluster."
+description: Install Meshery on KinD. Deploy Meshery in-cluster or out-of-cluster.
 weight: 50
 aliases:
   - /installation/platforms/kind

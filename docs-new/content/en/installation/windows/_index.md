@@ -1,6 +1,6 @@
 ---
 title: Install Meshery CLI on Windows
-description: "Install mesheryctl on Windows"
+description: Install mesheryctl on Windows
 weight: 40
 aliases:
   - /installation/platforms/windows

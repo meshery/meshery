@@ -1,6 +1,6 @@
 ---
 title: Minikube
-description: "Install Meshery on Minikube. Deploy Meshery in-cluster or out-of-cluster."
+description: Install Meshery on Minikube. Deploy Meshery in-cluster or out-of-cluster.
 weight: 60
 aliases:
   - /installation/platforms/minikube

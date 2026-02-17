@@ -1,6 +1,6 @@
 ---
 title: Helm
-description: "Install Meshery on Kubernetes using Helm. Deploy Meshery in-cluster."
+description: Install Meshery on Kubernetes using Helm. Deploy Meshery in-cluster.
 weight: 10
 aliases:
   - /installation/platforms/helm

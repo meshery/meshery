@@ -1,6 +1,6 @@
 ---
 title: GitHub Codespaces
-description: "Build and contribute to Meshery using GitHub Codespaces"
+description: Build and contribute to Meshery using GitHub Codespaces
 weight: 30
 aliases:
   - /installation/platforms/codespaces

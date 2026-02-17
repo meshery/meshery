@@ -1,6 +1,6 @@
 ---
 title: Using Multiple Meshery Adapters
-description: "Running multiple instances of the same Meshery adapter"
+description: Running multiple instances of the same Meshery adapter
 weight: 60
 aliases:
   - /installation/platforms/multiple-of-the-same-adapter

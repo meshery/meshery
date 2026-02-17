@@ -1,6 +1,6 @@
 ---
 title: Meshery Playground
-description: "Details about Meshery Playground"
+description: Details about Meshery Playground
 weight: 15
 aliases:
   - /installation/platforms/playground

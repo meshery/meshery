@@ -1,6 +1,6 @@
 ---
 title: AKS
-description: "Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster."
+description: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
 weight: 20
 aliases:
   - /installation/platforms/aks
