@@ -6,7 +6,7 @@ display_title: false
 
 # Meshery Registry: A Central Hub for Capabilities
 
-The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry]({{site.baseurl}}/reference/mesheryctl/registry)).
+The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry](/reference/mesheryctl/registry)).
 
 As the central repository for all capabilities known to Meshery, the registry contains various entities.
 
@@ -17,7 +17,7 @@ As the central repository for all capabilities known to Meshery, the registry co
   <ul>
     <li><a href="../components">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
     <li><a href="../relationships">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
-    <li><a href="../logical/policies">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
+    <li><a href="../policies">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
     <li><a href="../connections">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
     <li><a href="../credentials">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
   </ul>
