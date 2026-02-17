@@ -140,7 +140,6 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 	}
 }
 
-
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
 	// l.issueSession(w, r, fromMiddleWare)
