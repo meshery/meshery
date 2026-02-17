@@ -41,7 +41,7 @@ var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered components",
 	Long: `View a component registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
 mesheryctl component view [component-name]

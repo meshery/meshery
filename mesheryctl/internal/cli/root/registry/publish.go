@@ -56,7 +56,7 @@ var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
 	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/publish`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/publish`,
 	Example: `
 // Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
