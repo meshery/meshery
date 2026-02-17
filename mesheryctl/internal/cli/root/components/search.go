@@ -56,7 +56,7 @@ mesheryctl component search "Component name"
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentName := strings.Join(args, "_")
+		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
 		searchValue.Add("search", componentName)
 
