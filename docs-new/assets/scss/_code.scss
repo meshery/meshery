@@ -48,18 +48,18 @@ code::-webkit-scrollbar {
   overflow: hidden;
 }
 
-  .td-content pre > div {
-    position: absolute;
-    top: auto;        
-    right: 10px;      
-    width: auto; 
+.td-content pre > div {
+  position: absolute;
+  top: auto;        
+  right: 10px;      
+  width: auto; 
 
-    & button{
-      border: none;
-      background: transparent;
-      font-size: 1.1rem;
-    }
+  & button{
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
   }
+}
 .td-content pre > code {
   padding: 10px 0;
   margin: 0;
