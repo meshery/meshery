@@ -21,7 +21,7 @@ Meshery and its components are written using the following languages and technol
 | [Meshery CLI](#meshery-cli)                                          | Golang                                                                            |
 | --- [Extensions](/extensions) ---                                    |                                                                                   |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
-| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
+| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points](/extensibility) |
 | [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
@@ -91,20 +91,20 @@ See the [**Operator**](/concepts/architecture/operator) section for more informa
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-database.webp" width="50%" /></a>
+<a href="/assets/img/architecture/meshery-database.webp" class="lightbox-image">
+<img src="/assets/img/architecture/meshery-database.webp" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
 
-_See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
+_See the [**Database**](/concepts/architecture/database) section for more information on the function of the database._
 
 ## Meshery Docker Extension
 
 Meshery's Docker extension provides a simple and flexible way to design and operate cloud native infrastructure on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
 
-<a href="{{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg" width="50%" /></a>
+<a href="/assets/img/architecture/meshery-docker-extension.svg" class="lightbox-image">
+<img src="/assets/img/architecture/meshery-docker-extension.svg" width="50%" /></a>
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
@@ -155,9 +155,9 @@ Meshery uses the following list of network ports to interface with its various c
 | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
 {% endfor -%}
-| [Meshery Perf]({{ site.baseurl }}/guides/performance-management/managing-performance) | 10013/gRPC    | Performance Management|
+| [Meshery Perf](/guides/performance-management/managing-performance) | 10013/gRPC    | Performance Management|
 
-See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
+See the [**Adapters**](/concepts/architecture/adapters) section for more information on the function of an adapter.
 
 ### **Meshery Connections and their Actions**
 

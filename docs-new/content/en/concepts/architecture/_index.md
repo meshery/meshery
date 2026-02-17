@@ -21,7 +21,7 @@ Meshery and its components are written using the following languages and technol
 | [Meshery CLI](#meshery-cli)                                          | Golang                                                                            |
 | --- [Extensions](/extensions) ---                                    |                                                                                   |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
-| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
+| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points](/extensibility) |
 | [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
@@ -155,9 +155,9 @@ Meshery uses the following list of network ports to interface with its various c
 | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
 {% endfor -%}
-| [Meshery Perf]({{ site.baseurl }}/guides/performance-management/managing-performance) | 10013/gRPC    | Performance Management|
+| [Meshery Perf](/guides/performance-management/managing-performance) | 10013/gRPC    | Performance Management|
 
-See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
+See the [**Adapters**](/concepts/architecture/adapters) section for more information on the function of an adapter.
 
 ### **Meshery Connections and their Actions**
 
