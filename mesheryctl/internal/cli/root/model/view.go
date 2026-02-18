@@ -33,9 +33,9 @@ mesheryctl model view [model-name]
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", invalidUsageMsg))
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", invalidUsageMsg))
 		}
 		return nil
 	},

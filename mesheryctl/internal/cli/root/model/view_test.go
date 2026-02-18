@@ -30,7 +30,7 @@ func TestViewModel(t *testing.T) {
 			URL:            "api/meshmodels/models",
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", invalidUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
