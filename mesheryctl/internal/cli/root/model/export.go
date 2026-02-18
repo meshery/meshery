@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	mValidator "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/validator"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/mesheryctlflags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -60,7 +60,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		err := validate.Struct(exportModelFlagsProvided)
 		if err != nil {
 			vErr := err.(validator.ValidationErrors)
-			return utils.ErrFlagsInvalid(mValidator.ReadValidationErrorMessages(vErr))
+			return utils.ErrFlagsInvalid(mesheryctlflags.ReadValidationErrorMessages(vErr))
 		}
 		return nil
 	},
@@ -94,10 +94,6 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		exportedModelData, err := api.FetchData(urlPath)
 		if err != nil {
 			return err
-		}
-
-		if exportedModelData == nil {
-			return utils.ErrNotFound(fmt.Errorf("model with name %s and version %s not found", modelName, exportModelFlagsProvided.Version))
 		}
 
 		var exportedModelPath string

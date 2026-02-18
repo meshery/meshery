@@ -1,4 +1,4 @@
-package validator
+package mesheryctlflags
 
 import (
 	"testing"
@@ -114,80 +114,10 @@ func TestValidateBoolean(t *testing.T) {
 	}
 }
 
-func TestReadValidationErrorMessages(t *testing.T) {
-	validate := NewValidator()
-
-	tests := []struct {
-		name           string
-		input          interface{}
-		expectedCount  int
-		expectedSubstr []string
-	}{
-		{
-			name: "semver validation error",
-			input: struct {
-				Version string `json:"version" validate:"semver"`
-			}{Version: "1.0.0"},
-			expectedCount:  1,
-			expectedSubstr: []string{"Invalid value for --version '1.0.0': version must be in format vX.X.X"},
-		},
-		{
-			name: "oneof validation error",
-			input: struct {
-				Format string `json:"format" validate:"oneof=json yaml"`
-			}{Format: "xml"},
-			expectedCount:  1,
-			expectedSubstr: []string{"Invalid value for --format 'xml': valid values are json yaml"},
-		},
-		{
-			name: "multiple validation errors",
-			input: struct {
-				Version string `json:"version" validate:"semver"`
-				Format  string `json:"format" validate:"oneof=json yaml"`
-			}{Version: "1.0.0", Format: "xml"},
-			expectedCount:  2,
-			expectedSubstr: []string{"Invalid value for --version '1.0.0'", "Invalid value for --format 'xml'"},
-		},
-		{
-			name: "dir validation error",
-			input: struct {
-				Path string `json:"path" validate:"dir"`
-			}{Path: "/nonexistent/path"},
-			expectedCount:  1,
-			expectedSubstr: []string{"Invalid value for --path '/nonexistent/path': directory does not exist"},
-		},
-		{
-			name: "generic validation error",
-			input: struct {
-				Name string `json:"name" validate:"required"`
-			}{Name: ""},
-			expectedCount:  1,
-			expectedSubstr: []string{"Invalid value for --name ''"},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := validate.Struct(tt.input)
-			assert.Error(t, err)
-
-			validationErrors, ok := err.(validator.ValidationErrors)
-			assert.True(t, ok)
-
-			messages := ReadValidationErrorMessages(validationErrors)
-			assert.Equal(t, tt.expectedCount, len(messages))
-
-			for i, substr := range tt.expectedSubstr {
-				assert.Contains(t, messages[i], substr)
-			}
-		})
-	}
-}
-
 func TestReadValidationErrorMessages_Empty(t *testing.T) {
 	var emptyErrors validator.ValidationErrors
-	messages := ReadValidationErrorMessages(emptyErrors)
-	assert.Nil(t, messages)
+	err := ReadValidationErrorMessages(emptyErrors)
+	assert.Nil(t, err)
 }
 
 func TestNewValidator(t *testing.T) {
@@ -216,4 +146,83 @@ func TestNewValidator(t *testing.T) {
 	validationErrors, ok := err.(validator.ValidationErrors)
 	assert.True(t, ok)
 	assert.Equal(t, "custom_name", validationErrors[0].Field())
+}
+
+func TestReadValidationErrorMessages(t *testing.T) {
+	validate := NewValidator()
+
+	tests := []struct {
+		name            string
+		setupStruct     interface{}
+		expectedError   string
+		shouldHaveError bool
+	}{
+		{
+			name: "semver validation error",
+			setupStruct: struct {
+				Version string `json:"version" validate:"semver"`
+			}{Version: "1.0.0"},
+			expectedError:   "Invalid value for --version '1.0.0': version must be in format vX.X.X",
+			shouldHaveError: true,
+		},
+		{
+			name: "oneof validation error",
+			setupStruct: struct {
+				Format string `json:"format" validate:"oneof=json yaml"`
+			}{Format: "xml"},
+			expectedError:   "Invalid value for --format 'xml': valid values are json yaml",
+			shouldHaveError: true,
+		},
+		{
+			name: "dir validation error",
+			setupStruct: struct {
+				OutputDir string `json:"output-dir" validate:"dir"`
+			}{OutputDir: "/nonexistent/path"},
+			expectedError:   "Invalid value for --output-dir '/nonexistent/path': directory does not exist",
+			shouldHaveError: true,
+		},
+		{
+			name: "dirpath validation error",
+			setupStruct: struct {
+				SourcePath string `json:"source-path" validate:"dirpath"`
+			}{SourcePath: "/invalid/directory"},
+			expectedError:   "Invalid value for --source-path '/invalid/directory': directory does not exist",
+			shouldHaveError: true,
+		},
+		{
+			name: "default validation error",
+			setupStruct: struct {
+				RequiredField string `json:"required-field" validate:"required"`
+			}{RequiredField: ""},
+			expectedError:   "Invalid value for --required-field ''",
+			shouldHaveError: true,
+		},
+		{
+			name: "multiple validation errors",
+			setupStruct: struct {
+				Version string `json:"version" validate:"semver"`
+				Format  string `json:"format" validate:"oneof=json yaml"`
+			}{Version: "invalid", Format: "xml"},
+			expectedError:   "Invalid value for --version 'invalid': version must be in format vX.X.X, Invalid value for --format 'xml': valid values are json yaml",
+			shouldHaveError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validate.Struct(tt.setupStruct)
+
+			if tt.shouldHaveError {
+				assert.Error(t, err)
+				validationErrors, ok := err.(validator.ValidationErrors)
+				assert.True(t, ok)
+
+				resultErr := ReadValidationErrorMessages(validationErrors)
+				assert.Error(t, resultErr)
+				assert.Equal(t, tt.expectedError, resultErr.Error())
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
