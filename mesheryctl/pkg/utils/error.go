@@ -65,6 +65,7 @@ var (
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
+	ErrCommandContextMissingCode   = "mesheryctl-1200"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -838,5 +839,16 @@ func ErrUploadFileWithParams(err error, fileName string) error {
 		[]string{err.Error()},
 		[]string{"File upload failed due to network issues or server errors"},
 		[]string{"Check your network connection and ensure the server is reachable."},
+	)
+}
+
+func ErrCommandContextMissing(contextName string) error {
+	return errors.New(
+		ErrCommandContextMissingCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Missing context with value %s as not been set", contextName)},
+		[]string{"A required context for command is missing or not specified"},
+		[]string{"The command may require a specific context to be set in order to function properly"},
+		[]string{"Ensure that the necessary contextis defined in the root command file and try again"},
 	)
 }

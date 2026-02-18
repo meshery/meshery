@@ -233,6 +233,6 @@ func setupLogger() {
 // This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 func initValidators(cmd *cobra.Command) {
 	validate := mesheryctlflags.NewValidator()
-	ctx := context.WithValue(context.Background(), "validators", validate)
+	ctx := context.WithValue(context.Background(), "flags-validator", validate)
 	cmd.SetContext(ctx)
 }
