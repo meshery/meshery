@@ -26,10 +26,26 @@ mesheryctl exp relationship view [flags]
 
 ## Examples
 
-View relationships of a model
+View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship view [model-name]
+
+</div>
+</pre> 
+
+View relationships of a model in JSON format
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship view [model-name] --output-format json
+
+</div>
+</pre> 
+
+View relationships of a model in json format and save it to a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship view [model-name] --output-format json --save
 
 </div>
 </pre> 
@@ -40,6 +56,7 @@ mesheryctl exp relationship view [model-name]
 <div class='codeblock'>
   -h, --help                   help for view
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
 
 </div>
 </pre>

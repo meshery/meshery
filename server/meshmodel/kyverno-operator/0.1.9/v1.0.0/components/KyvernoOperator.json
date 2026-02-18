@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "security.nirmata.io/v1",
     "kind": "KyvernoOperator",
     "schema": "{\n \"description\": \"KyvernoOperator is the Schema for the kyvernooperators API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KyvernoOperatorSpec defines the desired state of KyvernoOperator\",\n   \"properties\": {\n    \"enableAntiAffinity\": {\n     \"description\": \"Whether to consider pod anti affinity to determine HA\",\n     \"type\": \"boolean\"\n    },\n    \"image\": {\n     \"description\": \"Valid Kyverno images separated by |. Use 'xxx' to match any version\",\n     \"type\": \"string\"\n    },\n    \"minNodes\": {\n     \"description\": \"Kyverno min nodes for HA mode\",\n     \"type\": \"integer\"\n    },\n    \"minReplicas\": {\n     \"description\": \"Kyverno min replicas for HA mode\",\n     \"type\": \"integer\"\n    },\n    \"pdbMaxUnavailable\": {\n     \"description\": \"Kyverno PDB min desired constraint\",\n     \"type\": \"integer\"\n    },\n    \"pdbMinAvailable\": {\n     \"description\": \"Kyverno PDB min desired constraint to determnie\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kyverno Operator\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where Eviction references the Pod",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaRestoreJob",
     "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

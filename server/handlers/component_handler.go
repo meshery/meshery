@@ -13,7 +13,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/helpers"
@@ -110,8 +109,11 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -182,8 +184,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -259,8 +264,11 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -333,8 +341,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -386,8 +397,11 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -440,8 +454,11 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -514,8 +531,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -589,8 +609,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -663,8 +686,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -738,8 +764,11 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -811,8 +840,11 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -885,8 +917,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -956,8 +991,11 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1029,8 +1067,11 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1131,8 +1172,11 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1148,7 +1192,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
@@ -1221,7 +1265,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	var message string
 
 	//Here the codes handles to decode and store the data from the payload
@@ -1726,12 +1770,13 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	_, err = rw.Write(byt)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
-
-
 
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship where a Kyverno UpdateRequest auto-creates or updates a Deployment",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

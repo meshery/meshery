@@ -31,14 +31,14 @@ import (
 
 var (
 	modelsApiPath = "api/meshmodels/models"
-	// Available model subcommads
+	// Available model subcommands
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "Manage models",
+	Short: "Manage models in the registery",
 	Long: `Export, generate, import, list, search and view model(s) and detailed informations
 Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
@@ -152,7 +152,7 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		if modelName == "" {
 			modelName = "N/A"
 		}
-		rows = append(rows, []string{modelName, string(model.Category.Name), model.Version})
+		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
 	return rows, int64(modelsResponse.Count)

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "moon.aerokube.com/v1",
     "kind": "DeviceSet",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"devices\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"height\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"pixelRatio\": {\n        \"type\": \"number\"\n       },\n       \"printVersion\": {\n        \"default\": false,\n        \"type\": \"boolean\"\n       },\n       \"userAgent\": {\n        \"type\": \"string\"\n       },\n       \"width\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"height\",\n       \"pixelRatio\",\n       \"userAgent\",\n       \"width\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"devices\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Device Set\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

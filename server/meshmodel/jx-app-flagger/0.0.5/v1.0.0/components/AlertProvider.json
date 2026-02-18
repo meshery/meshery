@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -202,5 +204,7 @@
     "version": "flagger.app/v1beta1",
     "kind": "AlertProvider",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"oneOf\": [\n    {\n     \"required\": [\n      \"type\",\n      \"address\"\n     ]\n    },\n    {\n     \"required\": [\n      \"type\",\n      \"secretRef\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"address\": {\n     \"description\": \"Hook URL address of this provider\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Kubernetes secret reference containing the provider address\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the Kubernetes secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Type of this provider\",\n     \"enum\": [\n      \"slack\",\n      \"msteams\",\n      \"discord\",\n      \"rocket\"\n     ],\n     \"type\": \"string\"\n    }\n   }\n  }\n },\n \"title\": \"Alert Provider\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

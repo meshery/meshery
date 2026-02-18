@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "exoscale.crossplane.io/v1",
     "kind": "ProviderConfigUsage",
     "schema": "{\n \"description\": \"A ProviderConfigUsage indicates that a resource is using a ProviderConfig.\",\n \"properties\": {\n  \"providerConfigRef\": {\n   \"description\": \"ProviderConfigReference to the provider config being used.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"Name of the referenced object.\",\n     \"type\": \"string\"\n    },\n    \"policy\": {\n     \"description\": \"Policies for referencing.\",\n     \"properties\": {\n      \"resolution\": {\n       \"default\": \"Required\",\n       \"description\": \"Resolution specifies whether resolution of this reference is required.\\nThe default is 'Required', which means the reconcile will fail if the\\nreference cannot be resolved. 'Optional' means this reference will be\\na no-op if it cannot be resolved.\",\n       \"enum\": [\n        \"Required\",\n        \"Optional\"\n       ],\n       \"type\": \"string\"\n      },\n      \"resolve\": {\n       \"description\": \"Resolve specifies when this reference should be resolved. The default\\nis 'IfNotPresent', which will attempt to resolve the reference only when\\nthe corresponding field is not present. Use 'Always' to resolve the\\nreference on every reconcile.\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  },\n  \"resourceRef\": {\n   \"description\": \"ResourceReference to the managed resource using the provider config.\",\n   \"properties\": {\n    \"apiVersion\": {\n     \"description\": \"APIVersion of the referenced object.\",\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"description\": \"Kind of the referenced object.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name of the referenced object.\",\n     \"type\": \"string\"\n    },\n    \"uid\": {\n     \"description\": \"UID of the referenced object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiVersion\",\n    \"kind\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"providerConfigRef\",\n  \"resourceRef\"\n ],\n \"title\": \"Provider Config Usage\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "argoproj.io/v1alpha1",
     "kind": "NotificationsConfiguration",
     "schema": "{\n \"description\": \"NotificationsConfiguration is the Schema for the NotificationsConfiguration API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NotificationsConfigurationSpec allows users to define the triggers, templates, services, context and\\nsubscriptions for the notifications\",\n   \"properties\": {\n    \"context\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Context is used to define some shared context between all notification templates\",\n     \"type\": \"object\"\n    },\n    \"services\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Services are used to deliver message\",\n     \"type\": \"object\"\n    },\n    \"subscriptions\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Subscriptions contain centrally managed global application subscriptions\",\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Templates are used to generate the notification template message\",\n     \"type\": \"object\"\n    },\n    \"triggers\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Triggers define the condition when the notification should be sent and list of templates required to generate the message\\nRecipients can subscribe to the trigger and specify the required message template and destination notification service.\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Notifications Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -16,10 +16,10 @@
         "name": "ErrInValidSourceCode",
         "code": "1002",
         "severity": "Fatal",
-        "long_description": "Invalid design source type due to wrong type/passing",
+        "long_description": "Invalid design source type was provided",
         "short_description": "",
-        "probable_cause": "design source type (-s) is invalid or not passed.",
-        "suggested_remediation": "Ensure you pass a valid source type. \\nAllowed source types: %s"
+        "probable_cause": "Provided design source type (-s) is invalid",
+        "suggested_remediation": "Ensure you pass a valid source type"
       },
       "1003": {
         "name": "ErrOnboardDesignCode",
@@ -148,13 +148,13 @@
         "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
       },
       "1018": {
-        "name": "ErrFilterNameOrIDCode",
+        "name": "ErrDeleteFilterCode",
         "code": "1018",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to fetch filter",
-        "probable_cause": "Probable invalid filter name or id",
-        "suggested_remediation": "Run `mesheryctl filter list` to view all available filters."
+        "short_description": "Failed to delete filter",
+        "probable_cause": "Unable to delete the specified filter",
+        "suggested_remediation": "Verify the filter exists using `mesheryctl filter list`"
       },
       "1019": {
         "name": "ErrFetchFilterCode",
@@ -335,15 +335,6 @@
         "short_description": "",
         "probable_cause": "Design file provided is not valid",
         "suggested_remediation": "Please check that your design file is a valid yaml file"
-      },
-      "1039": {
-        "name": "ErrDesignInvalidNameOrIDCode",
-        "code": "1039",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to fetch Design",
-        "probable_cause": "Invalid design name or ID",
-        "suggested_remediation": "Run `mesheryctl design view -a` to view all available designs."
       },
       "1040": {
         "name": "ErrReadFilepathCode",
@@ -784,7 +775,7 @@
         "long_description": "",
         "short_description": "Failed to make a request",
         "probable_cause": "Meshery server is not reachable.",
-        "suggested_remediation": "Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."
+        "suggested_remediation": "Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."
       },
       "1091": {
         "name": "ErrInvalidTokenCode",
@@ -1047,15 +1038,6 @@
         "probable_cause": "Design source type not provided",
         "suggested_remediation": "Provide one of the supported source type for the design to import. \\n\\n%v"
       },
-      "1122": {
-        "name": "ErrCopyDataCode",
-        "code": "1122",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error copying data to file",
-        "probable_cause": "Insufficient disk space, or file system errors.",
-        "suggested_remediation": "Check for sufficient disk space, and verify the integrity of the file system."
-      },
       "1123": {
         "name": "ErrCreateFileCode",
         "code": "1123",
@@ -1107,8 +1089,26 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
-        "probable_cause": "provied sheet id for %s might be incorrect",
+        "probable_cause": "provided sheet id for %s might be incorrect",
         "suggested_remediation": "ensure the sheet id is correct"
+      },
+      "1129": {
+        "name": "ErrGenerationTimeoutCode",
+        "code": "1129",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate",
+        "suggested_remediation": "Try generating a specific model using --model flag\nCheck network connectivity\nReview the generation logs for problematic models"
+      },
+      "1130": {
+        "name": "ErrParsingRelationshipCode",
+        "code": "1130",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid relationship definition format\nMissing required relationship fields\nMalformed selector in relationship",
+        "suggested_remediation": "Verify the relationship CSV format\nCheck that all required fields are present\nValidate the selector JSON syntax"
       },
       "1131": {
         "name": "ErrTemplateFileNotPresentCode",
@@ -1273,13 +1273,13 @@
         "suggested_remediation": "Ensure passing all params according to the command description"
       },
       "1152": {
-        "name": "ErrInvalidOrgIDCode",
+        "name": "ErrInvalidUUIDCode",
         "code": "1152",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid organization ID format",
-        "probable_cause": "Organization ID is not a valid UUID format\nOrganization ID contains invalid characters",
-        "suggested_remediation": "Ensure the organization ID is a valid UUID format\nCheck the orgID parameter for typos or formatting issues"
+        "short_description": "Invalid ID format",
+        "probable_cause": "ID is not a valid UUID format\nID contains invalid characters",
+        "suggested_remediation": "Ensure the ID is a valid UUID format\nCheck the ID parameter for typos or formatting issues"
       },
       "1153": {
         "name": "ErrFetchEnvironmentsCode",
@@ -1309,13 +1309,13 @@
         "suggested_remediation": "Provide a valid flag"
       },
       "1156": {
-        "name": "ErrOutputToYamlCode",
+        "name": "ErrMesheryServerNotRunningCode",
         "code": "1156",
         "severity": "Alert",
-        "long_description": "Error occurred while formatting to YAML",
-        "short_description": "Failed to format output in YAML",
-        "probable_cause": "The content provided for formatting failed.",
-        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+        "long_description": "",
+        "short_description": "Meshery Server is not running",
+        "probable_cause": "Meshery Server is not running or is unreachable\nDocker or Kubernetes environment is not ready\nNetwork connectivity issues",
+        "suggested_remediation": "Start Meshery Server with `mesheryctl system start`\nVerify system readiness with `mesheryctl system check --preflight`\nCheck your network connection and firewall settings"
       },
       "1157": {
         "name": "ErrListPaginationCode",
@@ -1325,6 +1325,321 @@
         "short_description": "Failed to fetch data from Meshery server.",
         "probable_cause": "While fetching data from Meshery server an error occurred.",
         "suggested_remediation": "Please check if returned data is valid"
+      },
+      "1158": {
+        "name": "ErrOutputToYamlCode",
+        "code": "1158",
+        "severity": "Alert",
+        "long_description": "Error occurred while formatting to YAML",
+        "short_description": "Failed to format output in YAML",
+        "probable_cause": "The content provided for formatting failed.",
+        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+      },
+      "1159": {
+        "name": "ErrModelGenerationFailedCode",
+        "code": "1159",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid model source URL\nUnsupported registrant type\nNetwork issues fetching model data",
+        "suggested_remediation": "Verify the model's source URL is accessible\nCheck the registrant type is supported\nReview network connectivity"
+      },
+      "1160": {
+        "name": "ErrUserPromptCode",
+        "code": "1160",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prompt failed",
+        "probable_cause": "User prompt was interrupted or failed to get input",
+        "suggested_remediation": "Try running the command again and complete the selection"
+      },
+      "1161": {
+        "name": "ErrConvertConcurrentRequestCode",
+        "code": "1161",
+        "severity": "Alert",
+        "long_description": "Invalid concurrent-request value provided",
+        "short_description": "Failed to convert concurrent-request",
+        "probable_cause": "The concurrent-request flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for concurrent-request"
+      },
+      "1162": {
+        "name": "ErrConvertQPSCode",
+        "code": "1162",
+        "severity": "Alert",
+        "long_description": "Invalid qps value provided",
+        "short_description": "Failed to convert qps",
+        "probable_cause": "The qps flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for qps"
+      },
+      "1163": {
+        "name": "ErrParseDesignFileCode",
+        "code": "1163",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to parse design file",
+        "probable_cause": "The design file format is invalid or corrupted\nThe YAML/JSON syntax may be incorrect",
+        "suggested_remediation": "Ensure the design file is a valid Meshery design format\nCheck for YAML/JSON syntax errors\nValidate the design file structure"
+      },
+      "1164": {
+        "name": "ErrDeleteDesignCode",
+        "code": "1164",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete design",
+        "probable_cause": "Design may not exist\nNetwork connection issue\nMeshery server unreachable",
+        "suggested_remediation": "Verify the design exists using 'mesheryctl design list'\nCheck your network connection and Meshery server status"
+      },
+      "1165": {
+        "name": "ErrGetKubernetesContextsCode",
+        "code": "1165",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get kubernetes contexts",
+        "probable_cause": "No kubernetes contexts found",
+        "suggested_remediation": "Ensure you have at least one valid context in your meshconfig file."
+      },
+      "1166": {
+        "name": "ErrSetKubernetesContextCode",
+        "code": "1166",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to set kubernetes context",
+        "probable_cause": "The specified Kubernetes context does not exist. ",
+        "suggested_remediation": "Verify that the Kubernetes context provided is valid and try again."
+      },
+      "1167": {
+        "name": "ErrFilterNotFoundCode",
+        "code": "1167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Filter not found",
+        "probable_cause": "The specified filter does not exist",
+        "suggested_remediation": "Use `mesheryctl filter list` to see available filters"
+      },
+      "1168": {
+        "name": "ErrFilterURIRequiredCode",
+        "code": "1168",
+        "severity": "Alert",
+        "long_description": "No URI provided for filter import",
+        "short_description": "URI is required",
+        "probable_cause": "Filter import command requires a URI",
+        "suggested_remediation": "Provide a valid file path or URL"
+      },
+      "1169": {
+        "name": "ErrViewAllWithNameCode",
+        "code": "1169",
+        "severity": "Alert",
+        "long_description": "--all cannot be used when filter name or ID is specified",
+        "short_description": "Invalid flag combination",
+        "probable_cause": "Conflicting options provided",
+        "suggested_remediation": "Use either --all flag OR specify a filter name/ID"
+      },
+      "1170": {
+        "name": "ErrMultiWordFilterNameCode",
+        "code": "1170",
+        "severity": "Alert",
+        "long_description": "multi-word filter names must be enclosed in double quotes",
+        "short_description": "Invalid filter name format",
+        "probable_cause": "Filter name with spaces requires quoting",
+        "suggested_remediation": "Enclose multi-word filter names in double quotes"
+      },
+      "1171": {
+        "name": "ErrInvalidFilterCommandCode",
+        "code": "1171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided subcommand is not recognized",
+        "suggested_remediation": "Run `mesheryctl filter --help` to see available commands"
+      },
+      "1172": {
+        "name": "ErrHandlePaginationCode",
+        "code": "1172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to display paginated results",
+        "probable_cause": "Interactive pagination requires keyboard input support",
+        "suggested_remediation": "Ensure you are running in an interactive terminal\nIf running in a non-interactive environment, use '--page' flag to skip pagination"
+      },
+      "1174": {
+        "name": "ErrAwsCliNotFoundCode",
+        "code": "1174",
+        "severity": "Alert",
+        "long_description": "The AWS CLI is required to create an EKS connection but was not found on your system",
+        "short_description": "AWS CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      },
+      "1175": {
+        "name": "ErrGcpGKEGetCredentialsCode",
+        "code": "1175",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the GKE cluster credentials",
+        "short_description": "Unable to get GKE cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the GKE cluster name, zone, and project ID are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1182": {
+        "name": "ErrConnectionTypeCode",
+        "code": "1182",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1183": {
+        "name": "ErrEncodingDataCode",
+        "code": "1183",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Non supported characters in the data",
+        "suggested_remediation": "Ensure the content of the data provided does not contain invalid supported characters"
+      },
+      "1184": {
+        "name": "ErrUnsupportedFormatCode",
+        "code": "1184",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "An unsupported output format was requested. ",
+        "suggested_remediation": "Specify a supported output format. Choices are 'json' or 'yaml'."
+      },
+      "1185": {
+        "name": "ErrUploadFileWithParamsCode",
+        "code": "1185",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "File upload failed due to network issues or server errors",
+        "suggested_remediation": "Check your network connection and ensure the server is reachable."
+      },
+      "1186": {
+        "name": "ErrAwsEksGetCredentialsCode",
+        "code": "1186",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the EKS cluster credentials",
+        "short_description": "Unable to get EKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the EKS cluster name and region are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1187": {
+        "name": "ErrReadKubeConfigCode",
+        "code": "1187",
+        "severity": "Alert",
+        "long_description": "There was an error reading the kubeconfig file",
+        "short_description": "Unable to read kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that the kubeconfig file exists, content is valid and is accessible"
+      },
+      "1188": {
+        "name": "ErrWriteKubeConfigCode",
+        "code": "1188",
+        "severity": "Alert",
+        "long_description": "There was an error writing the kubeconfig file",
+        "short_description": "Unable to write kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that you have the necessary permissions to write to the kubeconfig file location"
+      },
+      "1189": {
+        "name": "ErrAzureAksGetCredentialsCode",
+        "code": "1189",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the AKS cluster credentials",
+        "short_description": "Unable to get AKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1190": {
+        "name": "ErrAzureCliNotFoundCode",
+        "code": "1190",
+        "severity": "Alert",
+        "long_description": "The Azure CLI is required to create an AKS connection but was not found on your system",
+        "short_description": "Azure CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      },
+      "1191": {
+        "name": "ErrInvalidCommandCode",
+        "code": "1191",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided command is not recognized",
+        "suggested_remediation": "Run 'mesheryctl design --help' to see available commands"
+      },
+      "1192": {
+        "name": "ErrDesignNameOrIDNotSpecifiedCode",
+        "code": "1192",
+        "severity": "Alert",
+        "long_description": "No design name or ID was provided",
+        "short_description": "Design name or ID not specified",
+        "probable_cause": "Command requires a design name or ID as argument",
+        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+      },
+      "1193": {
+        "name": "ErrReadInputCode",
+        "code": "1193",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to read the input",
+        "probable_cause": "The provided input was invalid or could not be read",
+        "suggested_remediation": "Validate the input and try again."
+      },
+      "1194": {
+        "name": "ErrOutputFileNotSpecifiedCode",
+        "code": "1194",
+        "severity": "Alert",
+        "long_description": "The output file path was not provided.",
+        "short_description": "Output file path is not specified.",
+        "probable_cause": "An output file path must be specified to save the output.",
+        "suggested_remediation": "Provide a valid file path."
+      },
+      "1195": {
+        "name": "ErrCreateEnvironmentCode",
+        "code": "1195",
+        "severity": "Alert",
+        "long_description": "There was an error while creating the environment",
+        "short_description": "",
+        "probable_cause": "Ensure Meshery server is running and reachable\nCheck if the organization ID is correct",
+        "suggested_remediation": "Start Meshery server and try again\nProvide a valid organization ID"
+      },
+      "1196": {
+        "name": "ErrContextNotExistsCode",
+        "code": "1196",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get context details",
+        "probable_cause": "Non exists context name is provided",
+        "suggested_remediation": "Run `mesheryctl system context list` to see available context name"
+      },
+      "1197": {
+        "name": "ErrConnectionNotFoundCode",
+        "code": "1197",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Connection not found",
+        "probable_cause": "The specified connection ID does not exist",
+        "suggested_remediation": "Verify the connection ID using `mesheryctl connection list`"
+      },
+      "1198": {
+        "name": "ErrInvalidOutputFormatCode",
+        "code": "1198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Output Format",
+        "probable_cause": "The specified output format is not supported",
+        "suggested_remediation": ""
+      },
+      "1199": {
+        "name": "ErrDesignInvalidApiResponseCode",
+        "code": "1199",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API response",
+        "probable_cause": "The API response is missing expected fields or has an unexpected format",
+        "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
       }
     }
   }

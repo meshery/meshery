@@ -10,7 +10,7 @@ redirect_from:
   - concepts/relationships
 ---
 
-Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./designs) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./designs) to further aid in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -21,18 +21,18 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Automated Configuration:** Relationship-driven actions can automate the configuration of components, reducing manual effort and potential errors.
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
-{% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-relationships'>Contributing to Meshery Relationships</a> guide." %}
+{% include alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-relationships'>Contributing to Meshery Relationships</a> guide." %}
 
 ## Types of Relationships
 
 Meshery supports different types of relationships to cater to various use cases:
 
-- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
+- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. Parent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
 - **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
 - **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
-- **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
+- **TagSets Relationships:** These represent relationships between components with the same label or annotation key/value pairs. Labels and Annotations are two different types of tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
  
-Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
 
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
@@ -45,7 +45,7 @@ Relationships are are categorized into different kinds, types, and subtypes, so 
    2. Binding
       1. Mount
       2. Permission
-2. Heirarchical
+2. Hierarchical
    1. Inventory
    2. Parent 
 3. TagSets -->
@@ -54,7 +54,7 @@ Relationships are are categorized into different kinds, types, and subtypes, so 
 
 ## The Meaning of Relationships
 
-Meshery supports a variety of relationships between components. These relationships are categorized into two types: Semantic and Non-Semantic. Relationships are categorized by whether they are meaningful in terms of how Meshery manages entities - a Semantic relationship - or are simply annotations to aid in the comprehension of you as the designer of the relationship - a Non-Semantic relationship.
+Meshery supports a variety of relationships between components. These relationships are categorized into two types: Semantic and Non-Semantic. Relationships are categorized by whether they are meaningful in terms of how Meshery manages entities - a Semantic relationship - or are simply annotations to aid in the comprehension for you as the designer of the relationship - a Non-Semantic relationship.
 
 ### Semantic Relationships
 
@@ -62,15 +62,15 @@ Semantic relationships are those that are meaningful in the context of the appli
 
 ### Non-Semantic Relationships
 
-Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-sematic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
+Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-semantic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
 
 <!-- @iArchitSharma, help, if you would please.
 
 _[TODO: a visual example is needed here]_ -->
 
-#### Identifiying Non-Semantic Relationships
+#### Identifying Non-Semantic Relationships
 
-The `isAnnotation` attribute of a Relationship or Component determines whether the given Relationship or Component represents a management concern for Meshery; whether the given Relationship or Component is sematically meaningful, and whose lifecycle is managed by Meshery.
+The `isAnnotation` attribute of a Relationship or Component determines whether the given Relationship or Component represents a management concern for Meshery; whether the given Relationship or Component is semantically meaningful, and whose lifecycle is managed by Meshery.
 
 ## Core Concepts of Relationships
 
@@ -114,9 +114,9 @@ This Relationship type configures the networking between one or more components.
 
 ### 2. Edge - Mount
 
-**Example**: Assignment of PersistentVolumes to Pods via PersistenVolumeClaim.
+**Example**: Assignment of PersistentVolumes to Pods via PersistentVolumeClaim.
 
-- Example 1) Pod --> PersistenVolumeClaim --> PersistentVolume
+- Example 1) Pod --> PersistentVolumeClaim --> PersistentVolume
 
 <details close><summary>Visual Representation of Edge-Mount Relationship</summary>
            <br>
@@ -130,7 +130,7 @@ This Relationship type configures the networking between one or more components.
 
 **Example**: The set of Service Accounts that are entitled with the one or more Roles/ClusterRoles bound via Role/ClusterRoleBinding.
 
-- Example 1) ClusterRole --> CluserRoleBinding --> ServiceAccount
+- Example 1) ClusterRole --> ClusterRoleBinding --> ServiceAccount
 - Example 2) Role --> RoleBinding --> ServiceAccount
 
 <details close><summary>Visual Representation of Edge-Permission Relationship</summary>
@@ -179,8 +179,8 @@ Logical or declarative links between components where one component refers to an
 - Example 1) (binary and configuration) --> IstioWASMPlugin
 - Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
-<details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
-           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
+<details close><summary>Visual Representation of Hierarchical-Parent-Wallet Relationship</summary>
+           <figure><br><figcaption>1. Hierarchical-Parent-Wallet: WASMFilter and IstioEnvoyFilter<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380" style="height:30rem;width:100%;"></div>
 <script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
@@ -203,7 +203,7 @@ Logical or declarative links between components where one component refers to an
 
 This relationship type defines the associations between components based on shared Labels or Annotations.
 
-**Example**: An label-based tag-set relationship between a NodePort service and an application. 
+**Example**: A label-based tag-set relationship between a NodePort service and an application. 
 
 <details close><summary>Visual Representation of Tag-Sets Relationship</summary>
           <br>
@@ -227,7 +227,7 @@ This relationship depicts connections between components without conveying speci
 
 ## Selectors in Relationships
 
-In Meshery, a selector is a way to specify which set of components a certain other component should affect or interact with. Selectors provide a flexible and powerful way to manage and orchestrate resources within a under Meshery's management.
+In Meshery, a selector is a way to specify which set of components a certain other component should affect or interact with. Selectors provide a flexible and powerful way to manage and orchestrate resources under Meshery's management.
 
 Selectors can be applied to various components, enabling a wide range of relationship definitions. Here are some examples:
 
@@ -275,7 +275,7 @@ The above relationships pairs have hierarchical inventory relationships, and vis
                   "name"
                 ]
               ],
-              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+              "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
             }
           }
         ],
@@ -323,7 +323,7 @@ Meshery employs a policy-driven approach to evaluate relationships between compo
 
 Each invocation of the evaluation process attempts to recursively evaluate the design until it reaches a stable state—i.e., no further changes are detected. If a bug in the evaluation policies causes non-terminating behavior (such as endlessly generating new components), the evaluation will be forcibly stopped after a configurable maximum depth (e.g., 5 iterations), and an error will be raised.
 
-During evaluation, in addition to the input design, the evaluation engine has access to all relationships stored in the registry. These relationships serve as the source of truth for policies to validate existing relationships  or identify new ones. Since relationships can be associated with different models, not all of them are relevant to a given design. To ensure efficiency, the evaluation process intelligently filters the registered relationships, retaining only those that directly impact the design.
+During evaluation, in addition to the input design, the evaluation engine has access to all relationships stored in the registry. These relationships serve as the source of truth for policies to validate existing relationships or identify new ones. Since relationships can be associated with different models, not all of them are relevant to a given design. To ensure efficiency, the evaluation process intelligently filters the registered relationships, retaining only those that directly impact the design.
 
 
 Currently, the filtering logic includes only relationships from models that are already part of the design. For example, if the design consists solely of Kubernetes components, relationships from the AWS model will not be loaded for evaluation.
@@ -338,16 +338,16 @@ Beyond this automatic filtering, relationship evaluation can also be selectively
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
-{% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/example-edge-permission-relationship-7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
+{% include alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/example-edge-permission-relationship-7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
-When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies).
+When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specifics of patching refer [Patch Strategies](#patch-strategies).
 
 Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
-<!-- Explain real time evaluationof relationships on -->
+<!-- Explain real time evaluation of relationships on -->
 <!-- 1. Import -->
-<!-- 2. When compoennt config is update and it statisfied the condition for the relationship -->
+<!-- 2. When compoennt config is update and it satisfied the condition for the relationship -->
 
 ### Patch Strategies
 
@@ -356,15 +356,15 @@ Patches in Meshery relationships utilize strategies and references (mutatorRef/m
 ### Caveats and Considerations
 
 1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there's no system to remove the extra pod configuration automatically.
-If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It's important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
+If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. e.g., The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It's important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment
 
-In any given Meshery deployment, you can reference and search the full set of registered relationships (in Meshery's internal registry) in using either of Meshery's client interfaces.
+In any given Meshery deployment, you can reference and search the full set of registered relationships (in Meshery's internal registry) using either of Meshery's client interfaces.
 
 **Meshery UI**
 
-- Visit _Setttings_ --> _Registry_
+- Visit _Settings_ --> _Registry_
 
 **Meshery CLI**
 

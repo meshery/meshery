@@ -46,6 +46,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -200,5 +202,7 @@
     "version": "ui.k8s.appscode.com/v1alpha1",
     "kind": "FeatureSet",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"sourceRef\": {\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"sourceRef\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"type\": \"boolean\"\n    },\n    \"icons\": {\n     \"items\": {\n      \"properties\": {\n       \"size\": {\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"recommended\": {\n     \"type\": \"boolean\"\n    },\n    \"requiredFeatures\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"title\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"chart\",\n    \"description\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature Set\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

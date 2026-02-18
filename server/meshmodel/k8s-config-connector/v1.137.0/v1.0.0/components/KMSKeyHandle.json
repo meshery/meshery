@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -199,5 +201,7 @@
     "version": "kms.cnrm.cloud.google.com/v1alpha1",
     "kind": "KMSKeyHandle",
     "schema": "{\n \"description\": \"KMSKeyHandle is the Schema for the KMSKeyHandle API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KMSKeyHandleSpec defines the desired state of KMSKeyHandle\",\n   \"properties\": {\n    \"location\": {\n     \"description\": \"Location name to create KeyHandle\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Project hosting KMSKeyHandle\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The KMS Key Handle ID used for resource creation or acquisition. For creation: If specified, this value is used as the key handle ID. If not provided, a UUID will be generated and assigned as the key handle ID. For acquisition: This field must be provided to identify the key handle resource to acquire.\",\n     \"type\": \"string\"\n    },\n    \"resourceTypeSelector\": {\n     \"description\": \"Indicates the resource type that the resulting [CryptoKey][] is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types https://cloud.google.com/kms/docs/autokey-overview#compatible-services.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Key Handle\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -1,21 +1,21 @@
 package design
 
 import (
+	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
+var (
+	update                 = flag.Bool("update", false, "update golden files")
+	invalidFilePath        = "/invalid/path/design.yaml"
+	validDesignSourceTypes = []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
+)
+
 func TestDesignCmd(t *testing.T) {
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -28,14 +28,7 @@ func TestDesignCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenrios for fetching data
-	testcase := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-	}{
+	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "design apply",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "design.golden")},
@@ -120,11 +113,10 @@ func TestDesignCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
-		// Invalid or Non-Existing
 		{
 			Name:             "design invalid view",
 			Args:             []string{"view", "test-view"},
-			ExpectedResponse: "design.view.invalid.output.golden",
+			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -139,56 +131,19 @@ func TestDesignCmd(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  ErrDesignNotFound(),
 		},
 	}
-	for _, test := range testcase {
-		t.Run(test.Name, func(t *testing.T) {
-			for _, url := range test.URLs {
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
-			}
-			// set token
-			utils.TokenFlag = test.Token
 
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, test.ExpectedResponse, testdataDir)
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
 
-			// setting up log to grab logs
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			DesignCmd.SetOut(b)
-			DesignCmd.SetArgs(test.Args)
-			err := DesignCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if test.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
-					return
-				}
-				t.Error(err)
-			}
-
-			// response being printed in console
-			actualResponse := b.String()
-
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-	}
-	utils.StopMockery(t)
-	t.Log("Design tests Passed")
+// reset other flags if needed
+func resetVariables() {
+	skipSave = false
+	patternFile = ""
+	file = ""
 }

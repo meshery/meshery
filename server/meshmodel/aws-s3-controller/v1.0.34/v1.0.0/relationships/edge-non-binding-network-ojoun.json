@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An edge relationship EC2 instances read/write objects to S3 buckets via SDK/CLI",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

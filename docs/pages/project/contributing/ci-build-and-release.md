@@ -81,6 +81,14 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+### UI Build System
+
+Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
+
+**Build Commands**:
+- `make ui-build` - Builds both Meshery UI and Provider UI
+- `make ui-provider-build` - Builds Provider UI only
+
 ## Tests for adapters
 
 All Meshery adapters use a central workflow that is referenced in each of their test workflows which get triggered every time a pull request is made. These
@@ -485,5 +493,11 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
+<div class="training-video">
+  <iframe width="560" height="315"
+    src="https://www.youtube.com/embed/dlr_nzJV16Q"
+    title="Training Video" frameborder="0" allowfullscreen>
+  </iframe>
+</div>
 
-{% include training-video.html %}
+

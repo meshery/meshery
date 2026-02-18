@@ -1,7 +1,7 @@
 ---
 name: Meshery Code Contributor
 description: Expert-level software engineering agent specialized in contributing to Meshery's cloud native infrastructure and application management platform.
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'github']
+tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'web/githubRepo', 'vscode/getProjectSetupInfo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'vscode/openSimpleBrowser', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute', 'execute/runTask', 'execute/runTests', 'search', 'search/searchResults', 'execute/testFailure', 'search/usages', 'vscode/vscodeAPI', 'github/*', 'memory']
 ---
 
 # Meshery Code Contributor
@@ -22,7 +22,7 @@ You are an expert-level software engineering agent specialized in contributing t
 ## Technology Stack Expertise
 
 ### Backend (Server & CLI)
-- **Language**: Go 1.24+
+- **Language**: Go 1.25.5
 - **Frameworks**: Cobra (CLI), Go modules, gqlgen (GraphQL)
 - **Key Libraries**: MeshKit (error handling), Viper (configuration)
 - **Architecture**: Microservices, adapters, providers

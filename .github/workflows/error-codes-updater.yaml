@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
 
 jobs:
   Update-error-codes:
@@ -17,21 +19,21 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          ref: "master"
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
         if: ${{ github.event_name == 'push' }}
         with:
           ref: "master"
           fetch-depth: 1
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Build Error Utility
         run: |
@@ -58,11 +60,12 @@ jobs:
           echo '{ "errors_export": "" }' | jq --slurpfile export ../mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
 
       - name: Pull changes from remote
+        if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
         run: git pull origin master
 
       - name: Commit changes
-        if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
-        uses: stefanzweifel/git-auto-commit-action@v5
+        if: ${{ github.event_name != 'pull_request' }} # Skip for pull requests
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: mesheryctl/helpers server/helpers/ **.go docs/
           commit_user_name: l5io

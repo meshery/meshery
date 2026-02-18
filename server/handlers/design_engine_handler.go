@@ -57,7 +57,7 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
@@ -140,7 +140,6 @@ func (h *Handler) PatternFileHandler(
 		h.log.Warnf("failed to hydrate pattern: %v", errs)
 	}
 
-
 	if patternID == uuid.Nil {
 		patternID = patternFile.Id
 	}
@@ -163,7 +162,7 @@ func (h *Handler) PatternFileHandler(
 		Provider:               provider,
 		Pattern:                patternFile,
 		PrefObj:                prefObj,
-		UserID:                 user.ID,
+		UserID:                 user.ID.String(),
 		IsDelete:               isDelete,
 		Validate:               validate,
 		DryRun:                 isDryRun,
@@ -234,7 +233,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 	// Get the kubehandler from the context
 	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), opts.Pattern.Name)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("meshery server failed to interact with the Kubernetes cluster due to the cluster not being available"), opts.Pattern.Name)
 	}
 
 	var ctxToconfig = make(map[string]string)

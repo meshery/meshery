@@ -72,7 +72,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -105,7 +105,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 	contextsLen := len(contexts)
 
 	// Parse contexts configuration if provided
@@ -171,13 +171,16 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				RegistryManager:    h.registryManager,
 			}
 
-			if status == connections.CONNECTED {
+			switch status {
+			case connections.CONNECTED:
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
-			} else if status == connections.IGNORED {
+
+			case connections.IGNORED:
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
-			} else if status == connections.DISCOVERED {
+
+			case connections.DISCOVERED:
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
@@ -234,7 +237,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
-	// err := provider.RecordPreferences(req, user.UserID, prefObj)
+	// err := provider.RecordPreferences(req, user.UserId, prefObj)
 	// if err != nil {
 	// 	logrus.Error(ErrRecordPreferences(err))
 	// 	http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -260,13 +263,13 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("discovered").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 
 	eventMetadata := map[string]interface{}{}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(*event, nil)
@@ -348,8 +351,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID.String(), false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		h.log.Error(ErrWriteResponse(err))
 		http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)

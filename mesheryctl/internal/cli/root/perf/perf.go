@@ -33,13 +33,13 @@ var (
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
-	Short: "Performance Management",
-	Long: `Performance Management & Benchmarking.
+	Short: "Run performance tests",
+	Long: `Load generation and performance characterization
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
 // Run performance test:
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
-	
+
 // List performance profiles:
 mesheryctl perf profile sam-test
 

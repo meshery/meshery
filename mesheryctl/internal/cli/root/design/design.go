@@ -15,24 +15,24 @@
 package design
 
 import (
-	"fmt"
+	"slices"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	validSourceTypes     []string
 )
 
 // DesignCmd represents the root command for design commands
 var DesignCmd = &cobra.Command{
 	Use:   "design",
-	Short: "Cloud Native Designs Management",
+	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
@@ -60,9 +60,9 @@ mesheryctl design list
 				}
 			}
 			if len(suggestions) > 0 {
-				return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl design --help' to display usage guide.\n", args[0], suggestions)))
+				return ErrInvalidCommand(args[0], suggestions)
 			}
-			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
+			return ErrInvalidCommand(args[0], []string{})
 		}
 		return nil
 	},
@@ -73,4 +73,26 @@ func init() {
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
+}
+
+func getDesignSourceTypes() ([]string, error) {
+	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
+	if err != nil {
+		return nil, err
+	}
+
+	sourceTypes := make([]string, 0, len(*apiResponse))
+	for _, sourceTypeResponse := range *apiResponse {
+		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
+	}
+
+	return sourceTypes, nil
+}
+
+func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
+	sType = strings.ToLower(sType)
+	if slices.Contains(validDesignSourceTypes, sType) {
+		return sType, nil
+	}
+	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }

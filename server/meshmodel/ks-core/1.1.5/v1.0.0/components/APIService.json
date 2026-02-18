@@ -48,6 +48,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -206,5 +208,7 @@
     "version": "extensions.kubesphere.io/v1alpha1",
     "kind": "APIService",
     "schema": "{\n \"description\": \"APIService is a special resource used in Ks-apiserver\\ndeclares a directional proxy path for a resource type API，\\nit's similar to Kubernetes API Aggregation Layer.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"caBundle\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"group\": {\n     \"type\": \"string\"\n    },\n    \"insecureSkipVerify\": {\n     \"type\": \"boolean\"\n    },\n    \"service\": {\n     \"description\": \"service is a reference to the service for this endpoint. Either\\nservice or url must be specified.\\nthe scheme is default to HTTPS.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"name is the name of the service.\\nRequired\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"namespace is the namespace of the service.\\nRequired\",\n       \"type\": \"string\"\n      },\n      \"path\": {\n       \"description\": \"path is an optional URL path at which the upstream will be contacted.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"port is an optional service port at which the upstream will be contacted.\\n`port` should be a valid port number (1-65535, inclusive).\\nDefaults to 443 for backward compatibility.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"url\": {\n     \"description\": \"`url` gives the location of the upstream, in standard URL form\\n(`scheme://host:port/path`). Exactly one of `url` or `service`\\nmust be specified.\",\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"API Service\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of APIM Service(parent component) is patched with the configuration of Subscription(child component). ",
+    "description": "",
     "styles": {
       "primaryColor": "",
       "svgColor": "",

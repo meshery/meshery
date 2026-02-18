@@ -20,12 +20,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os/exec"
 	"runtime"
 	"strings"
 
 	"github.com/pkg/errors"
 
+	dockerclient "github.com/docker/docker/client"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	c "github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -262,8 +262,9 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		log.Info("\nDocker \n--------------")
 	}
 	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
-	//Check whether docker daemon is running or not
-	err := exec.Command("docker", "ps").Run()
+
+	// Check whether docker daemon is running using Docker client API
+	dockerCli, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
 	if err != nil {
 		if endpointParts[1] != "//localhost" {
 			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
@@ -287,40 +288,42 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		if hc.context.Platform == "docker" {
 			failure++
 		}
-	} else { // if not error we check if we are supposed to print logs
-		// logging if we're supposed to
-		if hc.Options.PrintLogs {
-			log.Info("✓ Docker is running")
+	} else {
+		// Try to ping the Docker daemon to verify it's actually running
+		_, err = dockerCli.Ping(context.Background())
+		if err != nil {
+			if endpointParts[1] != "//localhost" {
+				return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
+			}
+			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
+				log.Warn("!! Docker is not running")
+				if runtime.GOOS == "windows" {
+					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+				}
+				err = utils.Startdockerdaemon(hc.Options.Subcommand)
+				if err != nil {
+					return errors.Wrapf(err, "failed to start Docker ")
+				}
+			} else if hc.Options.PrintLogs { // warn incase of printing logs
+				log.Warn("!! Docker is not running")
+			} else { // else we're supposed to grab errors
+				return err
+			}
+			if hc.context.Platform == "docker" {
+				failure++
+			}
+		} else { // if not error we check if we are supposed to print logs
+			// logging if we're supposed to
+			if hc.Options.PrintLogs {
+				log.Info("✓ Docker is running")
+			}
 		}
 	}
 
-	//Check for installed docker-compose on client system
-	err = exec.Command("docker-compose", "-v").Run()
-	if err != nil {
-		if hc.Options.IsPreRunE { // if PreRunExec we trigger self installation
-			log.Warn("!! docker-compose is not available")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
-			}
-			err = utils.InstallprereqDocker()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
-			}
-		} else if hc.Options.PrintLogs { // warn incase of printing logs
-			log.Warn("!! docker-compose is not available")
-		} else { // else we're supposed to grab the error
-			return err
-		}
-
-		if hc.context.Platform == "docker" {
-			failure++
-		}
-	} else { // if not error we check if we are supposed to print logs
-		// logging if we're supposed to
-		if hc.Options.PrintLogs {
-			log.Info("✓ docker-compose is available")
-		}
+	// Since we now use docker compose library, we don't need to check for docker-compose binary
+	// The compose functionality is provided by the library itself
+	if hc.Options.PrintLogs {
+		log.Info("✓ docker-compose is available (via library)")
 	}
 
 	return nil
@@ -471,7 +474,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	// skip this part as we failed to get a response from the api
 	if !skipServerLogs {
 		// needs multiple defer as Body.Close needs a valid response
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
@@ -688,7 +691,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 		if !skipAdapter {
 			// needs multiple defer as Body.Close needs a valid response
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
 					log.Infof("!! Meshery Adapter for %s is running but not reachable", name)

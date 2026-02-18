@@ -35,7 +35,7 @@ As the central repository for all capabilities known to Meshery, the registry co
 - **Registry**: a component within Meshery that contains a database of known capabilities.
 - **Registrar**: The internal Meshery Server process responsible for managing and maintaining the registry.
 - **Registrant** (Entity Source): The source of an entity (e.g., model file, Kubernetes cluster).
-Entity (Registree): An individual capability stored in the registry (e.g., model, component).
+- **Entity** (Registree): An individual capability stored in the registry (e.g., model, component).
 - **Registrant** *(Host)*: A Meshery Connection responsible for sourcing and registering entities. A registrant can perform registration for their own entities, or a registrant can act as a proxy on behalf of a third-party entity source.
 - **Entity** *(registree)* - an entry in the Meshery Registry; e.g. a model, component, relationship, or policy. Sometimes referred to as a capability.
 <!-- - **Entity Source**: an entity’s original location from which it was sourced; e.g. (source_uri is used as the flag by Meshery Server to assess whether additional support). The Entity Source should have all the information that Meshery needs to generate the components.   -->
@@ -47,7 +47,7 @@ You will find two types of models in the registry: Static and Dynamic.
 - **Static Models:** Pre-defined models included with each Meshery release. See the full list of static models.
 - **Dynamic Models:** Generated at run-time by connecting Meshery to supported platforms like Kubernetes clusters or cloud providers.
 
-Each Meshery release comes with a built-in set of models automatically registered at Meshery Server boot-time. These built-in models offer a core set of entities for Meshery's supported [integrations](/extensibility/integrations). Once Meshery Server is running, and as it connects to and discovers your infrastructure, *dynamic models* are automatically generated. A given Meshery release may not include all possible models found in your environment, so Meshery automatically generates *and registers* new models and components based on the specific infrastructure Meshery is connected to. Dyanmic models often lack additional metadata, such as descriptions, tags, and relationships, which are typically included in static models.
+Each Meshery release comes with a built-in set of models automatically registered at Meshery Server boot-time. These built-in models offer a core set of entities for Meshery's supported [integrations](/extensibility/integrations). Once Meshery Server is running, and as it connects to and discovers your infrastructure, *dynamic models* are automatically generated. A given Meshery release may not include all possible models found in your environment, so Meshery automatically generates *and registers* new models and components based on the specific infrastructure Meshery is connected to. Dynamic models often lack additional metadata, such as descriptions, tags, and relationships, which are typically included in static models.
 
 ## Interacting with the Meshery Registry
 
@@ -67,7 +67,7 @@ See [`mesheryctl registry generate`](/reference/mesheryctl/registry/generate) fo
 
 Once registered in the Meshery Registry, Models and their entities are available for use within that specific Meshery Server.
 
-Meshery [Adapters]({{ site.baseurl }}/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+Meshery [Adapters]({{ site.baseurl }}/concepts/architecture/adapters) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these entities into one or more models.
 
 #### Using Meshery CLI to Register a Model
 

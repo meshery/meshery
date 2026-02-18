@@ -47,6 +47,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -201,5 +203,7 @@
     "version": "ecr.services.k8s.aws/v1alpha1",
     "kind": "PullThroughCacheRule",
     "schema": "{\n \"description\": \"PullThroughCacheRule is the Schema for the PullThroughCacheRules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PullThroughCacheRuleSpec defines the desired state of PullThroughCacheRule.\\n\\nThe details of a pull through cache rule.\",\n   \"properties\": {\n    \"ecrRepositoryPrefix\": {\n     \"description\": \"The repository name prefix to use when caching images from the source registry.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"registryID\": {\n     \"description\": \"The Amazon Web Services account ID associated with the registry to create\\nthe pull through cache rule for. If you do not specify a registry, the default\\nregistry is assumed.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"upstreamRegistryURL\": {\n     \"description\": \"The registry URL of the upstream public registry to use as the source for\\nthe pull through cache rule. The following is the syntax to use for each\\nsupported upstream registry.\\n\\n  - Amazon ECR Public (ecr-public) - public.ecr.aws\\n\\n  - Docker Hub (docker-hub) - registry-1.docker.io\\n\\n  - Quay (quay) - quay.io\\n\\n  - Kubernetes (k8s) - registry.k8s.io\\n\\n  - GitHub Container Registry (github-container-registry) - ghcr.io\\n\\n  - Microsoft Azure Container Registry (azure-container-registry) - .azurecr.io\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"ecrRepositoryPrefix\",\n    \"upstreamRegistryURL\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pull Through Cache Rule\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

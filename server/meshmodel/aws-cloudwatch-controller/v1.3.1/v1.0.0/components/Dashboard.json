@@ -45,6 +45,8 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
   },
@@ -198,5 +200,7 @@
     "version": "cloudwatch.services.k8s.aws/v1alpha1",
     "kind": "Dashboard",
     "schema": "{\n \"description\": \"Dashboard is the Schema for the Dashboards API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DashboardSpec defines the desired state of Dashboard.\",\n   \"properties\": {\n    \"dashboardBody\": {\n     \"description\": \"The detailed information about the dashboard in JSON format, including the\\nwidgets to include and their location on the dashboard. This parameter is\\nrequired.\\n\\nFor more information about the syntax, see Dashboard Body Structure and Syntax\\n(https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html).\",\n     \"type\": \"string\"\n    },\n    \"dashboardName\": {\n     \"description\": \"The name of the dashboard. If a dashboard with this name already exists,\\nthis call modifies that dashboard, replacing its current contents. Otherwise,\\na new dashboard is created. The maximum length is 255, and valid characters\\nare A-Z, a-z, 0-9, \\\"-\\\", and \\\"_\\\". This parameter is required.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dashboardBody\",\n    \"dashboardName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Dashboard\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

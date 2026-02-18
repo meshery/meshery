@@ -1,25 +1,12 @@
 package eval
 
-import data.core_utils
-import data.feasibility_evaluation_utils
 import rego.v1
 
-import data.core_utils.component_alias
-import data.core_utils.component_declaration_by_id
 import data.core_utils.configuration_for_component_at_path
-import data.core_utils.from_component_id
-import data.core_utils.get_component_configuration
-import data.core_utils.new_uuid
-import data.core_utils.object_get_nested
-import data.core_utils.pop_first
 import data.core_utils.static_uuid
-import data.core_utils.to_component_id
 import data.core_utils.truncate_set
 import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
-
-import data.actions
-import data.eval_rules
 
 # Notes :
 # these policies take advantage of set comprehensions to weedout duplicates at any stage
@@ -34,28 +21,25 @@ MAX_MATCHLABELS := 20
 
 match_labels_policy_identifier := "sibling_match_labels_policy"
 
-
-relationship_is_implicated_by_policy(relationship,policy_identifier) := true if {
-    policy_identifier == match_labels_policy_identifier
+relationship_is_implicated_by_policy(relationship, policy_identifier) if {
+	policy_identifier == match_labels_policy_identifier
 	relationship.type == "sibling"
 }
 
-
-relationship_already_exists(rel,design_file,policy_identifier) := false if {
-  policy_identifier == match_labels_policy_identifier
+relationship_already_exists(rel, design_file, policy_identifier) := false if {
+	policy_identifier == match_labels_policy_identifier
 }
 
 # these rels are stateless right now so just invalidate all then re identify
 # to bypass any expensive validation at this stage as we are eitherway going to do that at identication stage
-relationship_is_invalid(relationship,design_file,policy_identifier) := true if {
+relationship_is_invalid(relationship, design_file, policy_identifier) if {
 	policy_identifier == match_labels_policy_identifier
-	relationship_is_implicated_by_policy(relationship,policy_identifier)
+	relationship_is_implicated_by_policy(relationship, policy_identifier)
 }
 
-
-identify_relationship(rel_definition,design_file,policy_identifier) := identified_relationships if {
+identify_relationship(rel_definition, design_file, policy_identifier) := identified_relationships if {
 	policy_identifier == match_labels_policy_identifier
-	identified_relationships := identify_matchlabel_relationships(rel_definition,design_file)
+	identified_relationships := identify_matchlabel_relationships(rel_definition, design_file)
 }
 
 # Matchlabels specific logic
@@ -69,7 +53,6 @@ identify_relationship(rel_definition,design_file,policy_identifier) := identifie
 # }
 identify_matchlabels(design_file, relationship) := all_match_labels if {
 	field_pairs := {pair |
-
 		# identify against pair of components
 		some component in design_file.components
 		some other_component in design_file.components
@@ -108,7 +91,6 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
 	} |
 		some pair in field_pairs
 	}
-
 }
 
 # merges the pairs into single groups on n components for each matching field ,value
@@ -120,12 +102,8 @@ get_components_merged(field, value, field_pairs) := {component |
 	some component in pair.components
 }
 
-
-identify_matchlabel_relationships(relationship,design_file) := identified_rels if {
-
-
+identify_matchlabel_relationships(relationship, design_file) := identified_rels if {
 	identified_rels := {new_relationship |
-
 		# limit matchlabel relationships
 		identified_matchlabels := truncate_set(identify_matchlabels(design_file, relationship), MAX_MATCHLABELS)
 		some match_label in identified_matchlabels

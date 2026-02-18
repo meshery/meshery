@@ -34,7 +34,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.24"
+        go-version: "1.25"
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 
@@ -43,7 +43,7 @@ jobs:
       run: git pull origin master
 
     - name: Commit
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v7
       with:
         repository: meshery-extensions
         commit_user_name: l5io
@@ -59,7 +59,7 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Send email notification on failure
-        uses: dawidd6/action-send-mail@v6
+        uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
           server_port: 465

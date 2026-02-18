@@ -120,7 +120,7 @@ func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 		utils.Log.Error(err)
 		return nil
 	}
-	defer jsonFile.Close()
+	defer func() { _ = jsonFile.Close() }()
 	_, err = jsonFile.Write(jsonData)
 	if err != nil {
 		utils.Log.Error(err)
