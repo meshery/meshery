@@ -52,6 +52,16 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
+			Name:             "given a multiple model-name provided when running mesheryctl model view name1 name2 then an error message is displayed",
+			Args:             []string{"view", "name1", "name2"},
+			URL:              "",
+			Fixture:          "list.model.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s%s", errMultiArg, viewUsageMsg)),
+			IsOutputGolden:   false,
+		},
+		{
 			Name:           "given an invalid format provided for --output-format flag when running mesheryctl model view valid-name --output-format invalid-format then an error message is displayed",
 			Args:           []string{"view", modelName, "--output-format", "invalid-format"},
 			URL:            fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
