@@ -222,6 +222,13 @@ func TestAddContextCmd(t *testing.T) {
 			Args:             []string{"context", "create", "local3"},
 			ExpectedResponse: "createContext.golden",
 		},
+		{
+			Name:           "add context ",
+			Args:           []string{"context", "create", "Local"},
+			ExpectError:    true,
+			ExpectedError:  ErrInvalidLowerCase(fmt.Errorf("context name %s is invalid", "Local")),
+			IsOutputGolden: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
