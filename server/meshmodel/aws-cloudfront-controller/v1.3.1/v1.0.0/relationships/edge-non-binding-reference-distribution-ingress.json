@@ -3,7 +3,7 @@
     "evaluationQuery": "",
     "kind": "edge",
     "metadata": {
-        "description": "CloudFront Distribution uses ACM Certificate for HTTPS",
+        "description": "CloudFront Distribution serves content from Kubernetes Ingress origin",
         "styles": {
             "primaryColor": "",
             "svgColor": "",
@@ -20,7 +20,7 @@
             "kind": ""
         },
         "model": {
-            "version": "v1.2.1"
+            "version": "v1.3.1"
         }
     },
     "schemaVersion": "relationships.meshery.io/v1alpha3",
@@ -52,8 +52,10 @@
                                     "configuration",
                                     "spec",
                                     "distributionConfig",
-                                    "viewerCertificate",
-                                    "acmCertificateARN"
+                                    "origins",
+                                    "items",
+                                    "_",
+                                    "domainName"
                                 ]
                             ]
                         }
@@ -62,12 +64,12 @@
                 "to": [
                     {
                         "id": null,
-                        "kind": "Certificate",
+                        "kind": "Ingress",
                         "match": {},
                         "match_strategy_matrix": null,
                         "model": {
                             "version": "",
-                            "name": "cert-manager",
+                            "name": "kubernetes",
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
@@ -81,7 +83,12 @@
                             "patchStrategy": "replace",
                             "mutatedRef": [
                                 [
-                                    "displayName"
+                                    "configuration",
+                                    "status",
+                                    "loadBalancer",
+                                    "ingress",
+                                    "_",
+                                    "hostname"
                                 ]
                             ]
                         }
