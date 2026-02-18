@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/validator"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -232,7 +232,7 @@ func setupLogger() {
 // Initialize a validator and add it to the command context
 // This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 func initValidators(cmd *cobra.Command) {
-	validate := validator.NewValidator()
+	validate := mesheryctlflags.NewValidator()
 	ctx := context.WithValue(context.Background(), "validators", validate)
 	cmd.SetContext(ctx)
 }

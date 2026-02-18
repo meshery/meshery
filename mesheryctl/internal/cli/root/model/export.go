@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/mesheryctlflags"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
