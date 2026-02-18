@@ -3,19 +3,12 @@
   <head>
     {{ partialCached "head.html" (dict "Title" .Title "Description" .Params.abstract "Site" .Site) .RelPermalink }}
     {{ partialCached "header.html" . .RelPermalink }}
+    <script src="{{ "js/mode-toggle.js" | relURL }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script>
   </head>
 
   <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
-    <script>
-      if (localStorage.getItem("mode") === "light-mode") {
-        document.body.classList.remove("dark-mode");
-        document.querySelectorAll("#logo-dark-light").forEach(e => {
-          e.src = e.dataset.logoForLight;
-        });
-      }
-    </script>
 
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
 
