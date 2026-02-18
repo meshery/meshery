@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Meshery Adapter for Consul
+display-title: false
 name: Meshery Adapter for Consul
 component: Consul
 earliest_version: v1.8.4
