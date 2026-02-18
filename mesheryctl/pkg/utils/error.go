@@ -772,7 +772,7 @@ func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
 		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
-		[]string{"Insufficient disk page", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
+		[]string{"Insufficient disk space", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
 		[]string{"Verify that the file path is valid", " Ensure there is sufficient disk space available", " Check your permissions for the specified path"})
 }
 

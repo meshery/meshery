@@ -87,6 +87,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// failsafe for data not found on the server
 	if resp.StatusCode == http.StatusNotFound {
 		bodyBytes, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
@@ -99,6 +100,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		resp.StatusCode != http.StatusNoContent
 	if isNotSuccess {
 		bodyBytes, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
