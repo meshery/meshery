@@ -67,7 +67,7 @@
                         "match_strategy_matrix": null,
                         "model": {
                             "version": "",
-                            "name": "kubernetes",
+                            "name": "cert-manager",
                             "displayName": "",
                             "id": "00000000-0000-0000-0000-000000000000",
                             "registrant": {
