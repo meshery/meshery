@@ -218,12 +218,12 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "add given context",
+			Name:             "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
 			Args:             []string{"context", "create", "local3"},
 			ExpectedResponse: "createContext.golden",
 		},
 		{
-			Name:           "add context ",
+			Name:           "given an invalid context name provided when running mesheryctl system context create [invalid-name] then an error message is displayed",
 			Args:           []string{"context", "create", "Local"},
 			ExpectError:    true,
 			ExpectedError:  ErrInvalidLowerCase(fmt.Errorf("context name %s is invalid", "Local")),
@@ -237,6 +237,12 @@ func TestAddContextCmd(t *testing.T) {
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+
+			if tt.ExpectError {
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+				return
+			}
+
 			if err != nil {
 				t.Error(err)
 			}
