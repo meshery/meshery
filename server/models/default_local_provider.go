@@ -20,6 +20,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
@@ -132,17 +133,46 @@ func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
 func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
-// GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+		obj := "provider capabilities"
+		errObj := ErrEncoding(err, obj)
+		l.Log.Error(errObj)
+		http.Error(w, errObj.Error(), http.StatusInternalServerError)
 	}
 }
 
-// InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
-	// l.issueSession(w, r, fromMiddleWare)
+// InitiateLogin - initiates login flow and redirects to home for local provider.
+// When called from AuthMiddleware (fromMiddleWare=true), it's a no-op since the
+// local provider doesn't require authentication — the middleware will allow the
+// request to proceed. When called from the /user/login route (fromMiddleWare=false),
+// it redirects to / or to the deep-link target from the ref query param.
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	if fromMiddleWare {
+		return
+	}
+	redirectURL := "/"
+	if ref := r.URL.Query().Get("ref"); ref != "" {
+		if decoded, err := core.DecodeRefURL(ref); err == nil && isSafeRedirect(decoded) {
+			redirectURL = decoded
+		}
+	}
+	http.Redirect(w, r, redirectURL, http.StatusFound)
+}
+
+// isSafeRedirect validates that a decoded ref URL is a relative in-app path
+// to prevent open redirects. It rejects absolute URLs (with scheme/host) and
+// protocol-relative URLs (starting with //).
+func isSafeRedirect(rawURL string) bool {
+	if rawURL == "" || strings.HasPrefix(rawURL, "//") {
+		return false
+	}
+	parsed, err := url.Parse(rawURL)
+	if err != nil {
+		return false
+	}
+	return parsed.Scheme == "" && parsed.Host == ""
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {

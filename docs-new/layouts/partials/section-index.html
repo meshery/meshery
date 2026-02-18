@@ -1,0 +1,31 @@
+{{ if or (gt (len .Sections) 0) (gt (len .RegularPages) 0) }}
+
+<ul class="section-title">
+
+  {{ range .Sections }}
+    {{ if ne .Params.hide_summary true }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+
+        {{ with .Description }}
+          - {{ . }}
+        {{ end }}
+      </li>
+    {{ end }}
+  {{ end }}
+
+  {{ range .RegularPages }}
+    {{ if ne .Params.hide_summary true }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+
+        {{ with .Description }}
+          - {{ . }}
+        {{ end }}
+      </li>
+    {{ end }}
+  {{ end }}
+
+</ul>
+
+{{ end }}
