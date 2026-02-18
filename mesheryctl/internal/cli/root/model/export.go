@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -56,14 +55,13 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		validate, ok := cmd.Context().Value("flags-validator").(*validator.Validate)
-		if !ok || validate == nil {
+		flagValidator, ok := cmd.Context().Value("flags-validator").(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
 			return utils.ErrCommandContextMissing("flags-validator")
 		}
-		err := validate.Struct(exportModelFlagsProvided)
+		err := flagValidator.Validate(exportModelFlagsProvided)
 		if err != nil {
-			vErr := err.(validator.ValidationErrors)
-			return utils.ErrFlagsInvalid(mesheryctlflags.ReadValidationErrorMessages(vErr))
+			return utils.ErrFlagsInvalid(err)
 		}
 		return nil
 	},

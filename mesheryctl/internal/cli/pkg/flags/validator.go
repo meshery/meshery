@@ -9,10 +9,31 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
+
+type FlagValidator struct {
+	validator *validator.Validate
+}
 
 // Based on https://github.com/go-playground/validator/blob/dede3413a22993dd5a091707c6764b6e9724df17/regexes.go#L75 adding `v` prefix
 var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
+
+func (fv *FlagValidator) Validate(s interface{}) error {
+	err := fv.validator.Struct(s)
+	if err != nil {
+		switch err.(type) {
+		case *validator.InvalidValidationError:
+			return utils.ErrFlagsInvalid(err)
+		case validator.ValidationErrors:
+			vErr := err.(validator.ValidationErrors)
+			return utils.ErrFlagsInvalid(ReadValidationErrorMessages(vErr))
+		default:
+			return utils.ErrFlagsInvalid(err)
+		}
+	}
+	return nil
+}
 
 func validateSemver(fl validator.FieldLevel) bool {
 	return vSemverRegex.MatchString(fl.Field().String())
@@ -53,7 +74,7 @@ func ReadValidationErrorMessages(err validator.ValidationErrors) error {
 	return errors.New(strings.Join(errorMessages, ", "))
 }
 
-func NewValidator() *validator.Validate {
+func NewFlagValidator() *FlagValidator {
 	validate := validator.New()
 
 	// Register the custom validation function with a tag name "semver"
@@ -77,5 +98,5 @@ func NewValidator() *validator.Validate {
 		return name
 	})
 
-	return validate
+	return &FlagValidator{validator: validate}
 }
