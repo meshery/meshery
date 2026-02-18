@@ -14,11 +14,12 @@ import (
 )
 
 type exportModelFlags struct {
+	DiscardComponents    bool   `json:"discard-components" validate:"boolean"`
+	DiscardRelationships bool   `json:"discard-relationships" validate:"boolean"`
 	OutputFormat         string `json:"output-format" validate:"required,oneof=json yaml"`
 	OutputLocation       string `json:"output-location" validate:"required,dirpath"`
 	OutputType           string `json:"output-type" validate:"required,oneof=oci tar"`
-	DiscardComponents    bool   `json:"discard-components" validate:"boolean"`
-	DiscardRelationships bool   `json:"discard-relationships" validate:"boolean"`
+	Page                 int    `json:"page" validate:"omitempty,min=1"`
 	Version              string `json:"version" validate:"omitempty,semver"`
 }
 
@@ -80,6 +81,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		queryParams.Set("file_type", exportModelFlagsProvided.OutputType)
 		queryParams.Set("components", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardComponents))
 		queryParams.Set("relationships", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardRelationships))
+		queryParams.Set("page", fmt.Sprintf("%d", exportModelFlagsProvided.Page))
 		if exportModelFlagsProvided.Version != "" {
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
@@ -118,10 +120,11 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 }
 
 func init() {
+	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardComponents, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
+	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardRelationships, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputFormat, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputLocation, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputType, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
-	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardComponents, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
-	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardRelationships, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
+	exportModelCmd.Flags().IntVarP(&exportModelFlagsProvided.Page, "page", "p", 1, "(optional) page number for paginated results (default = 1)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.Version, "version", "", "", "(optional) model version to export (default = \"\", format: vX.X.X)")
 }
