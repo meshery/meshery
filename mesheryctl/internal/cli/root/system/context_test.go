@@ -68,9 +68,7 @@ func TestViewContextCmd(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if err == nil {
-					t.Fatalf("expected error, got nil")
-				}
+				t.Fatalf("expected error, got nil")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata/context")
@@ -238,13 +236,17 @@ func TestAddContextCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 
-			if tt.ExpectError {
-				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-				return
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
 			}
 
-			if err != nil {
-				t.Error(err)
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := b.String()
