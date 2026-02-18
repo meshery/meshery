@@ -31,7 +31,6 @@ var (
 	searchType      string
 	searchSubType   string
 	searchKind      string
-	page            int
 )
 
 // represents the mesheryctl exp relationship search [query-text] subcommand.
@@ -41,7 +40,10 @@ var searchCmd = &cobra.Command{
 	Long:  "Search registred relationship(s) used by different models",
 	Example: `
 // Search for relationship using a query
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
+
+// Search relationships for a specified page
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [--page <int>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
 		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
@@ -54,9 +56,8 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		isPaged := cmd.Flags().Changed("page")
-
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(isPaged))
+		page, _ := cmd.Flags().GetInt("page")
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(cmd, page))
 
 		if err != nil {
 			return err
@@ -94,10 +95,10 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
-	searchCmd.Flags().IntVar(&page, "page", 1, "returns page number")
+	searchCmd.Flags().IntP("page", "p", 0, "search relationships of particular page")
 }
 
-func buildSearchUrl(isPaged bool) string {
+func buildSearchUrl(cmd *cobra.Command, page int) string {
 	var searchUrl strings.Builder
 
 	if searchModelName == "" {
@@ -122,11 +123,7 @@ func buildSearchUrl(isPaged bool) string {
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
 
-	if isPaged {
-		searchUrl.WriteString(fmt.Sprintf("page=%d&", page))
-	} else {
-		searchUrl.WriteString("pagesize=all&")
-	}
+	searchUrl.WriteString(utils.GetPageQueryParameter(cmd, page))
 
 	return searchUrl.String()
 }
