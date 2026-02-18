@@ -221,7 +221,7 @@ func TestAddContextCmd(t *testing.T) {
 			ExpectedResponse: "createContext.golden",
 		},
 		{
-			Name:           "given an invalid context name provided when running mesheryctl system context create [invalid-name] then an error message is displayed",
+			Name:           "given a context name provided with mixed-case when running mesheryctl system context create [mixed-case-name] then an error message is displayed",
 			Args:           []string{"context", "create", "Local"},
 			ExpectError:    true,
 			ExpectedError:  ErrInvalidLowerCase(fmt.Errorf("context name %s is invalid", "Local")),
