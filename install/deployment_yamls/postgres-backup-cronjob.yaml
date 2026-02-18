@@ -1,0 +1,355 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres-backup-sa
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: meshery
+  name: postgres-backup-role
+  labels:
+    app: postgres-backup
+    component: database
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "create", "delete"]
+- apiGroups: [""]
+  resources: ["secrets", "configmaps"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["get", "list", "create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres-backup-rolebinding
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+subjects:
+- kind: ServiceAccount
+  name: postgres-backup-sa
+  namespace: meshery
+roleRef:
+  kind: Role
+  name: postgres-backup-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-backup-config
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+data:
+  backup-script.sh: |
+    set -e
+    
+    export PGPASSWORD="$POSTGRES_PASSWORD"
+    
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_DIR="/backups"
+    
+    # Array of databases to backup (placeholder names)
+    DATABASES=("meshery_main" "meshery_analytics" "meshery_auth" "meshery_catalog")
+    
+    echo "Starting PostgreSQL backup process at $(date)"
+    
+    # Create backup directory if it doesn't exist
+    mkdir -p "$BACKUP_DIR"
+    
+    # Test database connectivity before proceeding
+    echo "Testing database connectivity..."
+    pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -t 30
+    
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Cannot connect to PostgreSQL server"
+        exit 1
+    fi
+    
+    for db in "${DATABASES[@]}"; do
+        echo "Backing up database: $db"
+        BACKUP_FILE="$BACKUP_DIR/${db}_backup_${TIMESTAMP}.sql"
+        
+        # Checking if database exists before backup
+        if ! psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw "$db"; then
+            echo "WARNING: Database $db does not exist, skipping..."
+            continue
+        fi
+        
+        # Create database backup using pg_dump
+        if pg_dump -h "$POSTGRES_HOST" \
+                   -p "$POSTGRES_PORT" \
+                   -U "$POSTGRES_USER" \
+                   -d "$db" \
+                   --no-password \
+                   --verbose \
+                   --clean \
+                   --if-exists \
+                   --create \
+                   > "$BACKUP_FILE"; then
+            
+            # Compress the backup file
+            gzip "$BACKUP_FILE"
+            echo "✓ Backup completed for $db: ${BACKUP_FILE}.gz"
+            
+            # Verify backup file integrity
+            if ! gzip -t "${BACKUP_FILE}.gz"; then
+                echo "ERROR: Backup file for $db is corrupted"
+                exit 1
+            fi
+        else
+            echo "ERROR: Failed to backup database $db"
+            exit 1
+        fi
+    done
+    
+    # Clean up old backups (keep last 7 days)
+    echo "Cleaning up old backups..."
+    find "$BACKUP_DIR" -name "*.sql.gz" -type f -mtime +7 -delete
+    
+    # Log backup summary
+    echo "=== Backup Summary ==="
+    echo "Backup completed at: $(date)"
+    echo "Total backup files:"
+    ls -la "$BACKUP_DIR"/*_backup_${TIMESTAMP}.sql.gz 2>/dev/null || echo "No backup files found for this session"
+    echo "Disk usage:"
+    du -sh "$BACKUP_DIR"
+    
+    echo "PostgreSQL backup process completed successfully at $(date)"
+    
+    # Optional: Upload to cloud storage (uncomment and configure as needed)
+    # echo "Uploading backups to cloud storage..."
+    # aws s3 sync $BACKUP_DIR s3://your-backup-bucket/postgres-backups/ \
+    #   --exclude "*" --include "*_backup_${TIMESTAMP}.sql.gz"
+    
+  retention-policy.sh: |
+    #!/bin/bash
+    # Retention policy script to manage backup lifecycle
+    
+    BACKUP_DIR="/backups"
+    DAYS_TO_KEEP=${RETENTION_DAYS:-7}
+    
+    echo "Running retention policy: keeping backups for $DAYS_TO_KEEP days"
+    echo "Backup directory: $BACKUP_DIR"
+    
+    # Count files before cleanup
+    BEFORE_COUNT=$(find "$BACKUP_DIR" -name "*.sql.gz" -type f | wc -l)
+    echo "Backup files before cleanup: $BEFORE_COUNT"
+    
+    # Remove backups older than specified days
+    OLD_FILES=$(find "$BACKUP_DIR" -name "*.sql.gz" -type f -mtime +$DAYS_TO_KEEP)
+    
+    if [ -n "$OLD_FILES" ]; then
+        echo "Removing old backup files:"
+        echo "$OLD_FILES"
+        find "$BACKUP_DIR" -name "*.sql.gz" -type f -mtime +$DAYS_TO_KEEP -delete
+    else
+        echo "No old backup files found to remove"
+    fi
+    
+    # Count files after cleanup
+    AFTER_COUNT=$(find "$BACKUP_DIR" -name "*.sql.gz" -type f | wc -l)
+    echo "Backup files after cleanup: $AFTER_COUNT"
+    
+    # Log current backup storage usage
+    echo "Current backup directory size:"
+    du -sh "$BACKUP_DIR"
+    
+    # List current backup files
+    echo "Current backup files:"
+    ls -la "$BACKUP_DIR"/*.sql.gz 2>/dev/null || echo "No backup files found"
+    
+  health-check.sh: |
+    #!/bin/bash
+    # Health check script for backup validation
+    
+    BACKUP_DIR="/backups"
+    TODAY=$(date +"%Y%m%d")
+    
+    echo "=== Backup Health Check ==="
+    echo "Checking for today's backups ($TODAY)..."
+    
+    DATABASES=("meshery_main" "meshery_analytics" "meshery_auth" "meshery_catalog")
+    MISSING_BACKUPS=()
+    
+    for db in "${DATABASES[@]}"; do
+        if ls "$BACKUP_DIR"/${db}_backup_${TODAY}_*.sql.gz 1> /dev/null 2>&1; then
+            echo "✓ Backup found for $db"
+        else
+            echo "✗ Missing backup for $db"
+            MISSING_BACKUPS+=("$db")
+        fi
+    done
+    
+    if [ ${#MISSING_BACKUPS[@]} -eq 0 ]; then
+        echo "✓ All database backups are present for today"
+        exit 0
+    else
+        echo "✗ Missing backups for: ${MISSING_BACKUPS[*]}"
+        exit 1
+    fi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-backup-secret
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+type: Opaque
+data:
+  # Base64 encoded placeholder values - replace with actual credentials
+  # To encode: echo -n "your_value" | base64
+  postgres-password: bWVzaGVyeV9wYXNzd29yZA==
+  postgres-user: bWVzaGVyeV91c2Vy
+  postgres-host: cG9zdGdyZXMtc2VydmljZQ==
+  postgres-port: NTQzMg==
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-backup-storage
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi  # Increased storage for multiple database backups
+  # Note: Adjust storageClassName based on your cluster's available storage classes
+  # storageClassName: standard
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup-cronjob
+  namespace: meshery
+  labels:
+    app: postgres-backup
+    component: database
+    version: v1.0.0
+spec:
+  # Run daily at 2:00 AM UTC
+  schedule: "0 2 * * *"
+  timeZone: "UTC"
+  concurrencyPolicy: Forbid  # Prevent overlapping jobs
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3  # Keep more failed jobs for debugging
+  startingDeadlineSeconds: 300  # 5 minutes grace period
+  jobTemplate:
+    metadata:
+      labels:
+        app: postgres-backup
+        component: database
+    spec:
+      backoffLimit: 2  # Retry failed jobs twice
+      activeDeadlineSeconds: 7200  # 2 hours timeout (increased for multiple databases)
+      template:
+        metadata:
+          labels:
+            app: postgres-backup
+            component: database
+        spec:
+          serviceAccountName: postgres-backup-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: postgres-backup
+            image: postgres:15-alpine  # Use official PostgreSQL image with pg_dump
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/bash
+            - -c
+            args:
+            - |
+              echo "Starting backup container..."
+
+              cp /scripts/backup-script.sh /tmp/backup-script.sh
+              cp /scripts/retention-policy.sh /tmp/retention-policy.sh
+              cp /scripts/health-check.sh /tmp/health-check.sh
+              
+              chmod +x /tmp/backup-script.sh
+              chmod +x /tmp/retention-policy.sh
+              chmod +x /tmp/health-check.sh
+            
+              echo "Executing backup script..."
+              /tmp/backup-script.sh
+             
+              echo "Running retention policy..."
+              /tmp/retention-policy.sh
+              
+              echo "Running health check..."
+              /tmp/health-check.sh
+              
+              echo "All backup operations completed successfully"
+            env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-backup-secret
+                  key: postgres-password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-backup-secret
+                  key: postgres-user
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-backup-secret
+                  key: postgres-host
+            - name: POSTGRES_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-backup-secret
+                  key: postgres-port
+            - name: RETENTION_DAYS
+              value: "7"
+            - name: PGCONNECT_TIMEOUT
+              value: "30"
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backups
+            - name: backup-scripts
+              mountPath: /scripts
+              readOnly: true
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "200m"
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
+            # Add liveness and readiness probes
+            livenessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - "ps aux | grep -v grep | grep -q backup-script || exit 1"
+              initialDelaySeconds: 60
+              periodSeconds: 300  # Checks every 5 minutes
+              timeoutSeconds: 10
+              failureThreshold: 2
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: postgres-backup-storage
+          - name: backup-scripts
+            configMap:
+              name: postgres-backup-config
+              defaultMode: 0755
