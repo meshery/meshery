@@ -34,7 +34,7 @@ mesheryctl model list --count
 		modelData := display.DisplayDataAsync{
 			UrlPath:          modelsApiPath,
 			DataType:         "model",
-			Header:           []string{"Model", "Category", "Version"},
+			Header:           []string{"ID", "Model", "Category", "Version"},
 			Page:             page,
 			PageSize:         pageSize,
 			IsPage:           cmd.Flags().Changed("page"),

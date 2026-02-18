@@ -33,7 +33,19 @@
       </div>
 
       <main class="main-container" role="main">
-        {{ block "main" . }}{{ end }}
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ partial "breadcrumbs.html" . }}
+            </li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          {{ if ne (.Params.display_title | default true) false }}
+            <h1>{{ .Title }}</h1>
+          {{ end }}
+          {{ block "main" . }}{{ end }}
+        </div>
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}

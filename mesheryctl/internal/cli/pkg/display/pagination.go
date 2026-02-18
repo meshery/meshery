@@ -61,8 +61,6 @@ func HandlePaginationAsync[T any](
 			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
 		}
 
-		utils.Log.Debug("Fetching data from URL: ", urlPath)
-
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			if meshkitErr, ok := err.(*errors.Error); ok {
@@ -96,6 +94,12 @@ func HandlePaginationAsync[T any](
 		utils.PrintToTable(displayData.Header, rows, nil)
 
 		if displayData.IsPage {
+			break
+		}
+
+		// If the URL already contains "pagesize=all", it means all data has been fetched in one go,
+		// so we can break the loop without waiting for user input
+		if strings.Contains(displayData.UrlPath, "pagesize=all") {
 			break
 		}
 
