@@ -18,6 +18,9 @@ func validateSemver(fl validator.FieldLevel) bool {
 	return vSemverRegex.MatchString(fl.Field().String())
 }
 
+// validateBoolean is a custom validation function that checks if a field is a boolean value (true or false)
+// This is necessary because the default validator does not have a built-in validation behaving as expected for boolean fields,
+// especially when using flags in cobra
 func validateBoolean(fl validator.FieldLevel) bool {
 	if val, ok := fl.Field().Interface().(bool); ok {
 		return val == true || val == false
@@ -59,7 +62,7 @@ func NewValidator() *validator.Validate {
 		log.Fatalf("Error registering validation: %v", err)
 	}
 
-	// Register a custom validation function for boolean values that accepts "true", "false", "1", and "0"
+	// Register a custom validation function for boolean values that accepts "true", "false"
 	err = validate.RegisterValidation("boolean", validateBoolean)
 	if err != nil {
 		log.Fatalf("Error registering validation: %v", err)
