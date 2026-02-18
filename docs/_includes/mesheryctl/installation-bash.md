@@ -6,7 +6,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
+  $ curl -L https://get.meshery.io | DEPLOY_MESHERY=false bash -
  </div></div>
  </pre>
 <br />
@@ -16,7 +16,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | PLATFORM=docker bash -
+  $ curl -L https://get.meshery.io | PLATFORM=docker bash -
  </div></div>
  </pre>
 <br />
@@ -26,7 +26,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+  $ curl -L https://get.meshery.io | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 <br />
@@ -38,7 +38,7 @@ Install `mesheryctl` binary and include one or more [adapters]({{ site.baseurl }
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
+  $ curl -L https://get.meshery.io | ADAPTERS=consul PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 <br />
