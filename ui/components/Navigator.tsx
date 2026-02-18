@@ -32,7 +32,6 @@ import {
   GithubIcon,
   DiscussForumIcon,
 } from '@sistent/sistent';
-import GithubColor from '@/assets/icons/GithubiconColor';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -399,7 +398,7 @@ const Navigator_ = () => {
       href: 'https://github.com/meshery/meshery/issues/new/choose',
       title: 'Issues',
       icon: <GithubIcon />,
-      hovericon: <GithubColor />,
+      hovericon: <GithubIcon orgIcon />,
       external_icon: ExternalLinkIcon,
     },
   ];
