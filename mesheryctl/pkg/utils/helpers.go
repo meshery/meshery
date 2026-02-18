@@ -1287,7 +1287,7 @@ func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 	if !cmd.Flags().Changed("page") {
 		return "pagesize=all"
 	}
-	return fmt.Sprintf("page=%d", page)
+	return fmt.Sprintf("page=%d", page-1)
 }
 func IsValidUrl(path string) bool {
 	u, err := url.Parse(path)
