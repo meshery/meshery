@@ -2,7 +2,8 @@
 title: Deploy Azure Storage Account with Meshery
 description: Learn how to deploy and manage Azure Storage account through Kubernetes with Meshery, utilizing ASO operator to enhance cloud resource management
 model: azure
-kind: StorageAccount
+params:
+   kind: StorageAccount
 categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-azure-storage-account-with-meshery

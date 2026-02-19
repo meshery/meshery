@@ -2,7 +2,8 @@
 title: Deploy Azure resources with Meshery
 description: Learn how to deploy and manage Azure resources through Kubernetes with Meshery, utilizing ASO operator to enhance cloud resource management
 model: azure
-kind: resources
+params:
+   kind: resources
 categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-azure-resources-with-meshery

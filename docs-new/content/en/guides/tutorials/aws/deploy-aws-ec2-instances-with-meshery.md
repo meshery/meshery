@@ -2,7 +2,8 @@
 title: Deploy AWS EC2 Instances with Meshery
 description: Learn how to deploy and manage AWS EC2 instances through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management
 model: aws
-kind: EC2
+params:
+    kind: EC2
 categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-aws-ec2-instances-with-meshery

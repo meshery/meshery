@@ -1,7 +1,8 @@
 ---
 title: Embedding a Meshery Design in a WordPress Post
 model: WordPress
-kind: design
+params:
+   kind: design
 categories: [tutorials]
 description: Learn how to Embed a Meshery Design in a WordPress Post
 aliases:

@@ -1,7 +1,8 @@
 ---
 title: Exploring Kubernetes Deployments with Meshery
 model: kubernetes
-kind: deployments
+params:
+    kind: deployments
 categories: [tutorials]
 description: Explore a Kubernetes Deployment using Meshery Playground, an interactive live environment, through a series of hands-on exercises.
 aliases:

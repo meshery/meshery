@@ -1,7 +1,8 @@
 ---
 title: Deploying Apache Cassandra with a StatefulSet in Meshery Playground
 model: kubernetes
-kind: deployments
+params:
+    kind: deployments
 categories: [tutorials]
 description: Deploy Apache Cassandra with a StatefulSet using Meshery Playground in an interactive live cluster environment.
 aliases:

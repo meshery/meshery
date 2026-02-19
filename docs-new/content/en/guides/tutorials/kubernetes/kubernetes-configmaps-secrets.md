@@ -1,7 +1,8 @@
 ---
 title: Understanding Kubernetes ConfigMaps and Secrets with Meshery
 model: kubernetes
-kind: configmaps
+params:
+   kind: configmaps
 categories: [tutorials]
 description: In this tutorial, we will explore how to effectively use Kubernetes ConfigMaps and Secrets for managing configuration data and sensitive information. Leveraging Meshery Playground, an interactive live cluster environment, we'll perform hands-on labs to understand the practical aspects of working with ConfigMaps and Secrets in Kubernetes.
 aliases:

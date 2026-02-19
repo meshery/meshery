@@ -1,7 +1,8 @@
 ---
 title: Publishing Meshery Designs to ArtifactHub
 model: artifacthub
-kind: design
+params:
+    kind: design
 categories: [tutorials]
 description: Step by step example for how to export Meshery Designs and publish them to an ArtifactHub repository.
 aliases:

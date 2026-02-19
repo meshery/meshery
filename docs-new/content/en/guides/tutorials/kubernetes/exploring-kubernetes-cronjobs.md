@@ -1,7 +1,8 @@
 ---
 title: Exploring Kubernetes CronJobs
 model: kubernetes
-kind: cronjobs
+params:
+   kind: cronjobs
 categories: [tutorials]
 description: In this tutorial, we will explore how to use Meshery Playground, an interactive live cluster environment, to perform hands-on labs for managing Kubernetes CronJobs.
 aliases:

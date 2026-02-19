@@ -1,7 +1,8 @@
 ---
 title: Exploring Kubernetes Pods with Meshery
 model: kubernetes
-kind: pods
+params:
+    kind: pods
 categories: [tutorials]
 description: Explore Kubernetes Pods using Meshery in an interactive live cluster environment, through a series of hands-on exercises.
 aliases:

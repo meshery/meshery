@@ -1,7 +1,8 @@
 ---
 title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
 model: kubernetes
-kind: deployments
+params:
+    kind: deployments
 categories: [tutorials]
 description: Deploy a WordPress site and a MySQL database with Persistent Volumes using Meshery Playground in an interactive live cluster environment.
 aliases:
