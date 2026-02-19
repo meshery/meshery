@@ -28,7 +28,7 @@ func TestConnectionViewCmd(t *testing.T) {
 			Args:           []string{"view"},
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified\n")),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified")),
 			IsOutputGolden: false,
 		},
 		{
@@ -36,7 +36,7 @@ func TestConnectionViewCmd(t *testing.T) {
 			Args:           []string{"view", "foo", "bar"},
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n")),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments")),
 			IsOutputGolden: false,
 		},
 		{
