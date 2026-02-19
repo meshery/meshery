@@ -17,7 +17,6 @@ package components
 import (
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -56,9 +55,8 @@ mesheryctl component search "Component name"
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
-		searchValue.Add("search", componentName)
+		searchValue.Add("search", args[0])
 
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
