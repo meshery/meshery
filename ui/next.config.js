@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
 
 const nextConfig = {
   reactStrictMode: false,
@@ -57,6 +58,14 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       'remote-component.config.js': __dirname + '/remote-component.config.js',
+      // Force a single React instance (prevents "Invalid hook call" / useContext null)
+      react: path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime'),
+      // Force a single MUI instance so tables pick up dark theme
+      '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
+      '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
     };
 
     // Handle markdown imports (replaces next-remove-imports)

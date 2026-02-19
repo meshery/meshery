@@ -697,6 +697,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
 // Keep the static getInitialProps method
 MesheryApp.getInitialProps = async ({ Component, ctx }) => {
+  if (!Component) {
+    return { pageProps: {} };
+  }
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
   return { pageProps };
 };
@@ -716,6 +719,13 @@ const MesheryThemeProvider = ({ children, emotionCache }) => {
 };
 
 const MesheryAppWrapper = ({ emotionCache = clientSideEmotionCache, ...props }) => {
+  // #region agent log
+  if (typeof window !== 'undefined') {
+    fetch('http://127.0.0.1:7243/ingest/132dd828-a23f-4c47-bc0f-4193aca5cdc8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'_app.tsx:718',message:'MesheryAppWrapper rendering',data:{hasEmotionCache:!!emotionCache,hasProps:!!props},timestamp:Date.now(),runId:'init',hypothesisId:'D'})}).catch(()=>{});
+    window.addEventListener('error',(e)=>{fetch('http://127.0.0.1:7243/ingest/132dd828-a23f-4c47-bc0f-4193aca5cdc8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'window.error',message:'Global error caught',data:{error:e.message,filename:e.filename,lineno:e.lineno},timestamp:Date.now(),runId:'init',hypothesisId:'F'})}).catch(()=>{});});
+    window.addEventListener('unhandledrejection',(e)=>{fetch('http://127.0.0.1:7243/ingest/132dd828-a23f-4c47-bc0f-4193aca5cdc8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'window.unhandledrejection',message:'Unhandled promise rejection',data:{reason:e.reason?.message||String(e.reason)},timestamp:Date.now(),runId:'init',hypothesisId:'F'})}).catch(()=>{});});
+  }
+  // #endregion
   return (
     <CacheProvider value={emotionCache}>
       <ProviderStoreWrapper>
