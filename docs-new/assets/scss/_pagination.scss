@@ -2,10 +2,6 @@
   display: flex;
   gap: 1rem;
   margin-top: 3rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
 }
 
 .toc-card {
