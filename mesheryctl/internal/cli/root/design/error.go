@@ -50,8 +50,10 @@ Description: Onboard pattern`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
-func ErrDesignNotFound() error {
-	return errors.New(ErrDesignsNotFoundCode, errors.Fatal, []string{"Design Not Found"}, []string{"No Design found with the given name or ID"}, []string{"Design with the given name or ID is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list'"})
+func ErrDesignNotFound(design string) error {
+	return errors.New(ErrDesignsNotFoundCode, errors.Fatal,
+		[]string{"Design Not Found"},
+		[]string{fmt.Sprintf("No Design found with name, ID or at path: %s", design)}, []string{"Design with the given name, ID or path is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list' or provide a valid file path"})
 }
 
 func ErrInvalidDesignFile(err error) error {
