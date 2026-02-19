@@ -177,8 +177,6 @@ Since there is no straightforward way to mark unit tests and integration tests d
 
 In the above code sample, the test is marked with **“Integration”** in the title and if a `--short` flag is passed with the command, this test is skipped.
 
-
-
 ### Running tests in GitHub workflows
 
 #### Unit tests
