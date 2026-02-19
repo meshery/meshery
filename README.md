@@ -314,9 +314,11 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 
 ### Project Contributors
 
-<a href="https://github.com/meshery/meshery/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=meshery/meshery" />
-</a>
+<p align="center">
+  <a href="https://github.com/meshery/meshery/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=meshery/meshery" alt="Project Contributors" />
+  </a>
+</p>
 
 ### Stargazers
 
