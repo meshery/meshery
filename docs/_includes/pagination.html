@@ -53,7 +53,7 @@
     <a class="toc-card previous" href="{{ prev.url | relative_url }}">   
       <div class="toc-label">Previous</div>
       <div class="toc-title">
-        <span class="arrow">&lt;</i></span>
+        <span class="arrow">&lt;</span>
         {% comment %} Stripping special characters similar to the Hugo Regex {% endcomment %}
         {{ prev.title| remove: "ↆ"| remove: "🗺"| remove: "🚀"| remove: "🧠"| remove: "📚"| remove: "🛠"| remove: "🧑‍🔬"| remove: "🧑‍💻"| remove: "📖"| strip }}
       </div>
@@ -68,7 +68,7 @@
       <div class="toc-label">Next</div>
       <div class="toc-title">
         {{ next.title| remove: "ↆ"| remove: "🗺"| remove: "🚀"| remove: "🧠"| remove: "📚"| remove: "🛠"| remove: "🧑‍🔬"| remove: "🧑‍💻"| remove: "📖"| strip }}
-        <span class="arrow">&gt;</i></span>
+        <span class="arrow">&gt;</span>
       </div>
     </a>
   {% endif %}
