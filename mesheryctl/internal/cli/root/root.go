@@ -40,8 +40,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-type contextKey string
-
 var (
 	cfgFile string
 	verbose = false
