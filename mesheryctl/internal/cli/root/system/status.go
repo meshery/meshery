@@ -52,7 +52,7 @@ mesheryctl system status --verbose
 	`,
 	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+		// Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
 			PrintLogs:  false,
@@ -149,14 +149,12 @@ mesheryctl system status --verbose
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
-
 			if err != nil {
 				return err
 			}
 
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
-
 			if err != nil {
 				return err
 			}
