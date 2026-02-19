@@ -30,6 +30,11 @@ const (
 
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
+
+	errNoArg     = "must provide one argument: model name\n"
+	errMultiArg  = "too many args provided\n"
+	viewUsageMsg = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
+	formaterrMsg = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
 )
 
 func ErrExportModel(err error, name string) error {
