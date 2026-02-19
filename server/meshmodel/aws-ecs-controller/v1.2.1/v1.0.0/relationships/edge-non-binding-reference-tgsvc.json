@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Relates ECS Service load balancer configuration to ELB TargetGroup.",
+    "description": "Relates ECS Service load balancer configuration to ELBV2 TargetGroup.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -56,7 +56,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "aws-ecs-controller",
+              "name": "aws-elbv2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
