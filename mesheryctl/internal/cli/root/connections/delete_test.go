@@ -50,7 +50,7 @@ func TestConnectionDeleteCmd(t *testing.T) {
 				},
 			},
 			ExpectError:   true,
-			ExpectedError: errConnectionNotFound(fmt.Errorf("No connection with id %q found", connectionId)),
+			ExpectedError: errConnectionNotFound(fmt.Errorf("no connection with id %q found", connectionId)),
 		},
 		{
 			Name: "given a valid connectionID provided when running mesheryctl connection delete then the connection is deleted",

@@ -52,7 +52,7 @@ func TestConnection(t *testing.T) {
 			URL:            "",
 			Fixture:        "list.connection.api.empty.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage.\n", "invalidCommand")),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", "invalidCommand")),
 			IsOutputGolden: false,
 		},
 		{

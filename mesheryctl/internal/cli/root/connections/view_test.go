@@ -12,8 +12,6 @@ import (
 
 func TestConnectionViewCmd(t *testing.T) {
 
-	connectionId := "11111111-1111-1111-111111111111"
-
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
