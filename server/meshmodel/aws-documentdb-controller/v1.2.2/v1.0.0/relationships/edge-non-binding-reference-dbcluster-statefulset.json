@@ -1,0 +1,104 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "You are connecting a DocumentDB Cluster to a StatefulSet, enabling the application to reference the database cluster identity.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-documentdb-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "DBCluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-documentdb-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "DocumentDB DBCluster identity is used as the source for workload configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "StatefulSet",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "env"
+                ]
+              ],
+              "description": "You are patching the StatefulSet container environment variables with the DocumentDB Cluster identity."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
