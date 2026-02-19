@@ -1,6 +1,6 @@
 ---
 title: Relationships
-description: "Meshery Relationships identify and facilitate genealogy between Components."
+description: Meshery Relationships identify and facilitate genealogy between Components.
 aliases:
 - /concepts/relationships/
 ---
@@ -16,9 +16,9 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Automated Configuration:** Relationship-driven actions can automate the configuration of components, reducing manual effort and potential errors.
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
-{{< alert type="dark" title="Contributor Guide to Meshery Relationships" >}}
-If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships](https://docs.meshery.io/project/contributing/contributing-relationships) guide.
-{{< /alert >}}
+{{% alert color="dark" title="Contributor Guide to Meshery Relationships" %}}
+If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships](/project/contributing/contributing-relationships) guide.
+{{% /alert %}}
 
 ## Types of Relationships
 
@@ -335,9 +335,9 @@ Beyond this automatic filtering, relationship evaluation can also be selectively
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
-{{< alert type="info" title="Explore an example relationship" >}}
+{{% alert color="info" title="Explore an example relationship" %}}
 To explore an example of this behavior, see the [Example Edge-Permission Relationship](https://meshery.io/catalog/deployment/example-edge-permission-relationship-7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html) and follow the steps written in its description.
-{{< /alert >}}
+{{% /alert %}}
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specifics of patching refer [Patch Strategies](#patch-strategies).
 

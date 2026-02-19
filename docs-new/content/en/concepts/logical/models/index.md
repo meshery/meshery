@@ -18,9 +18,9 @@ Models serve as the foundational packaging units for Meshery's logical object re
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
 * **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
 
-{{< alert title="Creating your own models" type="light" >}}
+{{% alert title="Creating your own models" color="light" %}}
 If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide.
-{{< /alert >}}
+{{% /alert %}}
 
 See [Contributing to Models](/project/contributing/contributing-models).
 
@@ -58,9 +58,9 @@ Meshery Models adhere to several design principles, including establishing a set
 
 Each model package can be imported and exported from the system as OCI-compatible images, making them portable (a design goal), abstracting their complexity, and encapsulating potential intellectual property that users might have invested into their models. Model packages are versioned and bundle any number of components, relationships, policies, connections and credentials. For example:
 
-{{< alert title="Model Packaging" type="info" >}}
+{{% alert title="Model Packaging" color="info" %}}
 Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments.
-{{< /alert >}}
+{{% /alert %}}
 
 ![Meshery Models](./images/meshery-models.png)
 _Figure: Model Construct Classification_
@@ -92,9 +92,9 @@ Models introduce various core constructs that form the foundation of the model. 
 
 Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
-{{< alert title="Model Schema" type="info" >}}
+{{% alert title="Model Schema" color="info" %}}
 Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs.
-{{< /alert >}}
+{{% /alert %}}
 
 ### Designs
 
@@ -104,9 +104,9 @@ Model constructs are defined using a schema language called Cue. Cue is a powerf
 
 [Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
-{{< alert title="Metadata" type="info" >}}
+{{% alert title="Metadata" color="info" %}}
 Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior.
-{{< /alert >}}
+{{% /alert %}}
 
 ## Versioning
 
