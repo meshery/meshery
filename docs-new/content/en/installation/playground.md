@@ -1,6 +1,5 @@
 ---
 title: Meshery Playground
-# permalink: installation/playground
 description: Details about Meshery Playground
 categories: [project]
 ---
