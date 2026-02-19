@@ -1,0 +1,77 @@
+{% comment %} 
+  1. Flatten the data structure from _data/toc.yml into a simple list 
+{% endcomment %}
+{% assign pages_list = "" | split: "," %}
+
+{% for item in site.data.toc %}
+  {% if item.url %}
+    {% assign pages_list = pages_list | push: item %}
+  {% endif %}
+
+  {% for link in item.links %}
+    {% if link.url %}
+      {% assign pages_list = pages_list | push: link %}
+    {% endif %}
+
+    {% for child in link.children %}
+      {% if child.url %}
+        {% assign pages_list = pages_list | push: child %}
+      {% endif %}
+
+      {% for grandchild in child.grandchildren %}
+        {% if grandchild.url %}
+          {% assign pages_list = pages_list | push: grandchild %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+
+{% comment %} 
+  2. Find the index of the current page 
+{% endcomment %}
+{% assign current_url = page.url | relative_url %}
+{% assign current_index = -1 %}
+
+{% for p in pages_list %}
+  {% assign p_url = p.url | relative_url %}
+  {% if p_url == current_url %}
+    {% assign current_index = forloop.index0 %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} 
+  3. Render the Pagination UI 
+{% endcomment %}
+{% if current_index != -1 %}
+<div class="toc-pagination-wrapper">
+
+  {% if current_index > 0 %}
+    {% assign prev_index = current_index | minus: 1 %}
+    {% assign prev = pages_list[prev_index] %}
+    <a class="toc-card previous" href="{{ prev.url | relative_url }}">   
+      <div class="toc-label">Previous</div>
+      <div class="toc-title">
+        <span class="arrow">&lt;</i></span>
+        {% comment %} Stripping special characters similar to the Hugo Regex {% endcomment %}
+        {{ prev.title| remove: "ↆ"| remove: "🗺"| remove: "🚀"| remove: "🧠"| remove: "📚"| remove: "🛠"| remove: "🧑‍🔬"| remove: "🧑‍💻"| remove: "📖"| strip }}
+      </div>
+    </a>
+  {% endif %}
+
+  {% assign last_index = pages_list.size | minus: 1 %}
+  {% if current_index < last_index %}
+    {% assign next_index = current_index | plus: 1 %}
+    {% assign next = pages_list[next_index] %}
+    <a class="toc-card next" href="{{ next.url | relative_url }}">
+      <div class="toc-label">Next</div>
+      <div class="toc-title">
+        {{ next.title| remove: "ↆ"| remove: "🗺"| remove: "🚀"| remove: "🧠"| remove: "📚"| remove: "🛠"| remove: "🧑‍🔬"| remove: "🧑‍💻"| remove: "📖"| strip }}
+        <span class="arrow">&gt;</i></span>
+      </div>
+    </a>
+  {% endif %}
+
+</div>
+{% endif %}

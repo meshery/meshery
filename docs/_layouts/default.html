@@ -85,6 +85,8 @@
           title=page.title type=page.type category=page.category url=page.url
           language="en" %} {% endif %} {% include_cached feedback.html %}
         </div>
+        {{ content }}
+        {% include pagination.html %}
       </main>
       {% if page.display-toc != "false" and layout.display-toc != "false" %}
       <div class="content-table-wrapper">

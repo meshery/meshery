@@ -1,99 +1,141 @@
 - title: 🗺 Overview & Installation
   url: project/overview
+  weight : 1
   links:
     - title: 🚀 Quick Start
       url: installation/quick-start
+      weight : 1
     - title: Installation ↆ
       url: installation
+      weight : 2
       children:
         - title: Docker ↆ
           url: installation/docker
+          weight : 1
           grandchildren:
             - title: Docker Extension
               url: installation/docker/docker-extension
+              weight : 1
         - title: GitHub Codespaces
           url: installation/codespaces
+          weight : 2
         - title: Kubernetes ↆ
           url: installation/kubernetes
+          weight : 3
           grandchildren:
             - title: "AKS"
               url: installation/kubernetes/aks
+              weight : 1
             - title: "EKS"
               url: installation/kubernetes/eks
+              weight : 2
             - title: "GKE"
               url: installation/kubernetes/gke
+              weight : 3
             - title: "Helm"
               url: installation/kubernetes/helm
+              weight : 4
             - title: "KinD"
               url: installation/kubernetes/kind
+              weight : 5
             - title: "Minikube"
               url: installation/kubernetes/minikube
+              weight : 6
             - title: KubeSphere
               url: installation/kubernetes/kubesphere
+              weight : 7
         - title: Linux or macOS ↆ
           url: installation/linux-mac
+          weight : 4
           grandchildren:
             - title: "Bash"
               url: installation/linux-mac/bash
+              weight : 1
             - title: "Brew"
               url: installation/linux-mac/brew
+              weight : 2
         - title: Windows ↆ
           url: installation/windows
+          weight : 5
           grandchildren:
             - title: "Scoop"
               url: installation/windows/scoop
+              weight : 1
         - title: Upgrading Meshery ↆ
           url: installation/upgrades
+          weight : 6
           grandchildren:
             - title: Meshery CLI
               url: installation/upgrades#upgrading-meshery-cli
+              weight : 1
         - title: Using Multiple Meshery Adapters
           url: installation/multiple-adapters
+          weight : 7
         - title: Meshery Playground
           url: installation/playground
+          weight : 8
         - title: FAQs
           url: project/faq
+          weight : 9
 - title: 🧠 Concepts
   url: concepts
+  weight : 2
   links:
     - title: Architectural ↆ
       url: concepts/architecture
+      weight : 1
       children:
         - title: "Adapters"
           url: concepts/architecture/adapters
+          weight : 1
         - title: Database
           url: concepts/architecture/database
+          weight : 2
         - title: "Operator ↆ"
           url: concepts/architecture/operator
+          weight : 3
           grandchildren:
             - title: "Broker"
               url: concepts/architecture/broker
+              weight : 1
             - title: "Meshsync"
               url: concepts/architecture/meshsync
+              weight : 2
     - title: Logical ↆ
       url: concepts/logical
+      weight : 2
       children:
         - title: "Designs"
           url: concepts/logical/designs
+          weight : 1
         - title: "Environments"
           url: concepts/logical/environments
+          weight : 2
         - title: "Models ↆ"
           url: concepts/logical/models
+          weight : 3
           grandchildren:
             - title: "Components"
               url: concepts/logical/components
+              weight : 1
             - title: "Relationships"
               url: concepts/logical/relationships
+              weight : 2
             - title: "Policies"
               url: concepts/logical/policies
+              weight : 3
             - title: "Connections"
               url: concepts/logical/connections
+              weight : 4
             - title: "Credentials"
               url: concepts/logical/credentials
+              weight : 5
         - title: "Registry"
           url: concepts/logical/registry
+          weight : 4
         - title: "Workspaces"
           url: concepts/logical/workspaces
+          weight : 5
 # - title: 📑 Features
 #   url: features
 #   links:
@@ -101,229 +143,330 @@
 #       url: features/playground
 - title: 📚 Guides & Tutorials
   url: guides
+  weight : 3
   links:
     - title: Infrastructure Management ↆ
       url: guides/infrastructure-management
+      weight : 1
       children:
         - title: Overview
           url: guides/infrastructure-management/overview
+          weight : 1
         - title: GitOps with Meshery
           url: guides/infrastructure-management/gitops-with-meshery
+          weight : 2
         - title: Deploying Sample Apps
           url: guides/infrastructure-management/sample-apps
+          weight : 3
         - title: Managing Notifications
           url: guides/infrastructure-management/notification-management
+          weight : 4
         - title: Managing Envoy Filters
           url: guides/infrastructure-management/filter-management
+          weight : 5
         - title: Managing Connections
           url: guides/infrastructure-management/lifecycle-management
+          weight : 6
           grandchildren:
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
+              weight : 1
     - title: Configuration Management ↆ
       url: guides/configuration-management
+      weight : 2
       children:
         - title: Overview
           url: guides/configuration-management/working-with-designs
+          weight : 1
         - title: Creating a Meshery Design
           url: guides/configuration-management/creating-a-meshery-design
+          weight : 2
         - title: Importing Models
           url: guides/configuration-management/importing-models
+          weight : 3
         - title: Exporting Models
           url: guides/configuration-management/exporting-models
+          weight : 4
         - title: Creating Models
           url: guides/configuration-management/creating-models
+          weight : 5
         - title: Managing Model Images
           url: guides/configuration-management/push-pull-model-image
+          weight : 6
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
+          weight : 7
         - title: Identifying Components
           url: guides/configuration-management/identifying-components
+          weight : 8
         - title: Edge Styles Guide
           url: guides/configuration-management/edges-guide
+          weight : 9
     - title: Performance Management ↆ
       url: guides/performance-management
+      weight : 3
       children:
         - title: Overview
           url: guides/performance-management/performance-management
+          weight : 1
         - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
+          weight : 2
         - title: Managing Performance
           url: guides/performance-management/managing-performance
+          weight : 3
         - title: Interpreting Performance Test Results
           url: guides/performance-management/interpreting-performance-test-results
+          weight : 4
     - title: Using Meshery CLI ↆ
       url: guides/mesheryctl
+      weight : 4
       children:
         - title: Overview
           url: guides/mesheryctl/working-with-mesheryctl
+          weight : 1
         - title: Autocompletion Setup
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
+          weight : 2
         - title: CLI Authentication
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
+          weight : 3
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
+          weight : 4
         - title: System Commands
           url: guides/mesheryctl/system-commands
+          weight : 5
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
+      weight : 5
       children:
         - title: Installation
           url: guides/troubleshooting/installation
+          weight : 1
         - title: Operator & MeshSync
           url: guides/troubleshooting/meshery-operator-meshsync
+          weight : 2
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
+          weight : 3
         - title: Enabling Extensions
           url: guides/troubleshooting/enabling-extensions-locally
+          weight : 4
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
+      weight : 6
       children:
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
+          weight : 1
         - title: Exploring Kubernetes Services
           url: guides/tutorials/kubernetes-services
+          weight : 2
         - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
+          weight : 3
         - title: Exploring Kubernetes Pods
           url: guides/tutorials/kubernetes-pods
+          weight : 4
         - title: Deploying WordPress & MySQL with Persistent Volumes
           url: guides/tutorials/wordpress-mysql-persistentvolume
+          weight : 5
         - title: Deploying PHP Guestbook with Redis
           url: guides/tutorials/deploy-php-redis
+          weight : 6
         - title: Deploying AWS EC2 Instances
           url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
+          weight : 7
         - title: Deploying Azure Storage Account
           url: guides/tutorials/deploy-azure-storage-account-with-meshery
+          weight : 8
         - title: Exploring Kubernetes Deployments
           url: guides/tutorials/kubernetes-deployments
+          weight : 9
         - title: Deploying Apache Cassandra with StatefulSets
           url: guides/tutorials/deploy-apache-cassandra-with-statefulset
+          weight : 10
         - title: Embedding Meshery Designs in WordPress
           url: guides/tutorials/embedding-meshery-design-in-wordpress
+          weight : 11
         - title: Publishing Designs to ArtifactHub
           url: guides/tutorials/publish-to-artifacthub
+          weight : 12
         - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
+          weight : 13
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
 - title: 🛠 Integrations & Extensions
   url: "#"
+  weight : 4
   links:
     - title: Integrations
       url: extensions/integrations
+      weight : 1
     - title: Extensions ↆ
       url: extensions
+      weight : 2
       children:
         - title: Helm Kanvas Snapshot
           url: extensions/helm-kanvas-snapshot
+          weight : 1
         - title: MeshSync Snapshot
           url: extensions/kubectl-meshsync-snapshot
+          weight : 2
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
+          weight : 3
           grandchildren:
             - title: Import & Export Designs
               url: extensions/import-export-designs
+              weight : 1
         - title: Kanvas Snapshot
           url: extensions/kanvas-snapshot
+          weight : 4
 
 - title: 🧑‍💻 Contributing & Community
   url: project
+  weight : 5
   links:
     - title: Community
       url: project/community
+      weight : 1
     - title: Meshery Playground
       url: installation/playground
+      weight : 2
     - title: Contributing Guides ↆ
       url: project/contributing
+      weight : 3
       children:
         - title: Build & Release (CI) ↆ
           url: project/contributing/build-and-release
+          weight : 1
         - title: Adapters
           url: project/contributing/contributing-adapters
+          weight : 2
         - title: CLI ↆ
           url: project/contributing/contributing-cli
+          weight : 3
           grandchildren:
             - title: Design Principles
               url: project/contributing/contributing-cli-guide
+              weight : 1
             - title: End-to-End CLI Tests
               url: project/contributing/contributing-cli-tests
+              weight : 2
         - title: Docs ↆ
           url: project/contributing/contributing-docs
+          weight : 4
           grandchildren:
             - title: Docs Structure
               url: project/contributing/contributing-docs-structure
+              weight : 1
         - title: Server ↆ
           url: project/contributing/contributing-server
+          weight : 5
           grandchildren:
             - title: Server Events
               url: project/contributing/contributing-server-events
+              weight : 1
             - title: Server Errors
               url: project/contributing/contributing-error
+              weight : 2
         - title: UI ↆ
           url: project/contributing/contributing-ui
+          weight : 6
           grandchildren:
             - title: Notification Center
               url: project/contributing/contributing-ui-notification-center
+              weight : 1
             - title: Sistent Design System
               url: project/contributing/contributing-ui-sistent
+              weight : 2
             - title: UI End-to-End Tests
               url: project/contributing/contributing-ui-tests
+              weight : 3
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
+              weight : 4
             - title: Schema-Driven UI in Meshery
               url: project/contributing/contributing-ui-schemas
+              weight : 5
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
+          weight : 7
         - title: Policies
           url: project/contributing/contributing-policies
+          weight : 8
         - title: Models ↆ
           url: project/contributing/contributing-models
+          weight : 9
           grandchildren:
             - title: Quick Start
               url: project/contributing/contributing-models-quick-start
+              weight : 1
             - title: Model Components
               url: project/contributing/contributing-components
+              weight : 2
             - title: Model Relationships
               url: project/contributing/contributing-relationships
+              weight : 3
         - title: Schemas
           url: project/contributing/contributing-schemas
+          weight : 10
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
+          weight : 11
 
 - title: 📖 Extensibility & Reference
   url: reference
+  weight : 6
   links:
     - title: Extensibility ↆ
       url: extensibility
+      weight : 1
       children:
         - title: Authorization
           url: extensibility/authorization
+          weight : 1
         - title: Build-time
           url: extensibility/build-time
+          weight : 2
         - title: Load Generators
           url: extensibility/load-generators
+          weight : 3
         - title: Providers
           url: extensibility/providers
+          weight : 4
         - title: Compatibility Guide
           url: extensibility/verify-compatibility
+          weight : 5
         - title: UI Plugins
           url: extensibility/ui
+          weight : 6
     - title: Error Code
       url: reference/error-codes
+      weight : 2
     - title: Permission Keys
       url: reference/permissions
+      weight : 3
     - title: Meshery Operator & CRDs
       url: reference/meshery-operator-crds
+      weight : 4
     - title: CLI Command
       url: reference/mesheryctl
+      weight : 5
     - title: REST & GraphQL API ↆ
       url: extensibility/api
+      weight : 6
       children:
         - title: GraphQL API
           url: reference/graphql-apis
+          weight : 1
         - title: REST API
           url: reference/rest-apis
+          weight : 2
     - title: Security Vulnerabilities
       url: project/security-vulnerabilities
+      weight : 7
