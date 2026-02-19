@@ -1,0 +1,76 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "non-binding",
+    "subType": "network",
+    "evaluationQuery": "edge_network_relationship",
+    "metadata": {
+      "description": "AWS EventBridge Rule routes matched events to target services (Lambda Function, SQS Queue, SNS Topic). This edge relationship represents event-driven invocation from an EventBridge Rule to its configured targets."
+    },
+    "model": {
+      "name": "aws-eventbridge-controller"
+    },
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Rule",
+              "model": "aws-eventbridge-controller"
+            }
+          ],
+          "to": [
+            {
+              "kind": "Function",
+              "model": "aws-lambda-controller"
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      },
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Rule",
+              "model": "aws-eventbridge-controller"
+            }
+          ],
+          "to": [
+            {
+              "kind": "Queue",
+              "model": "aws-sqs-controller"
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      },
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Rule",
+              "model": "aws-eventbridge-controller"
+            }
+          ],
+          "to": [
+            {
+              "kind": "Topic",
+              "model": "aws-sns-controller"
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    ]
+  }
