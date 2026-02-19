@@ -148,7 +148,7 @@ const KubernetesSubscription = ({ setAppState }) => {
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
-      return () => { };
+      return () => {};
     }
 
     return subscribeK8sContext(
@@ -309,7 +309,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
-        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => { } }));
+        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
         return;
       }
 
