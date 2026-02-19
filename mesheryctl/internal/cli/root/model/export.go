@@ -56,7 +56,7 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value("flags-validator").(*mesheryctlflags.FlagValidator)
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
 		if !ok || flagValidator == nil {
 			return utils.ErrCommandContextMissing("flags-validator")
 		}

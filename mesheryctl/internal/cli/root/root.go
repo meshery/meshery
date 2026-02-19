@@ -40,6 +40,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+type contextKey string
+
 var (
 	cfgFile string
 	verbose = false
@@ -233,6 +235,6 @@ func setupLogger() {
 // This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 func initValidators(cmd *cobra.Command) {
 	validate := mesheryctlflags.NewFlagValidator()
-	ctx := context.WithValue(context.Background(), "flags-validator", validate)
+	ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, validate)
 	cmd.SetContext(ctx)
 }

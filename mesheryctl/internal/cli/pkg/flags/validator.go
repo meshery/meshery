@@ -9,7 +9,13 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+const (
+	// FlagValidatorKey is the key used to store the flag validator in the command context
+	FlagValidatorKey pkg.ContextKey = "flags-validator"
 )
 
 type FlagValidator struct {
