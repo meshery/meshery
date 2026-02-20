@@ -138,7 +138,7 @@ func selectRelationshipPrompt(relationships []relationship.RelationshipDefinitio
 
 	i, _, err := prompt.Run()
 	if err != nil {
-		return nil, fmt.Errorf("relationship selection cancelled: %w", err)
+		return nil, utils.ErrPromptCancelled()
 	}
 
 	return &relationships[i], nil

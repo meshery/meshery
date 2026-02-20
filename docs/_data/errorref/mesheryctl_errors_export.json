@@ -1649,6 +1649,15 @@
         "short_description": "Failed to delete model",
         "probable_cause": "The specified model ID may not exist",
         "suggested_remediation": "Verify the model ID using `mesheryctl model list`"
+      },
+      "1201": {
+        "name": "ErrPromptCancelledCode",
+        "code": "1201",
+        "severity": "Alert",
+        "long_description": "Selection prompt has been cancelled",
+        "short_description": "Selection cancelled",
+        "probable_cause": "The selection prompt was interrupted",
+        "suggested_remediation": "Run the command again and complete the selection"
       }
     }
   }

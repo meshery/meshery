@@ -65,6 +65,7 @@ var (
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
+	ErrPromptCancelledCode         = "mesheryctl-1201"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -838,5 +839,16 @@ func ErrUploadFileWithParams(err error, fileName string) error {
 		[]string{err.Error()},
 		[]string{"File upload failed due to network issues or server errors"},
 		[]string{"Check your network connection and ensure the server is reachable."},
+	)
+}
+
+func ErrPromptCancelled() error {
+	return errors.New(
+		ErrPromptCancelledCode,
+		errors.Alert,
+		[]string{"Selection cancelled"},
+		[]string{"Selection prompt has been cancelled"},
+		[]string{"The selection prompt was interrupted"},
+		[]string{"Run the command again and complete the selection"},
 	)
 }
