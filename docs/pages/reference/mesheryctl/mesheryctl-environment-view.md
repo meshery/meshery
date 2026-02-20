@@ -17,7 +17,7 @@ View registered environmnents
 ## Synopsis
 
 View details of an environment registered in Meshery Server for a specific organization
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment view [flags]

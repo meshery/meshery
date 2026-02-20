@@ -2,9 +2,6 @@ package eval
 
 import rego.v1
 
-import data.core_utils
-import data.feasibility_evaluation_utils
-
 import data.actions
 import data.eval_rules
 
