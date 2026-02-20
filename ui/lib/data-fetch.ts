@@ -1,5 +1,3 @@
-import fetch from 'isomorphic-unfetch';
-
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
   // const signal = controller.signal;
