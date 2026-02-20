@@ -60,11 +60,12 @@ mesheryctl exp organization list --count
 func processOrgData(orgs *models.OrganizationsPage) ([][]string,int64) {
 	var rows [][]string
 	for _,org := range orgs.Organizations {
-		rows = append(rows,[]string{
-			org.Name,
+		rows = append(rows, []string{
 			org.Id.String(),
-			fmt.Sprintf("%v/%v/%v",org.CreatedAt.Year(),org.CreatedAt.Month(),org.CreatedAt.Day()),
+			org.Name,
+			fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day()),
 		})
+
 	}
 	return rows, int64(orgs.TotalCount)
 }
