@@ -91,6 +91,16 @@ func stop() error {
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		utils.TemplateToken,
+		utils.TemplateContext,
+	); err != nil {
+		return err
+	}
 
 	// if a temp context is set using the -c flag, use it as the current context
 	err = mctlCfg.SetCurrentContext(tempContext)

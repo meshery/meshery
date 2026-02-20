@@ -1,0 +1,12 @@
+contexts:
+    local:
+        endpoint: http://localhost:9081
+        token: default
+        platform: kubernetes
+        channel: stable
+        version: latest
+        provider: Layer5
+current-context: local
+tokens:
+    - name: default
+      location: auth.json

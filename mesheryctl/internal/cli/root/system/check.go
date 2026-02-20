@@ -89,7 +89,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		utils.Log.Error(err)
-		return nil, nil
+		return nil, err
 	}
 	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {

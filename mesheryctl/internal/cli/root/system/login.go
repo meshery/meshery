@@ -46,6 +46,18 @@ mesheryctl system login
 mesheryctl system login -p Meshery
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Ensure config + default context/token exist (login is a write command)
+		utils.SetKubeConfig()
+
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
