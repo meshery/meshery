@@ -32,7 +32,7 @@ var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
 	Long: `List all components registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/list`,
 	Example: `
 // View list of components
 mesheryctl component list
