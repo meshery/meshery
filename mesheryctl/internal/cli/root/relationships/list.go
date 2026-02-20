@@ -64,13 +64,13 @@ mesheryctl relationship list --count
 				evaluationQuery = *rel.EvaluationQuery
 			}
 			if len(rel.GetEntityDetail()) > 0 {
-				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
+				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.RelationshipType, rel.SubType, evaluationQuery})
 			}
 		}
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Header:           []string{"kind", "API Version", "Model name", "Type", "Sub Type", "Evaluation Policy"},
 			Rows:             rows,
 			Count:            relationships.Count,
 			DisplayCountOnly: count,

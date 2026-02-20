@@ -66,13 +66,13 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 				if relationship.EvaluationQuery != nil {
 					evaluationQuery = *relationship.EvaluationQuery
 				}
-				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, evaluationQuery})
+				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.RelationshipType, relationship.SubType, evaluationQuery})
 			}
 		}
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"},
+			Header:           []string{"kind", "apiVersion", "model-name", "Type", "subType", "regoQuery"},
 			Rows:             rows,
 			Count:            relationshipResponse.Count,
 			DisplayCountOnly: false,
