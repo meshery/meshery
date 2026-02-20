@@ -119,10 +119,10 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 }
 
 // selectRelationshipPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
+func selectRelationshipPrompt(relationships []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
 	relationshipNames := []string{}
 
-	for _, _rel := range relationship {
+	for _, _rel := range relationships {
 		evaluationQuery := "N/A"
 		if _rel.EvaluationQuery != nil {
 			evaluationQuery = *_rel.EvaluationQuery
@@ -141,7 +141,7 @@ func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition
 		return nil, fmt.Errorf("relationship selection cancelled: %w", err)
 	}
 
-	return &relationship[i], nil
+	return &relationships[i], nil
 }
 
 func init() {
