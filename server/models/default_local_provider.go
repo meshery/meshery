@@ -133,11 +133,13 @@ func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
 func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
-// GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+		obj := "provider capabilities"
+		errObj := ErrEncoding(err, obj)
+		l.Log.Error(errObj)
+		http.Error(w, errObj.Error(), http.StatusInternalServerError)
 	}
 }
 

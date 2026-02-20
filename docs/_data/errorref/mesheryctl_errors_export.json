@@ -1640,6 +1640,15 @@
         "short_description": "Invalid API response",
         "probable_cause": "The API response is missing expected fields or has an unexpected format",
         "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
+      },
+      "1200": {
+        "name": "ErrDeleteModelCode",
+        "code": "1200",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete model",
+        "probable_cause": "The specified model ID may not exist",
+        "suggested_remediation": "Verify the model ID using `mesheryctl model list`"
       }
     }
   }

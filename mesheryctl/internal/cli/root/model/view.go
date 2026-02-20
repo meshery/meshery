@@ -27,17 +27,15 @@ mesheryctl model view [model-name]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
-			const errMsg = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
-			return ErrModelUnsupportedOutputFormat(errMsg)
+			return ErrModelUnsupportedOutputFormat(formaterrMsg)
 		}
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("model name isn't specified\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s%s", errNoArg, viewUsageMsg))
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s%s", errMultiArg, viewUsageMsg))
 		}
 		return nil
 	},
