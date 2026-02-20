@@ -13,7 +13,7 @@ Extensions in Meshery are additional plugins or add-ons that provide extra funct
 <ul>
     {% for item in sorted_pages %}
     {% if item.type=="extensions" and item.language=="en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      <li><a href="{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract != " " %}
         -  {{ item.abstract }}
       {% endif %}
