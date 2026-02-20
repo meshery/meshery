@@ -134,8 +134,11 @@ export const notificationCenterApi = api
 
       deleteEvent: builder.mutation({
         query: ({ id }) => ({
-          url: `system/events/${id}`,
+          url: `system/events/bulk`,
           method: 'DELETE',
+          body: {
+            ids: [id],
+          },
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
