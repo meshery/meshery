@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"log"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
@@ -32,7 +33,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
+	logrus "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -90,7 +91,7 @@ func Execute() error {
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
-		utils.Log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	cobra.OnInitialize(setupLogger)
@@ -158,7 +159,6 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-
 		createDefaultConfig := false
 
 		switch {
@@ -210,10 +210,10 @@ func initConfig() {
 
 // setVerbose sets the log level to debug if the -v flag is set
 func setVerbose() {
-	utils.Log.SetLevel(log.InfoLevel)
+	utils.Log.SetLevel(logrus.InfoLevel)
 
 	if verbose {
-		utils.Log.SetLevel(log.DebugLevel)
+		utils.Log.SetLevel(logrus.DebugLevel)
 	}
 }
 
