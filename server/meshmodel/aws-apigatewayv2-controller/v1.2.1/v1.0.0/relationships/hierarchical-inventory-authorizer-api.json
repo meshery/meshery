@@ -51,7 +51,9 @@
                   "kind": "API",
                   "mutatorRef": [
                     [
-                      "displayName"
+                      "configuration",
+                      "spec",
+                      "name"
                     ]
                   ]
                 }
@@ -76,7 +78,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -110,7 +112,9 @@
                   "kind": "self",
                   "mutatorRef": [
                     [
-                      "displayName"
+                      "configuration",
+                      "spec",
+                      "name"
                     ]
                   ]
                 }
@@ -135,9 +139,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "name"
                 ]
               ]
             }
