@@ -1,44 +1,36 @@
 ---
 layout: default
-title: mesheryctl-exp-workspace
-permalink: reference/mesheryctl/exp/workspace
-redirect_from: reference/mesheryctl/exp/workspace/
+title: mesheryctl-model-delete
+permalink: reference/mesheryctl/model/delete
+redirect_from: reference/mesheryctl/model/delete/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: workspace
+command: model
+subcommand: delete
 ---
 
-# mesheryctl exp workspace
+# mesheryctl model delete
 
-Managge workspaces under an organization
+Delete a model
 
 ## Synopsis
 
-Create, list of workspaces under an organization
+Delete a model by ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace [flags]
+mesheryctl model delete [model-id] [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view a list workspaces
+Delete a model by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
-
-</div>
-</pre> 
-
-To create a workspace
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl model delete [model-id]
 
 </div>
 </pre> 
@@ -47,8 +39,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered workspaces
-  -h, --help    help for workspace
+  -h, --help   help for delete
 
 </div>
 </pre>
@@ -64,8 +55,5 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 </pre>
 
 ## See Also
-
-* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
-* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

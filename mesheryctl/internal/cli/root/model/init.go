@@ -22,7 +22,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
