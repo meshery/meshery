@@ -65,7 +65,7 @@ var (
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
-	ErrCommandContextMissingCode   = "mesheryctl-1200"
+	ErrCommandContextMissingCode   = "mesheryctl-1201"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
