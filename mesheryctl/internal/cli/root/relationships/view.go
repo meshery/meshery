@@ -75,7 +75,10 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
 		default:
-			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			selectedModel, err = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
@@ -115,13 +118,16 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	},
 }
 
-// selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
+// selectRelationshipPrompt lets user to select a relation if relations are more than one
+func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
 	relationshipNames := []string{}
 
 	for _, _rel := range relationship {
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
+		evaluationQuery := "N/A"
+		if _rel.EvaluationQuery != nil {
+			evaluationQuery = *_rel.EvaluationQuery
+		}
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
@@ -130,14 +136,12 @@ func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition
 		Items: relationshipNames,
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return &relationship[i]
+	i, _, err := prompt.Run()
+	if err != nil {
+		return nil, fmt.Errorf("relationship selection cancelled: %w", err)
 	}
+
+	return &relationship[i], nil
 }
 
 func init() {
