@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "You are connecting a VPC Link to a Subnet, ensuring private connectivity for your API resources.",
+    "description": "You are connecting a VPC Link to a Subnet to ensure private cloud connectivity.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -31,8 +31,6 @@
           {
             "id": null,
             "kind": "VPCLink",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -42,12 +40,12 @@
                 "kind": "github"
               },
               "model": {
-                "version": "v1.2.1"
+                "version": ""
               }
             },
             "patch": {
               "patchStrategy": "add",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -61,8 +59,6 @@
           {
             "id": null,
             "kind": "Subnet",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-ec2-controller",
@@ -77,9 +73,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }

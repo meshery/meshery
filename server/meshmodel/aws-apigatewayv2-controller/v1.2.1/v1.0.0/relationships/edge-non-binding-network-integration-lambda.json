@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "You are connecting an API Gateway Integration to a Lambda Function to enable serverless backend execution.",
+    "description": "You are connecting an API Integration to a Lambda Function to enable serverless backend execution.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -31,8 +31,6 @@
           {
             "id": null,
             "kind": "Integration",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -42,12 +40,12 @@
                 "kind": "github"
               },
               "model": {
-                "version": "v1.2.1"
+                "version": ""
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -61,8 +59,6 @@
           {
             "id": null,
             "kind": "Function",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-lambda-controller",
@@ -77,9 +73,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "You are linking an API Integration to a Kubernetes Service to route traffic into your cluster via VPC Link.",
+    "description": "You are linking an API Integration to a Kubernetes Service to route traffic into your cluster.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -31,8 +31,6 @@
           {
             "id": null,
             "kind": "Integration",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -42,14 +40,16 @@
                 "kind": "github"
               },
               "model": {
-                "version": "v1.2.1"
+                "version": ""
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "integrationUri"
                 ]
               ]
             }
@@ -59,8 +59,6 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "kubernetes",
@@ -75,11 +73,10 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "metadata",
-                  "annotations",
-                  "meshery.io/api-integration-id"
+                  "name"
                 ]
               ]
             }
