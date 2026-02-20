@@ -172,6 +172,9 @@ func (h *Handler) EvaluateDesign(
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
 	for i := range MAX_RE_EVALUATION_DEPTH {
+		for _, defaultErr := range utils.ApplyDefaultsToPatternComponents(&lastEvaluationResponse.Design) {
+			h.log.Debugf("failed to hydrate design defaults during evaluation: %v", defaultErr)
+		}
 
 		// evaluate specified relationship policies
 		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.

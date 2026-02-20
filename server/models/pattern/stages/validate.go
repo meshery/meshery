@@ -8,6 +8,7 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/jsonschema"
 	"github.com/meshery/meshery/server/models/pattern/resource/selector"
+	putils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"gopkg.in/yaml.v2"
@@ -80,6 +81,12 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 			if core.Format {
 				component.Configuration = core.Format.DePrettify(component.Configuration, false)
 			}
+
+			// Hydrate missing configuration values from schema defaults before validation.
+			if err := putils.ApplyDefaultsToConfiguration(wc.Component.Schema, &component.Configuration); err != nil {
+				act.Log(fmt.Sprintf("failed to hydrate defaults for %s: %s", component.DisplayName, err.Error()))
+			}
+
 			//Validate component definition
 			if validate {
 				if err := validateWorkload(component.Configuration, wc); err != nil {

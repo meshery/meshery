@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // ApplyDefaultsToComponentConfiguration mutates component configuration by
@@ -15,6 +16,27 @@ func ApplyDefaultsToComponentConfiguration(comp *component.ComponentDefinition) 
 	}
 
 	return ApplyDefaultsToConfiguration(comp.Component.Schema, &comp.Configuration)
+}
+
+// ApplyDefaultsToPatternComponents mutates component configurations in a design
+// by hydrating missing values from each component schema defaults.
+func ApplyDefaultsToPatternComponents(patternFile *pattern.PatternFile) []error {
+	if patternFile == nil {
+		return nil
+	}
+
+	errs := make([]error, 0)
+	for _, comp := range patternFile.Components {
+		if comp == nil {
+			continue
+		}
+
+		if err := ApplyDefaultsToComponentConfiguration(comp); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", comp.DisplayName, err))
+		}
+	}
+
+	return errs
 }
 
 // ApplyDefaultsToConfiguration mutates config by hydrating missing values from
