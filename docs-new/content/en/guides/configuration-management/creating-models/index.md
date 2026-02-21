@@ -262,10 +262,10 @@ Meshery Server is not required to generate models. The Meshery CLI can be used t
 {{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:
 
-- `mesheryctl registry` - interact with and update spreadsheets
-- `mesheryctl models` - interact with and update Meshery Server
-- `mesheryctl component` - interact with and update Meshery Server
-- `mesheryctl relationships` - interact with and update Meshery Server
+- `mesheryctl registry` - manage the state and contents of Meshery's internal registry of capabilities
+- `mesheryctl model` - export, generate, import, list, search and view model(s) and detailed information
+- `mesheryctl component` - list, search and view component(s) and detailed information
+- `mesheryctl exp relationship` - generate, list, search and view relationship(s) and detailed information
 {{% /alert %}}
 
   </section>
