@@ -139,8 +139,8 @@ mesheryctl system status --verbose
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
 			if err = hc.Run(); err != nil {
-                          		utils.Log.Warn(errors.New("could not run kubernetes health checks, skipping"))
-                                utils.Log.Debug(err)
+			 	utils.Log.Warn("Skipping Kubernetes health checks (Meshery server is not running)",)
+    			utils.Log.Debugf("Kubernetes health check error: %v", err)
 				return nil
 			}
 
