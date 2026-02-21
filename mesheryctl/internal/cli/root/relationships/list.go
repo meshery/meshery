@@ -64,7 +64,11 @@ mesheryctl relationship list --count
 				evaluationQuery = *rel.EvaluationQuery
 			}
 			if len(rel.GetEntityDetail()) > 0 {
-				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.RelationshipType, rel.SubType, evaluationQuery})
+				modelName := "N/A"
+				if rel.Model.Name != "" {
+					modelName = rel.Model.Name
+				}
+				rows = append(rows, []string{string(rel.Kind), rel.Version, modelName, rel.RelationshipType, rel.SubType, evaluationQuery})
 			}
 		}
 

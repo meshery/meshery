@@ -66,7 +66,11 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 				if relationship.EvaluationQuery != nil {
 					evaluationQuery = *relationship.EvaluationQuery
 				}
-				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.RelationshipType, relationship.SubType, evaluationQuery})
+				modelName := "N/A"
+				if relationship.Model.DisplayName != "" {
+					modelName = relationship.Model.DisplayName
+				}
+				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, modelName, relationship.RelationshipType, relationship.SubType, evaluationQuery})
 			}
 		}
 
