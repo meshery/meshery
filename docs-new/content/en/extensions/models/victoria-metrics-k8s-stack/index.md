@@ -1,0 +1,120 @@
+---
+title: Victoria Metrics K8S Stack
+subtitle: Collaborative and visual infrastructure as design for Victoria Metrics K8S Stack
+image: /extensions/models/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/victoria-metrics-k8s-stack
+description: 
+integrations-category: Observability and Analysis
+integrations-subcategory: Monitoring
+registrant: Artifact Hub
+components: 
+- name: vm-agent
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-agent/icons/color/vm-agent-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-agent/icons/white/vm-agent-white.svg
+  description: 
+- name: vm-alertmanager-config
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alertmanager-config/icons/color/vm-alertmanager-config-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alertmanager-config/icons/white/vm-alertmanager-config-white.svg
+  description: 
+- name: vm-alertmanager
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alertmanager/icons/color/vm-alertmanager-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alertmanager/icons/white/vm-alertmanager-white.svg
+  description: 
+- name: vm-alert
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alert/icons/color/vm-alert-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-alert/icons/white/vm-alert-white.svg
+  description: 
+- name: vm-auth
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-auth/icons/color/vm-auth-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-auth/icons/white/vm-auth-white.svg
+  description: 
+- name: vm-cluster
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-cluster/icons/color/vm-cluster-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-cluster/icons/white/vm-cluster-white.svg
+  description: 
+- name: vm-node-scrape
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-node-scrape/icons/color/vm-node-scrape-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-node-scrape/icons/white/vm-node-scrape-white.svg
+  description: 
+- name: vm-pod-scrape
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-pod-scrape/icons/color/vm-pod-scrape-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-pod-scrape/icons/white/vm-pod-scrape-white.svg
+  description: 
+- name: vm-probe
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-probe/icons/color/vm-probe-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-probe/icons/white/vm-probe-white.svg
+  description: 
+- name: vm-rule
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-rule/icons/color/vm-rule-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-rule/icons/white/vm-rule-white.svg
+  description: 
+- name: vm-service-scrape
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-service-scrape/icons/color/vm-service-scrape-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-service-scrape/icons/white/vm-service-scrape-white.svg
+  description: 
+- name: vm-single
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-single/icons/color/vm-single-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-single/icons/white/vm-single-white.svg
+  description: 
+- name: vm-static-scrape
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-static-scrape/icons/color/vm-static-scrape-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-static-scrape/icons/white/vm-static-scrape-white.svg
+  description: 
+- name: vm-user
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-user/icons/color/vm-user-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-user/icons/white/vm-user-white.svg
+  description: 
+- name: vm-scrape-config
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-scrape-config/icons/color/vm-scrape-config-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-scrape-config/icons/white/vm-scrape-config-white.svg
+  description: 
+- name: v-logs
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/v-logs/icons/color/v-logs-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/v-logs/icons/white/v-logs-white.svg
+  description: 
+- name: vl-cluster
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-cluster/icons/color/vl-cluster-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-cluster/icons/white/vl-cluster-white.svg
+  description: 
+- name: vl-single
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-single/icons/color/vl-single-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-single/icons/white/vl-single-white.svg
+  description: 
+- name: vm-anomaly
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-anomaly/icons/color/vm-anomaly-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vm-anomaly/icons/white/vm-anomaly-white.svg
+  description: 
+- name: vl-agent
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-agent/icons/color/vl-agent-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-agent/icons/white/vl-agent-white.svg
+  description: 
+- name: vl-agent
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-agent/icons/color/vl-agent-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vl-agent/icons/white/vl-agent-white.svg
+  description: 
+- name: vt-cluster
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-cluster/icons/color/vt-cluster-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-cluster/icons/white/vt-cluster-white.svg
+  description: 
+- name: vt-single
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-single/icons/color/vt-single-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-single/icons/white/vt-single-white.svg
+  description: 
+- name: vt-single
+  colorIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-single/icons/color/vt-single-color.svg
+  whiteIcon: /extensions/models/victoria-metrics-k8s-stack/components/vt-single/icons/white/vt-single-white.svg
+  description: 
+components-count: 24
+relationships: 
+relationship-count: 0
+featureList: [
+  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
+  "Invite anyone to review and make changes to your private designs.",
+  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/victoria-metrics-k8s-stack
+---
