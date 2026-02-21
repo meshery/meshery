@@ -144,7 +144,7 @@ mesheryctl system status --verbose
     			return nil
 			}
 
-case "kubernetes":
+
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
