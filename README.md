@@ -59,26 +59,25 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <h4 align="center">Open Meshery extension, Kanvas, in your browser: https://kanvas.new</h4>
 </p>
 <br />
-<!--
-- [Functionality](#functionality)
-  - [Meshery Architecture](#meshery-architecture)
-  - [Join the Meshery community!](#join-the-meshery-community)
-  - [Contributing](#contributing)
-    - [Stargazers](#stargazers)
-    - [License](#license)
--->
-<!-- <p style="clear:both;">&nbsp;</p>
-<a href="https://meshery.io"><picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
-  <img alt="Meshery - the Cloud Native Manager" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg" align="left" width="45%">
-  </picture></a> 
-<a href="https://meshery.io">
-<h3 style="margin:auto;"><br /><br />
-  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
-  <br /><br /><br />
-</h3> -->
 
+---
+
+## 📑 Table of Contents
+
+- [Functionality](#functionality)
+  - [Infrastructure Lifecycle Management](#infrastructure-lifecycle-management)
+  - [Workspaces](#workspaces-your-teams-google-drive-for-cloud-native-projects)
+  - [Platform Engineering](#platform-engineering-with-mesherys-extension-points)
+  - [Performance Management](#performance-management)
+- [Get Started with Meshery](#get-started-with-meshery)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Supported Platforms](#supported-platforms)
+- [Join the Meshery Community](#join-the-meshery-community)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
 
 <p style="clear:both;">&nbsp;</p>
 
@@ -216,17 +215,69 @@ SCREENSHOT / GIF NEEDED HERE
 
 </details>
 
-<h2><a name="running"></a>Get Started with Meshery</h2>
+<h2><a name="get-started-with-meshery"></a>Get Started with Meshery</h2>
 <p style="clear:both;"></p>
-<!-- <img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" /> -->
-<h3>Using `mesheryctl`</h3>
-<p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
-<pre>curl -L https://meshery.io/install | bash -</pre>
-<p>Use the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
-<details>
-  <summary><strong>See all supported platforms</strong></summary>
 
-See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
+Meshery is a cloud native manager that enables the design and management of all Kubernetes-based infrastructure and applications. Get started in minutes!
+
+### Prerequisites
+
+Before installing Meshery, ensure you have the following:
+
+#### System Requirements
+- **Operating System**: Linux, macOS, or Windows (with WSL2)
+- **Memory**: Minimum 4GB RAM (8GB recommended)
+- **Disk Space**: Minimum 2GB available
+
+#### Kubernetes (Optional)
+While Meshery can run standalone, connecting to Kubernetes unlocks its full potential:
+- **Kubernetes Cluster**: v1.20 or higher (Minikube, Kind, GKE, EKS, AKS, or any standard distribution)
+- **kubectl**: Installed and configured to access your cluster
+- **kubeconfig**: Valid configuration file (typically located at `~/.kube/config`)
+
+> **Note**: Don't have Kubernetes? No problem! Meshery works with Docker alone and can help you set up Kubernetes later.
+
+### Installation
+
+#### Quick Install with `mesheryctl`
+
+The fastest way to get Meshery running is using `mesheryctl`, Meshery's command-line interface:
+
+```bash
+curl -L https://meshery.io/install | bash -
+```
+
+This command will:
+1. ✅ Download and install `mesheryctl` for your operating system
+2. ✅ Start Meshery Server (default: `http://localhost:9081`)
+3. ✅ Launch the Meshery UI in your browser
+4. ✅ Automatically detect and connect to your Kubernetes clusters (if available)
+
+#### What Happens After Installation?
+
+1. **Access Meshery UI**: Your browser will automatically open to `http://localhost:9081`
+2. **Choose a Provider**: Select between:
+   - **Local Provider** (no account needed, data stored locally)
+   - **Meshery Cloud** (free account, sync across devices, team collaboration)
+3. **Connect Your Infrastructure**: 
+   - Meshery auto-discovers Kubernetes contexts from your `kubeconfig`
+   - Or skip this step to explore Meshery's playground mode
+4. **Start Designing**: Begin creating and managing your cloud native infrastructure!
+
+#### Next Steps
+
+Once Meshery is running:
+- 📖 Follow the **[Quick Start Guide](https://docs.meshery.io/installation/quick-start)** for a step-by-step tutorial
+- 🎮 Try the **[Cloud Native Playground](https://play.meshery.io)** for a live demo environment
+- 📺 Watch **[Getting Started Videos](https://www.youtube.com/@mesheryio)** on YouTube
+- 💬 Join the **[Community Slack](https://slack.meshery.io)** for live support
+
+### Supported Platforms
+
+<details>
+  <summary><strong>See all installation methods and supported platforms</strong></summary>
+
+Meshery can be deployed on various platforms. Choose the installation method that best fits your environment:
 
 | Platform                                                                                                                                                                                                                             | Supported?  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------: |
