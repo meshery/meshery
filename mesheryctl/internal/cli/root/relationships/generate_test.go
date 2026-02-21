@@ -84,14 +84,12 @@ func TestGenerate(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
 
 	// test scenarios for fetching data
 	tests := []struct {
 		Name             string
 		Args             []string
 		Fixture          string
-		Token            string
 		ExpectedResponse string
 		ExpectError      bool
 		IsOutputGolden   bool  `default:"true"`
@@ -117,7 +115,7 @@ func TestGenerate(t *testing.T) {
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
 			Fixture:          "generate.relationship.api.response.golden",
 			ExpectedResponse: "generate.relationship.output.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
+			IsOutputGolden:   true,
 			ExpectError:      false,
 		},
 	}
@@ -129,6 +127,15 @@ func TestGenerate(t *testing.T) {
 			defer func() {
 				spreadsheetCred = ""
 				spreadsheetID = ""
+			}()
+
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			originalStdout := os.Stdout
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			defer func() {
+				os.Stdout = originalStdout
 			}()
 
 			if tt.Name == "Generate registered relationships" {
@@ -166,9 +173,8 @@ func TestGenerate(t *testing.T) {
 				}
 			}
 
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
-
 			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
 
 			// to validate the expected errors
@@ -181,6 +187,22 @@ func TestGenerate(t *testing.T) {
 
 				t.Fatal(err)
 			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
+			actualResponse := b.String()
+
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
+			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
+
+			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 
 			// to validate the generated json file
 			if !tt.ExpectError {
