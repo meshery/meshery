@@ -1,6 +1,10 @@
 package display
 
 import (
+	"fmt"
+
+	"github.com/fatih/color"
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -61,4 +65,56 @@ func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataPr
 		displayData,
 		processData,
 	)
+}
+
+func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pageSize int) (T, int, error) {
+	var zero T
+
+	names := formatLabel(rows)
+	if len(rows) < pageSize {
+		noMoreLabel := color.New(color.FgHiBlack).Sprint("End of list")
+		names = append(names, noMoreLabel)
+	} else {
+		loadMoreLabel := color.New(color.FgCyan, color.Bold).Sprint("Load More.....")
+		names = append(names, loadMoreLabel)
+	}
+
+	itemCount := len(rows)
+
+	prompt := promptui.Select{
+		Label: "Select item",
+		Items: names,
+		Size:  5,
+		Templates: &promptui.SelectTemplates{
+			Help: "Use ↑/↓/←/→ to navigate, Ctrl+C or Esc to cancel",
+		},
+	}
+
+	maxRetries := 3
+	retries := 0
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			// Handle ctrl+c
+			if err == promptui.ErrInterrupt {
+				return zero, -1, fmt.Errorf("Selection cancelled")
+			}
+			retries++
+			if retries >= maxRetries {
+				return zero, -1, fmt.Errorf("prompt failed after %d attempts: %w", maxRetries, err)
+			}
+			continue
+		}
+
+		// Last item (Load More / End of list) selected
+		if i == itemCount {
+			// No more pages just re-show the prompt
+			if len(rows) < pageSize {
+				continue
+			}
+			return zero, i, nil
+		}
+
+		return rows[i], i, nil
+	}
 }

@@ -14,9 +14,11 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
-var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-var nextPageKeyboardKeys = []keyboard.Key{keyboard.KeyEnter, keyboard.KeyArrowDown, keyboard.KeySpace}
-var escapeKeyboardKeys = []keyboard.Key{keyboard.KeyEsc, keyboard.KeyCtrlC}
+var (
+	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	nextPageKeyboardKeys = []keyboard.Key{keyboard.KeyEnter, keyboard.KeyArrowDown, keyboard.KeySpace}
+	escapeKeyboardKeys   = []keyboard.Key{keyboard.KeyEsc, keyboard.KeyCtrlC}
+)
 
 var serverAndNetworkErrors = []string{
 	utils.ErrUnauthenticatedCode,
@@ -137,4 +139,61 @@ func HandlePaginationAsync[T any](
 	}
 
 	return nil
+}
+
+func HandlePaginationPrompt[R any, T any](
+	baseAPIPath string,
+	searchTerm string,
+	formatLabel func([]T) []string,
+	extractItems func(*R) []T,
+) (T, error) {
+	currentPage := 0
+	pageSize := 10
+	var selectedModel T
+
+	for {
+		urlPath := ""
+
+		// Build paginated URL with search, page, and pagesize params
+		pagesQuerySearch := url.Values{}
+		pagesQuerySearch.Set("search", url.QueryEscape(searchTerm))
+		pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
+
+		if strings.Contains(baseAPIPath, "?") {
+			urlPath = fmt.Sprintf("%s&%s", baseAPIPath, pagesQuerySearch.Encode())
+		} else {
+			urlPath = fmt.Sprintf("%s?%s", baseAPIPath, pagesQuerySearch.Encode())
+		}
+
+		data, err := api.Fetch[R](urlPath)
+		if err != nil {
+			return selectedModel, utils.ErrFailRequest(err)
+		}
+
+		rows := extractItems(data)
+
+		var index int
+		switch len(rows) {
+		case 0:
+			var zero T
+			return zero, ErrNoResultsFound(searchTerm)
+		case 1:
+			return rows[0], nil
+		default:
+			selectedModel, index, err = SelectFromPagedResults(rows, formatLabel, pageSize)
+			if err != nil {
+				return selectedModel, err
+			}
+		}
+
+		// Item selected
+		if index != len(rows) {
+			break
+		}
+		currentPage++
+
+	}
+
+	return selectedModel, nil
 }
