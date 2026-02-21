@@ -18,8 +18,6 @@ func TestComponentView(t *testing.T) {
 
 	currDir := filepath.Dir(filename)
 
-	componentApiPath := "api/meshmodels/components"
-
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:           "given no component is provided when running mesheryctl component view then an error message is displayed",
