@@ -121,7 +121,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Meshery intelligently infers the manner in which each resource [interrelates](https://docs.meshery.io/concepts/logical/relationships) with each other. Meshery supports a broad variety of built-in relationships between components, which you can use to create your own custom relationships.
 
-<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Diagram showing Pod and PersistentVolume relationship with mount edge connection" align="center" />
+<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Diagram showing Pod and PersistentVolume relationship with mount edge connection" loading="lazy" align="center" />
 
 <details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
 <img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
