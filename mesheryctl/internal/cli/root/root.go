@@ -15,7 +15,6 @@
 package root
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -67,7 +66,9 @@ mesheryctl system start --help
 mesheryctl -v [or] --verbose
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		initValidators(cmd)
+		// Initialize a validator and add it to the command context
+		// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
+		mesheryctlflags.InitValidators(cmd)
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -227,12 +228,4 @@ func setVerbose() {
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
 	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
-}
-
-// Initialize a validator and add it to the command context
-// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
-func initValidators(cmd *cobra.Command) {
-	validate := mesheryctlflags.NewFlagValidator()
-	ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, validate)
-	cmd.SetContext(ctx)
 }

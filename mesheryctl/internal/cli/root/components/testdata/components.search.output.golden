@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 Total number of components: 1
 Page: 1
 NAME  MODEL             CATEGORY  VERSION                             
 Test  component-test-0  Test      memorydb.aws.kubeform.com/v1alpha1  
+=======
+[90;47;1mTotal number of components: 1[0;0;22m
+[H[2J[3J
+
+[1mNAME[22m  [1mMODEL[22m             [1mVERSION[22m                             
+Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1  
+>>>>>>> 68a680e1448 (refactor(mesheryctl): update component commands to integrate flag validation and streamline output formatting)

@@ -1,6 +1,7 @@
 package mesheryctlflags
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
 )
 
 const (
@@ -105,4 +107,10 @@ func NewFlagValidator() *FlagValidator {
 	})
 
 	return &FlagValidator{validator: validate}
+}
+
+func InitValidators(cmd *cobra.Command) {
+	validate := NewFlagValidator()
+	ctx := context.WithValue(context.Background(), FlagValidatorKey, validate)
+	cmd.SetContext(ctx)
 }
