@@ -3,6 +3,7 @@ package relationships
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -56,7 +57,7 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 
 		// Check if flag is set
 		if spreadsheetID == "" || spreadsheetCred == "" {
-			return errors.New(utils.RelationshipsError(errMsg, "generate"))
+			return ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg))
 		}
 
 		return nil
