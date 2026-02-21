@@ -1,22 +1,27 @@
 import { expect, test } from '@playwright/test';
 import { DashboardPage } from './pages/DashboardPage';
 
-const SETTINGS_TABS = [
+const SETTINGS_TABS: string[] = [
   'settings-tab-adapters',
   'settings-tab-metrics',
   'settings-tab-registry',
   'settings-tab-reset',
 ];
 
-const ACTION_BUTTONS = [
+const ACTION_BUTTONS: string[] = [
   'adapter-undeploy-button',
   'adapter-connect-button',
   'adapter-deploy-button',
 ];
 
-const GRAFANA_ELEMENTS = ['grafana-api-key'];
+const GRAFANA_ELEMENTS: string[] = ['grafana-api-key'];
 
-const COMMON_UI_ELEMENTS = ['navigation', 'notification-button', 'profile-button', 'header-menu'];
+const COMMON_UI_ELEMENTS: string[] = [
+  'navigation',
+  'notification-button',
+  'profile-button',
+  'header-menu',
+];
 
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }) => {
