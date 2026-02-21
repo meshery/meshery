@@ -1,5 +1,5 @@
 Total number of relationships: 1
 [H[2J[3J
 
-KIND  API VERSION  MODEL  TYPE     SUB-TYPE  REGO QUERY  
-edge               N/A    network  Mount                 
+KIND  API VERSION  MODEL  TYPE     SUB-TYPE  
+edge  v1.0.0       N/A    network  Mount     

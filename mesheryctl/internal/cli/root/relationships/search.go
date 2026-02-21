@@ -62,21 +62,17 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 
 		for _, relationship := range relationshipResponse.Relationships {
 			if len(relationship.Type()) > 0 {
-				evaluationQuery := ""
-				if relationship.EvaluationQuery != nil {
-					evaluationQuery = *relationship.EvaluationQuery
-				}
 				modelName := "N/A"
-				if relationship.Model.DisplayName != "" {
-					modelName = relationship.Model.DisplayName
+				if relationship.Model.Name != "" {
+					modelName = relationship.Model.Name
 				}
-				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, modelName, relationship.RelationshipType, relationship.SubType, evaluationQuery})
+				rows = append(rows, []string{string(relationship.Kind), relationship.Version, modelName, relationship.RelationshipType, relationship.SubType})
 			}
 		}
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"Kind", "Api Version", "Model", "Type", "Sub-Type", "Rego Query"},
+			Header:           []string{"Kind", "Api Version", "Model", "Type", "Sub-Type"},
 			Rows:             rows,
 			Count:            relationshipResponse.Count,
 			DisplayCountOnly: false,
