@@ -15,7 +15,7 @@ abstract: Install Docker Extension for Meshery
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
+The Docker Extension for Meshery extends Docker Desktop's position as the developer's go-to Kubernetes environment with easy access to the full capabilities of Meshery's collaborative cloud native management features.
 
 ## Prerequisites
 
@@ -42,11 +42,11 @@ Click **Open** when installation is done or click **Meshery** on the left under 
 
 [![Docker Meshery Extension Open]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-open.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-open.png)
 
-Click **Login** to open the _Layer5 Cloud_ login page. Login or Sign up and you will be redirected back to Docker Desktop.
+Click **Login** to open the _Layer5 Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
 [![Docker Meshery Extension Login]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-login.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-login.png)
 
-Finally, click **Launch Meshery** to load Meshery Dashboard on a browser window. It runs at http://localhost:9081/ by default.
+Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window. It runs at http://localhost:9081/ by default.
 
 [![Docker Meshery Extension Launch]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-launch.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-launch.png)
 
@@ -88,7 +88,7 @@ Finally, you can now fully utilize Meshery to manage and monitor your cloud-nati
 
 ## Remove Meshery as a Docker Extension
 
-You can remove the Docker Extension from Docker Desktop interface or from the CLI. 
+You can remove the Docker Extension from the Docker Desktop interface or from the CLI. 
 
 ### Removing from Docker Desktop
 
@@ -105,13 +105,13 @@ To remove the extension from the command line, use the `docker extension rm` com
 
 ### Additional Cleanup
 
-There could be redisual Images and Networks to remove after removing/uninstalling the extension. Follow the steps below to do so. 
+There could be residual images and networks to remove after removing/uninstalling the extension. Follow the steps below to do so. 
 
 **Remove Meshery Images (if necessary)**
 
 Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
 
-{% capture code_content %}$ docker rmi layer5/meshery:stable-latest{% endcapture %}
+{% capture code_content %}$ docker rmi meshery/meshery:stable-latest{% endcapture %}
 {% include code.html code=code_content %}
 
 

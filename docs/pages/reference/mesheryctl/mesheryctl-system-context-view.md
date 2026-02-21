@@ -12,21 +12,23 @@ subcommand: context
 
 # mesheryctl system context view
 
-view current context
+Display the current Meshery CLI configuration context
 
 ## Synopsis
 
-Display active Meshery context
+Display the current Meshery CLI context configuration.
+This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
+Use this to verify or debug your current CLI settings.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context view [context-name | --context context-name| --all] --flags [flags]
+mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View default context
+View the default context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view
@@ -34,7 +36,7 @@ mesheryctl system context view
 </div>
 </pre> 
 
-View specified context
+View a specified context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view context-name
@@ -42,7 +44,7 @@ mesheryctl system context view context-name
 </div>
 </pre> 
 
-View specified context with context flag
+View a specified context using the --context flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view --context context-name
@@ -50,10 +52,17 @@ mesheryctl system context view --context context-name
 </div>
 </pre> 
 
-View config of all contexts
+View configuration of all contexts
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view --all
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+    
 
 </div>
 </pre> 

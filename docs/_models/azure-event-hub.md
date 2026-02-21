@@ -32,7 +32,19 @@ components:
   description: 
 components-count: 5
 relationships: 
-relationship-count: 0
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 4
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

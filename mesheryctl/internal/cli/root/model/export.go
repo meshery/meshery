@@ -2,18 +2,26 @@ package model
 
 import (
 	"fmt"
-	"io"
-	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type exportModelFlags struct {
+	DiscardComponents    bool   `json:"discard-components" validate:"boolean"`
+	DiscardRelationships bool   `json:"discard-relationships" validate:"boolean"`
+	OutputFormat         string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputLocation       string `json:"output-location" validate:"required,dirpath"`
+	OutputType           string `json:"output-type" validate:"required,oneof=oci tar"`
+	Page                 int    `json:"page" validate:"omitempty,min=1"`
+	Version              string `json:"version" validate:"omitempty,semver"`
+}
 
 type outputDetail struct {
 	Format string
@@ -21,12 +29,16 @@ type outputDetail struct {
 	Path   string
 }
 
+var (
+	exportModelFlagsProvided exportModelFlags
+)
+
 // mesheryctl model export <designname>
 var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
 	Long: `Export the registered model to the specified output type
-Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/export`,
 	Example: `
 // Export a model by name 
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
@@ -43,89 +55,76 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 // Export a model version by name in YAML type
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(exportModelFlagsProvided)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
-		outputFormat, _ := cmd.Flags().GetString("output-format")
-		outputType, _ := cmd.Flags().GetString("output-type")
-		discardComponents, _ := cmd.Flags().GetBool("discard-components")
-		discardRelationships, _ := cmd.Flags().GetBool("discard-relationships")
-		version, _ := cmd.Flags().GetString("version")
-		page, _ := cmd.Flags().GetInt("page")
-		url := fmt.Sprintf("%s/api/meshmodels/export?name=%s&output_format=%s&file_type=%s&components=%t&relationships=%t&%s", baseUrl, modelName, outputFormat, outputType, !discardComponents, !discardRelationships, utils.GetPageQueryParameter(cmd, page))
-		if version != "" {
-			url += fmt.Sprintf("&version=%s", version)
+		queryParams := url.Values{}
+		queryParams.Set("name", modelName)
+		queryParams.Set("output_format", exportModelFlagsProvided.OutputFormat)
+		queryParams.Set("file_type", exportModelFlagsProvided.OutputType)
+		queryParams.Set("components", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardComponents))
+		queryParams.Set("relationships", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardRelationships))
+		queryParams.Set("page", fmt.Sprintf("%d", exportModelFlagsProvided.Page))
+		if exportModelFlagsProvided.Version != "" {
+			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
 
-		outputPath, _ := cmd.Flags().GetString(("output-location"))
+		urlPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
 
 		output := &outputDetail{
-			Format: outputFormat,
-			Type:   outputType,
-			Path:   outputPath,
+			Format: exportModelFlagsProvided.OutputFormat,
+			Type:   exportModelFlagsProvided.OutputType,
+			Path:   exportModelFlagsProvided.OutputLocation,
 		}
 
-		return export(args[0], url, output)
+		exportedModelData, err := api.FetchData(urlPath)
+		if err != nil {
+			return err
+		}
+
+		var exportedModelPath string
+
+		extension := "tar"
+		if output.Type != "oci" {
+			extension = "tar.gz"
+		}
+
+		exportedModelPath = filepath.Join(output.Path, fmt.Sprintf("%s.%s", modelName, extension))
+
+		err = os.WriteFile(exportedModelPath, exportedModelData, 0o644)
+		if err != nil {
+			return utils.ErrCreateFile(exportedModelPath, err)
+		}
+
+		utils.Log.Infof("Exported model to %s", exportedModelPath)
+
+		return nil
 	},
 }
 
-func export(modelName string, url string, output *outputDetail) error {
-	// Find the entity with the model name
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		return err
-	}
-
-	// ensure proper cleaning of resources
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-
-	var exportedModelPath string
-
-	if output.Type != "oci" {
-		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
-	} else {
-		exportedModelPath = filepath.Join(output.Path, modelName+".tar")
-	}
-
-	err = os.WriteFile(exportedModelPath, data, 0644)
-	if err != nil {
-		utils.LogError.Error(err)
-		return nil
-	}
-
-	utils.Log.Infof("Exported model to %s", exportedModelPath)
-	return nil
-}
-
 func init() {
-	exportModelCmd.Flags().StringP("output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
-	exportModelCmd.Flags().StringP("output-location", "l", "./", "(optional) output location (default = current directory)")
-	exportModelCmd.Flags().StringP("output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
-	exportModelCmd.Flags().BoolP("discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
-	exportModelCmd.Flags().BoolP("discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
-	exportModelCmd.Flags().StringP("version", "", "", "(optional) model version to export (default = \"\")")
-	exportModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardComponents, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
+	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardRelationships, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
+	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputFormat, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
+	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputLocation, "output-location", "l", "./", "(optional) output location (default = current directory)")
+	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputType, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
+	exportModelCmd.Flags().IntVarP(&exportModelFlagsProvided.Page, "page", "p", 1, "(optional) page number for paginated results (default = 1)")
+	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.Version, "version", "", "", "(optional) model version to export (default = \"\", format: vX.X.X)")
 }

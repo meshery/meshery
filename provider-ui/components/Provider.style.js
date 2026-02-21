@@ -6,7 +6,7 @@ import {
   Typography,
   Popover,
   charcoal,
-} from "@layer5/sistent";
+} from "@sistent/sistent";
 export const CustomDiv = styled("div")(({ theme }) => ({
   width: "60%",
   marginLeft: "auto",

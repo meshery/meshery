@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	"github.com/layer5io/meshkit/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	"github.com/meshery/meshkit/utils"
 )
 
 type SystemType int
@@ -173,7 +173,7 @@ func GenerateJSStyleDocs(model meshkitRegistryUtils.ModelCSV, docsJSON string, c
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {
@@ -246,7 +246,7 @@ func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshk
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	_, err = io.WriteString(file, md)
 	if err != nil {

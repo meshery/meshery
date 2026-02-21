@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -10,37 +9,38 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/mod/semver"
+	"gopkg.in/yaml.v3"
 )
 
 var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for exp models init can be found at https://docs.meshery.io/reference/mesheryctl/exp/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
-mesheryctl exp model init [model-name]
+mesheryctl model init [model-name]
 
 // generates a folder structure and sets up model version
-mesheryctl exp model init [model-name] --version [version] (default is v0.1.0)
+mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 
 // generates a folder structure under specified path
-mesheryctl exp model init [model-name] --path [path-to-location] (default is current folder)
+mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		{
 			// validate model name
 			if len(args) != 1 {
-				return ErrModelInitFromString("must provide only one argument: model name")
+				return ErrModelInitFromString(errInitOneArg)
 			}
 			modelName := args[0]
 			input := map[string]any{"name": modelName}
@@ -63,7 +63,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 				validFormatsString := strings.Join(initModelGetValidOutputFormat(), ", ")
 				return ErrModelUnsupportedOutputFormat(
 					fmt.Sprintf(
-						"[ %s ] are the only format supported",
+						errInitUnsupportedFormat,
 						validFormatsString,
 					),
 				)
@@ -75,13 +75,12 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 			version, _ := cmd.Flags().GetString("version")
 			if !semver.IsValid(version) {
 				return ErrModelUnsupportedVersion(
-					"version must follow a semver format, f.e. v1.2.3",
+					errInitInvalidVersion,
 				)
 			}
 		}
 
 		return nil
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
@@ -94,6 +93,9 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 		path, _ := cmd.Flags().GetString("path")
 		// immediately remove trailing folder separator
 		path = strings.TrimRight(path, string(os.PathSeparator))
+		// this will make it in one format
+		path = filepath.Join(path)
+
 		version, _ := cmd.Flags().GetString("version")
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
@@ -108,7 +110,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 			if !os.IsNotExist(err) && info.IsDir() {
 				return ErrModelInitFromString(
 					fmt.Sprintf(
-						"folder %s exists, please specify different model name or version",
+						errInitFolderExists,
 						modelVersionFolder,
 					),
 				)
@@ -157,7 +159,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 					if err != nil {
 						return ErrModelInit(err)
 					}
-					defer file.Close() // Ensure the file is closed when the function exits
+					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
 
 					_, err = file.Write(content)
 					if err != nil {
@@ -171,6 +173,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 				initModelReplacePlaceholders(
 					initModelNextStepsText,
 					map[string]string{
+						"{path}":               path,
 						"{modelName}":          modelName,
 						"{modelVersion}":       version,
 						"{modelFolder}":        modelFolder,
@@ -181,17 +184,16 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 			)
 			return nil
 		}()
-
 		if err != nil {
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
 				// if model folder didn'tv exist before -> delete it
 				utils.Log.Infof("Removing %s", modelFolder)
-				os.RemoveAll(modelFolder)
+				_ = os.RemoveAll(modelFolder)
 			} else {
 				// otherwise remove only version folder
 				utils.Log.Infof("Removing %s", modelVersionFolder)
-				os.RemoveAll(modelVersionFolder)
+				_ = os.RemoveAll(modelVersionFolder)
 			}
 			return err
 		}
@@ -213,12 +215,17 @@ func initModelGetValidOutputFormat() []string {
 	// return []string{"json", "yaml", "csv"}
 }
 
-const initModelDirPerm = 0755
-const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
-const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
-const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection_template"
-const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+const (
+	initModelDirPerm                  = 0o755
+	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
+)
+
+// TODO: Connection templates are temporarily disabled.
+// This constant is not currently in use.
+// const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
 // TODO
 // if csv output is not directory based
@@ -236,7 +243,7 @@ To import this model into Meshery:
 $ mesheryctl model import {modelFolder}
 
 To export this model as OCI image:
-$ mesheryctl model build {modelVersionFolder} -t myregistry/{modelName}:{modelVersion}
+$ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 
@@ -272,7 +279,7 @@ var initModelData = []struct {
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
-			"relationship": initModelTemplatePathRelathionship,
+			"relationship": initModelTemplatePathRelationship,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Creating sample relationships...")
@@ -281,9 +288,7 @@ var initModelData = []struct {
 	{
 		folderPath: "connections",
 		// map file name to template key
-		files: map[string]string{
-			"connection": initModelTemplatePathConnection,
-		},
+		files: nil,
 		beforeHook: func() {
 			utils.Log.Info("Adding sample connections...")
 		},
@@ -373,11 +378,11 @@ func initModelValidateDataOverSchema(schema []byte, data map[string]interface{})
 }
 
 func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
-	// Generic structure to decode JSON
+	// Generic structure to decode Yaml
 	var schemaMap map[string]interface{}
 
-	// Unmarshal JSON schema into a map
-	if err := json.Unmarshal(schema, &schemaMap); err != nil {
+	// Unmarshal Yaml schema into a map
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
 		return "", err
 	}
 

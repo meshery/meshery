@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -36,7 +37,7 @@
       "primaryColor": "#00B39F",
       "secondaryColor": "#00D3A9",
       "shape": "circle",
-      "source_uri": "https://charts.kubesphere.io/test/ks-installer-0.3.1.tgz",
+      "source_uri": "https://charts.kubesphere.io/main/ks-installer-0.3.1.tgz",
       "styleOverrides": "",
       "svgColor": "",
       "svgComplete": "",
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.kubesphere.io/main/ks-installer-0.3.1.tgz"
   },
   "configuration": null,
   "component": {
     "version": "installer.kubesphere.io/v1alpha1",
     "kind": "ClusterConfiguration",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Cluster Configuration\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -110,9 +110,73 @@ components:
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/color/inference-component-color.svg
   whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/white/inference-component-white.svg
   description: 
-components-count: 25
+- name: labeling-job
+  colorIcon: assets/img/integrations/aws-sagemaker-controller/components/labeling-job/icons/color/labeling-job-color.svg
+  whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/labeling-job/icons/white/labeling-job-white.svg
+  description: 
+- name: space
+  colorIcon: assets/img/integrations/aws-sagemaker-controller/components/space/icons/color/space-color.svg
+  whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/space/icons/white/space-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-sagemaker-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+- name: project
+  colorIcon: assets/img/integrations/aws-sagemaker-controller/components/project/icons/color/project-color.svg
+  whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/project/icons/white/project-white.svg
+  description: 
+components-count: 29
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 16
 featureList: [
   "Choice of ML tools",
   "Repeatable and responsible ML workflows",

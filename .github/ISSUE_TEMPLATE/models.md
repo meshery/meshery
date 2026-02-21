@@ -15,7 +15,7 @@ assignees: ''
 
 ---
 
-### General Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### General Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook)
 
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
 
@@ -30,6 +30,7 @@ assignees: ''
  - [Contributing Models](https://docs.meshery.io/project/contributing/contributing-models)
    - [Contributing Components](https://docs.meshery.io/project/contributing/contributing-components)
    - [Contributing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships)
+   - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
 
  <!-- ### Instructions for Policies
  - [Contributing Policies](https://docs.meshery.io/project/contributing/contributing-policies)

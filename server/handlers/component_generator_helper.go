@@ -10,17 +10,17 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 
-	"github.com/layer5io/meshkit/encoding"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
+	"github.com/meshery/meshkit/encoding"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 
-	meshkitFileUtils "github.com/layer5io/meshkit/files"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitFileUtils "github.com/meshery/meshkit/files"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/core/policies"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -171,11 +171,14 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 	mu.Lock()
 	defer mu.Unlock()
 	response.EntityCount.TotalErrCount++
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		response.EntityCount.ErrCompCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		response.EntityCount.ErrRelCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		response.EntityCount.ErrModelCount++
 	}
 }
@@ -183,11 +186,14 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, compCount *int, relCount *int, modelCount *int) {
 	mu.Lock()
 	defer mu.Unlock()
-	if entityType == entity.ComponentDefinition {
+	switch entityType {
+	case entity.ComponentDefinition:
 		*compCount++
-	} else if entityType == entity.RelationshipDefinition {
+
+	case entity.RelationshipDefinition:
 		*relCount++
-	} else if entityType == entity.Model {
+
+	case entity.Model:
 		*modelCount++
 	}
 }
@@ -196,7 +202,7 @@ func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, des
 	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
@@ -352,7 +358,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		WithMetadata(metadata).
 		Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func getFirst42Chars(s string) string {
@@ -384,7 +390,7 @@ func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider,
 		WithSeverity(events.Informational).
 		WithMetadata(metadata).
 		Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func writeMessageString(response *models.RegistryAPIResponse) string {

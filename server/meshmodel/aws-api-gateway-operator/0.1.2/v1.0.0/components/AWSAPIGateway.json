@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -41,8 +42,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#ff9900",
@@ -175,12 +190,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/mintel/helm-charts/releases/download/aws-api-gateway-operator-0.1.2/aws-api-gateway-operator-0.1.2.tgz"
   },
   "configuration": null,
   "component": {
     "version": "mintel.cloud/v1alpha1",
     "kind": "AWSAPIGateway",
     "schema": "{\n \"description\": \"AWSAPIGateway is the Schema for the awsapigateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AWSAPIGatewaySpec defines the desired state of AWSAPIGateway\",\n   \"properties\": {\n    \"api-id\": {\n     \"description\": \"ID of the gateway to modify\",\n     \"type\": \"string\"\n    },\n    \"open-api-yaml\": {\n     \"description\": \"full yaml definition of the OpenAPI spec to apply, including aws extenstions\",\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"description\": \"\\\"rest\\\" or \\\"http\\\"\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"api-id\",\n    \"open-api-yaml\",\n    \"protocol\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AWSAPI Gateway\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

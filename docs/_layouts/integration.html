@@ -53,7 +53,7 @@ layout: default
     {% for design in site.catalog %}
     {% if design.compatibility contains tech %}
     <li class="design-link">
-      <a href="https://cloud.layer5.io/catalog/content/catalog/{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
+      <a href="https://meshery.io/catalog/{{ design.type }}/{{ design.name | slugify }}-{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
     </li>
     {% endif %}
     {% endfor %}

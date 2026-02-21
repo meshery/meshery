@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.RELEASE_NOTES_PAT }}
           ref: 'master'
@@ -43,11 +43,11 @@ jobs:
         run: git pull origin master
 
       - name: Commit artifact to Jekyll folder
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           file_pattern: "docs/_includes/test-report.md"
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated test report in Jekyll"

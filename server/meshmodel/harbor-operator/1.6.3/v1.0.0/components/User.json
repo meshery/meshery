@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4b9b33",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://helm.mittwald.de/charts/harbor-operator-1.6.3.tgz"
   },
   "configuration": null,
   "component": {
     "version": "registries.mittwald.de/v1alpha2",
     "kind": "User",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"comments\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the user is created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"passwordStrength\": {\n     \"description\": \"The effective length of the generated user password\",\n     \"format\": \"int32\",\n     \"maximum\": 128,\n     \"minimum\": 8,\n     \"type\": \"integer\"\n    },\n    \"realname\": {\n     \"type\": \"string\"\n    },\n    \"sysAdmin\": {\n     \"type\": \"boolean\"\n    },\n    \"userSecretRef\": {\n     \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"name\",\n    \"parentInstance\",\n    \"realname\",\n    \"userSecretRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

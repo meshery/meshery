@@ -12,12 +12,12 @@ subcommand: nil
 
 # mesheryctl model
 
-Manage models
+Manage models in the registery
 
 ## Synopsis
 
 Export, generate, import, list, search and view model(s) and detailed informations
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]
@@ -67,6 +67,14 @@ mesheryctl model list
 </div>
 </pre> 
 
+Delete avaialbe model(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model delete [model-id]
+
+</div>
+</pre> 
+
 Search for a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -79,6 +87,29 @@ View a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]
+
+</div>
+</pre> 
+
+Scaffold a folder structure for model creation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model init [model-name]
+
+</div>
+</pre> 
+
+Create an OCI-compliant package from the model files
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model build [model-name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model build [model-name]/[model-version]
 
 </div>
 </pre> 
@@ -105,9 +136,12 @@ mesheryctl model view [model-name]
 
 ## See Also
 
+* [mesheryctl model build](/reference/mesheryctl/model/build)
+* [mesheryctl model delete](/reference/mesheryctl/model/delete)
 * [mesheryctl model export](/reference/mesheryctl/model/export)
 * [mesheryctl model generate](/reference/mesheryctl/model/generate)
 * [mesheryctl model import](/reference/mesheryctl/model/import)
+* [mesheryctl model init](/reference/mesheryctl/model/init)
 * [mesheryctl model list](/reference/mesheryctl/model/list)
 * [mesheryctl model search](/reference/mesheryctl/model/search)
 * [mesheryctl model view](/reference/mesheryctl/model/view)

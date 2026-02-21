@@ -1,0 +1,24 @@
+version: 0.0.5
+name: apache-11.3.5.tgz
+displayName: apache-11.3.5.tgz
+createdAt: "2025-04-23T20:32:08Z"
+description: Apache HTTP Server is an open-source HTTP server. The goal of this project is to provide a secure, efficient and extensible server that provides HTTP services in sync with the current HTTP standards.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a67af210-22af-4115-a788-c64aadcd67ac/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Prometheus metrics\n\nThis chart can be integrated with Prometheus by setting metrics.enabled to true. This will deploy a sidecar container with apache-exporter in all pods and a metrics service, which can be configured under the metrics.service section. This metrics service will have the necessary annotations to be automatically scraped by Prometheus. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a67af210-22af-4115-a788-c64aadcd67ac-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a67af210-22af-4115-a788-c64aadcd67ac-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

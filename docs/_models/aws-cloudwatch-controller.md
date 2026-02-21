@@ -22,9 +22,36 @@ components:
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/color/metric-alarm-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/white/metric-alarm-white.svg
   description: 
-components-count: 3
+- name: metric-stream
+  colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-stream/icons/color/metric-stream-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-stream/icons/white/metric-stream-white.svg
+  description: 
+- name: dashboard
+  colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/dashboard/icons/color/dashboard-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/dashboard/icons/white/dashboard-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 5
 featureList: [
   "Provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, and optimize resource utilization.",
   "Collects monitoring and operational data in the form of logs, metrics, and traces.",

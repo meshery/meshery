@@ -14,17 +14,17 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/walker"
+	meshkitutils "github.com/meshery/meshkit/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/walker"
 	v1core "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -82,6 +82,7 @@ type Service struct {
 	Environment []string `yaml:"environment,omitempty"`
 	Volumes     []string `yaml:"volumes,omitempty"`
 	Ports       []string `yaml:"ports,omitempty"`
+	Command     []string `yaml:"command,omitempty"`
 }
 
 type Volumes struct {
@@ -407,9 +408,10 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
-		if ctx.Channel == "edge" {
+		switch ctx.Channel {
+		case "edge":
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
-		} else if ctx.Channel == "stable" {
+		case "stable":
 			if ctx.Version == "latest" {
 				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
@@ -432,7 +434,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			}
 
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
-		} else {
+		default:
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 

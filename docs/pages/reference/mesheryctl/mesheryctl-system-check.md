@@ -12,7 +12,7 @@ subcommand: check
 
 # mesheryctl system check
 
-Meshery environment check
+Pre-deployment and post-deployment healthchecks for Meshery
 
 ## Synopsis
 
@@ -26,7 +26,7 @@ mesheryctl system check [flags]
 
 ## Examples
 
-Run system checks for both pre and post mesh deployment scenarios on Meshery
+Run all system checks for both pre and post-deployment scenarios
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check
@@ -34,7 +34,7 @@ mesheryctl system check
 </div>
 </pre> 
 
-Run Pre-mesh deployment checks (Docker and Kubernetes)
+Run pre-deployment checks (Docker and Kubernetes)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --preflight
@@ -42,7 +42,23 @@ mesheryctl system check --preflight
 </div>
 </pre> 
 
-Run checks on specific mesh adapter
+Run pre-deployment checks (Docker and Kubernetes)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --pre
+
+</div>
+</pre> 
+
+Run checks for all Meshery adapters
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapters
+
+</div>
+</pre> 
+
+Run checks on a specific Meshery adapter
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio:10000
@@ -50,18 +66,9 @@ mesheryctl system check --adapter meshery-istio:10000
 </div>
 </pre> 
 
-or
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio
-
-</div>
-</pre> 
-
-Run checks for all the mesh adapters
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl system check --adapters
 
 </div>
 </pre> 

@@ -362,13 +362,13 @@ services:
         message: Looks, good did you configured GitHub creds?
         timestamp: "2023-09-24T21:52:36.636Z"
         userid: b9029c89-926f-42cd-bbe7-7c0281ca16e7
-      - avatarUrl: https://layer5.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
+      - avatarUrl: https://meshery.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
         firstName: Xin
         lastName: Huang
         message: Oh, right... no, I didn't connect the GH app...
         timestamp: "2023-09-24T21:53:23.733Z"
         userid: b26fc444-c246-4be8-9863-dfffeb70c41f
-      - avatarUrl: https://layer5.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
+      - avatarUrl: https://meshery.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
         firstName: Xin
         lastName: Huang
         message: |

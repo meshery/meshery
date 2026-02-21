@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/lumenvox/helm-charts/releases/download/voice-biometrics-2.0.1/voice-biometrics-2.0.1.tgz"
   },
   "configuration": null,
   "component": {
     "version": "traefik.containo.us/v1alpha1",
     "kind": "MiddlewareTCP",
     "schema": "{\n \"description\": \"MiddlewareTCP is a specification for a MiddlewareTCP resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec holds the MiddlewareTCP configuration.\",\n   \"properties\": {\n    \"ipWhiteList\": {\n     \"description\": \"TCPIPWhiteList holds the TCP ip white list configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

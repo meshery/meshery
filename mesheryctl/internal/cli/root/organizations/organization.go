@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
@@ -21,13 +21,13 @@ var OrgCmd = &cobra.Command{
 	Use:   "organization",
 	Short: "Interact with registered orgnizations",
 	Long: `Interact with registered organizations to display detailled informations
-Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
 	Example: `
 // Number of  registered orgs
-mesheryctl organizations --count 
+mesheryctl exp organization --count
 
 // List registerd orgs
-mesheryctl organizations list	
+mesheryctl exp organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ = cmd.Flags().GetBool("count")

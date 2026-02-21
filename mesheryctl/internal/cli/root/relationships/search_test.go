@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestSearch_WithoutFlags(t *testing.T) {
@@ -43,14 +43,24 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
+			// Grab console prints with proper cleanup
+			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
+			// Ensure stdout is always restored
+			defer func() {
+				os.Stdout = originalStdout
+			}()
+
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(rescueStdout)
+			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
+
+			// Close write end before reading
+			_ = w.Close()
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -66,10 +76,7 @@ func TestSearch_WithoutFlags(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			w.Close()
 			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			actualResponse := string(out)
 
 			if *update {
@@ -97,7 +104,7 @@ func TestSearch_WithFlags(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Search registered relationships matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
@@ -105,6 +112,7 @@ func TestSearch_WithFlags(t *testing.T) {
 			Fixture:          "search.relationship.api.response.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.matching.result.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 		{
 			Name:             "Search registered relationships no matching result(s) found",
@@ -113,6 +121,7 @@ func TestSearch_WithFlags(t *testing.T) {
 			Fixture:          "search.relationship.api.response.no.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.no.matching.result.golden",
 			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 

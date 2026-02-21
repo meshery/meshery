@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 // UserHandler returns info about the logged in user
@@ -165,7 +165,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 
-	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+	if err := provider.RecordPreferences(req, user.UserId, prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)

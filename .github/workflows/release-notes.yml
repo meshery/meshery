@@ -30,11 +30,11 @@ jobs:
           run: git pull origin master
 
         - name: Commit
-          uses: stefanzweifel/git-auto-commit-action@v5
+          uses: stefanzweifel/git-auto-commit-action@v7
           with:
             file_pattern: docs
             commit_user_name: l5io
-            commit_user_email: ci@layer5.io
+            commit_user_email: ci@meshery.io
             commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
             commit_options: '--signoff'
             commit_message: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'

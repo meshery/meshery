@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://salaboy.github.io/helm/fmtok8s-conference-chart-v0.1.4.tgz"
   },
   "configuration": null,
   "component": {
     "version": "integreatly.org/v1alpha1",
     "kind": "GrafanaNotificationChannel",
     "schema": "{\n \"description\": \"GrafanaNotificationChannel is the Schema for the GrafanaNotificationChannels API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaNotificationChannelSpec defines the desired state of GrafanaNotificationChannel\",\n   \"properties\": {\n    \"json\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"json\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Notification Channel\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

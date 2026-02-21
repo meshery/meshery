@@ -11,19 +11,20 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
+	mutils "github.com/meshery/meshkit/utils"
 )
 
 const (
@@ -154,9 +155,16 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // Helper method to make design evaluation based on the relationship policies.
+// evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
+	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
+
+	// hydrate the design file components from the registry if needed
+	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
+		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
 
@@ -192,19 +200,23 @@ func (h *Handler) EvaluateDesign(
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
 
-		if doesntNeedReeval(evaluationResponse) {
+		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
 			break
 		}
 		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
 			h.log.Info("Evaluation depth exceeded")
-			return lastEvaluationResponse, fmt.Errorf("Evaluation depth exceeded")
+			return lastEvaluationResponse, fmt.Errorf("evaluation depth exceeded")
 		}
 
 	}
 
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
+
+	// dehydrate the design file components to remove unnecessary details
+	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+
 	return lastEvaluationResponse, nil
 }
 
@@ -338,7 +350,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 ) {
 	evalCtx := r.Context()
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -370,7 +382,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	go func() {
 		// Evaluate specified relationship policies
 		// Perform the CPU-intensive work
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 
 		if err != nil {
 			evalErrChan <- err // Send the error
@@ -389,12 +401,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
-		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
+		event := eventBuilder.WithDescription(description).
 			WithMetadata(map[string]interface{}{
-				"trace":        evaluationResponse.Trace,
-				"evaluated_at": *evaluationResponse.Timestamp,
+				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
+				"trace":               evaluationResponse.Trace,
+				"evaluation_response": evaluationResponse,
+				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
 		ec := json.NewEncoder(rw)
@@ -499,8 +514,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -556,7 +574,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }

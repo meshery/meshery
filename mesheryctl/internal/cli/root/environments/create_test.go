@@ -5,7 +5,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 )
 
 func TestCreateEnvironment(t *testing.T) {
@@ -17,15 +18,17 @@ func TestCreateEnvironment(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// Test scenarios for environment creation
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
 			Name:             "Create environment without arguments",
 			Args:             []string{"create"},
 			URL:              "/api/environments",
 			HttpMethod:       "POST",
 			Fixture:          "",
-			ExpectedResponse: "create.environment.without.name.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message")),
 		},
 		{
 			Name:             "Create environment successfully",

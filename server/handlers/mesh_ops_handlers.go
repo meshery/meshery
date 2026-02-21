@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/viper"
 )
 
@@ -163,7 +163,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	prefObj.MeshAdapters = meshAdapters
-	err = provider.RecordPreferences(req, user.UserID, prefObj)
+	err = provider.RecordPreferences(req, user.UserId, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -252,11 +252,14 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	}
 
 	newMeshAdapters := []*models.Adapter{}
-	if aID == 0 {
+	switch aID {
+	case 0:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[1:]...)
-	} else if aID == adaptersLen-1 {
+
+	case adaptersLen - 1:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[:adaptersLen-1]...)
-	} else {
+
+	default:
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[0:aID]...)
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[aID+1:]...)
 	}
@@ -349,7 +352,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
-		Username:    user.UserID,
+		Username:    user.UserId,
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),

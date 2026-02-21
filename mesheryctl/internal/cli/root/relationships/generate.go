@@ -5,8 +5,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkit "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 )
@@ -120,7 +120,7 @@ func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 		utils.Log.Error(err)
 		return nil
 	}
-	defer jsonFile.Close()
+	defer func() { _ = jsonFile.Close() }()
 	_, err = jsonFile.Write(jsonData)
 	if err != nil {
 		utils.Log.Error(err)

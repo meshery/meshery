@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#4b9b33",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://helm.mittwald.de/charts/harbor-operator-1.6.3.tgz"
   },
   "configuration": null,
   "component": {
     "version": "registries.mittwald.de/v1alpha2",
     "kind": "Project",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"memberRequests\": {\n     \"description\": \"Ref to the name of a 'User' resource\",\n     \"items\": {\n      \"properties\": {\n       \"role\": {\n        \"type\": \"string\"\n       },\n       \"user\": {\n        \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       }\n      },\n      \"required\": [\n       \"role\",\n       \"user\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metadata\": {\n     \"properties\": {\n      \"autoScan\": {\n       \"description\": \"Whether to scan images automatically when pushing or not\",\n       \"type\": \"boolean\"\n      },\n      \"enableContentTrust\": {\n       \"description\": \"Whether content trust is enabled or not\\nIf it is, users can not pull unsigned images from this project\",\n       \"type\": \"boolean\"\n      },\n      \"preventVul\": {\n       \"description\": \"Whether to prevent the vulnerable images from running or not.\",\n       \"type\": \"boolean\"\n      },\n      \"public\": {\n       \"description\": \"Public status of the Project\",\n       \"type\": \"boolean\"\n      },\n      \"reuseSysCVEAllowlist\": {\n       \"description\": \"Whether this project reuses the system level CVE allowlist as the allowlist of its own.\\nThe valid values are \\\"true\\\", \\\"false\\\".\\nIf set to \\\"true\\\", the actual allowlist associated with this project, if any, will be ignored.\",\n       \"type\": \"boolean\"\n      },\n      \"severity\": {\n       \"description\": \"If a vulnerability's severity is higher than the severity defined here,\\nimages can't be pulled. Valid values are \\\"none\\\", \\\"low\\\", \\\"medium\\\", \\\"high\\\", \\\"critical\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"public\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the project is created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"proxyCache\": {\n     \"description\": \"ProxyCache defines an optional reference to a registry resource.\\nThe project will be created as a \\\"Proxy Cache\\\" project, if specified.\",\n     \"properties\": {\n      \"registry\": {\n       \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"storageLimit\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"parentInstance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Project\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

@@ -17,6 +17,7 @@ List registered components
 ## Synopsis
 
 List all components registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component list [flags]
@@ -34,15 +35,23 @@ mesheryctl component list
 </div>
 </pre> 
 
-View list of components with specified page number (25 components per page)
+View list of components with specified page number (10 components per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list --page 2
+mesheryctl component list --page [page-number]
 
 </div>
 </pre> 
 
-To view the number of components present in Meshery
+View list of components with specified page number with specified number of components per page
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component list --page [page-number] --pagesize [page-size]
+
+</div>
+</pre> 
+
+Display the number of components present in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component list --count
@@ -54,9 +63,10 @@ mesheryctl component list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Display count only
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of components with --page (default = 1) (default 1)
+  -c, --count          (optional) Display count only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of components with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of components with --pagesize (default = 10) (default 10)
 
 </div>
 </pre>

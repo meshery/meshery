@@ -1,0 +1,24 @@
+version: 0.0.61
+name: terraform_architecture
+displayName: Terraform_Architecture
+createdAt: "2025-10-02T15:28:05Z"
+description: Terraform Architecture
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/60467829-05b2-4ccd-97b9-bb57221d42bc/0.0.61/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This architecture design is created for visual representation and understanding of the Terraform workflow \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: aab8040b-fe49-4f9d-9b15-36a2a0c7fd41
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/60467829-05b2-4ccd-97b9-bb57221d42bc-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/60467829-05b2-4ccd-97b9-bb57221d42bc-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

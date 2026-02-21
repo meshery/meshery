@@ -25,8 +25,10 @@ spec:
             - name: PLAYGROUND
               value: "true"
             - name: DISABLE_OPERATOR
-              value: "true"
-          image: layer5/meshery:playground-v0.6.35
+              value: "false"
+            - name: MESHSYNC_DEFAULT_DEPLOYMENT_MODE
+              value: "operator"
+          image: meshery/meshery:playground-v0.6.35
           imagePullPolicy: Always
           name: meshery
           ports:

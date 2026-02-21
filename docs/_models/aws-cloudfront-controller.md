@@ -50,12 +50,46 @@ components:
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
   description: 
-components-count: 10
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 11
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the FieldExport (parent) component is patched with the configuration as received from Pod (child) component."
-relationship-count: 1
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 11
 featureList: [
   "Global content delivery",
   "Improves website and application performance",

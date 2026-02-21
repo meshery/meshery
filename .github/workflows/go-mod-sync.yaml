@@ -1,3 +1,10 @@
+# Meshery Extension Point
+# ---
+# Purpose: Notify Remote Providers of changes in Golang dependencies
+# Learn more: See https://docs.meshery.io/extensibility
+# Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+# ---
+
 name: Meshery extensions go.mod sync
 on:
   workflow_dispatch:
@@ -13,21 +20,21 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: check out code for meshery
-      uses: actions/checkout@master
+      uses: actions/checkout@v6
       with:
         repository: meshery/meshery
-        token: ${{ secrets.RELEASE_NOTES_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery
     - name: Check out code for meshery-extensions
-      uses: actions/checkout@master
+      uses: actions/checkout@v6
       with:
         repository: layer5labs/meshery-extensions
-        token: ${{ secrets.RELEASE_NOTES_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery-extensions
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.23"
+        go-version: "1.25"
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 
@@ -36,11 +43,11 @@ jobs:
       run: git pull origin master
 
     - name: Commit
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v7
       with:
         repository: meshery-extensions
         commit_user_name: l5io
-        commit_user_email: ci@layer5.io
+        commit_user_email: ci@meshery.io
         commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
         commit_options: '--signoff'
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
@@ -52,14 +59,14 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
       - name: Send email notification on failure
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Go Mod Sync Failed - ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-          to: support@layer5.io
+          to: maintainers@meshery.io
           from: Meshery extensions go.mod sync workflow
           body: |
             The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository.

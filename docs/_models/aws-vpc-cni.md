@@ -7,7 +7,7 @@ permalink: extensibility/integrations/aws-vpc-cni
 docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 
 integrations-category: Cloud Native Network
-integrations-subcategory: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
 registrant: Artifact Hub
 components: 
 - name: eni-config
@@ -20,7 +20,16 @@ components:
   description: 
 components-count: 2
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 3
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use Kanvas&lsquo;s visual designer to explore your App Mesh configuration",

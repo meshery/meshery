@@ -23,6 +23,16 @@ The following is a list of top-level frameworks, libraries, design system used i
 - [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
 - [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
 
+### Build System
+
+Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) for fast builds and optimal performance.
+
+## Schema-Driven UI Development
+
+Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
+
+**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide](https://docs.meshery.io/project/contributing/contributing-ui-schemas) to understand how Meshery's UI components are generated and maintained using schemas.
+
 ## Meshery Server APIs
 
 The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
@@ -41,7 +51,7 @@ Meshery UI is a significant component of the value proposition Meshery offers to
 
 ### User Flows / Wireframing / Mockups
 
-Figma is used as the user flow and UI mockup design tool. The [Meshery UI design file](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) can be viewed by using this [open invitation](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9) for view access. Fill-in a [community member form](https://layer5.io/newcomers) to gain access to additional community resources.
+Figma is used as the user flow and UI mockup design tool. The [Meshery UI design file](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) can be viewed by using this [open invitation](https://www.figma.com/team_invite/redeem/GvB8SudhEOoq3JOvoLaoMs) for view access. Fill-in a [community member form](https://meshery.io/newcomers) to gain access to additional community resources.
 
 ### Design Goals
 
@@ -58,9 +68,9 @@ The designs in this specification should result in enabling:
 {% include alert.html type="info" title="Windows User?" content="See <a href='https://docs.meshery.io/project/contributing/meshery-windows'>Setting up Meshery Development Environment on Windows</a>."
 %}
 
-### Node Version Recommendations
+### Required Node Version
 
-We recommend using Node 20 LTS. Meshery UI's build script supports other Node versions as well, including node16, node17, node18 and node19, but is recommended to use Node 20 LTS.
+Node 20 LTS
 
 ### Linting-UI
 
@@ -172,4 +182,3 @@ Images and icons used in Meshery UI need to be sourced from the [public director
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
 
 {% include code.html code="let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);" %}
-

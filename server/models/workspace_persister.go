@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
@@ -23,10 +23,9 @@ type WorkspacePersister struct {
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
 	return &User{
-		UserID:    "meshery",
+		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
-		AvatarURL: "",
 	}
 }
 
@@ -132,7 +131,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	// Marshal the workspace to JSON
@@ -342,7 +341,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -354,6 +353,14 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 }
 
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+
+	// delete any existing mapping for the design in the workspace
+	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
+
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	}
+
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
 		DesignId:    designID,
 		WorkspaceId: workspaceID,
@@ -393,7 +400,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -404,7 +411,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {

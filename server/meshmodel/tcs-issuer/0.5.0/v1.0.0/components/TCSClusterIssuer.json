@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/tcs-issuer-0.5.0/tcs-issuer-0.5.0.tgz"
   },
   "configuration": null,
   "component": {
     "version": "tcs.intel.com/v1alpha1",
     "kind": "TCSClusterIssuer",
     "schema": "{\n \"description\": \"TCSClusterIssuer is the Schema for the clusterissuers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TCSIssuerSpec defines the desired state of Issuer\",\n   \"properties\": {\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels to set for the sub-objects (QuoteAttestation, Secret etc.,) created for this issuer.\",\n     \"type\": \"object\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName is the name of the secret object to be created by issuer controller to hold ca certificate\",\n     \"type\": \"string\"\n    },\n    \"selfSign\": {\n     \"default\": true,\n     \"description\": \"SelfSignCertificate defines weather to generate a self-signed certificate for this CA issuer. When it set false, the CA is expected to get provisioned by an external key server using QuoteAttestation CRD. Default to True.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"TCS Cluster Issuer\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

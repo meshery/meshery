@@ -1,11 +1,8 @@
 package model
 
 import (
-	"fmt"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -14,7 +11,7 @@ var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered models",
 	Long: `List all registered models by pagingation (25 models per page)
-Documentation for models list can be found at https://docs.meshery.io/reference/mesheryctl/model/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/list`,
 	Example: `
 // List of models
 mesheryctl model list
@@ -33,18 +30,23 @@ mesheryctl model list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
-
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?%s", modelsApiPath, utils.GetPageQueryParameter(cmd, page)))
-
-		if err != nil {
-			return err
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:          modelsApiPath,
+			DataType:         "model",
+			Header:           []string{"ID", "Model", "Category", "Version"},
+			Page:             page,
+			PageSize:         pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		return displayModels(modelsResponse, cmd)
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 	},
 }
 
 func init() {
-	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 0)")
+	listModelCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of models with --pagesize (default = 0)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }

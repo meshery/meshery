@@ -1,0 +1,24 @@
+version: 0.0.1964
+name: traefik-proxy-architecture
+displayName: Traefik Proxy Architecture
+createdAt: "2025-10-08T20:54:58Z"
+description: The architecture shows how Traefik Proxy routes incoming client requests through its routing engine, handling security, traffic management, and observability. It then forwards the traffic to the appropriate backend services like APIs, web servers, or containers.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/971d44b4-3dd5-4a09-b87f-b8fac073c5dc/0.0.1964/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Each component in the architecture is currently grouped; you’ll need to ungroup them before making any design edits. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 898ae1c7-82b5-451e-b244-8675bf1fb8f2
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/971d44b4-3dd5-4a09-b87f-b8fac073c5dc-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/971d44b4-3dd5-4a09-b87f-b8fac073c5dc-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

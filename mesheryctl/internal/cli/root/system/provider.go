@@ -19,8 +19,8 @@ import (
 	"os"
 	"sort"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -30,7 +30,7 @@ import (
 var (
 	showProviderForAllContext bool
 	forceSetProvider          bool
-	MesheryProvider           = "Meshery"
+	MesheryProvider           = "Layer5"
 	NoneProvider              = "None"
 )
 
@@ -316,10 +316,10 @@ mesheryctl system provider switch [provider]
 // resetProviderCmd represents the reset command
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
-	Short: "reset provider to default",
-	Long:  "Reset provider for current context to default (Meshery)",
+	Short: "Clear the configured provider",
+	Long:  "Clear the configured provider for the current context. This allows users to select a provider on the next Meshery start. This clears the enforced provider so that users are presented with the provider selection UI on next start.",
 	Example: `
-// Reset provider to default
+// Clear the configured provider
 mesheryctl system provider reset
 	`,
 	SilenceUsage: true,
@@ -350,7 +350,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		currCtx.Provider = MesheryProvider
+		currCtx.Provider = ""
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)
@@ -360,7 +360,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		log.Infof("Provider reset to Meshery")
+		log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
 		return nil
 	},
 }
@@ -379,7 +379,7 @@ mesheryctl system provider list
 mesheryctl system provider set [provider]
 // To switch provider and redeploy Meshery
 mesheryctl system provider switch [provider]
-// To reset provider to default
+// To clear the configured provider
 mesheryctl system provider reset
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

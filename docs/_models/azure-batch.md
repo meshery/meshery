@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-batch
 docURL: https://docs.meshery.io/extensibility/integrations/azure-batch
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: Uncategorized
+integrations-subcategory: Compute
 registrant: GitHub
 components: 
 - name: batch-account

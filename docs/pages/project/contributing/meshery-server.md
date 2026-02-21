@@ -18,13 +18,13 @@ Once an issue has been addressed, you’ll need to test it as well. Ideally, the
 
 To build and run Meshery server from source:
 
-1. Build the static assets for the UI by running
+1. First, build the static assets for the UI by running
 
 {% capture code_content %}make ui-setup
 make ui-build{% endcapture %}
 {% include code.html code=code_content %}
 
-2. Build & run the server code by running
+2. Next, build & run the server code by running
 
 {% capture code_content %}make server{% endcapture %}
 {% include code.html code=code_content %}
@@ -83,6 +83,40 @@ The server log levels can be configured at runtime by changing the env variable 
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
 
+### Runtime Configuration Environment Variables
+
+Meshery Server supports several runtime configuration environment variables that control various aspects of server behavior:
+
+#### Provider and Extension Configuration
+
+- **`PROVIDER_CAPABILITIES_FILEPATH`**: Specifies a local file path to load provider capabilities from a static JSON file instead of fetching from the remote provider's endpoint. Useful for offline development and testing.
+  - Default: Not set (capabilities fetched from remote provider)
+  - Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
+
+- **`SKIP_DOWNLOAD_EXTENSIONS`**: Controls whether Meshery downloads and refreshes provider extension packages during login and capability refresh operations.
+  - Default: `false` (extensions are downloaded/refreshed)
+  - Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
+  - Use cases: Development environments, pre-packaged deployments, reducing startup time
+
+#### Kubernetes Configuration
+
+- **`KUBECONFIG_FOLDER`**: Specifies the folder path where Meshery should look for Kubernetes configuration files. This allows you to provide a Meshery deployment with a predefined Kubernetes context.
+  - Default: `$HOME/.kube` (or `/home/appuser/.kube` in containerized deployments)
+  - Example: `KUBECONFIG_FOLDER=/home/appuser/.kube`
+  - Use cases: Custom kubeconfig locations, pre-configured Kubernetes contexts, containerized deployments
+  - Note: Meshery looks for a `config` file within this folder (e.g., `/home/appuser/.kube/config`)
+
+#### Other Configuration Variables
+
+- **`SKIP_DOWNLOAD_CONTENT`**: Skips downloading seed content for patterns, filters, and applications.
+  - Default: `false`
+
+- **`SKIP_COMP_GEN`**: Skips component generation during startup.
+  - Default: `false`
+
+- **`PLAYGROUND`**: Enables playground mode for Meshery.
+  - Default: `false`
+
 ### Using custom Meshkit code for Meshery server development
 
 <ol>
@@ -97,7 +131,7 @@ $ git clone https://github.com/meshery/meshkit.git
   <li>
     <p>In your <code>meshery</code> go.mod, update the meshkit package.</p>
     {% capture code_content %}
-github.com/layer5io/meshkit => ../meshkit
+github.com/meshery/meshkit => ../meshkit
     {% endcapture %}
     {% include code.html code=code_content %}
     <p>Remember to remove this go.mod change when creating pull requests.</p>

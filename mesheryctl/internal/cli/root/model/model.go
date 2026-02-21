@@ -17,12 +17,12 @@ package model
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -31,16 +31,16 @@ import (
 
 var (
 	modelsApiPath = "api/meshmodels/models"
-	// Available model subcommads
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
+	// Available model subcommands
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "Manage models",
+	Short: "Manage models in the registery",
 	Long: `Export, generate, import, list, search and view model(s) and detailed informations
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
 // Display number of available models in Meshery
 mesheryctl model --count
@@ -57,11 +57,21 @@ mesheryctl model import -f [Uri]
 // List available model(s)
 mesheryctl model list
 
+// Delete avaialbe model(s)
+mesheryctl model delete [model-id]
+
 // Search for a specific model
 mesheryctl model search [model-name]
 
 // View a specific model
 mesheryctl model view [model-name]
+
+// Scaffold a folder structure for model creation
+mesheryctl model init [model-name]
+
+// Create an OCI-compliant package from the model files
+mesheryctl model build [model-name]
+mesheryctl model build [model-name]/[model-version]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
@@ -88,7 +98,7 @@ mesheryctl model view [model-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -135,4 +145,18 @@ func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Comm
 	}
 
 	return nil
+}
+
+func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
+	rows := [][]string{}
+
+	for _, model := range modelsResponse.Models {
+		modelName := model.Name
+		if modelName == "" {
+			modelName = "N/A"
+		}
+		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
+	}
+
+	return rows, int64(modelsResponse.Count)
 }

@@ -24,12 +24,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	encoding "github.com/layer5io/meshkit/encoding"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	encoding "github.com/meshery/meshkit/encoding"
+	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -70,22 +70,19 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		patternNameOrID := strings.Join(args, " ")
 		design, isID, err := utils.ValidId(mctlCfg.GetBaseMesheryURL(), patternNameOrID, "pattern")
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		if !isID {
 			if design, err = fetchPatternIDByName(baseUrl, design); err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 		}
 
@@ -95,8 +92,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 		}
 
 		if err := exportDesign(baseUrl, design, designType); err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -114,14 +110,14 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", models.ErrDoRequest(err, resp.Request.Method, patternUrl)
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 	var response struct {
 		TotalCount int                     `json:"total_count"`
@@ -131,9 +127,10 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return "", err
 	}
 
-	if response.TotalCount == 0 {
-		return "", ErrDesignNotFound()
-	} else if response.TotalCount == 1 {
+	switch response.TotalCount {
+	case 0:
+		return "", ErrDesignNotFound(patternName)
+	case 1:
 		return response.Patterns[0].ID.String(), nil
 	}
 
@@ -160,7 +157,7 @@ func exportDesign(baseUrl, design, designType string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return models.ErrDoRequest(err, resp.Request.Method, url)
@@ -168,14 +165,14 @@ func exportDesign(baseUrl, design, designType string) error {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return ErrReadFromBody(err)
+		return utils.ErrReadFromBody(err)
 	}
 
 	filename := generateFilename(pattern.Name, design, designType)
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
-	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(outputFilePath), 0o755); err != nil {
 		return models.ErrMakeDir(err, outputFilePath)
 	}
 
@@ -187,7 +184,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, models.ErrDoRequest(err, resp.Request.Method, dataURL)
@@ -195,12 +192,12 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 
 	buf := new(bytes.Buffer)
 	if _, err = buf.ReadFrom(resp.Body); err != nil {
-		return nil, ErrReadFromBody(err)
+		return nil, utils.ErrReadFromBody(err)
 	}
 
 	var pattern models.MesheryPattern
 	if err = encoding.Unmarshal(buf.Bytes(), &pattern); err != nil {
-		return nil, err
+		return nil, utils.ErrUnmarshal(err)
 	}
 
 	return &pattern, nil
@@ -251,7 +248,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", models.ErrDoRequest(err, resp.Request.Method, url)
 	}
@@ -259,7 +256,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	var userProfile models.User
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", ErrReadFromBody(err)
+		return "", utils.ErrReadFromBody(err)
 	}
 
 	if err := encoding.Unmarshal([]byte(body), &userProfile); err != nil {

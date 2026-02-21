@@ -19,8 +19,8 @@ import (
 
 	"errors"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 )
 
@@ -38,9 +38,10 @@ var (
 
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
-	Use:     "registry",
-	Short:   "Model Database",
-	Long:    `Manage the state and contents of Meshery’s internal registry of capabilities.`,
+	Use:   "registry",
+	Short: "Manage the capability registry",
+	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry`,
 	Example: `mesheryctl registry [subcommand]`,
 
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

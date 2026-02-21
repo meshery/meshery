@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -189,5 +204,7 @@
     "version": "storage.kubesphere.io/v1alpha1",
     "kind": "StorageClassCapability",
     "schema": "{\n \"description\": \"StorageClassCapability is the Schema for the storage class capability API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StorageClassCapabilitySpec defines the desired state of StorageClassCapability\",\n   \"properties\": {\n    \"features\": {\n     \"description\": \"CapabilityFeatures describe storage features\",\n     \"properties\": {\n      \"snapshot\": {\n       \"description\": \"SnapshotFeature describe snapshot features\",\n       \"properties\": {\n        \"create\": {\n         \"type\": \"boolean\"\n        },\n        \"list\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"create\",\n        \"list\"\n       ],\n       \"type\": \"object\"\n      },\n      \"topology\": {\n       \"type\": \"boolean\"\n      },\n      \"volume\": {\n       \"description\": \"VolumeFeature describe volume features\",\n       \"properties\": {\n        \"attach\": {\n         \"type\": \"boolean\"\n        },\n        \"clone\": {\n         \"type\": \"boolean\"\n        },\n        \"create\": {\n         \"type\": \"boolean\"\n        },\n        \"expandMode\": {\n         \"type\": \"string\"\n        },\n        \"list\": {\n         \"type\": \"boolean\"\n        },\n        \"stats\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"attach\",\n        \"clone\",\n        \"create\",\n        \"expandMode\",\n        \"list\",\n        \"stats\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"snapshot\",\n      \"topology\",\n      \"volume\"\n     ],\n     \"type\": \"object\"\n    },\n    \"provisioner\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"features\",\n    \"provisioner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Storage Class Capability\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

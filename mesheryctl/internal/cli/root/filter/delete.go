@@ -15,11 +15,10 @@
 package filter
 
 import (
-	"fmt"
+	"errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -35,14 +34,16 @@ mesheryctl filter delete [filter-name | ID]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// for formatting errors
+		subCmdUsed := cmd.Use
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl filter delete --help' to display usage guide\n"))
+			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 		}
 
 		var filterID string
@@ -52,15 +53,13 @@ mesheryctl filter delete [filter-name | ID]
 
 		filterID, isValidID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 		if err != nil {
-			utils.Log.Error(ErrFilterNameOrID(err))
-			return nil
+			return utils.ErrInvalidNameOrID(err)
 		}
 
 		if !isValidID {
 			filterName, filterID, isValidName, err = utils.ValidName(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
-				utils.Log.Error(ErrFilterNameOrID(err))
-				return nil
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -75,12 +74,12 @@ mesheryctl filter delete [filter-name | ID]
 				filter = filterName
 			}
 			if err != nil {
-				return errors.Wrap(err, utils.FilterDeleteError(fmt.Sprintf("failed to delete filter %s", filter)))
+				return ErrDeleteFilter(err, filter, subCmdUsed)
 			}
 			utils.Log.Info("Filter ", filter, " deleted")
 			return nil
 		}
 
-		return errors.New(utils.FilterDeleteError(fmt.Sprintf("filter with name or ID having prefix %s does not exist", args[0])))
+		return ErrFilterNotFound(args[0], subCmdUsed)
 	},
 }

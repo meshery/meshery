@@ -8,8 +8,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
+	"github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -56,68 +57,83 @@ func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interfa
 	return result
 }
 
+func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSchema bool, stripInstanceDetails bool) (*component.ComponentDefinition, error) {
+
+	var componentDef component.ComponentDefinition
+	err := MapToStruct(resource.ComponentMetadata, &componentDef)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to map component metadata: %w", err)
+	}
+
+	componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
+
+	var spec interface{}
+	if resource.Spec != nil {
+		spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+	}
+
+	labels := map[string]string{}
+	annotations := map[string]string{}
+
+	if resource.KubernetesResourceMeta.Labels != nil {
+		for _, label := range resource.KubernetesResourceMeta.Labels {
+			labels[label.Key] = label.Value
+		}
+	}
+
+	if resource.KubernetesResourceMeta.Annotations != nil {
+		for _, annotation := range resource.KubernetesResourceMeta.Annotations {
+			annotations[annotation.Key] = annotation.Value
+		}
+	}
+
+	metadata := map[string]interface{}{
+		"labels":      labels,
+		"annotations": annotations,
+		"name":        resource.KubernetesResourceMeta.Name,
+	}
+
+	// only set namespace if it is not empty otherwise evaluator creates empty namespace
+	if resource.KubernetesResourceMeta.Namespace != "" {
+		metadata["namespace"] = resource.KubernetesResourceMeta.Namespace
+	}
+
+	componentDef.Configuration = map[string]interface{}{
+		"metadata": metadata,
+		"spec":     spec,
+		"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
+	}
+
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+
+	componentDef.Metadata.AdditionalProperties["resourceId"] = resource.ID
+
+	if !stripInstanceDetails {
+		componentDef.Metadata.AdditionalProperties["instanceDetails"] = resource
+	}
+
+	if stripSchema {
+		componentDef.Component.Schema = ""
+	}
+
+	return &componentDef, nil
+}
+
 // ConvertToPatternFile converts a list of Kubernetes resources to a PatternFile.
 func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool) pattern.PatternFile {
 	components := []*component.ComponentDefinition{}
 
 	for _, resource := range resources {
-		var componentDef component.ComponentDefinition
-		err := MapToStruct(resource.ComponentMetadata, &componentDef)
-
-		if err != nil {
-			continue
+		componentDef, err := KubernetesResourceToComponentDef(resource, stripSchema, true)
+		if err != nil || componentDef == nil {
+			continue // skip this resource if there's an error
 		}
 
-		componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
-		componentDef.DisplayName = resource.KubernetesResourceMeta.Name
-
-		var spec interface{}
-		if resource.Spec != nil {
-			spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
-		}
-
-		labels := map[string]string{}
-		annotations := map[string]string{}
-
-		if resource.KubernetesResourceMeta.Labels != nil {
-			for _, label := range resource.KubernetesResourceMeta.Labels {
-				labels[label.Key] = label.Value
-			}
-		}
-
-		if resource.KubernetesResourceMeta.Annotations != nil {
-			for _, annotation := range resource.KubernetesResourceMeta.Annotations {
-				annotations[annotation.Key] = annotation.Value
-			}
-		}
-
-		metadata := map[string]interface{}{
-			"labels":      labels,
-			"annotations": annotations,
-			"name":        resource.KubernetesResourceMeta.Name,
-		}
-
-		// only set namespace if it is not empty otherwise evaluator creates empty namespace
-		if resource.KubernetesResourceMeta.Namespace != "" {
-			metadata["namespace"] = resource.KubernetesResourceMeta.Namespace
-		}
-
-		componentDef.Configuration = map[string]interface{}{
-			"metadata": metadata,
-			"spec":     spec,
-			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
-		}
-
-		if componentDef.Metadata.AdditionalProperties == nil {
-			componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
-		}
-
-		componentDef.Metadata.AdditionalProperties["instanceDetails"] = resource
-		if stripSchema {
-			componentDef.Component.Schema = ""
-		}
-
-		components = append(components, &componentDef)
+		components = append(components, componentDef)
 	}
 
 	var emptyUUID uuid.UUID
@@ -344,20 +360,37 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	if asDesign {
 		rawDesign := ConvertToPatternFile(resources, true) // strip schema
-		resources = []model.KubernetesResource{}           // clear resources to save memory
+
+		rawDesign.Preferences = &pattern.DesignPreferences{
+			Layers: map[string]interface{}{
+				"relationships": map[string]interface{}{
+					"hierarchical-sibling-matchlabels": false,
+				},
+			},
+		}
+
+		resources = []model.KubernetesResource{} // clear resources to save memory
 		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
 		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
 			Design: rawDesign,
-		})
+		}, 1)
 
 		if error != nil {
 			design = rawDesign
-			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
+			h.log.Error(fmt.Errorf("error evaluating design: %v", error))
 		} else {
 			design = evalResponse.Design // use the evaluated design
 		}
 
 	}
+
+	// Extra Optimization ( need to confirm if its worth doing this) clean up components.configuration ( remove data and spec to reduce payload )
+	// for _, comp := range design.Components {
+	// 	comp.Configuration["data"] = map[string]interface{}{}
+	// 	comp.Configuration["spec"] = map[string]interface{}{}
+	// }
+
+	patterns.DehydratePattern(&design)
 
 	response := &models.MeshSyncResourcesAPIResponse{
 		Page:       page,
@@ -367,9 +400,60 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		Design:     design,
 	}
 
+	rw.Header().Set("Content-Type", "application/json")
+
 	if err := enc.Encode(response); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+// swagger:route GET /api/system/meshsync/resources/{id} GetMeshSyncResourceByID idGetMeshSyncResourceByID
+// Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
+// responses:
+// 200: meshsyncResourceByIDResponseWrapper
+func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	resourceID := mux.Vars(r)["id"]
+
+	var resource model.KubernetesResource
+
+	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		// Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+		Preload("KubernetesResourceMeta").
+		Preload("Spec").
+		Preload("Status").
+		Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel).
+		Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation).
+		Where("kubernetes_resources.id = ?", resourceID)
+
+	err := query.First(&resource).Error
+
+	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	componentDef, err := KubernetesResourceToComponentDef(resource, true, false)
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := enc.Encode(componentDef); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -447,7 +531,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
-		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
 		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -459,8 +543,11 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 

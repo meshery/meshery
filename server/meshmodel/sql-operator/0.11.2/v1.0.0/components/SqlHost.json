@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/stenic/sql-operator/releases/download/sql-operator-0.11.2/sql-operator-0.11.2.tgz"
   },
   "configuration": null,
   "component": {
     "version": "stenic.io/v1alpha1",
     "kind": "SqlHost",
     "schema": "{\n \"description\": \"SqlHost is the Schema for the sqlhosts API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlHostSpec defines the desired state of SqlHost\",\n   \"properties\": {\n    \"dsn\": {\n     \"description\": \"Endpoint to manage\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"Engine of the external endpoint (like Mysql)\",\n     \"enum\": [\n      \"Mysql\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dsn\",\n    \"engine\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Host\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

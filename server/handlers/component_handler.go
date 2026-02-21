@@ -16,31 +16,31 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
 
-	// "github.com/layer5io/meshkit/errors"
-	// "github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/events"
+	// "github.com/meshery/meshkit/errors"
+	// "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"gorm.io/gorm"
 )
 
 /**Meshmodel endpoints **/
@@ -111,8 +111,11 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -183,8 +186,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -260,8 +266,11 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -334,8 +343,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -387,8 +399,11 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -441,8 +456,11 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -498,7 +516,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Annotations:  returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -515,8 +533,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -573,7 +594,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -590,8 +611,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -647,7 +671,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 	})
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -664,8 +688,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -722,7 +749,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Annotations: returnAnnotationComp,
 	})
 
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -739,8 +766,11 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -795,7 +825,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -812,8 +842,11 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -869,7 +902,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -886,8 +919,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -940,7 +976,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 	if limit == 0 {
@@ -957,8 +993,11 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -982,6 +1021,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?id={id}``` If id is non empty then only the component with the given id is returned
 //
 // ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
@@ -1010,7 +1051,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := prettifyCompDefSchema(entities)
+	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
 
@@ -1028,8 +1069,11 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1130,8 +1174,11 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1147,7 +1194,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // request body should be of struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
 		ID          string `json:"id"`
@@ -1168,7 +1215,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(_event)
+		_ = provider.PersistEvent(*_event, nil)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1177,25 +1224,27 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+// processComponentDefinitions processes a list of entities and extracts component definitions,
+// it also sets the ModelReference field for each component definition.
+func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
-			m := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
-			m = core.Format.Prettify(m, true)
-			b, _ := json.Marshal(m)
-			comp.Component.Schema = string(b)
+			if comp.Model != nil {
+				comp.ModelReference = comp.Model.ToReference()
+			}
+
 			comps = append(comps, *comp)
 		}
+
 	}
 	return comps
 }
@@ -1218,7 +1267,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	userID := uuid.FromStringOrNil(user.ID)
+	userID := user.ID
 	var message string
 
 	//Here the codes handles to decode and store the data from the payload
@@ -1650,7 +1699,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	for _, comp := range components {
 		_ = comp.ReplaceSVGData("../../")
-		comp.Model = *model
+		comp.Model = model
 		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
@@ -1658,7 +1707,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	}
 	for _, rel := range relationships {
-		rel.Model = *model
+		rel.Model = model.ToReference()
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
@@ -1723,8 +1772,11 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	_, err = rw.Write(byt)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -1758,4 +1810,83 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		return nil
 	}
 	return meshkitutils.ErrInvalidSchemaVersion
+}
+
+// swagger:route DELETE /api/meshmodels/models/{id} MeshmodelAPI idDeleteModel
+// Handle DELETE request for a model by ID
+//
+// Deletes a model and its associated registry entries from the database.
+// responses:
+//
+//	204: noContentWrapper
+func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	modelID := mux.Vars(r)["id"]
+	modelUUID, err := uuid.FromString(modelID)
+	if err != nil {
+		http.Error(rw, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
+		var modelDef _model.ModelDefinition
+		if err := tx.First(&modelDef, "id = ?", modelUUID).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for components belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+			entity.ComponentDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for relationships belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+			entity.RelationshipDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for policies belonging to this model
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
+			entity.PolicyDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the model's own registry entry
+		if err := tx.Where("entity = ? AND type = ?", modelUUID, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete components, relationships, and policies
+		if err := tx.Where("model_id = ?", modelUUID).Delete(&component.ComponentDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the model itself
+		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+	})
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			http.Error(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
+			return
+		}
+		mesheryErr := models.ErrDBDelete(err, "")
+		h.log.Error(mesheryErr)
+		http.Error(rw, mesheryErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusNoContent)
 }

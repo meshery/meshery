@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -41,7 +41,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if tokenPath == "" { // token was not passed with the flag
 		tokenPath, err = GetCurrentAuthToken()
 		if err != nil {
-			return nil, err
+			return nil, ErrAttachAuthToken(err)
 		}
 		// set TokenFlag value equals tokenPath
 		TokenFlag = tokenPath
@@ -51,8 +51,6 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	if err != nil || !exist {
 		return nil, ErrAttachAuthToken(err)
 	}
-
-	log.Debug("token path is" + tokenPath)
 
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
@@ -86,9 +84,23 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrUnauthenticated()
 	}
 
-	// failsafe for bad api call
-	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+	// failsafe for data not found on the server
+	if resp.StatusCode == http.StatusNotFound {
 		bodyBytes, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+	}
+
+	// failsafe for bad api call
+	isNotSuccess := resp.StatusCode != http.StatusOK &&
+		resp.StatusCode != http.StatusCreated &&
+		resp.StatusCode != http.StatusNoContent
+	if isNotSuccess {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
@@ -176,7 +188,6 @@ func UpdateAuthDetails(filepath string) error {
 		return ErrLoadConfig(err)
 	}
 
-	// TODO: get this from the global config
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request: ")
@@ -328,11 +339,11 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	srv, port, err := CreateTempAuthServer(func(rw http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
 		if token == "" {
-			fmt.Fprintf(rw, "token not found")
+			_, _ = fmt.Fprintf(rw, "token not found")
 			return
 		}
 
-		fmt.Fprint(rw, "you have logged in, you can close this window now")
+		_, _ = fmt.Fprint(rw, "you have logged in, you can close this window now")
 		tokenChan <- token
 	})
 	if err != nil {
@@ -353,8 +364,12 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	// Pause until we get the response on the channel
 	token := <-tokenChan
 
-	// Shut down the server
-	if err := srv.Shutdown(context.TODO()); err != nil {
+	// Add timeout context for server shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Shut down the server with timeout
+	if err := srv.Shutdown(ctx); err != nil {
 		return token, err
 	}
 
@@ -447,7 +462,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	return io.ReadAll(resp.Body)
 }
@@ -460,6 +475,6 @@ func IsServerRunning(serverAddr string) error {
 		// Connection failed, server is not running
 		return errors.WithMessage(err, "Meshery server is not reachable")
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	return nil
 }

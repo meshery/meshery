@@ -40,7 +40,28 @@ components:
   description: 
 components-count: 7
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 7
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

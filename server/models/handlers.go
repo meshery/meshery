@@ -5,8 +5,8 @@ import (
 
 	"time"
 
-	"github.com/layer5io/meshery/server/models/meshmodel"
-	"github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/models/meshmodel"
+	"github.com/meshery/meshkit/utils/events"
 )
 
 // HandlerInterface defines the methods a Handler should define
@@ -201,9 +201,7 @@ type HandlerInterface interface {
 	SaveConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnections(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnectionsByKind(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetConnectionsStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnectionByID(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -220,8 +218,11 @@ type HandlerInterface interface {
 	GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *Preference, _ *User, provider Provider)
 	GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	DeleteModel(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetOrganizations(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -235,7 +236,7 @@ type HandlerInterface interface {
 	RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }

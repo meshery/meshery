@@ -1,5 +1,8 @@
 name: Meshery Integrations Updater
 
+# Extension Point. Add your website repo here.
+# See http://docs.meshery.io/extensibility/providers
+
 on:
   push:
     branches:
@@ -25,27 +28,29 @@ jobs:
         uses: actions/checkout@master
         with:
           path: meshery
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-
+          token: ${{ secrets.MESHERY_CI }}
+      
+      # Extension Point. Add your website repo here.
+      # See http://docs.meshery.io/extensibility/providers
       - name: Checkout Layer5.io repo
         uses: actions/checkout@master
         with:
           repository: layer5io/layer5
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: layer5
 
       - name: Checkout Meshery.io repo
         uses: actions/checkout@master
         with:
           repository: meshery/meshery.io
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: meshery.io
 
       - name: Checkout cloud repo
         uses: actions/checkout@master
         with:
           repository: layer5io/meshery-cloud
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: meshery-cloud
 
       - name: Build mesheryctl
@@ -56,16 +61,60 @@ jobs:
         working-directory: ./meshery/mesheryctl
         run: ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../../meshery.io/integrations ../meshery.io/assets/images/integration -o js
 
+      - name: Clean paths in data.js
+        working-directory: ./meshery.io/integrations
+        run: |
+          sed -i 's|"meshery\.io/|"/|g' data.js
+
+      - name: Build and inject OCI files to custom models in catalog
+        working-directory: ./meshery/mesheryctl
+        run: |
+          set -euo pipefail
+          mkdir -p ../../meshery.io/assets/modelsFiles
+          
+          declare -A PRESET
+          if models_json=$(./mesheryctl model list --json 2>/dev/null); then
+            while read -r n; do PRESET["$n"]=1; done < <(echo "$models_json" | jq -r '.[].name' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+          fi
+          
+          PAGES_DIR="../../meshery.io/collections/_models"
+          shopt -s nullglob
+          for page in "$PAGES_DIR"/*/*.md; do
+            dir="$(dirname "$page")"
+            slug="$(basename "$dir")"
+            
+            if [[ -n "${PRESET[$slug]:-}" ]]; then
+              echo "Skipping preexisting model: $slug"
+              continue
+            fi
+            
+            if [[ -f "../../meshery.io/assets/modelsFiles/${slug}.tar" ]]; then
+              echo "OCI file already exists for custom model: $slug"
+              continue
+            fi
+            
+            model_name=$(grep -E '^name:' "$page" | head -1 | sed 's/^name:[[:space:]]*//' | tr -d '"' || echo "")
+            if [[ -z "$model_name" ]]; then
+              echo "WARN: Could not extract model name from $page"
+              continue
+            fi
+            
+            echo "Building OCI for custom model: $model_name (slug: $slug)"
+            cd ../../meshery.io/assets/modelsFiles
+            ../../../meshery/mesheryctl model build "$model_name" || true
+            cd ../../../meshery/mesheryctl
+          done
+          
       - name: Pull latest changes from Meshery.io repo
         working-directory: ./meshery.io
         run: git pull origin master
 
       - name: Commit changes to Meshery.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery.io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -80,11 +129,11 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Layer5.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./layer5
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -99,11 +148,11 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Meshery repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -111,18 +160,18 @@ jobs:
 
       - name: Publish to Meshery Cloud
         working-directory: ./meshery/mesheryctl
-        run: ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery-cloud/meshmodels/models ../meshery-cloud/ui/public/img/meshmodels
+        run: ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery-cloud/server/meshmodels/models ../meshery-cloud/ui/public/img/meshmodels
 
       - name: Pull latest changes from Meshery Cloud repo
         working-directory: ./meshery-cloud
         run: git pull origin master
 
       - name: Commit changes to Cloud repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
           repository: ./meshery-cloud
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "Models Updated"
@@ -130,7 +179,7 @@ jobs:
 
       - name: Send Email on Model Publish Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
           server_port: 465

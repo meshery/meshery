@@ -12,11 +12,12 @@ subcommand: nil
 
 # mesheryctl component
 
-Manage components
+Manage Meshery components
 
 ## Synopsis
 
 List, search and view component(s) and detailed informations
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component [flags]

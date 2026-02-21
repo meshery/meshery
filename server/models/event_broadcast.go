@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/sirupsen/logrus"
 )
 

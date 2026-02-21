@@ -11,26 +11,28 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/patterns"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
-	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 
-	"github.com/layer5io/meshery/server/models/pattern/stages"
-	"github.com/layer5io/meshkit/logger"
-	events "github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
-	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/models/pattern/stages"
+	"github.com/meshery/meshkit/logger"
+	events "github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
+	meshkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	patternHelpers "github.com/meshery/meshkit/models/patterns"
 )
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
@@ -55,8 +57,8 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := uuid.FromStringOrNil(user.ID)
-	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	userID := user.ID
+	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
@@ -99,7 +101,7 @@ func (h *Handler) PatternFileHandler(
 	if err != nil {
 		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -115,7 +117,7 @@ func (h *Handler) PatternFileHandler(
 		}, eventBuilder)
 
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		if err != nil {
@@ -131,6 +133,11 @@ func (h *Handler) PatternFileHandler(
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// hydrate pattern before processing to fill in any missing details
+	if errs := patternHelpers.HydratePattern(&patternFile, h.registryManager); errs != nil {
+		h.log.Warnf("failed to hydrate pattern: %v", errs)
 	}
 
 	if patternID == uuid.Nil {
@@ -155,7 +162,7 @@ func (h *Handler) PatternFileHandler(
 		Provider:               provider,
 		Pattern:                patternFile,
 		PrefObj:                prefObj,
-		UserID:                 user.ID,
+		UserID:                 user.ID.String(),
 		IsDelete:               isDelete,
 		Validate:               validate,
 		DryRun:                 isDryRun,
@@ -177,7 +184,7 @@ func (h *Handler) PatternFileHandler(
 		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
@@ -204,13 +211,10 @@ func (h *Handler) PatternFileHandler(
 		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)
-		err = provider.PublishEventToProvider(token, *event)
-		if err != nil {
-			h.log.Warn(ErrPersistEventToRemoteProvider(err))
-		}
+
 	}()
 
 	ec := json.NewEncoder(rw)
@@ -229,7 +233,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 	// Get the kubehandler from the context
 	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), opts.Pattern.Name)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("meshery server failed to interact with the Kubernetes cluster due to the cluster not being available"), opts.Pattern.Name)
 	}
 
 	var ctxToconfig = make(map[string]string)

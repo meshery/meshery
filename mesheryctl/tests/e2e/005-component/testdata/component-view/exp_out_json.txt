@@ -1,0 +1,76 @@
+{
+  "id": "5cb01c11-c87f-4c09-bef5-a5964a84bbdf",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "component_cli-e2e-test",
+  "description": "The KubeCon + CloudNativeCon NA 2024 logo ",
+  "format": "JSON",
+  "model": {
+    "id": "c3b926f6-974d-233e-4d90-ca2fcce35b6b",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "model_cli-e2e-test",
+    "displayName": "model cli e2e test",
+    "description": "Meshery ContribFest",
+    "status": "enabled",
+    "registrant": {
+      "id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+      "name": "meshery",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "meshery",
+      "status": "registered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+    },
+    "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+    "category": {
+      "id": "a3d5edbd-3678-d3f8-6a1e-e777a4efb24e",
+      "name": "Platform"
+    },
+    "subCategory": "Containers",
+    "metadata": {
+      "isAnnotation": true,
+      "primaryColor": "#00b39f",
+      "secondaryColor": "#FFFFFF",
+      "shape": "circle",
+      "styleOverrides": "",
+      "svgColor": "ui/public/static/img/meshmodels/model_cli-e2e-test/color/model_cli-e2e-test-color.svg",
+      "svgComplete": "",
+      "svgWhite": "ui/public/static/img/meshmodels/model_cli-e2e-test/white/model_cli-e2e-test-white.svg"
+    },
+    "model": {
+      "version": "0.7.2"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "background-opacity": 0,
+    "primaryColor": "#00b39f",
+    "secondaryColor": "#FFFFFF",
+    "shape": "circle",
+    "svgColor": "ui/public/static/img/meshmodels/model_cli-e2e-test/color/conference logo-color.svg",
+    "svgComplete": "",
+    "svgWhite": "ui/public/static/img/meshmodels/model_cli-e2e-test/white/conference logo-white.svg"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "hasInvalidSchema": true,
+    "instanceDetails": null,
+    "isAnnotation": true,
+    "isNamespaced": false,
+    "published": false
+  },
+  "configuration": null,
+  "component": {
+    "version": "",
+    "kind": "Conference Logo",
+    "schema": "{}"
+  }
+}

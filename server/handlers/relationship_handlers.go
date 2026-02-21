@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 
@@ -71,8 +71,11 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 
@@ -158,8 +161,11 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
 

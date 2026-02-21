@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 )
 
 // UserCapabilitiesPersister assists with persisting user capabilities in the store

@@ -5,19 +5,68 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	mErrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 )
 
 // Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
 func Fetch[T any](url string) (*T, error) {
-	return makeRequest[T](url, http.MethodGet, nil)
+	resp, err := makeRequest(url, http.MethodGet, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return generateDataFromBodyResponse[T](resp)
+}
+
+func FetchData(url string) ([]byte, error) {
+	resp, err := makeRequest(url, http.MethodGet, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+
+	return data, nil
+}
+
+func Delete(url string) (*http.Response, error) {
+	return makeRequest(url, http.MethodDelete, nil, nil)
+}
+
+// Add sends a POST request to the given URL path with the provided body and optional headers.
+// headers may be nil. Header keys/values will be added to the http.Request before dispatch.
+func Add(url string, body io.Reader, headers map[string]string) (*http.Response, error) {
+	return makeRequest(url, http.MethodPost, body, headers)
+}
+
+func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
+	// defers the closing of the response body after its use, ensuring that the resources are properly released.
+	defer func() { _ = response.Body.Close() }()
+
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var apiResult T
+	err = json.Unmarshal(data, &apiResult)
+	if err != nil {
+		return nil, err
+	}
+
+	return &apiResult, nil
 }
 
 // Send a Http request to meshery server from mesheryctl cli
-func makeRequest[T any](urlPath string, httpMethod string, body io.Reader) (*T, error) {
+func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[string]string) (*http.Response, error) {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return nil, utils.ErrLoadConfig(err)
@@ -30,24 +79,36 @@ func makeRequest[T any](urlPath string, httpMethod string, body io.Reader) (*T, 
 		return nil, err
 	}
 
+	// Add any provided headers to the request. This is important for callers
+	// that construct bodies externally (e.g., multipart form) and need to
+	// preserve Content-Type or other headers.
+	for k, v := range headers {
+		if http.CanonicalHeaderKey(k) == "Content-Type" {
+			// Ensure we set Content-Type directly (replace any existing)
+			req.Header.Set(k, v)
+		} else {
+			req.Header.Add(k, v)
+		}
+	}
+
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
+		if meshkitErr, ok := err.(*mErrors.Error); ok {
+			if meshkitErr.Code == utils.ErrFailRequestCode {
+				endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
+				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
+				errRemediation := mErrors.GetRemedy(failedReqErr)
+				return nil, utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
+			}
+		}
 		return nil, err
 	}
 
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
-	defer resp.Body.Close()
+	return resp, nil
+}
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var apiResponse T
-	err = json.Unmarshal(data, &apiResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	return &apiResponse, nil
+func generateErrorReferenceDetails(referenceCodeName, code string) string {
+	codeNumber := strings.Split(code, "-")[1]
+	return fmt.Sprintf("\nFor additional details see https://docs.meshery.io/reference/error-codes#%s-%s", referenceCodeName, codeNumber)
 }

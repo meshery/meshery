@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.crossplane.io/master/oam-kubernetes-runtime-legacy-0.4.0-rc1.18.g64a2994.tgz"
   },
   "configuration": null,
   "component": {
     "version": "core.oam.dev/v1alpha2",
     "kind": "ScopeDefinition",
     "schema": "{\n \"description\": \"A ScopeDefinition registers a kind of Kubernetes custom resource as a valid OAM scope kind by referencing its CustomResourceDefinition. The CRD is used to validate the schema of the scope when it is embedded in an OAM ApplicationConfiguration.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A ScopeDefinitionSpec defines the desired state of a ScopeDefinition.\",\n   \"properties\": {\n    \"allowComponentOverlap\": {\n     \"description\": \"AllowComponentOverlap specifies whether an OAM component may exist in multiple instances of this kind of scope.\",\n     \"type\": \"boolean\"\n    },\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this scope kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"type\": \"object\"\n    },\n    \"workloadRefsPath\": {\n     \"description\": \"WorkloadRefsPath indicates if/where a scope accepts workloadRef objects\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allowComponentOverlap\",\n    \"definitionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Scope Definition\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

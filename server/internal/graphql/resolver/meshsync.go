@@ -2,16 +2,20 @@ package resolver
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -35,7 +39,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		if actions.HardReset == "true" {
 			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-			if err != nil && os.IsNotExist(err) {
+			if err != nil && !os.IsExist(err) {
 				return "", err
 			}
 
@@ -123,13 +127,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
-			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
 				r.Log.Error(ErrEmptyCurrentK8sContext)
 				return "", ErrEmptyCurrentK8sContext
 			}
 			var sid string
 			for _, k8ctx := range k8sctxs {
+				if k8ctx == nil {
+					continue
+				}
 				if k8ctx.ID == k8scontextID && k8ctx.KubernetesServerID != nil {
 					sid = k8ctx.KubernetesServerID.String()
 					break
@@ -167,15 +174,76 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		if r.BrokerConn.Info() != broker.NotConnected {
-			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-				Request: &broker.RequestObject{
-					Entity: broker.ReSyncDiscoveryEntity,
-				},
-			})
-			if err != nil {
-				return "", ErrPublishBroker(err)
+		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+		if !ok {
+			return "", ErrResyncCluster(
+				fmt.Errorf("resyncCluster: resync: not able to take handler from context"),
+			)
+		}
+
+		instanceTracker := handler.ConnectionToStateMachineInstanceTracker
+		if instanceTracker == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf("resyncCluster: resync: instance tracker is nil in handler instance"),
+			)
+		}
+
+		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
+		if !ok || len(k8sCtxs) == 0 {
+			return "", ErrResyncCluster(
+				fmt.Errorf("resyncCluster: resync: %w", ErrEmptyCurrentK8sContext),
+			)
+		}
+
+		var k8sCtx *models.K8sContext
+		for _, v := range k8sCtxs {
+			if v != nil && v.ID == k8scontextID {
+				k8sCtx = v
+				break
 			}
+		}
+
+		if k8sCtx == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"resyncCluster: resync: no k8s context found in golang context for k8scontextID %s",
+					k8scontextID,
+				),
+			)
+		}
+
+		if k8sCtx.ConnectionID == "" {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"resyncCluster: resync: k8sCtx.ConnectionID is empty for k8scontextID %s",
+					k8scontextID,
+				),
+			)
+		}
+		connectionID := k8sCtx.ConnectionID
+
+		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(connectionID))
+		if !ok || machine == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"resyncCluster: resync: instance tracker does not contain machine for k8scontextID %s and connectionID %s",
+					k8scontextID,
+					connectionID,
+				),
+			)
+		}
+
+		if err := mhelpers.ResyncResources(ctx, machine); err != nil {
+			return "", ErrResyncCluster(
+				errors.Join(
+					fmt.Errorf(
+						"resyncCluster: resync: error resyncing resources for k8scontextID %s and connectionID %s",
+						k8scontextID,
+						connectionID,
+					),
+					err,
+				),
+			)
 		}
 	}
 	return model.StatusProcessing, nil

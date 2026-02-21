@@ -20,13 +20,13 @@ play-prod-run:
 	-e PLAYGROUND=true \
 	-e MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token \ 
 	-p $(PROD_PLAYGROUND_PORT):8080 \
-	layer5/meshery:playground-latest ./meshery
+	meshery/meshery:playground-latest ./meshery
 	
 # docker run -d --name meshery \
-# 	-e PROVIDER_BASE_URLS=https://cloud.layer5.io \
+# 	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER) \
 # 	-e PLAYGROUND=true \
 # 	-p 80:8080 \
-# 	layer5/meshery:playground-latest ./meshery
+# 	meshery/meshery:playground-latest ./meshery
 
 play-prod-stop:
 	docker rm -f meshery

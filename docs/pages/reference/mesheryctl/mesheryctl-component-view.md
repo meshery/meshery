@@ -17,6 +17,7 @@ View registered components
 ## Synopsis
 
 View a component registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component view [flags]
@@ -30,6 +31,22 @@ View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component view [component-name]
+
+</div>
+</pre> 
+
+View details of a specific component in specifed format 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component view [component-name] -o [json|yaml]
+
+</div>
+</pre> 
+
+View details of a specific component in specified format and save it as a file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl component view [component-name] -o [json|yaml] --save
 
 </div>
 </pre> 

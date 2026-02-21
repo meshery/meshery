@@ -2,7 +2,6 @@
 package handlers
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,12 +9,12 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"time"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/core"
+	"github.com/meshery/meshery/server/models"
 )
 
-// swagger:route GET /api/user/login UserAPI idGetUserLogin
+// swagger:route GET /user/login UserAPI idGetUserLogin
 // Handlers GET request for User login
 //
 // Redirects user for auth or issues session
@@ -44,14 +43,21 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     h.config.ProviderCookieName,
-		Value:    p.Name(),
-		Expires:  time.Now().Add(-time.Hour),
-		Path:     "/",
-		HttpOnly: true,
-	})
-	_ = p.DeleteCapabilitiesForUser(user.ID)
+	// Clear all Meshery cookies to ensure complete logout
+	for _, cookieName := range []string{
+		h.config.ProviderCookieName,
+		models.TokenCookieName,
+		models.ProviderSessionCookieName,
+	} {
+		http.SetCookie(w, &http.Cookie{
+			Name:     cookieName,
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			MaxAge:   -1,
+		})
+	}
+	_ = p.DeleteCapabilitiesForUser(user.ID.String())
 	err := p.Logout(w, req)
 	if err != nil {
 		h.log.Error(models.ErrLogout(err))
@@ -157,15 +163,9 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 
 // Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 func GetRefURL(req *http.Request) string {
-	refURL := req.URL.Path + "?" + req.URL.RawQuery
-	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
-	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.
-	if refURL == "?" || refURL == "/?" {
-		return ""
-	}
-	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
-	return refURLB64
+	return core.EncodeRefUrl(*req.URL)
 }
+
 func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 

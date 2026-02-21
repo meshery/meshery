@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-red-hat-openshift
 docURL: https://docs.meshery.io/extensibility/integrations/azure-red-hat-openshift
 description: 
 integrations-category: Provisioning
-integrations-subcategory: Uncategorized
+integrations-subcategory: Certified Kubernetes - Distribution
 registrant: GitHub
 components: 
 - name: open-shift-cluster
@@ -16,7 +16,10 @@ components:
   description: 
 components-count: 1
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

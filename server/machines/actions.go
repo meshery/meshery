@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -34,7 +34,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID := user.ID
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 

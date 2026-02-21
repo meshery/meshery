@@ -4,6 +4,7 @@ title: Meshery Adapter for Nighthawk
 name: Meshery Adapter for Nighthawk
 component: Nighthawk
 earliest_version: v0.7
+adapter_version: v0.7.1
 port: 10013/gRPC
 project_status: alpha
 #lab: nighthawk-meshery-adapter
@@ -33,7 +34,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-<!-- {% include adapter-labs.html %} -->
+
 
 ### Features
 

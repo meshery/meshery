@@ -23,9 +23,9 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -55,11 +55,9 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		var searchString string
 		if len(args) > 0 {
@@ -68,8 +66,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(ErrFetchFilter(err))
-			return nil
+			return ErrFetchFilter(err)
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -82,7 +79,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return errors.New(utils.FilterListError("error reading token\nUse 'mesheryctl filter list --help' to display usage guide\n" + err.Error()))
+			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
@@ -117,7 +114,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
 				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 			}
-
 		} else if provider == "None" {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
@@ -148,18 +144,17 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		countFlag := cmd.Flag("count")
 		if countFlag != nil && countFlag.Value.String() == "true" {
-			whiteBoardPrinter.Println("Total number of filter: ", len(data))
+			_, _ = whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}
 
 		if cmd.Flags().Changed("page") {
-			utils.PrintToTableWithFooter(header, data, footer)
+			utils.PrintToTable(header, data, footer)
 			return nil
 		}
 		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrHandlePagination(err)
 		}
 		return nil
 	},
@@ -186,7 +181,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 		return nil, utils.ErrRequestResponse(err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -203,6 +198,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	}
 	return response, nil
 }
+
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")

@@ -21,10 +21,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/store"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 
@@ -34,7 +34,6 @@ import (
 var (
 	modelLocation            string
 	logFile                  *os.File
-	errorLogFile             *os.File
 	sheetGID                 int64
 	totalAggregateComponents int
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
@@ -45,15 +44,17 @@ var (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.",
+	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
-mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
-// Updating models in the meshery/meshery repo
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
-// Updating models in the meshery/meshery repo based on flag
-mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
+// Updating models in the meshery/meshery repository based on the spreadsheet
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
+
+// Updating models in the meshery/meshery repository based on flag
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -195,6 +196,9 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
+
+						utils.Log.Infof("Updating genealogy for component %s...", component.Component)
+						componentDef.Metadata.Genealogy = component.Genealogy
 
 						_, err = os.Stat(compPath)
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 // Please reference the following before contributing an error code:
@@ -114,7 +114,7 @@ const (
 	ErrUrlParseCode                       = "meshery-server-1335"
 	ErrCloseIoReaderCode                  = "meshery-server-1336"
 	ErrDownloadPackageCode                = "meshery-server-1337"
-	ErrOperationNotAvaibaleCode           = "meshery-server-1338"
+	ErrOperationNotAvailableCode           = "meshery-server-1338"
 	ErrTokenVerifyCode                    = "meshery-server-1339"
 	ErrLogoutCode                         = "meshery-server-1340"
 	ErrGetSessionCookieCode               = "meshery-server-1341"
@@ -137,6 +137,7 @@ const (
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
+	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
 )
 
 var (
@@ -166,7 +167,7 @@ var (
 	ErrMesheryNotInCluster     = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
-	ErrOperationNotAvaibale    = errors.New(ErrOperationNotAvaibaleCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
+	ErrOperationNotAvailable   = errors.New(ErrOperationNotAvailableCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
 	ErrEmptySession            = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the selected Provider.", "Browser might be restricting use of cookies."}, []string{"Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.", "Verify that your browser settings allow cookies."})
 )
 
@@ -608,4 +609,8 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 
 func ErrMarshallingDesignIntoYAML(err error) error {
 	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrMeshsyncDataHandler(err error) error {
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }

@@ -19,7 +19,7 @@ Meshery can manage your minikube clusters and is particularly useful for multi-c
 
 For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.
 
-After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). You can also Visualize the resources in your cluster in Operator Mode, See [Views in Visualizer](https://docs.layer5.io/kanvas/operator/operator-views/).
+After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). You can also Visualize the resources in your cluster in Operator Mode, See [Views in Visualizer](https://docs.layer5.io/kanvas/operator/operator-views/).
 
 **There are two ways to create this connection:**
 
@@ -118,7 +118,7 @@ To install Meshery on Docker(out-of-cluster) and connect it to your Minikube clu
 Run the following command to start Meshery in a Docker environment:
 {% capture code_content %}$ mesheryctl system start -p docker{% endcapture %}
 {% include code.html code=code_content %}
-This will spin up meshery docker containers. To verify that Meshery  is running, use
+This will start Meshery in Docker containers. To verify that Meshery is running, use
 {% capture code_content %}$ docker ps{% endcapture %}
 {% include code.html code=code_content %}
 Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at http://localhost:9081.
@@ -166,11 +166,11 @@ server: https://{minikubeIP}:{port}
 
 `Ctrl + X` then enter `Y` to save and close the file.
 
-Next run this command to configure Meshery to access your cluster.
+Next, run the following command to configure Meshery to access your cluster.
 {% capture code_content %}$  mesheryctl system config minikube{% endcapture %}
 {% include code.html code=code_content %}
 
-**Note**: An alternative to running the mesheryctl system config minikube command for meshery to discover your cluster is manually uploading your config file to the UI.
+**Note**: An alternative to running the mesheryctl system config minikube command for Meshery to discover your cluster is manually uploading your config file to the UI.
 
 # Uploading Configuration File in the Meshery Web UI
 

@@ -16,20 +16,21 @@ package workspaces
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 
 	"github.com/spf13/cobra"
 )
+
+var listUsageErrorMessage = "Usage: mesheryctl exp workspace list --orgId [Organization ID]\nRun 'mesheryctl exp workspace list --help' to see detailed help message"
 
 var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
 	Long: `List name of all registered workspaces
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/workspace/list`,
 	Example: `
 // List of workspace under a specific organization
 mesheryctl exp workspace list --orgId [orgId]
@@ -45,8 +46,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		// Check if the orgID is provided
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 		if orgIdFlag == "" {
-			const errorMsg = "[ Organization ID ] isn't specified\n\nUsage: \nmesheryctl  exp workspace list --orgId [Organization ID]\nmesheryctl  exp workspace list --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errorMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
 		}
 
 		return nil

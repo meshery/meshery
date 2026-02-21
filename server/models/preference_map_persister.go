@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

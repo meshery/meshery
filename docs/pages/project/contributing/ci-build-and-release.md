@@ -18,6 +18,10 @@ Meshery’s build and release system incorporates many tools, organized into dif
 
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
+All repositories under the `github.com/meshery` and `github.com/meshery-extensions` organizations use immutable releases.
+<img width="954" height="166" alt="immutable-releases-setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
+
+
 ### Artifact Repositories
 
 Artifacts produced in the build processes are published and persisted in different public repositories and in different formats.
@@ -37,8 +41,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of December, 2024 is 1.23
-- `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
+- `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
@@ -50,8 +53,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `METAL_SERVER2`: Configuration for metal server 2
-- `METAL_SERVER3`: Configuration for metal server 3
 - `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
 - `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
@@ -79,6 +80,14 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Docker build, tag and push
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
+
+### UI Build System
+
+Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
+
+**Build Commands**:
+- `make ui-build` - Builds both Meshery UI and Provider UI
+- `make ui-provider-build` - Builds Provider UI only
 
 ## Tests for adapters
 
@@ -209,7 +218,7 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 ##### Scoop
 
-GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
+GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
 
 ## Helm Charts Lint Check, Build, and Release
 
@@ -383,14 +392,14 @@ The following is an example of the release channels and the docker tags used to 
 
 **Latest Stable Image**
 
-- layer5/meshery:stable-latest
-- layer5/meshery:stable-v0.4.1
-- layer5/meshery:stable-324vdgb (sha)
+- meshery/meshery:stable-latest
+- meshery/meshery:stable-v0.4.1
+- meshery/meshery:stable-324vdgb (sha)
 
 **Older Stable Image**
 
-- layer5/meshery:stable-v0.4.0
-- layer5/meshery:stable-289d02 (sha)
+- meshery/meshery:stable-v0.4.0
+- meshery/meshery:stable-289d02 (sha)
 
 Every docker image built receives either the edge tags or the stable tags. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).
 
@@ -402,12 +411,12 @@ Stable and edge releases are both published to the same Docker Hub repository. D
 
 **Latest Edge Image**
 
-- layer5/meshery:edge-latest
-- layer5/meshery:edge-289d02 (sha)
+- meshery/meshery:edge-latest
+- meshery/meshery:edge-289d02 (sha)
 
 **Older Edge Image**
 
-- layer5/meshery:edge-324vdgb (sha)
+- meshery/meshery:edge-324vdgb (sha)
 
 ### Switching Between Meshery Release Channels
 
@@ -427,7 +436,7 @@ Minor releases of the Meshery project are release frequently (on a monthly basis
 
 ### Release Support
 
-General community support and commercial support from Layer5 is available. Separately, third parties and partners may offer longer-term support solutions.
+General community support is available. Separately, third parties and partners may offer longer-term support solutions.
 
 #### Pre v1.0
 
@@ -484,5 +493,11 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
+<div class="training-video">
+  <iframe width="560" height="315"
+    src="https://www.youtube.com/embed/dlr_nzJV16Q"
+    title="Training Video" frameborder="0" allowfullscreen>
+  </iframe>
+</div>
 
-{% include training-video.html %}
+

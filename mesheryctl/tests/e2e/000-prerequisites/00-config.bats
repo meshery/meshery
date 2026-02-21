@@ -15,16 +15,16 @@ setup() {
     run yq '.contexts.local.provider' "$MESHERY_CONFIG_FILE_PATH"
     assert_success
 
-    assert_output  --partial "Meshery"       
+    assert_output  --partial "Layer5"
 }
 
 @test "mesehry auth.json file as been created" {
     assert_exists "$MESHERY_AUTH_FILE"
 }
 
-@test "meshery auth.json file meshery provider is Meshery" {
+@test "meshery auth.json file meshery provider is Layer5" {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     assert_success
 
-    assert_output "\"Meshery\""
+    assert_output "\"Layer5\""
 }

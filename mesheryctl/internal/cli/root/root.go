@@ -15,22 +15,25 @@
 package root
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/adapter"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/design"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/environments"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/connections"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/environments"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/filter"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/model"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/perf"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -63,6 +66,10 @@ mesheryctl system start --help
 // For viewing verbose output:
 mesheryctl -v [or] --verbose
 `,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		initValidators(cmd)
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -118,9 +125,28 @@ func init() {
 		components.ComponentCmd,
 		model.ModelCmd,
 		environments.EnvironmentCmd,
+		connections.ConnectionsCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+	RootCmd.SetHelpCommand(newHelpCommand())
+}
+
+func newHelpCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "help [command]",
+		Short: "Show help for any command",
+		Long:  "Show help for any command.",
+		Run: func(c *cobra.Command, args []string) {
+			cmd, _, err := c.Root().Find(args)
+			if cmd == nil || err != nil {
+				c.Println(c.UsageString())
+				return
+			}
+			cmd.InitDefaultHelpFlag()
+			cmd.HelpFunc()(cmd, args)
+		},
+	}
 }
 
 func TreePath() *cobra.Command {
@@ -139,55 +165,52 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-		if !os.IsNotExist(err) && stat.Size() == 0 {
-			log.Println("Empty meshconfig. Please populate it before running a command")
-		}
-		if os.IsNotExist(err) {
+
+		createDefaultConfig := false
+
+		switch {
+		case os.IsNotExist(err):
 			log.Printf("Missing Meshery config file.")
+			createDefaultConfig = true
+
+		case err == nil && stat.Size() == 0:
+			log.Println("Empty meshconfig. Please populate it before running a command")
+			createDefaultConfig = true
+
+		case err != nil:
+			log.Printf("Cannot access Meshery config file. Please check permissions. Error: %v", err)
+			return
 		}
 
-		// Create a default meshconfig in each of the above two scenarios.
-		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
-			// Check for Meshery existence and permission of application folder
-			if _, err := os.Stat(utils.MesheryFolder); err != nil {
-				if os.IsNotExist(err) {
-					err = os.MkdirAll(utils.MesheryFolder, 0775)
-					if err != nil {
-						log.Fatal(err)
-					}
-				}
-			}
-
-			// Create config file if not present in meshery folder
-			err = utils.CreateConfigFile()
-			if err != nil {
+		// Only create + mutate config when needed
+		if createDefaultConfig {
+			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
 				log.Fatal(err)
 			}
 
-			// Add Token to context file
-			err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
-			if err != nil {
+			if err := utils.CreateConfigFile(); err != nil {
 				log.Fatal(err)
 			}
 
-			// Add Context to context file
-			err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
-			if err != nil {
+			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
 				log.Fatal(err)
 			}
 
-			log.Println(
-				fmt.Sprintf("Default config file created at %s",
-					utils.DefaultConfigPath,
-				))
+			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
+				log.Fatal(err)
+			}
+
+			log.Printf("Default config file created at %s", utils.DefaultConfigPath)
 		}
-		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
+
+	viper.SetConfigFile(cfgFile)
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	if err := viper.ReadInConfig(); err != nil {
+		log.Debugf("unable to read config file: %v", err)
+	} else {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
 }
@@ -204,4 +227,12 @@ func setVerbose() {
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
 	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
+}
+
+// Initialize a validator and add it to the command context
+// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
+func initValidators(cmd *cobra.Command) {
+	validate := mesheryctlflags.NewFlagValidator()
+	ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, validate)
+	cmd.SetContext(ctx)
 }

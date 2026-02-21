@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/perf-operator-2.13.0.tgz"
   },
   "configuration": null,
   "component": {
     "version": "v2.edp.epam.com/v1",
     "kind": "PerfDataSourceJenkins",
     "schema": "{\n \"description\": \"PerfDataSourceJenkins is the Schema for the PerfDataSourceJenkinses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfDataSourceJenkinsSpec defines the desired state of PerfDataSource.\",\n   \"properties\": {\n    \"codebaseName\": {\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"properties\": {\n      \"jobNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"jobNames\",\n      \"url\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"perfServerName\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"codebaseName\",\n    \"config\",\n    \"name\",\n    \"perfServerName\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Data Source Jenkins\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

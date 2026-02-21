@@ -19,10 +19,10 @@ import (
 	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -417,11 +417,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultInst *periodic.RunnerResults
 		err        error
 	)
-	if loadTestOptions.LoadGenerator == models.Wrk2LG {
+	switch loadTestOptions.LoadGenerator {
+	case models.Wrk2LG:
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
-	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
+
+	case models.NighthawkLG:
 		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, h.log)
-	} else {
+
+	default:
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	}
 	if err != nil {

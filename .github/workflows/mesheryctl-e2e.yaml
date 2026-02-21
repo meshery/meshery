@@ -17,30 +17,37 @@ on:
       bats_test: 
         description: "run only bats suite test"
         required: false
+  push:
+    branches:
+      - "master"
+    paths:
+      - "mesheryctl/**"
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
 
 jobs:
   manual-bats:
-    name: Manual BATS Test
+    name: BATS Test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
+    if: ${{ (github.event_name == 'push' && github.repository == 'meshery/meshery') || (github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true') }} 
     strategy:
       fail-fast: false
       matrix:
-        go: ['1.23']
-        k8s_version: ['v1.31.4', 'v1.32.0']
+        go: ['1.25']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['kubernetes']
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v3.9.0
+        uses: docker/setup-buildx-action@v3.12.0
       - name: Setup BATS and BATS libs
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
-      - uses: actions/setup-go@v5.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      - uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
       - run: |
@@ -49,9 +56,9 @@ jobs:
           sudo chown -R $USER $HOME/.kube
           sudo chown -R $USER $HOME/.minikube
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.13.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.33.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
       - name: Run minikube tunnel
@@ -62,9 +69,15 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: Build mesheryctl and start Meshery
+        run: |
+          make build && \
+          ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update
+        shell: bash
+        working-directory: ./mesheryctl
       - name: Run mesheryctl end2end tests
         run: |
-          bash run_tests.bash
+          bash run_tests.bash | tee bats.tap
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
@@ -73,6 +86,38 @@ jobs:
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
 
+      - name: Convert TAP to Allure results
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: ./mesheryctl
+        run: |
+          node bats-to-allure.js tests/e2e/bats.tap
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        with:
+          repository: meshery/qa
+          path: ./qa
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        working-directory: qa
+        run: |
+          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
+
+      - name: Commit & push to qa
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
+          commit_options: "--signoff"
+          repository: qa
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
   manual-test:
     name: Manual e2e Test
     runs-on: ubuntu-24.04
@@ -80,13 +125,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.31.4', 'v1.32.0']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.13.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.33.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
       - run: |
@@ -139,13 +184,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.31.4', 'v1.32.0']
+        k8s_version: ['v1.33.0', 'v1.34.3']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.11.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
-          minikube version: 'v1.34.0'
+          minikube version: 'v1.37.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 

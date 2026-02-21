@@ -11,13 +11,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/errors"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/errors"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -28,7 +28,7 @@ var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
 	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Documentation for models import can be found at https://docs.meshery.io/reference/mesheryctl/model/import`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
 	Example: `
 // Import model
 mesheryctl model import -f [URI]
@@ -177,14 +177,14 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	url := baseURL + "/api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
-	if dataType == "csv" {
+	switch dataType {
+	case "csv":
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
 		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
-
-	} else if dataType == "file" {
+	case "file":
 		importRequest.ImportBody.ModelFile = data
-	} else {
+	default:
 		if data != nil {
 			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
@@ -211,7 +211,7 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		err = models.ErrDoRequest(err, resp.Request.Method, url)
 		return err
@@ -296,22 +296,21 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 
 func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
-		header := []string{"Component", "Category", "Version"}
+		header := []string{"Component", "Version"}
 		rows := [][]string{}
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelDisplayName, _ := comp["Model"].(string)
-			category, _ := comp["Category"].(string)
 			modelVersion, _ := comp["Version"].(string)
 			if modelDisplayName == modelName {
-				rows = append(rows, []string{displayName, category, modelVersion})
+				rows = append(rows, []string{displayName, modelVersion})
 
 			}
 		}
 		if len(rows) > 0 {
 			fmt.Println("")
-			utils.PrintToTable(header, rows)
+			utils.PrintToTable(header, rows, nil)
 		}
 	}
 }
@@ -354,7 +353,7 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				}
 				parts := strings.Split(key, "/")
 				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, parts[0], parts[1], parts[2])
-				utils.PrintToTable(header, rows)
+				utils.PrintToTable(header, rows, nil)
 			}
 		}
 	}
@@ -458,17 +457,18 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 				continue
 			}
 		}
-		if entityType == "unknown" {
-			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
+		switch entityType {
+		case "unknown":
+			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), name.(string), longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
 			}
 			if suggestedRemediation != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), suggestedRemediation)
 			}
-		} else if entityType == "component" {
+		case "component":
 			compCount++
-		} else if entityType == "relationship" {
+		case "relationship":
 			relCount++
 		}
 

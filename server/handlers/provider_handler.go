@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	models "github.com/layer5io/meshery/server/models"
+	models "github.com/meshery/meshery/server/models"
 )
 
 // swagger:route GET /api/provider ProvidersAPI idChoiceProvider
@@ -27,10 +27,6 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				HttpOnly: true,
 			})
 			redirectURL := "/user/login?" + r.URL.RawQuery
-			if provider == "None" {
-				redirectURL = "/"
-			}
-
 			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
 		}
@@ -82,7 +78,10 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 		// Propagate existing request parameters, if present.
-		redirectURL := "/user/login?" + r.URL.RawQuery
+		redirectURL := "/user/login"
+		if r.URL.RawQuery != "" {
+			redirectURL += "?" + r.URL.RawQuery
+		}
 		http.Redirect(w, r, redirectURL, http.StatusFound)
 		return
 	}
@@ -105,10 +104,10 @@ func (h *Handler) ProviderCapabilityHandler(
 	provider models.Provider,
 ) {
 	// change it to use fethc from the meshery server cache
-	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID)
+	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID.String())
 	if err != nil {
-		h.log.Debugf("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID)
-		provider.GetProviderCapabilities(w, r, user.ID)
+		h.log.Debugf("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID.String())
+		provider.GetProviderCapabilities(w, r, user.ID.String())
 		return
 	}
 

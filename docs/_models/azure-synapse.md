@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-synapse
 docURL: https://docs.meshery.io/extensibility/integrations/azure-synapse
 description: 
 integrations-category: Observability and Analysis
-integrations-subcategory: Uncategorized
+integrations-subcategory: Metrics
 registrant: GitHub
 components: 
 - name: workspace
@@ -20,7 +20,10 @@ components:
   description: 
 components-count: 2
 relationships: 
-relationship-count: 0
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

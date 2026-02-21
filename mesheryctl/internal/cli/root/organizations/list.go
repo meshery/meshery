@@ -17,9 +17,9 @@ package organizations
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
@@ -27,17 +27,17 @@ var listOrgCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered organizations",
 	Long: `List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
-Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations/list
+Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/organizations/list
 	`,
 	Example: `
 // list all organizations
-mesheryctl exp organizations list
+mesheryctl exp organization list
 
 // list organizations for a specified page
-mesheryctl exp organizations list --page [page-number]
+mesheryctl exp organization list --page [page-number]
 
 // list organizations for a specified page
-mesheryctl exp organizations list --count
+mesheryctl exp organization list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
@@ -49,7 +49,7 @@ mesheryctl exp organizations list --count
 		header := []string{"NAME", "ID", "CREATED-AT"}
 
 		for _, org := range orgs.Organizations {
-			rows = append(rows, []string{org.Name, org.ID.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
+			rows = append(rows, []string{org.Name, org.Id.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
 		}
 
 		count, _ := cmd.Flags().GetBool("count")

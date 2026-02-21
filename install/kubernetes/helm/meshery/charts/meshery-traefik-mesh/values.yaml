@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-traefik-mesh:stable-latest
+  repository: meshery/meshery-traefik-mesh:stable-latest
   pullPolicy: Always
 
 env: {}

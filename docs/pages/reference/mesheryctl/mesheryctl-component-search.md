@@ -12,11 +12,12 @@ subcommand: search
 
 # mesheryctl component search
 
-search registered components
+Search registered components
 
 ## Synopsis
 
-search components registered in Meshery Server based on kind
+Search components registered in Meshery Server based on kind
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component search [flags]

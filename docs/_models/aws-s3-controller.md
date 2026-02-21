@@ -22,25 +22,29 @@ components:
   colorIcon: assets/img/integrations/aws-s3-controller/components/bucket/icons/color/bucket-color.svg
   whiteIcon: assets/img/integrations/aws-s3-controller/components/bucket/icons/white/bucket-white.svg
   description: 
-components-count: 3
+- name: iam-role-selector
+  colorIcon: assets/img/integrations/aws-s3-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: assets/img/integrations/aws-s3-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
-- type: "Non Binding"
-  kind: "Edge"
-  description: "A relationship that defines network edges between components"
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Non Binding"
-  kind: "Edge"
+- type: "non-binding"
+  kind: "edge"
   description: ""
-- type: "Sibling"
-  kind: "Hierarchical"
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
   description: ""
 relationship-count: 6
 featureList: [

@@ -23,7 +23,8 @@
       "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -47,8 +48,22 @@
     },
     "components_count": 0,
     "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
     "components": null,
     "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -181,12 +196,15 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/cosmo-workspace/charts/releases/download/cosmo-controller-manager-0.9.0/cosmo-controller-manager-0.9.0.tgz"
   },
   "configuration": null,
   "component": {
     "version": "cosmo-workspace.github.io/v1alpha1",
     "kind": "Workspace",
     "schema": "{\n \"description\": \"Workspace is the Schema for the workspaces API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkspaceSpec defines the desired state of Workspace\",\n   \"properties\": {\n    \"network\": {\n     \"items\": {\n      \"description\": \"NetworkRule is an abstract network configuration rule for workspace\",\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"host\": {\n        \"type\": \"string\"\n       },\n       \"httpPath\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"portNumber\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"public\": {\n        \"type\": \"boolean\"\n       },\n       \"targetPortNumber\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"httpPath\",\n       \"name\",\n       \"portNumber\",\n       \"public\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicas\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"template\": {\n     \"description\": \"TemplateRef defines template to use in Instance creation\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"vars\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workspace\",\n \"type\": \"object\"\n}"
-  }
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
 }

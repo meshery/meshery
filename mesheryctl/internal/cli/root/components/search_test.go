@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestSearchComponent(t *testing.T) {
@@ -19,21 +19,23 @@ func TestSearchComponent(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "Search components with query parameter",
+			Name:             "Search components without query parameter",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.no.agrs.output.golden",
+			ExpectedResponse: "",
 			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage)),
 		},
 		{
 			Name:             "Search components with query parameter",
 			Args:             []string{"search", "Test"},
-			URL:              fmt.Sprintf("/%s?search=Test&pagesize=all", componentApiPath),
+			URL:              fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.output.golden",
+			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
 		},
 	}
