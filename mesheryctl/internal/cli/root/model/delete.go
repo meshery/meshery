@@ -18,7 +18,10 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -38,10 +41,6 @@ mesheryctl model delete [model-id]
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		// if !utils.IsUUID(args[0]) {
-		// 	return utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", args[0]))
-		// }
-
 		return nil
 	},
 
@@ -58,8 +57,36 @@ mesheryctl model delete [model-id]
 			return nil
 		}
 
-		// Delete model by name
+		// Delete model by name, use paginated selection prompt
+		selectedModel, _, err := display.HandlePaginationPrmot[models.MeshmodelsAPIResponse, model.ModelDefinition](
+			modelsApiPath,
+			modelArg,
+			formatNames,
+			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
+				return data.Models
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		// Delete the selected model by its UUID
+		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.Id))
+		if err != nil {
+			return ErrDeleteModel(err, modelArg)
+		}
+		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.Id)
 
 		return nil
 	},
+}
+
+func formatNames(rows []model.ModelDefinition) []string {
+	labels := []string{}
+
+	for _, m := range rows {
+		name := fmt.Sprintf("%s,  version: %s", m.DisplayName, m.Version)
+		labels = append(labels, name)
+	}
+	return labels
 }

@@ -177,13 +177,13 @@ func HandlePaginationPrmot[R any, T any](
 		switch len(rows) {
 		case 0:
 			var zero T
-			return zero, 0, fmt.Errorf("no results found for %q", searchTerm)
+			return zero, 0, ErrNoResultsFound(searchTerm)
 		case 1:
 			return rows[0], 0, nil
 		default:
-			selectedModel, index, err = SelectFromPagedResults(rows, formatLabel)
+			selectedModel, index, err = SelectFromPagedResults(rows, formatLabel, pageSize)
 			if err != nil {
-				continue
+				return selectedModel, -1, err
 			}
 		}
 

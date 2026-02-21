@@ -3,6 +3,7 @@ package display
 import (
 	"fmt"
 
+	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -66,15 +67,17 @@ func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataPr
 	)
 }
 
-func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string) (T, int, error) {
+func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pageSize int) (T, int, error) {
 	var zero T
 
-	if len(rows) == 0 {
-		return zero, 0, fmt.Errorf("no items to select from")
-	}
-
 	names := formatLabel(rows)
-	names = append(names, "Load More.....")
+	if len(rows) < pageSize {
+		noMoreLabel := color.New(color.FgHiBlack).Sprint("End of list")
+		names = append(names, noMoreLabel)
+	} else {
+		loadMoreLabel := color.New(color.FgCyan, color.Bold).Sprint("Load More.....")
+		names = append(names, loadMoreLabel)
+	}
 
 	itemCount := len(rows)
 
@@ -90,7 +93,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string) (T,
 		if err != nil {
 			// Handle ctrl+c / interrupt
 			if err == promptui.ErrInterrupt {
-				return zero, -1, fmt.Errorf("selection cancelled")
+				return zero, -1, fmt.Errorf("Selection cancelled")
 			}
 			retries++
 			if retries >= maxRetries {
@@ -99,8 +102,12 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string) (T,
 			continue
 		}
 
-		// "Load More" selected
+		// Last item (Load More / End of list) selected
 		if i == itemCount {
+			// No more pages just re-show the prompt
+			if len(rows) < pageSize {
+				continue
+			}
 			return zero, i, nil
 		}
 
