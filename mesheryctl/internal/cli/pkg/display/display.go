@@ -1,6 +1,9 @@
 package display
 
 import (
+	"fmt"
+
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -61,4 +64,46 @@ func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataPr
 		displayData,
 		processData,
 	)
+}
+
+func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string) (T, int, error) {
+	var zero T
+
+	if len(rows) == 0 {
+		return zero, 0, fmt.Errorf("no items to select from")
+	}
+
+	names := formatLabel(rows)
+	names = append(names, "Load More.....")
+
+	itemCount := len(rows)
+
+	prompt := promptui.Select{
+		Label: "Select item",
+		Items: names,
+	}
+
+	maxRetries := 3
+	retries := 0
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			// Handle ctrl+c / interrupt
+			if err == promptui.ErrInterrupt {
+				return zero, -1, fmt.Errorf("selection cancelled")
+			}
+			retries++
+			if retries >= maxRetries {
+				return zero, -1, fmt.Errorf("prompt failed after %d attempts: %w", maxRetries, err)
+			}
+			continue
+		}
+
+		// "Load More" selected
+		if i == itemCount {
+			return zero, i, nil
+		}
+
+		return rows[i], i, nil
+	}
 }

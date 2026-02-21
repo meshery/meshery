@@ -16,6 +16,7 @@ const (
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
 	ErrDeleteModelCode                  = "mesheryctl-1200"
+	ErrModelNotFoundCode                = "replace"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
@@ -73,6 +74,19 @@ func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }
 
-func ErrDeleteModel(err error, id string) error {
-	return errors.New(ErrDeleteModelCode, errors.Alert, []string{"Failed to delete model"}, []string{fmt.Sprintf("failed to delete model with ID %s: %s", id, err.Error())}, []string{"The specified model ID may not exist"}, []string{"Verify the model ID using `mesheryctl model list`"})
+func ErrDeleteModel(err error, nameOrID string) error {
+	return errors.New(ErrDeleteModelCode, errors.Alert,
+		[]string{"Failed to delete model"},
+		[]string{fmt.Sprintf("Failed to delete model with name or ID '%s': %s", nameOrID, err.Error())},
+		[]string{"The specified model name or ID may not exist"},
+		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
+}
+
+// TODO Check if it could be added to other cmd's
+func ErrModelNotFound(model string) error {
+	return errors.New(ErrModelNotFoundCode, errors.Fatal,
+		[]string{"Model Not Found"},
+		[]string{fmt.Sprintf("No model found with the name or ID: %s", model)},
+		[]string{"A model with the given name or ID does not exist in the registry"},
+		[]string{"Please verify the model name or ID using 'mesheryctl model list' and try again"})
 }
