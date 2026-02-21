@@ -29,16 +29,15 @@ identify_relationship(
 		some selectors in selector_set.allow.to
 		kind := selectors.kind
 	}
-	deny_selectors := object.get(selector_set, "deny", [])
 
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors)
+	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors)
 }
 
-evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := {result |
+evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors) := {result |
 	some from_selector in from_selectors
 	some to_selector in to_selectors
 
@@ -61,7 +60,6 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 	)
 	print("Feasible relationship found: ", from_decl.component.kind, "->", to_decl.component.kind, s)
 
-	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
 	# The criteria for relationship is met hence add the relationship.
