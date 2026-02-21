@@ -15,8 +15,6 @@
 package organizations
 
 import (
-	"fmt"
-
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
@@ -42,15 +40,16 @@ mesheryctl exp organization list --count
 		page, _ := cmd.Flags().GetInt("page")
 		pagesize, _ := cmd.Flags().GetInt("pagesize")
 		count, _ := cmd.Flags().GetBool("count")
-		data := display.DisplayDataAsync{ 
-			UrlPath: organizationsApiPath,
-			Page: page,
-			PageSize: pagesize,
-			DataType: "organizations",
-			Header: []string{"ID", "NAME", "CREATED-AT"},
+		data := display.DisplayDataAsync{
+			UrlPath:          organizationsApiPath,
+			Page:             page,
+			PageSize:         pagesize,
+			DataType:         "organizations",
+			Header:           []string{"ID", "NAME", "CREATED-AT"},
 			DisplayCountOnly: count,
-			IsPage: cmd.Flags().Changed("page"),
+			IsPage:           cmd.Flags().Changed("page"),
 		}
+
 		return display.ListAsyncPagination(data, processOrgData)
 	},
 }
@@ -63,7 +62,7 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string,int64) {
 		rows = append(rows, []string{
 			org.Id.String(),
 			org.Name,
-			fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day()),
+			org.CreatedAt.Format("01-02-2006"),
 		})
 
 	}
