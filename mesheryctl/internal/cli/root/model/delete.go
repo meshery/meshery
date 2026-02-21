@@ -38,19 +38,28 @@ mesheryctl model delete [model-id]
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		if !utils.IsUUID(args[0]) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", args[0]))
-		}
+		// if !utils.IsUUID(args[0]) {
+		// 	return utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", args[0]))
+		// }
 
 		return nil
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, args[0]))
-		if err != nil {
-			return ErrDeleteModel(err, args[0])
+		modelArg := args[0]
+
+		// Delete model by ID
+		if utils.IsUUID(modelArg) {
+			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
+			if err != nil {
+				return ErrDeleteModel(err, modelArg)
+			}
+			utils.Log.Infof("Model with ID %s has been deleted", modelArg)
+			return nil
 		}
 
-		utils.Log.Infof("Model with ID %s has been deleted", args[0])
+		// Delete model by name
+
 		return nil
 	},
 }
