@@ -84,6 +84,10 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 	prompt := promptui.Select{
 		Label: "Select item",
 		Items: names,
+		Size:  5,
+		Templates: &promptui.SelectTemplates{
+			Help: "Use ↑/↓/←/→ to navigate, Ctrl+C or Esc to cancel",
+		},
 	}
 
 	maxRetries := 3
@@ -91,7 +95,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 	for {
 		i, _, err := prompt.Run()
 		if err != nil {
-			// Handle ctrl+c / interrupt
+			// Handle ctrl+c
 			if err == promptui.ErrInterrupt {
 				return zero, -1, fmt.Errorf("Selection cancelled")
 			}
