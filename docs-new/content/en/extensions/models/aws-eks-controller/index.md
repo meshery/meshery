@@ -1,0 +1,81 @@
+---
+title: AWS Elastic Kubernetes Service
+subtitle: Collaborative and visual infrastructure as design for AWS Elastic Kubernetes Service
+image: /extensions/models/aws-eks-controller/icons/color/aws-eks-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
+description: 
+integrations-category: Orchestration & Management
+integrations-subcategory: Containers
+registrant: GitHub
+components: 
+- name: cluster
+  colorIcon: /extensions/models/aws-eks-controller/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/cluster/icons/white/cluster-white.svg
+  description: 
+- name: addon
+  colorIcon: /extensions/models/aws-eks-controller/components/addon/icons/color/addon-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/addon/icons/white/addon-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-eks-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: eks-anywhere-subscription
+  colorIcon: /extensions/models/aws-eks-controller/components/eks-anywhere-subscription/icons/color/eks-anywhere-subscription-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/eks-anywhere-subscription/icons/white/eks-anywhere-subscription-white.svg
+  description: 
+- name: fargate-profile
+  colorIcon: /extensions/models/aws-eks-controller/components/fargate-profile/icons/color/fargate-profile-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/fargate-profile/icons/white/fargate-profile-white.svg
+  description: 
+- name: field-export
+  colorIcon: /extensions/models/aws-eks-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: nodegroup
+  colorIcon: /extensions/models/aws-eks-controller/components/nodegroup/icons/color/nodegroup-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/nodegroup/icons/white/nodegroup-white.svg
+  description: 
+- name: pod-identity-association
+  colorIcon: /extensions/models/aws-eks-controller/components/pod-identity-association/icons/color/pod-identity-association-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/pod-identity-association/icons/white/pod-identity-association-white.svg
+  description: 
+- name: access-entry
+  colorIcon: /extensions/models/aws-eks-controller/components/access-entry/icons/color/access-entry-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/access-entry/icons/white/access-entry-white.svg
+  description: 
+- name: identity-provider-config
+  colorIcon: /extensions/models/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-eks-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+- name: capability
+  colorIcon: /extensions/models/aws-eks-controller/components/capability/icons/color/capability-color.svg
+  whiteIcon: /extensions/models/aws-eks-controller/components/capability/icons/white/capability-white.svg
+  description: 
+components-count: 12
+relationships: 
+- type: "binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 3
+featureList: [
+  "Simplifies Kubernetes cluster creation and management",
+  "Integrates with other AWS services",
+  "High availability and scalability"
+]
+howItWorks: "Deploys and manages EKS clusters"
+howItWorksDetails: "Easy and scalable Kubernetes management on AWS"
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-eks-controller
+---

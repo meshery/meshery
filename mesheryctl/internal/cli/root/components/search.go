@@ -56,7 +56,7 @@ mesheryctl component search [query-text]
 			return err
 		}
 
-		header := []string{"Name", "Model", "kind", "Version"}
+		header := []string{"Name", "Model", "Version"}
 
 		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
 
