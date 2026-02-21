@@ -1,0 +1,25 @@
+version: 0.0.5
+name: sqlcl-liquibase-1.0.0.tgz
+displayName: sqlcl-liquibase-1.0.0.tgz
+createdAt: "2025-10-08T13:59:52Z"
+description: |
+    A Helm chart to deploy a container running SQLcl and Liquibase for managing Oracle database schema migrations.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/34cc15a9-2cf7-4eb6-91b6-c9731e0984d8/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This chart requires configuration with valid database credentials and connection details to function correctly. Ensure secrets are managed securely.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f8636e1-2702-4cad-935e-c3874a1dc55b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/34cc15a9-2cf7-4eb6-91b6-c9731e0984d8-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/34cc15a9-2cf7-4eb6-91b6-c9731e0984d8-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

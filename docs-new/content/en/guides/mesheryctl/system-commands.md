@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Mesheryctl system commands
 categories: [mesheryctl]
 description: Mesheryctl system commands for managing Meshery deployments.
