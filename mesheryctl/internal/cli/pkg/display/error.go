@@ -13,9 +13,9 @@ var (
 	ErrUnsupportedFormatCode      = "mesheryctl-1184"
 	ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
 	ErrInvalidOutputFormatCode    = "mesheryctl-1198"
-	ErrNoResultsFoundCode         = "mesheryctl-1199"
-	ErrPromptFailedCode           = "mesheryctl-1200"
-	ErrSelectionCancelledCode     = "mesheryctl-1201"
+	ErrNoResultsFoundCode         = "replace_me"
+	ErrPromptFailedCode           = "replace_me"
+	ErrSelectionCancelledCode     = "replace_me"
 )
 
 func ErrNoResultsFound(name string) error {
