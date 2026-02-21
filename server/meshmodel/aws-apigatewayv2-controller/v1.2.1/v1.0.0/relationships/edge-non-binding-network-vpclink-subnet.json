@@ -45,7 +45,7 @@
             },
             "patch": {
               "patchStrategy": "add",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -73,7 +73,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "status",

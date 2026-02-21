@@ -45,11 +45,10 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "integrationUri"
+                  "metadata",
+                  "name"
                 ]
               ]
             }
@@ -73,9 +72,10 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "metadata",
+                  "spec",
+                  "integrationRef",
                   "name"
                 ]
               ]
