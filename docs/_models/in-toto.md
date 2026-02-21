@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: in-toto
 subtitle: Collaborative and visual infrastructure as design for in-toto

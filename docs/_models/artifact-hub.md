@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Artifact Hub
 subtitle: Collaborative and visual infrastructure as design for Artifact Hub

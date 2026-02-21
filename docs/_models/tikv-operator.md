@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Tikv Operator
 subtitle: Collaborative and visual infrastructure as design for Tikv Operator

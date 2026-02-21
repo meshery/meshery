@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: K3s
 subtitle: Collaborative and visual infrastructure as design for K3s

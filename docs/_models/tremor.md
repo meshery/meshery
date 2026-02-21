@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Tremor
 subtitle: Collaborative and visual infrastructure as design for Tremor

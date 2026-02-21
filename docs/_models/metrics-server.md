@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Kubernetes Metrics Server
 subtitle: Collaborative and visual infrastructure as design for Kubernetes Metrics Server

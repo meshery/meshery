@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: OpenGitOps
 subtitle: Collaborative and visual infrastructure as design for OpenGitOps

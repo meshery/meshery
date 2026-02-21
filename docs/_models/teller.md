@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Teller
 subtitle: Collaborative and visual infrastructure as design for Teller

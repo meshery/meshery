@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters

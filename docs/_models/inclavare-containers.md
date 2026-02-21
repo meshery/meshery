@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Inclavare Containers
 subtitle: Collaborative and visual infrastructure as design for Inclavare Containers

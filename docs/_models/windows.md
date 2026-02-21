@@ -1,4 +1,5 @@
 ---
+isAnnotation: true
 layout: integration
 title: Windows
 subtitle: Collaborative and visual infrastructure as design for Windows
