@@ -1,0 +1,98 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "kind": "edge",
+  "metadata": {
+    "description": "Defines the permission relationship between an AWS IAM Role and an Amazon EKS Cluster. The IAM Role must be attached to the EKS Cluster as its cluster IAM role (roleARN), granting the Kubernetes control plane the necessary permissions to make AWS API calls on your behalf.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-iam-controller",
+    "displayName": "AWS IAM Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.6.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "aws-iam-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "description": "The IAM Role whose ARN will be assigned to the EKS Cluster as its cluster IAM role. This grants the Kubernetes control plane the necessary permissions to make AWS API calls on your behalf."
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Cluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "aws-eks-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "roleARN"
+                ]
+              ],
+              "description": "The EKS Cluster that receives the IAM Role ARN in its spec.roleARN field (or the role name in spec.roleRef.from.name), authorising the control plane to make AWS API calls."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
