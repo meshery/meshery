@@ -1,8 +1,4 @@
-import {
-  IndeterminateCheckBox,
-  CompareArrows,
-  GetApp,
-} from '@sistent/sistent'
+import { IndeterminateCheckBox, CompareArrows, GetApp } from '@sistent/sistent';
 import React, { useState } from 'react';
 import { IconButton, Tooltip, styled } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
