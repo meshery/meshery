@@ -8,13 +8,18 @@ on:
         default: v0.x.x
 
 jobs:
-
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
     
     steps:
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          df -h
       - name: Check out code
         uses: actions/checkout@v6
         with:
@@ -40,4 +45,3 @@ jobs:
           tag-name: ${{inputs.release-tag}}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}
- 
