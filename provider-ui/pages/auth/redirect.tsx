@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import { PROVIDER_URL } from "../../lib/data-fetch";
+import React, { useEffect } from 'react';
+import { PROVIDER_URL } from '../../lib/data-fetch';
 
-const Redirect = () => {
+const Redirect = (): React.ReactElement => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const returnTo = params.get("return_to");
-    let redirectURL;
+    const returnTo = params.get('return_to');
+    let redirectURL: URL;
     if (returnTo) {
       redirectURL = new URL(`${returnTo}?${params.toString()}`);
     } else {
