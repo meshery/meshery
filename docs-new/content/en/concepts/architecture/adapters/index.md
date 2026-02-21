@@ -15,7 +15,7 @@ Adapters that extend Meshery's lifecycle management capabilities for infrastruct
 
 Meshery has lifecycle adapters for managing the following cloud native infrastructure.
 
-<!-- TODO: Migrate Table  -->
+{{< adapters-table >}}
 
 ## Meshery Adapters for Performance Management
 

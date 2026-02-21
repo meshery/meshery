@@ -1,0 +1,1646 @@
+{
+  "errors_export": {
+    "component_name": "mesheryctl",
+    "component_type": "client",
+    "errors": {
+      "1001": {
+        "name": "ErrImportDesignCode",
+        "code": "1001",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to import design",
+        "probable_cause": "Invalid design file",
+        "suggested_remediation": "Check your design URL/file path"
+      },
+      "1002": {
+        "name": "ErrInValidSourceCode",
+        "code": "1002",
+        "severity": "Fatal",
+        "long_description": "Invalid design source type was provided",
+        "short_description": "",
+        "probable_cause": "Provided design source type (-s) is invalid",
+        "suggested_remediation": "Ensure you pass a valid source type"
+      },
+      "1003": {
+        "name": "ErrOnboardDesignCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "Unable to onboard design due to empty path",
+        "short_description": "Error Onboarding design",
+        "probable_cause": "File path or design name not provided.",
+        "suggested_remediation": "Provide a file path/design name. \\n\\n%v"
+      },
+      "1005": {
+        "name": "ErrOffboardDesignCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "Unable to offboard design due to empty path",
+        "short_description": "Error Offboarding design",
+        "probable_cause": "File path or design name not provided.",
+        "suggested_remediation": "Provide a file path/design name. \\n\\n%v"
+      },
+      "1006": {
+        "name": "ErrDesignFlagCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "Wrong use of command flags",
+        "short_description": "Invalid command",
+        "probable_cause": "-a/all flag is being used while an design is specified",
+        "suggested_remediation": "-a/-all cannot be used when [design name|id] is specified"
+      },
+      "1007": {
+        "name": "ErrDesignManifestCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "No manifest file path detected",
+        "short_description": "No file path detected",
+        "probable_cause": "Manifest path not provided",
+        "suggested_remediation": "Provide the path to the design manifest. \\n\\n%v"
+      },
+      "1008": {
+        "name": "ErrInvalidMeshConfigCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Meshconfig",
+        "probable_cause": "Loading the Invalid MeshConfig data caused error",
+        "suggested_remediation": "Make sure that your 'config.yaml' file in your '.meshery' is valid"
+      },
+      "1009": {
+        "name": "ErrUpdateConfigCode",
+        "code": "1009",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error in writing config",
+        "probable_cause": "Unable to Update config file",
+        "suggested_remediation": "Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+      },
+      "1010": {
+        "name": "ErrProcessingConfigCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "Error processing config",
+        "short_description": "Error processing config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrCreatingConfigFileCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Unable to create config file",
+        "short_description": "Unable to create config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrAddingTokenToConfigCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrAddingContextToConfigCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "Unable to add context to config",
+        "short_description": "Unable to add context to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrUnmarshallingConfigFileCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "Error processing json in config file",
+        "short_description": "Error processing json in config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrGettingRequestContextCode",
+        "code": "1015",
+        "severity": "Fatal",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrUnmarshallingAPIDataCode",
+        "code": "1016",
+        "severity": "Fatal",
+        "long_description": "Error processing json API data",
+        "short_description": "Error processing json API data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrConnectingToServerCode",
+        "code": "1017",
+        "severity": "Fatal",
+        "long_description": "Unable to communicate with Meshery server\nSee https://docs.meshery.io for help getting started with Meshery",
+        "short_description": "Unable to communicate with Meshery server",
+        "probable_cause": "",
+        "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
+      },
+      "1018": {
+        "name": "ErrDeleteFilterCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete filter",
+        "probable_cause": "Unable to delete the specified filter",
+        "suggested_remediation": "Verify the filter exists using `mesheryctl filter list`"
+      },
+      "1019": {
+        "name": "ErrFetchFilterCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to Fetch Filter",
+        "probable_cause": "Filter name or id doesn't exist",
+        "suggested_remediation": "Run `mesheryctl filter view -a` to view all available filters."
+      },
+      "1020": {
+        "name": "ErrGettingSessionDataCode",
+        "code": "1020",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to fetch session data",
+        "probable_cause": "Unable to get session from server",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1021": {
+        "name": "ErrNoAdaptersCode",
+        "code": "1021",
+        "severity": "Fatal",
+        "long_description": "Adapter for required mesh not found",
+        "short_description": "Unable to validate adapter",
+        "probable_cause": "Unable to fetch Mesh adapter, adapter not valid.",
+        "suggested_remediation": "Run the appropriate Meshery Adapter for your specific use case. See https://docs.meshery.io/concepts/architecture/adapters for list of adapters"
+      },
+      "1022": {
+        "name": "ErrPromptCode",
+        "code": "1022",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error while reading selected option",
+        "probable_cause": "Unable to identify your selected component from the list",
+        "suggested_remediation": "Ensure you enter a component name"
+      },
+      "1023": {
+        "name": "ErrCreatingDeployRequestCode",
+        "code": "1023",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending deploy request",
+        "probable_cause": "There might be a connection failure with Meshery Server",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1024": {
+        "name": "ErrCreatingDeployResponseRequestCode",
+        "code": "1024",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to create a response",
+        "probable_cause": "Error occurred while generating a response from deployed request",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1025": {
+        "name": "ErrCreatingDeployResponseStreamCode",
+        "code": "1025",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating deploy event response stream",
+        "probable_cause": "Unable convert a connection to a stream of server sent events",
+        "suggested_remediation": "Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1026": {
+        "name": "ErrCreatingValidateResponseStreamCode",
+        "code": "1026",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating validate event response stream",
+        "probable_cause": "Meshery is not running or there is a network issue.",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1027": {
+        "name": "ErrTimeoutWaitingForDeployResponseCode",
+        "code": "1027",
+        "severity": "Fatal",
+        "long_description": "Timed out waiting for deployment",
+        "short_description": "Timed out waiting for deploy event",
+        "probable_cause": "Network error or wrong environment configurations",
+        "suggested_remediation": "Ensure your have a strong connection and the right environment configuration"
+      },
+      "1028": {
+        "name": "ErrFailedDeployingMeshCode",
+        "code": "1028",
+        "severity": "Fatal",
+        "long_description": "Failed to deploy",
+        "short_description": "Failed to deploy",
+        "probable_cause": "Network error or wrong environment configurations",
+        "suggested_remediation": "Ensure your have a strong connection and the right environment configuration"
+      },
+      "1029": {
+        "name": "ErrCreatingValidateRequestCode",
+        "code": "1029",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending Validate request",
+        "probable_cause": "An HTTP error occurred due to network connection",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1030": {
+        "name": "ErrCreatingValidateResponseRequestCode",
+        "code": "1030",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating request for validate response",
+        "probable_cause": "Unable to create response from request",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1031": {
+        "name": "ErrTimeoutWaitingForValidateResponseCode",
+        "code": "1031",
+        "severity": "Fatal",
+        "long_description": "Timed out waiting for validate response",
+        "short_description": "Timed out waiting for validate response",
+        "probable_cause": "Network error or wrong environment configurations",
+        "suggested_remediation": "Ensure your have a strong connection and the right environment configuration"
+      },
+      "1032": {
+        "name": "ErrSMIConformanceTestsFailedCode",
+        "code": "1032",
+        "severity": "Fatal",
+        "long_description": "SMI conformance tests failed",
+        "short_description": "SMI conformance tests failed",
+        "probable_cause": "",
+        "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
+      },
+      "1033": {
+        "name": "ErrValidateAdapterCode",
+        "code": "1033",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to validate adapter",
+        "probable_cause": "Unable to fetch Mesh adapter, adapter not valid.",
+        "suggested_remediation": "Enter a valid Mesh adapter."
+      },
+      "1034": {
+        "name": "ErrSendOperationCode",
+        "code": "1034",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to perform operation",
+        "probable_cause": "Failed to perform an adapter operation due to network connection.",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1035": {
+        "name": "ErrValidMeshNameCode",
+        "code": "1035",
+        "severity": "Alert",
+        "long_description": "Unable to validate mesh name",
+        "short_description": "Invalid mesh name",
+        "probable_cause": "%s is not a valid mesh name or is unsupported",
+        "suggested_remediation": "Enter a valid mesh name"
+      },
+      "1036": {
+        "name": "ErrWaitValidateResponseCode",
+        "code": "1036",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to validate a response",
+        "probable_cause": "Unable to create responses after verifying operation",
+        "suggested_remediation": "Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."
+      },
+      "1037": {
+        "name": "ErrDesignsNotFoundCode",
+        "code": "1037",
+        "severity": "Fatal",
+        "long_description": "No Design found with the given name or ID",
+        "short_description": "Design Not Found",
+        "probable_cause": "Design with the given name or ID is not present",
+        "suggested_remediation": "Please check if the given design name or ID is present via 'mesheryctl design list'"
+      },
+      "1038": {
+        "name": "ErrInvalidDesignFileCode",
+        "code": "1038",
+        "severity": "Fatal",
+        "long_description": "Design appears invalid. Could not parse provided design",
+        "short_description": "",
+        "probable_cause": "Design file provided is not valid",
+        "suggested_remediation": "Please check that your design file is a valid yaml file"
+      },
+      "1040": {
+        "name": "ErrReadFilepathCode",
+        "code": "1040",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read file",
+        "probable_cause": "The provided file is not present or has an invalid path",
+        "suggested_remediation": "Provide a valid file path"
+      },
+      "1041": {
+        "name": "ErrNoProfileNameCode",
+        "code": "1041",
+        "severity": "Alert",
+        "long_description": "No profile name provided",
+        "short_description": "No profile name",
+        "probable_cause": "No profile name provided to perform test",
+        "suggested_remediation": "Provide a profile-name"
+      },
+      "1042": {
+        "name": "ErrNoTestURLCode",
+        "code": "1042",
+        "severity": "Alert",
+        "long_description": "Unable to get URL for performing test",
+        "short_description": "No URL",
+        "probable_cause": "No URL provided for performing tests",
+        "suggested_remediation": "Provide a test URL"
+      },
+      "1043": {
+        "name": "ErrNotValidURLCode",
+        "code": "1043",
+        "severity": "Alert",
+        "long_description": "Invalid URL for performing test",
+        "short_description": "Invalid URL",
+        "probable_cause": "Invalid test URL provided",
+        "suggested_remediation": "Input a valid test URL"
+      },
+      "1044": {
+        "name": "ErrFailMarshalCode",
+        "code": "1044",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to convert JSON object.",
+        "probable_cause": "Invalid JSON Format",
+        "suggested_remediation": "Check the data structure you are providing for marshalling"
+      },
+      "1045": {
+        "name": "ErrFailUnmarshalCode",
+        "code": "1045",
+        "severity": "Alert",
+        "long_description": "Failed to unmarshal response body",
+        "short_description": "Error unmarshalling response",
+        "probable_cause": "The JSON format from the response body is not valid.",
+        "suggested_remediation": "Ensure a valid JSON is provided for processing."
+      },
+      "1046": {
+        "name": "ErrNoProfileFoundCode",
+        "code": "1046",
+        "severity": "Alert",
+        "long_description": "No profile found with given name",
+        "short_description": "No profile found",
+        "probable_cause": "Invalid profile name or no profile name provided",
+        "suggested_remediation": "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/mesheryctl/perf/apply for more details"
+      },
+      "1047": {
+        "name": "ErrInvalidOutputChoiceCode",
+        "code": "1047",
+        "severity": "Alert",
+        "long_description": "Output format choice is invalid, use [json|yaml]",
+        "short_description": "Invalid output format choice",
+        "probable_cause": "Invalid JSON or YAML content",
+        "suggested_remediation": "Check the JSON or YAML structure."
+      },
+      "1048": {
+        "name": "ErrUnauthenticatedCode",
+        "code": "1048",
+        "severity": "Alert",
+        "long_description": "Access to this resource is unauthorized.",
+        "short_description": "Unauthenticated User",
+        "probable_cause": "You haven't logged in to Meshery.",
+        "suggested_remediation": "To proceed, log in using `mesheryctl system login`."
+      },
+      "1049": {
+        "name": "ErrFailUnmarshalFileCode",
+        "code": "1049",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to unmarshal configuration file",
+        "probable_cause": "Unable to covert JSON format from yml file",
+        "suggested_remediation": "Ensure a valid data is provided in your yml file"
+      },
+      "1050": {
+        "name": "ErrInvalidTestConfigFileCode",
+        "code": "1050",
+        "severity": "Alert",
+        "long_description": "Invalid test configuration file",
+        "short_description": "Invalid config file",
+        "probable_cause": "The test configuration is outdated or incorrect",
+        "suggested_remediation": "See https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"
+      },
+      "1051": {
+        "name": "ErrArgumentOverflowCode",
+        "code": "1051",
+        "severity": "Alert",
+        "long_description": "Invalid number of arguments",
+        "short_description": "Invalid arguments",
+        "probable_cause": "Too many arguments passed",
+        "suggested_remediation": "Use `mesheryctl perf --help` to display usage guide."
+      },
+      "1052": {
+        "name": "ErrInvalidJSONFileCode",
+        "code": "1052",
+        "severity": "Alert",
+        "long_description": "Unable to create perf profile",
+        "short_description": "Invalid JSON",
+        "probable_cause": "Invalid JSON passed as options in file",
+        "suggested_remediation": "Provide a valid JSON object"
+      },
+      "1053": {
+        "name": "ErrHealthCheckerCode",
+        "code": "1053",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Healthchecks Failed",
+        "probable_cause": "Failed to initialize healthchecker",
+        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/mesheryctl/system/check for checking Meshery components"
+      },
+      "1054": {
+        "name": "ErrPerformanceProfileResultCode",
+        "code": "1054",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error displaying performance",
+        "probable_cause": "Failed to fetch results for a specific profile",
+        "suggested_remediation": "Check your network connection and ensure Meshery is running ."
+      },
+      "1055": {
+        "name": "ErrGenerateModelCode",
+        "code": "1055",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
+        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
+      },
+      "1056": {
+        "name": "ErrGenerateComponentCode",
+        "code": "1056",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error generating comp %s of model %s",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1057": {
+        "name": "ErrUpdateModelCode",
+        "code": "1057",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error updating model ",
+        "probable_cause": "Model does not exist",
+        "suggested_remediation": "Ensure existence of model, check for typo in model name"
+      },
+      "1058": {
+        "name": "ErrUpdateComponentCode",
+        "code": "1058",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Component does not exist\nComponent definition is corrupted",
+        "suggested_remediation": "Ensure existence of component, check for typo in component name\nRegenerate corrupted component"
+      },
+      "1059": {
+        "name": "ErrUpdateRegistryCode",
+        "code": "1059",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error updating registry at ",
+        "probable_cause": "Provided spreadsheet ID is incorrect\nProvided credential is incorrect",
+        "suggested_remediation": "Ensure correct spreadsheet ID is provided\nEnsure correct credential is used"
+      },
+      "1060": {
+        "name": "ErrHealthCheckFailedCode",
+        "code": "1060",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Health checks failed",
+        "probable_cause": "Health checks execution failed in starting Meshery server",
+        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations."
+      },
+      "1062": {
+        "name": "ErrStopMesheryCode",
+        "code": "1062",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error stopping Meshery",
+        "probable_cause": "Meshery server is not stopped, some of the docker containers are still running",
+        "suggested_remediation": "Verify all docker containers of Meshery server are stopped"
+      },
+      "1063": {
+        "name": "ErrResetMeshconfigCode",
+        "code": "1063",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error resetting meshconfig to default settings",
+        "probable_cause": "Meshery server config file is not reset to default settings",
+        "suggested_remediation": ""
+      },
+      "1064": {
+        "name": "ErrApplyManifestCode",
+        "code": "1064",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying manifest with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1065": {
+        "name": "ErrApplyOperatorManifestCode",
+        "code": "1065",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying operator manifests with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1066": {
+        "name": "ErrCreateDirCode",
+        "code": "1066",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating directory ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1067": {
+        "name": "ErrUnsupportedPlatformCode",
+        "code": "1067",
+        "severity": "Alert",
+        "long_description": "The provided platform is not supported.",
+        "short_description": "Unsupported platform",
+        "probable_cause": "The platform \n is not supported for the deployment of Meshery. ",
+        "suggested_remediation": "Supported platforms are:\\n\\n- docker\\n- kubernetes\\n\\n Verify this setting in your meshconfig at \n or verify by executing `mesheryctl system context view`"
+      },
+      "1068": {
+        "name": "ErrRetrievingCurrentContextCode",
+        "code": "1068",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error retrieving current-context",
+        "probable_cause": "current-context is not retrieved",
+        "suggested_remediation": ""
+      },
+      "1069": {
+        "name": "ErrSettingDefaultContextToConfigCode",
+        "code": "1069",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting default context to config",
+        "probable_cause": "Mesheryctl config file may not exist or is invalid",
+        "suggested_remediation": "Make sure the Mesheryctl config file exists"
+      },
+      "1070": {
+        "name": "ErrSettingTemporaryContextCode",
+        "code": "1070",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting temporary context",
+        "probable_cause": "temporary context is not set properly",
+        "suggested_remediation": "Verify the temporary context is set properly using the -c flag provided"
+      },
+      "1072": {
+        "name": "ErrRestartMesheryCode",
+        "code": "1072",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error restarting Meshery",
+        "probable_cause": "Meshery is not running",
+        "suggested_remediation": "Restart Meshery instance"
+      },
+      "1073": {
+        "name": "ErrK8sQueryCode",
+        "code": "1073",
+        "severity": "Alert",
+        "long_description": "\\nThe Kubernetes cluster is not accessible\n Please confirm that the token is valid\n See https://docs.meshery.io/installation/quick-start for additional instructions",
+        "short_description": "The Kubernetes cluster is not accessible.",
+        "probable_cause": "Kubernetes cluster is unavailable and that the token is invalid",
+        "suggested_remediation": "Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"
+      },
+      "1074": {
+        "name": "ErrK8sConfigCode",
+        "code": "1074",
+        "severity": "Alert",
+        "long_description": "\\nThe Kubernetes cluster is not accessible\n Please confirm that the cluster is running\n See https://docs.meshery.io/installation/quick-start for additional instructions.",
+        "short_description": "The Kubernetes cluster is not accessible.",
+        "probable_cause": "Kubernetes cluster isn't running or inaccessible",
+        "suggested_remediation": "Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."
+      },
+      "1075": {
+        "name": "ErrInitPortForwardCode",
+        "code": "1075",
+        "severity": "Alert",
+        "long_description": "Failed to create new Port Forward instance",
+        "short_description": "Failed to initialize port-forward",
+        "probable_cause": "Connection not established",
+        "suggested_remediation": "Ensure you have a strong network connection"
+      },
+      "1076": {
+        "name": "ErrRunPortForwardCode",
+        "code": "1076",
+        "severity": "Fatal",
+        "long_description": "Error running port-forward for Meshery",
+        "short_description": "Failed to run port-forward",
+        "probable_cause": "Meshery pod is not in running phase\nmesheryctl can't connect to kubernetes with client-go",
+        "suggested_remediation": "Make sure Meshery pod exists and is in running state\nCheck if mesheryctl is connected to kubernetes with `mesheryctl system check`"
+      },
+      "1077": {
+        "name": "ErrFailedGetEphemeralPortCode",
+        "code": "1077",
+        "severity": "Fatal",
+        "long_description": "Failed to start port-forwarding",
+        "short_description": "Failed to get a free port",
+        "probable_cause": "Unable to provide a free port to connect to a kuberentes cluster",
+        "suggested_remediation": "Ensure your Meshery Server is running,\nEnsure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"
+      },
+      "1078": {
+        "name": "ErrUnmarshalDockerComposeCode",
+        "code": "1078",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing JSON response from Meshery Server",
+        "probable_cause": "Either the JSON response is invalid or the Response is distorted",
+        "suggested_remediation": "Ensure Meshery Server is running and you have a strong newtwork connection"
+      },
+      "1079": {
+        "name": "ErrCreatingDockerClientCode",
+        "code": "1079",
+        "severity": "Critical",
+        "long_description": "Error occurred while creating Docker client from config file",
+        "short_description": "Failed to create Docker client",
+        "probable_cause": "Missing or invalid docker config",
+        "suggested_remediation": "Please check the Docker config file for any errors or missing information. Make sure it is correctly formatted and contains all the required fields."
+      },
+      "1080": {
+        "name": "ErrWriteConfigCode",
+        "code": "1080",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error in writing config",
+        "probable_cause": "Unable to write to config file",
+        "suggested_remediation": ""
+      },
+      "1081": {
+        "name": "ErrContextContentCode",
+        "code": "1081",
+        "severity": "Fatal",
+        "long_description": "Unable to detect current-context",
+        "short_description": "Failed to detect context",
+        "probable_cause": "Error while trying to fetch current-context in YML file",
+        "suggested_remediation": "Ensure a valid context name is provided"
+      },
+      "1082": {
+        "name": "ErrSwitchChannelResponseCode",
+        "code": "1082",
+        "severity": "Alert",
+        "long_description": "Channel switch aborted",
+        "short_description": "Unable to exectute command",
+        "probable_cause": "No user response provided",
+        "suggested_remediation": ""
+      },
+      "1083": {
+        "name": "ErrGetCurrentContextCode",
+        "code": "1083",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get current-context",
+        "probable_cause": "Invalid context name provided",
+        "suggested_remediation": ""
+      },
+      "1084": {
+        "name": "ErrSetCurrentContextCode",
+        "code": "1084",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to set current-context",
+        "probable_cause": "Invalid context name provided",
+        "suggested_remediation": ""
+      },
+      "1085": {
+        "name": "ErrTokenContextCode",
+        "code": "1085",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get token",
+        "probable_cause": "No token found for the Current context",
+        "suggested_remediation": ""
+      },
+      "1086": {
+        "name": "ErrProviderInfoCode",
+        "code": "1086",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to verify provider",
+        "probable_cause": "Unable to verify provider  as Meshery server was unreachable",
+        "suggested_remediation": ""
+      },
+      "1087": {
+        "name": "ErrValidProviderCode",
+        "code": "1087",
+        "severity": "Fatal",
+        "long_description": "Unable to validate provider",
+        "short_description": "Invalid provider",
+        "probable_cause": "A wrong provider was specified",
+        "suggested_remediation": ""
+      },
+      "1088": {
+        "name": "ErrUnmarshallConfigCode",
+        "code": "1088",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid config",
+        "probable_cause": "Unable to decode Meshconfig.",
+        "suggested_remediation": ""
+      },
+      "1089": {
+        "name": "ErrUploadFileParamsCode",
+        "code": "1089",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to upload",
+        "probable_cause": "Unable to upload parameters from config file with provided context",
+        "suggested_remediation": ""
+      },
+      "1090": {
+        "name": "ErrFailRequestCode",
+        "code": "1090",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to make a request",
+        "probable_cause": "Meshery server is not reachable.",
+        "suggested_remediation": "Please ensure that the Meshery server is running and accessible. You can try running 'mesheryctl system restart'."
+      },
+      "1091": {
+        "name": "ErrInvalidTokenCode",
+        "code": "1091",
+        "severity": "Alert",
+        "long_description": "The authentication token has expired or is invalid.",
+        "short_description": "Invalid authentication Token",
+        "probable_cause": "The token in auth.json has expired or is invalid.",
+        "suggested_remediation": "Provide a valid user token by logging in with `mesheryctl system login`."
+      },
+      "1092": {
+        "name": "ErrFailReqStatusCode",
+        "code": "1092",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed response server error",
+        "probable_cause": "Invalid API call",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1093": {
+        "name": "ErrAttachAuthTokenCode",
+        "code": "1093",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Authentication token Not Found",
+        "probable_cause": "The user is not logged in to generate a token.",
+        "suggested_remediation": "Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."
+      },
+      "1094": {
+        "name": "ErrUnmarshalCode",
+        "code": "1094",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error unmarshalling response",
+        "probable_cause": "The JSON format from the response body is not valid.",
+        "suggested_remediation": "Ensure a valid JSON is provided for processing."
+      },
+      "1095": {
+        "name": "ErrFileReadCode",
+        "code": "1095",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "File read error",
+        "probable_cause": "The provided file is not present or has an invalid path.",
+        "suggested_remediation": "To proceed, provide a valid file path with a valid file."
+      },
+      "1096": {
+        "name": "ErrCreatingRequestCode",
+        "code": "1096",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error occurred while making an HTTP request.",
+        "probable_cause": "Meshery is not running or there is a network issue.",
+        "suggested_remediation": "Check your network connection and verify the status of the Meshery server using `mesheryctl system status`."
+      },
+      "1097": {
+        "name": "ErrMarshalCode",
+        "code": "1097",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error while marshalling the content",
+        "probable_cause": "The content provided for marshalling is invalid.",
+        "suggested_remediation": "Check the data structure you are providing for marshalling."
+      },
+      "1098": {
+        "name": "ErrReadResponseBodyCode",
+        "code": "1098",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to read response body from request",
+        "probable_cause": "There might be connection failure with Meshery Server",
+        "suggested_remediation": "Check the status via `mesheryctl system status`"
+      },
+      "1099": {
+        "name": "ErrParsingUrlCode",
+        "code": "1099",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error parsing the URL",
+        "probable_cause": "The provided URL does not exist or the relative path is incorrect.",
+        "suggested_remediation": "Double-check the correctness of the URL you have inputted."
+      },
+      "1100": {
+        "name": "ErrNotFoundCode",
+        "code": "1100",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Item Not Found",
+        "probable_cause": "The item you are searching for is not present.",
+        "suggested_remediation": "Check whether the item is present."
+      },
+      "1101": {
+        "name": "ErrUnauthenticatedCode",
+        "code": "1101",
+        "severity": "Alert",
+        "long_description": "Access to this resource is unauthorized.",
+        "short_description": "Unauthenticated User",
+        "probable_cause": "You haven't logged in to Meshery.",
+        "suggested_remediation": "To proceed, log in using `mesheryctl system login`."
+      },
+      "1102": {
+        "name": "ErrInvalidFileCode",
+        "code": "1102",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid File",
+        "probable_cause": "File does not meet the criteria.",
+        "suggested_remediation": "Check the file's validity."
+      },
+      "1103": {
+        "name": "ErrInvalidNameOrIDCode",
+        "code": "1103",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid Name or ID Provided",
+        "probable_cause": "The provided Name or ID is either not present or invalid.",
+        "suggested_remediation": "Provide a valid Name or ID using the `list` command with the appropriate subcommand."
+      },
+      "1104": {
+        "name": "ErrInvalidAPIResponseCode",
+        "code": "1104",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Invalid API response encountered",
+        "probable_cause": "Error occurred while generating a response body",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1105": {
+        "name": "ErrReadConfigFileCode",
+        "code": "1105",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read meshconfig file",
+        "probable_cause": "The provided file is not present or has an invalid path",
+        "suggested_remediation": "Provide a valid file path with a valid meshconfig file."
+      },
+      "1106": {
+        "name": "ErrMarshalIndentCode",
+        "code": "1106",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error indenting JSON body",
+        "probable_cause": "Unable to format the JSON body filters due to invalid content",
+        "suggested_remediation": "Check the data structure provided for proper formatting."
+      },
+      "1107": {
+        "name": "ErrLoadConfigCode",
+        "code": "1107",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing config",
+        "probable_cause": "Unable to load meshconfig due to wrong configurations",
+        "suggested_remediation": "Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."
+      },
+      "1108": {
+        "name": "ErrResponseStatusBodyCode",
+        "code": "1108",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Incorrect status code",
+        "probable_cause": "Error occurred while generating a response body",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1109": {
+        "name": "ErrResponseStatusCode",
+        "code": "1109",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Incorrect status code",
+        "probable_cause": "Error occurred while generating a response",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1110": {
+        "name": "ErrJSONToYAMLCode",
+        "code": "1110",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to convert JSON to YAML",
+        "probable_cause": "The content provided for marshalling is invalid.",
+        "suggested_remediation": "Check the JSON structure you are providing for YAML conversion."
+      },
+      "1111": {
+        "name": "ErrOutFormatFlagCode",
+        "code": "1111",
+        "severity": "Alert",
+        "long_description": "Output format choice is invalid, use [json|yaml]",
+        "short_description": "Invalid output format choice",
+        "probable_cause": "Invalid JSON or YAML content",
+        "suggested_remediation": "Check the JSON or YAML structure."
+      },
+      "1112": {
+        "name": "ErrParseGithubFileCode",
+        "code": "1112",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to parse github file",
+        "probable_cause": "Unable to retrieve file from URL: %s",
+        "suggested_remediation": "Ensure you have a github url in file path"
+      },
+      "1113": {
+        "name": "ErrReadTokenCode",
+        "code": "1113",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not read token",
+        "probable_cause": "Token file is invalid",
+        "suggested_remediation": "Provide a valid user token by logging in with `mesheryctl system login`."
+      },
+      "1114": {
+        "name": "ErrRequestResponseCode",
+        "code": "1114",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to handle request",
+        "probable_cause": "Error occurred while generating a response",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1117": {
+        "name": "ErrBadRequestCode",
+        "code": "1117",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete the connection",
+        "probable_cause": "Error occurred while deleting the connection",
+        "suggested_remediation": "Check your network connection and the status of Meshery Server via `mesheryctl system status`."
+      },
+      "1118": {
+        "name": "ErrInvalidArgumentCode",
+        "code": "1118",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Argument",
+        "probable_cause": "Invalid Argument",
+        "suggested_remediation": "Please check the arguments passed"
+      },
+      "1119": {
+        "name": "ErrGeneratingIconsCode",
+        "code": "1119",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error generating icons at ",
+        "probable_cause": "Model SVG data is missing\nModel name formatting issue",
+        "suggested_remediation": "Ensure model SVG data is provided in model definition\nEnsure model name formatting is correct"
+      },
+      "1120": {
+        "name": "ErrClearLineCode",
+        "code": "1120",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to clear terminal",
+        "probable_cause": "Error occurred while attempting to clear the command-line interface",
+        "suggested_remediation": "Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"
+      },
+      "1121": {
+        "name": "ErrPatternSourceTypeCode",
+        "code": "1121",
+        "severity": "Alert",
+        "long_description": "Empty  source type detected",
+        "short_description": "Source type for the design to import not specified",
+        "probable_cause": "Design source type not provided",
+        "suggested_remediation": "Provide one of the supported source type for the design to import. \\n\\n%v"
+      },
+      "1123": {
+        "name": "ErrCreateFileCode",
+        "code": "1123",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating file",
+        "probable_cause": "Insufficient disk page, filepath could be invalid.",
+        "suggested_remediation": "Verify that the file path is valid, and ensure there is sufficient disk space available."
+      },
+      "1124": {
+        "name": "ErrRetrieveHomeDirCode",
+        "code": "1124",
+        "severity": "Alert",
+        "long_description": "Failed to retrieve the home/root directory,",
+        "short_description": "Error retrieving user home/root directory",
+        "probable_cause": "Operating system environment issue or insufficient permissions.",
+        "suggested_remediation": "Ensure that the operating system environment is set up correctly and run the application with elevated privileges."
+      },
+      "1125": {
+        "name": "ErrReadFromBodyCode",
+        "code": "1125",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read data from the response body",
+        "probable_cause": "The data for the pattern (design) file might be corrupted.",
+        "suggested_remediation": "Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."
+      },
+      "1126": {
+        "name": "ErrMarkFlagRequireCode",
+        "code": "1126",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The flag may not exist or there was some error while specifying the flag.",
+        "suggested_remediation": "Please ensure that the required flag '%s' is correctly specified and set before running the command."
+      },
+      "1127": {
+        "name": "ErrExportModelCode",
+        "code": "1127",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error exporting model",
+        "probable_cause": "Model may not be present in the registry",
+        "suggested_remediation": "Ensure that there are no typos in the model name"
+      },
+      "1128": {
+        "name": "ErrParsingSheetCode",
+        "code": "1128",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "provided sheet id for %s might be incorrect",
+        "suggested_remediation": "ensure the sheet id is correct"
+      },
+      "1129": {
+        "name": "ErrGenerationTimeoutCode",
+        "code": "1129",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The model source may be unresponsive\nNetwork connectivity issues\nLarge number of components to generate",
+        "suggested_remediation": "Try generating a specific model using --model flag\nCheck network connectivity\nReview the generation logs for problematic models"
+      },
+      "1130": {
+        "name": "ErrParsingRelationshipCode",
+        "code": "1130",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid relationship definition format\nMissing required relationship fields\nMalformed selector in relationship",
+        "suggested_remediation": "Verify the relationship CSV format\nCheck that all required fields are present\nValidate the selector JSON syntax"
+      },
+      "1131": {
+        "name": "ErrTemplateFileNotPresentCode",
+        "code": "1131",
+        "severity": "Fatal",
+        "long_description": "no template file is provided while using url for importing a model ",
+        "short_description": "error no template file provided",
+        "probable_cause": "template file not present",
+        "suggested_remediation": "ensure that the template file is present in the given path"
+      },
+      "1132": {
+        "name": "ErrGeneratesModelCode",
+        "code": "1132",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
+        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
+      },
+      "1134": {
+        "name": "ErrUpdateComponentsCode",
+        "code": "1134",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Component does not exist\nComponent definition is corrupted",
+        "suggested_remediation": "Ensure existence of component, check for typo in component name\nRegenerate corrupted component"
+      },
+      "1137": {
+        "name": "ErrMissingCommandsCode",
+        "code": "1137",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Missing required commands",
+        "probable_cause": "Required commands are not installed or not in PATH",
+        "suggested_remediation": "Install the missing commands and ensure they are in PATH"
+      },
+      "1138": {
+        "name": "ErrKubernetesConnectivityCode",
+        "code": "1138",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to connect to Kubernetes API server",
+        "probable_cause": "Kubernetes API server is not reachable",
+        "suggested_remediation": "Ensure your Kubernetes cluster is running and accessible"
+      },
+      "1139": {
+        "name": "ErrKubernetesQueryCode",
+        "code": "1139",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to query Kubernetes API",
+        "probable_cause": "Kubernetes API query failed",
+        "suggested_remediation": "Ensure your Kubernetes cluster is running and accessible"
+      },
+      "1140": {
+        "name": "ErrDesignFileNotProvidedCode",
+        "code": "1140",
+        "severity": "Alert",
+        "long_description": "Design [File | File Path | URL] isn't specified",
+        "short_description": "Design file path not provided",
+        "probable_cause": "[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command",
+        "suggested_remediation": "Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \\n\\n%v"
+      },
+      "1141": {
+        "name": "ErrCreateManifestsFolderCode",
+        "code": "1141",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating manifest folder",
+        "probable_cause": "system error in creating manifest folder",
+        "suggested_remediation": "Make sure manifest folder (.meshery/manifests) is created properly"
+      },
+      "1142": {
+        "name": "ErrDownloadFileCode",
+        "code": "1142",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error downloading file ",
+        "probable_cause": "Failed to download docker-compose or manifest file due to system/config/network issues",
+        "suggested_remediation": "Make sure docker-compose or manifest file is downloaded"
+      },
+      "1143": {
+        "name": "ErrNoManifestFilesFoundCode",
+        "code": "1143",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No manifest files found in the specified path",
+        "probable_cause": "The provided directory may be empty, incorrect, or manifests were not properly downloaded.",
+        "suggested_remediation": "Verify the specified path contains valid manifest files."
+      },
+      "1144": {
+        "name": "ErrWalkManifestsCode",
+        "code": "1144",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error walking through manifests",
+        "probable_cause": "Unable to traverse git repository or manifests due to filesystem or permission issues.",
+        "suggested_remediation": "Ensure the repository and manifests directory are accessible and have proper permissions."
+      },
+      "1145": {
+        "name": "ErrGetChannelVersionCode",
+        "code": "1145",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to retrieve release channel and version information.",
+        "probable_cause": "Failed to determine version from context or GitHub releases, possibly due to network or configuration issues.",
+        "suggested_remediation": "Check your network connection and context configuration; ensure GitHub is accessible."
+      },
+      "1146": {
+        "name": "ErrModelUnsupportedOutputFormatCode",
+        "code": "1146",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error viewing model",
+        "probable_cause": "Output format not supported",
+        "suggested_remediation": "Ensure giving a valid format"
+      },
+      "1147": {
+        "name": "ErrOutputToJsonCode",
+        "code": "1147",
+        "severity": "Alert",
+        "long_description": "Error occurred while formatting to JSON",
+        "short_description": "Failed to format output in JSON",
+        "probable_cause": "The content provided for formatting failed.",
+        "suggested_remediation": "Check the JSON structure you are providing for formatting."
+      },
+      "1148": {
+        "name": "ErrModelInitCode",
+        "code": "1148",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error model init",
+        "probable_cause": "Error during run of model init command",
+        "suggested_remediation": "Ensure passing all params according to the command description"
+      },
+      "1149": {
+        "name": "ErrModelUnsupportedVersionCode",
+        "code": "1149",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error in model version format",
+        "probable_cause": "Version format not supported",
+        "suggested_remediation": "Ensure giving a semver version format"
+      },
+      "1150": {
+        "name": "ErrInvalidModelCode",
+        "code": "1150",
+        "severity": "Alert",
+        "long_description": "No valid component or relationship found in the Model provided. A Model can be only imported if it contains at least one valid Component or Relationship.",
+        "short_description": "No valid component or relationship found in the model provided",
+        "probable_cause": "Provided components or relationships might have incorrect format\nFolder structure might be incorrect",
+        "suggested_remediation": "Know about Meshery Models and Importing instructions here: https://docs.meshery.io/guides/configuration-management/importing-models"
+      },
+      "1151": {
+        "name": "ErrModelBuildCode",
+        "code": "1151",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error model build",
+        "probable_cause": "Error during run of model build command",
+        "suggested_remediation": "Ensure passing all params according to the command description"
+      },
+      "1152": {
+        "name": "ErrInvalidUUIDCode",
+        "code": "1152",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid ID format",
+        "probable_cause": "ID is not a valid UUID format\nID contains invalid characters",
+        "suggested_remediation": "Ensure the ID is a valid UUID format\nCheck the ID parameter for typos or formatting issues"
+      },
+      "1153": {
+        "name": "ErrFetchEnvironmentsCode",
+        "code": "1153",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to fetch environments",
+        "probable_cause": "Network connection issues\nMeshery server is not reachable\nInvalid API endpoint\nAuthentication issues",
+        "suggested_remediation": "Check your network connection\nVerify Meshery server status via `mesheryctl system status`\nEnsure you have proper authentication credentials"
+      },
+      "1154": {
+        "name": "ErrTableRenderCode",
+        "code": "1154",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to display output in table format",
+        "probable_cause": "Table rendering issue",
+        "suggested_remediation": "Ensure the data being rendered is valid and properly structured."
+      },
+      "1155": {
+        "name": "ErrFlagsInvalidCode",
+        "code": "1155",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid flag provided",
+        "probable_cause": "The flag provided is invalid.",
+        "suggested_remediation": "Provide a valid flag"
+      },
+      "1156": {
+        "name": "ErrMesheryServerNotRunningCode",
+        "code": "1156",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server is not running",
+        "probable_cause": "Meshery Server is not running or is unreachable\nDocker or Kubernetes environment is not ready\nNetwork connectivity issues",
+        "suggested_remediation": "Start Meshery Server with `mesheryctl system start`\nVerify system readiness with `mesheryctl system check --preflight`\nCheck your network connection and firewall settings"
+      },
+      "1157": {
+        "name": "ErrListPaginationCode",
+        "code": "1157",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to fetch data from Meshery server.",
+        "probable_cause": "While fetching data from Meshery server an error occurred.",
+        "suggested_remediation": "Please check if returned data is valid"
+      },
+      "1158": {
+        "name": "ErrOutputToYamlCode",
+        "code": "1158",
+        "severity": "Alert",
+        "long_description": "Error occurred while formatting to YAML",
+        "short_description": "Failed to format output in YAML",
+        "probable_cause": "The content provided for formatting failed.",
+        "suggested_remediation": "Check the Yaml structure you are providing for formatting."
+      },
+      "1159": {
+        "name": "ErrModelGenerationFailedCode",
+        "code": "1159",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Invalid model source URL\nUnsupported registrant type\nNetwork issues fetching model data",
+        "suggested_remediation": "Verify the model's source URL is accessible\nCheck the registrant type is supported\nReview network connectivity"
+      },
+      "1160": {
+        "name": "ErrUserPromptCode",
+        "code": "1160",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prompt failed",
+        "probable_cause": "User prompt was interrupted or failed to get input",
+        "suggested_remediation": "Try running the command again and complete the selection"
+      },
+      "1161": {
+        "name": "ErrConvertConcurrentRequestCode",
+        "code": "1161",
+        "severity": "Alert",
+        "long_description": "Invalid concurrent-request value provided",
+        "short_description": "Failed to convert concurrent-request",
+        "probable_cause": "The concurrent-request flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for concurrent-request"
+      },
+      "1162": {
+        "name": "ErrConvertQPSCode",
+        "code": "1162",
+        "severity": "Alert",
+        "long_description": "Invalid qps value provided",
+        "short_description": "Failed to convert qps",
+        "probable_cause": "The qps flag value is not a valid integer",
+        "suggested_remediation": "Provide a valid integer value for qps"
+      },
+      "1163": {
+        "name": "ErrParseDesignFileCode",
+        "code": "1163",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to parse design file",
+        "probable_cause": "The design file format is invalid or corrupted\nThe YAML/JSON syntax may be incorrect",
+        "suggested_remediation": "Ensure the design file is a valid Meshery design format\nCheck for YAML/JSON syntax errors\nValidate the design file structure"
+      },
+      "1164": {
+        "name": "ErrDeleteDesignCode",
+        "code": "1164",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete design",
+        "probable_cause": "Design may not exist\nNetwork connection issue\nMeshery server unreachable",
+        "suggested_remediation": "Verify the design exists using 'mesheryctl design list'\nCheck your network connection and Meshery server status"
+      },
+      "1165": {
+        "name": "ErrGetKubernetesContextsCode",
+        "code": "1165",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get kubernetes contexts",
+        "probable_cause": "No kubernetes contexts found",
+        "suggested_remediation": "Ensure you have at least one valid context in your meshconfig file."
+      },
+      "1166": {
+        "name": "ErrSetKubernetesContextCode",
+        "code": "1166",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to set kubernetes context",
+        "probable_cause": "The specified Kubernetes context does not exist. ",
+        "suggested_remediation": "Verify that the Kubernetes context provided is valid and try again."
+      },
+      "1167": {
+        "name": "ErrFilterNotFoundCode",
+        "code": "1167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Filter not found",
+        "probable_cause": "The specified filter does not exist",
+        "suggested_remediation": "Use `mesheryctl filter list` to see available filters"
+      },
+      "1168": {
+        "name": "ErrFilterURIRequiredCode",
+        "code": "1168",
+        "severity": "Alert",
+        "long_description": "No URI provided for filter import",
+        "short_description": "URI is required",
+        "probable_cause": "Filter import command requires a URI",
+        "suggested_remediation": "Provide a valid file path or URL"
+      },
+      "1169": {
+        "name": "ErrViewAllWithNameCode",
+        "code": "1169",
+        "severity": "Alert",
+        "long_description": "--all cannot be used when filter name or ID is specified",
+        "short_description": "Invalid flag combination",
+        "probable_cause": "Conflicting options provided",
+        "suggested_remediation": "Use either --all flag OR specify a filter name/ID"
+      },
+      "1170": {
+        "name": "ErrMultiWordFilterNameCode",
+        "code": "1170",
+        "severity": "Alert",
+        "long_description": "multi-word filter names must be enclosed in double quotes",
+        "short_description": "Invalid filter name format",
+        "probable_cause": "Filter name with spaces requires quoting",
+        "suggested_remediation": "Enclose multi-word filter names in double quotes"
+      },
+      "1171": {
+        "name": "ErrInvalidFilterCommandCode",
+        "code": "1171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided subcommand is not recognized",
+        "suggested_remediation": "Run `mesheryctl filter --help` to see available commands"
+      },
+      "1172": {
+        "name": "ErrHandlePaginationCode",
+        "code": "1172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to display paginated results",
+        "probable_cause": "Interactive pagination requires keyboard input support",
+        "suggested_remediation": "Ensure you are running in an interactive terminal\nIf running in a non-interactive environment, use '--page' flag to skip pagination"
+      },
+      "1174": {
+        "name": "ErrAwsCliNotFoundCode",
+        "code": "1174",
+        "severity": "Alert",
+        "long_description": "The AWS CLI is required to create an EKS connection but was not found on your system",
+        "short_description": "AWS CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"
+      },
+      "1175": {
+        "name": "ErrGcpGKEGetCredentialsCode",
+        "code": "1175",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the GKE cluster credentials",
+        "short_description": "Unable to get GKE cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the GKE cluster name, zone, and project ID are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1182": {
+        "name": "ErrConnectionTypeCode",
+        "code": "1182",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1183": {
+        "name": "ErrEncodingDataCode",
+        "code": "1183",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Non supported characters in the data",
+        "suggested_remediation": "Ensure the content of the data provided does not contain invalid supported characters"
+      },
+      "1184": {
+        "name": "ErrUnsupportedFormatCode",
+        "code": "1184",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "An unsupported output format was requested. ",
+        "suggested_remediation": "Specify a supported output format. Choices are 'json' or 'yaml'."
+      },
+      "1185": {
+        "name": "ErrUploadFileWithParamsCode",
+        "code": "1185",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "File upload failed due to network issues or server errors",
+        "suggested_remediation": "Check your network connection and ensure the server is reachable."
+      },
+      "1186": {
+        "name": "ErrAwsEksGetCredentialsCode",
+        "code": "1186",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the EKS cluster credentials",
+        "short_description": "Unable to get EKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the EKS cluster name and region are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1187": {
+        "name": "ErrReadKubeConfigCode",
+        "code": "1187",
+        "severity": "Alert",
+        "long_description": "There was an error reading the kubeconfig file",
+        "short_description": "Unable to read kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that the kubeconfig file exists, content is valid and is accessible"
+      },
+      "1188": {
+        "name": "ErrWriteKubeConfigCode",
+        "code": "1188",
+        "severity": "Alert",
+        "long_description": "There was an error writing the kubeconfig file",
+        "short_description": "Unable to write kubeconfig file",
+        "probable_cause": "",
+        "suggested_remediation": "Please ensure that you have the necessary permissions to write to the kubeconfig file location"
+      },
+      "1189": {
+        "name": "ErrAzureAksGetCredentialsCode",
+        "code": "1189",
+        "severity": "Alert",
+        "long_description": "There was an error while fetching the AKS cluster credentials",
+        "short_description": "Unable to get AKS cluster credentials",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"
+      },
+      "1190": {
+        "name": "ErrAzureCliNotFoundCode",
+        "code": "1190",
+        "severity": "Alert",
+        "long_description": "The Azure CLI is required to create an AKS connection but was not found on your system",
+        "short_description": "Azure CLI not found",
+        "probable_cause": "",
+        "suggested_remediation": "Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"
+      },
+      "1191": {
+        "name": "ErrInvalidCommandCode",
+        "code": "1191",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid command",
+        "probable_cause": "The provided command is not recognized",
+        "suggested_remediation": "Run 'mesheryctl design --help' to see available commands"
+      },
+      "1192": {
+        "name": "ErrDesignNameOrIDNotSpecifiedCode",
+        "code": "1192",
+        "severity": "Alert",
+        "long_description": "No design name or ID was provided",
+        "short_description": "Design name or ID not specified",
+        "probable_cause": "Command requires a design name or ID as argument",
+        "suggested_remediation": "Provide a design name or ID, or use '-a' flag to view all designs.\\nRun 'mesheryctl design view --help' for usage details"
+      },
+      "1193": {
+        "name": "ErrReadInputCode",
+        "code": "1193",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to read the input",
+        "probable_cause": "The provided input was invalid or could not be read",
+        "suggested_remediation": "Validate the input and try again."
+      },
+      "1194": {
+        "name": "ErrOutputFileNotSpecifiedCode",
+        "code": "1194",
+        "severity": "Alert",
+        "long_description": "The output file path was not provided.",
+        "short_description": "Output file path is not specified.",
+        "probable_cause": "An output file path must be specified to save the output.",
+        "suggested_remediation": "Provide a valid file path."
+      },
+      "1195": {
+        "name": "ErrCreateEnvironmentCode",
+        "code": "1195",
+        "severity": "Alert",
+        "long_description": "There was an error while creating the environment",
+        "short_description": "",
+        "probable_cause": "Ensure Meshery server is running and reachable\nCheck if the organization ID is correct",
+        "suggested_remediation": "Start Meshery server and try again\nProvide a valid organization ID"
+      },
+      "1196": {
+        "name": "ErrContextNotExistsCode",
+        "code": "1196",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to get context details",
+        "probable_cause": "Non exists context name is provided",
+        "suggested_remediation": "Run `mesheryctl system context list` to see available context name"
+      },
+      "1197": {
+        "name": "ErrConnectionNotFoundCode",
+        "code": "1197",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Connection not found",
+        "probable_cause": "The specified connection ID does not exist",
+        "suggested_remediation": "Verify the connection ID using `mesheryctl connection list`"
+      },
+      "1198": {
+        "name": "ErrInvalidOutputFormatCode",
+        "code": "1198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Output Format",
+        "probable_cause": "The specified output format is not supported",
+        "suggested_remediation": ""
+      },
+      "1199": {
+        "name": "ErrDesignInvalidApiResponseCode",
+        "code": "1199",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API response",
+        "probable_cause": "The API response is missing expected fields or has an unexpected format",
+        "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
+      }
+    }
+  }
+}

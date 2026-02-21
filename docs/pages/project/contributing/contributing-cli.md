@@ -193,3 +193,4 @@ To update golden files with the test output use the `--update` flag:
 
 {% capture code_content %}var update = flag.Bool("update", false, "update golden files"){% endcapture %}
 {% include code.html code=code_content %}
+

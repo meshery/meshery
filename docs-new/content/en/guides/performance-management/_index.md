@@ -5,5 +5,3 @@ description: Guides for understanding Meshery's ability to characterize and anal
 ---
 
 Guides for understanding Meshery's ability to characterize and analyze performance of your infrastructure and applications.
-
-{{< category-guides-list category="performance" >}}
