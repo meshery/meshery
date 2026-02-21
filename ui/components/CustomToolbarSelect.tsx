@@ -1,9 +1,7 @@
+import { IndeterminateCheckBox, CompareArrows, GetApp } from '@sistent/sistent';
 import React, { useState } from 'react';
 import { IconButton, Tooltip, styled } from '@sistent/sistent';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { NoSsr } from '@sistent/sistent';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { useDispatch, useSelector } from 'react-redux';
@@ -96,7 +94,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
           <Tooltip title="Deselect ALL">
             <StyledIconButton onClick={handleClickDeselectAll}>
               <StyledIcon>
-                <IndeterminateCheckBoxIcon />
+                <IndeterminateCheckBox />
               </StyledIcon>
             </StyledIconButton>
           </Tooltip>
@@ -110,7 +108,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
                 download={`${fullData[0].name}_test_result.json`}
               >
                 <StyledIcon>
-                  <GetAppIcon />
+                  <GetApp />
                 </StyledIcon>
               </StyledIconButton>
             </Tooltip>
@@ -118,7 +116,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
           <Tooltip title="Compare selected">
             <StyledIconButton onClick={handleCompareSelected}>
               <StyledIcon>
-                <CompareArrowsIcon />
+                <CompareArrows />
               </StyledIcon>
             </StyledIconButton>
           </Tooltip>
