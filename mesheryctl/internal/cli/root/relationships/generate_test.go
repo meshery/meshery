@@ -2,7 +2,7 @@ package relationships
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -38,7 +38,7 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 	}
 
 	// for testing, relative path is required in createJsonFile function
-	jsonFilePath := "./testdata/RelationshipsDataTest.json"
+	jsonFilePath := "./testdata/relationships-data-test.json"
 
 	err = createJsonFile(resp, jsonFilePath)
 	if err != nil {
@@ -50,7 +50,7 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 
 	relationshipData, err := os.ReadFile(jsonFilePath)
 	if err != nil {
-		t.Fatal("Error in reading file 'RelationshipsDataTest.json': ", err)
+		t.Fatal("Error in reading file 'relationships-data-test.json': ", err)
 	}
 
 	expectedRelationshipData, err := os.ReadFile(goldenFilePath)
@@ -61,12 +61,12 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 	var relationshipDataJson, expectedRelationshipDataJson []map[string]interface{}
 	err = json.Unmarshal([]byte(relationshipData), &relationshipDataJson)
 	if err != nil {
-		t.Fatal("Error in parsing file 'RelationshipsDataTest.json': ", err)
+		t.Fatal("Error in parsing file 'relationships-data-test.json': ", err)
 	}
 
 	err = json.Unmarshal([]byte(expectedRelationshipData), &expectedRelationshipDataJson)
 	if err != nil {
-		t.Fatal("Error in parsing file 'RelationshipsDataTest.json': ", err)
+		t.Fatal("Error in parsing file 'relationships-data-test.json': ", err)
 	}
 
 	assert.JSONEqf(t, string(expectedRelationshipData), string(relationshipData), "Generated JSON data does not match expected data.\n Difference: %s", cmp.Diff(relationshipData, expectedRelationshipDataJson))
@@ -101,19 +101,19 @@ func TestGenerate(t *testing.T) {
 			Args:           []string{"generate", "--spreadsheet-id", "1"},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  errors.New(utils.RelationshipsError(errMsg, "generate")),
+			ExpectedError:  ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg)),
 		},
 		{
 			Name:           "Generate registered relationships without spreadsheet id",
 			Args:           []string{"generate", "--spreadsheet-cred", "$CRED"},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  errors.New(utils.RelationshipsError(errMsg, "generate")),
+			ExpectedError:  ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg)),
 		},
 		{
 			Name:             "Generate registered relationships",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
-			Fixture:          "generate.relationship.api.response.golden",
+			Fixture:          "generate.relationship.sheet.data.golden",
 			ExpectedResponse: "generate.relationship.output.golden",
 			IsOutputGolden:   true,
 			ExpectError:      false,
@@ -129,6 +129,7 @@ func TestGenerate(t *testing.T) {
 				spreadsheetID = ""
 			}()
 
+			fixturesDir := filepath.Join(currDir, "fixtures")
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
@@ -141,20 +142,17 @@ func TestGenerate(t *testing.T) {
 			if tt.Name == "Generate registered relationships" {
 				originalPath := relationshipsOutputPath
 				defer func() { relationshipsOutputPath = originalPath }()
-				relationshipsOutputPath = "./testdata/RelationshipsDataTest.json"
+				relationshipsOutputPath = "./fixtures/generate.relationship.json.output.golden"
 
 				originalFetch := fetchSheetValues
 				defer func() { fetchSheetValues = originalFetch }()
 
-				sheetData, err := os.ReadFile("./fixtures/generate.relationship.sheet.data.golden")
-				if err != nil {
-					t.Fatal("Error in reading file 'generate.relationship.sheet.data.golden': ", err)
-				}
+				golden := utils.NewGoldenFile(t, tt.Fixture, fixturesDir)
+				sheetData := golden.Load()
 
 				var sheetDataParsed map[string]interface{}
-				err = json.Unmarshal(sheetData, &sheetDataParsed)
-				if err != nil {
-					t.Fatal("Error in parsing file 'generate.relationship.sheet.data.golden': ", err)
+				if err := json.Unmarshal([]byte(sheetData), &sheetDataParsed); err != nil {
+					t.Fatal("Error parsing golden sheet data:", err)
 				}
 
 				fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
