@@ -1,0 +1,37 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "non-binding",
+    "subType": "network",
+    "evaluationQuery": "edge_network_relationship",
+    "metadata": {
+      "description": "AWS EventBridge Rule routes matched events to an AWS SQS Queue."
+    },
+    "model": {
+      "name": "aws-eventbridge-controller"
+    },
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Rule",
+              "model": "aws-eventbridge-controller"
+            }
+          ],
+          "to": [
+            {
+              "kind": "Queue",
+              "model": "aws-sqs-controller"
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    ]
+  }
+  
