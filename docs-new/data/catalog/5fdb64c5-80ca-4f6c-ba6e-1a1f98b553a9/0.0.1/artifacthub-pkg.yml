@@ -1,0 +1,25 @@
+version: 0.0.1
+name: gerrit-operator-
+displayName: 'Gerrit operator '
+createdAt: "2024-04-14T20:22:48Z"
+description: |4-
+    This YAML configuration defines a Kubernetes Deployment named "gerrit-operator-deployment" for managing a containerized application called "gerrit-operator". It specifies that one replica of the application should be deployed. The Deployment ensures that the application is always running by managing pod replicas based on the provided selector labels. The template section describes the pod specification, including labels, service account, security context, and container configuration. The container named "gerrit-operator-container" is configured with an image from a container registry, with resource limits and requests defined for CPU and memory. Environment variables are set for various parameters like the namespace, pod name, and platform type. Additionally, specific intervals for syncing Gerrit projects and group members are defined. Further configuration options can be added as needed, such as volumes and initContainers.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5fdb64c5-80ca-4f6c-ba6e-1a1f98b553a9/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Requirements: Ensure that the resource requests and limits specified for CPU and memory are appropriate for the workload and the cluster's capacity to prevent performance issues or resource contention.\n\n2. Image Pull Policy: The imagePullPolicy set to \"Always\" ensures that the latest image version is always pulled from the container registry. This may increase deployment time and consume more network bandwidth, so consider the trade-offs based on your deployment requirements.\n\n3. Security Configuration: The security context settings, such as runAsNonRoot and allowPrivilegeEscalation: false, enhance pod security by enforcing non-root user execution and preventing privilege escalation. Verify that these settings align with your organization's security policies.\n\n4. Environment Variables: Review the environment variables set for WATCH_NAMESPACE, POD_NAME, PLATFORM_TYPE, GERRIT_PROJECT_SYNC_INTERVAL, and GERRIT_GROUP_MEMBER_SYNC_INTERVAL to ensure they are correctly configured for your deployment environment and application requirements. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5fdb64c5-80ca-4f6c-ba6e-1a1f98b553a9-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5fdb64c5-80ca-4f6c-ba6e-1a1f98b553a9-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
