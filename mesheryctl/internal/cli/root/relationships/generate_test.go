@@ -2,14 +2,13 @@ package relationships
 
 import (
 	"encoding/json"
-	"io"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/sheets/v4"
@@ -39,7 +38,7 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 	}
 
 	// for testing, relative path is required in createJsonFile function
-	jsonFilePath := "./testdata/RelationshipDataTest.json"
+	jsonFilePath := "./testdata/RelationshipsDataTest.json"
 
 	err = createJsonFile(resp, jsonFilePath)
 	if err != nil {
@@ -79,12 +78,6 @@ func TestGenerate(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
-	//initialize mock server for handling requests
-	utils.StartMockery(t)
-
-	// create a test helper
-	testContext := utils.NewTestHelper(t)
-
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -97,34 +90,31 @@ func TestGenerate(t *testing.T) {
 	tests := []struct {
 		Name             string
 		Args             []string
-		URL              string
 		Fixture          string
 		Token            string
 		ExpectedResponse string
 		ExpectError      bool
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
 	}{
+
 		{
-			Name:             "Generate registered relationships without spreadsheet id",
-			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "",
-			ExpectedResponse: "generate.relationship.output.without.spreadsheet.id.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      true,
+			Name:           "Generate registered relationships without spreadsheet creadentials",
+			Args:           []string{"generate", "--spreadsheet-id", "1"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  errors.New(utils.RelationshipsError(errMsg, "generate")),
 		},
 		{
-			Name:             "Generate registered relationships without spreadsheet creadentials",
-			Args:             []string{"generate", "--spreadsheet-id", "1"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "",
-			ExpectedResponse: "generate.relationship.output.without.spreadsheet.cred.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      true,
+			Name:           "Generate registered relationships without spreadsheet id",
+			Args:           []string{"generate", "--spreadsheet-cred", "$CRED"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  errors.New(utils.RelationshipsError(errMsg, "generate")),
 		},
 		{
 			Name:             "Generate registered relationships",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "generate.relationship.api.response.golden",
 			ExpectedResponse: "generate.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
@@ -135,6 +125,12 @@ func TestGenerate(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+
+			defer func() {
+				spreadsheetCred = ""
+				spreadsheetID = ""
+			}()
+
 			if tt.Name == "Generate registered relationships" {
 				originalPath := relationshipsOutputPath
 				defer func() { relationshipsOutputPath = originalPath }()
@@ -149,93 +145,60 @@ func TestGenerate(t *testing.T) {
 							{}, // header row 1
 							{}, // header row 2
 							{
-								"kubernetes", // Model
-								"v1.0.0",     // Version
-								"edge",       // Kind
-								"network",    // Type
-								"Mount",      // SubType
-								"desc",
-								"docs",
-								"styles",
-								"OPA",
-								"denyFrom",
-								"denyTo",
-								"allowFrom",
-								"allowTo",
-								"complete",
-								"visual",
+								"kubernetes",
+								"v1.25.2",
+								"Hierarchical",
+								"",
+								"Inventory",
+								"A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+								"",
+								"",
+								"hierarchical_inventory_relationship",
+								"",
+								"",
+								"",
+								"",
+								"",
+								"",
 							},
 						},
 					}, nil
 				}
 			}
 
-			if tt.Fixture != "" {
-				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
-				utils.TokenFlag = tt.Token
-
-				httpmock.RegisterResponder("GET", tt.URL,
-					httpmock.NewStringResponder(200, apiResponse))
-			}
-
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// Grab console prints with proper cleanup
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
 
-			// Close write end before reading
-			_ = w.Close()
-
+			// to validate the expected errors
 			if err != nil {
-				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
-					actualResponse := err.Error()
-					utils.Equals(t, expectedResponse, actualResponse)
-					// reset the global variables
-					spreadsheetCred = ""
-					spreadsheetID = ""
+
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
-				t.Error(err)
+
+				t.Fatal(err)
 			}
 
-			out, _ := io.ReadAll(r)
-			actualResponse := string(out)
+			// to validate the generated json file
+			if !tt.ExpectError {
+				generatedFile := "./testdata/RelationshipsDataTest.json"
 
-			if *update {
-				golden.Write(actualResponse)
+				generatedData, err := os.ReadFile(generatedFile)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				fixturesDir := filepath.Join(currDir, "fixtures")
+				golden := utils.NewGoldenFile(t, "generate.relationship.json.output.golden", fixturesDir)
+
+				expected := golden.Load()
+
+				assert.JSONEq(t, expected, string(generatedData))
 			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
-			// reset the global variables
-			spreadsheetCred = ""
-			spreadsheetID = ""
 		})
 		t.Log("Generate experimental relationship test passed")
 	}
-
-	utils.StopMockery(t)
 }

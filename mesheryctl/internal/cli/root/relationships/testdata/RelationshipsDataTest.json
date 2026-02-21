@@ -1,19 +1,19 @@
 [
     {
         "Model": "kubernetes",
-        "Version": "v1.0.0",
-        "kind": "edge",
-        "type": "network",
-        "subType": "Mount",
-        "metadataDescription": "desc",
-        "docs": "docs",
-        "metadataStyles": "styles",
-        "evalPolicy": "OPA",
-        "selectorsDenyFrom": "denyFrom",
-        "selectorsDenyTo": "denyTo",
-        "selectorsAllowFrom": "allowFrom",
-        "selectorsAllowTo": "allowTo",
-        "CompleteDefinition": "complete",
-        "VisualizationExample": "visual"
+        "Version": "v1.25.2",
+        "kind": "Hierarchical",
+        "type": "",
+        "subType": "Inventory",
+        "metadataDescription": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "docs": "",
+        "metadataStyles": "",
+        "evalPolicy": "hierarchical_inventory_relationship",
+        "selectorsDenyFrom": "",
+        "selectorsDenyTo": "",
+        "selectorsAllowFrom": "",
+        "selectorsAllowTo": "",
+        "CompleteDefinition": "",
+        "VisualizationExample": ""
     }
 ]

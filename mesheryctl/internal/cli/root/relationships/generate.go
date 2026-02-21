@@ -53,7 +53,6 @@ var generateCmd = &cobra.Command{
 mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified\n\nUsage: mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
 
 		// Check if flag is set
 		if spreadsheetID == "" || spreadsheetCred == "" {
