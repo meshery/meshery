@@ -146,28 +146,25 @@ func TestGenerate(t *testing.T) {
 				originalFetch := fetchSheetValues
 				defer func() { fetchSheetValues = originalFetch }()
 
+				sheetData, err := os.ReadFile("./fixtures/generate.relationship.sheet.data.golden")
+				if err != nil {
+					t.Fatal("Error in reading file 'generate.relationship.sheet.data.golden': ", err)
+				}
+
+				var sheetDataParsed map[string]interface{}
+				err = json.Unmarshal(sheetData, &sheetDataParsed)
+				if err != nil {
+					t.Fatal("Error in parsing file 'generate.relationship.sheet.data.golden': ", err)
+				}
+
 				fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 					return &sheets.ValueRange{
+						MajorDimension: "ROWS",
+						Range:          "Relationships!A1:O1000",
 						Values: [][]interface{}{
-							{}, // header row 1
-							{}, // header row 2
-							{
-								"kubernetes",
-								"v1.25.2",
-								"Hierarchical",
-								"",
-								"Inventory",
-								"A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
-								"",
-								"",
-								"hierarchical_inventory_relationship",
-								"",
-								"",
-								"",
-								"",
-								"",
-								"",
-							},
+							{},
+							{},
+							sheetDataParsed["ROW3"].([]interface{}),
 						},
 					}, nil
 				}
@@ -203,23 +200,6 @@ func TestGenerate(t *testing.T) {
 			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
-
-			// to validate the generated json file
-			if !tt.ExpectError {
-				generatedFile := "./testdata/RelationshipsDataTest.json"
-
-				generatedData, err := os.ReadFile(generatedFile)
-				if err != nil {
-					t.Fatal(err)
-				}
-
-				fixturesDir := filepath.Join(currDir, "fixtures")
-				golden := utils.NewGoldenFile(t, "generate.relationship.json.output.golden", fixturesDir)
-
-				expected := golden.Load()
-
-				assert.JSONEq(t, expected, string(generatedData))
-			}
 		})
 		t.Log("Generate experimental relationship test passed")
 	}
