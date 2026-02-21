@@ -1,0 +1,19 @@
+[
+    {
+        "Model": "kubernetes",
+        "Version": "v1.0.0",
+        "kind": "edge",
+        "type": "network",
+        "subType": "Mount",
+        "metadataDescription": "desc",
+        "docs": "docs",
+        "metadataStyles": "styles",
+        "evalPolicy": "OPA",
+        "selectorsDenyFrom": "denyFrom",
+        "selectorsDenyTo": "denyTo",
+        "selectorsAllwowFrom": "allowFrom",
+        "selectorsAllowTo": "allowTo",
+        "CompleteDefinition": "complete",
+        "VisualizationExample": "visual"
+    }
+]
