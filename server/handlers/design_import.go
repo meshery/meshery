@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -274,7 +275,16 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 
-	design.Name = importDesignPayload.Name
+	if importDesignPayload.Name != "" {
+		design.Name = importDesignPayload.Name
+	} else if design.Name == "" {
+		name := fileToImport.FileName
+		name = strings.TrimSuffix(name, ".tar.gz")
+		name = strings.TrimSuffix(name, filepath.Ext(name))
+		if name != "" {
+			design.Name = name
+		}
+	}
 	patternFile, err := encoding.Marshal(design)
 
 	if err != nil {
