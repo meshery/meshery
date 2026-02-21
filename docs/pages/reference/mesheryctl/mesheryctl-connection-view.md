@@ -17,7 +17,7 @@ View a connection
 ## Synopsis
 
 View a connection by its ID or name.
-Documentation for viewing connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/view
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection view [flags]

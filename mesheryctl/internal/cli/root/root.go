@@ -18,7 +18,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"log"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -32,7 +34,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
+	logrus "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -64,6 +66,12 @@ mesheryctl system start --help
 // For viewing verbose output:
 mesheryctl -v [or] --verbose
 `,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Initialize a validator and add it to the command context
+		// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
+		mesheryctlflags.InitValidators(cmd)
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -81,7 +89,6 @@ mesheryctl -v [or] --verbose
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() error {
 	//log formatter for improved UX
-	utils.SetupLogrusFormatter()
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
 	err := RootCmd.Execute()
@@ -94,8 +101,8 @@ func init() {
 		log.Fatal(err)
 	}
 
-	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(setupLogger)
+	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
@@ -159,42 +166,41 @@ func initConfig() {
 		// Otherwise, use the default `config.yaml` config file
 	} else {
 		stat, err := os.Stat(utils.DefaultConfigPath)
-
 		createDefaultConfig := false
 
 		switch {
 		case os.IsNotExist(err):
-			log.Printf("Missing Meshery config file.")
+			utils.Log.Info("Missing Meshery config file.")
 			createDefaultConfig = true
 
 		case err == nil && stat.Size() == 0:
-			log.Println("Empty meshconfig. Please populate it before running a command")
+			utils.Log.Info("Empty meshconfig. Please populate it before running a command")
 			createDefaultConfig = true
 
 		case err != nil:
-			log.Printf("Cannot access Meshery config file. Please check permissions. Error: %v", err)
+			utils.Log.Infof("Cannot access Meshery config file. Please check permissions. Error: %v", err)
 			return
 		}
 
 		// Only create + mutate config when needed
 		if createDefaultConfig {
 			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
-				log.Fatal(err)
+				utils.Log.Fatal(err)
 			}
 
 			if err := utils.CreateConfigFile(); err != nil {
-				log.Fatal(err)
+				utils.Log.Fatal(err)
 			}
 
 			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
-				log.Fatal(err)
+				utils.Log.Fatal(err)
 			}
 
 			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
-				log.Fatal(err)
+				utils.Log.Fatal(err)
 			}
 
-			log.Printf("Default config file created at %s", utils.DefaultConfigPath)
+			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)
 		}
 	}
 
@@ -203,22 +209,21 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Debugf("unable to read config file: %v", err)
+		utils.Log.Debugf("unable to read config file: %v", err)
 	} else {
-		log.Debug("Using config file:", viper.ConfigFileUsed())
+		utils.Log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
 }
 
 // setVerbose sets the log level to debug if the -v flag is set
 func setVerbose() {
-	log.SetLevel(log.InfoLevel)
+	utils.Log.SetLevel(logrus.InfoLevel)
 
 	if verbose {
-		log.SetLevel(log.DebugLevel)
+		utils.Log.SetLevel(logrus.DebugLevel)
 	}
 }
 
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
-	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }

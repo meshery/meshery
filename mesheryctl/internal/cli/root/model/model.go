@@ -32,7 +32,7 @@ import (
 var (
 	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommands
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
@@ -40,7 +40,7 @@ var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Manage models in the registery",
 	Long: `Export, generate, import, list, search and view model(s) and detailed informations
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
 // Display number of available models in Meshery
 mesheryctl model --count
@@ -56,6 +56,9 @@ mesheryctl model import -f [Uri]
 
 // List available model(s)
 mesheryctl model list
+
+// Delete avaialbe model(s)
+mesheryctl model delete [model-id]
 
 // Search for a specific model
 mesheryctl model search [model-name]
@@ -95,7 +98,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -152,7 +155,7 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		if modelName == "" {
 			modelName = "N/A"
 		}
-		rows = append(rows, []string{modelName, string(model.Category.Name), model.Version})
+		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
 	return rows, int64(modelsResponse.Count)
