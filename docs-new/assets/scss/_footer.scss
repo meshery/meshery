@@ -3,37 +3,35 @@ html {
   scroll-behavior: smooth;
 }
 .footer {
-  background: linear-gradient(to bottom,
-  #151515 5%,
-  #252525 20%,
-  #2f2f2f,
-  #303030,
-  #3d3d3d
-  );
+  background: var(--color-primary-medium);
+  border-top: 1px solid var(--color-grey-light);
   display: flex;
   flex-direction: column;
   padding: min(2vh, 2vw);
   gap: min(2vh, 5vw);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
 
   @media (max-width: 600px) {
-    height: calc(var(--footer-height) - 4.0rem);
+    height: calc(var(--footer-height) - 4rem);
   }
 
-  @media (max: 1200px){
+  @media (max: 1200px) {
     height: var(--footer-height);
   }
 
   & * {
-    color: white;
+    color: var(--color-secondary-medium);
   }
 
   & .text-white {
-    color: #adb5bd;
+    color: var(--color-grey-dark);
     font-size: 1rem;
     text-align: center;
 
     @media (max-width: 600px) {
-      font-size: .8rem;
+      font-size: 0.8rem;
     }
   }
 
@@ -44,7 +42,7 @@ html {
     justify-content: center;
 
     @media (max-width: 600px) {
-      gap: .5rem;
+      gap: 0.5rem;
     }
 
     & .footer-icons {
@@ -100,10 +98,9 @@ html {
           fill: #000;
         }
         & svg.youtube:hover {
-          fill: #FF0000;
+          fill: #ff0000;
         }
       }
     }
   }
 }
-
