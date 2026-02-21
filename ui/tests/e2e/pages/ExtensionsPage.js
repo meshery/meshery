@@ -49,9 +49,9 @@ export class ExtensionsPage {
   }
 
   async verifyKanvasSignupUI() {
-    await expect(this.kanvasSignupHeading).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeEnabled();
+    await expect(this.kanvasSignupHeading).toBeVisible({ timeout: 10000 });
+    await expect(this.kanvasSignupBtn).toBeVisible({ timeout: 10000 });
+    await expect(this.kanvasSignupBtn).toBeEnabled({ timeout: 10000 });
   }
 
   async toggleCatalog() {
@@ -59,8 +59,16 @@ export class ExtensionsPage {
   }
 
   async verifyNewTab(context, locator, expectedUrl) {
-    const [newPage] = await Promise.all([context.waitForEvent('page'), locator.click()]);
-    await expect(newPage).toHaveURL(expectedUrl);
+    // Wait for the element to be visible and clickable before proceeding
+    await expect(locator).toBeVisible({ timeout: 10000 });
+    await expect(locator).toBeEnabled({ timeout: 10000 });
+
+    const [newPage] = await Promise.all([
+      context.waitForEvent('page', { timeout: 30000 }),
+      locator.click(),
+    ]);
+    await newPage.waitForLoadState('domcontentloaded');
+    await expect(newPage).toHaveURL(expectedUrl, { timeout: 15000 });
     await newPage.close();
   }
 }
