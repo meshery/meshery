@@ -136,7 +136,7 @@ Workspaces let you organize your work and serve as the central point of collabor
 
 <details><summary><h4>Manage your connections with Environments</h4></summary>
 
-<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Meshery environments interface for managing connections and credentials" loading="lazy" />
+<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Meshery environments interface for managing connections and credentials" loading="lazy" align="center" />
 <p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 </details>
 
