@@ -45,12 +45,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "spec",
+                  "integrationUri"
                 ]
               ]
             }
@@ -74,11 +73,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "integrationUri"
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }
