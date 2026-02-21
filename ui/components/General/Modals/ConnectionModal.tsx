@@ -30,9 +30,11 @@ const ConnectionModal = ({
       <ModalBody>
         <div style={{ marginBlock: '2rem', maxHeight: '65vh' }}>
           <ConnectionTable
-            meshsyncControllerState={meshsyncControllerState}
-            connectionMetadataState={connectionMetadataState}
-            selectedFilter={'kubernetes'}
+            {...({
+              meshsyncControllerState,
+              connectionMetadataState,
+              selectedFilter: 'kubernetes',
+            } as any)}
           />
         </div>
       </ModalBody>

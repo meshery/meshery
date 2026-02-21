@@ -152,7 +152,7 @@ export const {
 
 export const useGetCategoriesSummary = () => {
   const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
-  const { data: categories } = useGetModelCategoriesQuery();
+  const { data: categories } = useGetModelCategoriesQuery(undefined);
   const [categoryMap, setCategoryMap] = useState({});
 
   const fetchModelsForCategories = async () => {
@@ -170,14 +170,21 @@ export const useGetCategoriesSummary = () => {
     return categoryMap;
   };
 
-  useEffect(async () => {
-    const categoryMap = await fetchModelsForCategories();
-    setCategoryMap(categoryMap);
+  useEffect(() => {
+    const loadCategories = async () => {
+      const map = await fetchModelsForCategories();
+      setCategoryMap(map);
+    };
+    loadCategories();
   }, [categories]);
   return categoryMap;
 };
 
-export const getComponentDefinition = async (component, model, params = {}) => {
+export const getComponentDefinition = async (
+  component,
+  model,
+  params: { apiVersion?: string; annotations?: string } = {},
+) => {
   const res = await initiateQuery(meshModelApi.endpoints.getComponentsByModelAndKind, {
     component,
     model,

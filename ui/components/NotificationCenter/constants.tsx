@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NOTIFICATIONCOLORS } from '../../themes';
 import AlertIcon from '../../assets/icons/AlertIcon';
 import ErrorIcon from '../../assets/icons/ErrorIcon';
@@ -60,7 +59,13 @@ export const SEVERITY_STYLE = {
   },
 };
 
-export const eventDetailFormatterKey = ({ action, category }) => `${action}-${category}`;
+type EventDetailFormatterKeyProps = {
+  action: string;
+  category: string;
+};
+
+export const eventDetailFormatterKey = ({ action, category }: EventDetailFormatterKeyProps) =>
+  `${action}-${category}`;
 
 export const EVENT_TYPE = {
   DEPLOY_DESIGN: {

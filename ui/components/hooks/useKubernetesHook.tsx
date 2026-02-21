@@ -132,7 +132,7 @@ export function useMeshsSyncController() {
         ) {
           handleInfo('MeshSync is not publishing to Meshery Broker');
         } else {
-          handleError('MeshSync could not be reached');
+          handleError('MeshSync could not be reached', null);
         }
         onSuccess && onSuccess(res);
 
@@ -183,9 +183,9 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
         //   natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
         // });
       },
-      error: () => {
+      error: (err) => {
         setIsLoading(false);
-        handleError('Meshery Operator status could not be retrieved');
+        handleError('Meshery Operator status could not be retrieved', err);
       },
     });
     return () => {
@@ -330,8 +330,10 @@ export const useControllerStatus = (controllerState) => {
   };
 };
 
+import type { RootState } from '@/store/index';
+
 export const useFilterK8sContexts = (k8sContexts, predicate) => {
-  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state: RootState) => state.ui);
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {

@@ -214,9 +214,8 @@ export const notificationCenterApi = api
             event_log_level: logLevel,
           },
         }),
-        onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {
-          const res = await safeQueryResolve(queryFulfilled);
-          res && dispatch();
+        onQueryStarted: async (_logLevel, { queryFulfilled }) => {
+          await safeQueryResolve(queryFulfilled);
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),

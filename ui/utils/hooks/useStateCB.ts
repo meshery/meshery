@@ -1,11 +1,16 @@
 import React from 'react';
 
-function useStateCB(initState, changeTrackCB) {
-  const [state, _setState] = React.useState(initState);
-  const stateRef = React.useRef(initState);
+type StateUpdater<S> = (_state: S) => void;
 
-  const callbackRef = React.useRef();
-  const changeTrackCBRef = React.useRef(changeTrackCB);
+function useStateCB<S>(
+  initState: S,
+  changeTrackCB?: StateUpdater<S>,
+): [S, (_state: S, _callback?: StateUpdater<S>) => void, () => S] {
+  const [state, _setState] = React.useState<S>(initState);
+  const stateRef = React.useRef<S>(initState);
+
+  const callbackRef = React.useRef<StateUpdater<S> | undefined>(undefined);
+  const changeTrackCBRef = React.useRef<StateUpdater<S> | undefined>(changeTrackCB);
   const isFirstCBCall = React.useRef(true);
 
   React.useEffect(() => {
@@ -16,7 +21,7 @@ function useStateCB(initState, changeTrackCB) {
     }
   }, [state]);
 
-  const setState = (state, callback) => {
+  const setState = (state: S, callback?: StateUpdater<S>) => {
     callbackRef.current = callback;
 
     stateRef.current = state;

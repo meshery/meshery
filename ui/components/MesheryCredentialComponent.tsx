@@ -6,10 +6,12 @@ import {
   TableCell,
   TableSortLabel,
   styled,
+  // @ts-expect-error - ResponsiveDataTable exists at runtime but types may not be exported
   ResponsiveDataTable,
+  // @ts-expect-error - CustomColumnVisibilityControl exists at runtime but types may not be exported
   CustomColumnVisibilityControl,
 } from '@sistent/sistent';
-import Modal from './Modal';
+import Modal from './General/Modals/Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
@@ -27,6 +29,7 @@ import {
 } from '@/rtk-query/credentials';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+// @ts-expect-error - RootState exists at runtime but types may not be exported
 import type { RootState } from '@/store/store';
 import type { MUIDataTableColumn, MUIDataTableMeta } from 'mui-datatables';
 
@@ -68,14 +71,10 @@ interface HandleSubmitPayload {
   id?: string;
 }
 
-interface ColumnMeta {
-  index: number;
-  label: string;
-  sortDirection?: 'asc' | 'desc' | null;
-}
+// ColumnMeta interface removed - using MUIDataTableCustomHeadRenderer directly
 
 const MesheryCredentialComponent: React.FC = () => {
-  const { data: credentialsData, isLoading } = useGetCredentialsQuery();
+  const { data: credentialsData, isLoading } = useGetCredentialsQuery(undefined);
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -124,6 +123,7 @@ const MesheryCredentialComponent: React.FC = () => {
     notify({
       message: `${error_msg}`,
       event_type: EVENT_TYPES.ERROR,
+      // @ts-ignore - details type definition is incorrect, should accept string
       details: error_msg.toString(),
     });
   };
@@ -166,16 +166,16 @@ const MesheryCredentialComponent: React.FC = () => {
         sort: false,
         searchable: true,
         customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
+          { index, ...column }: any,
           sortColumn: (_idx: number) => void,
         ) {
           return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
+                active={column.sortDirection != null}
+                direction={column.sortDirection || 'asc'}
               >
-                {columnMeta.label}
+                {column.label}
               </TableSortLabel>
             </CustomTableCell>
           );
@@ -190,27 +190,28 @@ const MesheryCredentialComponent: React.FC = () => {
         sort: false,
         searchable: true,
         customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
+          { index, ...column }: any,
           sortColumn: (_idx: number) => void,
         ) {
           return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
+                active={column.sortDirection != null}
+                direction={column.sortDirection || 'asc'}
               >
-                {columnMeta.label}
+                {column.label}
               </TableSortLabel>
             </CustomTableCell>
           );
         },
         customBodyRender: function CustomBody(_: unknown, tableMeta: MUIDataTableMeta) {
+          const icon = getCredentialsIcon(tableMeta.rowData[1]);
           return (
             <Tooltip title={tableMeta.rowData[1]}>
               <Chip
                 label={tableMeta.rowData[1]}
                 variant="outlined"
-                icon={getCredentialsIcon(tableMeta.rowData[1])}
+                {...(icon ? { icon: icon as React.ReactElement } : {})}
               />
             </Tooltip>
           );
@@ -226,16 +227,16 @@ const MesheryCredentialComponent: React.FC = () => {
         searchable: true,
         sortDescFirst: true,
         customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
+          { index, ...column }: any,
           sortColumn: (_idx: number) => void,
         ) {
           return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
+                active={column.sortDirection != null}
+                direction={column.sortDirection || 'asc'}
               >
-                {columnMeta.label}
+                {column.label}
               </TableSortLabel>
             </CustomTableCell>
           );
@@ -254,16 +255,16 @@ const MesheryCredentialComponent: React.FC = () => {
         searchable: true,
         sortDescFirst: true,
         customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
+          { index, ...column }: any,
           sortColumn: (_idx: number) => void,
         ) {
           return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
+                active={column.sortDirection != null}
+                direction={column.sortDirection || 'asc'}
               >
-                {columnMeta.label}
+                {column.label}
               </TableSortLabel>
             </CustomTableCell>
           );
@@ -280,20 +281,24 @@ const MesheryCredentialComponent: React.FC = () => {
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead(columnMeta: ColumnMeta) {
-          return <CustomTableCell key={columnMeta.index}>{columnMeta.label}</CustomTableCell>;
+        customHeadRender: function CustomHead({ index, ...column }: any) {
+          return <CustomTableCell key={index}>{column.label}</CustomTableCell>;
         },
         customBodyRender: (_: unknown, tableMeta: MUIDataTableMeta) => {
           const credentials = credentialsData?.credentials || [];
           const rowData = credentials[tableMeta.rowIndex] as { id: string } | undefined;
+          const submitPayload: HandleSubmitPayload = {
+            type: CON_OPS.DELETE,
+          };
+          if (rowData?.id) {
+            submitPayload.id = rowData.id;
+          }
           return (
             <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
-                  onClick={() =>
-                    handleSubmit({ type: CON_OPS.DELETE, id: rowData?.id || undefined })
-                  }
+                  onClick={() => handleSubmit(submitPayload)}
                   size="large"
                 >
                   <DeleteIcon />

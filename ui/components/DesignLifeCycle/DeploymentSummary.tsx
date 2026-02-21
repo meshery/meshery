@@ -12,12 +12,19 @@ import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/
 import { useRouter } from 'next/router';
 import { capitalize } from 'lodash';
 
-const StyledDetailBox = styled(Box)(() => ({
+type StyledDetailBoxProps = {
+  severityColor?: string;
+  bgOpacity?: number;
+};
+
+const StyledDetailBox = styled(Box, {
+  shouldForwardProp: (prop) => !['severityColor', 'bgOpacity'].includes(prop as string),
+})<StyledDetailBoxProps>(() => ({
   display: 'flex',
 }));
 
 // deployment_type is deploy/undeploy
-const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
+const DeploymentComponentFormatter = ({ componentDetail, deploymentType, event }) => {
   return (
     <StyledDetailBox
       severityColor={
@@ -35,7 +42,7 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
             model: componentDetail.Model,
             color: 'color',
           })}
-          alt={componentDetail.Kind}
+          label={componentDetail.Kind}
         />
         <Typography variant="textB1Regular">
           {componentDetail.Success
@@ -43,7 +50,9 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
             : `Failed to ${deploymentType} ${componentDetail.Kind} "${componentDetail.CompName}"`}
         </Typography>
       </Stack>
-      {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
+      {componentDetail.Error && (
+        <ErrorMetadataFormatter metadata={componentDetail.Error} event={event} />
+      )}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
     </StyledDetailBox>
   );
@@ -51,18 +60,19 @@ const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
 
 const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
-  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
+  const eventStyle = (SEVERITY_STYLE[event?.severity] || {}) as { color?: string };
   const errors = event.metadata?.error;
   const errorAction = event?.action;
   const router = useRouter();
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
-    (perComponentDetail) => {
-      perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
-      return perComponentDetail.flatMap((perContextDetail) =>
-        perContextDetail?.Summary?.map((detail) => ({
-          ...detail,
-          Location: perContextDetail.Location,
-        })),
+    (perComponentDetail: any) => {
+      const arr = Array.isArray(perComponentDetail) ? perComponentDetail : [];
+      return arr.flatMap(
+        (perContextDetail: any) =>
+          perContextDetail?.Summary?.map((detail: any) => ({
+            ...detail,
+            Location: perContextDetail.Location,
+          })) || [],
       );
     },
   );
@@ -72,7 +82,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   return (
     <Box>
       <StyledDetailBox
-        severityColor={eventStyle.color}
+        {...(eventStyle.color && { severityColor: eventStyle.color })}
         bgOpacity={0.1}
         alignItems="center"
         justifyContent="space-between"
@@ -98,12 +108,16 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             }
             style={{ gap: '0.25rem' }}
           >
-            Open In Operator <ExternalLinkIcon fill={theme.palette.background.constant.white} />
+            Open In Operator{' '}
+            <ExternalLinkIcon fill={theme.palette.background?.constant?.white || '#fff'} />
           </Button>
         )}
       </StyledDetailBox>
       {errors && (
-        <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
+        <StyledDetailBox
+          {...(eventStyle.color && { severityColor: eventStyle.color })}
+          bgOpacity={0}
+        >
           <ErrorMetadataFormatter metadata={errors} event={event} />
         </StyledDetailBox>
       )}
@@ -112,6 +126,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
         <DeploymentComponentFormatter
           componentDetail={componentDetail}
           deploymentType={event.action}
+          event={event}
           key={componentDetail.CompName + componentDetail.Location}
         />
       ))}

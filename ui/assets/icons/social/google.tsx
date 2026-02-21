@@ -12,10 +12,6 @@ function Google({ height, width, className }) {
       <g
         fillOpacity="0"
         strokeMiterlimit="10"
-        fontFamily="none"
-        fontSize="none"
-        fontWeight="none"
-        textAnchor="none"
         style={{ mixBlendMode: "normal" }}
       >
         <path d="M0 256V0h256v256z"></path>
@@ -23,10 +19,6 @@ function Google({ height, width, className }) {
       <g
         fill="none"
         strokeMiterlimit="10"
-        fontFamily="none"
-        fontSize="none"
-        fontWeight="none"
-        textAnchor="none"
         style={{ mixBlendMode: "normal" }}
       >
         <path

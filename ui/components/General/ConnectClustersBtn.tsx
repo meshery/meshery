@@ -17,9 +17,9 @@ function ConnectClustersBtn() {
       >
         <AddIcon
           style={{
+            height: iconMedium.height,
             width: theme.spacing(2.5),
             paddingRight: theme.spacing(0.5),
-            ...iconMedium,
           }}
         />
         Connect Clusters

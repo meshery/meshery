@@ -55,9 +55,9 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
   const getStatusColor = (statusLevel) => {
     switch (statusLevel) {
       case 'healthy':
-        return theme.palette.background.brand.default;
+        return theme.palette.background.brand?.default || theme.palette.primary.main;
       case 'partial':
-        return theme.palette.background.warning.default;
+        return theme.palette.background.warning?.default || theme.palette.warning.main;
       case 'error':
       default:
         return theme.palette.text.disabled;
@@ -75,7 +75,7 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
       avatar={
         status ? (
           <BadgeAvatars color={getStatusColor(getStatusLevel(status))}>
-            <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
+            <Avatar src={iconSrc} style={status ? iconMedium : { ...iconMedium, opacity: 0.2 }}>
               <ConnectionIcon {...iconSmall} />
             </Avatar>
           </BadgeAvatars>
@@ -225,7 +225,7 @@ const NotFoundStateChip = ({ value }) => {
 const Default = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
-      <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
+      <DiscoveredChip avatar={<ExploreIcon />} label={value} />
     </ConnectionStyledMenuItem>
   );
 };

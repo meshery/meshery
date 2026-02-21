@@ -94,19 +94,39 @@ function deduplicatedListOfComponentsFromAllVersions(componentDefs) {
 }
 
 function groupComponentsByVersion(componentDefs) {
+  const filteredComponentDefs =
+    componentDefs?.filter((componentDef: any) => {
+      const modelName = componentDef.model?.name || componentDef.model?.model?.name;
+      const modelVersion = componentDef.model?.version || componentDef.model?.model?.version;
+      const kind = componentDef.component?.kind;
+
+      // Exclude specific VerticalPodAutoscalerCheckpoint component version the user does not want
+      if (
+        modelName === 'insights-agent' &&
+        modelVersion === '5.2.6' &&
+        kind === 'VerticalPodAutoscalerCheckpoint'
+      ) {
+        return false;
+      }
+
+      return true;
+    }) || [];
+
   const versions = [
-    ...new Set(componentDefs?.map((componentDef) => componentDef.model.model.version) || []),
+    ...new Set(
+      filteredComponentDefs?.map((componentDef) => componentDef.model.model.version) || [],
+    ),
   ];
 
   if (versions.length > 1) {
     return [
       {
         version: WILDCARD_V,
-        components: deduplicatedListOfComponentsFromAllVersions(componentDefs),
+        components: deduplicatedListOfComponentsFromAllVersions(filteredComponentDefs),
       },
       ...versions.map((version) => ({
         version: version,
-        components: componentDefs.filter(
+        components: filteredComponentDefs.filter(
           (componentDef) => componentDef.model.model.version === version,
         ),
       })),
@@ -116,7 +136,7 @@ function groupComponentsByVersion(componentDefs) {
   // don't attach the wildcards
   return versions.map((version) => ({
     version: version,
-    components: componentDefs.filter(
+    components: filteredComponentDefs.filter(
       (componentDef) => componentDef.model.model.version === version,
     ),
   }));
@@ -139,7 +159,7 @@ export function useMeshModelComponents() {
 
   useEffect(() => {
     fetchCategories()
-      .then((categoryJson) => {
+      .then((categoryJson: any) => {
         setCategories(
           categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)),
         );
@@ -154,7 +174,7 @@ export function useMeshModelComponents() {
     }
 
     getModelFromCategoryApi(category)
-      .then((response) => {
+      .then((response: any) => {
         setModels(
           Object.assign(
             { ...models },
@@ -167,10 +187,10 @@ export function useMeshModelComponents() {
       .catch(handleError);
   }
 
-  async function getComponentsFromModel(modelName, version) {
+  async function getComponentsFromModel(modelName: string, version?: string) {
     if (!version) {
       if (!meshmodelComponents[modelName]) {
-        const modelData = await getComponentFromModelApi(modelName);
+        const modelData = (await getComponentFromModelApi(modelName)) as any;
 
         setMeshModelComponents(
           Object.assign(
@@ -190,7 +210,7 @@ export function useMeshModelComponents() {
         (model) => model.model.version === version,
       )
     ) {
-      const modelData = await getVersionedComponentFromModel(modelName, version);
+      const modelData = (await getVersionedComponentFromModel(modelName, version)) as any;
       setMeshModelComponents(
         Object.assign(
           { ...meshmodelComponents },

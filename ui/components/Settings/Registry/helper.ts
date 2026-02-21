@@ -67,21 +67,21 @@ export const removeDuplicateVersions = (data: Array<any>) => {
   const groupedModels = _.groupBy(data, 'name');
   const result = _.reduce(
     groupedModels,
-    (acc, models, name) => {
+    (acc: any[], models: any[], name: string) => {
       const uniqueVersions = _.groupBy(models, (modelDef) => modelDef?.model?.version);
       const arrayOfUniqueVersions = Object.values(uniqueVersions);
       const existingModelDef = acc.find((m) => m.name === name);
 
       const mergedData = arrayOfUniqueVersions.map((modelsWithSameVersion) => {
         let subVal = {
-          relationships: {},
-          components: {},
+          relationships: [] as any[],
+          components: [] as any[],
         };
         modelsWithSameVersion.map((model) => {
           subVal.relationships = groupRelationshipsByKind(
-            _.union(subVal.relationships, model.relationships),
+            _.union(subVal.relationships, model.relationships || []),
           );
-          subVal.components = _.union(subVal.components, model.components);
+          subVal.components = _.union(subVal.components, model.components || []);
         });
         return {
           ...modelsWithSameVersion[0],
@@ -106,7 +106,7 @@ export const removeDuplicateVersions = (data: Array<any>) => {
 
       return acc;
     },
-    [],
+    [] as any[],
   );
 
   return result;

@@ -1,7 +1,9 @@
 import React from 'react';
 import {
   ModalFooter,
+  // @ts-expect-error
   useStepper,
+  // @ts-expect-error
   CustomizedStepper,
   ModalBody,
   Box,
@@ -81,23 +83,26 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
     });
   };
   const handleModelCsvFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
-    if (file) {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const base64 = await fileToBase64(file);
       setModelCsvFile({ base64, name: file.name });
     }
   };
   const handleComponentCsvFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
-    if (file) {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const base64 = await fileToBase64(file);
       setComponentCsvFile({ base64, name: file.name });
     }
   };
 
   const handleRelationshipCsvFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
-    if (file) {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const base64 = await fileToBase64(file);
       setRelationshipCsvFile({ base64, name: file.name });
     }

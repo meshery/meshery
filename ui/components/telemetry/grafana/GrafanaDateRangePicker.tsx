@@ -577,7 +577,7 @@ const GrafanaDateRangePicker = (props) => {
 
   return (
     <NoSsr>
-      <RangeButton variant="filled" onClick={handleClick}>
+      <RangeButton variant="contained" onClick={handleClick}>
         <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
         <Moment format="LLLL">{startDate}</Moment>
         <Space>-</Space>
@@ -650,7 +650,7 @@ const GrafanaDateRangePicker = (props) => {
                 Quick Ranges
                 <Grid2 container spacing={0} size="grow">
                   {quickRanges.map((qr, index) => (
-                    <TimeList item key={`qr-${index}`} size={{ xs: 12, sm: 3 }}>
+                    <TimeList key={`qr-${index}`} size={{ xs: 12, sm: 3 }}>
                       {qr.map((q) => (
                         <Button key={q} variant="text" onClick={setRange(q)}>
                           {q}

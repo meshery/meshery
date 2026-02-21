@@ -1,4 +1,6 @@
-import React, { forwardRef, Ref, ComponentProps } from 'react';
+import React, { forwardRef } from 'react';
+import type { Ref, ComponentProps } from 'react';
+// @ts-expect-error
 import { PromptComponent } from '@sistent/sistent';
 
 type PromptComponentProps = ComponentProps<typeof PromptComponent>;

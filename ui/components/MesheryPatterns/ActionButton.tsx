@@ -12,9 +12,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function ActionButton({ defaultActionClick, options }) {
   const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
 
-  const handleMenuItemClick = () => {
+  const handleMenuItemClick = (_event?: any) => {
     setOpen(false);
   };
 
@@ -23,7 +23,7 @@ export default function ActionButton({ defaultActionClick, options }) {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event: any) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -68,14 +68,16 @@ export default function ActionButton({ defaultActionClick, options }) {
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        {...({
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left',
+          },
+          transformOrigin: {
+            vertical: 'top',
+            horizontal: 'left',
+          },
+        } as any)}
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
