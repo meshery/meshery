@@ -2,7 +2,6 @@ package stages
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 
@@ -18,11 +17,7 @@ const FillerPattern = `\$\(#ref\..+\)`
 var FillerRegex *regexp.Regexp
 
 func init() {
-	var err error
-	FillerRegex, err = regexp.Compile(FillerPattern)
-	if err != nil {
-		log.Fatal("failed to compile filler design regex")
-	}
+	FillerRegex = regexp.MustCompile(FillerPattern)
 }
 
 // Filler - filler stage processes the pattern to subsitute Pattern
