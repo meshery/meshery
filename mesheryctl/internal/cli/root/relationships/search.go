@@ -76,7 +76,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"kind", "apiVersion", "model-name", "type", "subType", "regoQuery"},
+			Header:           []string{"Kind", "Api Version", "Model", "Type", "Sub-Type", "Rego Query"},
 			Rows:             rows,
 			Count:            relationshipResponse.Count,
 			DisplayCountOnly: false,
