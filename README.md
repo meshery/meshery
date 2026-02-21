@@ -99,7 +99,7 @@ Find infrastructure configuration patterns in Meshery's <a href="https://meshery
 
 ### Multiple Kubernetes Clusters and Multiple Clouds
 
-<img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Meshery managing multiple Kubernetes clusters across different cloud providers" loading="lazy" align="center" /><br />
+<img src="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Meshery managing multiple Kubernetes clusters across different cloud providers" loading="lazy" align="center" />
 
 Meshery provides a single pane of glass to manage multiple Kubernetes clusters across any infrastructure, including various cloud providers. Meshery enables consistent configuration, operation, and observability across your entire Kubernetes landscape.
 
