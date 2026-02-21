@@ -11,7 +11,7 @@
         "evalPolicy": "OPA",
         "selectorsDenyFrom": "denyFrom",
         "selectorsDenyTo": "denyTo",
-        "selectorsAllwowFrom": "allowFrom",
+        "selectorsAllowFrom": "allowFrom",
         "selectorsAllowTo": "allowTo",
         "CompleteDefinition": "complete",
         "VisualizationExample": "visual"
