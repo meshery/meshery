@@ -38,7 +38,7 @@ type CustomValueRange struct {
 	EvalPolicy           string `json:"evalPolicy"`
 	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
 	SelectorsDenyTo      string `json:"selectorsDenyTo"`
-	SelectorsAllowFrom   string `json:"selectorsAllwowFrom"`
+	SelectorsAllowFrom   string `json:"selectorsAllowFrom"`
 	SelectorsAllowTo     string `json:"selectorsAllowTo"`
 	CompleteDefinition   string `json:"CompleteDefinition"`
 	VisualizationExample string `json:"VisualizationExample"`
