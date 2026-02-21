@@ -57,8 +57,8 @@ mesheryctl model delete [model-id]
 			return nil
 		}
 
-		// Delete model by name, use paginated selection prompt
-		selectedModel, _, err := display.HandlePaginationPrmot[models.MeshmodelsAPIResponse, model.ModelDefinition](
+		// Delete model by name, for multiple matches use pagination selection prompt
+		selectedModel, err := display.HandlePaginationPrompt(
 			modelsApiPath,
 			modelArg,
 			formatNames,

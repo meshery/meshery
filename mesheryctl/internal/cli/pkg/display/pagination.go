@@ -141,12 +141,12 @@ func HandlePaginationAsync[T any](
 	return nil
 }
 
-func HandlePaginationPrmot[R any, T any](
+func HandlePaginationPrompt[R any, T any](
 	baseAPIPath string,
 	searchTerm string,
 	formatLabel func([]T) []string,
 	extractItems func(*R) []T,
-) (T, int, error) {
+) (T, error) {
 	currentPage := 0
 	pageSize := 10
 	var selectedModel T
@@ -154,7 +154,7 @@ func HandlePaginationPrmot[R any, T any](
 	for {
 		urlPath := ""
 
-		// Build URL
+		// Build paginated URL with search, page, and pagesize params
 		pagesQuerySearch := url.Values{}
 		pagesQuerySearch.Set("search", url.QueryEscape(searchTerm))
 		pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
@@ -168,7 +168,7 @@ func HandlePaginationPrmot[R any, T any](
 
 		data, err := api.Fetch[R](urlPath)
 		if err != nil {
-			return selectedModel, 0, utils.ErrFailRequest(err)
+			return selectedModel, utils.ErrFailRequest(err)
 		}
 
 		rows := extractItems(data)
@@ -177,17 +177,17 @@ func HandlePaginationPrmot[R any, T any](
 		switch len(rows) {
 		case 0:
 			var zero T
-			return zero, 0, ErrNoResultsFound(searchTerm)
+			return zero, ErrNoResultsFound(searchTerm)
 		case 1:
-			return rows[0], 0, nil
+			return rows[0], nil
 		default:
 			selectedModel, index, err = SelectFromPagedResults(rows, formatLabel, pageSize)
 			if err != nil {
-				return selectedModel, -1, err
+				return selectedModel, err
 			}
 		}
 
-		// Case where Load more is not selected
+		// Item selected
 		if index != len(rows) {
 			break
 		}
@@ -195,5 +195,5 @@ func HandlePaginationPrmot[R any, T any](
 
 	}
 
-	return selectedModel, 0, nil
+	return selectedModel, nil
 }
