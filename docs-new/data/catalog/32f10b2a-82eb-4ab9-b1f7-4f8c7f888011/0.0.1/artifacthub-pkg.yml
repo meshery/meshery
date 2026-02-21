@@ -1,0 +1,24 @@
+version: 0.0.1
+name: jaeger-operator
+displayName: Jaeger operator
+createdAt: "2024-05-17T18:30:30Z"
+description: This YAML configuration defines a Kubernetes Deployment for the Jaeger Operator. This Deployment, named "jaeger-operator," specifies that a container will be created using the jaegertracing/jaeger-operator:master image. The container runs with the argument "start," which initiates the operator's main process. Additionally, the container is configured with an environment variable, LOG-LEVEL, set to "debug," enabling detailed logging for troubleshooting and monitoring purposes. This setup allows the Jaeger Operator to manage Jaeger tracing instances within the Kubernetes cluster, ensuring efficient deployment, scaling, and maintenance of distributed tracing components.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/32f10b2a-82eb-4ab9-b1f7-4f8c7f888011/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Image Tag: The image tag master indicates that the latest, potentially unstable version of the Jaeger Operator is being used. For production environments, it's safer to use a specific, stable version to avoid unexpected issues.\n\n2. Resource Limits and Requests: The deployment does not specify resource requests and limits for the container. It's crucial to define these to ensure that the Jaeger Operator has enough CPU and memory to function correctly, while also preventing it from consuming excessive resources on the cluster.\n\n3. Replica Count: The spec section does not specify the number of replicas for the deployment. By default, Kubernetes will create one replica, which might not provide high availability. Consider increasing the replica count for redundancy.\n\n4. Namespace: The deployment does not specify a namespace. Ensure that the deployment is applied to the appropriate namespace, particularly if you have a multi-tenant cluster.\n\n5. Security Context: There is no security context defined. Adding a security context can enhance the security posture of the container by restricting permissions and enforcing best practices like running as a non-root user. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/32f10b2a-82eb-4ab9-b1f7-4f8c7f888011-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/32f10b2a-82eb-4ab9-b1f7-4f8c7f888011-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
