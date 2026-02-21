@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
+	
 	"github.com/pkg/errors"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -138,11 +138,17 @@ mesheryctl system status --verbose
 				return nil
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
-			if err = hc.Run(); err != nil {
-				return nil
-			}
+			 if err := hc.Run(); err != nil {
+        		utils.Log.Warn(errors.New("skipping Kubernetes health checks (Meshery server is not running)"))
+        		utils.Log.Debug(err)
+        		return nil
+    		}
 
-			fallthrough
+    		// explicitly continue into kubernetes logic
+    		// by structuring code, not by fallthrough
+    		// (e.g., call a function or share code)
+
+
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
