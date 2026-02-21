@@ -1,0 +1,210 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Field Export",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-glue-controller",
+    "displayName": "AWS Glue ",
+    "description": "AWS Glue is a serverless data integration service that makes it easier to discover, prepare, move, and integrate data from multiple sources for analytics, machine learning (ML), and application development.",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Analytics"
+    },
+    "subCategory": "Data Integration",
+    "metadata": {
+      "capabilities": null,
+      "isAnnotation": false,
+      "primaryColor": "#8C4FFF",
+      "secondaryColor": "#FFFFFF",
+      "shape": "bottom-round-rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/glue-controller/main/helm/crds",
+      "styleOverrides": "",
+      "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 80 80\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->\n    <title xmlns=\"http://www.w3.org/2000/svg\">Icon-Architecture/64/Arch_AWS-Glue_64</title>\n    <desc xmlns=\"http://www.w3.org/2000/svg\">Created with Sketch.</desc>\n    <defs xmlns=\"http://www.w3.org/2000/svg\">\n        <linearGradient xmlns=\"http://www.w3.org/2000/svg\" x1=\"0%\" y1=\"100%\" x2=\"100%\" y2=\"0%\" id=\"linearGradient-1\">\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#4D27A8\" offset=\"0%\"></stop>\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A166FF\" offset=\"100%\"></stop>\n        </linearGradient>\n    </defs>\n    <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/64/Arch_AWS-Glue_64\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/64/Analytics\" fill=\"url(#linearGradient-1)\">\n            <rect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"80\" height=\"80\"></rect>\n        </g>\n        <path xmlns=\"http://www.w3.org/2000/svg\" d=\"M33,23 L35,23 L35,21 L33,21 L33,23 Z M31,24 L31,20 C31,19.448 31.447,19 32,19 L36,19 C36.553,19 37,19.448 37,20 L37,24 C37,24.552 36.553,25 36,25 L32,25 C31.447,25 31,24.552 31,24 L31,24 Z M41,17 L43,17 L43,15 L41,15 L41,17 Z M39,18 L39,14 C39,13.448 39.447,13 40,13 L44,13 C44.553,13 45,13.448 45,14 L45,18 C45,18.552 44.553,19 44,19 L40,19 C39.447,19 39,18.552 39,18 L39,18 Z M43,27 L45,27 L45,25 L43,25 L43,27 Z M42,23 L46,23 C46.553,23 47,23.448 47,24 L47,28 C47,28.552 46.553,29 46,29 L42,29 C41.447,29 41,28.552 41,28 L41,24 C41,23.448 41.447,23 42,23 L42,23 Z M40,33.5 C38.239,33.5 31.854,33.425 27.701,32.404 L37.846,48.466 C37.946,48.626 38,48.811 38,49 L38,51.277 C39.404,51.684 40.701,51.688 42,51.293 L42,49 C42,48.811 42.054,48.626 42.154,48.466 L52.299,32.404 C48.146,33.425 41.761,33.5 40,33.5 L40,33.5 Z M24.254,30.692 C24.095,30.46 24,30.21 24,29.937 C24,27.092 33.384,26.566 38.978,26.505 L38.999,28.505 C32.127,28.58 27.928,29.364 26.448,29.948 C28.018,30.604 32.643,31.5 40,31.5 C47.338,31.5 51.957,30.609 53.539,29.954 C52.893,29.693 51.555,29.307 48.879,28.98 L49.121,26.995 C55.183,27.735 56,28.897 56,29.937 C56,30.21 55.905,30.46 55.746,30.692 L44,49.29 L44,52 C44,52.408 43.752,52.776 43.373,52.928 C42.282,53.366 41.186,53.584 40.066,53.584 C38.956,53.584 37.824,53.369 36.654,52.938 C36.262,52.793 36,52.419 36,52 L36,49.29 L24.254,30.692 Z M46.924,59.617 C47.079,59.991 46.993,60.421 46.707,60.707 L40.707,66.707 C40.512,66.902 40.256,67 40,67 C39.744,67 39.488,66.902 39.293,66.707 L33.293,60.707 C33.007,60.421 32.921,59.991 33.076,59.617 C33.23,59.244 33.596,59 34,59 L37,59 L37,56 L39,56 L39,60 C39,60.552 38.553,61 38,61 L36.414,61 L40,64.586 L43.586,61 L42,61 C41.447,61 41,60.552 41,60 L41,56 L43,56 L43,59 L46,59 C46.404,59 46.77,59.244 46.924,59.617 L46.924,59.617 Z\" id=\"AWS-Glue_Icon_64_Squid\" fill=\"#FFFFFF\"></path>\n    </g>\n</svg>",
+      "svgComplete": "",
+      "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 80 80\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->\n    <title xmlns=\"http://www.w3.org/2000/svg\">Icon-Architecture/64/Arch_AWS-Glue_64</title>\n    <desc xmlns=\"http://www.w3.org/2000/svg\">Created with Sketch.</desc>\n    <defs xmlns=\"http://www.w3.org/2000/svg\">\n        <linearGradient xmlns=\"http://www.w3.org/2000/svg\" x1=\"0%\" y1=\"100%\" x2=\"100%\" y2=\"0%\" id=\"linearGradient-1\">\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#4D27A8\" offset=\"0%\"></stop>\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A166FF\" offset=\"100%\"></stop>\n        </linearGradient>\n    </defs>\n    <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/64/Arch_AWS-Glue_64\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/64/Analytics\" fill=\"url(#linearGradient-1)\">\n            <rect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"80\" height=\"80\"></rect>\n        </g>\n        <path xmlns=\"http://www.w3.org/2000/svg\" d=\"M33,23 L35,23 L35,21 L33,21 L33,23 Z M31,24 L31,20 C31,19.448 31.447,19 32,19 L36,19 C36.553,19 37,19.448 37,20 L37,24 C37,24.552 36.553,25 36,25 L32,25 C31.447,25 31,24.552 31,24 L31,24 Z M41,17 L43,17 L43,15 L41,15 L41,17 Z M39,18 L39,14 C39,13.448 39.447,13 40,13 L44,13 C44.553,13 45,13.448 45,14 L45,18 C45,18.552 44.553,19 44,19 L40,19 C39.447,19 39,18.552 39,18 L39,18 Z M43,27 L45,27 L45,25 L43,25 L43,27 Z M42,23 L46,23 C46.553,23 47,23.448 47,24 L47,28 C47,28.552 46.553,29 46,29 L42,29 C41.447,29 41,28.552 41,28 L41,24 C41,23.448 41.447,23 42,23 L42,23 Z M40,33.5 C38.239,33.5 31.854,33.425 27.701,32.404 L37.846,48.466 C37.946,48.626 38,48.811 38,49 L38,51.277 C39.404,51.684 40.701,51.688 42,51.293 L42,49 C42,48.811 42.054,48.626 42.154,48.466 L52.299,32.404 C48.146,33.425 41.761,33.5 40,33.5 L40,33.5 Z M24.254,30.692 C24.095,30.46 24,30.21 24,29.937 C24,27.092 33.384,26.566 38.978,26.505 L38.999,28.505 C32.127,28.58 27.928,29.364 26.448,29.948 C28.018,30.604 32.643,31.5 40,31.5 C47.338,31.5 51.957,30.609 53.539,29.954 C52.893,29.693 51.555,29.307 48.879,28.98 L49.121,26.995 C55.183,27.735 56,28.897 56,29.937 C56,30.21 55.905,30.46 55.746,30.692 L44,49.29 L44,52 C44,52.408 43.752,52.776 43.373,52.928 C42.282,53.366 41.186,53.584 40.066,53.584 C38.956,53.584 37.824,53.369 36.654,52.938 C36.262,52.793 36,52.419 36,52 L36,49.29 L24.254,30.692 Z M46.924,59.617 C47.079,59.991 46.993,60.421 46.707,60.707 L40.707,66.707 C40.512,66.902 40.256,67 40,67 C39.744,67 39.488,66.902 39.293,66.707 L33.293,60.707 C33.007,60.421 32.921,59.991 33.076,59.617 C33.23,59.244 33.596,59 34,59 L37,59 L37,56 L39,56 L39,60 C39,60.552 38.553,61 38,61 L36.414,61 L40,64.586 L43.586,61 L42,61 C41.447,61 41,60.552 41,60 L41,56 L43,56 L43,59 L46,59 C46.404,59 46.77,59.244 46.924,59.617 L46.924,59.617 Z\" id=\"AWS-Glue_Icon_64_Squid\" fill=\"#FFFFFF\"></path>\n    </g>\n</svg>"
+    },
+    "model": {
+      "version": "v0.3.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "version": "",
+    "name": "",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": ""
+    },
+    "model": {
+      "version": ""
+    }
+  },
+  "styles": {
+    "primaryColor": "#8C4FFF",
+    "secondaryColor": "#FFFFFF",
+    "shape": "bottom-round-rectangle",
+    "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 80 80\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->\n    <title xmlns=\"http://www.w3.org/2000/svg\">Icon-Architecture/64/Arch_AWS-Glue_64</title>\n    <desc xmlns=\"http://www.w3.org/2000/svg\">Created with Sketch.</desc>\n    <defs xmlns=\"http://www.w3.org/2000/svg\">\n        <linearGradient xmlns=\"http://www.w3.org/2000/svg\" x1=\"0%\" y1=\"100%\" x2=\"100%\" y2=\"0%\" id=\"linearGradient-1\">\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#4D27A8\" offset=\"0%\"></stop>\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A166FF\" offset=\"100%\"></stop>\n        </linearGradient>\n    </defs>\n    <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/64/Arch_AWS-Glue_64\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/64/Analytics\" fill=\"url(#linearGradient-1)\">\n            <rect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"80\" height=\"80\"></rect>\n        </g>\n        <path xmlns=\"http://www.w3.org/2000/svg\" d=\"M33,23 L35,23 L35,21 L33,21 L33,23 Z M31,24 L31,20 C31,19.448 31.447,19 32,19 L36,19 C36.553,19 37,19.448 37,20 L37,24 C37,24.552 36.553,25 36,25 L32,25 C31.447,25 31,24.552 31,24 L31,24 Z M41,17 L43,17 L43,15 L41,15 L41,17 Z M39,18 L39,14 C39,13.448 39.447,13 40,13 L44,13 C44.553,13 45,13.448 45,14 L45,18 C45,18.552 44.553,19 44,19 L40,19 C39.447,19 39,18.552 39,18 L39,18 Z M43,27 L45,27 L45,25 L43,25 L43,27 Z M42,23 L46,23 C46.553,23 47,23.448 47,24 L47,28 C47,28.552 46.553,29 46,29 L42,29 C41.447,29 41,28.552 41,28 L41,24 C41,23.448 41.447,23 42,23 L42,23 Z M40,33.5 C38.239,33.5 31.854,33.425 27.701,32.404 L37.846,48.466 C37.946,48.626 38,48.811 38,49 L38,51.277 C39.404,51.684 40.701,51.688 42,51.293 L42,49 C42,48.811 42.054,48.626 42.154,48.466 L52.299,32.404 C48.146,33.425 41.761,33.5 40,33.5 L40,33.5 Z M24.254,30.692 C24.095,30.46 24,30.21 24,29.937 C24,27.092 33.384,26.566 38.978,26.505 L38.999,28.505 C32.127,28.58 27.928,29.364 26.448,29.948 C28.018,30.604 32.643,31.5 40,31.5 C47.338,31.5 51.957,30.609 53.539,29.954 C52.893,29.693 51.555,29.307 48.879,28.98 L49.121,26.995 C55.183,27.735 56,28.897 56,29.937 C56,30.21 55.905,30.46 55.746,30.692 L44,49.29 L44,52 C44,52.408 43.752,52.776 43.373,52.928 C42.282,53.366 41.186,53.584 40.066,53.584 C38.956,53.584 37.824,53.369 36.654,52.938 C36.262,52.793 36,52.419 36,52 L36,49.29 L24.254,30.692 Z M46.924,59.617 C47.079,59.991 46.993,60.421 46.707,60.707 L40.707,66.707 C40.512,66.902 40.256,67 40,67 C39.744,67 39.488,66.902 39.293,66.707 L33.293,60.707 C33.007,60.421 32.921,59.991 33.076,59.617 C33.23,59.244 33.596,59 34,59 L37,59 L37,56 L39,56 L39,60 C39,60.552 38.553,61 38,61 L36.414,61 L40,64.586 L43.586,61 L42,61 C41.447,61 41,60.552 41,60 L41,56 L43,56 L43,59 L46,59 C46.404,59 46.77,59.244 46.924,59.617 L46.924,59.617 Z\" id=\"AWS-Glue_Icon_64_Squid\" fill=\"#FFFFFF\"></path>\n    </g>\n</svg>",
+    "svgComplete": "",
+    "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 80 80\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->\n    <title xmlns=\"http://www.w3.org/2000/svg\">Icon-Architecture/64/Arch_AWS-Glue_64</title>\n    <desc xmlns=\"http://www.w3.org/2000/svg\">Created with Sketch.</desc>\n    <defs xmlns=\"http://www.w3.org/2000/svg\">\n        <linearGradient xmlns=\"http://www.w3.org/2000/svg\" x1=\"0%\" y1=\"100%\" x2=\"100%\" y2=\"0%\" id=\"linearGradient-1\">\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#4D27A8\" offset=\"0%\"></stop>\n            <stop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A166FF\" offset=\"100%\"></stop>\n        </linearGradient>\n    </defs>\n    <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/64/Arch_AWS-Glue_64\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/64/Analytics\" fill=\"url(#linearGradient-1)\">\n            <rect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"80\" height=\"80\"></rect>\n        </g>\n        <path xmlns=\"http://www.w3.org/2000/svg\" d=\"M33,23 L35,23 L35,21 L33,21 L33,23 Z M31,24 L31,20 C31,19.448 31.447,19 32,19 L36,19 C36.553,19 37,19.448 37,20 L37,24 C37,24.552 36.553,25 36,25 L32,25 C31.447,25 31,24.552 31,24 L31,24 Z M41,17 L43,17 L43,15 L41,15 L41,17 Z M39,18 L39,14 C39,13.448 39.447,13 40,13 L44,13 C44.553,13 45,13.448 45,14 L45,18 C45,18.552 44.553,19 44,19 L40,19 C39.447,19 39,18.552 39,18 L39,18 Z M43,27 L45,27 L45,25 L43,25 L43,27 Z M42,23 L46,23 C46.553,23 47,23.448 47,24 L47,28 C47,28.552 46.553,29 46,29 L42,29 C41.447,29 41,28.552 41,28 L41,24 C41,23.448 41.447,23 42,23 L42,23 Z M40,33.5 C38.239,33.5 31.854,33.425 27.701,32.404 L37.846,48.466 C37.946,48.626 38,48.811 38,49 L38,51.277 C39.404,51.684 40.701,51.688 42,51.293 L42,49 C42,48.811 42.054,48.626 42.154,48.466 L52.299,32.404 C48.146,33.425 41.761,33.5 40,33.5 L40,33.5 Z M24.254,30.692 C24.095,30.46 24,30.21 24,29.937 C24,27.092 33.384,26.566 38.978,26.505 L38.999,28.505 C32.127,28.58 27.928,29.364 26.448,29.948 C28.018,30.604 32.643,31.5 40,31.5 C47.338,31.5 51.957,30.609 53.539,29.954 C52.893,29.693 51.555,29.307 48.879,28.98 L49.121,26.995 C55.183,27.735 56,28.897 56,29.937 C56,30.21 55.905,30.46 55.746,30.692 L44,49.29 L44,52 C44,52.408 43.752,52.776 43.373,52.928 C42.282,53.366 41.186,53.584 40.066,53.584 C38.956,53.584 37.824,53.369 36.654,52.938 C36.262,52.793 36,52.419 36,52 L36,49.29 L24.254,30.692 Z M46.924,59.617 C47.079,59.991 46.993,60.421 46.707,60.707 L40.707,66.707 C40.512,66.902 40.256,67 40,67 C39.744,67 39.488,66.902 39.293,66.707 L33.293,60.707 C33.007,60.421 32.921,59.991 33.076,59.617 C33.23,59.244 33.596,59 34,59 L37,59 L37,56 L39,56 L39,60 C39,60.552 38.553,61 38,61 L36.414,61 L40,64.586 L43.586,61 L42,61 C41.447,61 41,60.552 41,60 L41,56 L43,56 L43,59 L46,59 C46.404,59 46.77,59.244 46.924,59.617 L46.924,59.617 Z\" id=\"AWS-Glue_Icon_64_Squid\" fill=\"#FFFFFF\"></path>\n    </g>\n</svg>"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/glue-controller/main/helm/crds"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "FieldExport",
+    "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+  },
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z"
+}
