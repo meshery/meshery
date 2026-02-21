@@ -171,6 +171,10 @@ func (h *Handler) EvaluateDesign(
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
+for _, defaultErr := range utils.ApplyDefaultsToPatternComponents(&lastEvaluationResponse.Design) {
+		h.log.Debugf("failed to hydrate design defaults during evaluation: %v", defaultErr)
+	}
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
 		// evaluate specified relationship policies
