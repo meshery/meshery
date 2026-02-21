@@ -1,0 +1,96 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "You are linking an API Integration to a Kubernetes Service to route traffic into your cluster.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-apigatewayv2-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.2.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Integration",
+            "model": {
+              "version": "",
+              "name": "aws-apigatewayv2-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Service",
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "spec",
+                  "integrationRef",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
