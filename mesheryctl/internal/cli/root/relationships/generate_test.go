@@ -135,6 +135,41 @@ func TestGenerate(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			if tt.Name == "Generate registered relationships" {
+				originalPath := relationshipsOutputPath
+				defer func() { relationshipsOutputPath = originalPath }()
+				relationshipsOutputPath = "./testdata/RelationshipsDataTest.json"
+
+				originalFetch := fetchSheetValues
+				defer func() { fetchSheetValues = originalFetch }()
+
+				fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
+					return &sheets.ValueRange{
+						Values: [][]interface{}{
+							{}, // header row 1
+							{}, // header row 2
+							{
+								"kubernetes", // Model
+								"v1.0.0",     // Version
+								"edge",       // Kind
+								"network",    // Type
+								"Mount",      // SubType
+								"desc",
+								"docs",
+								"styles",
+								"OPA",
+								"denyFrom",
+								"denyTo",
+								"allowFrom",
+								"allowTo",
+								"complete",
+								"visual",
+							},
+						},
+					}, nil
+				}
+			}
+
 			if tt.Fixture != "" {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
@@ -176,8 +211,8 @@ func TestGenerate(t *testing.T) {
 					actualResponse := err.Error()
 					utils.Equals(t, expectedResponse, actualResponse)
 					// reset the global variables
-					spreadsheeetCred = ""
-					spreadsheeetID = ""
+					spreadsheetCred = ""
+					spreadsheetID = ""
 					return
 				}
 				t.Error(err)
@@ -196,8 +231,8 @@ func TestGenerate(t *testing.T) {
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 			// reset the global variables
-			spreadsheeetCred = ""
-			spreadsheeetID = ""
+			spreadsheetCred = ""
+			spreadsheetID = ""
 		})
 		t.Log("Generate experimental relationship test passed")
 	}
