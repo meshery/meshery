@@ -55,7 +55,7 @@ mesheryctl exp relationship generate [flags]
 mesheryctl exp relationship list [flags]
 
 // Search for a specific relationship
-mesheryctl exp relationship search [query-text] [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 // View a specific relationship
 mesheryctl exp relationship view [model-name]
