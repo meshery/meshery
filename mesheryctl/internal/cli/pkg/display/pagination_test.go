@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"testing"
 
@@ -219,7 +220,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 	}
 }
 
-func TetHandlePaginationPrompt(t *testing.T) {
+func TestHandlePaginationPrompt(t *testing.T) {
 	type testItem struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
@@ -304,18 +305,18 @@ func TetHandlePaginationPrompt(t *testing.T) {
 				utils.TokenFlag = "Not Set"
 			}()
 
-			mApiResponse, err := json.Marshal(tt.apiItems)
+			mApiResponse, err := json.Marshal(promptAPIResponse{Items: tt.apiItems})
 			if err != nil {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			url := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			url := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + url.QueryEscape(tt.searchTerm)
 			httpmock.RegisterResponder("GET", url,
 				httpmock.NewStringResponder(tt.apiStatusCode, string(mApiResponse)))
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-			result, err := HandlePaginationPrompt[promptAPIResponse, testItem](
+			result, err := HandlePaginationPrompt(
 				"/test",
 				tt.searchTerm,
 				formatLabel,
