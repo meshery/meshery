@@ -310,6 +310,8 @@
           url: extensibility/verify-compatibility
         - title: UI Plugins
           url: extensibility/ui
+        - title: CLI Plugins
+          url: extensibility/cli-plugins
     - title: Error Code
       url: reference/error-codes
     - title: Permission Keys
