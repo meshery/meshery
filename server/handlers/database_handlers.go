@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -81,13 +80,14 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	w.Header().Set("Content-Type", "application/json")
 
-	val, err := json.Marshal(databaseSummary)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Fprint(w, string(val))
+val, err := json.Marshal(databaseSummary)
+if err != nil {
+    http.Error(w, "failed to serialize database summary", http.StatusInternalServerError)
+    return
 }
 
+w.Write(val)
+}
 // swagger:route DELETE /api/system/database/reset ResetSystemDatabase
 // Reset the system database to its initial state.
 //
@@ -196,6 +196,6 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, "Database reset successful")
+		w.Write([]byte("Database reset successful"))
 	}
 }
