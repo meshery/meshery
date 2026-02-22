@@ -60,7 +60,7 @@ mesheryctl component search "Component name"
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
 			DataType: "component",
-			Header:   []string{"Name", "Model", "Category", "Version"},
+			Header:   []string{"Name", "Model", "Version"},
 			Page:     cmdComponentSearchFlag.Page,
 			PageSize: cmdComponentSearchFlag.PageSize,
 			IsPage:   cmd.Flags().Changed("page"),
