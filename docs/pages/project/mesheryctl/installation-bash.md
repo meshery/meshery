@@ -1,5 +1,4 @@
-
-To install or upgrade `mesheryctl` using `bash`, execute anyone of the following commands.
+To install or upgrade `mesheryctl` using `bash`, execute one of the following commands.
 
 #### Option 1: Only install `mesheryctl` binary
 
@@ -33,7 +32,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
 <br />
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install `mesheryctl` binary and include one or more [adapters]({{ site.baseurl }}/concepts/architecture/adapters) to be deployed
+Install the `mesheryctl` binary and include one or more [adapters]({{ site.baseurl }}/concepts/architecture/adapters) for deployment.
 
  <pre class="codeblock-pre">
  <div class="codeblock">
@@ -44,7 +43,7 @@ Install `mesheryctl` binary and include one or more [adapters]({{ site.baseurl }
 <br />
 <br />
 ### Start Meshery
-You are ready to deploy Meshery `mesheryctl`. To do so, execute the following command.
+You are ready to deploy Meshery using `mesheryctl`. To do so, execute the following command.
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">mesheryctl system start</div></div>

@@ -1,0 +1,76 @@
+---
+title: AWS DynamoDB
+subtitle: Collaborative and visual infrastructure as design for AWS DynamoDB
+image: /extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
+description: 
+integrations-category: App Definition and Development
+integrations-subcategory: Database
+registrant: GitHub
+components: 
+- name: field-export
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: backup
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/backup/icons/color/backup-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/backup/icons/white/backup-white.svg
+  description: 
+- name: table
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/table/icons/color/table-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/table/icons/white/table-white.svg
+  description: 
+- name: global-table
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/global-table/icons/color/global-table-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/global-table/icons/white/global-table-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 9
+featureList: [
+  "Handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
+",
+  "Secure your data with encryption at rest, automatic backup and restore, and guaranteed reliability with an SLA of up to 99.999% availability.",
+  "Fast and flexible NoSQL database service for any scale"
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-dynamodb-controller
+---
