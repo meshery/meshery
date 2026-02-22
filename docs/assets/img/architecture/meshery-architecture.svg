@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 860" role="img" aria-labelledby="title desc">
+  <title id="title">Meshery architecture</title>
+  <desc id="desc">A high-level architecture diagram showing Meshery UI and clients communicating with Meshery Server, which coordinates providers, adapters, and Kubernetes clusters.</desc>
+  <defs>
+    <style>
+      .title { font: 700 32px Inter, Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 500 18px Inter, Arial, sans-serif; fill: #374151; }
+      .group-title { font: 700 24px Inter, Arial, sans-serif; fill: #111827; }
+      .label { font: 600 18px Inter, Arial, sans-serif; fill: #1f2937; }
+      .small { font: 500 15px Inter, Arial, sans-serif; fill: #4b5563; }
+      .frame { stroke: #d1d5db; stroke-width: 2; rx: 18; }
+      .node { stroke: #9ca3af; stroke-width: 2; rx: 12; }
+      .arrow { stroke: #4b5563; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+      .dashed { stroke-dasharray: 10 8; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563" />
+    </marker>
+  </defs>
+
+  <rect x="20" y="20" width="1360" height="820" fill="#f9fafb" stroke="#e5e7eb" rx="22"/>
+
+  <text x="60" y="80" class="title">Meshery Architecture</text>
+  <text x="60" y="114" class="subtitle">High-level system view of Meshery components and communication paths</text>
+
+  <rect x="60" y="150" width="1280" height="160" class="frame" fill="#eff6ff"/>
+  <text x="86" y="190" class="group-title">Clients</text>
+  <rect x="90" y="215" width="280" height="70" class="node" fill="#ffffff"/>
+  <text x="110" y="258" class="label">Meshery UI (Next.js)</text>
+
+  <rect x="410" y="215" width="280" height="70" class="node" fill="#ffffff"/>
+  <text x="430" y="258" class="label">mesheryctl (CLI)</text>
+
+  <rect x="730" y="215" width="280" height="70" class="node" fill="#ffffff"/>
+  <text x="750" y="258" class="label">Provider UI Extensions</text>
+
+  <rect x="1050" y="215" width="260" height="70" class="node" fill="#ffffff"/>
+  <text x="1080" y="258" class="label">Other API Clients</text>
+
+  <rect x="60" y="340" width="1280" height="220" class="frame" fill="#ecfeff"/>
+  <text x="86" y="380" class="group-title">Meshery Server (Core Orchestrator)</text>
+
+  <rect x="90" y="405" width="280" height="130" class="node" fill="#ffffff"/>
+  <text x="108" y="440" class="label">REST + GraphQL API</text>
+  <text x="108" y="470" class="small">Auth, Workspaces, Designs,</text>
+  <text x="108" y="492" class="small">Lifecycle Management</text>
+
+  <rect x="410" y="405" width="280" height="130" class="node" fill="#ffffff"/>
+  <text x="430" y="440" class="label">Persistence Layer</text>
+  <text x="430" y="470" class="small">PostgreSQL / Metadata</text>
+  <text x="430" y="492" class="small">Preferences / State</text>
+
+  <rect x="730" y="405" width="280" height="130" class="node" fill="#ffffff"/>
+  <text x="752" y="440" class="label">Eventing + Messaging</text>
+  <text x="752" y="470" class="small">NATS / Broker</text>
+  <text x="752" y="492" class="small">Subscriptions + Streams</text>
+
+  <rect x="1050" y="405" width="260" height="130" class="node" fill="#ffffff"/>
+  <text x="1070" y="440" class="label">Provider Plugins</text>
+  <text x="1070" y="470" class="small">Local / Remote Providers</text>
+  <text x="1070" y="492" class="small">Identity + Preferences</text>
+
+  <rect x="60" y="590" width="1280" height="220" class="frame" fill="#f0fdf4"/>
+  <text x="86" y="630" class="group-title">Runtime and Managed Infrastructure</text>
+
+  <rect x="90" y="655" width="280" height="120" class="node" fill="#ffffff"/>
+  <text x="113" y="690" class="label">Meshery Adapters</text>
+  <text x="113" y="720" class="small">gRPC Integrations</text>
+  <text x="113" y="742" class="small">300+ Ecosystem Targets</text>
+
+  <rect x="410" y="655" width="280" height="120" class="node" fill="#ffffff"/>
+  <text x="430" y="690" class="label">Meshery Operator</text>
+  <text x="430" y="720" class="small">Manages Broker + MeshSync</text>
+  <text x="430" y="742" class="small">Multi-cluster Lifecycle</text>
+
+  <rect x="730" y="655" width="280" height="120" class="node" fill="#ffffff"/>
+  <text x="750" y="690" class="label">Kubernetes Clusters</text>
+  <text x="750" y="720" class="small">Control Plane + Workloads</text>
+  <text x="750" y="742" class="small">Discovered by MeshSync</text>
+
+  <rect x="1050" y="655" width="260" height="120" class="node" fill="#ffffff"/>
+  <text x="1070" y="690" class="label">Cloud Services</text>
+  <text x="1070" y="720" class="small">Prometheus, Grafana,</text>
+  <text x="1070" y="742" class="small">Registries, Datastores</text>
+
+  <path d="M230 286 L230 405" class="arrow"/>
+  <path d="M550 286 L550 405" class="arrow"/>
+  <path d="M870 286 L870 405" class="arrow"/>
+  <path d="M1180 286 L1180 405" class="arrow"/>
+
+  <path d="M230 535 L230 655" class="arrow"/>
+  <path d="M550 535 L550 655" class="arrow"/>
+  <path d="M870 535 L870 655" class="arrow"/>
+  <path d="M1180 535 L1180 655" class="arrow"/>
+
+  <path d="M690 470 L730 470" class="arrow dashed"/>
+  <path d="M1010 470 L1050 470" class="arrow dashed"/>
+</svg>

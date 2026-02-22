@@ -37,7 +37,10 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 In Meshery v0.6.0, Adapters will register with Meshery Server over HTTP POST. If Meshery Server is not available, Meshery Adapters will backoff and retry to connect to Meshery Server perpetually.
 
 <a href="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" class="lightbox-image">
-<img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" width="50%" /></a>
+<picture>
+  <source srcset="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg" type="image/svg+xml">
+  <img src="{{ site.baseurl }}/assets/img/architecture/meshery-architecture.webp" width="50%" alt="Meshery architecture diagram" />
+</picture></a>
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
