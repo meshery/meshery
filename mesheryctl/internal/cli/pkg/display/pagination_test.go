@@ -317,7 +317,7 @@ func TestHandlePaginationPrompt(t *testing.T) {
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
 			result, err := HandlePaginationPrompt(
-				"/test",
+				"test",
 				tt.searchTerm,
 				formatLabel,
 				extractItems,
