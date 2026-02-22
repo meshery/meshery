@@ -16,6 +16,8 @@ package components
 
 import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -46,18 +48,29 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 // Display the number of components present in Meshery
 mesheryctl component list --count
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(cmdComponentListFlag)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelData := display.DisplayDataAsync{
+		componentData := display.DisplayDataAsync{
 			UrlPath:          componentApiPath,
 			DataType:         "component",
-			Header:           []string{"Name", "Model", "Category", "Version"},
+			Header:           []string{"Name", "Model", "Version"},
 			Page:             cmdComponentListFlag.Page,
 			PageSize:         cmdComponentListFlag.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
 			DisplayCountOnly: cmdComponentListFlag.Count,
 		}
 
-		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
+		err := display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 		if err != nil {
 			return err
 		}

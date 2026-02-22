@@ -20,13 +20,14 @@ import (
 	"github.com/meshery/meshery/server/models"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 type componentFlags struct {
-	count bool
+	Count bool
 }
 
 var (
@@ -55,21 +56,37 @@ mesheryctl component search [component-name]
 // View a specific component
 mesheryctl component view [component-name]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(componentFlagsProvided)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
-		if argsIsEmpty && !componentFlagsProvided.count {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
+		if argsIsEmpty && !componentFlagsProvided.Count {
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if count {
-			return listComponents(cmd, componentApiPath)
+		if componentFlagsProvided.Count {
+			componentData := display.DisplayDataAsync{
+				UrlPath:          componentApiPath,
+				DataType:         "component",
+				Header:           []string{},
+				Page:             cmdComponentListFlag.Page,
+				PageSize:         10,
+				IsPage:           false,
+				DisplayCountOnly: componentFlagsProvided.Count,
+			}
+			return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
@@ -86,7 +103,7 @@ mesheryctl component view [component-name]
 
 func init() {
 	ComponentCmd.AddCommand(availableSubcommands...)
-	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.count, "count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.Flags().BoolVarP(&componentFlagsProvided.Count, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
@@ -104,27 +121,8 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		componenttKind := component.Component.Kind
-		if componenttKind == "" {
-			componenttKind = "N/A"
-		}
-		rows = append(rows, []string{componentName, modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{componentName, modelName, componentVersion})
 	}
 
 	return rows, int64(componentsResponse.Count)
-}
-
-func listComponents(cmd *cobra.Command, apiPath string) error {
-	page, _ := cmd.Flags().GetInt("page")
-
-	modelData := display.DisplayDataAsync{
-		UrlPath:          componentApiPath,
-		DataType:         "component",
-		Header:           []string{"Name", "Model", "Category", "Version"},
-		Page:             page,
-		IsPage:           cmd.Flags().Changed("page"),
-		DisplayCountOnly: cmd.Flags().Changed("count"),
-	}
-
-	return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 }
