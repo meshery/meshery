@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"time"
+	"log"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -82,10 +83,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 val, err := json.Marshal(databaseSummary)
 if err != nil {
+    log.Printf("failed to serialize database summary: %v", err)
     http.Error(w, "failed to serialize database summary", http.StatusInternalServerError)
     return
 }
-
 w.Write(val)
 }
 // swagger:route DELETE /api/system/database/reset ResetSystemDatabase
