@@ -95,7 +95,7 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
-	searchCmd.Flags().IntP("page", "p", 0, "search relationships of particular page")
+	searchCmd.Flags().IntP("page", "p", 1, "(optional) Search next set of relationships with --page (default = 1)")
 }
 
 func buildSearchUrl(cmd *cobra.Command, page int) string {
