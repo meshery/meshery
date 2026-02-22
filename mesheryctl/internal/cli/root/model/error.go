@@ -82,7 +82,6 @@ func ErrDeleteModel(err error, nameOrID string) error {
 		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
 }
 
-// TODO Check if it could be added to other cmd's
 func ErrModelNotFound(model string) error {
 	return errors.New(ErrModelNotFoundCode, errors.Fatal,
 		[]string{"Model Not Found"},

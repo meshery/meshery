@@ -67,7 +67,10 @@ func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataPr
 	)
 }
 
-func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pageSize int) (T, int, error) {
+func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pageSize int) (selected T,
+	itemSelected bool,
+	err error,
+) {
 	var zero T
 
 	names := formatLabel(rows)
@@ -84,9 +87,9 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 	prompt := promptui.Select{
 		Label: "Select item",
 		Items: names,
-		Size:  5,
+		Size:  6,
 		Templates: &promptui.SelectTemplates{
-			Help: "Use ↑/↓/←/→ to navigate, Ctrl+C or Esc to cancel",
+			Help: "Use ↑/↓/←/→ to navigate, Ctrl+C to cancel",
 		},
 	}
 
@@ -97,24 +100,24 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 		if err != nil {
 			// Handle ctrl+c
 			if err == promptui.ErrInterrupt {
-				return zero, -1, fmt.Errorf("Selection cancelled")
+				return zero, false, fmt.Errorf("selection cancelled")
 			}
 			retries++
 			if retries >= maxRetries {
-				return zero, -1, fmt.Errorf("prompt failed after %d attempts: %w", maxRetries, err)
+				return zero, false, fmt.Errorf("prompt failed after %d attempts: %w", maxRetries, err)
 			}
 			continue
 		}
 
-		// Last item (Load More / End of list) selected
+		// Last item (Load More | End of list) selected
 		if i == itemCount {
 			// No more pages just re-show the prompt
 			if len(rows) < pageSize {
-				continue
+				return zero, false, fmt.Errorf("selection cancelled")
 			}
-			return zero, i, nil
+			return zero, false, nil
 		}
 
-		return rows[i], i, nil
+		return rows[i], true, nil
 	}
 }

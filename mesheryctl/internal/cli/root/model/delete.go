@@ -21,6 +21,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterros "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -61,12 +62,15 @@ mesheryctl model delete [model-id]
 		selectedModel, err := display.HandlePaginationPrompt(
 			modelsApiPath,
 			modelArg,
-			formatNames,
+			formatLable,
 			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
 				return data.Models
 			},
 		)
 		if err != nil {
+			if meshkiterros.GetCode(err) == utils.ErrNotFoundCode {
+				ErrModelNotFound(modelArg)
+			}
 			return err
 		}
 
@@ -81,11 +85,11 @@ mesheryctl model delete [model-id]
 	},
 }
 
-func formatNames(rows []model.ModelDefinition) []string {
+func formatLable(rows []model.ModelDefinition) []string {
 	labels := []string{}
 
 	for _, m := range rows {
-		name := fmt.Sprintf("%s,  version: %s", m.DisplayName, m.Version)
+		name := fmt.Sprintf("%s, version: %s", m.DisplayName, m.Version)
 		labels = append(labels, name)
 	}
 	return labels

@@ -13,44 +13,7 @@ var (
 	ErrUnsupportedFormatCode      = "mesheryctl-1184"
 	ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
 	ErrInvalidOutputFormatCode    = "mesheryctl-1198"
-	ErrNoResultsFoundCode         = "replace_me"
-	ErrPromptFailedCode           = "replace_me"
-	ErrSelectionCancelledCode     = "replace_me"
 )
-
-func ErrNoResultsFound(name string) error {
-	return errors.New(ErrNoResultsFoundCode, errors.Alert,
-		[]string{fmt.Sprintf("No matching results found for %q", name)},
-		[]string{fmt.Sprintf("The name %q did not match any available items", name)},
-		[]string{"The name may be misspelled or the item may not exist in the registry"},
-		[]string{
-			"Check the spelling and try again",
-			"Run 'mesheryctl model list' to see all available models",
-		})
-}
-
-func ErrPromptFailed(err error) error {
-	return errors.New(ErrPromptFailedCode, errors.Alert,
-		[]string{"Unable to display selection menu"},
-		[]string{err.Error()},
-		[]string{"The selection menu could not be displayed in this terminal"},
-		[]string{
-			"Make sure you are running this command in a regular terminal window",
-			"Try running the command again",
-			"You can also use the item's ID directly to skip the selection menu",
-		})
-}
-
-func ErrSelectionCancelled() error {
-	return errors.New(ErrSelectionCancelledCode, errors.Alert,
-		[]string{"Operation cancelled"},
-		[]string{"No item was selected before the prompt was closed"},
-		[]string{"The operation was cancelled before a selection was made"},
-		[]string{
-			"Run the command again to retry",
-			"You can also provide the item's ID directly to skip the selection menu",
-		})
-}
 
 func ErrorListPagination(err error, currentPage int) error {
 	return errors.New(ErrListPaginationCode, errors.Alert,
