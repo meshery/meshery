@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -27,12 +26,23 @@ mesheryctl model search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		queryText := args[0]
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?search=%s&pagesize=all", modelsApiPath, url.QueryEscape(queryText)))
-		if err != nil {
-			return err
+
+		page, _ := cmd.Flags().GetInt("page")
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:  fmt.Sprintf("%s?search=%s", modelsApiPath, url.QueryEscape(args[0])),
+			DataType: "model",
+			Header:   []string{"ID", "Model", "Category", "Version"},
+			Page:     page,
+			PageSize: pageSize,
+			IsPage:   cmd.Flags().Changed("page"),
 		}
 
-		return displayModels(modelsResponse, cmd)
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 	},
+}
+
+func init() {
+	searchModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 0)")
+	searchModelCmd.Flags().IntP("pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 0)")
 }
