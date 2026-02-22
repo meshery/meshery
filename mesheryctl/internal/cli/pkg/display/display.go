@@ -110,8 +110,8 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 
 		// Last item (Load More | End of list) selected
 		if i == itemCount {
-			// No more pages just re-show the prompt
-			if len(rows) < pageSize {
+			// No more items to show
+			if itemCount < pageSize {
 				return zero, false, fmt.Errorf("no more items available")
 			}
 			return zero, false, nil

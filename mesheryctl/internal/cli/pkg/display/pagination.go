@@ -176,8 +176,14 @@ func HandlePaginationPrompt[R any, T any](
 		var itemSelected bool
 		switch len(rows) {
 		case 0:
-			var zero T
-			return zero, utils.ErrNotFound(fmt.Errorf("no results for %s", searchTerm))
+			if currentPage == 0 {
+				var zero T
+				return zero, utils.ErrNotFound(fmt.Errorf("no results for %s", searchTerm))
+			}
+			// Previous page was full but no more results
+			currentPage--
+			pageSize++
+			continue
 		case 1:
 			return rows[0], nil
 		default:
