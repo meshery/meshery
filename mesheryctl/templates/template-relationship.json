@@ -1,101 +1,97 @@
-{
-  "kind": "edge",
-  "metadata": {
-    "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
+[
+  {
+    "kind": "edge",
+    "metadata": {
+      "description": "MetricAlarm triggers notifications and actions to other AWS services",
+      "styles": {
+        "primaryColor": "#FF9900",
+        "svgColor": "#FF9900",
+        "svgWhite": "#FFFFFF"
+      },
+      "isAnnotation": false
     },
-    "isAnnotation": false
-  },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "Pod",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "_",
-                      "networkPolicy"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "NetworkPolicy",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
-                }
-              ]
-            },
-            "patch": null
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Pod",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "NetworkPolicy",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "ingress"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "selector",
-                      "matchLabels"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ],
-                    [
-                      "configuration",
-                      "metadata",
-                      "labels"
-                    ]
-                  ]
-                }
-              ]
-            },
-            "patch": null
-          }
-        ]
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            { "id": null, "kind": "MetricAlarm", "match": {}, "patch": null }
+          ],
+          "to": [
+            { "id": null, "kind": "SNS", "match": {}, "patch": null },
+            { "id": null, "kind": "Lambda", "match": {}, "patch": null },
+            { "id": null, "kind": "S3", "match": {}, "patch": null },
+            { "id": null, "kind": "KMS", "match": {}, "patch": null }
+          ]
+        }
       }
-    }
-  ],
-  "subType": "firewall",
-  "status": "enabled",
-  "type": "binding",
-  "version": "v1.0.0"
-}
+    ],
+    "subType": "monitoring",
+    "status": "enabled",
+    "type": "binding",
+    "version": "v1.0.0"
+  },
+  {
+    "kind": "edge",
+    "metadata": {
+      "description": "Dashboard monitors metrics and visualizes AWS services",
+      "styles": {
+        "primaryColor": "#00AAFF",
+        "svgColor": "#00AAFF",
+        "svgWhite": "#FFFFFF"
+      },
+      "isAnnotation": false
+    },
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            { "id": null, "kind": "Dashboard", "match": {}, "patch": null }
+          ],
+          "to": [
+            { "id": null, "kind": "EC2", "match": {}, "patch": null },
+            { "id": null, "kind": "RDS", "match": {}, "patch": null },
+            { "id": null, "kind": "Lambda", "match": {}, "patch": null },
+            { "id": null, "kind": "S3", "match": {}, "patch": null }
+          ]
+        }
+      }
+    ],
+    "subType": "monitoring",
+    "status": "enabled",
+    "type": "binding",
+    "version": "v1.0.0"
+  },
+  {
+    "kind": "edge",
+    "metadata": {
+      "description": "MetricStream streams metrics to storage and processing services",
+      "styles": {
+        "primaryColor": "#00FF66",
+        "svgColor": "#00FF66",
+        "svgWhite": "#FFFFFF"
+      },
+      "isAnnotation": false
+    },
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            { "id": null, "kind": "MetricStream", "match": {}, "patch": null }
+          ],
+          "to": [
+            { "id": null, "kind": "S3", "match": {}, "patch": null },
+            { "id": null, "kind": "Kinesis", "match": {}, "patch": null },
+            { "id": null, "kind": "KMS", "match": {}, "patch": null }
+          ]
+        }
+      }
+    ],
+    "subType": "monitoring",
+    "status": "enabled",
+    "type": "binding",
+    "version": "v1.0.0"
+  }
+]
