@@ -62,14 +62,14 @@ mesheryctl model delete [model-id]
 		selectedModel, err := display.HandlePaginationPrompt(
 			modelsApiPath,
 			modelArg,
-			formatLable,
+			formatLabel,
 			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
 				return data.Models
 			},
 		)
 		if err != nil {
 			if meshkiterros.GetCode(err) == utils.ErrNotFoundCode {
-				ErrModelNotFound(modelArg)
+				return ErrModelNotFound(modelArg)
 			}
 			return err
 		}
@@ -85,7 +85,7 @@ mesheryctl model delete [model-id]
 	},
 }
 
-func formatLable(rows []model.ModelDefinition) []string {
+func formatLabel(rows []model.ModelDefinition) []string {
 	labels := []string{}
 
 	for _, m := range rows {

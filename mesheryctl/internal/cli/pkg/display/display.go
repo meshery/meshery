@@ -72,17 +72,16 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 	err error,
 ) {
 	var zero T
+	itemCount := len(rows)
 
 	names := formatLabel(rows)
-	if len(rows) < pageSize {
+	if itemCount < pageSize {
 		noMoreLabel := color.New(color.FgHiBlack).Sprint("End of list")
 		names = append(names, noMoreLabel)
 	} else {
 		loadMoreLabel := color.New(color.FgCyan, color.Bold).Sprint("Load More.....")
 		names = append(names, loadMoreLabel)
 	}
-
-	itemCount := len(rows)
 
 	prompt := promptui.Select{
 		Label: "Select item",
@@ -113,7 +112,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 		if i == itemCount {
 			// No more pages just re-show the prompt
 			if len(rows) < pageSize {
-				return zero, false, fmt.Errorf("selection cancelled")
+				return zero, false, fmt.Errorf("no more items available")
 			}
 			return zero, false, nil
 		}

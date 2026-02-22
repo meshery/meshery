@@ -149,14 +149,14 @@ func HandlePaginationPrompt[R any, T any](
 ) (T, error) {
 	currentPage := 0
 	pageSize := 10
-	var selectedModel T
+	var selectedItem T
 
 	for {
 		urlPath := ""
 
 		// Build URL
 		pagesQuerySearch := url.Values{}
-		pagesQuerySearch.Set("search", url.QueryEscape(searchTerm))
+		pagesQuerySearch.Set("search", searchTerm)
 		pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
 
@@ -165,11 +165,10 @@ func HandlePaginationPrompt[R any, T any](
 		} else {
 			urlPath = fmt.Sprintf("%s?%s", baseAPIPath, pagesQuerySearch.Encode())
 		}
-		utils.Log.Debugf("URL for currentPage(%s): (%s)", currentPage, urlPath)
 
 		data, err := api.Fetch[R](urlPath)
 		if err != nil {
-			return selectedModel, utils.ErrFailRequest(err)
+			return selectedItem, utils.ErrFailRequest(err)
 		}
 
 		rows := extractItems(data)
@@ -182,9 +181,9 @@ func HandlePaginationPrompt[R any, T any](
 		case 1:
 			return rows[0], nil
 		default:
-			selectedModel, itemSelected, err = SelectFromPagedResults(rows, formatLabel, pageSize)
+			selectedItem, itemSelected, err = SelectFromPagedResults(rows, formatLabel, pageSize)
 			if err != nil {
-				return selectedModel, err
+				return selectedItem, err
 			}
 		}
 
@@ -195,5 +194,5 @@ func HandlePaginationPrompt[R any, T any](
 
 	}
 
-	return selectedModel, nil
+	return selectedItem, nil
 }
