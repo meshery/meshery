@@ -24,7 +24,6 @@ import (
 )
 
 type componentSearchFlag struct {
-	Count    bool
 	Page     int
 	PageSize int
 }
@@ -61,7 +60,7 @@ mesheryctl component search "Component name"
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
 			DataType: "component",
-			Header:   []string{"Name", "Model", "Category", "Version"},
+			Header:   []string{"Name", "Model", "Version"},
 			Page:     cmdComponentSearchFlag.Page,
 			PageSize: cmdComponentSearchFlag.PageSize,
 			IsPage:   cmd.Flags().Changed("page"),
@@ -71,28 +70,6 @@ mesheryctl component search "Component name"
 		if err != nil {
 			return err
 		}
-<<<<<<< HEAD
-=======
-
-		header := []string{"Name", "Model", "Version"}
-
-		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		dataToDisplay := display.DisplayedData{
-			DataType:         "components",
-			Header:           header,
-			Rows:             rows,
-			Count:            componentsCount,
-			DisplayCountOnly: false,
-			IsPage:           false,
-		}
-
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
-
->>>>>>> 68a680e1448 (refactor(mesheryctl): update component commands to integrate flag validation and streamline output formatting)
 		return nil
 	},
 }
