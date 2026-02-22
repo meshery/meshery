@@ -54,11 +54,9 @@ mesheryctl exp organization list --count
 	},
 }
 
-
-
-func processOrgData(orgs *models.OrganizationsPage) ([][]string,int64) {
+func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 	var rows [][]string
-	for _,org := range orgs.Organizations {
+	for _, org := range orgs.Organizations {
 		rows = append(rows, []string{
 			org.Id.String(),
 			org.Name,
@@ -69,12 +67,9 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string,int64) {
 	return rows, int64(orgs.TotalCount)
 }
 
-
 func init() {
 	listOrgCmd.Flags().IntP("page", "p", 1, "(optional) Page number of paginated results")
 	listOrgCmd.Flags().IntP("pagesize", "s", 10, "(optional) Number of organizations per page")
 	listOrgCmd.Flags().BoolP("count", "", false, "total number of registered orgs")
-
-
 
 }
