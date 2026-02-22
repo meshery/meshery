@@ -16,7 +16,7 @@ const (
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
 	ErrDeleteModelCode                  = "mesheryctl-1200"
-	ErrModelNotFoundCode                = "replace"
+	ErrModelNotFoundCode                = "mesheryctl-1202"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"

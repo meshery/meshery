@@ -13,7 +13,6 @@ import (
 )
 
 func TestHandlePaginationAsync(t *testing.T) {
-
 	type items struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
@@ -161,7 +160,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 	utils.SetupContextEnv(t)
 
-	//initialize mock server for handling requests
+	// initialize mock server for handling requests
 	utils.StartMockery(t)
 
 	// create a test helper
@@ -169,7 +168,6 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			if tt.hasToken {
 				utils.TokenFlag = utils.GetToken(t)
 			}
@@ -217,7 +215,125 @@ func TestHandlePaginationAsync(t *testing.T) {
 				assert.Equal(t, cleanExpected, cleanedActual)
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
 
+func TetHandlePaginationPrompt(t *testing.T) {
+	type testItem struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	type promptAPIResponse struct {
+		Items []testItem `json:"items"`
+	}
+
+	extractItems := func(data *promptAPIResponse) []testItem {
+		return data.Items
+	}
+
+	formatLabel := func(rows []testItem) []string {
+		labels := []string{}
+		for _, r := range rows {
+			labels = append(labels, fmt.Sprintf("%s (%s)", r.Name, r.ID))
+		}
+		return labels
+	}
+
+	tests := []struct {
+		name          string
+		searchTerm    string
+		apiItems      []testItem
+		apiStatusCode int
+		hasToken      bool
+		expectError   bool
+		expectItem    *testItem
+		errContains   string
+	}{
+		{
+			name:          "Given_Zero_Results_When_HandlePaginationPrompt_Then_ErrNotFound",
+			searchTerm:    "nonexistent",
+			apiItems:      []testItem{},
+			apiStatusCode: 200,
+			hasToken:      true,
+			expectError:   true,
+			errContains:   "no results for nonexistent",
+		},
+		{
+			name:       "Given_Single_Result_When_HandlePaginationPrompt_Then_AutoSelect",
+			searchTerm: "istio",
+			apiItems: []testItem{
+				{ID: "abc-123", Name: "Istio Base"},
+			},
+			apiStatusCode: 200,
+			hasToken:      true,
+			expectError:   false,
+			expectItem:    &testItem{ID: "abc-123", Name: "Istio Base"},
+		},
+		{
+			name:          "Given_Missing_Token_When_HandlePaginationPrompt_Then_AuthError",
+			searchTerm:    "istio",
+			apiItems:      []testItem{},
+			apiStatusCode: 400,
+			hasToken:      false,
+			expectError:   true,
+			errContains:   "Not Set does not exist",
+		},
+		{
+			name:          "Given_Invalid_Token_When_HandlePaginationPrompt_Then_InvalidTokenError",
+			searchTerm:    "istio",
+			apiItems:      []testItem{},
+			apiStatusCode: 302,
+			hasToken:      true,
+			expectError:   true,
+		},
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.hasToken {
+				utils.TokenFlag = utils.GetToken(t)
+			}
+
+			defer func() {
+				utils.TokenFlag = "Not Set"
+			}()
+
+			mApiResponse, err := json.Marshal(tt.apiItems)
+			if err != nil {
+				t.Fatalf("Failed to marshal API response: %v", err)
+			}
+
+			url := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			httpmock.RegisterResponder("GET", url,
+				httpmock.NewStringResponder(tt.apiStatusCode, string(mApiResponse)))
+
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			result, err := HandlePaginationPrompt[promptAPIResponse, testItem](
+				"/test",
+				tt.searchTerm,
+				formatLabel,
+				extractItems,
+			)
+
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errContains != "" {
+					assert.Contains(t, err.Error(), tt.errContains)
+				}
+			} else {
+				assert.NoError(t, err)
+				if tt.expectItem != nil {
+					assert.Equal(t, tt.expectItem.ID, result.ID)
+					assert.Equal(t, tt.expectItem.Name, result.Name)
+				}
+			}
 		})
 	}
 }
