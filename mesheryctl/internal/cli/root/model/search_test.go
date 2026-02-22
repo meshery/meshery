@@ -35,7 +35,7 @@ func TestSearchModel(t *testing.T) {
 		{
 			Name:             "given a valid argument provided when running mesheryctl model search valid-name then the output is displayed",
 			Args:             []string{"search", "model-test", "--page", "1", "--pagesize", "10"},
-			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(querySearch)),
+			URL:              fmt.Sprintf("/%s?search=%s&page=1&pagesize=10", modelsApiPath, url.QueryEscape(querySearch)),
 			Fixture:          "search.model.api.response.golden",
 			ExpectedResponse: "search.model.output.golden",
 			ExpectError:      false,

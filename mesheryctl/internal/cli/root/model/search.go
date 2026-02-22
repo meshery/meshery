@@ -43,6 +43,6 @@ mesheryctl model search [query-text]
 }
 
 func init() {
-	searchModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 0)")
-	searchModelCmd.Flags().IntP("pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 0)")
+	searchModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	searchModelCmd.Flags().IntP("pagesize", "s", 10, "(optional) List next set of models with --pagesize (default = 10)")
 }
