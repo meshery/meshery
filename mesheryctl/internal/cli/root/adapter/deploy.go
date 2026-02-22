@@ -54,13 +54,13 @@ mesheryctl adapter deploy linkerd --watch
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				// ErrValidatingAdapter
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			return nil
 		},

@@ -60,12 +60,13 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
 			utils.Log.Error((ErrGettingSessionData(err)))
+			return err
 		}
 		//resolve adapterUrl to adapter Location
 		for _, adapter := range prefs.MeshAdapters {
@@ -78,6 +79,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		//sync with available adapters
 		if err = validateAdapter(mctlCfg, meshName); err != nil {
 			utils.Log.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
+			return err
 		}
 		utils.Log.Info("verified prerequisites")
 		return nil
