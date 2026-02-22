@@ -17,63 +17,65 @@ package components
 import (
 	"fmt"
 	"net/url"
-	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
-var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+type componentSearchFlag struct {
+	Count    bool
+	Page     int
+	PageSize int
+}
+
+var cmdComponentSearchFlag componentSearchFlag
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered components",
 	Long: `Search components registered in Meshery Server based on kind
-Find more information at: https://docs.meshery.io/reference/mesheryctl/component/search`,
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/search`,
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]
+
+// Search for multi-word component names (must be quoted)
+mesheryctl component search "Component name"
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage))
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, searchUsageMessage))
+		}
+
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errMultiArg, searchUsageMessage))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
-		searchValue.Add("search", componentName)
-		searchValue.Add("pagesize", "all")
+		searchValue.Add("search", args[0])
 
-		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
+		modelData := display.DisplayDataAsync{
+			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
+			DataType: "component",
+			Header:   []string{"Name", "Model", "Category", "Version"},
+			Page:     cmdComponentSearchFlag.Page,
+			PageSize: cmdComponentSearchFlag.PageSize,
+			IsPage:   cmd.Flags().Changed("page"),
+		}
 
+		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 		if err != nil {
 			return err
 		}
-
-		header := []string{"Name", "Model", "Version"}
-
-		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		dataToDisplay := display.DisplayedData{
-			DataType:         "components",
-			Header:           header,
-			Rows:             rows,
-			Count:            componentsCount,
-			DisplayCountOnly: false,
-			IsPage:           false,
-		}
-
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
-
 		return nil
 	},
+}
+
+func init() {
+	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&cmdComponentSearchFlag.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
 }
