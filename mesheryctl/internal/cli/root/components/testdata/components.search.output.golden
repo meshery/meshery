@@ -1,4 +1,4 @@
 Total number of components: 1
 Page: 1
-NAME  MODEL             CATEGORY                            VERSION  
-Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1           
+NAME  MODEL             VERSION                             
+Test  component-test-0  memorydb.aws.kubeform.com/v1alpha1  
