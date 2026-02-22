@@ -2,7 +2,7 @@
   position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  width: 350px;
+  width: 24.3vw;
   transition: all 0.5s ease-in-out;
   margin-top: calc(var(--navbar-height));
   top: calc(var(--navbar-height));
@@ -68,7 +68,7 @@
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
   width: max-content;
-  width: 350px;
+  width: 24.3vw;
   height: 100%;
 
   &::-webkit-scrollbar {
