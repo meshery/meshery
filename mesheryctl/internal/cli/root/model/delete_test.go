@@ -21,7 +21,7 @@ func TestDeleteModel(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "given no args when running model delete then ErrInvalidArgument is returned",
+			Name:             "given no model name or ID provided when running model delete then ErrInvalidArgument is returned",
 			Args:             []string{"delete"},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
