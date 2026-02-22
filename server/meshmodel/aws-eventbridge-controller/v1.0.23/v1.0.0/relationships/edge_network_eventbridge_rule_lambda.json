@@ -1,37 +1,50 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha3",
-    "version": "v1.0.0",
-    "kind": "edge",
-    "type": "non-binding",
-    "subType": "network",
-    "evaluationQuery": "edge_network_relationship",
-    "metadata": {
-      "description": "AWS EventBridge Rule routes matched events to an AWS Lambda Function."
-    },
-    "model": {
-      "name": "aws-eventbridge-controller"
-    },
-    "selectors": [
-      {
-        "allow": {
-          "from": [
-            {
-              "kind": "Rule",
-              "model": "aws-eventbridge-controller"
+  "id": "02b31ec3-a555-4b63-8c0d-f02e5df95e8f",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "edge_network_relationship",
+  "metadata": {
+    "description": "AWS EventBridge Rule routes matched events to an AWS Lambda Function."
+  },
+  "model": {
+    "name": "aws-eventbridge-controller",
+    "version": "v1.0.23",
+    "displayName": "AWS EventBridge Controller",
+    "registrant": {
+      "kind": "github"
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Rule",
+            "model": {
+              "name": "aws-eventbridge-controller",
+              "version": "v1.0.23",
+              "displayName": "AWS EventBridge Controller",
+              "registrant": { "kind": "github" }
             }
-          ],
-          "to": [
-            {
-              "kind": "Function",
-              "model": "aws-lambda-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Function",
+            "model": {
+              "name": "aws-lambda-controller",
+              "version": "v1.0.0",
+              "displayName": "AWS Lambda Controller",
+              "registrant": { "kind": "github" }
             }
-          ]
-        },
-        "deny": {
-          "from": [],
-          "to": []
-        }
-      }
-    ]
-  }
-  
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}
