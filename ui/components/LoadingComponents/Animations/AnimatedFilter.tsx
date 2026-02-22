@@ -19,9 +19,10 @@ const AnimatedFilter = (props) => {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setIsActive(!isActive);
     }, 2000);
+    return () => clearTimeout(timerId);
   }, [isActive]);
 
   return (
