@@ -1,0 +1,2545 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "clickhouse-9.4.4.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "7964fc33-39ae-4bd9-8ba1-64b879093cfd",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 9181
+                },
+                {
+                  "port": 9234
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "keeper",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "5c4ef5c7-966f-41b7-a492-de0bd23d1123",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 8123
+                },
+                {
+                  "port": 9000
+                },
+                {
+                  "port": 9004
+                },
+                {
+                  "port": 9005
+                },
+                {
+                  "port": 9009
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "clickhouse",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d5032eab-9a12-47a8-839f-34bc1e4b189f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "keeper",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "fc5437aa-dcea-4397-a470-0c07f415521d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-shard0",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4",
+            "shard": "0"
+          },
+          "name": "clickhouse-shard0",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "clickhouse",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse",
+              "shard": "0"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "fc9c2272-2f7d-4092-98e4-be1813690609",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-shard1",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4",
+            "shard": "1"
+          },
+          "name": "clickhouse-shard1",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "clickhouse",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse",
+              "shard": "1"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "365e9b7b-46d4-4cc8-905d-3e2e4a78c66c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "127ad385-2afa-4d7f-9426-4270437c89bf",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "admin-password": "NjJCbHo0d2ZJZA=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "347b032f-e705-4d82-889d-70e9c0da671e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-configd",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "01-listen.xml": "\u003cyandex\u003e\n    \u003clisten_host\u003e::\u003c/listen_host\u003e\n    \u003clisten_host\u003e0.0.0.0\u003c/listen_host\u003e\n    \u003clisten_try\u003e1\u003c/listen_try\u003e\n\u003c/yandex\u003e\n",
+          "02-logger.xml": "\u003cyandex\u003e\n    \u003clogger\u003e\n        \u003clevel\u003einformation\u003c/level\u003e\n    \u003c/logger\u003e\n\u003c/yandex\u003e\n",
+          "03-macros.xml": "\u003cyandex\u003e\n    \u003cmacros\u003e\n        \u003cshard from_env=\"CLICKHOUSE_SHARD_ID\"\u003e\u003c/shard\u003e\n        \u003creplica from_env=\"CLICKHOUSE_REPLICA_ID\"\u003e\u003c/replica\u003e\n        \u003clayer\u003eclickhouse\u003c/layer\u003e\n    \u003c/macros\u003e\n\u003c/yandex\u003e\n",
+          "04-cluster.xml": "\u003cyandex\u003e\n    \u003cremote_servers\u003e\n        \u003cdefault\u003e\n            \u003cshard\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard0-0.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard0-1.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard0-2.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n            \u003c/shard\u003e\n            \u003cshard\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard1-0.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard1-1.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n                \u003creplica\u003e\n                    \u003chost\u003eclickhouse-shard1-2.clickhouse-headless.default.svc.cluster.local\u003c/host\u003e\n                    \u003cport from_env=\"CLICKHOUSE_TCP_PORT\"\u003e\u003c/port\u003e\n                    \u003cuser from_env=\"CLICKHOUSE_ADMIN_USER\"\u003e\u003c/user\u003e\n                    \u003cpassword from_env=\"CLICKHOUSE_ADMIN_PASSWORD\"\u003e\u003c/password\u003e\n                \u003c/replica\u003e\n            \u003c/shard\u003e\n        \u003c/default\u003e\n    \u003c/remote_servers\u003e\n\u003c/yandex\u003e\n",
+          "05-zookeeper.xml": "\u003cyandex\u003e\n    \u003czookeeper\u003e\n        \u003cnode\u003e\n            \u003chost\u003eclickhouse-keeper-0.clickhouse-keeper-headless.default.svc.cluster.local\u003c/host\u003e\n            \u003cport\u003e9181\u003c/port\u003e\n        \u003c/node\u003e\n        \u003cnode\u003e\n            \u003chost\u003eclickhouse-keeper-1.clickhouse-keeper-headless.default.svc.cluster.local\u003c/host\u003e\n            \u003cport\u003e9181\u003c/port\u003e\n        \u003c/node\u003e\n        \u003cnode\u003e\n            \u003chost\u003eclickhouse-keeper-2.clickhouse-keeper-headless.default.svc.cluster.local\u003c/host\u003e\n            \u003cport\u003e9181\u003c/port\u003e\n        \u003c/node\u003e\n    \u003c/zookeeper\u003e    \n\u003c/yandex\u003e\n",
+          "08-sampling.xml": "\u003cyandex\u003e\n    \u003casynchronous_insert_log remove=\"1\"/\u003e\n    \u003casynchronous_metric_log remove=\"1\"/\u003e\n    \u003cerror_log remove=\"1\"/\u003e\n    \u003cevent_log remove=\"1\"/\u003e\n    \u003clatency_log remove=\"1\"/\u003e\n    \u003cmetric_log remove=\"1\"/\u003e\n    \u003cquery_log remove=\"1\"/\u003e\n    \u003cquery_metric_log remove=\"1\"/\u003e\n    \u003cquery_thread_log remove=\"1\"/\u003e\n    \u003cquery_views_log remove=\"1\"/\u003e\n    \u003cpart_log remove=\"1\"/\u003e\n    \u003ctext_log remove=\"1\"/\u003e\n    \u003ctrace_log remove=\"1\"/\u003e\n    \u003copentelemetry_span_log remove=\"1\"/\u003e\n    \u003cprocessors_profile_log remove=\"1\"/\u003e\n\u003c/yandex\u003e\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-configd",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f6ffc1ac-d057-4b1b-b710-dfdec618a5f8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper-configd",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "01-raft.xml": "\u003cyandex\u003e\n    \u003ckeeper_server\u003e\n        \u003craft_configuration\u003e\n            \u003cserver\u003e\n                \u003cid\u003e0\u003c/id\u003e\n                \u003chostname\u003eclickhouse-keeper-0.clickhouse-keeper-headless.default.svc.cluster.local\u003c/hostname\u003e\n                \u003cport from_env=\"CLICKHOUSE_KEEPER_RAFT_PORT\"\u003e\u003c/port\u003e\n            \u003c/server\u003e\n            \u003cserver\u003e\n                \u003cid\u003e1\u003c/id\u003e\n                \u003chostname\u003eclickhouse-keeper-1.clickhouse-keeper-headless.default.svc.cluster.local\u003c/hostname\u003e\n                \u003cport from_env=\"CLICKHOUSE_KEEPER_RAFT_PORT\"\u003e\u003c/port\u003e\n            \u003c/server\u003e\n            \u003cserver\u003e\n                \u003cid\u003e2\u003c/id\u003e\n                \u003chostname\u003eclickhouse-keeper-2.clickhouse-keeper-headless.default.svc.cluster.local\u003c/hostname\u003e\n                \u003cport from_env=\"CLICKHOUSE_KEEPER_RAFT_PORT\"\u003e\u003c/port\u003e\n            \u003c/server\u003e\n        \u003c/raft_configuration\u003e\n    \u003c/keeper_server\u003e\n\u003c/yandex\u003e\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper-configd",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "03c26636-176c-4ae6-9268-2e6e2225d261",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-headless",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-headless",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "http",
+              "port": 8123,
+              "protocol": "TCP",
+              "targetPort": "http"
+            },
+            {
+              "name": "tcp",
+              "port": 9000,
+              "protocol": "TCP",
+              "targetPort": "tcp"
+            },
+            {
+              "name": "tcp-mysql",
+              "port": 9004,
+              "protocol": "TCP",
+              "targetPort": "tcp-mysql"
+            },
+            {
+              "name": "tcp-postgresql",
+              "port": 9005,
+              "protocol": "TCP",
+              "targetPort": "tcp-postgresql"
+            },
+            {
+              "name": "http-intersrv",
+              "port": 9009,
+              "protocol": "TCP",
+              "targetPort": "http-intersrv"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "71c06d5e-7664-4e91-9aad-0657c14b72a7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper-headless",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper-headless",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "tcp",
+              "port": 9181,
+              "protocol": "TCP",
+              "targetPort": "tcp"
+            },
+            {
+              "name": "tcp-raft",
+              "port": 9234,
+              "protocol": "TCP",
+              "targetPort": "raft"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "862260a8-f525-492c-9dca-5a266d9d5d0e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "tcp",
+              "nodePort": null,
+              "port": 9181,
+              "protocol": "TCP",
+              "targetPort": "tcp"
+            },
+            {
+              "name": "tcp-raft",
+              "nodePort": null,
+              "port": 9234,
+              "protocol": "TCP",
+              "targetPort": "raft"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8c8dbaa8-e269-4a2d-a5ea-d910822a1992",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {},
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "nodePort": null,
+              "port": 8123,
+              "protocol": "TCP",
+              "targetPort": "http"
+            },
+            {
+              "name": "tcp",
+              "nodePort": null,
+              "port": 9000,
+              "protocol": "TCP",
+              "targetPort": "tcp"
+            },
+            {
+              "name": "tcp-mysql",
+              "nodePort": null,
+              "port": 9004,
+              "protocol": "TCP",
+              "targetPort": "tcp-mysql"
+            },
+            {
+              "name": "tcp-postgresql",
+              "nodePort": null,
+              "port": 9005,
+              "protocol": "TCP",
+              "targetPort": "tcp-postgresql"
+            },
+            {
+              "name": "http-intersrv",
+              "nodePort": null,
+              "port": 9009,
+              "protocol": "TCP",
+              "targetPort": "http-intersrv"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "0e72449f-0709-48cd-a689-caf95f68f270",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-keeper",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "keeper",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4"
+          },
+          "name": "clickhouse-keeper",
+          "namespace": "default"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "keeper",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse"
+            }
+          },
+          "serviceName": "clickhouse-keeper-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configd-configuration": "51f6a3218ce089e29836b9361e3c02f8fe878304f9ed5021af5cf2400746ac77"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "keeper",
+                "app.kubernetes.io/instance": "clickhouse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "clickhouse",
+                "app.kubernetes.io/part-of": "clickhouse",
+                "app.kubernetes.io/version": "25.7.5",
+                "helm.sh/chart": "clickhouse-9.4.4"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "keeper",
+                            "app.kubernetes.io/instance": "clickhouse",
+                            "app.kubernetes.io/name": "clickhouse"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "CLICKHOUSE_KEEPER_SERVER_ID",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "CLICKHOUSE_KEEPER_TCP_PORT",
+                      "value": "9181"
+                    },
+                    {
+                      "name": "CLICKHOUSE_KEEPER_RAFT_PORT",
+                      "value": "9234"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/clickhouse-keeper:25.7.5-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "tcp"
+                    },
+                    "timeoutSeconds": 1
+                  },
+                  "name": "keeper",
+                  "ports": [
+                    {
+                      "containerPort": 9181,
+                      "name": "tcp"
+                    },
+                    {
+                      "containerPort": 9234,
+                      "name": "raft"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "bash",
+                        "-ec",
+                        "OK=$(exec 3\u003c\u003e/dev/tcp/127.0.0.1/9181; printf 'ruok' \u003e\u00263; IFS=; tee \u003c\u00263; exec 3\u003c\u0026-;)\nif [[ \"${OK}\" == \"imok\" ]]; then exit 0; else exit 1; fi\n"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "750m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "768Mi"
+                    },
+                    "requests": {
+                      "cpu": "500m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/clickhouse-keeper",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/bitnami/clickhouse-keeper/etc/keeper_config.d",
+                      "name": "configd-configuration"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse-keeper/etc",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse-keeper/logs",
+                      "name": "empty-dir",
+                      "subPath": "app-logs-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse-keeper/tmp",
+                      "name": "empty-dir",
+                      "subPath": "app-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": null,
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "clickhouse",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "configMap": {
+                    "name": "clickhouse-keeper-configd"
+                  },
+                  "name": "configd-configuration"
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "rollingUpdate": {},
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "labels": {
+                  "app.kubernetes.io/component": "keeper",
+                  "app.kubernetes.io/instance": "clickhouse",
+                  "app.kubernetes.io/name": "clickhouse",
+                  "app.kubernetes.io/part-of": "clickhouse"
+                },
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "286d1c1f-9054-4cf1-976d-61d0a0ba3e55",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-shard0",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4",
+            "shard": "0"
+          },
+          "name": "clickhouse-shard0",
+          "namespace": "default"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "clickhouse",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse",
+              "shard": "0"
+            }
+          },
+          "serviceName": "clickhouse-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configd-configuration": "40f56799170f3cee270f48a7739531fd59f3660d5a7a35c123fb0b32ecb1c10e"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "clickhouse",
+                "app.kubernetes.io/instance": "clickhouse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "clickhouse",
+                "app.kubernetes.io/part-of": "clickhouse",
+                "app.kubernetes.io/version": "25.7.5",
+                "helm.sh/chart": "clickhouse-9.4.4",
+                "shard": "0"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "clickhouse",
+                            "app.kubernetes.io/instance": "clickhouse",
+                            "app.kubernetes.io/name": "clickhouse"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "CLICKHOUSE_HTTP_PORT",
+                      "value": "8123"
+                    },
+                    {
+                      "name": "CLICKHOUSE_TCP_PORT",
+                      "value": "9000"
+                    },
+                    {
+                      "name": "CLICKHOUSE_MYSQL_PORT",
+                      "value": "9004"
+                    },
+                    {
+                      "name": "CLICKHOUSE_POSTGRESQL_PORT",
+                      "value": "9005"
+                    },
+                    {
+                      "name": "CLICKHOUSE_INTERSERVER_HTTP_PORT",
+                      "value": "9009"
+                    },
+                    {
+                      "name": "CLICKHOUSE_SHARD_ID",
+                      "value": "shard0"
+                    },
+                    {
+                      "name": "CLICKHOUSE_REPLICA_ID",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "CLICKHOUSE_ADMIN_USER",
+                      "value": "default"
+                    },
+                    {
+                      "name": "CLICKHOUSE_ADMIN_PASSWORD_FILE",
+                      "value": "/opt/bitnami/clickhouse/secrets/admin-password"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/clickhouse:25.7.5-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "http"
+                    },
+                    "timeoutSeconds": 1
+                  },
+                  "name": "clickhouse",
+                  "ports": [
+                    {
+                      "containerPort": 8123,
+                      "name": "http"
+                    },
+                    {
+                      "containerPort": 9000,
+                      "name": "tcp"
+                    },
+                    {
+                      "containerPort": 9005,
+                      "name": "tcp-postgresql"
+                    },
+                    {
+                      "containerPort": 9004,
+                      "name": "tcp-mysql"
+                    },
+                    {
+                      "containerPort": 9009,
+                      "name": "http-intersrv"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/ping",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "750m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "768Mi"
+                    },
+                    "requests": {
+                      "cpu": "500m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/clickhouse",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/bitnami/clickhouse/etc/config.d",
+                      "name": "configd-configuration"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/secrets",
+                      "name": "secrets",
+                      "readOnly": true
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/etc",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/logs",
+                      "name": "empty-dir",
+                      "subPath": "app-logs-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/tmp",
+                      "name": "empty-dir",
+                      "subPath": "app-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": null,
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "clickhouse",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "configMap": {
+                    "name": "clickhouse-configd"
+                  },
+                  "name": "configd-configuration"
+                },
+                {
+                  "name": "secrets",
+                  "secret": {
+                    "defaultMode": 256,
+                    "secretName": "clickhouse"
+                  }
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "rollingUpdate": {},
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "labels": {
+                  "app.kubernetes.io/component": "clickhouse",
+                  "app.kubernetes.io/instance": "clickhouse",
+                  "app.kubernetes.io/name": "clickhouse"
+                },
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b2019eb2-6c40-4fc4-944e-db7b9172c812",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "clickhouse-shard1",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-06T15:44:40.407150041Z",
+          "updated_at": "2025-10-06T15:44:40.407150041Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "clickhouse",
+            "app.kubernetes.io/instance": "clickhouse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "clickhouse",
+            "app.kubernetes.io/part-of": "clickhouse",
+            "app.kubernetes.io/version": "25.7.5",
+            "helm.sh/chart": "clickhouse-9.4.4",
+            "shard": "1"
+          },
+          "name": "clickhouse-shard1",
+          "namespace": "default"
+        },
+        "spec": {
+          "podManagementPolicy": "Parallel",
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "clickhouse",
+              "app.kubernetes.io/instance": "clickhouse",
+              "app.kubernetes.io/name": "clickhouse",
+              "app.kubernetes.io/part-of": "clickhouse",
+              "shard": "1"
+            }
+          },
+          "serviceName": "clickhouse-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configd-configuration": "40f56799170f3cee270f48a7739531fd59f3660d5a7a35c123fb0b32ecb1c10e"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "clickhouse",
+                "app.kubernetes.io/instance": "clickhouse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "clickhouse",
+                "app.kubernetes.io/part-of": "clickhouse",
+                "app.kubernetes.io/version": "25.7.5",
+                "helm.sh/chart": "clickhouse-9.4.4",
+                "shard": "1"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "clickhouse",
+                            "app.kubernetes.io/instance": "clickhouse",
+                            "app.kubernetes.io/name": "clickhouse"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "CLICKHOUSE_HTTP_PORT",
+                      "value": "8123"
+                    },
+                    {
+                      "name": "CLICKHOUSE_TCP_PORT",
+                      "value": "9000"
+                    },
+                    {
+                      "name": "CLICKHOUSE_MYSQL_PORT",
+                      "value": "9004"
+                    },
+                    {
+                      "name": "CLICKHOUSE_POSTGRESQL_PORT",
+                      "value": "9005"
+                    },
+                    {
+                      "name": "CLICKHOUSE_INTERSERVER_HTTP_PORT",
+                      "value": "9009"
+                    },
+                    {
+                      "name": "CLICKHOUSE_SHARD_ID",
+                      "value": "shard1"
+                    },
+                    {
+                      "name": "CLICKHOUSE_REPLICA_ID",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "CLICKHOUSE_ADMIN_USER",
+                      "value": "default"
+                    },
+                    {
+                      "name": "CLICKHOUSE_ADMIN_PASSWORD_FILE",
+                      "value": "/opt/bitnami/clickhouse/secrets/admin-password"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/clickhouse:25.7.5-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "http"
+                    },
+                    "timeoutSeconds": 1
+                  },
+                  "name": "clickhouse",
+                  "ports": [
+                    {
+                      "containerPort": 8123,
+                      "name": "http"
+                    },
+                    {
+                      "containerPort": 9000,
+                      "name": "tcp"
+                    },
+                    {
+                      "containerPort": 9005,
+                      "name": "tcp-postgresql"
+                    },
+                    {
+                      "containerPort": 9004,
+                      "name": "tcp-mysql"
+                    },
+                    {
+                      "containerPort": 9009,
+                      "name": "http-intersrv"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/ping",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 1
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "750m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "768Mi"
+                    },
+                    "requests": {
+                      "cpu": "500m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/clickhouse",
+                      "name": "data"
+                    },
+                    {
+                      "mountPath": "/bitnami/clickhouse/etc/config.d",
+                      "name": "configd-configuration"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/secrets",
+                      "name": "secrets",
+                      "readOnly": true
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/etc",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/logs",
+                      "name": "empty-dir",
+                      "subPath": "app-logs-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/clickhouse/tmp",
+                      "name": "empty-dir",
+                      "subPath": "app-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": null,
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "clickhouse",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "configMap": {
+                    "name": "clickhouse-configd"
+                  },
+                  "name": "configd-configuration"
+                },
+                {
+                  "name": "secrets",
+                  "secret": {
+                    "defaultMode": 256,
+                    "secretName": "clickhouse"
+                  }
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "rollingUpdate": {},
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "labels": {
+                  "app.kubernetes.io/component": "clickhouse",
+                  "app.kubernetes.io/instance": "clickhouse",
+                  "app.kubernetes.io/name": "clickhouse"
+                },
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

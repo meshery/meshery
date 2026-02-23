@@ -17,7 +17,7 @@ List registered components
 ## Synopsis
 
 List all components registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component list [flags]

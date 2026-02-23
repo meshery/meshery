@@ -138,11 +138,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	defer sm.mx.Unlock()
 	var event *events.Event
 	var err error
-	for {
-		if eventType == NoOp {
-			break
-		}
-
+	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
@@ -212,10 +208,10 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		}
 
 		connectionPayload := &connections.ConnectionPayload{
-			ID:     sm.ID,
-			Kind:   connection.Kind,
-			MetaData : connection.Metadata,
-			Status: connections.ConnectionStatus(sm.CurrentState)}
+			ID:       sm.ID,
+			Kind:     connection.Kind,
+			MetaData: connection.Metadata,
+			Status:   connections.ConnectionStatus(sm.CurrentState)}
 
 		if connectionPayload.MetaData == nil {
 			connectionPayload.MetaData = map[string]interface{}{}

@@ -17,7 +17,7 @@ Export registered models
 ## Synopsis
 
 Export the registered model to the specified output type
-Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [flags]
@@ -77,8 +77,8 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
   -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
   -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
-  -p, --page int                 (optional) List next set of models with --page (default = 1) (default 1)
-      --version string           (optional) model version to export (default = "")
+  -p, --page int                 (optional) page number for paginated results (default = 1) (default 1)
+      --version string           (optional) model version to export (default = "", format: vX.X.X)
 
 </div>
 </pre>

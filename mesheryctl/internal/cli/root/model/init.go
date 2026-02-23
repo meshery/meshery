@@ -22,7 +22,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -231,7 +231,7 @@ const (
 // if csv output is not directory based
 // should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
-1. cd {modelFolder}
+1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
 3. Add your components in the components/ directory
 4. Define relationships in relationships/ directory

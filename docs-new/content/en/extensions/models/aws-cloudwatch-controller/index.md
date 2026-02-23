@@ -1,0 +1,63 @@
+---
+title: AWS CloudWatch
+subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch
+image: /extensions/models/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatch-controller
+description: 
+integrations-category: Observability and Analysis
+integrations-subcategory: Management Governance
+registrant: GitHub
+components: 
+- name: field-export
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: metric-alarm
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/metric-alarm/icons/color/metric-alarm-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/metric-alarm/icons/white/metric-alarm-white.svg
+  description: 
+- name: metric-stream
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/metric-stream/icons/color/metric-stream-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/metric-stream/icons/white/metric-stream-white.svg
+  description: 
+- name: dashboard
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/dashboard/icons/color/dashboard-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/dashboard/icons/white/dashboard-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-cloudwatch-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatch-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 6
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 5
+featureList: [
+  "Provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, and optimize resource utilization.",
+  "Collects monitoring and operational data in the form of logs, metrics, and traces.",
+  "Get a unified view of operational health and gain complete visibility of your AWS resources, applications, and services running on AWS and on-premises."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-cloudwatch-controller
+---

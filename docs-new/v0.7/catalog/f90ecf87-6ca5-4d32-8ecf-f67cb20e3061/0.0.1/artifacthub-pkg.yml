@@ -1,0 +1,20 @@
+version: 0.0.1
+name: k8s-deployment-2
+displayName: k8s Deployment-2
+createdAt: "2023-10-17T05:01:08Z"
+description: Sample kubernetes deployment
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f90ecf87-6ca5-4d32-8ecf-f67cb20e3061/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 846d0933-57da-44ff-9ae8-098007e03cb3
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
