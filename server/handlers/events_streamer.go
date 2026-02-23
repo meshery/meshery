@@ -52,7 +52,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	userID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
-	fmt.Println(page)
+	h.log.Debug(fmt.Sprintf("processing page: %d", page))
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {

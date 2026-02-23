@@ -59,11 +59,11 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	if reqURL == "/" || reqURL == "" {
 		filePath.WriteString("index.html")
 	} else if isDynamicUIEndpoint(reqURL) {
-		fmt.Println("serving dynamic ui endpoint: ", r.URL.Path, reqURL)
+		h.log.Debug(fmt.Sprintf("serving dynamic ui endpoint: %s, reqURL: %s", r.URL.Path, reqURL))
 		filePath.Reset()
 		filePath.WriteString(getDynamicUIEndpoint(reqURL))
 
-		fmt.Println("Generated path: ", filePath.String())
+		h.log.Debug(fmt.Sprintf("generated path: %s", filePath.String()))
 	} else if filepath.Ext(reqURL) == "" {
 		filePath.WriteString(".html")
 	}

@@ -119,7 +119,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		fmt.Printf("%v", testObj)
+		h.log.Debug(fmt.Sprintf("test object: %v", testObj))
 		data, err := protojson.Marshal(testObj)
 		if err != nil {
 			// logrus.Errorf("error reading database: %v", err)
