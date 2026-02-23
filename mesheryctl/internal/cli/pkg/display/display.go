@@ -33,10 +33,10 @@ type DisplayDataAsync struct {
 }
 
 type (
-	listRowBuilder[T any]      func(*T) ([][]string, int64)
-	selectRowBuilder[R any]    func([]R) []string
-	pageHandler[T any]         func(*T, int, int) (bool, error)
-	extractItems[T any, R any] func(*T) []R
+	listRowBuilder[T any]       func(*T) ([][]string, int64)
+	promptLabelBuilder[R any]   func([]R) []string
+	pageHandler[T any]          func(*T, int, int) (bool, error)
+	itemExtractor[T any, R any] func(*T) []R
 )
 
 func List(data DisplayedData) error {
@@ -62,14 +62,14 @@ func List(data DisplayedData) error {
 func ListAsyncPagination[T any](displayData DisplayDataAsync, processData listRowBuilder[T]) error {
 	return HandlePaginationAsync(
 		displayData,
-		listPageCallback(displayData, processData),
+		listPageHandler(displayData, processData),
 	)
 }
 
-func SelectAsyncPagination[T any, R any](displayData DisplayDataAsync, processData selectRowBuilder[R], extractItem extractItems[T, R], selectedItem *R) error {
+func PromptAsyncPagination[T any, R any](displayData DisplayDataAsync, processData promptLabelBuilder[R], extractItems itemExtractor[T, R], selectedItem *R) error {
 	return HandlePaginationAsync(
 		displayData,
-		selectPageCallback(displayData, processData, extractItem, selectedItem),
+		promptPageHandler(displayData, processData, extractItems, selectedItem),
 	)
 }
 

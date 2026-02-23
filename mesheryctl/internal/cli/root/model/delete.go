@@ -60,7 +60,7 @@ mesheryctl model delete [model-id]
 
 		// Delete model by name, for multiple matches use pagination selection prompt
 		var selectedModel model.ModelDefinition
-		err := display.SelectAsyncPagination(
+		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
 				UrlPath:    modelsApiPath,
 				SearchTerm: modelArg,
