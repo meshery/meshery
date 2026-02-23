@@ -35,7 +35,7 @@ var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "Manage environments",
 	Long: `Create, delete, list of view details of environment(s) of a specific organization
-Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
+Find more information at: https://docs.meshery.io/concepts/logical/environments
 	`,
 	Example: `
 // Create an environment in an organization

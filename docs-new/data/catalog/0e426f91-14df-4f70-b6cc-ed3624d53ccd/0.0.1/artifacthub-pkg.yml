@@ -1,0 +1,24 @@
+version: 0.0.1
+name: key-cloak-operator
+displayName: Key cloak operator
+createdAt: "2024-04-14T20:26:48Z"
+description: This YAML snippet describes a Kubernetes Deployment for a Keycloak operator, ensuring a single replica. It specifies labels and annotations for metadata, including a service account. The pod template defines a container running the Keycloak operator image, with environment variables set for namespace and pod name retrieval. Security context settings prevent privilege escalation. Probes are configured for liveness and readiness checks on port 8081, with resource requests and limits ensuring proper resource allocation for the container.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0e426f91-14df-4f70-b6cc-ed3624d53ccd/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Single Replica: The configuration specifies only one replica, which means there's no built-in redundancy or high availability. Consider adjusting the replica count based on your availability requirements.\n\n2. Resource Allocation: Resource requests and limits are set for CPU and memory. Ensure these values are appropriate for your workload and cluster capacity to avoid performance issues or resource contention.\n\n3. Security Context: The security context is configured to run the container as a non-root user and disallow privilege escalation. Ensure these settings align with your security policies and container requirements.\n\n4. Probes Configuration: Liveness and readiness probes are set up to check the health of the container on port 8081. Ensure that the specified endpoints (/healthz and /readyz) are correctly implemented in the application code.\n\n5. Namespace Configuration: The WATCH_NAMESPACE environment variable is set to an empty string, potentially causing the operator to watch all namespaces. Ensure this behavior aligns with your intended scope of operation and namespace isolation requirements. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0e426f91-14df-4f70-b6cc-ed3624d53ccd-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0e426f91-14df-4f70-b6cc-ed3624d53ccd-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
