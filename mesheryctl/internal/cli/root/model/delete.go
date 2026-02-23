@@ -59,13 +59,17 @@ mesheryctl model delete [model-id]
 		}
 
 		// Delete model by name, for multiple matches use pagination selection prompt
-		selectedModel, err := display.HandlePaginationPrompt(
-			modelsApiPath,
-			modelArg,
+		var selectedModel model.ModelDefinition
+		err := display.SelectAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:    modelsApiPath,
+				SearchTerm: modelArg,
+			},
 			formatLabel,
 			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
 				return data.Models
 			},
+			&selectedModel,
 		)
 		if err != nil {
 			if meshkiterros.GetCode(err) == utils.ErrNotFoundCode {

@@ -20,6 +20,8 @@ var (
 	escapeKeyboardKeys   = []keyboard.Key{keyboard.KeyEsc, keyboard.KeyCtrlC}
 )
 
+const pageSize = 10
+
 var serverAndNetworkErrors = []string{
 	utils.ErrUnauthenticatedCode,
 	utils.ErrInvalidTokenCode,
@@ -28,11 +30,14 @@ var serverAndNetworkErrors = []string{
 }
 
 func HandlePaginationAsync[T any](
-	pageSize int,
 	displayData DisplayDataAsync,
-	processDataFunc func(*T) ([][]string, int64),
+	processDataFunc pageHandler[T],
 ) error {
-	startIndex := 0
+	effectivePageSize := pageSize
+	if displayData.PageSize > 0 {
+		effectivePageSize = displayData.PageSize
+	}
+
 	// Adjust the page number to be zero-based
 	currentPage := displayData.Page - 1
 
@@ -54,7 +59,11 @@ func HandlePaginationAsync[T any](
 		}
 
 		if !strings.Contains(displayData.UrlPath, "pagesize") {
-			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
+			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
+		}
+
+		if displayData.SearchTerm != "" {
+			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
 		if strings.Contains(displayData.UrlPath, "?") {
@@ -75,17 +84,36 @@ func HandlePaginationAsync[T any](
 		}
 
 		// Process the fetched data
+		shouldContiue, err := processDataFunc(data, currentPage, effectivePageSize)
+		if err != nil {
+			return err
+		}
+
+		if shouldContiue {
+			currentPage++
+		} else {
+			break
+		}
+
+	}
+
+	return nil
+}
+
+func listPageCallback[T any](displayData DisplayDataAsync, processDataFunc listRowBuilder[T]) pageHandler[T] {
+	startIndex := 0
+	return func(data *T, currentPage int, pageSize int) (bool, error) {
 		rows, totalCount := processDataFunc(data)
 
 		// Display the total count and current page
 		utils.DisplayCount(displayData.DataType, totalCount)
 
 		if len(rows) == 0 {
-			break
+			return false, nil
 		}
 
 		if displayData.DisplayCountOnly {
-			return nil
+			return false, nil
 		}
 
 		// Display the current page number to be one-based
@@ -96,23 +124,23 @@ func HandlePaginationAsync[T any](
 		utils.PrintToTable(displayData.Header, rows, nil)
 
 		if displayData.IsPage {
-			break
+			return false, nil
 		}
 
 		// If the URL already contains "pagesize=all", it means all data has been fetched in one go,
 		// so we can break the loop without waiting for user input
 		if strings.Contains(displayData.UrlPath, "pagesize=all") {
-			break
+			return false, nil
 		}
 
 		if int64(startIndex+pageSize) >= totalCount {
-			break
+			return false, nil
 		}
 
 		// Wait for user input to navigate pages
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
-			return err
+			return false, err
 		}
 
 		defer func() {
@@ -122,83 +150,45 @@ func HandlePaginationAsync[T any](
 		event := <-keysEvents
 		if event.Err != nil {
 			utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-			break
+			return false, event.Err
 		}
 
 		if slices.Contains(escapeKeyboardKeys, event.Key) {
-			break
+			return false, nil
 		}
 
 		if slices.Contains(nextPageKeyboardKeys, event.Key) {
-			currentPage++
 			startIndex += pageSize
+			return true, nil
 		} else {
-			break
+			return false, nil
 		}
-
 	}
-
-	return nil
 }
 
-func HandlePaginationPrompt[R any, T any](
-	baseAPIPath string,
-	searchTerm string,
-	formatLabel func([]T) []string,
-	extractItems func(*R) []T,
-) (T, error) {
-	currentPage := 0
-	pageSize := 10
-	var selectedItem T
+func selectPageCallback[T any, R any](displayData DisplayDataAsync, processData selectRowBuilder[R], extractItem extractItems[T, R], selectedItem *R) pageHandler[T] {
+	return func(data *T, currentPage int, pageSize int) (bool, error) {
+		rows := extractItem(data)
 
-	for {
-		urlPath := ""
-
-		// Build URL
-		pagesQuerySearch := url.Values{}
-		pagesQuerySearch.Set("search", searchTerm)
-		pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
-		pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
-
-		if strings.Contains(baseAPIPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", baseAPIPath, pagesQuerySearch.Encode())
-		} else {
-			urlPath = fmt.Sprintf("%s?%s", baseAPIPath, pagesQuerySearch.Encode())
-		}
-
-		data, err := api.Fetch[R](urlPath)
-		if err != nil {
-			return selectedItem, utils.ErrFailRequest(err)
-		}
-
-		rows := extractItems(data)
-
-		var itemSelected bool
 		switch len(rows) {
 		case 0:
 			if currentPage == 0 {
-				var zero T
-				return zero, utils.ErrNotFound(fmt.Errorf("no results for %s", searchTerm))
+				return false, utils.ErrNotFound(fmt.Errorf("no results for %s", displayData.SearchTerm))
 			}
-			// Previous page was full but no more results
-			currentPage--
-			pageSize++
-			continue
+			return false, nil
 		case 1:
-			return rows[0], nil
+			*selectedItem = rows[0]
+			return false, nil
 		default:
-			selectedItem, itemSelected, err = SelectFromPagedResults(rows, formatLabel, pageSize)
+			picked, itemSelected, err := SelectFromPagedResults(rows, processData, pageSize)
 			if err != nil {
-				return selectedItem, err
+				return false, err
 			}
+			if itemSelected {
+				*selectedItem = picked
+				return false, nil
+			}
+			return true, nil
 		}
-
-		if itemSelected {
-			break
-		}
-		currentPage++
-
 	}
-
-	return selectedItem, nil
 }

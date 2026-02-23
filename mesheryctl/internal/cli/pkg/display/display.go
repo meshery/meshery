@@ -8,8 +8,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-const pageSize = 10
-
 type DisplayedData struct {
 	// Meshery Logical conmponent
 	DataType string
@@ -31,9 +29,15 @@ type DisplayDataAsync struct {
 	PageSize         int
 	DisplayCountOnly bool
 	IsPage           bool
+	SearchTerm       string
 }
 
-type dataProcessor[T any] func(*T) ([][]string, int64)
+type (
+	listRowBuilder[T any]      func(*T) ([][]string, int64)
+	selectRowBuilder[R any]    func([]R) []string
+	pageHandler[T any]         func(*T, int, int) (bool, error)
+	extractItems[T any, R any] func(*T) []R
+)
 
 func List(data DisplayedData) error {
 	utils.DisplayCount(data.DataType, data.Count)
@@ -55,15 +59,17 @@ func List(data DisplayedData) error {
 	return nil
 }
 
-func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataProcessor[T]) error {
-	effctivePageSize := pageSize
-	if displayData.PageSize > 0 {
-		effctivePageSize = displayData.PageSize
-	}
+func ListAsyncPagination[T any](displayData DisplayDataAsync, processData listRowBuilder[T]) error {
 	return HandlePaginationAsync(
-		effctivePageSize,
 		displayData,
-		processData,
+		listPageCallback(displayData, processData),
+	)
+}
+
+func SelectAsyncPagination[T any, R any](displayData DisplayDataAsync, processData selectRowBuilder[R], extractItem extractItems[T, R], selectedItem *R) error {
+	return HandlePaginationAsync(
+		displayData,
+		selectPageCallback(displayData, processData, extractItem, selectedItem),
 	)
 }
 
