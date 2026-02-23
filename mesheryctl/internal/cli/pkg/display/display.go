@@ -9,7 +9,7 @@ import (
 )
 
 type DisplayedData struct {
-	// Meshery Logical conmponent
+	// Meshery Logical component
 	DataType string
 	// Header of the table
 	Header []string

@@ -21,7 +21,7 @@ var (
 // It tracks the current index across pages to determine when all data has been shown
 func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRowBuilder[T]) pageHandler[T] {
 	startIndex := 0
-	return func(data *T, currentPage int, pageSize int) (bool, error) {
+	return func(data *T, currentPage int, pgSize int) (bool, error) {
 		rows, totalCount := processDataFunc(data)
 
 		// Display the total count and current page
@@ -52,7 +52,7 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 			return false, nil
 		}
 
-		if int64(startIndex+pageSize) >= totalCount {
+		if int64(startIndex+pgSize) >= totalCount {
 			return false, nil
 		}
 
@@ -77,7 +77,7 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 		}
 
 		if slices.Contains(nextPageKeyboardKeys, event.Key) {
-			startIndex += pageSize
+			startIndex += pgSize
 			return true, nil
 		} else {
 			return false, nil
@@ -87,7 +87,7 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 
 // promptPageHandler creates a pageHandler that presents each fetched page as a selection prompt.
 func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData promptLabelBuilder[R], extractItem itemExtractor[T, R], selectedItem *R) pageHandler[T] {
-	return func(data *T, currentPage int, pageSize int) (bool, error) {
+	return func(data *T, currentPage int, pgSize int) (bool, error) {
 		rows := extractItem(data)
 
 		switch len(rows) {
@@ -100,7 +100,7 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 			*selectedItem = rows[0]
 			return false, nil
 		default:
-			picked, itemSelected, err := SelectFromPagedResults(rows, processData, pageSize)
+			picked, itemSelected, err := SelectFromPagedResults(rows, processData, pgSize)
 			if err != nil {
 				return false, err
 			}
