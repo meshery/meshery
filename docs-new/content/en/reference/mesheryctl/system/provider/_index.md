@@ -53,7 +53,7 @@ mesheryctl system provider switch [provider]
 </div>
 </pre> 
 
-To reset provider to default
+To clear the configured provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset
@@ -81,7 +81,6 @@ mesheryctl system provider reset
 
 </div>
 </pre>
-
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
 
