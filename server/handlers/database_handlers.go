@@ -84,8 +84,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
 		h.log.Error(err)
+		http.Error(w, "failed to marshal response", http.StatusInternalServerError)
+		return
 	}
-	fmt.Fprint(w, string(val))
+	w.Write(val)
 }
 
 // swagger:route DELETE /api/system/database/reset ResetSystemDatabase
