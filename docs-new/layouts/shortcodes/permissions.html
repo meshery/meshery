@@ -12,7 +12,7 @@
   }
 
   tr {
-    cursor: pointer;
+    cursor: default;
   }
 
   th {
@@ -24,50 +24,50 @@
       width: 100%;
       table-layout: fixed;
     }
+
     td {
       word-wrap: break-word;
     }
+
     #tablesContainer {
       max-width: 1200px;
       margin: auto;
     }
   }
 
-  .hidden-row {
-    display: none;
-  }
 
-  tr:nth-child(4n+1), tr:nth-child(4n+2) {
+  tr:nth-child(4n+1),
+  tr:nth-child(4n+2) {
     background-color: var(--color-primary-medium) !important;
-}
+  }
 </style>
 <div id="tablesContainer"></div>
 
 <script type="module">
   import { keys } from '/js/permission_constants.js';
 
-  window.onload = function() {
+  window.onload = function () {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/excel/keys.csv', true);
     xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         const data = new Uint8Array(xhr.response);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const colHeaders = jsonData[1];  
-        
+        const colHeaders = jsonData[1];
+
         const categoryIdx = colHeaders.indexOf("Category");
         const functionIdx = colHeaders.indexOf("Function");
         const featureIdx = colHeaders.indexOf("Feature");
         const keyIdIdx = colHeaders.indexOf("Key ID");
 
         if (categoryIdx === -1 || functionIdx === -1 || featureIdx === -1 || keyIdIdx === -1) {
-            console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
-            return;
+          console.error("One or more required columns ('Category', 'Function', 'Feature', 'Key ID') not found in the permissions data. Please check the 'keys.csv' file format.");
+          return;
         };
 
         // Remove the first two rows
@@ -81,6 +81,7 @@
         // Group rows by category
         const categories = {};
         processedData.forEach(row => {
+          if (!row[0]) return; // skip blank/spacer rows
           const category = row[0].replace(/\s+/g, '');
           if (!categories[category]) {
             categories[category] = [];
@@ -88,7 +89,7 @@
           categories[category].push(row);
         });
 
-        const headers = ["Category", "Key Name", "Description", "Key ID"];
+        const headers = ["Category", "Key Name", "Description", "Key ID", "Moniker"];
 
         // Generate tables
         const container = document.getElementById('tablesContainer');
@@ -110,44 +111,27 @@
           table.appendChild(thead);
 
           const tbody = document.createElement('tbody');
-          categories[category].forEach((row, rowIndex) => {
+          categories[category].forEach((row) => {
             const tr = document.createElement('tr');
+
+            // Render Category, Key Name, Description, Key ID
             row.forEach((cell, index) => {
-              if (index < headers.length) {
+              if (index < 4) {
                 const td = document.createElement('td');
                 td.style.padding = '1rem';
-                td.textContent = cell;
+                td.textContent = cell ?? '';
                 tr.appendChild(td);
               }
             });
-            tbody.appendChild(tr);
 
-            // Hidden row
-            const newRow = document.createElement('tr');
-            newRow.classList.add('hidden-row');
-
-            const monikerColumn = document.createElement('td');
-            monikerColumn.style.padding = '1rem';
-            monikerColumn.colSpan = headers.length - 1;
-
+            // Render Moniker as 5th column
+            const monikerTd = document.createElement('td');
+            monikerTd.style.padding = '1rem';
             const matchingPermissionKey = Object.keys(keys).find(key => keys[key].subject === row[1]);
-            if (matchingPermissionKey) {
-              monikerColumn.innerHTML = `<b>Moniker:</b><br> ${matchingPermissionKey}`;
-            } else {
-              monikerColumn.textContent = 'No matching permission moniker found';
-            }
-            newRow.appendChild(monikerColumn);
+            monikerTd.textContent = matchingPermissionKey ?? '—';
+            tr.appendChild(monikerTd);
 
-            tbody.appendChild(newRow);
-
-            // Toggle visibility
-            tr.addEventListener('click', () => {
-              if (newRow.style.display === 'none' || newRow.style.display === '') {
-                newRow.style.display = 'table-row';
-              } else {
-                newRow.style.display = 'none';
-              }
-            });
+            tbody.appendChild(tr);
           });
           table.appendChild(tbody);
 
@@ -161,7 +145,7 @@
       }
     };
 
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       console.error('Failed to load Excel file!');
     };
 

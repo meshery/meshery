@@ -64,6 +64,11 @@ jobs:
       - name: Save keys.csv to docs/assets/excel
         run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
 
+      - name: Save keys.csv to docs-new/static/excel
+        run: |
+          mkdir -p docs-new/static/excel
+          cp server/permissions/keys.csv docs-new/static/excel/keys.csv
+
       - name: Pull changes from remote
         run: git pull origin master
 
