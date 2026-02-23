@@ -24,7 +24,7 @@ const AnimatedMeshPattern = (props) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setIsActive(prevIsActive => !prevIsActive);
+      setIsActive((prevIsActive) => !prevIsActive);
     }, 2000);
     return () => clearInterval(intervalId);
   }, []);

@@ -20,7 +20,7 @@ const AnimatedLightMeshery = (props) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setIsActive(prevIsActive => !prevIsActive);
+      setIsActive((prevIsActive) => !prevIsActive);
     }, 4000);
     return () => clearInterval(intervalId);
   }, []);
