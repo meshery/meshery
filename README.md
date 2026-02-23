@@ -159,7 +159,7 @@ Get snapshots of your infrastructure directly in your PRs. Preview your deployme
 
 ## Platform Engineering with Meshery's Extension Points
 
-Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL. The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
+Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable React packages and Golang plugins, subscriptions on NATS topics, and consumable _and_ extendable API interfaces via REST and GraphQL. The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
 
 <details><summary><h4>Access the Cloud Native Patterns for Kubernetes</h4></summary>
 
