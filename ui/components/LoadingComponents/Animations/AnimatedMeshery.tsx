@@ -14,17 +14,18 @@ const AnimatedMeshery = (props) => {
   const textfill = props.textFill || '#000000';
 
   useEffect(() => {
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setIsActive(false);
     }, 100);
+    return () => clearTimeout(timerId);
   }, []);
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      setIsActive(!isActive);
+    const intervalId = setInterval(() => {
+      setIsActive(prevIsActive => !prevIsActive);
     }, 4000);
-    return () => clearTimeout(timerId);
-  }, [isActive]);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div>

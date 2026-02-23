@@ -16,17 +16,18 @@ const AnimatedMeshPattern = (props) => {
   const [isActive, setIsActive] = useState(true);
   const theme = useTheme();
   useEffect(() => {
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setIsActive(false);
     }, 100);
+    return () => clearTimeout(timerId);
   }, []);
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      setIsActive(!isActive);
+    const intervalId = setInterval(() => {
+      setIsActive(prevIsActive => !prevIsActive);
     }, 2000);
-    return () => clearTimeout(timerId);
-  }, [isActive]);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div>
