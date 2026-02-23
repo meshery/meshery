@@ -1,0 +1,8 @@
+{{- $models := where site.RegularPages "Section" "extensions" -}}
+{{- $count := 0 -}}
+{{- range $models -}}
+{{- if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") -}}
+{{- $count = add $count 1 -}}
+{{- end -}}
+{{- end -}}
+{{- $count -}}
