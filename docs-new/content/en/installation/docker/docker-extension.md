@@ -95,8 +95,7 @@ Navigate to **Manage** under Extensions, click the ellipsis button (three vertic
 
 To remove the extension from the command line, use the `docker extension rm` command.
 
-{% capture code_content %}$ docker extension rm meshery/docker-extension-meshery{% endcapture %}
-{% include code.html code=code_content %}
+{{< code code="$ docker extension rm meshery/docker-extension-meshery" >}}
 
 ### Additional Cleanup
 
