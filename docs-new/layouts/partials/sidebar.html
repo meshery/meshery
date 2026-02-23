@@ -83,7 +83,7 @@
                     class="sidebar-nav__section-link {{ if in $pageUrl $grandchildTitle }}active{{ end }}"
                     id="m-{{ anchorize $section.title }}-{{ anchorize $entry.title }}-{{ anchorize $grandchild.title }}"
                     href="{{ $grandchildUrl }}"
-                    style="color: var(--color-secondary-medium); font-weight: normal;"
+                    style="font-weight: normal;"
                   >{{ $grandchild.title }}</a>
                 </li>
                 {{ end }} <!-- grandchild -->
