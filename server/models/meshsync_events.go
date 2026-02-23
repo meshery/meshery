@@ -1,7 +1,11 @@
 package models
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gofrs/uuid"
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
@@ -11,6 +15,7 @@ import (
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const (
@@ -18,30 +23,47 @@ const (
 	MeshsyncRequestSubject      = "meshery.meshsync.request"
 )
 
+type meshsyncInternalEvent struct {
+	EventType broker.EventType
+	Object    meshsyncmodel.KubernetesResource
+}
+type metadataCacheEntry struct {
+	data  map[string]any
+	model string
+}
+
 // TODO: Create proper error codes for the functionalities this struct implements
 type MeshsyncDataHandler struct {
-	broker       broker.Handler
-	dbHandler    database.Handler
-	log          logger.Handler
-	Provider     Provider
-	UserID       uuid.UUID
-	ConnectionID uuid.UUID
-	InstanceID   uuid.UUID
-	Token        string
-	StopFunc     func()
+	broker        broker.Handler
+	dbHandler     database.Handler
+	log           logger.Handler
+	Provider      Provider
+	UserID        uuid.UUID
+	ConnectionID  uuid.UUID
+	InstanceID    uuid.UUID
+	Token         string
+	StopFunc      func()
+	metadataCache *lru.Cache[string, metadataCacheEntry]
+	eventBuffer   chan meshsyncInternalEvent
 }
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
+	// TODO: make the 200 configurable so the user can define the cache
+	cache, _ := lru.New[string, metadataCacheEntry](200)
+
 	return &MeshsyncDataHandler{
-		broker:       broker,
-		dbHandler:    dbHandler,
-		log:          log,
-		Provider:     provider,
-		UserID:       userID,
-		ConnectionID: connID,
-		InstanceID:   instanceID,
-		Token:        token,
-		StopFunc:     stopFunc,
+		broker:        broker,
+		dbHandler:     dbHandler,
+		log:           log,
+		Provider:      provider,
+		UserID:        userID,
+		ConnectionID:  connID,
+		InstanceID:    instanceID,
+		Token:         token,
+		StopFunc:      stopFunc,
+		metadataCache: cache,
+		// TODO: the event buffer needs to be configurable
+		eventBuffer: make(chan meshsyncInternalEvent, 2000),
 	}
 }
 
@@ -79,6 +101,9 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 	}
 	mh.log.Info("subscribed to meshery broker for meshsync events")
 
+	// Start the batch event processor
+	go mh.eventProcessor()
+
 	for event := range eventsChan {
 		if event.EventType == broker.ErrorEvent {
 			// TODO: Handle errors accordingly
@@ -86,12 +111,144 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 			continue
 		}
 
-		// handle the events
-		err := mh.meshsyncEventsAccumulator(event)
+		obj, err := mh.Unmarshal(event.Object)
 		if err != nil {
 			mh.log.Error(err)
 			continue
 		}
+
+		// Push the event to the buffer for batch processing
+		mh.eventBuffer <- meshsyncInternalEvent{
+			EventType: event.EventType,
+			Object:    obj,
+		}
+	}
+}
+
+// eventProcessor drains the eventBuffer and processes events in batches
+func (mh *MeshsyncDataHandler) eventProcessor() {
+	// process batch every 500ms or when buffer is full
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+
+	const maxBatchSize = 100
+	var count int
+
+	// hot pots for events
+	// updates and adds are the same
+	addsUpdates := make([]meshsyncmodel.KubernetesResource, 0, maxBatchSize)
+	deletes := make([]meshsyncmodel.KubernetesResource, 0, maxBatchSize)
+
+	processAll := func() {
+		if count == 0 {
+			return
+		}
+
+		// High-performance batch processing with individual fallback
+		mh.processAddUpdateBatch(addsUpdates)
+		mh.processDeleteBatch(deletes)
+
+		// reuse the buffers
+		addsUpdates = addsUpdates[:0]
+		deletes = deletes[:0]
+		count = 0
+	}
+
+	for {
+		select {
+		case event, ok := <-mh.eventBuffer:
+			if !ok {
+				processAll()
+				return
+			}
+
+			// set object directly before buffering
+			compMetadata, model := mh.getComponentMetadata(event.Object.APIVersion, event.Object.Kind)
+			event.Object.ComponentMetadata = utils.MergeMaps(event.Object.ComponentMetadata, compMetadata)
+			event.Object.Model = model
+
+			switch event.EventType {
+			case broker.Add, broker.Update:
+				addsUpdates = append(addsUpdates, event.Object)
+			case broker.Delete:
+				deletes = append(deletes, event.Object)
+			}
+
+			count++
+			if count >= maxBatchSize {
+				processAll()
+			}
+		case <-ticker.C:
+			processAll()
+		}
+	}
+}
+
+func (mh *MeshsyncDataHandler) processAddUpdateBatch(objs []meshsyncmodel.KubernetesResource) {
+	if len(objs) == 0 {
+		return
+	}
+
+	// Try Bulk Upsert for gain perfromance
+	// the bulk works on batches with 100 objs
+	err := mh.dbHandler.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).CreateInBatches(objs, 100).Error
+
+	// Fallback to one-by-one with SavePoints to ensure "others continue"
+	if err != nil {
+		mh.log.Warn(err)
+		var succeeded []meshsyncmodel.KubernetesResource
+		txErr := mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+			for i, obj := range objs {
+				sp := fmt.Sprintf("sp_add_%d_%d", time.Now().UnixNano(), i)
+				tx.SavePoint(sp)
+				if err := tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&obj).Error; err != nil {
+					mh.log.Error(err)
+					tx.RollbackTo(sp)
+				} else {
+					succeeded = append(succeeded, obj)
+				}
+			}
+			// always commit what succeeded
+			return nil
+		})
+		if txErr != nil {
+			mh.log.Error(fmt.Errorf("fallback transaction failed to commit: %w", txErr))
+		}
+		if len(succeeded) == 0 {
+			mh.log.Warnf("processAddBatch: all %d objects failed in fallback", len(objs))
+		}
+		// Only send to the registration queue if the transaction itself committed.
+		if txErr == nil {
+			regQueue := GetMeshSyncRegistrationQueue()
+			for _, obj := range succeeded {
+				regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
+			}
+		}
+		return
+	}
+}
+func (mh *MeshsyncDataHandler) processDeleteBatch(objs []meshsyncmodel.KubernetesResource) {
+	if len(objs) == 0 {
+		return
+	}
+	// Try bulk delete
+	err := mh.dbHandler.Delete(&objs).Error
+	// Fallback to one-by-one with SavePoints to ensure "others continue"
+	if err != nil {
+		mh.log.Warn(err)
+		mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+			for _, obj := range objs {
+				sp := fmt.Sprintf("sp_del_%d", time.Now().UnixNano())
+				tx.SavePoint(sp)
+				if err := tx.Delete(&obj).Error; err != nil {
+					mh.log.Error(err)
+					tx.RollbackTo(sp)
+				}
+			}
+			return nil
+		})
 	}
 }
 
@@ -121,7 +278,10 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 			continue
 		}
 
-		objectsSlice := storeUpdate.Object.([]interface{})
+		objectsSlice, ok := storeUpdate.Object.([]interface{})
+		if !ok {
+			continue
+		}
 
 		for _, object := range objectsSlice {
 			obj, err := mh.Unmarshal(object)
@@ -129,94 +289,38 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				continue
 			}
 
-			err = mh.persistStoreUpdate(&obj)
-			if err != nil {
-				mh.log.Error(err)
-				continue
+			// Pipe store updates through the same high-performance batch pipeline
+			mh.eventBuffer <- meshsyncInternalEvent{
+				EventType: broker.Add,
+				Object:    obj,
 			}
 		}
 	}
 }
 
 func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
-	objectJSON, _ := utils.Marshal(object)
+	var data []byte
+	var err error
+
+	switch v := object.(type) {
+	case []byte:
+		data = v
+	case string:
+		data = []byte(v)
+	default:
+		jsonStr, err := utils.Marshal(object)
+		if err != nil {
+			return meshsyncmodel.KubernetesResource{}, ErrUnmarshal(err, fmt.Sprintf("%v", object))
+		}
+		data = []byte(jsonStr)
+	}
+
 	obj := meshsyncmodel.KubernetesResource{}
-	err := encoding.Unmarshal([]byte(objectJSON), &obj)
+	err = encoding.Unmarshal(data, &obj)
 	if err != nil {
-		mh.log.Error(ErrUnmarshal(err, objectJSON))
-		return obj, ErrUnmarshal(err, objectJSON)
+		return obj, ErrUnmarshal(err, string(data))
 	}
 	return obj, nil
-}
-
-// derives the state of the cluster from the events and persists it in the database
-func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) error {
-	mh.dbHandler.Lock()
-	defer mh.dbHandler.Unlock()
-
-	obj, err := mh.Unmarshal(event.Object)
-	if err != nil {
-		return err
-	}
-
-	regQueue := GetMeshSyncRegistrationQueue()
-	switch event.EventType {
-	case broker.Add:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
-		obj.Model = model
-		result := mh.dbHandler.Create(&obj)
-		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
-		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
-		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-			if result.Error != nil {
-				return ErrDBPut(result.Error)
-			}
-		}
-	case broker.Update:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
-		obj.Model = model
-		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
-		}
-		return nil
-	case broker.Delete:
-		result := mh.dbHandler.Delete(&obj)
-		if result.Error != nil {
-			return ErrDBDelete(result.Error, "")
-		}
-	}
-
-	mh.log.Info("Updated database in response to ", event.EventType, " event of object: ", obj.KubernetesResourceMeta.Name, " in namespace: ", obj.KubernetesResourceMeta.Namespace, " of kind: ", obj.Kind)
-
-	return nil
-}
-
-func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
-	mh.dbHandler.Lock()
-	defer mh.dbHandler.Unlock()
-	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
-	object.Model = model
-	result := mh.dbHandler.Create(object)
-	regQueue := GetMeshSyncRegistrationQueue()
-
-	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
-
-	if result.Error != nil {
-		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
-		}
-		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
-		return nil
-	}
-	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
-
-	return nil
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
@@ -264,32 +368,34 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
-	componentDef := component.ComponentDefinition{} // Retrieve the entire component
-	defer func() {
-		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
-		if componentDef.Model != nil {
-			model = componentDef.Model.Name
-		}
-	}()
+	cacheKey := apiVersion + "/" + kind
+	if entry, ok := mh.metadataCache.Get(cacheKey); ok {
+		return entry.data, entry.model
+	}
 
+	componentDef := component.ComponentDefinition{}
 	// Query the database for the complete component definition
 	result := mh.dbHandler.Model(component.ComponentDefinition{}).Preload("Model").
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
 		First(&componentDef)
 
 	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			mh.log.Error(ErrResultNotFound(result.Error))
-		} else {
+		if result.Error != gorm.ErrRecordNotFound {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
 		// Provide a default or fallback component definition
 		componentDef = component.ComponentDefinition{
 			Styles: &K8sMeshModelMetadata.Styles,
 		}
-		return
 	}
 
+	data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
+	if componentDef.Model != nil {
+		model = componentDef.Model.Name
+	}
+
+	// Cache the result (including fallbacks) to avoid repeated DB misses
+	mh.metadataCache.Add(cacheKey, metadataCacheEntry{data, model})
 	return
 }
 
