@@ -1,0 +1,27 @@
+name: Istio BookInfo Application
+version: 0.0.12
+services:
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ebc4d4e1-84c4-44d7-81d4-369b6223aafa
+        label: default
+        position:
+          posX: 470
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: Namespace.K8s
+    version: v1.25.0

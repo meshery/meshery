@@ -12,11 +12,11 @@ subcommand: provider
 
 # mesheryctl system provider reset
 
-reset provider to default
+Clear the configured provider
 
 ## Synopsis
 
-Reset provider for current context to default (Layer5)
+Clear the configured provider for the current context. This allows users to select a provider on the next Meshery start. This clears the enforced provider so that users are presented with the provider selection UI on next start.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset [flags]
@@ -26,7 +26,7 @@ mesheryctl system provider reset [flags]
 
 ## Examples
 
-Reset provider to default
+Clear the configured provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset

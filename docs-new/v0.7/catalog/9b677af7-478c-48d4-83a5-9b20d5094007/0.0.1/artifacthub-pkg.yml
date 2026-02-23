@@ -1,0 +1,24 @@
+version: 0.0.1
+name: istio-ingress-service-web-api-v1-only
+displayName: istio-ingress-service-web-api-v1-only
+createdAt: "2023-09-25T22:44:52Z"
+description: Requests with the URI prefix kiali are routed to the kiali.istio-system.svc.cluster.local service on port 20001. Requests with URI prefixes like /web-api/v1/getmultiple, /web-api/v1/create, and /web-api/v1/manage are routed to the web-api service with the subset v1. Requests with URI prefixes openapi/ui/ and /openapi are routed to the web-api service on port 9080. Requests with URI prefixes like /loginwithtoken, /login, and /callback are routed to different services, including web-app and authentication. Requests with any other URI prefix are routed to the web-app service on port 80.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9b677af7-478c-48d4-83a5-9b20d5094007/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure Istio control plane is up and running \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9b677af7-478c-48d4-83a5-9b20d5094007-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9b677af7-478c-48d4-83a5-9b20d5094007-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

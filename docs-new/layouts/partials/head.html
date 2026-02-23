@@ -1,0 +1,161 @@
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+  <meta name="generator" content="Hugo 0.154.5" />
+  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    href="{{ .Site.BaseURL }}index.xml"
+  />
+
+  <link
+    rel="shortcut icon"
+    href="{{ .Site.BaseURL }}assets/favicons/favicon.ico"
+  />
+  <link
+    rel="apple-touch-icon"
+    href="{{ .Site.BaseURL }}assets/favicons/apple-touch-icon.png"
+    sizes="180x180"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/favicon-16x16.png"
+    sizes="16x16"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/favicon-32x32.png"
+    sizes="32x32"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-144x144.png"
+    sizes="36x36"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-144x144.png"
+    sizes="48x48"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-144x144.png"
+    sizes="72x72"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-144x144.png"
+    sizes="96x96"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-144x144.png"
+    sizes="144x144"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="{{ .Site.BaseURL }}assets/favicons/android-192x192.png"
+    sizes="192x192"
+  />
+
+  <title>{{ .Title | default .Site.Title }} | Meshery</title>
+  <meta property="og:title" content="{{ .Title | default .Site.Title }}" />
+  <meta
+    property="og:description"
+    content="{{ .Description | default .Site.Params.description | plainify | truncate 160 }}"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ .Permalink }}" />
+  <meta property="og:site_name" content="{{ .Site.Title }}" />
+  <meta
+    property="og:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png"
+  />
+
+  <meta itemprop="name" content="{{ .Title | default .Site.Title }}" />
+  <meta
+    itemprop="description"
+    content="{{ .Description | default .Site.Params.description | plainify | truncate 160 }}"
+  />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ .Title | default .Site.Title }}" />
+  <meta
+    name="twitter:description"
+    content="{{ .Description | default .Site.Params.description | plainify | truncate 160 }}"
+  />
+  <meta
+    name="twitter:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png"
+  />
+
+  {{- $sass := resources.Get "scss/_styles_project.scss" -}} {{- $opts := dict "transpiler"
+  "dartsass" "targetPath" "css/styles.css" -}} {{- with $sass | toCSS $opts |
+  minify | fingerprint -}}
+  <link
+    rel="stylesheet"
+    href="{{ .RelPermalink }}"
+    integrity="{{ .Data.Integrity }}"
+    crossorigin="anonymous"
+  />
+  {{- end -}}
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ .Site.BaseURL }}css/anchorjs.css"
+  />
+
+  <!-- Google Tag Manager -->
+  {{ partial "scripts/google-tagmanager-head.html" . }}
+  <!-- End Google Tag Manager -->
+
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+    integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>
+    $(function () {
+      /** AnchorJS options and selector */
+      anchors.options = {
+        visible: "hover",
+        placement: "right",
+      };
+      anchors.add("h1, h2, h3, h4, h5");
+    });
+    // Function to handle anchor links
+    document.addEventListener("click", function (event) {
+      if (
+        event.target.tagName === "A" &&
+        event.target.getAttribute("href").startsWith("#")
+      ) {
+        window.location.hash = event.target.getAttribute("href");
+      }
+    });
+  </script>
+</head>
