@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"os"
 	"testing"
 
@@ -13,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandlePaginationAsync(t *testing.T) {
+func TestListAsyncPagination(t *testing.T) {
 	type items struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
@@ -24,12 +23,10 @@ func TestHandlePaginationAsync(t *testing.T) {
 		Items []items `json:"items"`
 	}
 
-	// Test cases
 	tests := []struct {
 		name             string
-		pageSize         int
 		displayData      DisplayDataAsync
-		processDataFunc  func(*[]items) ([][]string, int64)
+		processDataFunc  listRowBuilder[[]items]
 		urlPath          string
 		expectedError    error
 		exceptedResponse string
@@ -37,9 +34,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 		hasToken         bool
 	}{
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -63,9 +60,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Count_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -89,9 +86,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Empty_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Count_Empty_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -112,9 +109,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_Missing_Token_When_HandlePaginationAsync_Then_Error_Returned",
-			pageSize: 2,
+			name: "Given_Missing_Token_When_ListAsyncPagination_Then_Error_Returned",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -135,9 +132,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         false,
 		},
 		{
-			name:     "Given_Meshery_Server_Is_Not_Reachable_When_HandlePaginationAsync_Then_Error_Returned",
-			pageSize: 2,
+			name: "Given_Meshery_Server_Is_Not_Reachable_When_ListAsyncPagination_Then_Error_Returned",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -160,11 +157,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 	}
 
 	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
 	utils.StartMockery(t)
-
-	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
 	for _, tt := range tests {
@@ -197,12 +190,11 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-			err = HandlePaginationAsync(tt.pageSize, tt.displayData, tt.processDataFunc)
+			err = ListAsyncPagination(tt.displayData, tt.processDataFunc)
 
 			if tt.expectedError != nil {
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
-
 				_ = writer.Close()
 
 				// Read captured output.
@@ -220,7 +212,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 	}
 }
 
-func TestHandlePaginationPrompt(t *testing.T) {
+func TestPromptAsyncPagination(t *testing.T) {
 	type testItem struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
@@ -253,7 +245,7 @@ func TestHandlePaginationPrompt(t *testing.T) {
 		errContains   string
 	}{
 		{
-			name:          "Given_Zero_Results_When_HandlePaginationPrompt_Then_ErrNotFound",
+			name:          "Given_Zero_Results_When_PromptAsyncPagination_Then_ErrNotFound",
 			searchTerm:    "nonexistent",
 			apiItems:      []testItem{},
 			apiStatusCode: 200,
@@ -262,7 +254,7 @@ func TestHandlePaginationPrompt(t *testing.T) {
 			errContains:   "no results for nonexistent",
 		},
 		{
-			name:       "Given_Single_Result_When_HandlePaginationPrompt_Then_AutoSelect",
+			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
 			searchTerm: "istio",
 			apiItems: []testItem{
 				{ID: "abc-123", Name: "Istio Base"},
@@ -273,7 +265,7 @@ func TestHandlePaginationPrompt(t *testing.T) {
 			expectItem:    &testItem{ID: "abc-123", Name: "Istio Base"},
 		},
 		{
-			name:          "Given_Missing_Token_When_HandlePaginationPrompt_Then_AuthError",
+			name:          "Given_Missing_Token_When_PromptAsyncPagination_Then_AuthError",
 			searchTerm:    "istio",
 			apiItems:      []testItem{},
 			apiStatusCode: 400,
@@ -282,7 +274,7 @@ func TestHandlePaginationPrompt(t *testing.T) {
 			errContains:   "Not Set does not exist",
 		},
 		{
-			name:          "Given_Invalid_Token_When_HandlePaginationPrompt_Then_InvalidTokenError",
+			name:          "Given_Invalid_Token_When_PromptAsyncPagination_Then_InvalidTokenError",
 			searchTerm:    "istio",
 			apiItems:      []testItem{},
 			apiStatusCode: 302,
@@ -310,17 +302,21 @@ func TestHandlePaginationPrompt(t *testing.T) {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			url := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + url.QueryEscape(tt.searchTerm)
-			httpmock.RegisterResponder("GET", url,
+			mockURL := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			httpmock.RegisterResponder("GET", mockURL,
 				httpmock.NewStringResponder(tt.apiStatusCode, string(mApiResponse)))
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-			result, err := HandlePaginationPrompt(
-				"test",
-				tt.searchTerm,
+			var result testItem
+			err = PromptAsyncPagination(
+				DisplayDataAsync{
+					UrlPath:    "test",
+					SearchTerm: tt.searchTerm,
+				},
 				formatLabel,
 				extractItems,
+				&result,
 			)
 
 			if tt.expectError {
