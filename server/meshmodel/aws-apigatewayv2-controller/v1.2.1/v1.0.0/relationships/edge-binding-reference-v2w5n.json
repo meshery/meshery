@@ -32,16 +32,8 @@
             "id": null,
             "kind": "Stage",
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": "v1.2.1"
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
@@ -60,16 +52,8 @@
             "id": null,
             "kind": "Deployment",
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": "v1.2.1"
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
