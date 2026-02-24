@@ -5,16 +5,15 @@
 {{ $currentSection := .Section }}
 {{ $models := where site.RegularPages "Section" $currentSection }}
 
-
 {{ if gt (len $models) 0 }}
 <div class="models-list">
   <ul>
     {{ range $models }}
-    {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
-    <li style="list-style-type: disc !important; margin: 2px 0 !important">
-      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-    </li>
-    {{ end }}
+      {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+      <li style="list-style-type: disc !important; margin: 2px 0 !important">
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </li>
+      {{ end }}
     {{ end }}
   </ul>
 </div>
