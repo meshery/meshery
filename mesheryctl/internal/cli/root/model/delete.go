@@ -38,7 +38,7 @@ mesheryctl model delete [model-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			const errMsg = "[ model-id ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message"
+			const errMsg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
@@ -79,11 +79,11 @@ mesheryctl model delete [model-id]
 		}
 
 		// Delete the selected model by its UUID
-		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.Id))
+		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.Id.String()))
 		if err != nil {
 			return ErrDeleteModel(err, modelArg)
 		}
-		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.Id)
+		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.Id.String())
 
 		return nil
 	},
