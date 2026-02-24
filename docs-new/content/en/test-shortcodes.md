@@ -14,24 +14,18 @@ This page tests the Hugo shortcodes created for the Jekyll to Hugo migration.
 
 ### Basic Usage
 
-{{< code >}}
-kubectl apply -f meshery.yaml
-{{< /code >}}
+{{< code code="kubectl apply -f meshery.yaml" >}}
 
 ### Multi-line Code
 
-{{< code >}}
-curl -L https://meshery.io/install | PLATFORM=docker bash -
+{{< code code=`curl -L https://meshery.io/install | PLATFORM=docker bash -
 
 mesheryctl system start
-mesheryctl system status
-{{< /code >}}
+mesheryctl system status` >}}
 
 ### Code with Special Characters
 
-{{< code >}}
-echo "Hello <world> & 'universe'"
-{{< /code >}}
+{{< code code=`echo "Hello <world> & 'universe'"` >}}
 
 ---
 

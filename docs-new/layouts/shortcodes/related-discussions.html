@@ -21,24 +21,6 @@
 {{- $dataFile := printf "discuss/%s" $tag -}}
 {{- $data := index .Site.Data.discuss $tag -}}
 
-<style>
-  .discuss-posts {
-    list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
-    line-height: 1.5rem;
-  }
-  .discuss-post {
-    padding: 0.3rem 0.4rem;
-  }
-  .discuss-post-date {
-    color: var(--color-grey-medium);
-    font-size: 0.9rem;
-  }
-  .discuss-post-author {
-    color: var(--color-grey-dark);
-    font-size: 0.85rem;
-  }
-</style>
-
 <h2>Recent Discussions with "{{ $tag }}" Tag</h2>
 
 {{- if $data -}}

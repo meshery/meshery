@@ -2,9 +2,11 @@
   code.html - Code block with clipboard copy functionality
 
   Usage:
-    {{< code >}}
-    kubectl apply -f meshery.yaml
-    {{< /code >}}
+    {{< code code="kubectl apply -f meshery.yaml" >}}
+
+  Multi-line (use backtick):
+    {{< code code=`line one
+    line two` >}}
 
   Replaces Jekyll include:
     {% capture code_content %}...{% endcapture %}
@@ -19,5 +21,5 @@
   Issue: https://github.com/meshery/meshery/issues/17244
 */}}
 <div class="codeblock">
-<pre class="codeblock-pre"><code class="clipboardjs">{{ .Inner | htmlEscape }}</code></pre>
+<pre class="codeblock-pre"><code class="clipboardjs">{{ .Get "code" | html }}</code></pre>
 </div>
