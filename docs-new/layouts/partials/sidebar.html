@@ -52,7 +52,8 @@
   
         {{ if $section.links }}
         <ul class="td-sidebar-nav__section collapse" id="section{{ $sectionIndex }}">
-          {{ range $entryIndex, $entry := $section.links }}
+          {{ $sortedLinks := sort $section.links "title" }}
+          {{ range $entryIndex, $entry := $sortedLinks }}
           {{ $entryUrl := replace (default "" $entry.url) "/" "" }}
           <li class="sidebar-nav__section-link {{ if eq $entryUrl $pageUrl }}active{{ end }}">
             <a
@@ -63,7 +64,8 @@
           {{ if or (in $currentPage.RelPermalink $entry.url) (eq $pageUrl $sectionUrl) }}
             {{ if $entry.children }}
             <ul style="margin-bottom: 0;">
-              {{ range $childIndex, $child := $entry.children }}
+              {{ $sortedChildren := sort $entry.children "title" }}
+              {{ range $childIndex, $child := $sortedChildren }}
               {{ $childUrl := cond (isset $child "url") (printf "%s%s" $currentPage.Site.BaseURL $child.url) $child.external_url }}
               {{ $childTitle := replace $childUrl "/" "" }}
               <li id="{{ anchorize $child.title }}">
@@ -75,7 +77,8 @@
               </li>
               {{ if $child.grandchildren }}
               <ul style="margin-bottom: 0;">
-                {{ range $grandchildIndex, $grandchild := $child.grandchildren }}
+                {{ $sortedGrandchildren := sort $child.grandchildren "title" }}
+                {{ range $grandchildIndex, $grandchild := $sortedGrandchildren }}
                 {{ $grandchildUrl := cond (isset $grandchild "url") (printf "%s%s" $currentPage.Site.BaseURL $grandchild.url) $grandchild.external_url }}
                 {{ $grandchildTitle := replace $grandchildUrl "/" "" }}
                 <li id="{{ anchorize $grandchild.title }}">
