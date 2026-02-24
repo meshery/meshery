@@ -69,6 +69,8 @@ td {
     }
 </script>
 
+# Error Code Reference
+
 ## Error Codes and Troubleshooting
 
 Meshery and its components use a common framework (defined within MeshKit) to generate and document an event with a unique error code identifier as the combination of `[component type]-[component name]-[event moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
