@@ -103,7 +103,7 @@ mesheryctl design view [design-name | ID]
 				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
 			}
 			if len(arr) == 0 {
-				return ErrDesignNotFound()
+				return ErrDesignNotFound(design)
 			}
 			designData = arr[0]
 		}

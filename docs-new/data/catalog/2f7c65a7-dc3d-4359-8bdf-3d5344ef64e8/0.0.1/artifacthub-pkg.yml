@@ -1,0 +1,31 @@
+version: 0.0.1
+name: kafka-meshery-design
+displayName: Kafka Meshery design
+createdAt: "2025-10-01T12:01:08Z"
+description: |-
+    Name: Kafka Streaming Platform
+    Version: 0.0.1
+    Type: Deployment
+    Description: Apache Kafka is a distributed streaming platform designed to build real-time pipelines and can be used as a message broker or as a replacement for a log aggregation solution for big data applications. This design is based on the Bitnami Kafka Helm chart version 32.4.3 with Kafka 4.0.0.
+    Tags: kafka,streaming,messaging,bitnami,infrastructure
+    Category: Infrastructure
+    Visibility: Public (so it can be published to catalog)
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2f7c65a7-dc3d-4359-8bdf-3d5344ef64e8/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• Requires persistent storage for data durability\n• Uses KRaft mode (no Zookeeper dependency)  \n• Default configuration suitable for development/testing\n• For production use, consider scaling replicas and configuring resource limits\n• Ensure proper network policies are in place for security \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 65a22fe4-ca01-4514-ae9c-12ed0cd4826c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2f7c65a7-dc3d-4359-8bdf-3d5344ef64e8-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2f7c65a7-dc3d-4359-8bdf-3d5344ef64e8-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
