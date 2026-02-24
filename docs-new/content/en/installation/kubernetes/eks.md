@@ -68,7 +68,9 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 # Out-of-cluster Installation
 
-{% include alert.html title='Out-of-cluster EKS deployments not currently supported' type="warning" alert='Out-of-cluster support for EKS is still beta and on <a href="https://github.com/meshery/meshery/blob/master/ROADMAP.md">roadmap</a>.' %}
+{{% alert title="Out-of-cluster EKS deployments not currently supported" color="warning" %}}
+Out-of-cluster support for EKS is still beta and on the [roadmap](https://github.com/meshery/meshery/blob/master/ROADMAP.md).
+{{% /alert %}}
 
 Install Meshery on Docker (out-of-cluster) and connect it to your EKS cluster.
 
