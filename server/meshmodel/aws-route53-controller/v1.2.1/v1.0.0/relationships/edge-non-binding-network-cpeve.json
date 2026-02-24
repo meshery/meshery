@@ -81,7 +81,7 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "spec",
+                  "status",
                   "domainName"
                 ]
               ]
