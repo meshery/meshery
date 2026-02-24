@@ -28,7 +28,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/vie
 mesheryctl model view [model-name]
 
 // View a specific model from current provider in JSON format
-mesheryctl exp relationship view [model-name] --output-format json
+mesheryctl model view [model-name] --output-format json
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
@@ -49,9 +49,6 @@ mesheryctl exp relationship view [model-name] --output-format json
 		if err != nil {
 			return err
 		}
-
-		modelDefinition := args[0]
-
 		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](urlPath)
 
 		if err != nil {
@@ -62,7 +59,7 @@ mesheryctl exp relationship view [model-name] --output-format json
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Println("No model(s) found for the given name ", modelDefinition)
+			fmt.Println("No model(s) found for the given name ", args[0])
 			return nil
 		case 1:
 			selectedModel = modelsResponse.Models[0]
