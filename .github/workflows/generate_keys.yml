@@ -61,11 +61,9 @@ jobs:
         run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
-      - name: Save keys.csv to docs/assets/excel
-        run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
-
-      - name: Save keys.csv to docs-new/static/excel
+      - name: Save keys.csv to docs static folders
         run: |
+          cp server/permissions/keys.csv docs/assets/excel/keys.csv
           mkdir -p docs-new/static/excel
           cp server/permissions/keys.csv docs-new/static/excel/keys.csv
 
