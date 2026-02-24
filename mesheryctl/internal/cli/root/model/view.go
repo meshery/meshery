@@ -2,6 +2,8 @@ package model
 
 import (
 	"fmt"
+	"net/url"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -19,11 +21,13 @@ var modelViewOutputFormat string
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long: `View a model queried by its name
+	Long: `View a model queried by its name or id
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
-// View a specific model from current provider
+// View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
+
+
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
@@ -40,9 +44,14 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		err, urlPath := getModelViewUrlPath(args[0])
+		if err != nil {
+			return err
+		}
+
 		modelDefinition := args[0]
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s/%s?pagesize=all", modelsApiPath, modelDefinition))
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](urlPath)
 
 		if err != nil {
 			return err
@@ -103,6 +112,27 @@ func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
 
 		return modelArray[i]
 	}
+}
+
+func getModelViewUrlPath(modelname string) (error, string) {
+	queryParams := url.Values{}
+	var modelsUrlPath string
+
+	isID, err := regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$", modelname)
+	if err != nil {
+		return err, ""
+	}
+
+	if !isID {
+		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelname))
+	} else {
+		modelsUrlPath = modelsApiPath
+		queryParams.Add("id", url.QueryEscape(modelname))
+	}
+
+	queryParams.Add("pagesize", "all")
+
+	return nil, fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
 }
 
 func init() {
