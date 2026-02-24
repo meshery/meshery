@@ -34,6 +34,7 @@
 
         // Select each header
         sections = $('.td-content h1');
+
         $.each(sections, function (idx, v) {
             section = $(v);
             var div_id = $(section).attr('id');
@@ -71,11 +72,11 @@
                     // Highlight the current menu item by adding 'selected' class
                     $(this).addClass('selected');
                 }
-                if ($(window).scrollTop() + $(window).height() > $(document).document().height() - 10) {
+                if ($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
                     $('.selected').removeClass('selected');
                     $(this).addClass('selected');
                 }
             });
         })
-            });
+    });
 </script>
