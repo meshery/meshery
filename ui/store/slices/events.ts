@@ -24,7 +24,7 @@ const initialState = {
     history_mode: false, // used to determine if the notification center is in history mode . so we render in a different way
     title: 'Notifications', // title of the operation center
     empty_message: 'No notifications found', // message to show when there are no notifications
-    icon: 'BellIcon',
+    icon: 'BellIcon', // icon name string (not component) to maintain Redux state serialization
   },
   isNotificationCenterOpen: false,
 };
