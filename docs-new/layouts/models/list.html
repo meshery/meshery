@@ -4,31 +4,17 @@
 
 {{ $currentSection := .Section }}
 {{ $models := where site.RegularPages "Section" $currentSection }}
-{{ $count := 0 }}
-{{ range $models }}
-  {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
-    {{ $count = add $count 1 }}
-  {{ end }}
-{{ end }}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const heading = document.querySelector('h3');
-    if (heading) {
-      heading.textContent = heading.textContent.replace('()', '(' + {{ $count }} + ')');
-    }
-  });
-</script>
 
 {{ if gt (len $models) 0 }}
 <div class="models-list">
   <ul>
     {{ range $models }}
-      {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
-      <li style="list-style-type: disc !important; margin: 2px 0 !important">
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-      </li>
-      {{ end }}
+    {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+    <li style="list-style-type: disc !important; margin: 2px 0 !important">
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    </li>
+    {{ end }}
     {{ end }}
   </ul>
 </div>
