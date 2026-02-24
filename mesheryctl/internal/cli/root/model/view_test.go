@@ -18,6 +18,7 @@ func TestViewModel(t *testing.T) {
 	}
 
 	const modelName = "model-test-0"
+	const modelId = "00000000-0000-0000-0000-000000000000"
 
 	currDir := filepath.Dir(filename)
 	modelsApiPath = "api/meshmodels/models"
@@ -39,6 +40,15 @@ func TestViewModel(t *testing.T) {
 			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape("invalid")),
 			Fixture:          "list.model.empty.api.response.golden",
 			ExpectedResponse: "view.model.empty.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
+		},
+		{
+			Name:             "given a valid model-id provided when running mesheryctl model view valid-id then the detailed information of the model is displayed",
+			Args:             []string{"view", modelId},
+			URL:              fmt.Sprintf("/%s?id=%s&pagesize=all", modelsApiPath, url.QueryEscape(modelId)),
+			Fixture:          "list.model.api.response.golden",
+			ExpectedResponse: "view.model.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
 		},
