@@ -18,6 +18,9 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/sea
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]
+
+// Search list of models for a specified page
+mesheryctl model search [query-text] --page [page-number]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
