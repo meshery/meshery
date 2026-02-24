@@ -35,6 +35,9 @@ Find more information at https://docs.meshery.io/reference/mesheryctl/model/dele
 	Example: `
 // Delete a model by ID
 mesheryctl model delete [model-id]
+
+// Delete a model by name
+mesheryctl model delete [model-name]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
