@@ -21,6 +21,10 @@ import (
 const (
 	MeshsyncStoreUpdatesSubject = "meshery-server.meshsync.store"
 	MeshsyncRequestSubject      = "meshery.meshsync.request"
+	MeshsyncEventBufferSize     = 2000
+	MeshsyncEventBatchSize      = 100
+	MeshsyncLRUCacheSize        = 200
+	MeshsyncEventBatchInterval  = 500 * time.Millisecond
 )
 
 type meshsyncInternalEvent struct {
@@ -49,7 +53,7 @@ type MeshsyncDataHandler struct {
 
 func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
 	// TODO: make the 200 configurable so the user can define the cache
-	cache, _ := lru.New[string, metadataCacheEntry](200)
+	cache, _ := lru.New[string, metadataCacheEntry](MeshsyncLRUCacheSize)
 
 	return &MeshsyncDataHandler{
 		broker:        broker,
@@ -63,7 +67,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		StopFunc:      stopFunc,
 		metadataCache: cache,
 		// TODO: the event buffer needs to be configurable
-		eventBuffer: make(chan meshsyncInternalEvent, 2000),
+		eventBuffer: make(chan meshsyncInternalEvent, MeshsyncEventBufferSize),
 	}
 }
 
@@ -128,16 +132,15 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 // eventProcessor drains the eventBuffer and processes events in batches
 func (mh *MeshsyncDataHandler) eventProcessor() {
 	// process batch every 500ms or when buffer is full
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(MeshsyncEventBatchInterval)
 	defer ticker.Stop()
 
-	const maxBatchSize = 100
 	var count int
 
 	// hot pots for events
 	// updates and adds are the same
-	addsUpdates := make([]meshsyncmodel.KubernetesResource, 0, maxBatchSize)
-	deletes := make([]meshsyncmodel.KubernetesResource, 0, maxBatchSize)
+	addsUpdates := make([]meshsyncmodel.KubernetesResource, 0, MeshsyncEventBatchSize)
+	deletes := make([]meshsyncmodel.KubernetesResource, 0, MeshsyncEventBatchSize)
 
 	processAll := func() {
 		if count == 0 {
@@ -175,7 +178,7 @@ func (mh *MeshsyncDataHandler) eventProcessor() {
 			}
 
 			count++
-			if count >= maxBatchSize {
+			if count >= MeshsyncEventBatchSize {
 				processAll()
 			}
 		case <-ticker.C:
@@ -190,10 +193,10 @@ func (mh *MeshsyncDataHandler) processAddUpdateBatch(objs []meshsyncmodel.Kubern
 	}
 
 	// Try Bulk Upsert for gain perfromance
-	// the bulk works on batches with 100 objs
+	// the bulk works on batches of `MeshsyncEventBatchSize` objects
 	err := mh.dbHandler.Clauses(clause.OnConflict{
 		UpdateAll: true,
-	}).CreateInBatches(objs, 100).Error
+	}).CreateInBatches(objs, MeshsyncEventBatchSize).Error
 
 	// Fallback to one-by-one with SavePoints to ensure "others continue"
 	if err != nil {
@@ -280,6 +283,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 
 		objectsSlice, ok := storeUpdate.Object.([]interface{})
 		if !ok {
+			mh.log.Warnf("received unexpected type for store update object: %T", storeUpdate.Object)
 			continue
 		}
 
@@ -308,9 +312,11 @@ func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.Kube
 	case string:
 		data = []byte(v)
 	default:
+		// Attempt to marshal the object to JSON if it's not already a byte slice or string.
 		jsonStr, err := utils.Marshal(object)
 		if err != nil {
-			return meshsyncmodel.KubernetesResource{}, ErrUnmarshal(err, fmt.Sprintf("%v", object))
+			// Log a more concise representation of the object if marshaling fails
+			return meshsyncmodel.KubernetesResource{}, ErrUnmarshal(err, fmt.Sprintf("failed to marshal object of type %T", object))
 		}
 		data = []byte(jsonStr)
 	}
