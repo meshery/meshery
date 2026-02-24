@@ -22,21 +22,24 @@ type DisplayedData struct {
 }
 
 type DisplayDataAsync struct {
-	UrlPath          string
+	// Core fields
+	UrlPath  string
+	PageSize int
+	Page     int
+	// List-only fields
 	DataType         string
 	Header           []string
-	Page             int
-	PageSize         int
 	DisplayCountOnly bool
 	IsPage           bool
-	SearchTerm       string
+	// Prompt-only field
+	SearchTerm string
 }
 
 type (
-	listRowBuilder[T any]       func(*T) ([][]string, int64)
-	promptLabelBuilder[R any]   func([]R) []string
-	pageHandler[T any]          func(*T, int, int) (bool, error)
-	itemExtractor[T any, R any] func(*T) []R
+	listRowBuilder[T any]       func(data *T) (rows [][]string, totalCount int64)
+	promptLabelBuilder[R any]   func(rows []R) (names []string)
+	pageHandler[T any]          func(data *T, currentPage int, pgSize int) (shouldContinue bool, err error)
+	itemExtractor[T any, R any] func(data *T) (rows []R)
 )
 
 func List(data DisplayedData) error {

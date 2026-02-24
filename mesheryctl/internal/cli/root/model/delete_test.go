@@ -30,7 +30,7 @@ func TestDeleteModel(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ model-id ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg)),
 		},
 		{
 			Name:             "given a valid model-id when running model delete then model is deleted successfully",

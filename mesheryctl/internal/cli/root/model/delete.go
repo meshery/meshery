@@ -38,8 +38,7 @@ mesheryctl model delete [model-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			const errMsg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+			return utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg))
 		}
 
 		return nil
