@@ -27,7 +27,8 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/vie
 // View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
 
-
+// View a specific model from current provider in JSON format
+mesheryctl exp relationship view [model-name] --output-format json
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
@@ -118,6 +119,7 @@ func getModelViewUrlPath(modelname string) (error, string) {
 	queryParams := url.Values{}
 	var modelsUrlPath string
 
+	// For validate an argument is uuid or name
 	isID, err := regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$", modelname)
 	if err != nil {
 		return err, ""
