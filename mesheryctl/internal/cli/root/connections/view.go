@@ -55,7 +55,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified"))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, viewUsageMsg))
 		}
 
 		if len(args) > 1 {

@@ -26,7 +26,7 @@ func TestConnectionViewCmd(t *testing.T) {
 			Args:           []string{"view"},
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified")),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, viewUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{

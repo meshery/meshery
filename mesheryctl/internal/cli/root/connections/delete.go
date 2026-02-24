@@ -6,7 +6,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -21,9 +20,8 @@ mesheryctl connection delete [connection_id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, deleteUsageMsg))
 		}
 
 		if !utils.IsUUID(args[0]) {

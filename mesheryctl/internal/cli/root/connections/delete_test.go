@@ -7,11 +7,9 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 )
 
 const connectionId = "11111111-1111-1111-1111-111111111111"
-const errMsg = "[ connection-id ] is required\n\nUsage: mesheryctl connection delete --help' to see detailed help message"
 
 func TestConnectionDeleteCmd(t *testing.T) {
 	// create a test helper
@@ -30,7 +28,7 @@ func TestConnectionDeleteCmd(t *testing.T) {
 			Name:          "given no connectionID provided when running mesheryctl connection delete then an error message is displayed",
 			Args:          []string{"delete"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(errors.New(errMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, deleteUsageMsg)),
 		},
 		{
 			Name:          "given an invalid connectionID provided when running mesheryctl connection delete invalid-id then an error message is displayed",
