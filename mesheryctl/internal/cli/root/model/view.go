@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"net/url"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -59,7 +58,7 @@ mesheryctl model view [model-name] --output-format json
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Println("No model(s) found for the given name ", args[0])
+			fmt.Println("No model(s) found for the given name or ID :", args[0])
 			return nil
 		case 1:
 			selectedModel = modelsResponse.Models[0]
@@ -117,16 +116,13 @@ func getModelViewUrlPath(modelname string) (error, string) {
 	var modelsUrlPath string
 
 	// For validate an argument is uuid or name
-	isID, err := regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$", modelname)
-	if err != nil {
-		return err, ""
-	}
+	isID := utils.IsUUID(modelname)
 
 	if !isID {
 		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelname))
 	} else {
 		modelsUrlPath = modelsApiPath
-		queryParams.Add("id", url.QueryEscape(modelname))
+		queryParams.Add("id", modelname)
 	}
 
 	queryParams.Add("pagesize", "all")

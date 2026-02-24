@@ -26,14 +26,13 @@ const (
 	errInitUnsupportedFormat = "[ %s ] are the only format supported"
 	errInitInvalidVersion    = "version must follow a semver format, f.e. v1.2.3"
 	errInitFolderExists      = "folder %s exists, please specify different model name or version"
-	errInitInvalidModelName  = "invalid model name: name must match pattern ^[a-z0-9-]+$"
 
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
 
-	errNoArg     = "must provide one argument: model name\n"
+	errNoArg     = "must provide one argument: [model-name] or [model-id]\n"
 	errMultiArg  = "too many args provided\n"
-	viewUsageMsg = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
+	viewUsageMsg = "Usage: mesheryctl model view [model-name] or [model-id]\nRun 'mesheryctl model view --help' to see detailed help message"
 	formaterrMsg = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
 )
 
