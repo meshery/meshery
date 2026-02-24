@@ -12,7 +12,7 @@
     "isAnnotation": false
   },
   "model": {
-    "version": "v1.2.1",
+    "version": "",
     "name": "aws-apigatewayv2-controller",
     "displayName": "AWS API Gateway v2",
     "id": "00000000-0000-0000-0000-000000000000",
@@ -33,7 +33,7 @@
             "kind": "APIMapping",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -54,7 +54,7 @@
             "kind": "API",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",

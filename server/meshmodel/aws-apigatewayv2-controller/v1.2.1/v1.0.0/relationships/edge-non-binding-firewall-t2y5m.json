@@ -33,7 +33,7 @@
             "kind": "VPCLink",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -53,7 +53,7 @@
             "kind": "SecurityGroup",
             "model": {
               "name": "aws-ec2-controller",
-              "version": "v1.9.2"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",

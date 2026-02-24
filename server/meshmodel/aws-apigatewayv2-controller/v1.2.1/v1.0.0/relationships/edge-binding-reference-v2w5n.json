@@ -33,7 +33,7 @@
             "kind": "Stage",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -53,7 +53,7 @@
             "kind": "Deployment",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",

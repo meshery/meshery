@@ -33,7 +33,7 @@
             "kind": "Stage",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -54,7 +54,7 @@
             "kind": "LogGroup",
             "model": {
               "name": "aws-cloudwatchlogs-controller",
-              "version": "v1.2.1"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",

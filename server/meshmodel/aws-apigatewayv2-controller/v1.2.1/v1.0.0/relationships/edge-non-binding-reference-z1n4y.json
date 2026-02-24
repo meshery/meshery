@@ -33,7 +33,7 @@
             "kind": "Authorizer",
             "model": {
               "name": "aws-apigatewayv2-controller",
-              "version": "v1.2.1",
+              "version": "",
               "registrant": {
                 "kind": "github"
               }
@@ -57,7 +57,7 @@
             "kind": "Function",
             "model": {
               "name": "aws-lambda-controller",
-              "version": "v1.10.1",
+              "version": "",
               "registrant": {
                 "kind": "github"
               }
