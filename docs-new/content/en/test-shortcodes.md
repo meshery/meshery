@@ -47,6 +47,34 @@ mesheryctl system status` >}}
 
 ---
 
+## 4. Alert Shortcode
+
+### Info (default)
+
+{{< alert title="Information" color="info" >}}
+This is an informational alert. Supports **markdown** content.
+{{< /alert >}}
+
+### Warning
+
+{{< alert title="Warning" color="warning" >}}
+This is a warning alert.
+{{< /alert >}}
+
+### Danger
+
+{{< alert title="Danger" color="danger" >}}
+This is a danger alert.
+{{< /alert >}}
+
+### No title
+
+{{< alert color="success" >}}
+This alert has no title, just content.
+{{< /alert >}}
+
+---
+
 ## Validation Checklist
 
 - [ ] Code blocks render with dark background
