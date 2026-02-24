@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Connects a CloudWatch LogGroup to a Stage for access log delivery.",
+    "description": "You are linking an API Stage to a CloudWatch Log Group to enable automated delivery of access logs.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,27 +31,18 @@
           {
             "id": null,
             "kind": "Stage",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "configuration",
+                  "spec",
+                  "accessLogSettings",
+                  "destinationArn"
                 ]
               ]
             }
@@ -61,27 +52,18 @@
           {
             "id": null,
             "kind": "LogGroup",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-cloudwatchlogs-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
-                  "accessLogSettings",
-                  "destinationArn"
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }
@@ -94,7 +76,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

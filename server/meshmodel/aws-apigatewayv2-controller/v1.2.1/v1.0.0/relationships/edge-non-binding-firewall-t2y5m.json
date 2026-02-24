@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Attaches a Security Group to a VpcLink to control private network access.",
+    "description": "You are binding a Security Group to a VPC Link to control private network access for your API.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,26 +31,17 @@
           {
             "id": null,
             "kind": "VPCLink",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
-                  "groupID"
+                  "configuration",
+                  "spec",
+                  "securityGroupIDs"
                 ]
               ]
             }
@@ -60,26 +51,17 @@
           {
             "id": null,
             "kind": "SecurityGroup",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-ec2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.9.2"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
-                  "securityGroupIDs"
+                  "configuration",
+                  "status",
+                  "id"
                 ]
               ]
             }
@@ -92,7 +74,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "firewall",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

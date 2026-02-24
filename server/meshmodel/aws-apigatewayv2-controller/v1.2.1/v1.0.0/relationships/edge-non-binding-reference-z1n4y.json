@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Wires a Lambda Function as the backing Authorizer URI for request authorization.",
+    "description": "You are binding a Lambda Function to an API Authorizer to define the custom logic for request authorization.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,29 +31,23 @@
           {
             "id": null,
             "kind": "Authorizer",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "version": "v1.2.1",
               "registrant": {
                 "kind": "github"
-              },
-              "model": {
-                "version": ""
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "configuration",
+                  "spec",
+                  "authorizerUri"
                 ]
-              ]
+              ],
+              "description": "The Authorizer is mutated to include the backing Lambda Function's ARN."
             }
           }
         ],
@@ -61,28 +55,24 @@
           {
             "id": null,
             "kind": "Function",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-lambda-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
+              "version": "v1.10.1",
               "registrant": {
                 "kind": "github"
-              },
-              "model": {
-                "version": ""
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
-                  "authorizerUri"
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
-              ]
+              ],
+              "description": "The Lambda Function provides its ARN to the Authorizer."
             }
           }
         ]
@@ -93,7 +83,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

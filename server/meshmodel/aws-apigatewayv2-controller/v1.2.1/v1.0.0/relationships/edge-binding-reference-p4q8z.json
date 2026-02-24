@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Secures a Route with an Authorizer.",
+    "description": "You are binding an Authorizer to a specific Route to enforce security and access control on the API endpoint.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,28 +31,20 @@
           {
             "id": null,
             "kind": "Route",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
+                  "configuration",
+                  "spec",
                   "authorizerID"
                 ]
-              ]
+              ],
+              "description": "The Route is mutated to include the Authorizer's identifier."
             }
           }
         ],
@@ -60,28 +52,18 @@
           {
             "id": null,
             "kind": "Authorizer",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
-                  "authorizerID"
+                  "displayName"
                 ]
-              ]
+              ],
+              "description": "The Authorizer acts as the mutator, providing its identity to secure the Route."
             }
           }
         ]
@@ -92,7 +74,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

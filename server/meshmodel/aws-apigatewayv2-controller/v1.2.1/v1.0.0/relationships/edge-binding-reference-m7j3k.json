@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Connects a Custom Domain Mapping to an API.",
+    "description": "You are binding an API Mapping to a specific API resource to establish the functional link for custom domain routing.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -12,12 +12,12 @@
     "isAnnotation": false
   },
   "model": {
-    "version": "",
+    "version": "v1.2.1",
     "name": "aws-apigatewayv2-controller",
-    "displayName": "",
+    "displayName": "AWS API Gateway v2",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,28 +31,20 @@
           {
             "id": null,
             "kind": "APIMapping",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
+                  "configuration",
+                  "spec",
                   "apiID"
                 ]
-              ]
+              ],
+              "description": "The API Mapping is mutated to include the target API's identifier."
             }
           }
         ],
@@ -60,28 +52,20 @@
           {
             "id": null,
             "kind": "API",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
-              "version": "",
               "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "version": "v1.2.1"
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
+                  "configuration",
+                  "status",
                   "apiID"
                 ]
-              ]
+              ],
+              "description": "The API acts as the mutator, providing its status-level apiID to the mapping."
             }
           }
         ]
@@ -92,7 +76,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Points a Stage to a specific Deployment snapshot.",
+    "description": "You are binding an API Stage to a specific Deployment snapshot to establish the environment configuration version.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,8 +31,6 @@
           {
             "id": null,
             "kind": "Stage",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -42,14 +40,15 @@
                 "kind": "github"
               },
               "model": {
-                "version": ""
+                "version": "v1.2.1"
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
+                  "configuration",
+                  "spec",
                   "deploymentID"
                 ]
               ]
@@ -60,8 +59,6 @@
           {
             "id": null,
             "kind": "Deployment",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -71,14 +68,15 @@
                 "kind": "github"
               },
               "model": {
-                "version": ""
+                "version": "v1.2.1"
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
+                  "configuration",
+                  "status",
                   "deploymentID"
                 ]
               ]
@@ -92,7 +90,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

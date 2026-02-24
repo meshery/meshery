@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Wires a VpcLink into an Integration for private backend connectivity.",
+    "description": "You are binding a VPC Link to an Integration to enable private backend connectivity.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -17,7 +17,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "model": {
       "version": "v1.2.1"
@@ -31,8 +31,6 @@
           {
             "id": null,
             "kind": "Integration",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -42,15 +40,16 @@
                 "kind": "github"
               },
               "model": {
-                "version": ""
+                "version": "v1.2.1"
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "status",
-                  "vpcLinkID"
+                  "configuration",
+                  "spec",
+                  "connectionID"
                 ]
               ]
             }
@@ -60,8 +59,6 @@
           {
             "id": null,
             "kind": "VPCLink",
-            "match": {},
-            "match_strategy_matrix": null,
             "model": {
               "version": "",
               "name": "aws-apigatewayv2-controller",
@@ -71,15 +68,16 @@
                 "kind": "github"
               },
               "model": {
-                "version": ""
+                "version": "v1.2.1"
               }
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "spec",
-                  "connectionID"
+                  "configuration",
+                  "status",
+                  "vpcLinkID"
                 ]
               ]
             }
@@ -92,7 +90,7 @@
       }
     }
   ],
-  "subType": "Binding",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
