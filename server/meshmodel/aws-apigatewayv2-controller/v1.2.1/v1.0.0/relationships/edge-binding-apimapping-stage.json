@@ -1,14 +1,8 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "kind": "hierarchical",
+  "kind": "Edge",
   "metadata": {
-    "description": "A Route is logically contained within a parent API.",
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "isAnnotation": false
+    "description": "Binding relationship where an APIMapping grabs the Stage name configuration."
   },
   "model": {
     "name": "aws-apigatewayv2-controller",
@@ -25,40 +19,7 @@
       "allow": {
         "from": [
           {
-            "kind": "Route",
-            "model": {
-              "name": "aws-apigatewayv2-controller"
-            },
-            "match": {
-              "from": [
-                {
-                  "kind": "Route"
-                }
-              ],
-              "to": [
-                {
-                  "kind": "API"
-                }
-              ]
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "apiRef",
-                  "from",
-                  "name"
-                ]
-              ],
-              "description": "Target the apiRef field in the Route"
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "API",
+            "kind": "Stage",
             "model": {
               "name": "aws-apigatewayv2-controller"
             },
@@ -66,18 +27,38 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "configuration",
+                  "spec",
+                  "stageName"
                 ]
               ],
-              "description": "Source the Kubernetes object name from the API"
+              "description": "Extracts the stageName string from the Stage component."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "APIMapping",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "stage"
+                ]
+              ],
+              "description": "Injects the Stage name string into the APIMapping configuration."
             }
           }
         ]
       }
     }
   ],
-  "subType": "inventory",
-  "status": "enabled",
-  "type": "parent",
+  "subType": "Binding",
+  "type": "Edge",
   "version": "v1.0.0"
-}
+} 

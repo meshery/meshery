@@ -1,14 +1,8 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "kind": "hierarchical",
+  "kind": "Edge",
   "metadata": {
-    "description": "A Route is logically contained within a parent API.",
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "isAnnotation": false
+    "description": "Binding relationship where an APIMapping links to a specific API via reference."
   },
   "model": {
     "name": "aws-apigatewayv2-controller",
@@ -25,21 +19,26 @@
       "allow": {
         "from": [
           {
-            "kind": "Route",
+            "kind": "API",
             "model": {
               "name": "aws-apigatewayv2-controller"
             },
-            "match": {
-              "from": [
-                {
-                  "kind": "Route"
-                }
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
               ],
-              "to": [
-                {
-                  "kind": "API"
-                }
-              ]
+              "description": "Extracts the Kubernetes object name from the API component."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "APIMapping",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
             },
             "patch": {
               "patchStrategy": "replace",
@@ -52,32 +51,14 @@
                   "name"
                 ]
               ],
-              "description": "Target the apiRef field in the Route"
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "API",
-            "model": {
-              "name": "aws-apigatewayv2-controller"
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "name"
-                ]
-              ],
-              "description": "Source the Kubernetes object name from the API"
+              "description": "Injects the API object name into the APIMapping apiRef."
             }
           }
         ]
       }
     }
   ],
-  "subType": "inventory",
-  "status": "enabled",
-  "type": "parent",
+  "subType": "Binding",
+  "type": "Edge",
   "version": "v1.0.0"
-}
+} 

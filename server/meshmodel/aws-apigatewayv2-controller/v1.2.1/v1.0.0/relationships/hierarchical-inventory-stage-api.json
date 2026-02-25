@@ -1,6 +1,5 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
     "description": "A Stage is logically contained within a parent API.",
@@ -12,16 +11,13 @@
     "isAnnotation": false
   },
   "model": {
-    "version": "",
     "name": "aws-apigatewayv2-controller",
-    "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "registrant": {
-      "kind": ""
+    "version": "v1.2.1",
+    "displayName": "AWS API Gateway v2",
+    "category": {
+      "name": "Cloud Native Network"
     },
-    "model": {
-      "version": "v1.2.1"
-    }
+    "subCategory": "Service Proxy"
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -29,52 +25,21 @@
       "allow": {
         "from": [
           {
-            "id": null,
             "kind": "Stage",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
             "match": {
               "from": [
                 {
-                  "id": null,
-                  "kind": "Stage",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "apiID"
-                    ]
-                  ]
+                  "kind": "Stage"
                 }
               ],
               "to": [
                 {
-                  "id": null,
-                  "kind": "API",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "name"
-                    ]
-                  ]
+                  "kind": "API"
                 }
               ]
-            },
-            "match_strategy_matrix": [
-              [
-                "to_contains_from"
-              ]
-            ],
-            "model": {
-              "version": "",
-              "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
             },
             "patch": {
               "patchStrategy": "replace",
@@ -82,77 +47,32 @@
                 [
                   "configuration",
                   "spec",
-                  "apiID"
+                  "apiRef",
+                  "from",
+                  "name"
                 ]
-              ]
+              ],
+              "description": "Target the apiRef field in the Stage"
             }
           }
         ],
         "to": [
           {
-            "id": null,
             "kind": "API",
-            "match": {
-              "from": [
-                {
-                  "id": null,
-                  "kind": "Stage",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "apiID"
-                    ]
-                  ]
-                }
-              ],
-              "to": [
-                {
-                  "id": null,
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "name"
-                    ]
-                  ]
-                }
-              ]
-            },
-            "match_strategy_matrix": [
-              [
-                "to_contains_from"
-              ]
-            ],
             "model": {
-              "version": "",
-              "name": "aws-apigatewayv2-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
+              "name": "aws-apigatewayv2-controller"
             },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
                   "name"
                 ]
-              ]
+              ],
+              "description": "Source the Kubernetes object name from the API"
             }
           }
         ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
       }
     }
   ],

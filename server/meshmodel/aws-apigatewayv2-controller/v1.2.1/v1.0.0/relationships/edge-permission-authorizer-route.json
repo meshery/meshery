@@ -1,14 +1,8 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "kind": "hierarchical",
+  "kind": "Edge",
   "metadata": {
-    "description": "A Route is logically contained within a parent API.",
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "isAnnotation": false
+    "description": "Permission relationship where an Authorizer grants access to a Route by injecting its name into the Route's authorizerRef."
   },
   "model": {
     "name": "aws-apigatewayv2-controller",
@@ -25,40 +19,7 @@
       "allow": {
         "from": [
           {
-            "kind": "Route",
-            "model": {
-              "name": "aws-apigatewayv2-controller"
-            },
-            "match": {
-              "from": [
-                {
-                  "kind": "Route"
-                }
-              ],
-              "to": [
-                {
-                  "kind": "API"
-                }
-              ]
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "apiRef",
-                  "from",
-                  "name"
-                ]
-              ],
-              "description": "Target the apiRef field in the Route"
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "API",
+            "kind": "Authorizer",
             "model": {
               "name": "aws-apigatewayv2-controller"
             },
@@ -69,15 +30,35 @@
                   "name"
                 ]
               ],
-              "description": "Source the Kubernetes object name from the API"
+              "description": "Extracts the Kubernetes object name from the Authorizer."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Route",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "authorizerRef",
+                  "from",
+                  "name"
+                ]
+              ],
+              "description": "Injects the Authorizer name into the Route's authorizerRef configuration."
             }
           }
         ]
       }
     }
   ],
-  "subType": "inventory",
-  "status": "enabled",
-  "type": "parent",
+  "subType": "Permission",
+  "type": "Edge",
   "version": "v1.0.0"
 }
