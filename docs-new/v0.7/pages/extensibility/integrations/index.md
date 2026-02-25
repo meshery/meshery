@@ -30,7 +30,7 @@ UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
 
     {% for item in sorted_index %}
     {% if item.type=="extensibility" and item.category=="integrations" and item.list=="include" and item.language == "en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      <li><a href="{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract %}
         -  {{ item.abstract }}
       {% endif %}
