@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	meshkiterros "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -74,9 +73,6 @@ mesheryctl model delete [model-name]
 			&selectedModel,
 		)
 		if err != nil {
-			if meshkiterros.GetCode(err) == utils.ErrNotFoundCode {
-				return ErrModelNotFound(modelArg)
-			}
 			return err
 		}
 
