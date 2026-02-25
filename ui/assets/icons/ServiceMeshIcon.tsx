@@ -18,7 +18,7 @@ const ServiceMeshIcon = (props) => {
     >
       <defs>
         <style>
-          {`.cls-1{fill:${fill}}.cls-3{opacity:0.8;fill:none;stroke:${fill};stroke-miterlimit:10;stroke-width:5px}`}
+          {`.cls-1{fill:${fill}}.cls-3{opacity:0.8;fill:none;stroke:${fill};strokeMiterlimit:10;strokeWidth:5px}`}
         </style>
       </defs>
       <g id="Layer_2" data-name="Layer 2">

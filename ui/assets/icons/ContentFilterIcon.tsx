@@ -16,11 +16,10 @@ const ContentFilterIcon = (props) => {
       style={{ ...props.style }}
       fill={props.fill ? props.fill : "currentColor"}
     >
-
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z" fill={props.fill}/>
+      {/* Changed fillRule  to fillRule and cliprule to clipRule below */}
+      <path fillRule="evenodd" clipRule="evenodd" d="M10 18H14V16H10V18ZM3 6V8H21V6H3ZM6 13H18V11H6V13Z" fill={props.fill}/>
     </svg>
   );
 };
 
 export default ContentFilterIcon;
-

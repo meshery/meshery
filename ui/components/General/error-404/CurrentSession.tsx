@@ -34,8 +34,6 @@ const CurrentSessionInfo = () => {
     // error: providerRolesError,
   } = useGetUserProviderRolesQuery();
 
-  console.log('rolesRes', rolesRes, 'providerRolesRes', providerRolesRes);
-
   return (
     <ErrorSectionContent>
       <div>

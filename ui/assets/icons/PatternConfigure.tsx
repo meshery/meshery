@@ -13,7 +13,7 @@ const PatternConfigureIcon = ({ height = '24', width = '24', fill = 'currentColo
     <defs>
       <style>
         {
-          '.cls-1{fill:fill;}.cls-2{fill:fill;}.cls-3{fill:white;stroke:none;stroke-miterlimit:10;stroke-width:10px;}.cls-4{fill:fill;}'
+          '.cls-1{fill:fill;}.cls-2{fill:fill;}.cls-3{fill:white;stroke:none;strokeMiterlimit:10;strokeWidth:10px;}.cls-4{fill:fill;}'
         }
       </style>
     </defs>
