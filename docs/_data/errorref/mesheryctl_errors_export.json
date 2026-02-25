@@ -322,10 +322,10 @@
         "name": "ErrDesignsNotFoundCode",
         "code": "1037",
         "severity": "Fatal",
-        "long_description": "No Design found with the given name or ID",
+        "long_description": "",
         "short_description": "Design Not Found",
-        "probable_cause": "Design with the given name or ID is not present",
-        "suggested_remediation": "Please check if the given design name or ID is present via 'mesheryctl design list'"
+        "probable_cause": "Design with the given name, ID or path is not present",
+        "suggested_remediation": "Please check if the given design name or ID is present via 'mesheryctl design list' or provide a valid file path"
       },
       "1038": {
         "name": "ErrInvalidDesignFileCode",
@@ -861,7 +861,7 @@
       "1100": {
         "name": "ErrNotFoundCode",
         "code": "1100",
-        "severity": "Fatal",
+        "severity": "Alert",
         "long_description": "",
         "short_description": "Item Not Found",
         "probable_cause": "The item you are searching for is not present.",
@@ -1044,8 +1044,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error creating file",
-        "probable_cause": "Insufficient disk page, filepath could be invalid.",
-        "suggested_remediation": "Verify that the file path is valid, and ensure there is sufficient disk space available."
+        "probable_cause": "Insufficient disk space\n Filepath could be invalid\n Lack of permissions to create file at the specified path",
+        "suggested_remediation": "Verify that the file path is valid\n Ensure there is sufficient disk space available\n Check your permissions for the specified path"
       },
       "1124": {
         "name": "ErrRetrieveHomeDirCode",
@@ -1304,9 +1304,9 @@
         "code": "1155",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid flag provided",
-        "probable_cause": "The flag provided is invalid.",
-        "suggested_remediation": "Provide a valid flag"
+        "short_description": "Invalid flag(s) provided",
+        "probable_cause": "The value for one or more flags provided is invalid.",
+        "suggested_remediation": "Provide valid flag value and try again."
       },
       "1156": {
         "name": "ErrMesheryServerNotRunningCode",
@@ -1640,6 +1640,24 @@
         "short_description": "Invalid API response",
         "probable_cause": "The API response is missing expected fields or has an unexpected format",
         "suggested_remediation": "Ensure the Meshery server is running a compatible version\nCheck for any issues with the Meshery server that may cause it to return malformed responses"
+      },
+      "1200": {
+        "name": "ErrDeleteModelCode",
+        "code": "1200",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete model",
+        "probable_cause": "The specified model ID may not exist",
+        "suggested_remediation": "Verify the model ID using `mesheryctl model list`"
+      },
+      "1201": {
+        "name": "ErrCommandContextMissingCode",
+        "code": "1201",
+        "severity": "Alert",
+        "long_description": "A required context for command is missing or not specified",
+        "short_description": "",
+        "probable_cause": "The command may require a specific context to be set in order to function properly",
+        "suggested_remediation": "Ensure that the necessary contextis defined in the root command file and try again"
       }
     }
   }

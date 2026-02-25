@@ -1,0 +1,20 @@
+version: 0.0.1
+name: glusterfs-service
+displayName: GlusterFS Service
+createdAt: "2023-11-22T04:46:39Z"
+description: 'GlusterFS is implemented as a distributed storage backend that spans multiple nodes, ensuring high availability and data redundancy. This design typically includes components such as GlusterFS servers deployed across Kubernetes nodes, which collectively form a distributed storage pool accessible to applications running in the cluster. The design leverages Kubernetes'' persistent volume framework to dynamically provision and manage storage volumes backed by GlusterFS, enabling applications to store and retrieve data seamlessly. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b991c21e-5147-4aa9-bb8d-fce2b37bb3c3/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "While GlusterFS offers scalability, performance can vary depending on the workload and network conditions. Latency issues may arise \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: dbc3408b-886d-423f-9a1d-f02316ce711a
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

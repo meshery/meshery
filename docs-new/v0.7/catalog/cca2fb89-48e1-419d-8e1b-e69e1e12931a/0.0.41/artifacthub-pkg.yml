@@ -1,0 +1,24 @@
+version: 0.0.41
+name: ec2-instances
+displayName: EC2-INSTANCES
+createdAt: "2024-10-31T19:48:36Z"
+description: 'This design has two EC2 instances, a Bastion host that will be deployed in a public Subnet and a private Instance that will be deployed in a private subnet. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/cca2fb89-48e1-419d-8e1b-e69e1e12931a/0.0.41/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Before deploying this design, ensure that the EC2 Controller design is deployed first, followed by the VPC Workflow design.\n\n2; You have to Configure the Security Group ID and Subnet ID for both components. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cca2fb89-48e1-419d-8e1b-e69e1e12931a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cca2fb89-48e1-419d-8e1b-e69e1e12931a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

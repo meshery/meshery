@@ -1,8 +1,8 @@
 ---
 title: Infrastructure Management
 aliases: 
-- tasks/application-management
-- tasks/infrastructure-management
+- /tasks/application-management
+- /tasks/infrastructure-management
 categories: [infrastructure]
 description: Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.
 ---
@@ -57,9 +57,9 @@ if connection.Kind == "artifacthub" ➜ Helm Go client used
 if connection.Kind == "kubernetes" ➜ Kubernetes Go client used
 </pre>
 
-{{< alert type="info" title="Implementation Detail" >}}
+{{% alert color="info" title="Implementation Detail" %}}
 This logic is handled in the <code>NewDependencyHandler()</code> function, which selects the deployment method based on <code>connection.Kind</code>.
-{{< /alert >}}
+{{% /alert %}}
 
 <h4>5. Provisioning</h4>
 <p>A Directed Acyclic Graph (DAG) generated in the previous step is processed. Dependent components are processed sequentially, while others are processed in parallel. Meshery intelligently handles the deployment order to ensure successful deployment.</p>
@@ -85,6 +85,6 @@ This logic is handled in the <code>NewDependencyHandler()</code> function, which
 
 </details>
 
-{{< alert type="info" title="Upcoming Features" >}}
+{{% alert color="info" title="Upcoming Features" %}}
 <p>Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility. Support for OCI registries is expected in the near future.</p><p><b>1. Custom Models and Components:</b> Import your own models for more flexibility.</p><p><b>2. OCI Registry Support:</b> In addition to ArtifactHub, OCI registries will be supported soon.</p>
-{{< /alert >}}
+{{% /alert %}}
