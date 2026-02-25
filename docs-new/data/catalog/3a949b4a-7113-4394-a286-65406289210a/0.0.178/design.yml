@@ -1,0 +1,3517 @@
+{
+  "id": "3a949b4a-7113-4394-a286-65406289210a",
+  "name": "Design Annotation Patterns",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.178",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "72fdfc0b-22c6-4a9f-af52-074523193976",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 48.62719565932603,
+          "y": -183.75307276428788
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 487
+      },
+      "capabilities": [],
+      "status": "open",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "lastUpdated": "2025-09-03T11:17:31.987Z",
+        "userMessages": [
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "This is an example of using a section. You can put a lot of content inside of it.",
+            "timestamp": "2025-09-03T11:15:14.414Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          },
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "The size of the section is automatically adjusted to enclose all of its content.",
+            "timestamp": "2025-09-03T11:15:51.157Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          },
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "Click the section and choose 'rename component' to give your section a unique title in the top-left corner.",
+            "timestamp": "2025-09-03T11:17:31.987Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          }
+        ]
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "70b75de7-d500-42cc-a881-007d22bc5521",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": -619.6515865253152,
+          "y": -158.42943668469297
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 486
+      },
+      "capabilities": [],
+      "status": "open",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "lastUpdated": "2025-09-03T11:19:32.142Z",
+        "userMessages": [
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "There are three different information box templates. You can choose the one that's right for you and copy it directly into your design.",
+            "timestamp": "2025-09-03T11:19:32.142Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          }
+        ]
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4b5284aa-4a60-477b-afc5-13847164d0c6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": -623.3513210058156,
+          "y": -563.861836063278
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 485
+      },
+      "capabilities": [],
+      "status": "open",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "lastUpdated": "2025-09-03T11:22:39.519Z",
+        "userMessages": [
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "You can directly copy this component to use as your title section.",
+            "timestamp": "2025-09-03T11:12:38.550Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          },
+          {
+            "firstName": "Zihan",
+            "lastName": "Kuang",
+            "message": "The component is made up of three separate parts. To copy the entire component, click and drag with your mouse to select all three parts, then copy them together.👍",
+            "timestamp": "2025-09-03T11:22:39.519Z",
+            "userid": "541779b2-bcaa-4826-bb14-377b47c87d01"
+          }
+        ]
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a76c9d37-275e-46cf-bf7c-5220de61e158",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "f8c7aac1-fb0e-2123-4b78-58dda082f562",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-arrows",
+        "displayName": "Meshery Arrows",
+        "description": "Icons that used for pointing out",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#2196F3",
+          "secondaryColor": "#00D3A9",
+          "shape": "polygon",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-arrows/color/meshery-arrows-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-arrows/white/meshery-arrows-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 30,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -664.2562615219276,
+          "y": -559.9269733276581
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-arrows/color/jumpinarrow-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-arrows/complete/jumpinarrow-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-arrows/white/jumpinarrow-white.svg",
+        "width": 30,
+        "z-index": 488
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "JumpInArrow",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b53fd828-9e47-413d-a401-f0984e0ef37a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OTAuNTQgNjg5LjI3Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2JhOGM2Mzt9LmNscy0ye2ZpbGw6I2ZmZjt9LmNscy0ze2ZpbGw6IzAwZDNhOTt9LmNscy00e2ZpbGw6IzNjNDk0ZTt9LmNscy01e2ZpbGw6IzAwYjM5Zjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9IkxheWVyXzIiIGRhdGEtbmFtZT0iTGF5ZXIgMiI+PGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj48ZyBpZD0iV29vZCI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTg2LjQyLDdsLS42Nyw1NS43NUwyMTIsNjQuNzlzMS42NC01Ny42Myw0LjEtNTguNDVTMTg2LjQyLDcsMTg2LjQyLDdaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTg2LjMxLDE2Ni4yNiwxODQuNDksNjc5aDMxLjYycy02LjkzLTQ5OS4zLTQuMTYtNTEyLjc2WiIvPjwvZz48cGF0aCBkPSJNMzUxLjM5LDBjMy40MywyLjcsNyw1LjIsMTAuMjUsOC4xMnEyNi41NSwyNC4wOCw1Mi45NCw0OC4zMmMuMzguMzYuNy43OSwxLjA2LDEuMTlsLTEuNTcsMi4xN0ExOC40MSwxOC40MSwwLDAsMSw0MTEsNTcuODdxLTI1LTIzLjE2LTUwLTQ2LjM4QTU3LjI4LDU3LjI4LDAsMCwwLDM1NS43Nyw3YzIuMjksMTcuNzYsMiwzNS40NSwxLjc1LDUzLjE0bC0uNjUsMGMtLjE0LTMuMTEtLjI3LTYuMjEtLjQyLTkuMzEtLjcxLTE0Ljg1LTEuNC0yOS43LTIuMjEtNDQuNTMtLjA1LTEtMS0yLTEuOTEtMi45MWE0NDIuMDYsNDQyLjA2LDAsMCwxLDIuNDcsNjcuMzFjLTIzLjM3LS4yNC00Ni40My0uNC02OS40OS0uNzMtMTEuNjctLjE3LTIzLjM1LS42NC0zNS0xLTEuMTUsMC0yLjguMzgtMi43NC0xLjU3czEuNzMtMS4zLDIuODQtMS4yOXE1MC4xNi42LDEwMC4zMywxLjI0Yy41OSwwLDEuMTktLjA5LDIuMDYtLjE3LDAtMS4xNi4wNS0yLjIsMC0zLjIzLTEtMTkuNDQtMi4xMy0zOC44Ny0zLjEyLTU4LjMxQTMzLjQ3LDMzLjQ3LDAsMCwxLDM1MC4zMywwWiIvPjxwYXRoIGQ9Ik00MjMuNTksNjUuMDVjLjg3LjU0LDIuMzcsMSwyLjUxLDEuNjYuNTIsMi41NSwyLjgsMi44Myw0LjM3LDQuMDUsMi40MywxLjg5LDQuNzksMy44OSw3LDZxMjMuNywyMi4yMyw0Ny4zNSw0NC41MWMxLjc5LDEuNjcsMy43OCwzLjExLDUuNjgsNC42NnYyLjY1YTI1LjUxLDI1LjUxLDAsMCwxLTMuNSwxLjY4LDIzLjQ5LDIzLjQ5LDAsMCwxLTMuNjguNTVsLS4xOC0uODEsMy41OS0yLjg3Yy0yLjE3LTEuNzEtNC4yMy0zLjEtNi00Ljc4UTQ1Ni4xMiw5OS4yNCw0MzEuNjEsNzZjLS44Ni0uODEtMS4yLTIuMTYtMS45NC0zLjU4LTEuMTktLjU0LTMuMzEtLjg5LTQuMzgtMi4xNFM0MjQuMTIsNjYuODMsNDIzLjU5LDY1LjA1WiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTEwMS41MiwyNTAuNzVhMTcuNDIsMTcuNDIsMCwwLDAtNy4xNC0xMy4xN2MtMi42Ny0yLjEtNS42Mi0uODUtNS44MSwyLjU2QTE2LjU0LDE2LjU0LDAsMCwwLDk0LDI1My4zOWMxLjQsMS4zNCwzLjQsMi4wNiw1LjA3Ljc4QzEwMC4yOSwyNTMuMjEsMTAxLDI1MS41MiwxMDEuNTIsMjUwLjc1Wm0tNS43NCwzOC44NC4zNiwxLjE3YTU0Ljc0LDU0Ljc0LDAsMCwwLDctMS41NGMxMy42NS00Ljg3LDI1LjcyLTEyLjI3LDM0Ljg3LTIzLjY2LDMuMjEtNCw1LjQyLTguODIsNy45My0xMy4zNi41Ni0xLC40Ny0yLjM5LjY3LTMuNjFsLS44NS0uMjNjLS4zNy43My0uNjgsMS40OS0xLjEsMi4xOS0yLjY2LDQuNDctNC44Nyw5LjI5LTguMSwxMy4zLTguODgsMTEtMjAuNzIsMTgtMzMuODEsMjNDMTAwLjQ0LDI4Ny43MSw5OC4xMiwyODguNjcsOTUuNzgsMjg5LjU5Wm0xMi42NS02MC4xNmMwLDMuNzYsMyw5LjksNS45NSwxMiwyLjMzLDEuNjcsNC44MiwxLjE3LDUuODMtMS40OGE4Ljg2LDguODYsMCwwLDAsLjM5LTQuNjIsMTMuNDksMTMuNDksMCwwLDAtNi43My05LjA4QzExMC41NCwyMjQuMjUsMTA4LjQ2LDIyNS41MSwxMDguNDMsMjI5LjQzWk03OC42LDI0My41Myw4NC41LDIyOEM4MC41OCwyMjkuNzUsNzYuNDksMjQwLDc4LjYsMjQzLjUzWm0yNC40OC0yOC40MiwxMi43MSwxLjI0QzExMi42NiwyMTIuMjUsMTA1LjI0LDIxMS44NCwxMDMuMDgsMjE1LjExWiIvPjxwYXRoIGQ9Ik04Ni42OCwyMDMuNWMtMS4wOC44NC0yLjEyLDEuNzYtMy4yNiwyLjUxYTcuNzgsNy43OCwwLDAsMS0zLDEuNDZjLTEwLjcxLDEuMjktMTguODEsNi44OS0yNS4xLDE1LjI5LTExLjE4LDE0LjkzLTE0LjM0LDMyLTExLjY4LDUwLDEuNjIsMTAuOTUsNy44OSwxOS41NSwxNi40MSwyNi40Nyw5LjA4LDcuMzcsMTkuMjUsMTIuNjQsMzAuODQsMTQuNTMsMTIuNDYsMiwyNC43NywxLjEsMzYuMjctNC41NywxNi41Ny04LjE2LDI3LjE4LTIxLjUzLDI5LjgxLTM5LjY2LDUuNDItMzcuNC0yMi41My02MS4wOC00Ni44OS02NS42NS01LjkxLTEuMTEtMTIuMTQtLjQ2LTE4LjIzLS41Ny0xLjc1LDAtMy41MS4xLTUuMjcuMTYsMS43NC0yLjM5LDQuNC0yLjc0LDctMy4xMywzNi42NC01LjQyLDcxLDI3LjExLDY3LjI4LDY0LjQyLTEuNjgsMTYuNzktMTAsMjkuOTMtMjIuNTksNDAuNjctMywyLjU0LTMuMDksMi40NC0xLjQzLDZxMi43Miw1Ljc2LDUuNSwxMS40OGEyMy43NSwyMy43NSwwLDAsMCwxLjM0LDIuMTFxMTkuNDctOCwzOS4xNy0xNi4xMWMuNDYsMS42NSwwLDIuNzMtMS44NCwzLjQ2LTExLjEsNC4zOC0yMi4xNSw4Ljg4LTMzLjI1LDEzLjI2LTMuNiwxLjQyLTMuNzQsMS4zNC0yLjI5LDUuMDZBMzgxLDM4MSwwLDAsMSwxNjMuMDcsMzkxYzEsNSwzLjY4LDI0LjUyLDQuNjcsMjkuNzQtLjg4LjMtMi4yNS0xLjI4LTMuMDUtMS0yLjg5LTEyLjY3LTYuNzMtMzcuODctOS44Ni01MC4zNWEyMTguOSwyMTguOSwwLDAsMC0xMi4yNi0zNi40NmMtLjY1LDQuNzgtMS40Myw5LjU0LTEuOTQsMTQuMzMtMi4zNCwyMi4xOC00LjUsNDQuMzgtNyw2Ni41NC0uNDgsNC4yOS43OCw2LjU0LDQuNTMsOC43OGE4Ny4zLDg3LjMsMCwwLDAsNDQuOTQsMTIuNDksNC4yMiw0LjIyLDAsMCwwLDMuODMtMS43M2MzLjEtNCw3LjYyLTUuNTcsMTIuMy02Ljc5LDEuMy0uMzQsMi4zNy0uNTcsMi40NS0yLjQ3LDEuMTEtMjUuMiwyLjM5LTUwLjM5LDMuNDYtNzUuNi4zMS03LjMzLjA3LTE0LjY5LjA5LTIyYTEuOCwxLjgsMCwwLDEsLjQ0LTEuMjNjMywzMy40LTIuNDQsNjYuNjMtMi4xMSwxMDAuMThoNy40NmMwLTMzLjY1LjEtNjcuMDksMC0xMDAuNTJzLS40OC02Ni45MS0uNzQtMTAwLjY0YzEuODYtLjgzLDIsLjY0LDIsMi4zLjM1LDIwLC45MSw0MCwxLDYwLC4yNSw0My45Mi4yOCw4Ny44NC40LDEzMS43NiwwLC43MS4wNiwxLjQyLDAsMi4xMi0uMTYsMi44NiwwLDUuNDIsMy42Miw2LjE0YTUuODEsNS44MSwwLDAsMSwyLjU0LDEuODVjNC45Miw1LDMuOSwxMS4wOC0yLjU2LDEzLjgtMi4zNCwxLTIuNzEsMi4xNC0yLjY4LDQuNTEuNDMsMjkuNTcuODQsNTkuMTMsMSw4OC43LjI0LDQzLjY2LjI3LDg3LjMxLjQzLDEzMSwwLDIuNzEuMzMsNS40MS41Niw4Ljc5LDEuMTktMS4wOSwxLjk0LTEuNzUsMi42Ni0yLjQ1YTYxLjI2LDYxLjI2LDAsMCwxLDI0Ljk0LTE1LjEzYzIuMzctLjczLDQuODQtMS4zOCw3LjM2LjA3bC03LjIyLDIuMmE1NS44Miw1NS44MiwwLDAsMC0yNS4yOCwxNS45NGMtMS41MSwxLjYzLTIuNjEsMy4yNy0yLjQ5LDUuNjFhMy40NywzLjQ3LDAsMCwxLTEuMiwyLjUxbC0uNzMtMi40NmMtLjkuODQtMS42OSwxLjU5LTIuNTEsMi4zMXMtMS43MywxLTEuOTUtLjU5bC0uMS4wOWMzLjQ0LTMsNC4wOS02LjU2LDMuOTEtMTEuMjMtLjc2LTIwLTEuMDktNDAtMS4xNi02MC0uMTctNDkuNDEtLjA4LTk4LjgxLS4xNi0xNDguMjIsMC01LjY2LS41Mi0xMS4zMi0uNjUtMTctLjA1LTIuMTYtMS0yLjc2LTMtMi41Mi0xLjc1LjIyLTMuNTIuMy01LjY3LjQ3djcuNTFsLTEuMTUsMGMwLTEuNjUtLjA5LTMuMzIsMC01LC4xMi0xLjktLjYyLTIuNjMtMi41NS0yLjgxYTQ1LjcsNDUuNywwLDAsMS04LjMyLTEuNDUsNy44Myw3LjgzLDAsMCwxLTQuMTctMi42NmMtMS42NC0yLjM2LTMuODMtMi41Mi02LjIyLTIuNTQtMTEuODktLjA5LTIzLjQ5LTEuNzgtMzQuMy03LTUuMzEtMi41Ni0xMC4zNi01LjctMTUuNDUtOC43MmEzLDMsMCwwLDEtLjk0LTIuNDdxNC4xNi0zOC41Myw4LjQ4LTc3LC42OC02LjA3LDEuNjktMTIuMDlhMTAuOTMsMTAuOTMsMCwwLDAtMS02Ljg4Yy0yLjIzLTQuNi00LjI2LTkuMzEtNi41MS0xNC4yOS0xLjIxLjU4LTIuMywxLjA1LTMuMzYsMS42LTI3LjUzLDE0LjUyLTYxLjI0LDUuMzYtNzkuNzQtMTYuNTMtNy45LTkuMzYtMTAuMjktMjAuMzctMTAuMDctMzIuNC4zMy0xNy43Miw2LjMxLTMzLDE4LjI0LTQ2YTM3LjU5LDM3LjU5LDAsMCwwLDQuNDEtNi45MWM2LjI4LTExLjEsMTUuODktMTguMzMsMjcuMjItMjMuNTdhMi40OSwyLjQ5LDAsMCwxLDIuMDYuMTMsMzMuMTEsMzMuMTEsMCwwLDEtMi42NSwyLjExYy0zLjkzLDIuNTYtOCw0Ljk0LTExLjgzLDcuNmE0NC4wOCw0NC4wOCwwLDAsMC0xMi40NiwxMy42MWMtLjMuNDktLjUsMS0uODIsMS43M0w4NS43MSwyMDJaTTIwMy4zNiw0NDEuNzZhMjcuNTQsMjcuNTQsMCwwLDAsMTMuOTQtMi4yNWMzLjItMS42MSwzLjY4LTMuMjYsMS44Ny02LjM2LTIuOC00LjgyLTktNi43LTE1LjgxLTQuNzJaTTIwMS43Niw0MjhjLTQuNTcsMS04LjU0LDItMTEuNzUsNC44OGE0LjIzLDQuMjMsMCwwLDAsLjQ1LDYuMjZjMy40MiwyLjI0LDcuMjksMi43NiwxMS4zLDIuNzhaIi8+PHBhdGggZD0iTTM1MS44MSwxNTUuOTNjMS4xNSwxMy43NS0uMTksMjcuNjcuMDUsNDEuNnExLTE2LjY4LDEuOTQtMzMuMzZsLjczLS4wOWExMiwxMiwwLDAsMSwuNDksMi4yNGMuMjYsMTIuNzEtMS4zMiwyNS4yNi0zLjIxLDM3Ljc4LTEsNi40NS0xLjc0LDEyLjkzLTIuNTYsMTkuNGEyLjQ0LDIuNDQsMCwwLDAsLjUzLDEuNDFjLjMxLTEuNzEuNTctMy4wOSwyLjY3LTEuNjguMzQuMjMsMS41My0uNjksMi4yNi0xLjE5LDE2LjYzLTExLjQyLDMzLjQ2LTIyLjU0LDQ5LjgxLTM0LjM1LDIzLTE2LjYzLDQ1LjY2LTMzLjc4LDY4LjQ3LTUwLjY5LDIuMTktMS42Miw0LjQ3LTMuMTEsNi43Ni00LjcsMS42NiwxLjU4Ljc1LDIuNDQtLjU2LDMuMzctOC4zNyw2LTE2Ljc3LDExLjg0LTI1LDE3LjkyLTIzLjQ1LDE3LjI1LTQ2LjY4LDM0Ljc5LTcwLjMyLDUxLjc4LTEwLjg5LDcuODQtMjIuNSwxNC42OC0zMy44NSwyMS44OC0xLjEuNy0yLjYzLjcyLTQsMS4wNi4wNS0xLjIzLDAtMi40Ni4xNi0zLjY3YTQ5Ni4xMiw0OTYuMTIsMCwwLDAsMy4xLTYzLjA4LDE3LjYzLDE3LjYzLDAsMCwwLS4yNy0xLjc1bC0xNjAuODQsN2MwLDguMjYsMCwxNS43NywwLDIzLjI3YTE0LjQ5LDE0LjQ5LDAsMCwxLTEsMy41OWwtMS0uMThjLS4xNC0yLjMzLS4zNS00LjY3LS40LTctLjEyLTUuNC0uMi0xMC44LS4yMS0xNi4yLDAtMi4xNC0uNzktMi45MS0zLTIuNzgtMTAuNi42MS0yMS4yMSwxLjA4LTMxLjgxLDEuNjFsLTQ5LjMyLDIuNS04Ny4yMiw0LjQ4Yy0uNzEsMC0xLjQxLjA5LTIuMTIuMTEtMi4xMy4wNi00LjU2LS42Ni01LjM5LDIuNjNMNiwxNzguNTRhMTEuMjksMTEuMjksMCwwLDEtLjc2LTMuMDhxLjYyLTE1Ljc4LDEuNDMtMzEuNTdhMjEuMywyMS4zLDAsMCwxLDEtMy45M2wuNDMuNi43My0uMDVjLS4zOC0zLS43NS02LTEuMTMtOWEyNy45LDI3LjksMCwwLDEtLjQ1LTMuMWMtLjM5LTIyLjY2LS43MS00NS4zMi0xLjE5LTY4LS4wNy0zLjU3LTEtNy4xMy0xLjMxLTEwLjcxQzQuNiw0Ny45Miw2LDQ3LjMsNy41NCw0Ny4zNWMzLjYzLjEzLDcuMjYuMjIsMTAuODcuNiwyNy4wOSwyLjg4LDU0LjE2LDYsODEuMjgsOC42OCwxNy4xNiwxLjY4LDM0LjQsMi42OCw1MS42MSwzLjkyLDEwLjA2LjczLDIwLjEzLDEuMzMsMzAuMTksMiwxLC4wNiwyLjExLDAsMy42MSwwLDAtMS4xNywwLTIuMjgsMC0zLjM5LjA2LTE0LjYxLjEtMjkuMjIuMi00My44M2E1NC40NCw1NC40NCwwLDAsMSwuNDQtNi44OGMuNDYtMy41NCwyLjQ5LTQuNDMsNS40Mi0yLjZsNS41LTQuMTNjLjMzLDIsLjQ2LDMsMi43NywyLjgzLDQuMTgtLjIzLDguNDIuNTQsMTIuNzYuOS0uNTQsMi43Ni0zLDEuNDYtNC4xNCwyLjA1LS4yLDQuNDItLjM5LDguNjQtLjU5LDEyLjg2aC0xVjhIMjAxYzEuNDUsMTQtLjQsMjcuNjctMS44Miw0MS4zOGwtLjc4LDBjLjE3LTIuMzEuNDQtNC42My40OS02Ljk0LjI1LTEwLjU0LjM5LTIxLjA3LjY4LTMxLjYuMS0zLjUyLTMtMy4zMi01LjMtNS4zNS0uMywzLS42Niw1LjI1LS43Myw3LjUzLS4yNSw3Ljc2LS4zOSwxNS41Mi0uNTgsMjMuMjlsLTEuMjUsMFYzMy40OGMwLTctLjA3LTE0LDAtMjEsMC0yLjI5LTEuMTItMy4yOS0zLjM5LTQuMTNWNjIuODJsMjIsMS4zN2MuOC0xNi42LDEuNjEtMzMuMDgsMi40MS00OS41N2wtLjM5LS4xNC00LjcsMTAuMTEtLjctLjI2TDIxMS44NCwxMGwxLjgyLDEuMjRjLjYtMS41NSwxLjE0LTMsMS44My00LjcybDEuNzYtLjE4Yy4xNS4zMS4zMS41LjI4LjYtNC43LDEyLjg4LTIuNDQsMjYuNDItMy42MywzOS42Mi0uNTIsNS43LS4wOSwxMS40OC0uMDksMTcuNTksMS41MS4xNSwzLjQuNDIsNS4zLjUzLDcuNjkuNDEsMTUuMzguNzUsMjMuMDcsMS4xNmE3LjU0LDcuNTQsMCwwLDEsMi41NC41NGMuMzguMTYuNjIuODYuNzIsMS4zNiwwLC4xOS0uNTEuNDktLjc5Ljc0bC0uNjgtLjljLTIsLjMxLTMuOTIsMS01LjgxLjg2cS0zOS4yMi0yLjE3LTc4LjQ1LTQuNTVjLTE2LjA3LTEtMzIuMTUtMi00OC4xOS0zLjM5LTE4LjUxLTEuNjItMzctMy42LTU1LjQ1LTUuNTgtMTMuODEtMS40OC0yNy41OS0zLjIyLTQxLjM5LTQuODJhMTguNjgsMTguNjgsMCwwLDAtMi40OCwwbDEuMTYsNDAuMzUtLjgxLjA3Yy0uMDktMS4yMS0uMjItMi40MS0uMjktMy42My0uNTktMTEuMjItMS4xNC0yMi40NC0xLjgtMzMuNjZhMTIuODEsMTIuODEsMCwwLDAtMS4xMi0zLjMxbC0uNjguMjRjLjUzLDIwLjU0LDEuNTUsNDEuMDcsMS40NCw2MS42cy0xLjMzLDQxLTIuMDksNjIuMDVjNC41NC0uMjMsOS4xOC0uNDQsMTMuODEtLjczLDE2LjQzLTEsMzIuODUtMi4xNyw0OS4yOC0zcTU3LjI3LTMsMTE0LjU0LTUuNzNjMjctMS4zNCw1My45Mi0yLjcsODAuODgtMy45LDI2LjE3LTEuMTcsNTIuMzUtMi4xMyw3OC41Mi0zLjI1QTQ5LjQ3LDQ5LjQ3LDAsMCwwLDM1MS44MSwxNTUuOTNaIi8+PHBhdGggZD0iTTEyNC4wOCw2ODEuMDVjMS40My02LDIuOTItMTEuODMsNC4xOC0xNy42OXExNy4wNi03OS40NywzNC4wNi0xNTljMS43Mi04LDMuMjctMTYuMTQsNS42MS0yNCwyLTYuODMsMi0xMy41MSwxLjA4LTIwLjQxLS44Ny02Ljc0LTEuNC0xMy41My0yLjA4LTIwLjM1LDIuNDYtMSwzLjExLjI4LDMuMjYsMi4yMi43Nyw5LjcsMS40OSwxOS40LDIuMzEsMjkuMWExMC43NywxMC43NywwLDAsMCwxLjA5LDQuMjVjMi40NCw0LjQxLDUuMjIsOC42Myw3LjYsMTMuMDZhODEsODEsMCwwLDEsMy4zNSw4LjE1bC0xLjI0LjY1Yy00LTYuMzgtOC4wNS0xMi43NS0xMi4zNy0xOS42MS0uNDgsMS41Ni0uOTIsMi42NS0xLjE2LDMuNzktNC40NCwyMS41Ni04LjY4LDQzLjE2LTEzLjMzLDY0LjY3cS0xNC4xOSw2NS43Mi0yOC43NSwxMzEuMzRjLTIuMTMsOS42NC0yLjgsMTAuMTgtMTIuNzQsMTAuMjYtOC4zOS4wNy0xNi43OC0uMjYtMjUuMTctLjU5YTE1LjUzLDE1LjUzLDAsMCwxLTUuMzQtMS40Yy0zLTEuMjktMy4zMS0zLjY0LS44Ni01Ljc3LDIuODktMi40OSw2LjQ3LTMuMTUsMTAuMTMtMy40LDkuMS0uNiwxOCwuMjYsMjYuNjEsMy41NUMxMjEuNDUsNjgwLjMzLDEyMi42Myw2ODAuNjEsMTI0LjA4LDY4MS4wNVptLTM5LjI2LjM3YzMuNDIsMy41NSwyOC40NSw1LjIzLDM3Ljc1LDIuNjZDMTEyLjQ2LDY3OC4zLDkxLjY0LDY3Ni4zNiw4NC44Miw2ODEuNDJaIi8+PHBhdGggZD0iTTE4NC4zOSw0MzEuOTJhMTQuMzksMTQuMzksMCwwLDEtLjQ2LTIuNjZxLjE5LTIxLC40OC00MS45M2MuMTUtMTIuMjIuMzgtMjQuNDMuNDktMzYuNjRxLjYtNzAuOSwxLjEzLTE0MS44MWMwLTEuMSwwLTIuMjEsMC0zLjMxbDEtLjE4Yy40NCwxLjk0LDEuMjksMy44OCwxLjI3LDUuODJxLS4zNiw2MC4xNS0uOTMsMTIwLjI5Yy0uMzMsMzAuOC0uODgsNjEuNi0xLjM2LDkyLjQsMCwyLjY3LS4zMyw1LjMzLS41LDhaIi8+PHBhdGggZD0iTTE4NC40Niw0NDEuMTFjMi4zOSwwLDIuMjUsMS42MiwyLjI5LDMsLjM1LDkuODIsMSwxOS42NC45MiwyOS40Ni0uMiwzNC44OC0uNiw2OS43NS0xLDEwNC42M3EtLjQ1LDQwLjg4LTEsODEuNzdjMCwxLjQxLS4xMywyLjgyLS4yMyw0LjIzLDAsLjEyLS4yMy4yMi0uODcuNzlhMjIuNjgsMjIuNjgsMCwwLDEtMS00LjMyYy0uMi0xMC41My0uNTctMjEuMDYtLjM3LTMxLjU5LjY1LTM0LDEuODktNjcuOTQsMi4xOC0xMDEuOTIuMjMtMjcuNDMtLjU4LTU0Ljg4LS45Mi04Mi4zMUMxODQuNDUsNDQzLjYxLDE4NC40Niw0NDIuMzksMTg0LjQ2LDQ0MS4xMVoiLz48cGF0aCBkPSJNMjE1LjczLDI5NC4xOGMtLjE1LTMuMywxLjkxLTQuMzYsMy44Ny01LjI3czIuNjMtMi4yNSwyLjU4LTQuNTNjLS40NC0yMC0xLjM2LTQwLTUuNjctNTkuNjEtLjEtLjQyLS4yLS44My0uMzQtMS4zOWEzMC4zMywzMC4zMywwLDAsMS0xNi44NC01LjdjLTYtNC05Ljk0LTkuNzctMTMuMTItMTYuMDUtMi0zLjg3LDEuNTEtOS4xLDYuMDktOS4zOGExNS41OSwxNS41OSwwLDAsMSwxMS43LDQuMTcsMTEyLjExLDExMi4xMSwwLDAsMSwxMC40OCwxMS4yYzMuMDYsMy43LDQuMTUsOC4xOCw0LjY2LDEzLC43Nyw3LjE5LDIuNzMsMTQuMjcsMy4zLDIxLjQ3LDEuMTIsMTMuOTIsMS42NCwyNy44OSwyLjM3LDQxLjg0LjE1LDIuOC0uNTksNS4wOS0zLjQ0LDYuNDZBNDcuODgsNDcuODgsMCwwLDAsMjE1LjczLDI5NC4xOFptLTIzLjU5LTEwMGExNS41MSwxNS41MSwwLDAsMC0zLjA5LDJjLTEuNjksMS43OC0xLjA3LDMuNzksMCw1LjYyLDUuMTUsOC43NiwxMi4xMiwxNS4zNywyMi4xNSwxOC4xNmEyMy4yLDIzLjIsMCwwLDAsNC41OS4zNWMtLjE3LTEuNjEuMDgtMy40MS0uNTctNC44LTMuNS03LjUtOC40OC0xMy44OC0xNS41Ny0xOC4yOUMxOTcuNDcsMTk1LjgxLDE5NC44MSwxOTUuMjEsMTkyLjE0LDE5NC4xN1oiLz48cGF0aCBkPSJNMjE5LjU1LDU0Ni41MWM1LjA2LDcuNjgsOS44OCwxNS4wNywxNC43NywyMi40MiwyLjI1LDMuMzgsNC43Nyw2LjU5LDYuODcsMTAuMDZhNi4xNSw2LjE1LDAsMCwxLC40Niw0LjE4Yy0yLjksMTIuODQtNi4wNSwyNS42My04LjksMzguNDgtMy4wNywxMy44LTUuODUsMjcuNjYtOC45Miw0MS40Ni0uMzYsMS42Mi0xLjY5LDMtMi41OCw0LjUzbC0xLS40Yy43MS00LjEsMS4yMy04LjI1LDIuMTctMTIuM3E4LTM0LjYxLDE2LjE1LTY5LjE4YTYsNiwwLDAsMC0uNzItNS4xOWMtNi4wNi05LjIzLTExLjk1LTE4LjU4LTE4LTI3LjgxQTUuNDcsNS40NywwLDAsMSwyMTkuNTUsNTQ2LjUxWiIvPjxwYXRoIGQ9Ik0xODguMTEsNjczLjM2bDYuNjUtNiwxLjEuOGMtLjQ2LDQuNTktMi45NCw4LjQ1LTQuOCwxMi41NGwtLjgyLS4yNSwyLjkxLTkuNzktNy4zNSw3LjktLjgzLS4yOGMuNTMtMi41MywxLjA3LTUuMDcsMS43Mi04LjE0TDE4MS40NCw2ODBjLTQtOC41NS03LjcyLTE2LjU3LTExLjQ1LTI0LjZsLS43OS4yOGMzLDguNzcsNiwxNy41NCw1LjI4LDI2LjkybC0uODcuMjZhMTMuNiwxMy42LDAsMCwxLTEtMi42NmMtMS43LTExLjI2LTQuNTMtMjIuMTYtMTAtMzIuMjZhNS4zNCw1LjM0LDAsMCwxLS4zOS0xLjI1LDIuNTksMi41OSwwLDAsMSwuMTUtLjcxLDYuMzQsNi4zNCwwLDAsMSw1LjkxLDMuMmMzLjMsNS4xLDYuNDksMTAuMjksOS4zOSwxNS42MywxLjY4LDMuMDgsMi43MSw2LjUxLDQuMjgsMTAuNCwyLjUzLTUuNzksNS41LTEwLjksMTAuNzQtMTQuNDVxLTIuNTgsNi4zMy01LjE1LDEyLjY3WiIvPjxwYXRoIGQ9Ik0yMDAuNzcsNTc1LjU0bDEuMzUtOTkuMTguNTctLjEzYTcuMTIsNy4xMiwwLDAsMSwuNiwxLjcxYy4xOSwyLjQ3LjQzLDQuOTQuNCw3LjQxcS0uNDksMzUuMTktMS4xMiw3MC4zN2MtLjExLDUuODQtLjYzLDExLjY2LTEsMTcuNDlhMTYuNzEsMTYuNzEsMCwwLDEtLjQ4LDIuNDJaIi8+PHBhdGggZD0iTTEzNy43Nyw2NjIuMzNjLjY5LS42OCwxLjYxLTIuMTgsMi45My0yLjc2LDUuNTgtMi40MSwxMS4zMi0zLjA4LDE2Ljc4LjI0YTMyLjExLDMyLjExLDAsMCwxLDEwLjg2LDExLjA5LDIyLDIyLDAsMCwxLDEuNDcsNC4xNmwtLjkxLjQ1YTEzLjg3LDEzLjg3LDAsMCwxLTEuNTItMS44NGMtMi42Ni00LjY0LTYuNTctOC4wNy0xMC44My0xMS4xM3MtOS4xMS0yLjQ4LTE0LjYyLTEuNTNjNy43NCw0LjYsMTMuNjIsMTAuMDgsMTcuMzEsMTcuNThsLS40OS42YTI4LjA4LDI4LjA4LDAsMCwxLTIuOTMtMi4yNWMtMy4wOC0zLjA1LTUuODktNi40LTkuMTktOS4xOEMxNDQuMTYsNjY1LjY4LDE0MS4wOSw2NjQuMzIsMTM3Ljc3LDY2Mi4zM1oiLz48cGF0aCBkPSJNMTU3LjgsNTk5LjgycTIuNjUsNS40NSw1LjMzLDEwLjg4bC44LS4zYy0uNzUtMi4zOS0xLjUtNC43OC0yLjE2LTYuOTEsMS41OC42MywzLjExLDIuOTIsNCw1LjcxYTU4LDU4LDAsMCwwLDMuMzIsOS4xNSw3OSw3OSwwLDAsMSw4LjgsNDAuNDVjLTEuMTEtNS40Ni0yLjI0LTEwLjkxLTMuMzQtMTYuMzdBMTAyLjgsMTAyLjgsMCwwLDAsMTY1Ljc2LDYxN2MtLjU2LTEuMTQtMS44NC0xLjkyLTIuOC0yLjg2YTcuMzEsNy4zMSwwLDAsMC0uNjUtLjQzYy0xLjk1LTEuNTYtNS40OC0xMC43My01LjIyLTEzLjUxWiIvPjxwYXRoIGQ9Ik0xOTIuMzYsNTMwLjQ5Yy43Ny0yNi43Mi0uMjItNTMsMS4wNy03OS4zQzE5NS44Myw0NTQuNzYsMTk0Ljc0LDUyNS40NywxOTIuMzYsNTMwLjQ5WiIvPjxwYXRoIGQ9Ik0xOTEuMzIsMzM1LjE2YzMuNTgsMjcuODUuNjUsNTUuNzQtMSw4My42NFoiLz48cGF0aCBkPSJNMjEwLjIxLDY4My4xOWwtMi4xMS0uNi0yLjg4LDQuMzVjLS43LTQtMS4yNS03LjE2LTEuNzktMTAuMjlsLS41NywwYy0uMjcsMS41Mi0uNDQsMy4wNi0uODQsNC41NGE3Ljg0LDcuODQsMCwwLDEtMiwzLjU2Yy4xNi01LjM2LDEuMTQtMTAuODcuMjctMTYuMDZzLTMuNTgtMTAtNS41My0xNS4xMWMzLjU1LDEuNDEsNS4yMyw1LjA4LDExLjU3LDI1LDEuMjgtMS4zOSwyLjU5LTIuOCw0LjI5LTQuNjYsMS4yOCwzLjg3LjE0LDYuNTktLjU1LDkuMzRaIi8+PHBhdGggZD0iTTI1NC44NCw3Mi42MmMyMi4yMS0xLjEyLDQ0LjM4LjEzLDY2LjU1LDEuNDJIMjU0LjgyWiIvPjxwYXRoIGQ9Ik0yNDAuNzgsNjgwLjc2YTY1LDY1LDAsMCwxLDI3LjU3LTUuMzgsMzQsMzQsMCwwLDEsNy41NiwxLjA5YzIsLjQ5LDMsMiwyLjQ3LDQuNS0yLjk0LTMuNDMtNi45MS0zLjMtMTAuNTctMy40LTEwLjQ2LS4yOS0yMC42NCwxLTI5LjY0LDdhNy41NSw3LjU1LDAsMCwxLTEuMTYuNTFsLS41LS42NCw0LjM1LTMuOFoiLz48cGF0aCBkPSJNMjQwLjg2LDY4MC42N2MtMS4zMy0xLjczLTMtMS4xMy00LjY2LS42Ny0zLjczLDEtNy40NiwyLTExLjk0LDMuMTguNzMtMS42MSwxLTMsMS44NS0zLjk1LDMtMy41NSw2LjEtNy4wOCw5LjQtMTAuMzdhMTAyLjkxLDEwMi45MSwwLDAsMSw3Ljg4LTYuNjgsMjAuODMsMjAuODMsMCwwLDEsMi4zMS0xLjQ0bC40OS42MS0xOC43NSwxOC4xNC40Ni43MiwxMy43OC0zLjE0LjQ4Ljc5Yy0uNDYsMS0uOTEsMS45My0xLjM3LDIuODlaIi8+PHBhdGggZD0iTTk0LjI3LDE2NS40NmMxNS4yMS0uODYsMzAuNDEtMi4yMiw0NS42OC0xLjMzbDAsLjg2LTQ1LjY0LDEuODVaIi8+PHBhdGggZD0iTTIwNSwyODFxLS42OS0yOS4yOC0xLjM5LTU4LjU3bDEuMDktLjE5YTE3LjcyLDE3LjcyLDAsMCwxLC43OCwzLjY2Yy4wNiwxMy4zNCwwLDI2LjY4LDAsNDBWMjgxWiIvPjxwYXRoIGQ9Ik0xOTUuMzEsMjczVjIxNy43N2ExNS42MywxNS42MywwLDAsMSwuODQsMy41M3EuMDcsMjUuODMsMCw1MS42NVoiLz48cGF0aCBkPSJNNDQ2LjE0LDE1My45YzExLjY3LTkuMiwyMy4yNi0xOC41NiwzNi4wNy0yNi4yNEM0NzEsMTM3LjQyLDQ1OC42NSwxNDUuNzcsNDQ2LjE0LDE1My45WiIvPjxwYXRoIGQ9Ik0yMTMsMTY3LjQyYy0uNTMsMTEuMjUtMSwyMS45NC0xLjUzLDMyLjYzbC0uNjIuMmMtLjM3LTEuMTQtMS4xMi0yLjMtMS4wNy0zLjQzcS42OS0xMy42MywxLjY5LTI3LjI1QzIxMS41MywxNjguODMsMjEyLjQ2LDE2OC4xNiwyMTMsMTY3LjQyWiIvPjxwYXRoIGQ9Ik0xOTAuNTMsNjE3LjM5VjU2OS4xaC42NUMxOTMsNTg1LjE2LDE5MS44OSw2MDEuMjIsMTkwLjUzLDYxNy4zOVoiLz48cGF0aCBkPSJNMTQ0LjcyLDY4My4wN2g5LjlsLjA2Ljg0YTM1LDM1LDAsMCwxLTExLjc5LDEuMzUsMi42MywyLjYzLDAsMCwxLS42Mi0yLjE0YzEuNTgtMy4yNyw5LjkxLTUuMzQsMTIuODUtMy4yNi40NC4zMi41MiwxLjE2Ljc2LDEuNzUtLjcuMTctMS40OS42NC0yLjA5LjQ3QTExLjI3LDExLjI3LDAsMCwwLDE0NC43Miw2ODMuMDdaIi8+PHBhdGggZD0iTTI1Ny4yMyw2ODcuNTVsMTEuNDktLjU2Yy0xLjY1LDIuMjItMTIuNDksMy0xNS41NCwxLjU1LDEuNDYtMy41NywxMS41Ny03LjQsMTcuMzgtNi4xOGwtMTMuNDgsNC40WiIvPjxwYXRoIGQ9Ik0yMDguMzIsNjE5LjE4Yy41OCwxMC42Ny0zLDIwLjczLTUuNDgsMzAuOTRsNC4zLTMxLjExWiIvPjxwYXRoIGQ9Ik0xNTUuMTYsNjYuMDhIMTI4QzEzMC4zMiw2NC41NCwxNTEuNzgsNjQuMTksMTU1LjE2LDY2LjA4WiIvPjxwYXRoIGQ9Ik0yMDIuNjcsMTY4LjIycTEuMDgsMTIuNTEsMi4xNywyNWwtLjg3LjI3YTcuNDUsNy40NSwwLDAsMS0xLTIuMjZjLS42Mi03LjI4LTEuMTUtMTQuNTctMS42Ny0yMS44NmEzLjU2LDMuNTYsMCwwLDEsLjQtMS4xOVoiLz48cGF0aCBkPSJNMTQuMSwxMzYuM3EtLjYyLDExLjIyLTEuMjIsMjIuNDRjLS4wOSwxLjc1LjA2LDMuNTMtLjIsNS4yNWE5LDksMCwwLDEtMS45MSw0LjIybDIuNDgtMzEuOTJaIi8+PHBhdGggZD0iTTE2NS43OCw0MTcuN2MuNjgsMSwxLjc3LDEuOTUsMiwzLjA1LjYsMy41OS44Nyw3LjI0LDEuMjcsMTAuODYtMi4zMS4zLTMuMTEtLjQ1LTMuMjQtMi4zNi0uMjUtMy43MS0uNzEtNy40LTEuMDgtMTEuMVoiLz48cGF0aCBkPSJNMTA1Ljc2LDE5MC42N2MtNi4zNiwzLjQ1LTEyLjEsNi41OC0xNy44Nyw5LjY2LS4xNS4wOC0uNTUtLjMyLTEuMTUtLjdDOTIuMjEsMTk0LjgzLDk3Ljg4LDE5MS4xMiwxMDUuNzYsMTkwLjY3WiIvPjxwYXRoIGQ9Ik0yMDkuODEsNjM2LjA4YzAsNi44OS0yLjI4LDEyLjc4LTMuNjksMTkuMjhDMjA0Ljc3LDY1MS44NSwyMDcuMzEsNjM3Ljc0LDIwOS44MSw2MzYuMDhaIi8+PHBhdGggZD0iTTE5Ny45NCwyOTkuNGMtLjU5LDUuMjMsMSwxMC43Ny0zLDE2LjE5LjctMy4yNSwxLjI1LTUuODUsMS44LTguNDRsLS4zNC0uMTktMi44OCw1LjctLjYtLjI2LDQuMTItMTMuMjJaIi8+PHBhdGggZD0iTTEzMi40MSw2ODYuNTVsMS40NiwyYy0uMjMuMTMtLjQ4LjI5LS40OS4yOC0uNzItMS0xLjQxLTEuOTMtMi4xMS0yLjksMS0uNTYsMi0xLjQ3LDMtMS42LDIuNTItLjMsNSwuMTUsNi43NywyLjIxLjQ3LjU0LjQ0LDEuNS42NCwyLjI3YTYsNiwwLDAsMS0yLjE4LS40NkMxMzcuNSw2ODcsMTM1LjQ0LDY4NiwxMzIuNDEsNjg2LjU1WiIvPjxwYXRoIGQ9Ik0xOTAuMzQsMzE0LjhxLjYxLTEyLjk0LDEuMjItMjUuODhsMSwuMDVxLS42NSwxMi45My0xLjMsMjUuODdaIi8+PHBhdGggZD0iTS40LDUxYy0xLjUtNS41NywxLjMzLTEwLjU3LDYuNDMtMTFBMTYuMjgsMTYuMjgsMCwwLDAsLjQsNTFaIi8+PHBhdGggZD0iTTE5MS40LDE3MC44OXEtLjc4LDguODctMS41NSwxNy43NGwtLjg2LS4wNiwxLTE3Ljc1WiIvPjxwYXRoIGQ9Ik0yMTAuMzgsNjg3LjA3bDE0LjI2LDEuMzYtLjA2LjY5YTg0LjQ0LDg0LjQ0LDAsMCwxLTE0LjMxLS44NloiLz48cGF0aCBkPSJNMjM2LjI3LDY4Ny4xN2gxMi4yQzI0NC40Miw2OTAuMzksMjQwLjM2LDY4OC43NiwyMzYuMjcsNjg3LjE3WiIvPjxwYXRoIGQ9Ik0yNjguNjksMTU2LjQ5aDEwLjA4di43NkgyNjguN1oiLz48cGF0aCBkPSJNMTk4LDE1Ni44Yy4xMiwxLjkyLjIxLDMuNTMuMzUsNS44Mi0xLS4xNC0yLjM1LjA4LTIuOTItLjQ5QzE5NC4yNCwxNjEsMTk1LjU1LDE1OC4yMiwxOTgsMTU2LjhaIi8+PHBhdGggZD0iTTE5OCw2OC42N2MuMjguNjkuNTIsMS4zOS44NCwyLjA2cy43MSwxLjI1LDEuMDYsMS44N2MtLjc4LjI2LTEuNjkuODgtMi4zMi42N3MtMS42NS0xLjI0LTEuNjMtMS44OGE5LjQ2LDkuNDYsMCwwLDEsMS4yMy0zLjA3WiIvPjxwYXRoIGQ9Ik0xNzIuNDIsNjg4Ljg2YzEuMTYtMi4wNiw3LjgyLTIuNTUsMTIuMi0xWiIvPjxwYXRoIGQ9Ik0xNi41MSw1My4yMmExMy44NywxMy44NywwLDAsMSw5LjEsMS4zNGwtLjEyLjg2TDE2LjM3LDU0LjJaIi8+PHBhdGggZD0iTTQxNy40Nyw2Mi4xNmwxLjIyLTEuODIsNC4xOSw0QzQxOS43LDY3LjA4LDQxOC43Miw2NC4yOCw0MTcuNDcsNjIuMTZaIi8+PHBhdGggZD0iTTIwNi43Nyw0OC4yMXEuMjctNi4yMy41NS0xMi40NGwuODIsMC0uNTcsMTIuNDNaIi8+PHBhdGggZD0iTTE5Ni4xMiwxNzkuODF2LTkuOTVsLjksMHEtLjMzLDUtLjY4LDkuOTRaIi8+PHBhdGggZD0iTTE2Nyw0MTcuMzljLTMuMTktLjg0LTMuNTktMi0xLjUtNC41M0MxNjYsNDE0LjQsMTY2LjQyLDQxNS43NCwxNjcsNDE3LjM5WiIvPjxwYXRoIGQ9Ik0yMTAuNTgsNjU5LjA2djcuMzNsLS43NCwwYy0uMTMtMi40NC0uMjctNC44OC0uNC03LjMyWiIvPjxwYXRoIGQ9Ik0xMDEuNTIsMjUwLjc1Yy0uNTQuNzctMS4yMywyLjQ2LTIuNDgsMy40Mi0xLjY3LDEuMjgtMy42Ny41Ni01LjA3LS43OGExNi41NCwxNi41NCwwLDAsMS01LjQtMTMuMjVjLjE5LTMuNDEsMy4xNC00LjY2LDUuODEtMi41NkExNy40MiwxNy40MiwwLDAsMSwxMDEuNTIsMjUwLjc1WiIvPjxwYXRoIGQ9Ik05NS43OCwyODkuNTljMi4zNC0uOTIsNC42Ni0xLjg4LDctMi43NywxMy4wOS01LDI0LjkzLTExLjkzLDMzLjgxLTIzLDMuMjMtNCw1LjQ0LTguODMsOC4xLTEzLjMuNDItLjcuNzMtMS40NiwxLjEtMi4xOWwuODUuMjNjLS4yLDEuMjItLjExLDIuNi0uNjcsMy42MS0yLjUxLDQuNTQtNC43Miw5LjM2LTcuOTMsMTMuMzYtOS4xNSwxMS4zOS0yMS4yMiwxOC43OS0zNC44NywyMy42NmE1NC43NCw1NC43NCwwLDAsMS03LDEuNTRaIi8+PHBhdGggZD0iTTEwOC40MywyMjkuNDNjMC0zLjkyLDIuMTEtNS4xOCw1LjQ0LTMuMTdhMTMuNDksMTMuNDksMCwwLDEsNi43Myw5LjA4LDguODYsOC44NiwwLDAsMS0uMzksNC42MmMtMSwyLjY1LTMuNSwzLjE1LTUuODMsMS40OEMxMTEuNDUsMjM5LjMzLDEwOC40LDIzMy4xOSwxMDguNDMsMjI5LjQzWiIvPjxwYXRoIGQ9Ik03OC42LDI0My41M2MtMi4xMS0zLjUsMi0xMy43OCw1LjktMTUuNTZaIi8+PHBhdGggZD0iTTEwMy4wOCwyMTUuMTFjMi4xNi0zLjI3LDkuNTgtMi44NiwxMi43MSwxLjI0WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTg0LjgyLDY4MS40MmM2LjgyLTUuMDYsMjcuNjQtMy4xMiwzNy43NSwyLjY2QzExMy4yNyw2ODYuNjUsODguMjQsNjg1LDg0LjgyLDY4MS40MloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTIuMTQsMTk0LjE3YzIuNjcsMSw1LjMzLDEuNjQsNy41MiwzLDcuMDksNC40MSwxMi4wNywxMC43OSwxNS41NywxOC4yOS42NSwxLjM5LjQsMy4xOS41Nyw0LjhhMjMuMiwyMy4yLDAsMCwxLTQuNTktLjM1Yy0xMC0yLjc5LTE3LTkuNC0yMi4xNS0xOC4xNi0xLjA4LTEuODMtMS43LTMuODQsMC01LjYyQTE1LjUxLDE1LjUxLDAsMCwxLDE5Mi4xNCwxOTQuMTdaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNjYuMzQsOTAuMzdINTYuNTJ2NDkuMDZoNDYuNTN2LTkuODFINjYuMzRaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTI3LjYsOTAuMzcsMTA4LDEzOS40M2gxMS4ybDEzLjMzLTM0LjM0TDE0MiwxMjkuNjJIMTI1LjdsLTMuNjUsOS44MWgzNUwxMzcuNDEsOTAuMzdaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTcwLjksMTA3LjU1LDE1OC42Myw5MC4zN0gxNDYuMzdMMTY2LDExOS44MXYxOS42Mmg5LjgxVjExOS44MWwxOS42Mi0yOS40NEgxODMuMzFaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTk5LjY2LDk4LjF2NDEuMzNoNDYuNTN2LTkuODFoLTM2Ljd2LTkuODFoMjguMTlWMTEwSDIwOS40OXYtOS44MWgzNi43VjkwLjM3SDE5OS42NloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0yNjIuMTIsOTkuNzNoMjUuMTd2MTAuMjFIMjY0Ljg1bC4wOSw5LjM2aDYuNzRsMTcuNzksMjAuMTVoMTIuMTFMMjgzLjc5LDExOS4zaDdhNy42Miw3LjYyLDAsMCwwLDcuNjItNy42MlY5OGE3LjYyLDcuNjIsMCwwLDAtNy42Mi03LjYxSDI1Mi41N3Y0OS4wNmg5LjgxbC0uMjQtMzkuNzJaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzU2LjY1LDkwLjU4SDMzNy4zMnY5LjNoMTkuMzNaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzU4LjM5LDEyMS45M3YtMy44NkE4LjIxLDguMjEsMCwwLDAsMzUwLDExMEgzMTguODV2LTIuNTNIMzA3LjQzdjExSDM0N3YzLjQzaDExLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMxOC44NywxMDQuNDZWOTkuODhoMTUuMjl2LTkuM0gzMDcuNDV2MTMuODhaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQ3LDEyNC45MnY1LjQySDMzMS43djkuM2gxOC44M2E3LjcsNy43LDAsMCwwLDcuODQtNy41OHYtNy4xNEgzNDdaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzE4LDEyNS40M3Y0LjkxaDEwLjU5djkuM0gzMTVhNy43LDcuNywwLDAsMS03Ljg0LTcuNTh2LTYuNjRIMzE4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIwMi4zMiw0MjcuMTlzLTE0LjY5LDMuNC0xNCw3Ljc5YzAsMC0yLjc3LDYuNywxMy40Myw3LjkxLDAsMCwxOC4yNC0uMTYsMTguOTQtNi4zOEMyMjAuNyw0MzYuNTEsMjIwLjcxLDQyNS4xMSwyMDIuMzIsNDI3LjE5WiIvPjwvZz48L2c+PC9zdmc+",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 50,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 260.7291762047291,
+          "y": 17.984958905590176
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/picture-color.svg",
+        "svgComplete": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OTAuNTQgNjg5LjI3Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2JhOGM2Mzt9LmNscy0ye2ZpbGw6I2ZmZjt9LmNscy0ze2ZpbGw6IzAwZDNhOTt9LmNscy00e2ZpbGw6IzNjNDk0ZTt9LmNscy01e2ZpbGw6IzAwYjM5Zjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9IkxheWVyXzIiIGRhdGEtbmFtZT0iTGF5ZXIgMiI+PGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj48ZyBpZD0iV29vZCI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTg2LjQyLDdsLS42Nyw1NS43NUwyMTIsNjQuNzlzMS42NC01Ny42Myw0LjEtNTguNDVTMTg2LjQyLDcsMTg2LjQyLDdaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTg2LjMxLDE2Ni4yNiwxODQuNDksNjc5aDMxLjYycy02LjkzLTQ5OS4zLTQuMTYtNTEyLjc2WiIvPjwvZz48cGF0aCBkPSJNMzUxLjM5LDBjMy40MywyLjcsNyw1LjIsMTAuMjUsOC4xMnEyNi41NSwyNC4wOCw1Mi45NCw0OC4zMmMuMzguMzYuNy43OSwxLjA2LDEuMTlsLTEuNTcsMi4xN0ExOC40MSwxOC40MSwwLDAsMSw0MTEsNTcuODdxLTI1LTIzLjE2LTUwLTQ2LjM4QTU3LjI4LDU3LjI4LDAsMCwwLDM1NS43Nyw3YzIuMjksMTcuNzYsMiwzNS40NSwxLjc1LDUzLjE0bC0uNjUsMGMtLjE0LTMuMTEtLjI3LTYuMjEtLjQyLTkuMzEtLjcxLTE0Ljg1LTEuNC0yOS43LTIuMjEtNDQuNTMtLjA1LTEtMS0yLTEuOTEtMi45MWE0NDIuMDYsNDQyLjA2LDAsMCwxLDIuNDcsNjcuMzFjLTIzLjM3LS4yNC00Ni40My0uNC02OS40OS0uNzMtMTEuNjctLjE3LTIzLjM1LS42NC0zNS0xLTEuMTUsMC0yLjguMzgtMi43NC0xLjU3czEuNzMtMS4zLDIuODQtMS4yOXE1MC4xNi42LDEwMC4zMywxLjI0Yy41OSwwLDEuMTktLjA5LDIuMDYtLjE3LDAtMS4xNi4wNS0yLjIsMC0zLjIzLTEtMTkuNDQtMi4xMy0zOC44Ny0zLjEyLTU4LjMxQTMzLjQ3LDMzLjQ3LDAsMCwxLDM1MC4zMywwWiIvPjxwYXRoIGQ9Ik00MjMuNTksNjUuMDVjLjg3LjU0LDIuMzcsMSwyLjUxLDEuNjYuNTIsMi41NSwyLjgsMi44Myw0LjM3LDQuMDUsMi40MywxLjg5LDQuNzksMy44OSw3LDZxMjMuNywyMi4yMyw0Ny4zNSw0NC41MWMxLjc5LDEuNjcsMy43OCwzLjExLDUuNjgsNC42NnYyLjY1YTI1LjUxLDI1LjUxLDAsMCwxLTMuNSwxLjY4LDIzLjQ5LDIzLjQ5LDAsMCwxLTMuNjguNTVsLS4xOC0uODEsMy41OS0yLjg3Yy0yLjE3LTEuNzEtNC4yMy0zLjEtNi00Ljc4UTQ1Ni4xMiw5OS4yNCw0MzEuNjEsNzZjLS44Ni0uODEtMS4yLTIuMTYtMS45NC0zLjU4LTEuMTktLjU0LTMuMzEtLjg5LTQuMzgtMi4xNFM0MjQuMTIsNjYuODMsNDIzLjU5LDY1LjA1WiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTEwMS41MiwyNTAuNzVhMTcuNDIsMTcuNDIsMCwwLDAtNy4xNC0xMy4xN2MtMi42Ny0yLjEtNS42Mi0uODUtNS44MSwyLjU2QTE2LjU0LDE2LjU0LDAsMCwwLDk0LDI1My4zOWMxLjQsMS4zNCwzLjQsMi4wNiw1LjA3Ljc4QzEwMC4yOSwyNTMuMjEsMTAxLDI1MS41MiwxMDEuNTIsMjUwLjc1Wm0tNS43NCwzOC44NC4zNiwxLjE3YTU0Ljc0LDU0Ljc0LDAsMCwwLDctMS41NGMxMy42NS00Ljg3LDI1LjcyLTEyLjI3LDM0Ljg3LTIzLjY2LDMuMjEtNCw1LjQyLTguODIsNy45My0xMy4zNi41Ni0xLC40Ny0yLjM5LjY3LTMuNjFsLS44NS0uMjNjLS4zNy43My0uNjgsMS40OS0xLjEsMi4xOS0yLjY2LDQuNDctNC44Nyw5LjI5LTguMSwxMy4zLTguODgsMTEtMjAuNzIsMTgtMzMuODEsMjNDMTAwLjQ0LDI4Ny43MSw5OC4xMiwyODguNjcsOTUuNzgsMjg5LjU5Wm0xMi42NS02MC4xNmMwLDMuNzYsMyw5LjksNS45NSwxMiwyLjMzLDEuNjcsNC44MiwxLjE3LDUuODMtMS40OGE4Ljg2LDguODYsMCwwLDAsLjM5LTQuNjIsMTMuNDksMTMuNDksMCwwLDAtNi43My05LjA4QzExMC41NCwyMjQuMjUsMTA4LjQ2LDIyNS41MSwxMDguNDMsMjI5LjQzWk03OC42LDI0My41Myw4NC41LDIyOEM4MC41OCwyMjkuNzUsNzYuNDksMjQwLDc4LjYsMjQzLjUzWm0yNC40OC0yOC40MiwxMi43MSwxLjI0QzExMi42NiwyMTIuMjUsMTA1LjI0LDIxMS44NCwxMDMuMDgsMjE1LjExWiIvPjxwYXRoIGQ9Ik04Ni42OCwyMDMuNWMtMS4wOC44NC0yLjEyLDEuNzYtMy4yNiwyLjUxYTcuNzgsNy43OCwwLDAsMS0zLDEuNDZjLTEwLjcxLDEuMjktMTguODEsNi44OS0yNS4xLDE1LjI5LTExLjE4LDE0LjkzLTE0LjM0LDMyLTExLjY4LDUwLDEuNjIsMTAuOTUsNy44OSwxOS41NSwxNi40MSwyNi40Nyw5LjA4LDcuMzcsMTkuMjUsMTIuNjQsMzAuODQsMTQuNTMsMTIuNDYsMiwyNC43NywxLjEsMzYuMjctNC41NywxNi41Ny04LjE2LDI3LjE4LTIxLjUzLDI5LjgxLTM5LjY2LDUuNDItMzcuNC0yMi41My02MS4wOC00Ni44OS02NS42NS01LjkxLTEuMTEtMTIuMTQtLjQ2LTE4LjIzLS41Ny0xLjc1LDAtMy41MS4xLTUuMjcuMTYsMS43NC0yLjM5LDQuNC0yLjc0LDctMy4xMywzNi42NC01LjQyLDcxLDI3LjExLDY3LjI4LDY0LjQyLTEuNjgsMTYuNzktMTAsMjkuOTMtMjIuNTksNDAuNjctMywyLjU0LTMuMDksMi40NC0xLjQzLDZxMi43Miw1Ljc2LDUuNSwxMS40OGEyMy43NSwyMy43NSwwLDAsMCwxLjM0LDIuMTFxMTkuNDctOCwzOS4xNy0xNi4xMWMuNDYsMS42NSwwLDIuNzMtMS44NCwzLjQ2LTExLjEsNC4zOC0yMi4xNSw4Ljg4LTMzLjI1LDEzLjI2LTMuNiwxLjQyLTMuNzQsMS4zNC0yLjI5LDUuMDZBMzgxLDM4MSwwLDAsMSwxNjMuMDcsMzkxYzEsNSwzLjY4LDI0LjUyLDQuNjcsMjkuNzQtLjg4LjMtMi4yNS0xLjI4LTMuMDUtMS0yLjg5LTEyLjY3LTYuNzMtMzcuODctOS44Ni01MC4zNWEyMTguOSwyMTguOSwwLDAsMC0xMi4yNi0zNi40NmMtLjY1LDQuNzgtMS40Myw5LjU0LTEuOTQsMTQuMzMtMi4zNCwyMi4xOC00LjUsNDQuMzgtNyw2Ni41NC0uNDgsNC4yOS43OCw2LjU0LDQuNTMsOC43OGE4Ny4zLDg3LjMsMCwwLDAsNDQuOTQsMTIuNDksNC4yMiw0LjIyLDAsMCwwLDMuODMtMS43M2MzLjEtNCw3LjYyLTUuNTcsMTIuMy02Ljc5LDEuMy0uMzQsMi4zNy0uNTcsMi40NS0yLjQ3LDEuMTEtMjUuMiwyLjM5LTUwLjM5LDMuNDYtNzUuNi4zMS03LjMzLjA3LTE0LjY5LjA5LTIyYTEuOCwxLjgsMCwwLDEsLjQ0LTEuMjNjMywzMy40LTIuNDQsNjYuNjMtMi4xMSwxMDAuMThoNy40NmMwLTMzLjY1LjEtNjcuMDksMC0xMDAuNTJzLS40OC02Ni45MS0uNzQtMTAwLjY0YzEuODYtLjgzLDIsLjY0LDIsMi4zLjM1LDIwLC45MSw0MCwxLDYwLC4yNSw0My45Mi4yOCw4Ny44NC40LDEzMS43NiwwLC43MS4wNiwxLjQyLDAsMi4xMi0uMTYsMi44NiwwLDUuNDIsMy42Miw2LjE0YTUuODEsNS44MSwwLDAsMSwyLjU0LDEuODVjNC45Miw1LDMuOSwxMS4wOC0yLjU2LDEzLjgtMi4zNCwxLTIuNzEsMi4xNC0yLjY4LDQuNTEuNDMsMjkuNTcuODQsNTkuMTMsMSw4OC43LjI0LDQzLjY2LjI3LDg3LjMxLjQzLDEzMSwwLDIuNzEuMzMsNS40MS41Niw4Ljc5LDEuMTktMS4wOSwxLjk0LTEuNzUsMi42Ni0yLjQ1YTYxLjI2LDYxLjI2LDAsMCwxLDI0Ljk0LTE1LjEzYzIuMzctLjczLDQuODQtMS4zOCw3LjM2LjA3bC03LjIyLDIuMmE1NS44Miw1NS44MiwwLDAsMC0yNS4yOCwxNS45NGMtMS41MSwxLjYzLTIuNjEsMy4yNy0yLjQ5LDUuNjFhMy40NywzLjQ3LDAsMCwxLTEuMiwyLjUxbC0uNzMtMi40NmMtLjkuODQtMS42OSwxLjU5LTIuNTEsMi4zMXMtMS43MywxLTEuOTUtLjU5bC0uMS4wOWMzLjQ0LTMsNC4wOS02LjU2LDMuOTEtMTEuMjMtLjc2LTIwLTEuMDktNDAtMS4xNi02MC0uMTctNDkuNDEtLjA4LTk4LjgxLS4xNi0xNDguMjIsMC01LjY2LS41Mi0xMS4zMi0uNjUtMTctLjA1LTIuMTYtMS0yLjc2LTMtMi41Mi0xLjc1LjIyLTMuNTIuMy01LjY3LjQ3djcuNTFsLTEuMTUsMGMwLTEuNjUtLjA5LTMuMzIsMC01LC4xMi0xLjktLjYyLTIuNjMtMi41NS0yLjgxYTQ1LjcsNDUuNywwLDAsMS04LjMyLTEuNDUsNy44Myw3LjgzLDAsMCwxLTQuMTctMi42NmMtMS42NC0yLjM2LTMuODMtMi41Mi02LjIyLTIuNTQtMTEuODktLjA5LTIzLjQ5LTEuNzgtMzQuMy03LTUuMzEtMi41Ni0xMC4zNi01LjctMTUuNDUtOC43MmEzLDMsMCwwLDEtLjk0LTIuNDdxNC4xNi0zOC41Myw4LjQ4LTc3LC42OC02LjA3LDEuNjktMTIuMDlhMTAuOTMsMTAuOTMsMCwwLDAtMS02Ljg4Yy0yLjIzLTQuNi00LjI2LTkuMzEtNi41MS0xNC4yOS0xLjIxLjU4LTIuMywxLjA1LTMuMzYsMS42LTI3LjUzLDE0LjUyLTYxLjI0LDUuMzYtNzkuNzQtMTYuNTMtNy45LTkuMzYtMTAuMjktMjAuMzctMTAuMDctMzIuNC4zMy0xNy43Miw2LjMxLTMzLDE4LjI0LTQ2YTM3LjU5LDM3LjU5LDAsMCwwLDQuNDEtNi45MWM2LjI4LTExLjEsMTUuODktMTguMzMsMjcuMjItMjMuNTdhMi40OSwyLjQ5LDAsMCwxLDIuMDYuMTMsMzMuMTEsMzMuMTEsMCwwLDEtMi42NSwyLjExYy0zLjkzLDIuNTYtOCw0Ljk0LTExLjgzLDcuNmE0NC4wOCw0NC4wOCwwLDAsMC0xMi40NiwxMy42MWMtLjMuNDktLjUsMS0uODIsMS43M0w4NS43MSwyMDJaTTIwMy4zNiw0NDEuNzZhMjcuNTQsMjcuNTQsMCwwLDAsMTMuOTQtMi4yNWMzLjItMS42MSwzLjY4LTMuMjYsMS44Ny02LjM2LTIuOC00LjgyLTktNi43LTE1LjgxLTQuNzJaTTIwMS43Niw0MjhjLTQuNTcsMS04LjU0LDItMTEuNzUsNC44OGE0LjIzLDQuMjMsMCwwLDAsLjQ1LDYuMjZjMy40MiwyLjI0LDcuMjksMi43NiwxMS4zLDIuNzhaIi8+PHBhdGggZD0iTTM1MS44MSwxNTUuOTNjMS4xNSwxMy43NS0uMTksMjcuNjcuMDUsNDEuNnExLTE2LjY4LDEuOTQtMzMuMzZsLjczLS4wOWExMiwxMiwwLDAsMSwuNDksMi4yNGMuMjYsMTIuNzEtMS4zMiwyNS4yNi0zLjIxLDM3Ljc4LTEsNi40NS0xLjc0LDEyLjkzLTIuNTYsMTkuNGEyLjQ0LDIuNDQsMCwwLDAsLjUzLDEuNDFjLjMxLTEuNzEuNTctMy4wOSwyLjY3LTEuNjguMzQuMjMsMS41My0uNjksMi4yNi0xLjE5LDE2LjYzLTExLjQyLDMzLjQ2LTIyLjU0LDQ5LjgxLTM0LjM1LDIzLTE2LjYzLDQ1LjY2LTMzLjc4LDY4LjQ3LTUwLjY5LDIuMTktMS42Miw0LjQ3LTMuMTEsNi43Ni00LjcsMS42NiwxLjU4Ljc1LDIuNDQtLjU2LDMuMzctOC4zNyw2LTE2Ljc3LDExLjg0LTI1LDE3LjkyLTIzLjQ1LDE3LjI1LTQ2LjY4LDM0Ljc5LTcwLjMyLDUxLjc4LTEwLjg5LDcuODQtMjIuNSwxNC42OC0zMy44NSwyMS44OC0xLjEuNy0yLjYzLjcyLTQsMS4wNi4wNS0xLjIzLDAtMi40Ni4xNi0zLjY3YTQ5Ni4xMiw0OTYuMTIsMCwwLDAsMy4xLTYzLjA4LDE3LjYzLDE3LjYzLDAsMCwwLS4yNy0xLjc1bC0xNjAuODQsN2MwLDguMjYsMCwxNS43NywwLDIzLjI3YTE0LjQ5LDE0LjQ5LDAsMCwxLTEsMy41OWwtMS0uMThjLS4xNC0yLjMzLS4zNS00LjY3LS40LTctLjEyLTUuNC0uMi0xMC44LS4yMS0xNi4yLDAtMi4xNC0uNzktMi45MS0zLTIuNzgtMTAuNi42MS0yMS4yMSwxLjA4LTMxLjgxLDEuNjFsLTQ5LjMyLDIuNS04Ny4yMiw0LjQ4Yy0uNzEsMC0xLjQxLjA5LTIuMTIuMTEtMi4xMy4wNi00LjU2LS42Ni01LjM5LDIuNjNMNiwxNzguNTRhMTEuMjksMTEuMjksMCwwLDEtLjc2LTMuMDhxLjYyLTE1Ljc4LDEuNDMtMzEuNTdhMjEuMywyMS4zLDAsMCwxLDEtMy45M2wuNDMuNi43My0uMDVjLS4zOC0zLS43NS02LTEuMTMtOWEyNy45LDI3LjksMCwwLDEtLjQ1LTMuMWMtLjM5LTIyLjY2LS43MS00NS4zMi0xLjE5LTY4LS4wNy0zLjU3LTEtNy4xMy0xLjMxLTEwLjcxQzQuNiw0Ny45Miw2LDQ3LjMsNy41NCw0Ny4zNWMzLjYzLjEzLDcuMjYuMjIsMTAuODcuNiwyNy4wOSwyLjg4LDU0LjE2LDYsODEuMjgsOC42OCwxNy4xNiwxLjY4LDM0LjQsMi42OCw1MS42MSwzLjkyLDEwLjA2LjczLDIwLjEzLDEuMzMsMzAuMTksMiwxLC4wNiwyLjExLDAsMy42MSwwLDAtMS4xNywwLTIuMjgsMC0zLjM5LjA2LTE0LjYxLjEtMjkuMjIuMi00My44M2E1NC40NCw1NC40NCwwLDAsMSwuNDQtNi44OGMuNDYtMy41NCwyLjQ5LTQuNDMsNS40Mi0yLjZsNS41LTQuMTNjLjMzLDIsLjQ2LDMsMi43NywyLjgzLDQuMTgtLjIzLDguNDIuNTQsMTIuNzYuOS0uNTQsMi43Ni0zLDEuNDYtNC4xNCwyLjA1LS4yLDQuNDItLjM5LDguNjQtLjU5LDEyLjg2aC0xVjhIMjAxYzEuNDUsMTQtLjQsMjcuNjctMS44Miw0MS4zOGwtLjc4LDBjLjE3LTIuMzEuNDQtNC42My40OS02Ljk0LjI1LTEwLjU0LjM5LTIxLjA3LjY4LTMxLjYuMS0zLjUyLTMtMy4zMi01LjMtNS4zNS0uMywzLS42Niw1LjI1LS43Myw3LjUzLS4yNSw3Ljc2LS4zOSwxNS41Mi0uNTgsMjMuMjlsLTEuMjUsMFYzMy40OGMwLTctLjA3LTE0LDAtMjEsMC0yLjI5LTEuMTItMy4yOS0zLjM5LTQuMTNWNjIuODJsMjIsMS4zN2MuOC0xNi42LDEuNjEtMzMuMDgsMi40MS00OS41N2wtLjM5LS4xNC00LjcsMTAuMTEtLjctLjI2TDIxMS44NCwxMGwxLjgyLDEuMjRjLjYtMS41NSwxLjE0LTMsMS44My00LjcybDEuNzYtLjE4Yy4xNS4zMS4zMS41LjI4LjYtNC43LDEyLjg4LTIuNDQsMjYuNDItMy42MywzOS42Mi0uNTIsNS43LS4wOSwxMS40OC0uMDksMTcuNTksMS41MS4xNSwzLjQuNDIsNS4zLjUzLDcuNjkuNDEsMTUuMzguNzUsMjMuMDcsMS4xNmE3LjU0LDcuNTQsMCwwLDEsMi41NC41NGMuMzguMTYuNjIuODYuNzIsMS4zNiwwLC4xOS0uNTEuNDktLjc5Ljc0bC0uNjgtLjljLTIsLjMxLTMuOTIsMS01LjgxLjg2cS0zOS4yMi0yLjE3LTc4LjQ1LTQuNTVjLTE2LjA3LTEtMzIuMTUtMi00OC4xOS0zLjM5LTE4LjUxLTEuNjItMzctMy42LTU1LjQ1LTUuNTgtMTMuODEtMS40OC0yNy41OS0zLjIyLTQxLjM5LTQuODJhMTguNjgsMTguNjgsMCwwLDAtMi40OCwwbDEuMTYsNDAuMzUtLjgxLjA3Yy0uMDktMS4yMS0uMjItMi40MS0uMjktMy42My0uNTktMTEuMjItMS4xNC0yMi40NC0xLjgtMzMuNjZhMTIuODEsMTIuODEsMCwwLDAtMS4xMi0zLjMxbC0uNjguMjRjLjUzLDIwLjU0LDEuNTUsNDEuMDcsMS40NCw2MS42cy0xLjMzLDQxLTIuMDksNjIuMDVjNC41NC0uMjMsOS4xOC0uNDQsMTMuODEtLjczLDE2LjQzLTEsMzIuODUtMi4xNyw0OS4yOC0zcTU3LjI3LTMsMTE0LjU0LTUuNzNjMjctMS4zNCw1My45Mi0yLjcsODAuODgtMy45LDI2LjE3LTEuMTcsNTIuMzUtMi4xMyw3OC41Mi0zLjI1QTQ5LjQ3LDQ5LjQ3LDAsMCwwLDM1MS44MSwxNTUuOTNaIi8+PHBhdGggZD0iTTEyNC4wOCw2ODEuMDVjMS40My02LDIuOTItMTEuODMsNC4xOC0xNy42OXExNy4wNi03OS40NywzNC4wNi0xNTljMS43Mi04LDMuMjctMTYuMTQsNS42MS0yNCwyLTYuODMsMi0xMy41MSwxLjA4LTIwLjQxLS44Ny02Ljc0LTEuNC0xMy41My0yLjA4LTIwLjM1LDIuNDYtMSwzLjExLjI4LDMuMjYsMi4yMi43Nyw5LjcsMS40OSwxOS40LDIuMzEsMjkuMWExMC43NywxMC43NywwLDAsMCwxLjA5LDQuMjVjMi40NCw0LjQxLDUuMjIsOC42Myw3LjYsMTMuMDZhODEsODEsMCwwLDEsMy4zNSw4LjE1bC0xLjI0LjY1Yy00LTYuMzgtOC4wNS0xMi43NS0xMi4zNy0xOS42MS0uNDgsMS41Ni0uOTIsMi42NS0xLjE2LDMuNzktNC40NCwyMS41Ni04LjY4LDQzLjE2LTEzLjMzLDY0LjY3cS0xNC4xOSw2NS43Mi0yOC43NSwxMzEuMzRjLTIuMTMsOS42NC0yLjgsMTAuMTgtMTIuNzQsMTAuMjYtOC4zOS4wNy0xNi43OC0uMjYtMjUuMTctLjU5YTE1LjUzLDE1LjUzLDAsMCwxLTUuMzQtMS40Yy0zLTEuMjktMy4zMS0zLjY0LS44Ni01Ljc3LDIuODktMi40OSw2LjQ3LTMuMTUsMTAuMTMtMy40LDkuMS0uNiwxOCwuMjYsMjYuNjEsMy41NUMxMjEuNDUsNjgwLjMzLDEyMi42Myw2ODAuNjEsMTI0LjA4LDY4MS4wNVptLTM5LjI2LjM3YzMuNDIsMy41NSwyOC40NSw1LjIzLDM3Ljc1LDIuNjZDMTEyLjQ2LDY3OC4zLDkxLjY0LDY3Ni4zNiw4NC44Miw2ODEuNDJaIi8+PHBhdGggZD0iTTE4NC4zOSw0MzEuOTJhMTQuMzksMTQuMzksMCwwLDEtLjQ2LTIuNjZxLjE5LTIxLC40OC00MS45M2MuMTUtMTIuMjIuMzgtMjQuNDMuNDktMzYuNjRxLjYtNzAuOSwxLjEzLTE0MS44MWMwLTEuMSwwLTIuMjEsMC0zLjMxbDEtLjE4Yy40NCwxLjk0LDEuMjksMy44OCwxLjI3LDUuODJxLS4zNiw2MC4xNS0uOTMsMTIwLjI5Yy0uMzMsMzAuOC0uODgsNjEuNi0xLjM2LDkyLjQsMCwyLjY3LS4zMyw1LjMzLS41LDhaIi8+PHBhdGggZD0iTTE4NC40Niw0NDEuMTFjMi4zOSwwLDIuMjUsMS42MiwyLjI5LDMsLjM1LDkuODIsMSwxOS42NC45MiwyOS40Ni0uMiwzNC44OC0uNiw2OS43NS0xLDEwNC42M3EtLjQ1LDQwLjg4LTEsODEuNzdjMCwxLjQxLS4xMywyLjgyLS4yMyw0LjIzLDAsLjEyLS4yMy4yMi0uODcuNzlhMjIuNjgsMjIuNjgsMCwwLDEtMS00LjMyYy0uMi0xMC41My0uNTctMjEuMDYtLjM3LTMxLjU5LjY1LTM0LDEuODktNjcuOTQsMi4xOC0xMDEuOTIuMjMtMjcuNDMtLjU4LTU0Ljg4LS45Mi04Mi4zMUMxODQuNDUsNDQzLjYxLDE4NC40Niw0NDIuMzksMTg0LjQ2LDQ0MS4xMVoiLz48cGF0aCBkPSJNMjE1LjczLDI5NC4xOGMtLjE1LTMuMywxLjkxLTQuMzYsMy44Ny01LjI3czIuNjMtMi4yNSwyLjU4LTQuNTNjLS40NC0yMC0xLjM2LTQwLTUuNjctNTkuNjEtLjEtLjQyLS4yLS44My0uMzQtMS4zOWEzMC4zMywzMC4zMywwLDAsMS0xNi44NC01LjdjLTYtNC05Ljk0LTkuNzctMTMuMTItMTYuMDUtMi0zLjg3LDEuNTEtOS4xLDYuMDktOS4zOGExNS41OSwxNS41OSwwLDAsMSwxMS43LDQuMTcsMTEyLjExLDExMi4xMSwwLDAsMSwxMC40OCwxMS4yYzMuMDYsMy43LDQuMTUsOC4xOCw0LjY2LDEzLC43Nyw3LjE5LDIuNzMsMTQuMjcsMy4zLDIxLjQ3LDEuMTIsMTMuOTIsMS42NCwyNy44OSwyLjM3LDQxLjg0LjE1LDIuOC0uNTksNS4wOS0zLjQ0LDYuNDZBNDcuODgsNDcuODgsMCwwLDAsMjE1LjczLDI5NC4xOFptLTIzLjU5LTEwMGExNS41MSwxNS41MSwwLDAsMC0zLjA5LDJjLTEuNjksMS43OC0xLjA3LDMuNzksMCw1LjYyLDUuMTUsOC43NiwxMi4xMiwxNS4zNywyMi4xNSwxOC4xNmEyMy4yLDIzLjIsMCwwLDAsNC41OS4zNWMtLjE3LTEuNjEuMDgtMy40MS0uNTctNC44LTMuNS03LjUtOC40OC0xMy44OC0xNS41Ny0xOC4yOUMxOTcuNDcsMTk1LjgxLDE5NC44MSwxOTUuMjEsMTkyLjE0LDE5NC4xN1oiLz48cGF0aCBkPSJNMjE5LjU1LDU0Ni41MWM1LjA2LDcuNjgsOS44OCwxNS4wNywxNC43NywyMi40MiwyLjI1LDMuMzgsNC43Nyw2LjU5LDYuODcsMTAuMDZhNi4xNSw2LjE1LDAsMCwxLC40Niw0LjE4Yy0yLjksMTIuODQtNi4wNSwyNS42My04LjksMzguNDgtMy4wNywxMy44LTUuODUsMjcuNjYtOC45Miw0MS40Ni0uMzYsMS42Mi0xLjY5LDMtMi41OCw0LjUzbC0xLS40Yy43MS00LjEsMS4yMy04LjI1LDIuMTctMTIuM3E4LTM0LjYxLDE2LjE1LTY5LjE4YTYsNiwwLDAsMC0uNzItNS4xOWMtNi4wNi05LjIzLTExLjk1LTE4LjU4LTE4LTI3LjgxQTUuNDcsNS40NywwLDAsMSwyMTkuNTUsNTQ2LjUxWiIvPjxwYXRoIGQ9Ik0xODguMTEsNjczLjM2bDYuNjUtNiwxLjEuOGMtLjQ2LDQuNTktMi45NCw4LjQ1LTQuOCwxMi41NGwtLjgyLS4yNSwyLjkxLTkuNzktNy4zNSw3LjktLjgzLS4yOGMuNTMtMi41MywxLjA3LTUuMDcsMS43Mi04LjE0TDE4MS40NCw2ODBjLTQtOC41NS03LjcyLTE2LjU3LTExLjQ1LTI0LjZsLS43OS4yOGMzLDguNzcsNiwxNy41NCw1LjI4LDI2LjkybC0uODcuMjZhMTMuNiwxMy42LDAsMCwxLTEtMi42NmMtMS43LTExLjI2LTQuNTMtMjIuMTYtMTAtMzIuMjZhNS4zNCw1LjM0LDAsMCwxLS4zOS0xLjI1LDIuNTksMi41OSwwLDAsMSwuMTUtLjcxLDYuMzQsNi4zNCwwLDAsMSw1LjkxLDMuMmMzLjMsNS4xLDYuNDksMTAuMjksOS4zOSwxNS42MywxLjY4LDMuMDgsMi43MSw2LjUxLDQuMjgsMTAuNCwyLjUzLTUuNzksNS41LTEwLjksMTAuNzQtMTQuNDVxLTIuNTgsNi4zMy01LjE1LDEyLjY3WiIvPjxwYXRoIGQ9Ik0yMDAuNzcsNTc1LjU0bDEuMzUtOTkuMTguNTctLjEzYTcuMTIsNy4xMiwwLDAsMSwuNiwxLjcxYy4xOSwyLjQ3LjQzLDQuOTQuNCw3LjQxcS0uNDksMzUuMTktMS4xMiw3MC4zN2MtLjExLDUuODQtLjYzLDExLjY2LTEsMTcuNDlhMTYuNzEsMTYuNzEsMCwwLDEtLjQ4LDIuNDJaIi8+PHBhdGggZD0iTTEzNy43Nyw2NjIuMzNjLjY5LS42OCwxLjYxLTIuMTgsMi45My0yLjc2LDUuNTgtMi40MSwxMS4zMi0zLjA4LDE2Ljc4LjI0YTMyLjExLDMyLjExLDAsMCwxLDEwLjg2LDExLjA5LDIyLDIyLDAsMCwxLDEuNDcsNC4xNmwtLjkxLjQ1YTEzLjg3LDEzLjg3LDAsMCwxLTEuNTItMS44NGMtMi42Ni00LjY0LTYuNTctOC4wNy0xMC44My0xMS4xM3MtOS4xMS0yLjQ4LTE0LjYyLTEuNTNjNy43NCw0LjYsMTMuNjIsMTAuMDgsMTcuMzEsMTcuNThsLS40OS42YTI4LjA4LDI4LjA4LDAsMCwxLTIuOTMtMi4yNWMtMy4wOC0zLjA1LTUuODktNi40LTkuMTktOS4xOEMxNDQuMTYsNjY1LjY4LDE0MS4wOSw2NjQuMzIsMTM3Ljc3LDY2Mi4zM1oiLz48cGF0aCBkPSJNMTU3LjgsNTk5LjgycTIuNjUsNS40NSw1LjMzLDEwLjg4bC44LS4zYy0uNzUtMi4zOS0xLjUtNC43OC0yLjE2LTYuOTEsMS41OC42MywzLjExLDIuOTIsNCw1LjcxYTU4LDU4LDAsMCwwLDMuMzIsOS4xNSw3OSw3OSwwLDAsMSw4LjgsNDAuNDVjLTEuMTEtNS40Ni0yLjI0LTEwLjkxLTMuMzQtMTYuMzdBMTAyLjgsMTAyLjgsMCwwLDAsMTY1Ljc2LDYxN2MtLjU2LTEuMTQtMS44NC0xLjkyLTIuOC0yLjg2YTcuMzEsNy4zMSwwLDAsMC0uNjUtLjQzYy0xLjk1LTEuNTYtNS40OC0xMC43My01LjIyLTEzLjUxWiIvPjxwYXRoIGQ9Ik0xOTIuMzYsNTMwLjQ5Yy43Ny0yNi43Mi0uMjItNTMsMS4wNy03OS4zQzE5NS44Myw0NTQuNzYsMTk0Ljc0LDUyNS40NywxOTIuMzYsNTMwLjQ5WiIvPjxwYXRoIGQ9Ik0xOTEuMzIsMzM1LjE2YzMuNTgsMjcuODUuNjUsNTUuNzQtMSw4My42NFoiLz48cGF0aCBkPSJNMjEwLjIxLDY4My4xOWwtMi4xMS0uNi0yLjg4LDQuMzVjLS43LTQtMS4yNS03LjE2LTEuNzktMTAuMjlsLS41NywwYy0uMjcsMS41Mi0uNDQsMy4wNi0uODQsNC41NGE3Ljg0LDcuODQsMCwwLDEtMiwzLjU2Yy4xNi01LjM2LDEuMTQtMTAuODcuMjctMTYuMDZzLTMuNTgtMTAtNS41My0xNS4xMWMzLjU1LDEuNDEsNS4yMyw1LjA4LDExLjU3LDI1LDEuMjgtMS4zOSwyLjU5LTIuOCw0LjI5LTQuNjYsMS4yOCwzLjg3LjE0LDYuNTktLjU1LDkuMzRaIi8+PHBhdGggZD0iTTI1NC44NCw3Mi42MmMyMi4yMS0xLjEyLDQ0LjM4LjEzLDY2LjU1LDEuNDJIMjU0LjgyWiIvPjxwYXRoIGQ9Ik0yNDAuNzgsNjgwLjc2YTY1LDY1LDAsMCwxLDI3LjU3LTUuMzgsMzQsMzQsMCwwLDEsNy41NiwxLjA5YzIsLjQ5LDMsMiwyLjQ3LDQuNS0yLjk0LTMuNDMtNi45MS0zLjMtMTAuNTctMy40LTEwLjQ2LS4yOS0yMC42NCwxLTI5LjY0LDdhNy41NSw3LjU1LDAsMCwxLTEuMTYuNTFsLS41LS42NCw0LjM1LTMuOFoiLz48cGF0aCBkPSJNMjQwLjg2LDY4MC42N2MtMS4zMy0xLjczLTMtMS4xMy00LjY2LS42Ny0zLjczLDEtNy40NiwyLTExLjk0LDMuMTguNzMtMS42MSwxLTMsMS44NS0zLjk1LDMtMy41NSw2LjEtNy4wOCw5LjQtMTAuMzdhMTAyLjkxLDEwMi45MSwwLDAsMSw3Ljg4LTYuNjgsMjAuODMsMjAuODMsMCwwLDEsMi4zMS0xLjQ0bC40OS42MS0xOC43NSwxOC4xNC40Ni43MiwxMy43OC0zLjE0LjQ4Ljc5Yy0uNDYsMS0uOTEsMS45My0xLjM3LDIuODlaIi8+PHBhdGggZD0iTTk0LjI3LDE2NS40NmMxNS4yMS0uODYsMzAuNDEtMi4yMiw0NS42OC0xLjMzbDAsLjg2LTQ1LjY0LDEuODVaIi8+PHBhdGggZD0iTTIwNSwyODFxLS42OS0yOS4yOC0xLjM5LTU4LjU3bDEuMDktLjE5YTE3LjcyLDE3LjcyLDAsMCwxLC43OCwzLjY2Yy4wNiwxMy4zNCwwLDI2LjY4LDAsNDBWMjgxWiIvPjxwYXRoIGQ9Ik0xOTUuMzEsMjczVjIxNy43N2ExNS42MywxNS42MywwLDAsMSwuODQsMy41M3EuMDcsMjUuODMsMCw1MS42NVoiLz48cGF0aCBkPSJNNDQ2LjE0LDE1My45YzExLjY3LTkuMiwyMy4yNi0xOC41NiwzNi4wNy0yNi4yNEM0NzEsMTM3LjQyLDQ1OC42NSwxNDUuNzcsNDQ2LjE0LDE1My45WiIvPjxwYXRoIGQ9Ik0yMTMsMTY3LjQyYy0uNTMsMTEuMjUtMSwyMS45NC0xLjUzLDMyLjYzbC0uNjIuMmMtLjM3LTEuMTQtMS4xMi0yLjMtMS4wNy0zLjQzcS42OS0xMy42MywxLjY5LTI3LjI1QzIxMS41MywxNjguODMsMjEyLjQ2LDE2OC4xNiwyMTMsMTY3LjQyWiIvPjxwYXRoIGQ9Ik0xOTAuNTMsNjE3LjM5VjU2OS4xaC42NUMxOTMsNTg1LjE2LDE5MS44OSw2MDEuMjIsMTkwLjUzLDYxNy4zOVoiLz48cGF0aCBkPSJNMTQ0LjcyLDY4My4wN2g5LjlsLjA2Ljg0YTM1LDM1LDAsMCwxLTExLjc5LDEuMzUsMi42MywyLjYzLDAsMCwxLS42Mi0yLjE0YzEuNTgtMy4yNyw5LjkxLTUuMzQsMTIuODUtMy4yNi40NC4zMi41MiwxLjE2Ljc2LDEuNzUtLjcuMTctMS40OS42NC0yLjA5LjQ3QTExLjI3LDExLjI3LDAsMCwwLDE0NC43Miw2ODMuMDdaIi8+PHBhdGggZD0iTTI1Ny4yMyw2ODcuNTVsMTEuNDktLjU2Yy0xLjY1LDIuMjItMTIuNDksMy0xNS41NCwxLjU1LDEuNDYtMy41NywxMS41Ny03LjQsMTcuMzgtNi4xOGwtMTMuNDgsNC40WiIvPjxwYXRoIGQ9Ik0yMDguMzIsNjE5LjE4Yy41OCwxMC42Ny0zLDIwLjczLTUuNDgsMzAuOTRsNC4zLTMxLjExWiIvPjxwYXRoIGQ9Ik0xNTUuMTYsNjYuMDhIMTI4QzEzMC4zMiw2NC41NCwxNTEuNzgsNjQuMTksMTU1LjE2LDY2LjA4WiIvPjxwYXRoIGQ9Ik0yMDIuNjcsMTY4LjIycTEuMDgsMTIuNTEsMi4xNywyNWwtLjg3LjI3YTcuNDUsNy40NSwwLDAsMS0xLTIuMjZjLS42Mi03LjI4LTEuMTUtMTQuNTctMS42Ny0yMS44NmEzLjU2LDMuNTYsMCwwLDEsLjQtMS4xOVoiLz48cGF0aCBkPSJNMTQuMSwxMzYuM3EtLjYyLDExLjIyLTEuMjIsMjIuNDRjLS4wOSwxLjc1LjA2LDMuNTMtLjIsNS4yNWE5LDksMCwwLDEtMS45MSw0LjIybDIuNDgtMzEuOTJaIi8+PHBhdGggZD0iTTE2NS43OCw0MTcuN2MuNjgsMSwxLjc3LDEuOTUsMiwzLjA1LjYsMy41OS44Nyw3LjI0LDEuMjcsMTAuODYtMi4zMS4zLTMuMTEtLjQ1LTMuMjQtMi4zNi0uMjUtMy43MS0uNzEtNy40LTEuMDgtMTEuMVoiLz48cGF0aCBkPSJNMTA1Ljc2LDE5MC42N2MtNi4zNiwzLjQ1LTEyLjEsNi41OC0xNy44Nyw5LjY2LS4xNS4wOC0uNTUtLjMyLTEuMTUtLjdDOTIuMjEsMTk0LjgzLDk3Ljg4LDE5MS4xMiwxMDUuNzYsMTkwLjY3WiIvPjxwYXRoIGQ9Ik0yMDkuODEsNjM2LjA4YzAsNi44OS0yLjI4LDEyLjc4LTMuNjksMTkuMjhDMjA0Ljc3LDY1MS44NSwyMDcuMzEsNjM3Ljc0LDIwOS44MSw2MzYuMDhaIi8+PHBhdGggZD0iTTE5Ny45NCwyOTkuNGMtLjU5LDUuMjMsMSwxMC43Ny0zLDE2LjE5LjctMy4yNSwxLjI1LTUuODUsMS44LTguNDRsLS4zNC0uMTktMi44OCw1LjctLjYtLjI2LDQuMTItMTMuMjJaIi8+PHBhdGggZD0iTTEzMi40MSw2ODYuNTVsMS40NiwyYy0uMjMuMTMtLjQ4LjI5LS40OS4yOC0uNzItMS0xLjQxLTEuOTMtMi4xMS0yLjksMS0uNTYsMi0xLjQ3LDMtMS42LDIuNTItLjMsNSwuMTUsNi43NywyLjIxLjQ3LjU0LjQ0LDEuNS42NCwyLjI3YTYsNiwwLDAsMS0yLjE4LS40NkMxMzcuNSw2ODcsMTM1LjQ0LDY4NiwxMzIuNDEsNjg2LjU1WiIvPjxwYXRoIGQ9Ik0xOTAuMzQsMzE0LjhxLjYxLTEyLjk0LDEuMjItMjUuODhsMSwuMDVxLS42NSwxMi45My0xLjMsMjUuODdaIi8+PHBhdGggZD0iTS40LDUxYy0xLjUtNS41NywxLjMzLTEwLjU3LDYuNDMtMTFBMTYuMjgsMTYuMjgsMCwwLDAsLjQsNTFaIi8+PHBhdGggZD0iTTE5MS40LDE3MC44OXEtLjc4LDguODctMS41NSwxNy43NGwtLjg2LS4wNiwxLTE3Ljc1WiIvPjxwYXRoIGQ9Ik0yMTAuMzgsNjg3LjA3bDE0LjI2LDEuMzYtLjA2LjY5YTg0LjQ0LDg0LjQ0LDAsMCwxLTE0LjMxLS44NloiLz48cGF0aCBkPSJNMjM2LjI3LDY4Ny4xN2gxMi4yQzI0NC40Miw2OTAuMzksMjQwLjM2LDY4OC43NiwyMzYuMjcsNjg3LjE3WiIvPjxwYXRoIGQ9Ik0yNjguNjksMTU2LjQ5aDEwLjA4di43NkgyNjguN1oiLz48cGF0aCBkPSJNMTk4LDE1Ni44Yy4xMiwxLjkyLjIxLDMuNTMuMzUsNS44Mi0xLS4xNC0yLjM1LjA4LTIuOTItLjQ5QzE5NC4yNCwxNjEsMTk1LjU1LDE1OC4yMiwxOTgsMTU2LjhaIi8+PHBhdGggZD0iTTE5OCw2OC42N2MuMjguNjkuNTIsMS4zOS44NCwyLjA2cy43MSwxLjI1LDEuMDYsMS44N2MtLjc4LjI2LTEuNjkuODgtMi4zMi42N3MtMS42NS0xLjI0LTEuNjMtMS44OGE5LjQ2LDkuNDYsMCwwLDEsMS4yMy0zLjA3WiIvPjxwYXRoIGQ9Ik0xNzIuNDIsNjg4Ljg2YzEuMTYtMi4wNiw3LjgyLTIuNTUsMTIuMi0xWiIvPjxwYXRoIGQ9Ik0xNi41MSw1My4yMmExMy44NywxMy44NywwLDAsMSw5LjEsMS4zNGwtLjEyLjg2TDE2LjM3LDU0LjJaIi8+PHBhdGggZD0iTTQxNy40Nyw2Mi4xNmwxLjIyLTEuODIsNC4xOSw0QzQxOS43LDY3LjA4LDQxOC43Miw2NC4yOCw0MTcuNDcsNjIuMTZaIi8+PHBhdGggZD0iTTIwNi43Nyw0OC4yMXEuMjctNi4yMy41NS0xMi40NGwuODIsMC0uNTcsMTIuNDNaIi8+PHBhdGggZD0iTTE5Ni4xMiwxNzkuODF2LTkuOTVsLjksMHEtLjMzLDUtLjY4LDkuOTRaIi8+PHBhdGggZD0iTTE2Nyw0MTcuMzljLTMuMTktLjg0LTMuNTktMi0xLjUtNC41M0MxNjYsNDE0LjQsMTY2LjQyLDQxNS43NCwxNjcsNDE3LjM5WiIvPjxwYXRoIGQ9Ik0yMTAuNTgsNjU5LjA2djcuMzNsLS43NCwwYy0uMTMtMi40NC0uMjctNC44OC0uNC03LjMyWiIvPjxwYXRoIGQ9Ik0xMDEuNTIsMjUwLjc1Yy0uNTQuNzctMS4yMywyLjQ2LTIuNDgsMy40Mi0xLjY3LDEuMjgtMy42Ny41Ni01LjA3LS43OGExNi41NCwxNi41NCwwLDAsMS01LjQtMTMuMjVjLjE5LTMuNDEsMy4xNC00LjY2LDUuODEtMi41NkExNy40MiwxNy40MiwwLDAsMSwxMDEuNTIsMjUwLjc1WiIvPjxwYXRoIGQ9Ik05NS43OCwyODkuNTljMi4zNC0uOTIsNC42Ni0xLjg4LDctMi43NywxMy4wOS01LDI0LjkzLTExLjkzLDMzLjgxLTIzLDMuMjMtNCw1LjQ0LTguODMsOC4xLTEzLjMuNDItLjcuNzMtMS40NiwxLjEtMi4xOWwuODUuMjNjLS4yLDEuMjItLjExLDIuNi0uNjcsMy42MS0yLjUxLDQuNTQtNC43Miw5LjM2LTcuOTMsMTMuMzYtOS4xNSwxMS4zOS0yMS4yMiwxOC43OS0zNC44NywyMy42NmE1NC43NCw1NC43NCwwLDAsMS03LDEuNTRaIi8+PHBhdGggZD0iTTEwOC40MywyMjkuNDNjMC0zLjkyLDIuMTEtNS4xOCw1LjQ0LTMuMTdhMTMuNDksMTMuNDksMCwwLDEsNi43Myw5LjA4LDguODYsOC44NiwwLDAsMS0uMzksNC42MmMtMSwyLjY1LTMuNSwzLjE1LTUuODMsMS40OEMxMTEuNDUsMjM5LjMzLDEwOC40LDIzMy4xOSwxMDguNDMsMjI5LjQzWiIvPjxwYXRoIGQ9Ik03OC42LDI0My41M2MtMi4xMS0zLjUsMi0xMy43OCw1LjktMTUuNTZaIi8+PHBhdGggZD0iTTEwMy4wOCwyMTUuMTFjMi4xNi0zLjI3LDkuNTgtMi44NiwxMi43MSwxLjI0WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTg0LjgyLDY4MS40MmM2LjgyLTUuMDYsMjcuNjQtMy4xMiwzNy43NSwyLjY2QzExMy4yNyw2ODYuNjUsODguMjQsNjg1LDg0LjgyLDY4MS40MloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTIuMTQsMTk0LjE3YzIuNjcsMSw1LjMzLDEuNjQsNy41MiwzLDcuMDksNC40MSwxMi4wNywxMC43OSwxNS41NywxOC4yOS42NSwxLjM5LjQsMy4xOS41Nyw0LjhhMjMuMiwyMy4yLDAsMCwxLTQuNTktLjM1Yy0xMC0yLjc5LTE3LTkuNC0yMi4xNS0xOC4xNi0xLjA4LTEuODMtMS43LTMuODQsMC01LjYyQTE1LjUxLDE1LjUxLDAsMCwxLDE5Mi4xNCwxOTQuMTdaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNNjYuMzQsOTAuMzdINTYuNTJ2NDkuMDZoNDYuNTN2LTkuODFINjYuMzRaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTI3LjYsOTAuMzcsMTA4LDEzOS40M2gxMS4ybDEzLjMzLTM0LjM0TDE0MiwxMjkuNjJIMTI1LjdsLTMuNjUsOS44MWgzNUwxMzcuNDEsOTAuMzdaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTcwLjksMTA3LjU1LDE1OC42Myw5MC4zN0gxNDYuMzdMMTY2LDExOS44MXYxOS42Mmg5LjgxVjExOS44MWwxOS42Mi0yOS40NEgxODMuMzFaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTk5LjY2LDk4LjF2NDEuMzNoNDYuNTN2LTkuODFoLTM2Ljd2LTkuODFoMjguMTlWMTEwSDIwOS40OXYtOS44MWgzNi43VjkwLjM3SDE5OS42NloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0yNjIuMTIsOTkuNzNoMjUuMTd2MTAuMjFIMjY0Ljg1bC4wOSw5LjM2aDYuNzRsMTcuNzksMjAuMTVoMTIuMTFMMjgzLjc5LDExOS4zaDdhNy42Miw3LjYyLDAsMCwwLDcuNjItNy42MlY5OGE3LjYyLDcuNjIsMCwwLDAtNy42Mi03LjYxSDI1Mi41N3Y0OS4wNmg5LjgxbC0uMjQtMzkuNzJaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzU2LjY1LDkwLjU4SDMzNy4zMnY5LjNoMTkuMzNaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzU4LjM5LDEyMS45M3YtMy44NkE4LjIxLDguMjEsMCwwLDAsMzUwLDExMEgzMTguODV2LTIuNTNIMzA3LjQzdjExSDM0N3YzLjQzaDExLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMxOC44NywxMDQuNDZWOTkuODhoMTUuMjl2LTkuM0gzMDcuNDV2MTMuODhaIi8+PHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQ3LDEyNC45MnY1LjQySDMzMS43djkuM2gxOC44M2E3LjcsNy43LDAsMCwwLDcuODQtNy41OHYtNy4xNEgzNDdaIi8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMzE4LDEyNS40M3Y0LjkxaDEwLjU5djkuM0gzMTVhNy43LDcuNywwLDAsMS03Ljg0LTcuNTh2LTYuNjRIMzE4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIwMi4zMiw0MjcuMTlzLTE0LjY5LDMuNC0xNCw3Ljc5YzAsMC0yLjc3LDYuNywxMy40Myw3LjkxLDAsMCwxOC4yNC0uMTYsMTguOTQtNi4zOEMyMjAuNyw0MzYuNTEsMjIwLjcxLDQyNS4xMSwyMDIuMzIsNDI3LjE5WiIvPjwvZz48L2c+PC9zdmc+",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/picture-white.svg",
+        "width": 50,
+        "z-index": 490
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c527bf16-f22a-4655-98b7-a76bf56e8985",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Creating a stand-alone pod",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 128.15346,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 248.99579013083587,
+          "y": 104.41695838743908
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
+        "width": 237.43748,
+        "z-index": 484
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "Creating a stand-alone pod"
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Section",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a1e8801e-743e-42e3-a6e5-4d9f3d5822cb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-09-01T03:44:04.105357497Z",
+          "updated_at": "2025-09-01T03:44:04.105357497Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Double-click icon for usage notes.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 32.576538,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -698.6525975060276,
+          "y": -517.9744850148229
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 127.044075,
+        "z-index": 489
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "2ec88a0e-ce5f-40a8-a5ea-da4a4cead40b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "height": 82.05289,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 226.97008579320547,
+          "y": 24.33379550478326
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
+        "width": 159.38277,
+        "z-index": 35
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      }
+    },
+    {
+      "id": "aaeb42c9-957c-4c63-ad4b-fe49f7211912",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "height": 40.445755,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 199.58330519546962,
+          "y": -122.56010840968955
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
+        "width": 268.3073,
+        "z-index": 109
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      }
+    },
+    {
+      "id": "fc85a2cf-1af3-4cd8-b245-99b0d254a7fc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-fit": "cover",
+        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 0,
+        "height": 148.06853,
+        "opacity": 1,
+        "padding": 0,
+        "position": {
+          "x": 204.331533000031,
+          "y": 211.89968218146268
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
+        "width": 114.98689,
+        "z-index": 80
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Picture",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1b0a8d9a-18ac-4b46-a29a-f31c084f4448",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(235,192,23)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 132.0495,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -398.59297255422206,
+          "y": 360.11945335018964
+        },
+        "primaryColor": "rgb(235,192,23)",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 387.83975,
+        "z-index": 0
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4b50a000-96a5-4e13-a344-2b4b8b274607",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 159.92302,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -390.72160800630184,
+          "y": -455.2493414741212
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 411.4422,
+        "z-index": 477
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "651029bb-f263-43de-a8fa-d83664316712",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-color": "rgb(0,180,216)",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 136.13062,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -393.49584150106784,
+          "y": 129.03558001309034
+        },
+        "primaryColor": "rgb(0,180,216)",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 390.01,
+        "z-index": 476
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d9099cc8-0cdb-44b2-b2d6-35a9a9b7ca2e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.",
+      "format": "JSON",
+      "model": {
+        "id": "3d2cd78d-d9fd-cf06-af5d-05b0564f0f32",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 147.41501,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -389.02414957893325,
+          "y": -125.92358544740289
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 393.01,
+        "z-index": 475
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1657fa20-6256-47cc-9f59-88b55175e531",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Alerts the user to a potential risk, an irreversible action, or a serious issue that could lead to errors. Its primary purpose is to prevent user mistakes.\n\n\"Be aware...\", \"This is permanent...\", \"Cannot be undone...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 108.40011,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -389.4966599588722,
+          "y": 403.9307930379935
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 390.71207,
+        "z-index": 478
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "2b230258-2d81-41d5-b007-8b0977d412ef",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "ℹ️ Info:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -473.5695497689674,
+          "y": -167.6767121268868
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 479
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "74c7b1e5-b393-4aed-9441-b1c2fe7c2e2c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "💡 Tip:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -477.1385162850562,
+          "y": 92.55817163174561
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 479
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "96f1a99d-f4f4-4386-a024-f8015fc8e24a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Title",
+        "body-text-color": "rgb(225,225,225)",
+        "body-text-font-size": 24,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 47.340183,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -481.89720504937037,
+          "y": -498.75848704905536
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 206.64168,
+        "z-index": 480
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b17e28d0-a923-4c71-9047-8e484717acca",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Click on the Kubernetes icon in the application bar.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 242.49737612260063,
+          "y": -36.090409571014014
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 349.18497,
+        "z-index": 26
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b3f83c6c-c51c-4ce6-b3ae-4e2ec4f13de3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Either click or drag and drop the component on Kanvas",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 251.64268913907114,
+          "y": 118.33911789565406
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 356.888,
+        "z-index": 32
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d083d825-0476-4866-9adf-fb1b24f84417",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-04T18:08:15.462084733Z",
+          "updated_at": "2024-11-04T18:08:15.462084733Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "With this, you have successfully created a standalone pod. Use the example compoments below to explore further.",
+        "body-text-color": "rgb(225,225,225)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 32.12068,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 232.121156787016,
+          "y": 329.5565626845677
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 324.48788,
+        "z-index": 115
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d41227e6-c08b-4c49-881d-93b172dcd812",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provide a brief description of the content.",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -396.3000417075673,
+          "y": -411.20812564596486
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 481
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "dddf26d0-14a1-4bf2-813f-d99be05aa7d3",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provides a helpful suggestion, shortcut, or best practice. Its purpose is to help users complete their work more efficiently and intelligently.\n\n\"You can quickly...\", \"A faster way is...\", \"Consider doing...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -386.436972416471,
+          "y": 172.03396324183518
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 482
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e7460c0f-a750-443b-ab8a-dabafa6c47fa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "⚠️Warning:",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 20,
+        "body-text-font-weight": "700",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 48.913437,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -479.92724882155994,
+          "y": 326.6311266095134
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 213.50899,
+        "z-index": 483
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    },
+    {
+      "id": "fcda4d1f-eae8-4e8c-8a4f-ceef948d80c6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ca787272-67cc-ecda-9340-974f01e11ad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+          "name": "meshery",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2024-11-03T13:59:28.281910293Z",
+          "updated_at": "2024-11-03T13:59:28.281910293Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f",
+        "category": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "App Definition and Development",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Provides neutral, objective facts or contextual information. It is unemotional and simply states \"what this is\" or \"what the situation is.\"\n\n\"This represents...\", \"The purpose is...\", \"You can...\"",
+        "body-text-color": "rgb(255,255,255)",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "left",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 0,
+        "height": 104.91352,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -391.1927792542932,
+          "y": -81.58599730898028
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 378.1452,
+        "z-index": 2
+      },
+      "capabilities": [
+        {
+          "description": "Configure the visual styles for the component",
+          "displayName": "Styling",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Change the shape of the component",
+          "displayName": "Change Shape",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "shape",
+          "type": "style",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Drag and Drop a component into a parent component in graph view",
+          "displayName": "Compound Drag And Drop",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "interaction",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "compoundDnd",
+          "type": "graph",
+          "version": "0.7.0"
+        },
+        {
+          "description": "Add text to nodes body",
+          "displayName": "Body Text",
+          "entityState": [
+            "declaration"
+          ],
+          "key": "",
+          "kind": "mutate",
+          "schemaVersion": "capability.meshery.io/v1alpha1",
+          "status": "enabled",
+          "subType": "body-text",
+          "type": "style",
+          "version": "0.7.0"
+        }
+      ],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": []
+}
