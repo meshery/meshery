@@ -4,7 +4,7 @@
   <ul id="search-results" style="margin-top: 30px; padding-left: 20px;"></ul>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -13,11 +13,11 @@
     const resultsEl = document.getElementById('search-results');
 
     if (!query) {
-      titleEl.innerText = "Please enter a search term.";
+      titleEl.textContent = "Please enter a search term.";
       return;
     }
 
-    titleEl.innerText = 'Showing results for "' + query + '"';
+    titleEl.textContent = 'Showing results for "' + query + '"';
 
     fetch('/index.json')
       .then(response => response.json())
@@ -63,14 +63,28 @@
           // NEW: Strip any sneaky HTML tags (like images, SVGs, or buttons) so it stays plain text!
           snippet = snippet.replace(/<\/?[^>]+(>|$)/g, "");
           
-          li.innerHTML = `
-            <div style="margin-bottom: 5px; font-size: 1.1rem; font-weight: normal;">
-              <a href="${doc.ref}" style="color: #00b39f; text-decoration: none;">${doc.title}</a>
-            </div>
-            <p style="margin-top: 0; font-size: 0.9em; color: #cccccc;">
-              ${snippet}
-            </p>
-          `;
+          // Create the title container
+          const titleDiv = document.createElement('div');
+          titleDiv.style.cssText = "margin-bottom: 5px; font-size: 1.1rem; font-weight: normal;";
+          
+          // Create the clickable link
+          const titleLink = document.createElement('a');
+          titleLink.href = doc.ref;
+          titleLink.style.cssText = "color: #00b39f; text-decoration: none;";
+          titleLink.textContent = doc.title; // Safely sets text without parsing HTML
+          
+          titleDiv.appendChild(titleLink);
+
+          // Create the snippet paragraph
+          const snippetP = document.createElement('p');
+          snippetP.style.cssText = "margin-top: 0; font-size: 0.9em; color: #cccccc;";
+          snippetP.textContent = snippet; // Safely sets text without parsing HTML
+
+          // Attach them to the list item
+          li.appendChild(titleDiv);
+          li.appendChild(snippetP);
+
+          // Append to results list
           resultsEl.appendChild(li);
         });
       })
