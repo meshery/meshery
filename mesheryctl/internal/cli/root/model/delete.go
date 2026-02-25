@@ -27,7 +27,7 @@ import (
 )
 
 var deleteModelCmd = &cobra.Command{
-	Use:   "delete [model-id]",
+	Use:   "delete [model-id | model-name]",
 	Short: "Delete a model",
 	Long: `Delete a model by ID
 Find more information at https://docs.meshery.io/reference/mesheryctl/model/delete`,
@@ -60,7 +60,7 @@ mesheryctl model delete [model-name]
 		}
 
 		// Delete model by name, for multiple matches use pagination selection prompt
-		var selectedModel model.ModelDefinition
+		selectedModel := new(model.ModelDefinition)
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
 				UrlPath:    modelsApiPath,
@@ -70,7 +70,7 @@ mesheryctl model delete [model-name]
 			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
 				return data.Models
 			},
-			&selectedModel,
+			selectedModel,
 		)
 		if err != nil {
 			return err
