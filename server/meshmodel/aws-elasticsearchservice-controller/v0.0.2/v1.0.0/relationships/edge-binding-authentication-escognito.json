@@ -80,7 +80,8 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "displayName"
+                  "status",
+                  "userPoolID"
                 ]
               ]
             }

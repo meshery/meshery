@@ -44,17 +44,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "snapshotOptions",
-                  "automatedSnapshotStartHour"
-                ]
-              ]
             }
           }
         ],
@@ -75,14 +64,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ]
             }
           }
         ]

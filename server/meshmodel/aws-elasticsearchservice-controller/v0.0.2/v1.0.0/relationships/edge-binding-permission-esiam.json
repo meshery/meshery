@@ -79,7 +79,8 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "displayName"
+                  "status",
+                  "arn"
                 ]
               ]
             }

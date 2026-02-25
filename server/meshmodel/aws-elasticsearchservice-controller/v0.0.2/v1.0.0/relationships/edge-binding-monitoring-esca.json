@@ -44,16 +44,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "domainName"
-                ]
-              ]
             }
           }
         ],
@@ -74,14 +64,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ]
             }
           }
         ]

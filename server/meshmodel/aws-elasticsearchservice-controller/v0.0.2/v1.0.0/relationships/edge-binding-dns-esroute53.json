@@ -44,16 +44,6 @@
               "model": {
                 "version": ""
               }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "domainName"
-                ]
-              ]
             }
           }
         ],
@@ -79,7 +69,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "displayName"
+                  "status",
+                  "resourceRecordSet",
+                  "resourceRecords"
                 ]
               ]
             }
