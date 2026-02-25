@@ -1,0 +1,49 @@
+---
+title: AWS CloudWatch Logs
+subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch Logs
+image: /extensions/models/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatchlogs-controller
+description: 
+integrations-category: Observability and Analysis
+integrations-subcategory: Management Governance
+registrant: GitHub
+components: 
+- name: field-export
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: log-group
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/color/log-group-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/log-group/icons/white/log-group-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-cloudwatchlogs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+components-count: 4
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 3
+featureList: [
+  "Two classes of log groups for flexibility – CloudWatch Logs offers two classes of log groups so that you can have a cost-effective option for logs that you access infrequently. ",
+  "Query your log data – You can use CloudWatch Logs Insights to interactively search and analyze your log data. ",
+  "Detect and debug using Live Tail – You can use Live Tail to quickly troubleshoot incidents by viewing a streaming list of new log events as they are ingested. "
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-cloudwatchlogs-controller
+---

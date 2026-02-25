@@ -1,0 +1,41 @@
+---
+title: AWS VPC CNI
+subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
+image: /extensions/models/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
+description: 
+integrations-category: Cloud Native Network
+integrations-subcategory: Networking Content Delivery
+registrant: Artifact Hub
+components: 
+- name: eni-config
+  colorIcon: /extensions/models/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg
+  whiteIcon: /extensions/models/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg
+  description: 
+- name: policy-endpoint
+  colorIcon: /extensions/models/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
+  whiteIcon: /extensions/models/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
+  description: 
+components-count: 2
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 3
+featureList: [
+  "Keep revision history and audit trail of all configuration changes",
+  "Use Kanvas&lsquo;s visual designer to explore your App Mesh configuration",
+  "Deploy Meshery on your EKS clusters for App Mesh management"
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-vpc-cni
+---

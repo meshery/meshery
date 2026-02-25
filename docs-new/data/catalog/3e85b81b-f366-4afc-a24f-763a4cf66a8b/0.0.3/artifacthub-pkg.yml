@@ -1,0 +1,24 @@
+version: 0.0.3
+name: -online-polling-application
+displayName: "\tOnline Polling Application"
+createdAt: "2025-07-17T10:16:50Z"
+description: A scalable online polling system using Go backend, PostgreSQL database, and React frontend served via Nginx.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3e85b81b-f366-4afc-a24f-763a4cf66a8b/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "PostgreSQL database uses default admin credentials. Nginx is used as a placeholder frontend image. Replace with actual React build in production. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d574bd52-93e6-44b7-ad69-edf67c643b2c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3e85b81b-f366-4afc-a24f-763a4cf66a8b-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3e85b81b-f366-4afc-a24f-763a4cf66a8b-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
