@@ -1,4 +1,8 @@
 import { api } from './index';
+import {
+  useGetEnvironmentsQuery,
+  useCreateEnvironmentMutation,
+} from '@meshery/schemas/dist/mesheryApi';
 
 const TAGS = {
   ENVIRONMENT_CONNECTIONS: 'enivroment_connections',
@@ -105,8 +109,6 @@ const connectionsApi = api
   });
 
 export const {
-  useGetEnvironmentsQuery,
-  useCreateEnvironmentMutation,
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
   useGetEnvironmentConnectionsQuery,
@@ -114,3 +116,5 @@ export const {
   useRemoveConnectionFromEnvironmentMutation,
   useSaveEnvironmentMutation,
 } = connectionsApi;
+
+export { useGetEnvironmentsQuery, useCreateEnvironmentMutation };
