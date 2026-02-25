@@ -1,0 +1,24 @@
+---
+title: AWS Elastic Kubernetes Service
+subtitle: Diagram and configure your Azure Kubernetes Service clusters
+image: /extensions/models/eks/icons/color/eks-color.svg
+docURL: https://docs.meshery.io/installation/kubernetes/eks
+description: 
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
+registrant: Artifact Hub
+components: 
+components-count: 0
+relationships: 
+relationship-count: 0
+featureList: [
+  "Save and share AKS configuration templates",
+  "Ensure multi-tenancy enforcement",
+  "Dry run your AKS configuration changes"
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/eks
+---

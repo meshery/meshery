@@ -134,7 +134,7 @@ func TestDesignCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound("test-view"),
 		},
 	}
 

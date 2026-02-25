@@ -15,9 +15,9 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
   <label for="tab1" data-icon="&#xf1cb;">REST API</label>
   <section class="tabbed" id="content1">
     <p>Meshery Server's REST API is available at <code>[hostname]:[port]/api/</code>.</p>
-    {{< alert type="dark" title="Meshery's REST API Reference" >}}
+    {{% alert color="dark" title="Meshery's REST API Reference" %}}
 See [REST API Reference](/reference/rest-apis) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
-    {{< /alert >}}
+    {{% /alert %}}
   </section>
 
   <!-- Tab 2: GraphQL API -->
@@ -31,9 +31,9 @@ See [REST API Reference](/reference/rest-apis) Self-generated API documentation 
       <li>Subscriptions for watching for any data changes.</li>
     </ul>
     <p>Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.</p>
-    {{< alert type="dark" title="Meshery's GraphQL API Reference" >}}
+    {{% alert color="dark" title="Meshery's GraphQL API Reference" %}}
 See [GraphQL API Reference](/reference/graphql-apis) Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
-    {{< /alert >}}
+    {{% /alert %}}
   </section>
 </div>
 
@@ -41,11 +41,11 @@ See [GraphQL API Reference](/reference/graphql-apis) Self-generated API document
 
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
-{{< alert type="dark" title="What are authentication tokens?" >}}
+{{% alert color="dark" title="What are authentication tokens?" %}}
 Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, [Meshery CLI](/reference/mesheryctl) and [UI](/extensibility/api#how-to-get-your-token), or its two APIs: [REST](/reference/rest-apis) or [GraphQL](/reference/graphql-apis). 
 
 Meshery's authentication token system provide secure access to Meshery's powerful management features.
-{{< /alert >}}
+{{% /alert %}}
 
 ### How to get your token
 
@@ -65,16 +65,16 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).
 
-{{< alert type="dark" title="How to use the token for requests to Meshery Rest API using API clients" >}}
+{{% alert color="dark" title="How to use the token for requests to Meshery Rest API using API clients" %}}
 Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication.
-{{< /alert >}}
+{{% /alert %}}
 {{< code code=`meshery-provider: Meshery
 token: your token` >}}
-{{< alert type="dark" >}}
+{{% alert color="dark" %}}
 Navigate to the cookies section your API testing platform, to set the appropriate name and value for the cookie, then make sure to save the configured cookies to initiate the request. 
 
 The request will be sent to the Meshery API using the configured cookies for authentication.
-{{< /alert >}}
+{{% /alert %}}
 
 ### Endpoints
 

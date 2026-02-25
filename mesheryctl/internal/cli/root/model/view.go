@@ -20,7 +20,7 @@ var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
 	Long: `View a model queried by its name
-Documentation for models view can be found at https://docs.meshery.io/reference/mesheryctl/model/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
 // View a specific model from current provider
 mesheryctl model view [model-name]
