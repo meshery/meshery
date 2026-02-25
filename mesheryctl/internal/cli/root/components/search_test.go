@@ -45,7 +45,7 @@ func TestSearchComponent(t *testing.T) {
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?search=Test&page=0&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.output.golden",
+			ExpectedResponse: "components.search.success.output.golden",
 			ExpectError:      false,
 		},
 		{

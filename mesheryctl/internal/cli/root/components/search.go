@@ -42,6 +42,9 @@ mesheryctl component search [query-text]
 
 // Search for multi-word component names (must be quoted)
 mesheryctl component search "Component name"
+
+// Search list of components of specified page [int]
+mesheryctl component search [query-text] [--page 1]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
