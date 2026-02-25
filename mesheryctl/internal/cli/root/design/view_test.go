@@ -94,7 +94,7 @@ func TestDesignView(t *testing.T) {
 			Token:          "",
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
 	}
 

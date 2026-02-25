@@ -1,0 +1,20 @@
+version: 0.0.1
+name: rbac-for-elasticsearch
+displayName: RBAC for ElasticSearch
+createdAt: "2023-04-21T21:30:14Z"
+description: 'This infrastructure design defines resources related to Role-Based Access Control (RBAC) for Elasticsearch in a Kubernetes environment. Here''s a brief description of the components: 1.) zk (ZooKeeper StatefulSet): - A StatefulSet named zk with 3 replicas is defined to manage ZooKeeper instances.   - It uses ordered pod management policy, ensuring that pods are started in order.   - ZooKeeper is configured with specific settings, including ports, data directories, and resource requests.   - It has affinity settings to avoid running multiple ZooKeeper instances on the same node.   - The configuration includes liveness and readiness probes to ensure the health of the pods. 2.) zk-cs (ZooKeeper Service):   - A Kubernetes Service named zk-cs is defined to provide access to the ZooKeeper instances.   - It exposes the client port (port 2181) used to connect to ZooKeeper. 3.) zk-hs (ZooKeeper Headless Service):   - Another Kubernetes Service named `zk-hs` is defined as headless (with cluster IP set to None).   - It exposes ports for ZooKeeper server (port 2888) and leader election (port 3888).   - This headless service is typically used for direct communication with individual ZooKeeper instances. 4.) **zk-pdb (ZooKeeper PodDisruptionBudget):**   - A PodDisruptionBudget named `zk-pdb` is defined to control the maximum number of unavailable ZooKeeper pods to 1.   - This ensures that at least one ZooKeeper instance remains available during disruptions.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f752c99c-cbe9-4af2-98a7-c3b7a05b94b6/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between pod and services. Ensure sufficient resources are available in the cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f3bd5ce-f178-4a69-83ba-62341c74d492
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

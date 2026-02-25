@@ -1,0 +1,28 @@
+---
+title: ChaosBlade
+subtitle: Collaborative and visual infrastructure as design for ChaosBlade
+image: /extensions/models/chaosblade-operator/icons/color/chaosblade-operator-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/chaosblade-operator
+description: 
+integrations-category: Observability and Analysis
+integrations-subcategory: Chaos Engineering
+registrant: Artifact Hub
+components: 
+- name: chaos-blade
+  colorIcon: /extensions/models/chaosblade-operator/components/chaos-blade/icons/color/chaos-blade-color.svg
+  whiteIcon: /extensions/models/chaosblade-operator/components/chaos-blade/icons/white/chaos-blade-white.svg
+  description: 
+components-count: 1
+relationships: 
+relationship-count: 0
+featureList: [
+  "Improves the fault tolerance of distributed systems.",
+  "Ensures business continuity during the process of enterprises going to cloud or moving to cloud native systems.",
+  "Supports rich experimental scenarios."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/chaosblade-operator
+---

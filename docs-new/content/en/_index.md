@@ -28,7 +28,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Installation pages will be listed here -->
+        {{< section-pages section="installation" >}}
       </ul>
     </details>
   </div>
@@ -44,8 +44,8 @@ linkTitle: Documentation
           <a href="/concepts/logical" class="text-black">Logical</a>
         </p>
       </summary>
-      <ul class="section-title">
-        <!-- Logical concept pages will be listed here -->
+      <ul>
+        {{< section-pages section="concepts/logical" >}}
       </ul>
     </details>
     <details>
@@ -55,7 +55,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul>
-        <!-- Architectural component pages will be listed here -->
+        {{< section-pages section="concepts/architecture" >}}
       </ul>
     </details>
   </div>
@@ -75,7 +75,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- mesheryctl guide pages will be listed here -->
+        {{< section-pages section="guides/mesheryctl" >}}
       </ul>
     </details>
     <details>
@@ -85,7 +85,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Tutorial pages will be listed here -->
+        {{< section-pages section="guides/tutorials" >}}
       </ul>
     </details>
     <details>
@@ -95,7 +95,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Infrastructure management pages will be listed here -->
+        {{< section-pages section="guides/infrastructure-management" >}}
       </ul>
     </details>
     <details>
@@ -105,7 +105,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Performance management pages will be listed here -->
+        {{< section-pages section="guides/performance-management" >}}
       </ul>
     </details>
     <details>
@@ -115,7 +115,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Configuration management pages will be listed here -->
+        {{< section-pages section="guides/configuration-management" >}}
       </ul>
     </details>  
     <details>
@@ -125,7 +125,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Troubleshooting pages will be listed here -->
+        {{< section-pages section="guides/troubleshooting" >}}
       </ul>
     </details>
   </div>
@@ -142,7 +142,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Extension pages will be listed here -->
+        {{< section-pages section="extensions" >}}
       </ul>
     </details>
     <details>
@@ -152,7 +152,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Integration pages will be listed here -->
+        <li>See all <a href="/extensions/models">391 integrations</a> </li>
       </ul>
     </details>
   </div>
@@ -166,9 +166,16 @@ linkTitle: Documentation
     <a href="/project">
         <div class="btn-primary">Contributing & Community</div>
     </a>
-    <ul>
-      <!-- Project pages will be listed here -->
-    </ul>
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="/project" class="text-black">Community</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {{< section-pages section="project" >}}
+      </ul>
+    </details>
     <!-- CONTRIBUTING -->
     <details>
       <summary>
@@ -177,7 +184,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Contributing pages will be listed here -->
+        {{< section-pages section="project/contributing" >}}
       </ul>
     </details>
   </div>
@@ -195,7 +202,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Reference pages will be listed here -->
+        {{< section-pages section="reference" >}}
       </ul>
     </details>
     <!-- Extensibility -->
@@ -206,7 +213,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        <!-- Extensibility pages will be listed here -->
+        {{< section-pages section="extensibility" >}}
       </ul>
     </details>
   </div>

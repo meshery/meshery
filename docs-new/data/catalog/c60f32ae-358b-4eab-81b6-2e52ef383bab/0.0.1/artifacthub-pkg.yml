@@ -1,0 +1,29 @@
+version: 0.0.1
+name: mattermost-operator
+displayName: mattermost operator
+createdAt: "2024-05-21T09:27:34Z"
+description: |-
+    This YAML file defines a Kubernetes Deployment for the mattermost-operator in the mattermost-operator namespace. The deployment is configured to run a single replica of the Mattermost operator, which manages Mattermost instances within the Kubernetes cluster. The pod template specifies the container details for the operator.
+
+    The container, named mattermost-operator, uses the image mattermost/mattermost-operator:latest and is set to pull the image if it is not already present (IfNotPresent). The container runs the /mattermost-operator command with arguments to enable leader election and set the metrics address to 0.0.0.0:8383. Several environment variables are defined to configure the operator's behaviour, such as MAX_RECONCILING_INSTALLATIONS (set to 20), REQUEUE_ON_LIMIT_DELAY (set to 20 seconds), and MAX_RECONCILE_CONCURRENCY (set to 10). These settings control how the operator handles the reconciliation process for Mattermost installations.
+
+    The container also exposes a port (8383) for metrics, allowing monitoring and observation of the operator's performance. The deployment specifies that the pods should use the mattermost-operator service account, ensuring they have the appropriate permissions to interact with the Kubernetes API and manage Mattermost resources.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c60f32ae-358b-4eab-81b6-2e52ef383bab/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Allocation:\nThe deployment specifies no resource limits or requests for the mattermost-operator container. It is crucial to define these to ensure the operator has sufficient CPU and memory to function correctly without affecting other workloads in the cluster.\n\n2. Image Tag:\nThe latest tag is used for the Mattermost operator image. This practice can lead to unpredictability in deployments, as the latest tag may change and introduce unexpected changes or issues. It is recommended to use a specific version tag to ensure consistency.\n\n3. Security Context:\nThe deployment does not specify a detailed security context for the container. Adding constraints such as runAsNonRoot, readOnlyRootFilesystem, and dropCapabilities can enhance security by limiting the container’s privileges.\n\n4. Environment Variables:\nThe environment variables like MAX_RECONCILING_INSTALLATIONS, REQUEUE_ON_LIMIT_DELAY, and MAX_RECONCILE_CONCURRENCY are set directly in the deployment. If these values need to be adjusted frequently, consider using a ConfigMap to manage them externally.\n\n5. Metrics and Monitoring:\nThe metrics address is exposed on port 8383. Ensure that appropriate monitoring tools are in place to capture and analyse these metrics for performance tuning and troubleshooting. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c60f32ae-358b-4eab-81b6-2e52ef383bab-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c60f32ae-358b-4eab-81b6-2e52ef383bab-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
