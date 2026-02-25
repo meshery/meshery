@@ -19,6 +19,7 @@ import (
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
@@ -46,6 +47,17 @@ mesheryctl component search "Component name"
 // Search list of components of specified page [int]
 mesheryctl component search [query-text] [--page 1]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(cmdComponentSearchFlag)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("%v\n\n%v", errNoArg, searchUsageMessage))
