@@ -4,7 +4,7 @@ const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
   reactStrictMode: true,
   env: {
-    RTK_MESHERY_ENDPOINT_PREFIX: process.env.RTK_MESHERY_ENDPOINT_PREFIX || '/api',
+    RTK_MESHERY_ENDPOINT_PREFIX: process.env.RTK_MESHERY_ENDPOINT_PREFIX || '',
   },
   eslint: {
     ignoreDuringBuilds: true,
