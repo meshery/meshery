@@ -1,0 +1,84 @@
+<style>
+.tbl-severity-fatal {
+  background-color: #FF0101 !important;
+  color: white !important;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  vertical-align: middle !important;
+}
+
+.tbl-severity-alert {
+  background-color: #FEA400 !important;
+  color: white !important;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  vertical-align: middle !important;
+}
+
+.tbl-severity-info {
+  background-color: transparent !important;
+  color: black !important;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  vertical-align: middle !important;
+}
+</style>
+
+{{ $count := 0 }}
+{{ range $fileName, $fileData := site.Data.errorref }}
+  {{ $count = add $count 1 }}
+  {{ $component := $fileData.errors_export }}
+  {{ $heading := "" }}
+  {{ if eq $component.component_type "adapter" }}
+      {{ $heading = printf "Meshery Adapter for %s" $component.component_name }}
+    {{ else if eq $component.component_type "client" }}
+      {{ $heading = printf "Meshery Client for %s" $component.component_name }}
+    {{ else if eq $component.component_type "library" }}
+      {{ $heading = printf "Meshery Library for %s" $component.component_name }}
+    {{ else if eq $component.component_name "meshery-server" }}
+      {{ $heading = "Meshery Server" }}
+    {{ end }}
+
+    <h2 class="title">{{ $heading }}</h2>
+    <table class="tbl">
+      <thead>
+        <tr class="tbl-head-row">
+          <th style="width:5%">Severity</th>
+          <th class="error-name-code"><span>Error Name - Code</span></th>
+          <th style="width:85%">Short Description</th>
+          <th>Discussion</th>
+        </tr>
+      </thead>
+      <tbody class="tbl-body">
+        {{ range $errCode, $err_code := $component.errors }}
+          {{ $severityClass := "tbl-severity-info" }}
+          {{ if eq (lower $err_code.severity) "fatal" }}
+            {{ $severityClass = "tbl-severity-fatal" }}
+          {{ else if eq (lower $err_code.severity) "alert" }}
+            {{ $severityClass = "tbl-severity-alert" }}
+          {{ end }}
+          <tr id="{{ $err_code.name }}-{{ $err_code.code }}" class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ $component.component_name }}-{{ $err_code.name }}-more-info');">
+            <td class="{{ $severityClass }}">{{ $err_code.severity }}</td>
+            <td id="{{ $heading | lower | replace " " "-" }}-{{ $err_code.code }}" class="error-name-code">
+              <code>{{ $err_code.name }}-{{ $err_code.code }}</code>
+            </td>
+            <td>{{ $err_code.short_description }}</td>
+            <td><a href="https://meshery.io/community#discussion-forums/search?q={{ $err_code.name }}-{{ $err_code.code }}" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="{{ $component.component_name }}-{{ $err_code.name }}-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">{{ $err_code.long_description }}</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">{{ $err_code.probable_cause }}</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">{{ $err_code.suggested_remediation }}</p>
+            </td>
+          </tr>
+        {{ end }}
+      </tbody>
+    </table>
+    <a href="#error-code-reference">Top</a>
+    <hr>
+    <br>
+{{ end }}
