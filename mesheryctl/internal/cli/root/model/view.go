@@ -44,10 +44,8 @@ mesheryctl model view [model-name] --output-format json
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err, urlPath := getModelViewUrlPath(args[0])
-		if err != nil {
-			return err
-		}
+		urlPath := getModelViewUrlPath(args[0])
+
 		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](urlPath)
 
 		if err != nil {
@@ -58,7 +56,7 @@ mesheryctl model view [model-name] --output-format json
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Println("No model(s) found for the given name or ID :", args[0])
+			fmt.Printf("No model(s) found for the given name or ID : %s\n", args[0])
 			return nil
 		case 1:
 			selectedModel = modelsResponse.Models[0]
@@ -111,19 +109,19 @@ func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
 	}
 }
 
-func getModelViewUrlPath(modelname string) (error, string) {
+func getModelViewUrlPath(modelNameorId string) string {
 	queryParams := url.Values{}
 	var modelsUrlPath string
 
-	if !utils.IsUUID(modelname) {
-		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelname))
+	if !utils.IsUUID(modelNameorId) {
+		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelNameorId))
 		queryParams.Add("pagesize", "all")
 	} else {
 		modelsUrlPath = modelsApiPath
-		queryParams.Add("id", modelname)
+		queryParams.Add("id", modelNameorId)
 	}
 
-	return nil, fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
+	return fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
 }
 
 func init() {
