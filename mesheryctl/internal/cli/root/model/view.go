@@ -115,17 +115,13 @@ func getModelViewUrlPath(modelname string) (error, string) {
 	queryParams := url.Values{}
 	var modelsUrlPath string
 
-	// For validate an argument is uuid or name
-	isID := utils.IsUUID(modelname)
-
-	if !isID {
+	if !utils.IsUUID(modelname) {
 		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelname))
+		queryParams.Add("pagesize", "all")
 	} else {
 		modelsUrlPath = modelsApiPath
 		queryParams.Add("id", modelname)
 	}
-
-	queryParams.Add("pagesize", "all")
 
 	return nil, fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
 }
