@@ -1,0 +1,83 @@
+{{ define "main" }}
+<div class="td-content">
+  <h1 id="search-title">Showing results for ""</h1>
+  <ul id="search-results" style="margin-top: 30px; padding-left: 20px;"></ul>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    const titleEl = document.getElementById('search-title');
+    const resultsEl = document.getElementById('search-results');
+
+    if (!query) {
+      titleEl.innerText = "Please enter a search term.";
+      return;
+    }
+
+    titleEl.innerText = 'Showing results for "' + query + '"';
+
+    fetch('/index.json')
+      .then(response => response.json())
+      .then(data => {
+        const idx = lunr(function () {
+          this.ref('ref');
+          // Massive boost to titles to ensure exact matches rank first
+          this.field('title', { boost: 100 }); 
+          this.field('tags', { boost: 30 });
+          this.field('categories', { boost: 20 });
+          this.field('description', { boost: 10 });
+          this.field('body');
+          
+          data.forEach(function (doc) {
+            let docToIndex = {
+              ref: doc.ref,
+              title: doc.title,
+              description: doc.description,
+              tags: doc.tags ? doc.tags.join(" ") : "",
+              categories: doc.categories ? doc.categories.join(" ") : "",
+              body: doc.body
+            };
+            this.add(docToIndex);
+          }, this);
+        });
+
+        // Search logic tuned for better accuracy
+        const searchQuery = query + "^100 " + query + "*^10";
+        const results = idx.search(searchQuery);
+
+        if (results.length === 0) {
+          resultsEl.innerHTML = '<p>No results found.</p>';
+          return;
+        }
+
+        results.forEach(result => {
+          const doc = data.find(d => d.ref === result.ref);
+          const li = document.createElement('li');
+          li.style.marginBottom = "25px";
+          
+          let snippet = doc.description ? doc.description : doc.body.substring(0, 180) + "...";
+          
+          // NEW: Strip any sneaky HTML tags (like images, SVGs, or buttons) so it stays plain text!
+          snippet = snippet.replace(/<\/?[^>]+(>|$)/g, "");
+          
+          li.innerHTML = `
+            <div style="margin-bottom: 5px; font-size: 1.1rem; font-weight: normal;">
+              <a href="${doc.ref}" style="color: #00b39f; text-decoration: none;">${doc.title}</a>
+            </div>
+            <p style="margin-top: 0; font-size: 0.9em; color: #cccccc;">
+              ${snippet}
+            </p>
+          `;
+          resultsEl.appendChild(li);
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching search index:", err);
+        resultsEl.innerHTML = '<p>Error loading search results.</p>';
+      });
+  });
+</script>
+{{ end }}

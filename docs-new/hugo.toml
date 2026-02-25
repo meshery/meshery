@@ -88,7 +88,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
 
 # Comment out if you don't want the "print entire section" link enabled.
 [outputs]
-  home = ["HTML", "RSS", "SITEMAP"]
+  home = ["HTML", "RSS", "SITEMAP", "JSON"]
   section = ["HTML", "RSS"]
   taxonomy = ["HTML", "RSS"]
   term = ["HTML", "RSS"]
