@@ -8,23 +8,23 @@ language: en
 
 ---
 
-This guide will help you run SMI Conformance Tests with Meshery through the [UI](#running-smi-conformance-tests-through-meshery-ui), CLI and a GitHub action for your CI/CD pipelines. To learn more about Meshery and SMI Conformance, see [Meshery and Service Mesh Interface (SMI) Conformance](/tasks/service-mesh-interface)
+This guide will help you run SMI Conformance Tests with Meshery through the [UI](#running-smi-conformance-tests-through-meshery-ui), CLI and a GitHub action for your CI/CD pipelines. To learn more about Meshery and SMI Conformance, see [Meshery and Service Mesh Interface (SMI) Conformance]({{ site.baseurl }}/tasks/service-mesh-interface)
 
 ## Setup Meshery and Install a Service Mesh
 
-Install and login to Meshery to start running SMI conformance tests. See [Installation](/installation) documentation for detailed steps on how to install Meshery.
+Install and login to Meshery to start running SMI conformance tests. See [Installation]({{ site.baseurl }}/installation) documentation for detailed steps on how to install Meshery.
 
 _Meshery dashboard_
 
-<a href="/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="/assets/img/smi/dashboard.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/smi/dashboard.png" /></a>
 
-Next, install the service mesh from Meshery. See [Service Meshes](/service-meshes) for a list of supported service meshes and guides on how to install them.
+Next, install the service mesh from Meshery. See [Service Meshes]({{ site.baseurl }}/service-meshes) for a list of supported service meshes and guides on how to install them.
 
 _Installing Istio_
 
-<a href="/assets/img/smi/istio-dashboard.png"><img alt="Istio Dashboard" src="/assets/img/smi/istio-dashboard.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/istio-dashboard.png"><img alt="Istio Dashboard" src="{{ site.baseurl }}/assets/img/smi/istio-dashboard.png" /></a>
 
-**Alternatively**, you can use mesheryctl, Meshery's CLI to deploy a service mesh. See [mesheryctl mesh](/reference/mesheryctl/mesh/) documentation for details.
+**Alternatively**, you can use mesheryctl, Meshery's CLI to deploy a service mesh. See [mesheryctl mesh]({{ site.baseurl }}/reference/mesheryctl/mesh/) documentation for details.
 
 ## Running SMI Conformance Tests Through Meshery UI
 
@@ -34,7 +34,7 @@ In the "Validate Service Mesh Configuration" click on the "+" button and select 
 
 _Running SMI Conformance Test on Istio_
 
-<a href="/assets/img/smi/smi-conformance-run.png"><img alt="Running SMI Conformance Tests on Istio" src="/assets/img/smi/smi-conformance-run.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-run.png"><img alt="Running SMI Conformance Tests on Istio" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-run.png" /></a>
 
 This will start running the SMI Conformance tests.
 
@@ -42,25 +42,25 @@ Once the tests are done, you can navigate to SMI Conformance results page by cli
 
 _SMI Conformance Test Results_
 
-<a href="/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-page.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png" /></a>
 
 Click the dropdown button to view the results of a specific test.
 
 _Viewing the Results_
 
-<a href="/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-result.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png" /></a>
 
 ## Running SMI Conformance Tests Through Meshery CLI (mesheryctl)
 
 Once we have deployed the service mesh to validate  (see [Setup Meshery and Install a Service Mesh](#setup-meshery-and-install-a-service-mesh)), we can run an SMI conformance test through the CLI (mesheryctl).
 
-You can also use mesheryctl, Meshery's CLI to deploy a service mesh. See [mesheryctl mesh](/reference/mesheryctl/mesh/) documentation for details.
+You can also use mesheryctl, Meshery's CLI to deploy a service mesh. See [mesheryctl mesh]({{ site.baseurl }}/reference/mesheryctl/mesh/) documentation for details.
 
 Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.
 
 _Downloading the token_
 
-<a href="/assets/img/smi/download-token.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/download-token.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/download-token.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/download-token.png" /></a>
 
 Open a terminal and run the following command.
 
@@ -82,13 +82,13 @@ Open a terminal and run the following command.
 
 _SMI Conformance Test Results_
 
-<a href="/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-page.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png" /></a>
 
 Click the dropdown button to view the results of a specific test.
 
 _Viewing the Results_
 
-<a href="/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-result.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png" /></a>
 
 ## Running SMI Conformance Tests in CI/CD Pipelines
 
@@ -100,7 +100,7 @@ Download the token from the Meshery Dashboard by clicking on the profile icon on
 
 _Downloading the token_
 
-<a href="/assets/img/smi/download-token.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/download-token.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/download-token.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/download-token.png" /></a>
 
 You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
 
@@ -135,15 +135,15 @@ A sample workflow that could be added to your `.github/workflows` folder is give
 
  _SMI Conformance Test Results_
 
-<a href="/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-page.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-page.png" /></a>
 
 Click the dropdown button to view the results of a specific test.
 
 _Viewing the Results_
 
-<a href="/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="/assets/img/smi/smi-conformance-result.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/smi-conformance-result.png" /></a>
 
 ##### Suggested Reading
 
-- Functionality: [Service Mesh Interface (SMI) Conformance](/tasks/service-mesh-interface)
+- Functionality: [Service Mesh Interface (SMI) Conformance]({{ site.baseurl }}/tasks/service-mesh-interface)
  -->
