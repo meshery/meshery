@@ -10,6 +10,8 @@ enableMissingTranslationPlaceholders = true
 
 enableRobotsTXT = true
 
+ignoreFiles = ["/meetings/.*", "/notes/.*"]
+
 # Will give values to .Lastmod etc.
 enableGitInfo = true
 
