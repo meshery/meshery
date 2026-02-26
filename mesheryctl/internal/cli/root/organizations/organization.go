@@ -26,7 +26,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/organizat
 // Number of  registered orgs
 mesheryctl organization --count
 
-// List registered orgs
+// List registerd orgs
 mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
