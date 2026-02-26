@@ -67,7 +67,8 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
   );
 
   const [modelShape, setModelShape] = React.useState<string>(
-    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.enum?.[0] ??
+      'round-rectangle',
   );
   const [modelUrl, setModelUrl] = React.useState<string>('');
   const [urlError, setUrlError] = React.useState<string>('');
