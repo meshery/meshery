@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-Binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "A CacheCluster is associated with one or more EC2 Security Groups to control inbound and outbound network traffic to the cache nodes. Security groups act as virtual firewalls, typically allowing access only from specific application servers or subnets on the ElastiCache port (e.g., 6379 for Redis, 11211 for Memcached)."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "securityGroupIDs", "_"]],
+              "description": "The CacheCluster references security group IDs that control its network access."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "SecurityGroup",
+            "model": "aws-ec2-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "groupID"]],
+              "description": "The EC2 SecurityGroup provides its group ID to control network access to the CacheCluster."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_network_relationship"
+}

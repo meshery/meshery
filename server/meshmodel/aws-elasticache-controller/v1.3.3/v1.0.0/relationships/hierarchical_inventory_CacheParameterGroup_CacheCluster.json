@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Inventory",
+  "subType": "Inventory",
+  "metadata": {
+    "description": "A CacheCluster inherits engine configuration from a CacheParameterGroup. The parameter group defines settings such as maxmemory-policy, timeout, and other engine-level options. The cluster's runtime behavior is governed by the parameter group it references."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheParameterGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "cacheParameterGroupName"]],
+              "description": "The CacheParameterGroup provides its name so the CacheCluster can reference it."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "cacheParameterGroupName"]],
+              "description": "The CacheCluster uses the CacheParameterGroup name to inherit engine parameters."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_inventory_relationship"
+}

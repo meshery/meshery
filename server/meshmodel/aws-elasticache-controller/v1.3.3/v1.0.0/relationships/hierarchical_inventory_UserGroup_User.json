@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Inventory",
+  "subType": "Inventory",
+  "metadata": {
+    "description": "A UserGroup is a collection of User resources. In ElastiCache RBAC for Redis/Valkey, User objects (with specific command/key permissions) are grouped into UserGroups, which are then associated with ReplicationGroups. The UserGroup configuration inherits its access rules from all its member Users."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "User",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "userID"]],
+              "description": "The User provides its userID to be enrolled in the UserGroup."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "UserGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "userIDs", "_"]],
+              "description": "The UserGroup holds an array of userIDs referencing member User resources."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_inventory_relationship"
+}

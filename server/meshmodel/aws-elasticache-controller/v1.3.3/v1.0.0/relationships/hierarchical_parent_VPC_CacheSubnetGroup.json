@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Parent",
+  "metadata": {
+    "description": "A CacheSubnetGroup must belong to a VPC. It groups subnets from within a single VPC so that ElastiCache clusters can be provisioned inside the network boundary of that VPC. The VPC must exist before the CacheSubnetGroup (and transitively any ElastiCache cluster using it) can be created."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheSubnetGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "subnetIDs", "_"]],
+              "description": "The CacheSubnetGroup references subnet IDs that belong to the VPC."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "VPC",
+            "model": "aws-ec2-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "vpcID"]],
+              "description": "The VPC provides the network boundary within which the CacheSubnetGroup's subnets reside."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_parent_relationship"
+}

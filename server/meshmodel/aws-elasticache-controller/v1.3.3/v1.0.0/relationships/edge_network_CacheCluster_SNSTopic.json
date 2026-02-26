@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-Binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "A CacheCluster can be configured to send event notifications to an AWS SNS Topic. This allows operational events such as node failures, reboots, and scaling activities to be published for downstream monitoring or automation workflows."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "notificationTopicARN"]],
+              "description": "The CacheCluster holds the SNS Topic ARN to publish ElastiCache event notifications."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Topic",
+            "model": "aws-sns-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "topicARN"]],
+              "description": "The SNS Topic receives ElastiCache operational event notifications from the CacheCluster."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_network_relationship"
+}

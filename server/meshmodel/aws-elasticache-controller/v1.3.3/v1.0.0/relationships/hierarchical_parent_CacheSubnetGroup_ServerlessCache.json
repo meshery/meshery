@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Parent",
+  "metadata": {
+    "description": "A ServerlessCache must be placed inside a CacheSubnetGroup. The CacheSubnetGroup determines VPC subnet placement for the serverless cache's internal resources."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ServerlessCache",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "subnetIds"]],
+              "description": "The ServerlessCache references subnet IDs from the CacheSubnetGroup."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CacheSubnetGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "subnetIds"]],
+              "description": "The CacheSubnetGroup provides subnet IDs for the ServerlessCache."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_parent_relationship"
+}
