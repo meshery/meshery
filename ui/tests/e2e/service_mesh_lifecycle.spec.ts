@@ -3,8 +3,13 @@ import { ENV } from './env';
 import { DashboardPage } from './pages/DashboardPage';
 
 test.describe.skip('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
-  // Strongly type the array of adapter configs
-  const mesheryAdapters: { adapterName: string; adapterPort: string; deploy: boolean }[] = [
+  type MesheryAdapterConfig = {
+    adapterName: string;
+    adapterPort: string;
+    deploy: boolean;
+  };
+
+  const mesheryAdapters: MesheryAdapterConfig[] = [
     { adapterName: 'Istio', adapterPort: '10000', deploy: false },
   ];
 

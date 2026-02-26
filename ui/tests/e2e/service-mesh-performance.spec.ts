@@ -3,7 +3,7 @@ import { mockPerfApis } from './mocks/mockPerfApi';
 import { DashboardPage } from './pages/DashboardPage';
 
 // Strongly typed inline array to dodge JS linter rules
-const performanceProfiles: {
+type PerformanceProfile = {
   profileName: string;
   serviceMesh: string;
   url: string;
@@ -11,7 +11,9 @@ const performanceProfiles: {
   concurrentRequest: string;
   qps: string;
   duration: string;
-}[] = [
+};
+
+const performanceProfiles: PerformanceProfile[] = [
   // {
   //   profileName: 'Fortio-Perf-Test',
   //   serviceMesh: 'None',

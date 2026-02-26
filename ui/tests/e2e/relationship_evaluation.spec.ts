@@ -27,6 +27,12 @@ interface DesignPattern {
   [key: string]: unknown;
 }
 
+interface EvaluationResponse {
+  design: {
+    relationships?: any[];
+  };
+}
+
 const DESIGNS_TO_TEST: { id?: string; name: string }[] = [
   {
     id: '13e803b7-596c-4620-bdc4-4d3a28a027a2',
@@ -86,11 +92,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
 
       expect(response.ok()).toBeTruthy();
 
-      const responseBody = (await response.json()) as {
-        design: {
-          relationships?: Relationship[];
-        };
-      };
+      const responseBody = (await response.json()) as EvaluationResponse;
 
       const actualRelationships = responseBody.design.relationships || [];
 
@@ -106,7 +108,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
           continue;
         }
 
-        const found = actualRelationships.find((actualRel) => {
+        const found = actualRelationships.find((actualRel: any) => {
           const expectedSelector = expectedRel.selectors[0];
           const actualSelector = actualRel.selectors[0];
 
