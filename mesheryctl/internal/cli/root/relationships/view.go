@@ -17,7 +17,6 @@ package relationships
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/manifoldco/promptui"
@@ -25,7 +24,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -34,10 +32,7 @@ type relationshipViewFlags struct {
 	save         bool
 }
 
-var (
-	validOutputFormat             = []string{"json", "yaml"}
-	relationshipViewFlagsProvided relationshipViewFlags
-)
+var relationshipViewFlagsProvided relationshipViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
@@ -60,13 +55,9 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 			return utils.ErrInvalidArgument(errTooManyArgs)
 		}
 
-		// Validate output-format
-		if !slices.Contains(validOutputFormat, strings.ToLower(relationshipViewFlagsProvided.outputFormat)) {
-			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
-		}
-
-		return nil
+		return display.ValidateOutputFormat(relationshipViewFlagsProvided.outputFormat)
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
@@ -79,7 +70,7 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 		switch relationshipsResponse.Count {
 		case 0:
-			utils.Log.Info("No relationship(s) found for the given name ", model)
+			fmt.Println("No relationship(s) found for the model with name:", model)
 			return nil
 		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]

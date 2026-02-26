@@ -1,0 +1,24 @@
+version: 0.0.616
+name: kubernetes-service-traffic-distribution
+displayName: Kubernetes Service Traffic Distribution
+createdAt: "2025-07-22T09:23:27Z"
+description: This design pattern illustrates how a Kubernetes Service acts as a stable endpoint for routing external traffic to a set of backend Pods. It is based on a diagram from the Exoscale documentation.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a95b76ce-ceaf-4bdf-bac7-95a6773168cd/0.0.616/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 47e3b5f6-a705-4cd2-9eb0-1446126fb88f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a95b76ce-ceaf-4bdf-bac7-95a6773168cd-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a95b76ce-ceaf-4bdf-bac7-95a6773168cd-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

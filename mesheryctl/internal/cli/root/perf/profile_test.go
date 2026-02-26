@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -97,7 +98,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, "invalid")),
+			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
 			Name: "Unmarshal error",

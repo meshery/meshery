@@ -1,0 +1,152 @@
+body {
+  line-height: 1.5;
+}
+a > * {
+  color: var(--brand-color);
+  text-decoration: none;
+  background-color: transparent;
+}
+img {
+  max-width: 100%;
+  border-style: none;
+}
+img.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+video.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0.6rem 0 0.6rem 0;
+
+  & > a {
+    color: var(--brand-color);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0.6rem 0 1rem;
+  font-weight: 500;
+  > a {
+    color: var(--color-secondary-light);
+  }
+}
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+h4,
+.h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+h5,
+.h5 {
+  font-size: 1rem;
+  font-weight: 400;
+}
+h6 {
+  font-size: .9rem;
+  font-weight: 300;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid var(--color-grey-light);
+}
+
+pre {
+  font-size: 1rem;
+}
+
+label {
+  font-size: 0.9rem;
+}
+
+// LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
+ul,
+ol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 1rem;
+  padding-inline-start: 2rem;
+
+  @media (max-width: 320px) {
+    font-size: 0.8rem;
+    padding-inline-start: 0.5rem;
+  }
+
+  & li {
+    margin: 2px 0;
+  }
+}
+ul {
+  font-size: 1rem;
+  list-style: disc;
+  > li {
+    color: var(--color-secondary-medium);
+  }
+}
+ol {
+  list-style-type: decimal;
+}
+
+li:has(> a[href*="/installation/quick-start"]) {
+  list-style-type: none;
+  margin-left: -2rem;
+  
+  @media (max-width: 1200px) {
+    margin-left: 0rem;
+  }
+  
+}
+
+li:has(> a[href*="/extensions"]) {
+  list-style-type: none;
+  margin-left: -2rem;
+}
+
+dt {
+  font-weight: bold;
+}
+dd {
+  margin-left: 1.5rem;
+}
+
+pre,
+code,
+kbd,
+samp {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+}
+
+button {
+  background-color: var(--color-primary-dark);
+  color: var(--color-secondary-dark);
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--color-secondary-light);
+}
+

@@ -100,7 +100,7 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectedError: func() error {
 				// validSourceTypes will be populated from the mock response
 				// These should match the values in view.designTypes.response.golden
-				return ErrInValidSource("invalid-source", []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"})
+				return ErrInValidSource("invalid-source", validDesignSourceTypes)
 			}(),
 		},
 		{
@@ -124,7 +124,7 @@ func TestOnboardCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(),
+			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
 	}
 
