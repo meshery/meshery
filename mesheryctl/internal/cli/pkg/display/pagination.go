@@ -3,20 +3,15 @@ package display
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"slices"
 	"strings"
 
-	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
 )
 
-var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-var nextPageKeyboardKeys = []keyboard.Key{keyboard.KeyEnter, keyboard.KeyArrowDown, keyboard.KeySpace}
-var escapeKeyboardKeys = []keyboard.Key{keyboard.KeyEsc, keyboard.KeyCtrlC}
+const pageSize = 10
 
 var serverAndNetworkErrors = []string{
 	utils.ErrUnauthenticatedCode,
@@ -26,11 +21,14 @@ var serverAndNetworkErrors = []string{
 }
 
 func HandlePaginationAsync[T any](
-	pageSize int,
 	displayData DisplayDataAsync,
-	processDataFunc func(*T) ([][]string, int64),
+	pageHandlerFunc pageHandler[T],
 ) error {
-	startIndex := 0
+	effectivePageSize := pageSize
+	if displayData.PageSize > 0 {
+		effectivePageSize = displayData.PageSize
+	}
+
 	// Adjust the page number to be zero-based
 	currentPage := displayData.Page - 1
 
@@ -52,7 +50,11 @@ func HandlePaginationAsync[T any](
 		}
 
 		if !strings.Contains(displayData.UrlPath, "pagesize") {
-			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", pageSize))
+			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
+		}
+
+		if displayData.SearchTerm != "" {
+			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
 		if strings.Contains(displayData.UrlPath, "?") {
@@ -67,69 +69,19 @@ func HandlePaginationAsync[T any](
 				if slices.Contains(serverAndNetworkErrors, meshkitErr.Code) {
 					return err
 				}
-				return ErrorListPagination(err, currentPage)
+				return ErrPagination(err, currentPage)
 			}
 			return err
 		}
 
 		// Process the fetched data
-		rows, totalCount := processDataFunc(data)
-
-		// Display the total count and current page
-		utils.DisplayCount(displayData.DataType, totalCount)
-
-		if len(rows) == 0 {
-			break
-		}
-
-		if displayData.DisplayCountOnly {
-			return nil
-		}
-
-		// Display the current page number to be one-based
-		_, _ = whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
-		fmt.Println()
-
-		// Display the data in a table
-		utils.PrintToTable(displayData.Header, rows, nil)
-
-		if displayData.IsPage {
-			break
-		}
-
-		// If the URL already contains "pagesize=all", it means all data has been fetched in one go,
-		// so we can break the loop without waiting for user input
-		if strings.Contains(displayData.UrlPath, "pagesize=all") {
-			break
-		}
-
-		if int64(startIndex+pageSize) >= totalCount {
-			break
-		}
-
-		// Wait for user input to navigate pages
-		keysEvents, err := keyboard.GetKeys(10)
+		shouldContinue, err := pageHandlerFunc(data, currentPage, effectivePageSize)
 		if err != nil {
 			return err
 		}
 
-		defer func() {
-			_ = keyboard.Close()
-		}()
-
-		event := <-keysEvents
-		if event.Err != nil {
-			utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-			break
-		}
-
-		if slices.Contains(escapeKeyboardKeys, event.Key) {
-			break
-		}
-
-		if slices.Contains(nextPageKeyboardKeys, event.Key) {
+		if shouldContinue {
 			currentPage++
-			startIndex += pageSize
 		} else {
 			break
 		}
