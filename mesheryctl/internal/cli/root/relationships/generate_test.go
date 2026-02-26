@@ -74,16 +74,9 @@ func TestGenerateCreateJsonFile(t *testing.T) {
 	t.Log("Create JSON file test passed")
 }
 
-func TestGenerate(t *testing.T) {
+func TestGenerateErrorOutput(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
-
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
 	tests := []struct {
@@ -110,6 +103,61 @@ func TestGenerate(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg)),
 		},
+	}
+
+	// run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+
+			defer func() {
+				spreadsheetCred = ""
+				spreadsheetID = ""
+			}()
+
+			RelationshipCmd.SetArgs(tt.Args)
+			err := RelationshipCmd.Execute()
+
+			// to validate the expected errors
+			if err != nil {
+				if tt.ExpectError {
+
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
+		})
+		t.Log("Generate experimental relationship test for argument validation has passed")
+	}
+}
+
+func TestGenerateDataOutput(t *testing.T) {
+	// setup current context
+	utils.SetupContextEnv(t)
+
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// test scenarios for fetching data
+	tests := []struct {
+		Name             string
+		Args             []string
+		Fixture          string
+		ExpectedResponse string
+		ExpectError      bool
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
+	}{
 		{
 			Name:             "Generate registered relationships",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
@@ -130,8 +178,6 @@ func TestGenerate(t *testing.T) {
 			}()
 
 			fixturesDir := filepath.Join(currDir, "fixtures")
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
 			b := utils.SetupMeshkitLoggerTesting(t, false)
@@ -139,38 +185,36 @@ func TestGenerate(t *testing.T) {
 				os.Stdout = originalStdout
 			}()
 
-			if tt.Name == "Generate registered relationships" {
-				originalPath := relationshipsOutputPath
-				defer func() { relationshipsOutputPath = originalPath }()
-				relationshipsOutputPath = "./fixtures/generate.relationship.json.output.golden"
-
-				originalFetch := fetchSheetValues
-				defer func() { fetchSheetValues = originalFetch }()
-
-				golden := utils.NewGoldenFile(t, tt.Fixture, fixturesDir)
-				sheetData := golden.Load()
-
-				var sheetDataParsed map[string]interface{}
-				if err := json.Unmarshal([]byte(sheetData), &sheetDataParsed); err != nil {
-					t.Fatal("Error parsing golden sheet data:", err)
-				}
-
-				fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
-					return &sheets.ValueRange{
-						MajorDimension: "ROWS",
-						Range:          "Relationships!A1:O1000",
-						Values: [][]interface{}{
-							{},
-							{},
-							sheetDataParsed["ROW3"].([]interface{}),
-						},
-					}, nil
-				}
-			}
-
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
+
+			originalPath := relationshipsOutputPath
+			defer func() { relationshipsOutputPath = originalPath }()
+			relationshipsOutputPath = "./fixtures/generate.relationship.json.output.golden"
+
+			originalFetch := fetchSheetValues
+			defer func() { fetchSheetValues = originalFetch }()
+
+			golden := utils.NewGoldenFile(t, tt.Fixture, fixturesDir)
+			sheetData := golden.Load()
+
+			var sheetDataParsed map[string]interface{}
+			if err := json.Unmarshal([]byte(sheetData), &sheetDataParsed); err != nil {
+				t.Fatal("Error parsing golden sheet data:", err)
+			}
+
+			fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
+				return &sheets.ValueRange{
+					MajorDimension: "ROWS",
+					Range:          "Relationships!A1:O1000",
+					Values: [][]interface{}{
+						{},
+						{},
+						sheetDataParsed["ROW3"].([]interface{}),
+					},
+				}, nil
+			}
 
 			// to validate the expected errors
 			if err != nil {
@@ -189,6 +233,9 @@ func TestGenerate(t *testing.T) {
 
 			actualResponse := b.String()
 
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -199,6 +246,6 @@ func TestGenerate(t *testing.T) {
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
-		t.Log("Generate experimental relationship test passed")
+		t.Log("Generate experimental relationship test for sheetdata validation has passed")
 	}
 }
