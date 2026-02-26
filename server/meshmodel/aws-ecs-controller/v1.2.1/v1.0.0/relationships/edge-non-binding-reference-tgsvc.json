@@ -30,27 +30,6 @@
         "from": [
           {
             "id": null,
-            "kind": "Service",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "aws-ecs-controller",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {}
-          }
-        ],
-        "to": [
-          {
-            "id": null,
             "kind": "TargetGroup",
             "match": {},
             "match_strategy_matrix": null,
@@ -66,7 +45,46 @@
                 "version": ""
               }
             },
-            "patch": {}
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Service",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ecs-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "loadBalancers",
+                  "0",
+                  "targetGroupARN"
+                ]
+              ]
+            }
           }
         ]
       },
