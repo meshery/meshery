@@ -20,6 +20,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -53,14 +54,11 @@ mesheryctl adapter deploy linkerd --watch
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return err
+				return errors.Wrap(err, "failed to get mesheryctl config")
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				// ErrValidatingAdapter
-				utils.Log.Error(err)
-				return err
+				return errors.Wrap(err, "failed to validate adapter")
 			}
 			return nil
 		},
