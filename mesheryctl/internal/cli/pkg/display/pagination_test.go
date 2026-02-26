@@ -12,8 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandlePaginationAsync(t *testing.T) {
-
+func TestListAsyncPagination(t *testing.T) {
 	type items struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
@@ -24,12 +23,10 @@ func TestHandlePaginationAsync(t *testing.T) {
 		Items []items `json:"items"`
 	}
 
-	// Test cases
 	tests := []struct {
 		name             string
-		pageSize         int
 		displayData      DisplayDataAsync
-		processDataFunc  func(*[]items) ([][]string, int64)
+		processDataFunc  listRowBuilder[[]items]
 		urlPath          string
 		expectedError    error
 		exceptedResponse string
@@ -37,9 +34,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 		hasToken         bool
 	}{
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -63,9 +60,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Count_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -89,9 +86,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_All_Requirements_Met_When_HandlePaginationAsync_Then_Successful_Count_Empty_Response",
-			pageSize: 2,
+			name: "Given_All_Requirements_Met_When_ListAsyncPagination_Then_Successful_Count_Empty_Response",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -112,9 +109,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         true,
 		},
 		{
-			name:     "Given_Missing_Token_When_HandlePaginationAsync_Then_Error_Returned",
-			pageSize: 2,
+			name: "Given_Missing_Token_When_ListAsyncPagination_Then_Error_Returned",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -135,9 +132,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 			hasToken:         false,
 		},
 		{
-			name:     "Given_Meshery_Server_Is_Not_Reachable_When_HandlePaginationAsync_Then_Error_Returned",
-			pageSize: 2,
+			name: "Given_Meshery_Server_Is_Not_Reachable_When_ListAsyncPagination_Then_Error_Returned",
 			displayData: DisplayDataAsync{
+				PageSize:         2,
 				Page:             1,
 				UrlPath:          "test",
 				DataType:         "items",
@@ -160,16 +157,11 @@ func TestHandlePaginationAsync(t *testing.T) {
 	}
 
 	utils.SetupContextEnv(t)
-
-	//initialize mock server for handling requests
 	utils.StartMockery(t)
-
-	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			if tt.hasToken {
 				utils.TokenFlag = utils.GetToken(t)
 			}
@@ -198,12 +190,11 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-			err = HandlePaginationAsync(tt.pageSize, tt.displayData, tt.processDataFunc)
+			err = ListAsyncPagination(tt.displayData, tt.processDataFunc)
 
 			if tt.expectedError != nil {
 				assert.EqualError(t, err, tt.expectedError.Error())
 			} else {
-
 				_ = writer.Close()
 
 				// Read captured output.
@@ -217,7 +208,129 @@ func TestHandlePaginationAsync(t *testing.T) {
 				assert.Equal(t, cleanExpected, cleanedActual)
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
 
+func TestPromptAsyncPagination(t *testing.T) {
+	type testItem struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	type promptAPIResponse struct {
+		Items []testItem `json:"items"`
+	}
+
+	extractItems := func(data *promptAPIResponse) []testItem {
+		return data.Items
+	}
+
+	formatLabel := func(rows []testItem) []string {
+		labels := []string{}
+		for _, r := range rows {
+			labels = append(labels, fmt.Sprintf("%s (%s)", r.Name, r.ID))
+		}
+		return labels
+	}
+
+	tests := []struct {
+		name          string
+		searchTerm    string
+		apiItems      []testItem
+		apiStatusCode int
+		hasToken      bool
+		expectError   bool
+		expectItem    *testItem
+		errContains   string
+	}{
+		{
+			name:          "Given_Zero_Results_When_PromptAsyncPagination_Then_ErrNotFound",
+			searchTerm:    "nonexistent",
+			apiItems:      []testItem{},
+			apiStatusCode: 200,
+			hasToken:      true,
+			expectError:   true,
+			errContains:   "no results for nonexistent",
+		},
+		{
+			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
+			searchTerm: "istio",
+			apiItems: []testItem{
+				{ID: "abc-123", Name: "Istio Base"},
+			},
+			apiStatusCode: 200,
+			hasToken:      true,
+			expectError:   false,
+			expectItem:    &testItem{ID: "abc-123", Name: "Istio Base"},
+		},
+		{
+			name:          "Given_Missing_Token_When_PromptAsyncPagination_Then_AuthError",
+			searchTerm:    "istio",
+			apiItems:      []testItem{},
+			apiStatusCode: 400,
+			hasToken:      false,
+			expectError:   true,
+			errContains:   "Not Set does not exist",
+		},
+		{
+			name:          "Given_Invalid_Token_When_PromptAsyncPagination_Then_InvalidTokenError",
+			searchTerm:    "istio",
+			apiItems:      []testItem{},
+			apiStatusCode: 302,
+			hasToken:      true,
+			expectError:   true,
+		},
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.hasToken {
+				utils.TokenFlag = utils.GetToken(t)
+			}
+
+			defer func() {
+				utils.TokenFlag = "Not Set"
+			}()
+
+			mApiResponse, err := json.Marshal(promptAPIResponse{Items: tt.apiItems})
+			if err != nil {
+				t.Fatalf("Failed to marshal API response: %v", err)
+			}
+
+			mockURL := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			httpmock.RegisterResponder("GET", mockURL,
+				httpmock.NewStringResponder(tt.apiStatusCode, string(mApiResponse)))
+
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			var result testItem
+			err = PromptAsyncPagination(
+				DisplayDataAsync{
+					UrlPath:    "test",
+					SearchTerm: tt.searchTerm,
+				},
+				formatLabel,
+				extractItems,
+				&result,
+			)
+
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errContains != "" {
+					assert.Contains(t, err.Error(), tt.errContains)
+				}
+			} else {
+				assert.NoError(t, err)
+				if tt.expectItem != nil {
+					assert.Equal(t, tt.expectItem.ID, result.ID)
+					assert.Equal(t, tt.expectItem.Name, result.Name)
+				}
+			}
 		})
 	}
 }
