@@ -33,7 +33,7 @@ mesheryctl organization list
 // list organizations for a specified page
 mesheryctl organization list --page [page-number]
 
-// list organizations for a specified page
+// Display number of available organizations
 mesheryctl organization list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
