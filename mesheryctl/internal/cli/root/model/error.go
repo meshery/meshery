@@ -30,10 +30,11 @@ const (
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
 
-	errNoArg     = "must provide one argument: [model-name] or [model-id]\n"
-	errMultiArg  = "too many args provided\n"
-	viewUsageMsg = "Usage: mesheryctl model view [model-name] or [model-id]\nRun 'mesheryctl model view --help' to see detailed help message"
-	formaterrMsg = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
+	errNoArg            = "must provide one argument: model name\n"
+	errMultiArg         = "too many args provided\n"
+	viewUsageMsg        = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
+	formaterrMsg        = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
+	errDeleteInvalidArg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id | model-name]\nRun 'mesheryctl model delete --help' to see detailed help message"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -72,6 +73,10 @@ func ErrModelBuild(err error) error {
 	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }
 
-func ErrDeleteModel(err error, id string) error {
-	return errors.New(ErrDeleteModelCode, errors.Alert, []string{"Failed to delete model"}, []string{fmt.Sprintf("failed to delete model with ID %s: %s", id, err.Error())}, []string{"The specified model ID may not exist"}, []string{"Verify the model ID using `mesheryctl model list`"})
+func ErrDeleteModel(err error, nameOrID string) error {
+	return errors.New(ErrDeleteModelCode, errors.Alert,
+		[]string{"Failed to delete model"},
+		[]string{fmt.Sprintf("Failed to delete model with name or ID '%s': %s", nameOrID, err.Error())},
+		[]string{"The specified model name or ID may not exist"},
+		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
 }
