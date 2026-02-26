@@ -17,8 +17,8 @@ package root
 import (
 	"errors"
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
