@@ -185,10 +185,6 @@ func TestGenerateDataOutput(t *testing.T) {
 				os.Stdout = originalStdout
 			}()
 
-			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
-			err := RelationshipCmd.Execute()
-
 			originalPath := relationshipsOutputPath
 			defer func() { relationshipsOutputPath = originalPath }()
 			relationshipsOutputPath = "./fixtures/generate.relationship.json.output.golden"
@@ -215,6 +211,10 @@ func TestGenerateDataOutput(t *testing.T) {
 					},
 				}, nil
 			}
+
+			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOut(originalStdout)
+			err := RelationshipCmd.Execute()
 
 			// to validate the expected errors
 			if err != nil {
