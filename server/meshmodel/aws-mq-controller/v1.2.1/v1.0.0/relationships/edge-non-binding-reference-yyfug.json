@@ -49,7 +49,10 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }
