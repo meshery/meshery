@@ -73,6 +73,7 @@ func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
 func InitTestEnvironment(t *testing.T) *TestHelper {
 	SetupContextEnv(t)
 	StartMockery(t)
+	viper.Set("LOG_LEVEL", int(logrus.InfoLevel))
 	testContext := NewTestHelper(t)
 	return testContext
 }
@@ -499,7 +500,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
-			b := SetupMeshkitLoggerTesting(t, false)
+			b := SetupMeshkitLoggerTesting(t, true)
 			defer func() {
 				os.Stdout = originalStdout
 			}()
