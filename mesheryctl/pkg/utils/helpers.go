@@ -573,7 +573,7 @@ func BoldString(s string) string {
 
 // ClearLine clears the last line from output
 func ClearLine() {
-	clearCmd := exec.Command("clear") // for UNIX-like systems
+	clearCmd := exec.Command("clear", "-x") // for UNIX-like systems
 	if runtime.GOOS == "windows" {
 		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
 	}
