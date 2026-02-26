@@ -65,13 +65,13 @@ func HandlePaginationAsync[T any](
 
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
-			if meshkitErr, ok := err.(*errors.Error); ok {
-				if slices.Contains(serverAndNetworkErrors, meshkitErr.Code) {
-					return err
-				}
-				return ErrPagination(err, currentPage)
+			if slices.Contains(serverAndNetworkErrors, errors.GetCode(err)) {
+				return err
 			}
-			return err
+			if errors.GetCode(err) == utils.ErrUnmarshalCode {
+				return err
+			}
+			return ErrPagination(err, currentPage)
 		}
 
 		// Process the fetched data
