@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -36,19 +35,17 @@ type environmentViewFlags struct {
 }
 
 var environmentViewFlagsProvided environmentViewFlags
-var environmentViewOutputFormats = []string{"json", "yaml"}
 
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered environmnents",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgID [orgID]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-
 		if environmentViewFlagsProvided.orgID == "" {
 			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment view --orgID [orgID]\nRun 'mesheryctl environment view --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
@@ -58,16 +55,11 @@ mesheryctl environment view --orgID [orgID]
 			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgID: %s", environmentViewFlagsProvided.orgID))
 		}
 
-		if !slices.Contains(environmentViewOutputFormats, strings.ToLower(environmentViewFlagsProvided.outputFormat)) {
-			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
-		}
-
-		return nil
+		return display.ValidateOutputFormat(environmentViewFlagsProvided.outputFormat)
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("%s?orgID=%s", environmentApiPath, environmentViewFlagsProvided.orgID))
-
 		if err != nil {
 			return err
 		}

@@ -1,0 +1,24 @@
+version: 0.0.4
+name: aws-cloudwatch-agent-for-cluster-metrics
+displayName: Aws Cloudwatch Agent for Cluster Metrics
+createdAt: "2024-07-06T07:45:57Z"
+description: CloudWatch Agent to collect Kubernetes cluster metrics involves configuring and deploying the CloudWatch Agent within your Kubernetes environment. This agent facilitates the collection and forwarding of various system-level and application-level metrics to AWS CloudWatch, enabling comprehensive monitoring and analysis. By integrating the CloudWatch Agent, Kubernetes administrators can effortlessly monitor cluster performance metrics such as CPU utilization, memory usage, disk I/O, and network traffic. This setup enhances operational visibility, supports proactive capacity planning, and enables the creation of alarms and notifications based on customizable thresholds, ensuring robust and reliable management of Kubernetes infrastructure at scale.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9144ecb9-36e3-4b82-9725-b5e1b60d565a/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "When deploying the CloudWatch Agent to collect Kubernetes cluster metrics, there are several caveats and considerations to keep in mind:\n\nResource Consumption: The CloudWatch Agent runs as a daemon set within Kubernetes, consuming resources (CPU, memory) on each node where it's deployed. Ensure your cluster has sufficient resources to accommodate this additional workload.\n\nNetworking: Verify that nodes in your Kubernetes cluster can communicate with AWS CloudWatch endpoints over the network. This may involve configuring network policies, security groups, or VPC settings to allow outbound traffic to AWS services.\n\nPermissions: Set up IAM roles or IAM users with appropriate permissions to allow the CloudWatch Agent to publish metrics to CloudWatch. Follow the principle of least privilege to minimize security risks.\n\nConfiguration: Properly configure the CloudWatch Agent to collect relevant metrics based on your application and infrastructure requirements. Incorrect configuration can lead to incomplete or inaccurate monitoring data.\n\nVersion Compatibility: Ensure compatibility between the CloudWatch Agent version and your Kubernetes cluster version. Updates or changes in Kubernetes versions may require corresponding updates to the CloudWatch Agent for optimal performance and compatibility.\n\nMonitoring Costs: Regularly monitor and review the costs associated with CloudWatch metrics ingestion and storage. Depending on the volume of metrics collected, costs can vary, especially if high-resolution metrics are enabled.\n\nHigh Availability: Design your deployment for high availability to ensure continuous monitoring and metric collection. Consider deploying multiple instances of the CloudWatch Agent across different availability zones or regions for resilience.\n\nSecurity: Implement best practices for securing the CloudWatch Agent deployment, including encrypting sensitive data in transit and at rest, using secure IAM roles, and regularly updating to the latest agent version to mitigate security vulnerabilities.\n\nIntegration with Monitoring Tools: Integrate CloudWatch metrics with your existing monitoring and alerting tools to streamline incident response and operational workflows. Ensure that metrics from CloudWatch can be correlated with other monitoring data for comprehensive visibility. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9144ecb9-36e3-4b82-9725-b5e1b60d565a-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/9144ecb9-36e3-4b82-9725-b5e1b60d565a-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

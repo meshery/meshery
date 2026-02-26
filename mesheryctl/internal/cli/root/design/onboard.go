@@ -101,7 +101,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				return ErrDesignNotFound()
+				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
