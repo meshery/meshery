@@ -59,7 +59,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "failed to get mesheryctl config")
+			return err
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
