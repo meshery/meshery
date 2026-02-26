@@ -42,7 +42,7 @@ var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
 	Long: `View a connection by its ID or name.
-Documentation for viewing connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/view`,
 	Example: `
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]

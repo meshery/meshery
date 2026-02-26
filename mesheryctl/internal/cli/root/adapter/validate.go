@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -56,7 +55,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof("Verifying prerequisites...")
+		utils.Log.Info("Verifying prerequisites...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -80,11 +79,11 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		if err = validateAdapter(mctlCfg, meshName); err != nil {
 			utils.Log.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
 		}
-		log.Info("verified prerequisites")
+		utils.Log.Info("verified prerequisites")
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof("Starting cloud and cloud native infrastructure validation...")
+		utils.Log.Info("Starting cloud and cloud native infrastructure validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -101,7 +100,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		s.Stop()
 
 		if watch {
-			log.Infof("Verifying Operation")
+			utils.Log.Info("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
 				utils.Log.Error(ErrWaitValidateResponse(err))

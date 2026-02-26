@@ -65,6 +65,7 @@ var (
 	ErrSetKubernetesContextCode    = "mesheryctl-1166"
 	ErrReadInputCode               = "mesheryctl-1193"
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
+	ErrCommandContextMissingCode   = "mesheryctl-1201"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -494,7 +495,7 @@ func ErrParsingUrl(err error) error {
 }
 
 func ErrNotFound(err error) error {
-	return errors.New(ErrNotFoundCode, errors.Fatal,
+	return errors.New(ErrNotFoundCode, errors.Alert,
 		[]string{"Item Not Found"},
 		[]string{err.Error()},
 		[]string{"The item you are searching for is not present."},
@@ -741,12 +742,12 @@ func ErrTableRender(err error) error {
 		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
 
-func ErrFlagsInvalid(msg string) error {
+func ErrFlagsInvalid(err error) error {
 	return errors.New(ErrFlagsInvalidCode, errors.Alert,
-		[]string{"Invalid flag provided"},
-		[]string{msg},
-		[]string{"The flag provided is invalid."},
-		[]string{"Provide a valid flag"})
+		[]string{"Invalid flag(s) provided"},
+		[]string{err.Error()},
+		[]string{"The value for one or more flags provided is invalid."},
+		[]string{"Provide valid flag value and try again."})
 }
 
 func ErrMesheryServerNotRunning(platform string) error {
@@ -772,8 +773,8 @@ func ErrCreateFile(filepath string, err error) error {
 	return errors.New(ErrCreateFileCode, errors.Alert,
 		[]string{"Error creating file"},
 		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
-		[]string{"Insufficient disk page, filepath could be invalid."},
-		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+		[]string{"Insufficient disk space", " Filepath could be invalid", " Lack of permissions to create file at the specified path"},
+		[]string{"Verify that the file path is valid", " Ensure there is sufficient disk space available", " Check your permissions for the specified path"})
 }
 
 func ErrRetrieveHomeDir(err error) error {
@@ -838,5 +839,16 @@ func ErrUploadFileWithParams(err error, fileName string) error {
 		[]string{err.Error()},
 		[]string{"File upload failed due to network issues or server errors"},
 		[]string{"Check your network connection and ensure the server is reachable."},
+	)
+}
+
+func ErrCommandContextMissing(contextName string) error {
+	return errors.New(
+		ErrCommandContextMissingCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Missing context with value %s as not been set", contextName)},
+		[]string{"A required context for command is missing or not specified"},
+		[]string{"The command may require a specific context to be set in order to function properly"},
+		[]string{"Ensure that the necessary contextis defined in the root command file and try again"},
 	)
 }

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: hello-kubernetes-tutorial
+displayName: Hello Kubernetes Tutorial
+createdAt: "2024-06-15T04:52:15Z"
+description: This tutorial will get you up and running with Dapr in a Kubernetes cluster. You will be deploying the same applications from Hello World. To recap, the Python App generates messages and the Node app consumes and persists them.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/107f4fc2-0655-4d00-be3d-164947159647/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "make sure to deploy dapr helm chart  into meshery playground  before deplying this  application including crd's , so that native dapr objects can come into consideration  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/107f4fc2-0655-4d00-be3d-164947159647-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/107f4fc2-0655-4d00-be3d-164947159647-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
