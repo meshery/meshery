@@ -251,7 +251,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 			apiStatusCode: 200,
 			hasToken:      true,
 			expectError:   true,
-			errContains:   "no results for nonexistent",
+			errContains:   "no results found",
 		},
 		{
 			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
