@@ -1,0 +1,85 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "",
+
+  "model": {
+    "name": "aws",
+    "version": "0.7.2",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": ""
+    }
+  },
+
+  "metadata": {
+    "description": "Traffic flow from AWS API Gateway to Kubernetes Ingress",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "AWS API Gateway",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "aws",
+              "version": "",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Ingress",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "kubernetes",
+              "version": "",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
+
