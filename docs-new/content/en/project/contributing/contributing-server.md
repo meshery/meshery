@@ -12,12 +12,12 @@ Once an issue has been addressed, you’ll need to test it as well. Ideally, the
 
 To build and run Meshery server from source:
 
-1. Build the static assets for the UI by running
+1. First, build the static assets for the UI by running
 
 {{< code code=`make ui-setup
 make ui-build` >}}
 
-2. Build & run the server code by running
+2. Next, build & run the server code by running
 
 {{< code code=`make server` >}}
 
