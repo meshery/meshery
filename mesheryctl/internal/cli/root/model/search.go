@@ -21,6 +21,9 @@ mesheryctl model search [query-text]
 
 // Search list of models for a specified page
 mesheryctl model search [query-text] --page [page-number]
+
+// Search list of models for a specified pagesize
+mesheryctl model search [query-text] --pagesize [pagesize-number]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
