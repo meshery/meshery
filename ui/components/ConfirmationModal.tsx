@@ -17,8 +17,9 @@ import {
   Modal,
   ModalBody,
   useTheme,
+  SearchIcon,
 } from '@sistent/sistent';
-import { Search } from '@mui/icons-material';
+// import { Search } from '@mui/icons-material';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -357,7 +358,7 @@ function ConfirmationMsg(props) {
                         margin: '1px 1px 8px ',
                       }}
                       InputProps={{
-                        endAdornment: <Search style={iconMedium} />,
+                        endAdornment: <SearchIcon style={iconMedium} />,
                       }}
                       // margin="none"
                     />
@@ -515,7 +516,7 @@ export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => 
           margin: '1px 1px 8px ',
         }}
         InputProps={{
-          endAdornment: <Search style={iconMedium} />,
+          endAdornment: <SearchIcon style={iconMedium} />,
         }}
         // margin="none"
       />
