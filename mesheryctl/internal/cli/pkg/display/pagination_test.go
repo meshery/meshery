@@ -219,11 +219,12 @@ func TestPromptAsyncPagination(t *testing.T) {
 	}
 
 	type promptAPIResponse struct {
-		Items []testItem `json:"items"`
+		Items      []testItem `json:"items"`
+		TotalCount int64      `json:"total_count"`
 	}
 
 	extractItems := func(data *promptAPIResponse) ([]testItem, int64) {
-		return data.Items, int64(len(data.Items))
+		return data.Items, data.TotalCount
 	}
 
 	formatLabel := func(rows []testItem) []string {
@@ -243,6 +244,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 		expectError   bool
 		expectItem    *testItem
 		errContains   string
+		totalCount    int64
 	}{
 		{
 			name:          "Given_Zero_Results_When_PromptAsyncPagination_Then_ErrNotFound",
@@ -252,6 +254,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 			hasToken:      true,
 			expectError:   true,
 			errContains:   "no results for nonexistent",
+			totalCount:    0,
 		},
 		{
 			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
@@ -263,6 +266,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 			hasToken:      true,
 			expectError:   false,
 			expectItem:    &testItem{ID: "abc-123", Name: "Istio Base"},
+			totalCount:    25,
 		},
 		{
 			name:          "Given_Missing_Token_When_PromptAsyncPagination_Then_AuthError",
@@ -272,6 +276,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 			hasToken:      false,
 			expectError:   true,
 			errContains:   "Not Set does not exist",
+			totalCount:    0,
 		},
 		{
 			name:          "Given_Invalid_Token_When_PromptAsyncPagination_Then_InvalidTokenError",
@@ -297,7 +302,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 				utils.TokenFlag = "Not Set"
 			}()
 
-			mApiResponse, err := json.Marshal(promptAPIResponse{Items: tt.apiItems})
+			mApiResponse, err := json.Marshal(promptAPIResponse{Items: tt.apiItems, TotalCount: tt.totalCount})
 			if err != nil {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
