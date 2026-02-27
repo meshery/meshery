@@ -1,6 +1,7 @@
 package display
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -92,7 +93,7 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 
 		if len(rows) == 0 {
 			if currentPage == 0 {
-				return false, utils.ErrNotFound(fmt.Errorf("no results found"))
+				return false, utils.ErrNotFound(errors.New("no results found"))
 			}
 			return false, nil
 		}
