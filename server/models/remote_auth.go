@@ -53,7 +53,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		// Read and close response body before reusing request
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
 		_, _ = io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		l.Log.Warn(ErrTokenRetry)
 		newToken, err := l.refreshToken(tokenString)
 		if err != nil {

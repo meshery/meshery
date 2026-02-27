@@ -50,7 +50,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", err
 			}
-			defer fin.Close()
+			defer func() {
+				_ = fin.Close()
+			}()
 
 			fout, err := os.Create(dst)
 			if err != nil {

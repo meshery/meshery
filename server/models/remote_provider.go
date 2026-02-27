@@ -419,8 +419,9 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
-	defer resp.Body.Close()
-
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
 	if err != nil {
@@ -4426,8 +4427,9 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	if err != nil {
 		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
 	}
-	defer resp.Body.Close()
-
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)

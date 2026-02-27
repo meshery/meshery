@@ -31,7 +31,9 @@ func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provid
 	}
 
 	components := make([]*model.TelemetryComp, 0)
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 	for rows.Next() {
 		var component model.TelemetryComp
 		err := rows.Scan(&component.Name, &component.Spec, &component.Status)

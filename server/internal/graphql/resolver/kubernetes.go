@@ -146,7 +146,9 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 		r.Log.Error(ErrGettingClusterResources(err))
 	}
 
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	resources := make([]*model.Resource, 0)
 	for rows.Next() {
