@@ -48,7 +48,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	_, _ = fmt.Fprint(w, string(resp))
 }
 
 // swagger:route GET /api/environments/{id} EnvironmentAPI idGetEnvironmentByIDHandler

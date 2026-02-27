@@ -85,7 +85,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Fprint(w, string(val))
+	_, _ = fmt.Fprint(w, string(val))
 }
 
 // swagger:route DELETE /api/system/database/reset ResetSystemDatabase
@@ -196,6 +196,6 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, "Database reset successful")
+		_, _ = fmt.Fprint(w, "Database reset successful")
 	}
 }

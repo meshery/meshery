@@ -1637,7 +1637,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
 		rw.WriteHeader(http.StatusNotFound)
 		// rw.Write([]byte(message))
-		fmt.Fprintln(rw, message)
+		_, _ = fmt.Fprintln(rw, message)
 		return
 	}
 
