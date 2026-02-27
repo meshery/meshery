@@ -1150,6 +1150,31 @@ connection:
           name: -s, --save
           description: (optional) save output as a JSON/YAML file
           usage: mesheryctl connection view --output-format [json|yaml] --save
+organization:
+  name: organization
+  description: Interact with existing organizations
+  usage: mesheryctl organization
+  flags:
+    count:
+      name: --count
+      description: (optional) Get the total of registered organizations
+    help:
+      name: --help, -h
+      description: help for organization command
+      usage: mesheryctl organization --help
+      example: mesheryctl organization --help
+  subcommands:
+    list:
+      name: list
+      description: List all organizations registered in Meshery Server
+      usage: mesheryctl organization list [flags]
+      flags:
+        page:
+          name: --page, -p
+          description: list organizations by specific page number (25 models per page)
+        count:
+          name: --count
+          description: (optional) Get the total of registered organizations
 
 exp:
   relationship:
@@ -1230,28 +1255,3 @@ exp:
           org:
             name: -o, -orgId
             description: organization id 
-  organization:
-    name: organization
-    description: Interact with existing organizations
-    usage: mesheryctl organization
-    flags:
-      count:
-        name: --count
-        description: (optional) Get the total of registrered organizations
-      help:
-        name: --help, -h
-        description: help for organization command
-        usage: mesheryctl organization --help
-        example: mesheryctl organization --help
-    subcommands:
-      list:
-        name: list
-        description: List all organizations registered in Meshery Server
-        usage: mesheryctl organization list [flags]
-        flags:
-          page:
-            name: --page, -p
-            description: list organizations by specific page number (25 models per page)  
-          count:
-            name: --count
-            description: (optional) Get the total of registrered organizations
