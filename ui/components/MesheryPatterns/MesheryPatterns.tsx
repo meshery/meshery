@@ -21,10 +21,13 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
+  EditIcon,
+  DeleteIcon,
+  CloseIcon,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import CloseIcon from '@mui/icons-material/Close';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -55,7 +58,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { Edit as EditIcon } from '@mui/icons-material';
+// import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
