@@ -12,6 +12,7 @@ import {
   EnvironmentIcon,
   IconButton,
   CustomTooltip,
+  EditIcon,
 } from '@sistent/sistent';
 import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
@@ -26,7 +27,7 @@ import {
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
 import { AddIcon } from '@sistent/sistent';
-import { Edit } from '@mui/icons-material';
+// import { Edit } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
@@ -182,7 +183,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
               >
-                <Edit />
+                <EditIcon />
               </IconButton>
             </div>
           </CustomTooltip>
