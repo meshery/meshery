@@ -19,7 +19,7 @@ html {
     height: calc(var(--footer-height) - 4.0rem);
   }
 
-  @media (max: 1200px){
+  @media (max-width: 1200px){
     height: var(--footer-height);
   }
 

@@ -47,7 +47,6 @@ node_modules/
 .hugo_build.lock
 
 latest_release.json
-.hugo_build.lock
 *.tar.gz
 
 v0.6/

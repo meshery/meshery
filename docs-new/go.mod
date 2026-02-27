@@ -1,6 +1,6 @@
 module github.com/layer5io/docs
 
-go 1.25
+go 1.23
 
 require (
 	github.com/google/docsy v0.12.0 // indirect
