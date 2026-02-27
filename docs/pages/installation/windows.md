@@ -10,7 +10,7 @@ display-title: "true"
 language: en
 list: include
 image: /assets/img/platforms/wsl2.png
-abstract: Install Meshery CLI on Windows
+abstract: Guide for installing mesheryctl and setting up a Meshery development environment on Windows.
 ---
 
 On Windows systems, `mesheryctl` can be installed via Scoop or [downloaded directly](https://github.com/meshery/meshery/releases/latest).
@@ -31,13 +31,25 @@ If you are installing Meshery on Docker, execute the following command:
 
 Optionally, move the `mesheryctl` binary to a directory in your `PATH`.
 
+## Local Development Setup
 
-<!-- Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
-  <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host ./mesheryctl system start</div></div>
-  </pre>
+For contributors looking to build Meshery from source on Windows, follow these steps to bypass common environment issues:
 
-Type `yes` when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery. -->
+### 1. Run the Server (Go)
+From the root directory of the repository, use the specific path to the main entry point:
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">go run server/cmd/main.go</div></div>
+</pre>
+
+### 2. Run the UI (Next.js)
+Navigate to the `ui` folder. If the default `npm run dev` fails due to `rm` command errors (Linux-specific commands), use the following workflow:
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">cd ui
+npm install
+npx next dev</div></div>
+</pre>
+
+**Note:** If you need to clean the build cache on Windows, install `rimraf` via npm (`npm install -g rimraf`) and use `rimraf .next out` instead of the standard `make clean` command.
 
 # Related Reading
 
