@@ -11,9 +11,9 @@ list: include
 
 {% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
 
-Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
+Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. After making changes, you can test locally, sign-off, commit, and push your changes for review.
 
-{% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and it information architecture." %}
+{% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and its information architecture." %}
 
 ## Documentation Framework
 
@@ -294,13 +294,13 @@ The `Gemfile.lock` will be updated automatically once the `make docs` command is
 
 You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
-### Using Github Codespaces
+### Using GitHub Codespaces
 
-- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">Github</a>
+- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">GitHub</a>
 - Open your forked Meshery repository on GitHub.
-- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in GitHub Codespaces.
 
-{% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+{% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
 - After opening the project on Github Codespaces, change to the docs directory.
   
