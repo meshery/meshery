@@ -1,0 +1,8 @@
+{{- $guides := where .Site.RegularPages ".Params.categories" "intersect" (slice "troubleshooting") }}
+<ul>
+{{- range $guides }}
+{{- if ne .Kind "section" }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+{{- end }}
+{{- end }}
+</ul>

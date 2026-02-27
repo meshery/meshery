@@ -124,9 +124,9 @@ Meshery preserves the originally requested URL when authentication is required, 
 
 **Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to MeshMap extension.
 
-{{< alert type="info" title="Deep-Link Security" >}}
+{{% alert color="info" title="Deep-Link Security" %}}
 Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
-{{< /alert >}}
+{{% /alert %}}
 
 ## Runtime Configuration Options
 
@@ -257,9 +257,9 @@ Example configuration in the capabilities response:
 2. **Custom Navigation**: Guide users to specific extension pages based on their workflow.
 3. **URL Aliasing**: Create shorter or more memorable URLs that redirect to extension endpoints.
 
-{{< alert type="info" title="Note" >}}
+{{% alert color="info" title="Note" %}}
 Redirects are evaluated before serving UI content. Only exact path matches are redirected.
-{{< /alert >}}
+{{% /alert %}}
 
 ## Capabilities Endpoint Example
 
@@ -467,9 +467,9 @@ First, construct the URL in the format
 So, the final URL would look similar to
 ```https://k8s-staging.test.io/api/user/token```
 
-{{< alert type="info" title="Note" >}}
+{{% alert color="info" title="Note" %}}
 Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider is installed on same server, pay attention to paths or subdomains.
-{{< /alert >}}
+{{% /alert %}}
 
 Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
 
