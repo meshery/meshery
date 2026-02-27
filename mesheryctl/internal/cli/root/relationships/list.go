@@ -70,7 +70,7 @@ mesheryctl relationship list --count
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model", "Type", "Sub-Type"},
+			Header:           []string{"KIND", "API VERSION", "MODEL", "TYPE", "SUB-TYPE"},
 			Rows:             rows,
 			Count:            relationships.Count,
 			DisplayCountOnly: count,
