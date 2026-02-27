@@ -243,7 +243,7 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 
 func DeleteSVGsFromFileSystem() {
 	for _, path := range UISVGPaths {
-		os.RemoveAll(path)
+		_ = os.RemoveAll(path)
 	}
 }
 func getRelativePathForAPI(path string) string {
