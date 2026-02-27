@@ -19,7 +19,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -120,25 +119,19 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 // selectRelationshipPrompt lets user to select a relation if relations are more than one
 func selectRelationshipPrompt(relationships []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
-	relationshipNames := []string{}
+	relationshipNames := make([]string, len(relationships))
 
-	for _, _rel := range relationships {
+	for i, _rel := range relationships {
 		evaluationQuery := "N/A"
 		if _rel.EvaluationQuery != nil {
 			evaluationQuery = *_rel.EvaluationQuery
 		}
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
-		relationshipNames = append(relationshipNames, relationshipName)
+		relationshipNames[i] = fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a relationship:",
-		Items: relationshipNames,
-	}
-
-	i, _, err := prompt.Run()
+	i, err := utils.RunSelectPrompt("Select a relationship:", relationshipNames)
 	if err != nil {
-		return nil, utils.ErrPromptCancelled()
+		return nil, err
 	}
 
 	return &relationships[i], nil

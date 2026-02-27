@@ -5,7 +5,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -57,7 +56,10 @@ mesheryctl model view [model-name]
 		case 1:
 			selectedModel = modelsResponse.Models[0]
 		default:
-			selectedModel = selectModelPrompt(modelsResponse.Models)
+			selectedModel, err = selectModelPrompt(modelsResponse.Models)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
@@ -79,30 +81,19 @@ func getValidOutputFormat() []string {
 	return []string{"yaml", "json"}
 }
 
-func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
-	modelArray := []model.ModelDefinition{}
-	modelNames := []string{}
+func selectModelPrompt(models []model.ModelDefinition) (model.ModelDefinition, error) {
+	modelNames := make([]string, len(models))
 
-	modelArray = append(modelArray, models...)
-
-	for _, model := range modelArray {
-		modelName := fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-		modelNames = append(modelNames, modelName)
+	for i, model := range models {
+		modelNames[i] = fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a model",
-		Items: modelNames,
+	i, err := utils.RunSelectPrompt("Select a model", modelNames)
+	if err != nil {
+		return model.ModelDefinition{}, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return modelArray[i]
-	}
+	return models[i], nil
 }
 
 func init() {
