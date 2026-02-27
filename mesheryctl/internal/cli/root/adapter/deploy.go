@@ -53,14 +53,11 @@ mesheryctl adapter deploy linkerd --watch
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return utils.ErrLoadConfig(err)
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				// ErrValidatingAdapter
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			return nil
 		},
