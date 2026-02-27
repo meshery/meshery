@@ -91,12 +91,11 @@ FROM alpine:3.23.2
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \
-    apk --update add libstdc++ curl ca-certificates && \
-    apk add --no-cache --virtual .build-deps curl binutils zstd gcompat && \
+    apk --update add libstdc++ curl ca-certificates wget && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
     for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
     do curl -sSL ${GLIBC_REPO}/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk del gcompat && \
-    apk add --force-overwrite --no-cache --allow-untrusted /tmp/*.apk && \
+    apk add --force-overwrite --no-cache /tmp/*.apk && \
     rm -v /tmp/*.apk && \
     /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
