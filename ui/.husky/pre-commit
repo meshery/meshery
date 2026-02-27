@@ -1,1 +1,14 @@
-cd ui && npx lint-staged
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+STAGED_FILES=$(git diff --cached --name-only)
+
+if echo "$STAGED_FILES" | grep -q '^ui/'; then
+  echo "Running lint-staged in ui/"
+  (cd "$REPO_ROOT/ui" && npx lint-staged)
+fi
+
+if echo "$STAGED_FILES" | grep -q '^provider-ui/'; then
+  echo "Running lint-staged in provider-ui/"
+  (cd "$REPO_ROOT/provider-ui" && npx lint-staged)
+fi

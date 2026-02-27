@@ -355,13 +355,13 @@ ui:
 ui-provider:
 	cd provider-ui; npm run dev; cd ..
 
-## Lint check Meshery UI and Provider UI on your local machine.
+## Lint check Meshery UI and Provider UI on your local machine. To not-fix issues, run with `NOT_FIX=true`
 ui-lint:
-	cd ui; npm i eslint; npx eslint . --fix; cd ..
+	cd ui && npx eslint . $(if $(filter true,$(NOT_FIX)),,--fix)
 
-## Lint check Meshery Provider UI on your local machine.
+## Lint check Meshery Provider UI on your local machine. To not-fix issues, run with `NOT_FIX=true`
 ui-provider-lint:
-	cd provider-ui && npm i eslint && npx eslint .
+	cd provider-ui && npx eslint . $(if $(filter true,$(NOT_FIX)),,--fix)
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:
