@@ -1233,7 +1233,7 @@ exp:
   organization:
     name: organization
     description: Interact with existing organizations
-    usage: mesheryctl exp organization
+    usage: mesheryctl organization
     flags:
       count:
         name: --count
@@ -1241,13 +1241,13 @@ exp:
       help:
         name: --help, -h
         description: help for organization command
-        usage: mesheryctl exp organization --help
-        example: mesheryctl exp organization --help
+        usage: mesheryctl organization --help
+        example: mesheryctl organization --help
     subcommands:
       list:
         name: list
         description: List all organizations registered in Meshery Server
-        usage: mesheryctl exp organization list [flags]
+        usage: mesheryctl organization list [flags]
         flags:
           page:
             name: --page, -p
