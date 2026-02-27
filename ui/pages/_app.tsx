@@ -1,4 +1,4 @@
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+// import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -46,6 +46,10 @@ import {
   Typography,
   Hidden,
   NoSsr,
+  CheckCircleIcon,
+  ErrorIcon,
+  InfoIcon,
+  WarningIcon,
 } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { keys } from '@/utils/permission_constants';
@@ -620,10 +624,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
                               horizontal: 'right',
                             }}
                             iconVariant={{
-                              success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                              error: <Error style={{ marginRight: '0.5rem' }} />,
-                              warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                              info: <Info style={{ marginRight: '0.5rem' }} />,
+                              success: <CheckCircleIcon style={{ marginRight: '0.5rem' }} />,
+                              error: <ErrorIcon style={{ marginRight: '0.5rem' }} />,
+                              warning: <WarningIcon style={{ marginRight: '0.5rem' }} />,
+                              info: <InfoIcon style={{ marginRight: '0.5rem' }} />,
                             }}
                             Components={{
                               info: ThemeResponsiveSnackbar,
