@@ -5,201 +5,252 @@ title: Rest API Docs
 
 {{ content }}
 
-{% if page.data %}
-{% assign swagger = site.data[page.data] %}
-{% else %}
-{% assign swagger = page %}
-{% endif %}
-{% assign sorted_paths = swagger.paths | sort %}
+<!-- 
+    This swagger layout dynamically fetches the OpenAPI specification from the published
+    location in the meshery/meshery GitHub repository at runtime. This ensures the 
+    documentation always reflects the latest published API schema.
+    
+    Schema source: https://raw.githubusercontent.com/meshery/meshery/master/server/helpers/swagger.yaml
+-->
 
-<details>
-<summary>
-    Here is a concise list of all REST API endpoints.
-</summary>
-<ul>
-{% for route in sorted_paths %}
-<li>{{ route[0] }}</li>
-{% endfor %}
-</ul>
-</details>
-
-{% for route in sorted_paths %}
-<div class="swagger-path">
-    <h2 class="swagger-path">{{ route[0] }}</h2>
-{% if route[0] contains '/api/oam' %}
-    <span class="deprecated-label">Deprecated</span>
-{% endif %}
-    {% for method in route[1] %}
-    <div class="swagger-method swagger-method-{{ method[0] }}">
-        <h3 class="swagger-method-title">
-            <a href="#" class="swagger-method-link">
-                <span class="swagger-method-name">{{ method[0] | upcase }}</span>
-                <span class="swagger-method-summary">{{ method[1].summary }}</span>
-            </a>
-        </h3>
-        <div class="swagger-method-details">
-            <h5>Description</h5>
-            <md-block>
-              <span class="swagger-method-description" >{{method[1].description}}</span>
-            </md-block>
-            {% if method[1].parameters %}
-            <div class="swagger-parameters">
-                <h5>Parameters</h5>
-                <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Located in</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in method[1].parameters %}
-                        <tr>
-                            <td>
-                                {% if parameter.required %}
-                                <span class="swagger-parameter-required">
-                                {% endif %}
-                                {{ parameter.name }}
-                                {% if parameter.required %}
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td>{{ parameter.in }}</td>
-                            <td>{{ parameter.description }}</td>
-                            <td>
-                                {% if parameter.type %}
-                                {{ parameter.type | capitalize }}
-                                {% if parameter.items %}
-                                of {{ parameter.items.type | capitalize }}
-                                {% endif %}
-                                {% else %}
-                                Unknown
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-            {% if method[1].responses %}
-            <div class="swagger-response">
-                <h5>Responses</h5>
-                {% for response in method[1].responses %}
-                <div class="swagger-response-{{ response[0] }}">
-                    <p class="swagger-response-title">
-                        <span class="swagger-response-code">{{ response[0] }}</span>
-                        {% if response[1].description != "" %}<span class="swagger-response-seperator">-</span>{% endif %}
-                        <md-block class="mdblock">
-                            <span class="swagger-response-description">{{ response[1].description }}</span>
-                        </md-block>
-                    </p>
-                </div>
-                {% if response[1].schema.properties %}
-                 <table class="swagger-parameters-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Format</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for parameter in response[1].schema.properties %}
-                        <tr>
-                            <td>{{ parameter[0] }}</td>
-                            <td>
-                                {% if parameter[1].format %}
-                                {{ parameter[1].format }}
-                                {% else %}
-                                Object
-                                {% endif %}
-
-                            </td>
-                            <td>{{ parameter[1].type }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
-                {% for content_type in swagger.produces %}
-                    {% if response[1].examples[content_type] %}
-                        {% assign example = response[1].examples[content_type] %}
-                        {% if content_type contains 'json' %}
-                            {% highlight json %}{{ example }}{% endhighlight %}
-                        {% elsif content_type contains 'xml' %}
-                            {% highlight xml %}{{ example }}{% endhighlight %}
-                        {% else %}
-                            {% highlight http %}{{ example }}{% endhighlight %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
+<!-- Loading indicator -->
+<div id="swagger-loading" style="padding: 20px; text-align: center;">
+    <p>Loading API documentation from published schema...</p>
+    <div class="loading-spinner"></div>
 </div>
-{% endfor %}
 
+<!-- Container for dynamically rendered swagger documentation -->
+<div id="swagger-container"></div>
+
+<style>
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" 
+        integrity="sha384-+pxiN6T7yvpryuJmE1gM9PX7yQit15auDb+ZwwvJOd/4be2Cie5/IuVXgQb/S9du" 
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
-// Helpers
+// Published OpenAPI schema URL from meshery/meshery repository
+// Note: Currently uses 'master' branch - update if default branch changes
+const SWAGGER_SCHEMA_URL = 'https://raw.githubusercontent.com/meshery/meshery/master/server/helpers/swagger.yaml';
+const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
 
-var slice = Array.prototype.slice;
-
-function $(expr, parent) {
-    return typeof expr === "string" ? (parent || document).querySelector(expr) : expr || null;
-}
-
-function $$(expr, parent) {
-    return slice.call((parent || document).querySelectorAll(expr));
-}
-
-bind = function(element, o) {
-    if (element) {
-        for (var event in o) {
-            var callback = o[event];
-
-            event.split(/\s+/).forEach(function (event) {
-                element.addEventListener(event, callback);
-            });
+// Fetch and parse the OpenAPI schema with timeout
+async function fetchSwaggerSpec() {
+    try {
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+        
+        const response = await fetch(SWAGGER_SCHEMA_URL, { 
+            signal: controller.signal 
+        });
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    }
-};
-
-toggleDetails = function(element) {
-    if (element.classList.contains('open')) {
-        element.classList.remove('open');
-    }
-    else {
-        element.classList.add('open');
+        const yamlText = await response.text();
+        // js-yaml 4.x exposes jsyaml global - use it to parse YAML
+        if (typeof jsyaml === 'undefined') {
+            throw new Error('js-yaml library not loaded properly');
+        }
+        const swagger = jsyaml.load(yamlText);
+        return swagger;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out after ' + (FETCH_TIMEOUT_MS / 1000) + ' seconds');
+        }
+        console.error('Error fetching swagger spec:', error);
+        throw error;
     }
 }
 
-// Initialization
+// Render the swagger documentation
+function renderSwaggerDocs(swagger) {
+    const container = document.getElementById('swagger-container');
+    const sortedPaths = Object.entries(swagger.paths || {}).sort((a, b) => a[0].localeCompare(b[0]));
+    
+    let html = '<details><summary>Here is a concise list of all REST API endpoints.</summary><ul>';
+    sortedPaths.forEach(([route]) => {
+        html += `<li>${escapeHtml(route)}</li>`;
+    });
+    html += '</ul></details>';
+    
+    sortedPaths.forEach(([route, methods]) => {
+        const isDeprecated = route.includes('/api/oam');
+        html += `<div class="swagger-path">
+            <h2 class="swagger-path">${escapeHtml(route)}</h2>
+            ${isDeprecated ? '<span class="deprecated-label">Deprecated</span>' : ''}`;
+        
+        Object.entries(methods).forEach(([method, details]) => {
+            html += `<div class="swagger-method swagger-method-${method}">
+                <h3 class="swagger-method-title">
+                    <a href="#" class="swagger-method-link">
+                        <span class="swagger-method-name">${method.toUpperCase()}</span>
+                        <span class="swagger-method-summary">${escapeHtml(details.summary || '')}</span>
+                    </a>
+                </h3>
+                <div class="swagger-method-details">`;
+            
+            // Description
+            if (details.description) {
+                html += `<h5>Description</h5>
+                    <md-block>
+                        <span class="swagger-method-description">${escapeHtml(details.description)}</span>
+                    </md-block>`;
+            }
+            
+            // Parameters
+            if (details.parameters && details.parameters.length > 0) {
+                html += `<div class="swagger-parameters">
+                    <h5>Parameters</h5>
+                    <table class="swagger-parameters-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Located in</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                details.parameters.forEach(param => {
+                    // Use controlled CSS class names (safe, no user input)
+                    const paramClass = param.required ? 'swagger-parameter-required' : '';
+                    // Escape individual type components before constructing paramType
+                    const escapedType = param.type ? escapeHtml(capitalize(param.type)) : '';
+                    const escapedItemsType = param.items && param.items.type ? escapeHtml(capitalize(param.items.type)) : '';
+                    const paramType = escapedType ? 
+                        (escapedItemsType ? `${escapedType} of ${escapedItemsType}` : escapedType) : 
+                        'Unknown';
+                    
+                    html += `<tr>
+                        <td><span class="${paramClass}">${escapeHtml(param.name)}</span></td>
+                        <td>${escapeHtml(param.in)}</td>
+                        <td>${escapeHtml(param.description || '')}</td>
+                        <td>${paramType}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+            }
+            
+            // Responses
+            if (details.responses) {
+                html += `<div class="swagger-response"><h5>Responses</h5>`;
+                
+                Object.entries(details.responses).forEach(([code, response]) => {
+                    html += `<div class="swagger-response-${code}">
+                        <p class="swagger-response-title">
+                            <span class="swagger-response-code">${code}</span>
+                            ${response.description ? '<span class="swagger-response-seperator">-</span>' : ''}
+                            <md-block class="mdblock">
+                                <span class="swagger-response-description">${escapeHtml(response.description || '')}</span>
+                            </md-block>
+                        </p>
+                    </div>`;
+                    
+                    // Response schema properties
+                    if (response.schema && response.schema.properties) {
+                        html += `<table class="swagger-parameters-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Format</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                        
+                        Object.entries(response.schema.properties).forEach(([propName, propDetails]) => {
+                            html += `<tr>
+                                <td>${escapeHtml(propName)}</td>
+                                <td>${escapeHtml(propDetails.format || 'Object')}</td>
+                                <td>${escapeHtml(propDetails.type || '')}</td>
+                            </tr>`;
+                        });
+                        
+                        html += `</tbody></table>`;
+                    }
+                });
+                
+                html += `</div>`;
+            }
+            
+            html += `</div></div>`;
+        });
+        
+        html += `</div>`;
+    });
+    
+    container.innerHTML = html;
+    
+    // Hide loading indicator
+    document.getElementById('swagger-loading').style.display = 'none';
+    
+    // Initialize event handlers
+    initializeEventHandlers();
+}
 
-function init() {
-    $$('.swagger-method-title').forEach(function (title) {
-        bind(title, {
-            'click': function (e) {
-                var details = $('.swagger-method-details', title.parentNode)
-                toggleDetails(details[0]);
-                e.preventDefault();
+// Helper functions
+// Reusable element for efficient HTML escaping
+const escapeElement = document.createElement('div');
+
+function escapeHtml(text) {
+    escapeElement.textContent = text;
+    return escapeElement.innerHTML;
+}
+
+function capitalize(str) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+
+function initializeEventHandlers() {
+    document.querySelectorAll('.swagger-method-title').forEach(title => {
+        title.addEventListener('click', function(e) {
+            e.preventDefault();
+            const details = this.parentNode.querySelector('.swagger-method-details');
+            if (details) {
+                details.classList.toggle('open');
             }
         });
     });
 }
 
-
-// DOM already loaded?
-if (document.readyState !== "loading") {
-    init();
-}
-else {
-    // Wait for it
-    document.addEventListener("DOMContentLoaded", init);
-}
+// Load and render on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const swagger = await fetchSwaggerSpec();
+        renderSwaggerDocs(swagger);
+    } catch (error) {
+        console.error('Error:', error);
+        const loadingDiv = document.getElementById('swagger-loading');
+        // Safely display error message without XSS risk
+        const errorPara = document.createElement('p');
+        errorPara.style.color = 'red';
+        errorPara.textContent = 'Error loading API documentation: ' + error.message;
+        
+        const helpPara = document.createElement('p');
+        helpPara.textContent = 'Please ensure you have an internet connection and try refreshing the page.';
+        
+        loadingDiv.innerHTML = '';
+        loadingDiv.appendChild(errorPara);
+        loadingDiv.appendChild(helpPara);
+    }
+});
 </script>
