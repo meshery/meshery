@@ -20,7 +20,7 @@ var modelViewOutputFormat string
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long: `View a model queried by its name or id
+	Long: `View a model queried by its name or ID
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
 // View a specific model from current provider by using [model-name] or [model-id] in default format yaml
@@ -56,7 +56,7 @@ mesheryctl model view [model-name] --output-format json
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Printf("No model(s) found for the given name or ID : %s\n", args[0])
+			fmt.Printf("No model(s) found for the given name or ID: %s\n", args[0])
 			return nil
 		case 1:
 			selectedModel = modelsResponse.Models[0]
@@ -109,16 +109,16 @@ func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
 	}
 }
 
-func getModelViewUrlPath(modelNameorId string) string {
+func getModelViewUrlPath(modelNameOrId string) string {
 	queryParams := url.Values{}
 	var modelsUrlPath string
 
-	if !utils.IsUUID(modelNameorId) {
-		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelNameorId))
+	if !utils.IsUUID(modelNameOrId) {
+		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelNameOrId))
 		queryParams.Add("pagesize", "all")
 	} else {
 		modelsUrlPath = modelsApiPath
-		queryParams.Add("id", modelNameorId)
+		queryParams.Add("id", modelNameOrId)
 	}
 
 	return fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
