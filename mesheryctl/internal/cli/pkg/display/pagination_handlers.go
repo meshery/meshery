@@ -88,7 +88,7 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 // promptPageHandler creates a pageHandler that presents each fetched page as a selection prompt.
 func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData promptLabelBuilder[R], extractItem itemExtractor[T, R], selectedItem *R) pageHandler[T] {
 	return func(data *T, currentPage int, pgSize int) (bool, error) {
-		rows := extractItem(data)
+		rows, totalCount := extractItem(data)
 
 		switch len(rows) {
 		case 0:
@@ -100,7 +100,8 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 			*selectedItem = rows[0]
 			return false, nil
 		default:
-			picked, itemSelected, err := SelectFromPagedResults(rows, processData, pgSize)
+			isLastPage := int64(currentPage*pgSize+len(rows)) >= totalCount
+			picked, itemSelected, err := SelectFromPagedResults(rows, processData, isLastPage)
 			if err != nil {
 				return false, err
 			}

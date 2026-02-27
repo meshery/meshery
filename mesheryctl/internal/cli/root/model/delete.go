@@ -67,8 +67,8 @@ mesheryctl model delete [model-name]
 				SearchTerm: modelArg,
 			},
 			formatLabel,
-			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
-				return data.Models
+			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
+				return data.Models, data.Count
 			},
 			selectedModel,
 		)

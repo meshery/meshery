@@ -222,8 +222,8 @@ func TestPromptAsyncPagination(t *testing.T) {
 		Items []testItem `json:"items"`
 	}
 
-	extractItems := func(data *promptAPIResponse) []testItem {
-		return data.Items
+	extractItems := func(data *promptAPIResponse) ([]testItem, int64) {
+		return data.Items, int64(len(data.Items))
 	}
 
 	formatLabel := func(rows []testItem) []string {
