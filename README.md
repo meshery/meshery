@@ -130,19 +130,19 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 ## Workspaces: Your team's Google Drive for cloud native projects
 
-<img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Meshery Workspaces collaboration interface" loading="lazy" />
 
 Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
 
 <details><summary><h4>Manage your connections with Environments</h4></summary>
 
-<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Managing Meshery Environments and resources" loading="lazy" />
 <p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 </details>
 
 <details><summary><h4>See changes to your infra before you merge</h4></summary>
 
-<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" />
+<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Infrastructure snapshots in GitHub Pull Requests" loading="lazy" align="center" />
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </details>
@@ -154,7 +154,7 @@ Get snapshots of your infrastructure directly in your PRs. Preview your deployme
 
 <h3>Control all of your infrastructure with mesheryctl</h3>
 <br /><br />
-<p>Whether managing multiple Meshery deployments, importing designs, discoverying Kubernetes clusters, do so with ease using Meshery CLI in your terminal.</p>
+<p>Whether managing multiple Meshery deployments, importing designs, discovering Kubernetes clusters, do so with ease using Meshery CLI in your terminal.</p>
 <br /><br /> -->
 
 ## Platform Engineering with Meshery's Extension Points
@@ -166,7 +166,7 @@ Extend Meshery as your self-service engineering platform by taking advantage of 
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>.
 </details>
 
-Meshery offers robust capabilities for managing multiple tenants within a shared Kubernetes infrastructure. Meshery provides the tools and integrations necessary to create a secure, isolated, and manageable multi-tenant environments, allowing multiple teams or organizations with granular control over their role-based access controls.
+Meshery offers robust capabilities for managing multiple tenants within a shared Kubernetes infrastructure. Meshery provides the tools and integrations necessary to create a secure, isolated, and manageable multi-tenant environment, allowing multiple teams or organizations with granular control over their role-based access controls.
 
 Meshery's "multi-player" functionality refers to its collaborative features that enable multiple users to interact with and manage cloud native infrastructure simultaneously. This is primarily facilitated through Kanvas, a Meshery extension visual designer and management interface.
 
