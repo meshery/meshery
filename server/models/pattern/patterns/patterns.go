@@ -31,7 +31,19 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+func Process(
+	kconfigs []string,
+	componets []component.ComponentDefinition,
+	isDel bool,
+	patternName string,
+	ec *models.Broadcast,
+	userID string,
+	provider models.Provider,
+	connection connection.Connection,
+	skipCrdAndOperator,
+	upgradeExistingRelease bool,
+) ([]DeploymentMessagePerContext, error) {
+
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
@@ -46,11 +58,15 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 	var msgsMx sync.Mutex
 
 	var errs []error
+	var errsMx sync.Mutex
+
 	var kclis []*kubernetes.Client
 	for _, config := range kconfigs {
 		cli, err := kubernetes.New([]byte(config))
 		if err != nil {
+			errsMx.Lock()
 			errs = append(errs, err)
+			errsMx.Unlock()
 			continue
 		}
 		kclis = append(kclis, cli)
@@ -59,12 +75,16 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 	var wg sync.WaitGroup
 	for _, kcli := range kclis {
 		wg.Add(1)
+
 		go func(kcli *kubernetes.Client) {
 			defer wg.Done()
 
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
+
 			for _, comp := range componets {
-				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
+				if !skipCrdAndOperator && depHandler != nil &&
+					comp.Model.Name != (_models.Kubernetes{}).String() {
+
 					deploymentMsg := DeploymentMessagePerComp{
 						Kind:       comp.Component.Kind,
 						Model:      comp.Model.Name,
@@ -73,19 +93,22 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 						DesignName: patternName,
 					}
 
-					// Deploys resources that are required inside cluster for successful deployment of the design.
-					result, err := depHandler.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
-					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
+					result, err := depHandler.HandleDependents(
+						comp, kcli, !isDel, upgradeExistingRelease,
+					)
+
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
-						errs = append(errs, err)
 						deploymentMsg.Error = err
+
+						errsMx.Lock()
+						errs = append(errs, err)
+						errsMx.Unlock()
 					}
+
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
 				}
-				//All other components will be handled directly by Kubernetes
-				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
 
 				_msg := DeploymentMessagePerComp{
 					Kind:       comp.Component.Kind,
@@ -97,10 +120,14 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 				}
 
 				if err := k8s.Deploy(kcli, comp, isDel); err != nil {
-					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.DisplayName)
+					_msg.Message = fmt.Sprintf(
+						"Error %sing %s/%s",
+						action, patternName, comp.DisplayName,
+					)
 					_msg.Error = err
 					_msg.Success = false
 				}
+
 				msgsPerComp = append(msgsPerComp, _msg)
 			}
 
@@ -114,6 +141,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 
 		}(kcli)
 	}
+
 	wg.Wait()
 	return msgs, mergeErrors(errs)
 }
