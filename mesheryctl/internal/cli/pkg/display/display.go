@@ -81,17 +81,16 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 	err error,
 ) {
 	var zero T
+	isLastPage := int64((currentPage+1)*pgSize) >= totalCount
 
 	names := formatLabel(rows)
-	if int64((currentPage+1)*pgSize) >= totalCount {
+	if isLastPage {
 		noMoreLabel := color.New(color.FgHiBlack).Sprint("End of list")
 		names = append(names, noMoreLabel)
 	} else {
 		loadMoreLabel := color.New(color.FgCyan, color.Bold).Sprint("Load More.....")
 		names = append(names, loadMoreLabel)
 	}
-
-	// names = append(names, fmt.Sprintf("%d,%d,%d", pgSize, currentPage, totalCount))
 
 	prompt := promptui.Select{
 		Label: "Select item",
@@ -121,7 +120,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 		// Last item (Load More | End of list) selected
 		if i == len(rows) {
 			// No more items to show
-			if int64((currentPage+1)*pgSize) >= totalCount {
+			if isLastPage {
 				return zero, false, fmt.Errorf("no more items available")
 			}
 			return zero, false, nil
