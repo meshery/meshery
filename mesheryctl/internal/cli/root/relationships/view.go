@@ -64,7 +64,7 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 		selectedModel := new(relationship.RelationshipDefinition)
 
-		// Fetch paginated data with selection promopt
+		// Fetch paginated data with selection prompt
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
 				UrlPath: relationshipAPIPath,

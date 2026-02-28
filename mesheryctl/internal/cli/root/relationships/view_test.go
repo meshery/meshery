@@ -32,7 +32,7 @@ func TestView(t *testing.T) {
 		{
 			Name:             "given model name provided when running relationship view then display registered relationship",
 			Args:             []string{"view", "kubernetes"},
-			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			URL:              "/api/meshmodels/models/kubernetes/relationships?page=0&pagesize=10",
 			Fixture:          "view.relationship.api.response.golden",
 			ExpectedResponse: "view.relationship.output.golden",
 			ExpectError:      false,
@@ -40,7 +40,7 @@ func TestView(t *testing.T) {
 		{
 			Name:             "given non existing model name provided when running relationship view then display no relationship found",
 			Args:             []string{"view", "nonexistent"},
-			URL:              "/api/meshmodels/models/nonexistent/relationships",
+			URL:              "/api/meshmodels/models/nonexistent/relationships?page=0&pagesize=10",
 			Fixture:          "view.relationship.empty.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
