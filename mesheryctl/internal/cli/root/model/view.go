@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"net/url"
 	"slices"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
 )
@@ -18,11 +20,14 @@ var modelViewOutputFormat string
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long: `View a model queried by its name
+	Long: `View a model queried by its name or ID
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
-// View a specific model from current provider
+// View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
+
+// View a specific model from current provider in JSON format
+mesheryctl model view [model-name] --output-format json
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
@@ -39,36 +44,49 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelDefinition := args[0]
+		urlPath := getModelViewUrlPath(args[0])
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s/%s?pagesize=all", modelsApiPath, modelDefinition))
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](urlPath)
 
 		if err != nil {
 			return err
 		}
 
-		var selectedModel model.ModelDefinition
+		selectedModel := new(model.ModelDefinition)
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Println("No model(s) found for the given name ", modelDefinition)
+			utils.Log.Infof("No model(s) found for the given name or ID: %s", args[0])
 			return nil
 		case 1:
-			selectedModel = modelsResponse.Models[0]
+			*selectedModel = modelsResponse.Models[0]
 		default:
-			selectedModel, err = selectModelPrompt(modelsResponse.Models)
+			err := display.PromptAsyncPagination(
+				display.DisplayDataAsync{
+					UrlPath:    modelsApiPath,
+					SearchTerm: args[0],
+				},
+				formatLabel,
+				func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
+					return data.Models, data.Count
+				},
+				selectedModel,
+			)
 			if err != nil {
+				if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
+					return utils.ErrNotFound(fmt.Errorf("no results found for %s", args[0]))
+				}
 				return err
 			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), selectedModel)
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), *selectedModel)
 		if err != nil {
 			return err
 		}
 
-		err = outputFormatter.Display()
+		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
 		if err != nil {
 			return err
 		}
@@ -81,19 +99,19 @@ func getValidOutputFormat() []string {
 	return []string{"yaml", "json"}
 }
 
-func selectModelPrompt(models []model.ModelDefinition) (model.ModelDefinition, error) {
-	modelNames := make([]string, len(models))
+func getModelViewUrlPath(modelNameOrId string) string {
+	queryParams := url.Values{}
+	var modelsUrlPath string
 
-	for i, model := range models {
-		modelNames[i] = fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
+	if !utils.IsUUID(modelNameOrId) {
+		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelNameOrId))
+		queryParams.Add("pagesize", "all")
+	} else {
+		modelsUrlPath = modelsApiPath
+		queryParams.Add("id", modelNameOrId)
 	}
 
-	i, err := utils.RunSelectPrompt("Select a model", modelNames)
-	if err != nil {
-		return model.ModelDefinition{}, err
-	}
-
-	return models[i], nil
+	return fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
 }
 
 func init() {
