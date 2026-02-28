@@ -36,7 +36,7 @@ list: exclude
       {% for item in sorted_installation  %}
       {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        {% if item.abstract and item.abstract != "" %}
+        {% if item.abstract and item.abstract | strip != "" %}
           - {{ item.abstract }}
         {% endif %}
         </li>
