@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd}
 	workspacesApiPath    = "api/workspaces"
 )
 
