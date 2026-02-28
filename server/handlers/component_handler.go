@@ -1231,8 +1231,90 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
+// isUnresolvedRef checks if a $ref is an unresolved external reference that cannot be resolved.
+// These are typically Kubernetes OpenAPI refs that weren't fully dereferenced during component generation.
+func isUnresolvedRef(ref interface{}) bool {
+	refStr, ok := ref.(string)
+	if !ok {
+		return false
+	}
+	return strings.HasPrefix(refStr, "#/components/schemas/") || strings.HasPrefix(refStr, "#/definitions/")
+}
+
+// resolveSchemaRefs recursively resolves unresolved $refs in a schema by replacing them with generic object schemas.
+// This prevents RJSF from crashing when it encounters refs that point to non-existent definitions.
+func resolveSchemaRefs(schema map[string]interface{}) {
+	if schema == nil {
+		return
+	}
+
+	// Handle direct $ref
+	if ref, ok := schema["$ref"]; ok && isUnresolvedRef(ref) {
+		delete(schema, "$ref")
+		schema["type"] = "object"
+		schema["additionalProperties"] = true
+	}
+
+	// Recurse into allOf, oneOf, anyOf
+	for _, key := range []string{"allOf", "oneOf", "anyOf"} {
+		if arr, ok := schema[key].([]interface{}); ok {
+			for _, item := range arr {
+				if itemMap, ok := item.(map[string]interface{}); ok {
+					resolveSchemaRefs(itemMap)
+				}
+			}
+		}
+	}
+
+	// Recurse into properties
+	if props, ok := schema["properties"].(map[string]interface{}); ok {
+		for _, prop := range props {
+			if propMap, ok := prop.(map[string]interface{}); ok {
+				resolveSchemaRefs(propMap)
+			}
+		}
+	}
+
+	// Recurse into additionalProperties
+	if addProps, ok := schema["additionalProperties"].(map[string]interface{}); ok {
+		resolveSchemaRefs(addProps)
+	}
+
+	// Recurse into items (for arrays)
+	if items, ok := schema["items"].(map[string]interface{}); ok {
+		resolveSchemaRefs(items)
+	} else if itemsArr, ok := schema["items"].([]interface{}); ok {
+		for _, item := range itemsArr {
+			if itemMap, ok := item.(map[string]interface{}); ok {
+				resolveSchemaRefs(itemMap)
+			}
+		}
+	}
+}
+
+// processComponentSchema processes the schema field of a component to resolve unresolved $refs.
+func processComponentSchema(comp *component.ComponentDefinition) {
+	if comp == nil || comp.Component.Schema == "" {
+		return
+	}
+
+	var schema map[string]interface{}
+	if err := json.Unmarshal([]byte(comp.Component.Schema), &schema); err != nil {
+		return // Leave as-is if parsing fails
+	}
+
+	resolveSchemaRefs(schema)
+
+	processedSchema, err := json.Marshal(schema)
+	if err != nil {
+		return // Leave as-is if marshaling fails
+	}
+
+	comp.Component.Schema = string(processedSchema)
+}
+
 // processComponentDefinitions processes a list of entities and extracts component definitions,
-// it also sets the ModelReference field for each component definition.
+// it also sets the ModelReference field for each component definition and resolves unresolved $refs in schemas.
 func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
@@ -1241,6 +1323,9 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 			if comp.Model != nil {
 				comp.ModelReference = comp.Model.ToReference()
 			}
+
+			// Process schema to resolve unresolved $refs
+			processComponentSchema(comp)
 
 			comps = append(comps, *comp)
 		}
