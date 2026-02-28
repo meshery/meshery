@@ -67,7 +67,7 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 		}
 	}
 
-	return dep.ObjectMeta.Name, version, nil
+	return dep.Name, version, nil
 }
 
 func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {

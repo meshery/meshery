@@ -2,13 +2,13 @@
 title: Cloud Native Design Patterns
 description: Meshery applies DRY principle when managing the configuration of cloud native infrastructure.
 aliases: 
-- tasks/pattern-management/
+- /tasks/pattern-management/
 categories: [configuration]
 ---
 
-{{< alert type="warning" title="What are Cloud Native Patterns?" >}}
+{{% alert color="warning" title="What are Cloud Native Patterns?" %}}
 This feature area is under active development. Patterns will be importable and exportable as OCI images in v0.8.0.
-{{< /alert >}}
+{{% /alert %}}
 
 Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure.  
 
@@ -22,9 +22,9 @@ _See [Meshery Catalog](https://meshery.io/catalog)_.
 
 You may bring your own patterns or find them available through your chosen provider. Each cloud native pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your cloud native deployment’s adherence to a pattern.
 
-{{< alert type="info" title="Repository of Cloud Native Patterns" >}}
+{{% alert color="info" title="Repository of Cloud Native Patterns" %}}
 A central set of design patterns is available in Meshery Catalog (<a href='/concepts/catalog'>concept</a>, <a href='https://meshery.io/catalog'>site</a>).
-{{< /alert >}}
+{{% /alert %}}
 
 
 ## Importing Patterns
