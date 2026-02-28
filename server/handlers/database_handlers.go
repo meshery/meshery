@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"time"
-	"log"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
