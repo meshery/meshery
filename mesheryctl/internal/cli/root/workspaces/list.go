@@ -77,7 +77,7 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		modelData := display.DisplayDataAsync{
 			UrlPath:          urlPath,
 			DataType:         "workspace",
-			Header:           []string{"ID", "Name", "Description", "Created At", "Updated At"},
+			Header:           []string{"ID", "Name", "Description", "Organization ID", "Created At", "Updated At"},
 			Page:             workspaceListFlagsProvided.Page,
 			PageSize:         workspaceListFlagsProvided.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
@@ -92,7 +92,7 @@ func generateModelDataToDisplay(workspacePage *workspace.WorkspacePage) ([][]str
 	rows := [][]string{}
 
 	for _, workspace := range workspacePage.Workspaces {
-		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.Description, workspace.OrganizationId.String(), workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
 	}
 
 	return rows, int64(workspacePage.TotalCount)
