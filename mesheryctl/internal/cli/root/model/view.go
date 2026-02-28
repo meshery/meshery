@@ -70,7 +70,7 @@ mesheryctl model view [model-name] --output-format json
 			return err
 		}
 
-		err = outputFormatter.Display()
+		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
 		if err != nil {
 			return err
 		}
