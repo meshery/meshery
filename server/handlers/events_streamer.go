@@ -22,8 +22,34 @@ import (
 )
 
 var (
-	flusherMap map[string]http.Flusher
+	// flusherMap stores HTTP flushers for SSE streaming connections.
+	// Protected by flusherMapMu for thread-safe concurrent access.
+	// Initialized at declaration to avoid nil checks in helper functions.
+	flusherMap   = make(map[string]http.Flusher)
+	flusherMapMu sync.RWMutex
 )
+
+// setFlusher safely stores a flusher for a client connection.
+func setFlusher(client string, flusher http.Flusher) {
+	flusherMapMu.Lock()
+	defer flusherMapMu.Unlock()
+	flusherMap[client] = flusher
+}
+
+// getFlusher safely retrieves a flusher for a client connection.
+func getFlusher(client string) (http.Flusher, bool) {
+	flusherMapMu.RLock()
+	defer flusherMapMu.RUnlock()
+	flusher, ok := flusherMap[client]
+	return flusher, ok
+}
+
+// deleteFlusher safely removes a flusher for a client connection.
+func deleteFlusher(client string) {
+	flusherMapMu.Lock()
+	defer flusherMapMu.Unlock()
+	delete(flusherMap, client)
+}
 
 type eventStatusPayload struct {
 	Status    string       `json:"status"`
@@ -305,18 +331,16 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		client = req.URL.Query().Get("client")
 	}
 
-	if flusherMap == nil {
-		flusherMap = make(map[string]http.Flusher, 0)
-	}
-
 	flusher, ok := w.(http.Flusher)
-	flusherMap[client] = flusher
-
 	if !ok {
 		h.log.Error(ErrEventStreamingNotSupported)
 		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
 		return
 	}
+
+	// Store flusher in thread-safe map for concurrent access
+	setFlusher(client, flusher)
+	defer deleteFlusher(client) // Clean up when connection closes
 
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -346,17 +370,17 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		h.log.Debug("new adapters channel closed")
 	}()
 	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
-	go func(flusher http.Flusher) {
+	go func(f http.Flusher) {
 		for data := range respChan {
 			h.log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
-			if flusher != nil {
-				flusher.Flush()
+			if f != nil {
+				f.Flush()
 				h.log.Debug("Flushed the messages on the wire...")
 			}
 		}
 		h.log.Debug("response channel closed")
-	}(flusherMap[client])
+	}(flusher) // Use local flusher variable instead of map access
 
 STOP:
 	for {
