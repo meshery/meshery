@@ -45,7 +45,7 @@ func TestView(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrNotFound(fmt.Errorf("%s%s", errRelationshipNotFoundMsg, "nonexistent")),
+			ExpectedError:    utils.ErrNotFound(fmt.Errorf("No relationship(s) found for the model with name: %s", "nonexistent")),
 		},
 	}
 

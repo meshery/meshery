@@ -21,7 +21,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/spf13/cobra"
 )
@@ -67,16 +66,14 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 		// Fetch paginated data with selection prompt
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath: relationshipAPIPath,
+				UrlPath:        relationshipAPIPath,
+				ErrNotFoundMsg: fmt.Sprintf("No relationship(s) found for the model with name: %s", model),
 			},
 			formatLabel,
 			func(data *MeshmodelRelationshipsAPIResponse) ([]relationship.RelationshipDefinition, int64) {
 				return data.Relationships, data.Count
 			}, selectedModel)
 		if err != nil {
-			if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
-				return utils.ErrNotFound(fmt.Errorf("%s%s", errRelationshipNotFoundMsg, model))
-			}
 			return err
 		}
 
