@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -61,7 +60,21 @@ mesheryctl model view [model-name] --output-format json
 		case 1:
 			selectedModel = modelsResponse.Models[0]
 		default:
-			selectedModel = selectModelPrompt(modelsResponse.Models)
+			selectedModel := new(model.ModelDefinition)
+			err := display.PromptAsyncPagination(
+				display.DisplayDataAsync{
+					UrlPath:    modelsApiPath,
+					SearchTerm: args[0],
+				},
+				formatLabel,
+				func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
+					return data.Models
+				},
+				selectedModel,
+			)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
@@ -81,32 +94,6 @@ mesheryctl model view [model-name] --output-format json
 
 func getValidOutputFormat() []string {
 	return []string{"yaml", "json"}
-}
-
-func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
-	modelArray := []model.ModelDefinition{}
-	modelNames := []string{}
-
-	modelArray = append(modelArray, models...)
-
-	for _, model := range modelArray {
-		modelName := fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-		modelNames = append(modelNames, modelName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select a model",
-		Items: modelNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return modelArray[i]
-	}
 }
 
 func getModelViewUrlPath(modelNameOrId string) string {
