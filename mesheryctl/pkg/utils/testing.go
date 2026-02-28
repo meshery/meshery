@@ -389,23 +389,20 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 
 			// Properly save and restore stdout using defer
 			originalStdout := os.Stdout
-			originalStderr := os.Stderr
 
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-			os.Stderr = w
 
 			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-				os.Stderr = originalStderr
-			}()
-
+			oldLog := Log
 			Log = SetupMeshkitLogger("mesheryctl", true, w)
 
-			cmd.SetOut(w)
-			cmd.SetErr(w)
+			defer func() {
+				os.Stdout = originalStdout
+				Log = oldLog
+			}()
 
+			cmd.SetOut(w)
 			cmd.SetArgs(tt.Args)
 			err := cmd.Execute()
 
