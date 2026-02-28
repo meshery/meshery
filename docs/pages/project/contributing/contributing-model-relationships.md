@@ -26,8 +26,12 @@ list: include
 4. [Relationship Scopes](#relationship-scopes)
 
 **Postwork:**
-5. [Relationship Testing](#relationship-testing)
-6. [Relationship Contribution](#relationship-contribution)
+5. [Relationship Validation](#relationship-validation)
+   - [Syntactic Validation](#syntactic-validation)
+   - [Domain Appropriateness](#domain-appropriateness)
+   - [Functional Validity](#functional-validity)
+6. [Best Practices](#relationship-best-practices)
+7. [Relationship Contribution](#relationship-contribution)
 
 ## Prework
 
@@ -318,7 +322,141 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 ## Postwork
 
-<a id="relationship-testing"></a>
+<a id="relationship-validation"></a>
+
+#### Validating Relationship Definitions
+
+Relationship validation occurs at three levels, each ensuring different aspects of correctness. Before contributing a relationship, verify your definitions pass all three levels of validation.
+
+<a id="syntactic-validation"></a>
+
+#### Level 1: Syntactic Validation via Model Import
+
+The first level of validation ensures your relationship definitions are syntactically correct according to the relationship schema (currently v1beta1). This validation happens automatically when you import a model containing relationship definitions into a running Meshery server.
+
+**Step-by-Step Process:**
+
+1. **Start a Meshery Server**
+   Ensure you have a running Meshery server instance. You can start one locally using:
+   ```bash
+   mesheryctl system start
+   ```
+
+2. **Prepare Your Model**
+   Your model directory should contain your relationship definition(s). Relationship files are typically named `relationships.yaml` or placed in a `relationships/` subdirectory within your model folder.
+
+3. **Import the Model**
+   Import your model into Meshery using one of these methods:
+   - **Via UI**: Navigate to Settings → Registry → Import Model, then upload your model package.
+   - **Via CLI**: Use the following command:
+     ```bash
+     mesheryctl model import -f /path/to/your/model
+     ```
+
+4. **Check for Validation Errors**
+   Upon import, Meshery validates all relationship definitions against the v1beta1 schema. If validation fails, you will receive error messages indicating:
+   - Missing required fields
+   - Invalid field types
+   - Malformed JSON/YAML structure
+   - Schema constraint violations
+
+**Common Syntactic Errors and Solutions:**
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Missing `kind` field | Required field not specified | Add `kind: edge`, `kind: hierarchical`, or `kind: sibling` |
+| Invalid `evaluationQuery` | Policy name doesn't match convention | Follow the naming pattern: `kind_type_subtype_relationship` (e.g., `edge_network_bind_relationship`) |
+| Malformed `selector` | Incorrect JSON structure in selectors | Ensure `allow`/`deny` contain valid `from`/`to` arrays |
+| Invalid `patchStrategy` | Unsupported strategy value | Use `replace`, `merge`, or other supported strategies |
+
+<a id="domain-appropriateness"></a>
+
+#### Level 2: Domain Appropriateness Review
+
+Beyond syntactic correctness, relationship definitions must be appropriate based on the implicated components. This validation requires domain expertise and is performed by maintainers and contributors knowledgeable about the infrastructure domain.
+
+**Domain Appropriateness Checklist:**
+
+Use this checklist when reviewing or self-validating relationship definitions:
+
+<details>
+<summary>Relationship Appropriateness Checklist</summary>
+
+**Component Compatibility:**
+- [ ] Do the `from` and `to` components logically interact in real-world scenarios?
+- [ ] Is the relationship direction correct? (e.g., for hierarchical relationships, is the parent/child relationship accurate?)
+- [ ] Are the component models correctly specified? (e.g., `kubernetes`, `istio-base`)
+
+**Relationship Classification:**
+- [ ] Is the `kind` (hierarchical, edge, sibling) appropriate for the interaction type?
+- [ ] Is the `type` (network, mount, permission, etc.) accurate for the relationship?
+- [ ] Is the `subType` correctly representing the visual paradigm?
+
+**Scope Appropriateness:**
+- [ ] Are the model and version constraints appropriate?
+- [ ] Is the relationship too broad (could match unintended components)?
+- [ ] Is the relationship too narrow (missing valid component combinations)?
+
+**Selector Accuracy:**
+- [ ] Do the `allow` selectors capture all valid component combinations?
+- [ ] Do the `deny` selectors correctly exclude invalid combinations?
+- [ ] Are there edge cases not covered by the selectors?
+
+**Real-World Validation:**
+- [ ] Does this relationship align with the official documentation of the implicated components?
+- [ ] Have similar relationships been implemented in other models for reference?
+
+</details>
+
+**Examples of Domain Appropriateness:**
+
+✅ **Appropriate**: A `network` edge relationship between a Kubernetes `Service` and a `Pod`, as Services route traffic to Pods.
+
+❌ **Inappropriate**: A `parent` hierarchical relationship where a `ConfigMap` is the parent of a `Namespace`, as Namespaces contain ConfigMaps, not vice versa.
+
+<a id="functional-validity"></a>
+
+#### Level 3: Functional Validity of Mutators
+
+The third level of validation ensures that the mutators defined in relationships (via `mutatorRef` and `mutatedRef`) are not just syntactically correct but functionally work as intended when relationships are evaluated.
+
+**Testing Mutator Functionality:**
+
+1. **Verify Path Correctness**
+   Ensure the paths in `mutatorRef` (source) and `mutatedRef` (target) correctly reference existing fields in the component specifications.
+
+   ```yaml
+   # Example: Verify these paths exist in the target component's spec
+   "mutatorRef": [["settings", "config"]]
+   "mutatedRef": [["spec", "containers", "_", "env"]]
+   ```
+
+2. **Test in Meshery Kanvas**
+   - Open Meshery Kanvas (the visual designer)
+   - Add the `from` and `to` components to your design
+   - Create the relationship between them
+   - Verify the configuration is correctly transferred/patched
+
+3. **Validate Patch Strategy**
+   Test that the `patchStrategy` produces the expected result:
+   - `replace`: Completely replaces the target value
+   - `merge`: Merges with existing values (for objects/arrays)
+
+4. **Edge Cases to Test:**
+   - Empty source values
+   - Array paths with the `_` wildcard
+   - Nested object structures
+   - Multiple selectors in the same relationship
+
+**Mutator Debugging Tips:**
+
+- Use `mesheryctl design view` to inspect the generated design and verify mutations applied correctly
+- Check the Meshery server logs for relationship evaluation errors
+- Test with minimal component configurations first, then add complexity
+
+{% include alert.html title="Testing Tip" type="info" content="Create a minimal test design with just the two components involved in the relationship to isolate and verify the mutator behavior before testing in more complex designs." %}
+
+<a id="relationship-best-practices"></a>
 
 #### Relationship Authoring Best Practices and Considerations
 
@@ -358,7 +496,7 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 <a class="anchorjs-link" id="relationship-contribution"></a>
 
-#### 4. Contribute your relationship to the Meshery project
+### 7. Contribute your relationship to the Meshery project
 
 Submit a pull request to the Meshery repository with your new relationship definition, so that all users can benefit from the relationship(s) you have defined.
 
