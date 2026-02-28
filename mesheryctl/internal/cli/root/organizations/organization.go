@@ -41,7 +41,7 @@ mesheryctl exp organization list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
+			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))
 			if err != nil {
 				return err
 			}

@@ -4,7 +4,7 @@
 
   {{ range .Sections }}
     {{ if ne .Params.hide_summary true }}
-      <li>
+      <li style="list-style-type: disc; margin: 2px 0;">
         <a href="{{ .RelPermalink }}">{{ .Title }}</a>
 
         {{ with .Description }}
@@ -16,7 +16,7 @@
 
   {{ range .RegularPages }}
     {{ if ne .Params.hide_summary true }}
-      <li>
+      <li style="list-style-type: disc; margin: 2px 0;">
         <a href="{{ .RelPermalink }}">{{ .Title }}</a>
 
         {{ with .Description }}
