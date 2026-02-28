@@ -152,12 +152,11 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	}
 
 	if err := json.Unmarshal(body, &reqBody); err != nil {
-if err := json.Unmarshal(body, &reqBody); err != nil {
-	unmarshalErr := models.ErrUnmarshal(err, "event status request body")
-	h.log.Error(unmarshalErr)
-	http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
-	return
-}
+		unmarshalErr := models.ErrUnmarshal(err, "event status request body")
+		h.log.Error(unmarshalErr)
+		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
+		return
+	}
 	status, ok := reqBody["status"].(string)
 	if !ok {
 		h.log.Error(ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()))
@@ -198,12 +197,11 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	}
 
 	if err := json.Unmarshal(body, &reqBody); err != nil {
-if err := json.Unmarshal(body, &reqBody); err != nil {
-	unmarshalErr := models.ErrUnmarshal(err, "bulk event status request body")
-	h.log.Error(unmarshalErr)
-	http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
-	return
-}
+		unmarshalErr := models.ErrUnmarshal(err, "bulk event status request body")
+		h.log.Error(unmarshalErr)
+		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
@@ -236,12 +234,12 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-if err := json.Unmarshal(body, &reqBody); err != nil {
-	unmarshalErr := models.ErrUnmarshal(err, "bulk delete event request body")
-	h.log.Error(unmarshalErr)
-	http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
-	return
-}
+	if err := json.Unmarshal(body, &reqBody); err != nil {
+		unmarshalErr := models.ErrUnmarshal(err, "bulk delete event request body")
+		h.log.Error(unmarshalErr)
+		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
@@ -535,8 +533,9 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 
 	err = json.Unmarshal(body, &evt)
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, "event"))
-		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
+		unmarshalErr := models.ErrUnmarshal(err, "event")
+		h.log.Error(unmarshalErr)
+		http.Error(w, unmarshalErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
