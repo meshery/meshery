@@ -27,6 +27,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - [`mesheryctl environment`](#meshery-environment) - Logical group of connections and their associated credentials.
 - [`mesheryctl connection`](#meshery-connection) - Managed or unmanaged resources that either through discovery or manual entry are tracked by Meshery.
+- [`mesheryctl organization`](#meshery-organization) - Manage and interact with registered organizations.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
@@ -831,6 +832,51 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% for subcommand_hash in cmdConnection.subcommands %}{% assign subcomand = subcommand_hash[1] %}
       <tr>
         <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdConnection.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+## Meshery Organization
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign cmdOrganization = site.data.mesheryctlcommands.cmds.organization %}
+  {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmdOrganization.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmdOrganization.subcommands.size | plus: subcommand_flag_count | plus: cmdOrganization.flags.size | plus: 1 %}
+    <tr>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdOrganization.name }}">{{ cmdOrganization.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ cmdOrganization.description }}</td>
+    </tr>
+    {% for flag_hash in cmdOrganization.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in cmdOrganization.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ cmdOrganization.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
         <td></td>
         <td>{{ subcomand.description }}</td>
       </tr>
