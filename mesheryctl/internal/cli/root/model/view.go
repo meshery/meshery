@@ -60,7 +60,18 @@ mesheryctl model view [model-name] --output-format json
 		case 1:
 			selectedModel = modelsResponse.Models[0]
 		default:
-			selectedModel, err = selectModelPrompt(modelsResponse.Models)
+			selectedModel := new(model.ModelDefinition)
+			err := display.PromptAsyncPagination(
+				display.DisplayDataAsync{
+					UrlPath:    modelsApiPath,
+					SearchTerm: args[0],
+				},
+				formatLabel,
+				func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
+					return data.Models
+				},
+				selectedModel,
+			)
 			if err != nil {
 				return err
 			}
@@ -83,21 +94,6 @@ mesheryctl model view [model-name] --output-format json
 
 func getValidOutputFormat() []string {
 	return []string{"yaml", "json"}
-}
-
-func selectModelPrompt(models []model.ModelDefinition) (model.ModelDefinition, error) {
-	modelNames := make([]string, len(models))
-
-	for i, model := range models {
-		modelNames[i] = fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-	}
-
-	i, err := utils.RunSelectPrompt("Select a model", modelNames)
-	if err != nil {
-		return model.ModelDefinition{}, err
-	}
-
-	return models[i], nil
 }
 
 func getModelViewUrlPath(modelNameOrId string) string {
