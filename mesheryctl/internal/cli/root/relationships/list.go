@@ -24,14 +24,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// represents the mesheryctl exp relationships list command
+// represents the mesheryctl relationship list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
 	Long:  "List all relationships registered in Meshery Server",
 	Example: `
 // List of relationships
-mesheryctl exp relationship list
+mesheryctl relationship list
 
 // List of relationships for a specified page
 mesheryctl relationship list --page [page-number]
@@ -40,7 +40,7 @@ mesheryctl relationship list --page [page-number]
 mesheryctl relationship list --count
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship list\nRun 'mesheryctl exp relationship list --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl relationship list\nRun 'mesheryctl relationship list --help' to see detailed help message"
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -82,7 +82,7 @@ mesheryctl relationship list --count
 }
 
 func init() {
-	// Add the new exp relationship commands to the listRelationshipsCmd
+	// Add the relationship subcommands to the listRelationshipsCmd
 	listCmd.Flags().IntP("page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
 }

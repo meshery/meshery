@@ -48,22 +48,22 @@ Meshery uses relationships to define how interconnected components interact.
 // Display number of available relationships in Meshery
 mesheryctl relationship --count
 
-// Generate a relationship documentation 
-mesheryctl exp relationship generate [flags]
+// Generate a relationship documentation
+mesheryctl relationship generate [flags]
 
 // List available relationship(s)
-mesheryctl exp relationship list [flags]
+mesheryctl relationship list [flags]
 
 // Search for a specific relationship
-mesheryctl exp relationship search [flags] [query-text]
+mesheryctl relationship search [flags] [query-text]
 
 // View a specific relationship
-mesheryctl exp relationship view [model-name]
+mesheryctl relationship view [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
-			errMsg := "Usage: mesheryctl exp relationship [subcommand]\nRun 'mesheryctl exp relationship --help' to see detailed help message"
+			errMsg := "Usage: mesheryctl relationship [subcommand]\nRun 'mesheryctl relationship --help' to see detailed help message"
 			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
 		}
 		return nil
@@ -83,7 +83,7 @@ mesheryctl exp relationship view [model-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationship --help' to display usage guide.\n", args[0]), "relationship"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0]), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

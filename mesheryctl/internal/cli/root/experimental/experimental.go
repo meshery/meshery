@@ -17,7 +17,6 @@ package experimental
 import (
 	"fmt"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/relationships"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -45,7 +44,7 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = append(availableSubcommands, relationships.RelationshipCmd, workspaces.WorkSpaceCmd)
+	availableSubcommands = append(availableSubcommands, workspaces.WorkSpaceCmd)
 
 	ExpCmd.AddCommand(availableSubcommands...)
 }
