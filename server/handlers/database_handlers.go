@@ -81,13 +81,13 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	w.Header().Set("Content-Type", "application/json")
 
-val, err := json.Marshal(databaseSummary)
-if err != nil {
-    log.Printf("failed to serialize database summary: %v", err)
-    http.Error(w, "failed to serialize database summary", http.StatusInternalServerError)
-    return
-}
-w.Write(val)
+	val, err := json.Marshal(databaseSummary)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "database summary"))
+		http.Error(w, "failed to serialize database summary", http.StatusInternalServerError)
+		return
+	}
+	w.Write(val)
 }
 // swagger:route DELETE /api/system/database/reset ResetSystemDatabase
 // Reset the system database to its initial state.
