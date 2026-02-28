@@ -40,7 +40,10 @@ var searchCmd = &cobra.Command{
 	Long:  "Search registred relationship(s) used by different models",
 	Example: `
 // Search for relationship using a query
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
+
+// Search relationships for a specified page
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [--page <int>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
 		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
@@ -53,7 +56,8 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl())
+		page, _ := cmd.Flags().GetInt("page")
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(cmd, page))
 
 		if err != nil {
 			return err
@@ -91,9 +95,10 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().IntP("page", "p", 1, "(optional) Search next set of relationships with --page (default = 1)")
 }
 
-func buildSearchUrl() string {
+func buildSearchUrl(cmd *cobra.Command, page int) string {
 	var searchUrl strings.Builder
 
 	if searchModelName == "" {
@@ -118,7 +123,7 @@ func buildSearchUrl() string {
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
 
-	searchUrl.WriteString("pagesize=all")
+	searchUrl.WriteString(utils.GetPageQueryParameter(cmd, page))
 
 	return searchUrl.String()
 }
