@@ -51,16 +51,15 @@ mesheryctl model view [model-name] --output-format json
 			return err
 		}
 
-		var selectedModel model.ModelDefinition
+		selectedModel := new(model.ModelDefinition)
 
 		switch modelsResponse.Count {
 		case 0:
 			utils.Log.Infof("No model(s) found for the given name or ID: %s", args[0])
 			return nil
 		case 1:
-			selectedModel = modelsResponse.Models[0]
+			*selectedModel = modelsResponse.Models[0]
 		default:
-			selectedModel := new(model.ModelDefinition)
 			err := display.PromptAsyncPagination(
 				display.DisplayDataAsync{
 					UrlPath:    modelsApiPath,
@@ -78,7 +77,7 @@ mesheryctl model view [model-name] --output-format json
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), selectedModel)
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), *selectedModel)
 		if err != nil {
 			return err
 		}
