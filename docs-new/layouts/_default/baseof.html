@@ -4,7 +4,10 @@
     {{ partialCached "head.html" (dict "Title" .Title "Description" .Params.abstract "Site" .Site) .RelPermalink }}
     {{ partialCached "header.html" . .RelPermalink }}
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <script src="{{ .Site.BaseURL }}assets/js/error-code-handler.js"></script>
+    
   </head>
 
   <body class="td-{{ .Kind }} dark-mode {{ with .Params.body_class }}{{ . }}{{ end }}">
@@ -46,6 +49,9 @@
           {{ end }}
           {{ block "main" . }}{{ end }}
         </div>
+        {{ if or .IsPage .IsSection }}
+          {{ partial "pagination.html" . }}
+        {{ end }}
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}
