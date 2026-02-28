@@ -8,7 +8,6 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - "*.github/**"
       - "Makefile"
   push:
     branches:
@@ -16,8 +15,8 @@ on:
     paths-ignore:
       - "docs/**"
       - "*.md"
-      - "*.github/**"
-
+  workflow_dispatch:
+  
 permissions: read-all
 
 jobs:
