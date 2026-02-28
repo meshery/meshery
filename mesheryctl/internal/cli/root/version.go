@@ -62,19 +62,19 @@ mesheryctl version
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					utils.Log.Error(ErrCreatingConfigFile)
+					return ErrCreatingConfigFile
 				}
 
 				// Add Token to context file
 				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
-					utils.Log.Error(ErrAddingTokenToConfig)
+					return ErrAddingTokenToConfig
 				}
 
 				// Add Context to context file
 				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
-					utils.Log.Error(ErrAddingContextToConfig)
+					return ErrAddingContextToConfig
 				}
 
 				utils.Log.Info(
@@ -84,7 +84,7 @@ mesheryctl version
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					utils.Log.Error(ErrUnmarshallingConfigFile)
+					return ErrUnmarshallingConfigFile
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -108,7 +108,7 @@ mesheryctl version
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		url := mctlCfg.GetBaseMesheryURL()
 		build := constants.GetMesheryctlVersion()
@@ -126,8 +126,8 @@ mesheryctl version
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrGettingRequestContext(err))
-			return
+			return ErrGettingRequestContext(err)
+
 		}
 
 		defer utils.CheckMesheryctlClientVersion(build)
@@ -136,8 +136,7 @@ mesheryctl version
 
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)
-			utils.Log.Warn(ErrConnectingToServer(err))
-			return
+			return ErrConnectingToServer(err)
 		}
 
 		// needs multiple defer as Body.Close needs a valid response
@@ -145,19 +144,19 @@ mesheryctl version
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
-			return
+			return utils.ErrInvalidAPIResponse(err)
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
-			return
+			return ErrUnmarshallingAPIData(err)
 		}
 
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
 		utils.PrintToTable(header, rows, nil)
+
+		return nil
 	},
 }

@@ -69,8 +69,7 @@ mesheryctl model import -f [path-to-csv-directory]
 		if utils.IsValidUrl(path) {
 			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			return nil
 		}
@@ -89,7 +88,7 @@ mesheryctl model import -f [path-to-csv-directory]
 						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), strings.Join(meshkitErr.SuggestedRemediation, ". "))
 					}
 				} else {
-					utils.Log.Error(err)
+					return err
 				}
 
 				return err
