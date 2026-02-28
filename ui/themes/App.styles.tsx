@@ -1,7 +1,18 @@
-import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
+// import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
 import { SnackbarContent } from 'notistack';
 import { forwardRef } from 'react';
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+// import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import {
+  BasicMarkdown,
+  CircularProgress,
+  styled,
+  lighten,
+  Box,
+  CheckCircleIcon,
+  ErrorIcon,
+  InfoIcon,
+  WarningIcon,
+} from '@sistent/sistent';
 
 const drawerWidth = 256;
 
@@ -118,13 +129,13 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
     const iconProps = { style: { marginRight: '0.5rem' } };
     switch (variant) {
       case 'error':
-        return <Error {...iconProps} />;
+        return <ErrorIcon {...iconProps} />;
       case 'success':
-        return <CheckCircle {...iconProps} />;
+        return <CheckCircleIcon {...iconProps} />;
       case 'warning':
-        return <Warning {...iconProps} />;
+        return <WarningIcon {...iconProps} />;
       case 'info':
-        return <Info {...iconProps} />;
+        return <InfoIcon {...iconProps} />;
       case 'loading':
         return <StyledCircularProgress />;
       default:

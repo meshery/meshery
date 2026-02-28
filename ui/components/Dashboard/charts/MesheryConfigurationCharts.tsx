@@ -6,7 +6,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
@@ -15,7 +14,7 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-import { Box, Typography, useTheme } from '@sistent/sistent';
+import { Box, Typography, useTheme, InfoIcon } from '@sistent/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
@@ -95,7 +94,7 @@ export default function MesheryConfigurationChart() {
               title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <div>
-                <InfoOutlined
+                <InfoIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />

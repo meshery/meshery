@@ -6,7 +6,6 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@mui/icons-material';
 import {
   useGetCategoriesSummary,
   useGetComponentsQuery,
@@ -18,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid2 } from '@sistent/sistent';
+import { Typography, useTheme, Grid2, InfoIcon } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -91,7 +90,7 @@ function MeshModelContructs() {
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <div>
-                <InfoOutlined
+                <InfoIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
@@ -169,7 +168,7 @@ function MeshModelCategories() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
