@@ -56,7 +56,7 @@ mesheryctl model view [model-name] --output-format json
 
 		switch modelsResponse.Count {
 		case 0:
-			fmt.Printf("No model(s) found for the given name or ID: %s\n", args[0])
+			utils.Log.Infof("No model(s) found for the given name or ID: %s", args[0])
 			return nil
 		case 1:
 			selectedModel = modelsResponse.Models[0]
