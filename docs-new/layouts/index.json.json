@@ -1,0 +1,10 @@
+{{- $pages := where .Site.Pages "Params.excluded_in_search" "!=" true -}}
+{{- $list := slice -}}
+{{- range $pages -}}
+  {{- /* Exclude releases, updates, and the root homepage ("/") */ -}}
+  {{- if and .Title (not (in .RelPermalink "/releases/")) (not (in .RelPermalink "/updates/")) (ne .RelPermalink "/") -}}
+    {{- $doc := dict "ref" .RelPermalink "title" .Title "description" (.Params.description | default .Summary | plainify) "tags" (.Params.tags | default slice) "categories" (.Params.categories | default slice) "body" (.Plain | plainify) -}}
+    {{- $list = $list | append $doc -}}
+  {{- end -}}
+{{- end -}}
+{{- $list | jsonify -}}
