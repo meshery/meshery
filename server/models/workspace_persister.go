@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
 )
@@ -462,7 +463,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		pageSize = "10"
 	}
 
-	designsFetched := []*MesheryPattern{}
+	designsFetched := []pattern.MesheryPattern{}
 	pageUint, err := strconv.ParseUint(page, 10, 64)
 	if err != nil {
 		return nil, err
@@ -479,11 +480,14 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
-	designsPage := &MesheryDesignPage{
-		Page:       int(pageUint),
-		PageSize:   len(designsFetched),
-		TotalCount: int(count),
-		Designs:    designsFetched,
+	pageInt := int(pageUint)
+	totalCount := int(count)
+	pageSizeInt := len(designsFetched)
+	designsPage := &pattern.MesheryPatternPage{
+		Page:       &pageInt,
+		PageSize:   &pageSizeInt,
+		TotalCount: &totalCount,
+		Patterns:   &designsFetched,
 	}
 
 	designsJSON, err := json.Marshal(designsPage)
