@@ -40,10 +40,10 @@ var generateCmd = &cobra.Command{
 	Long:  "Generate relationships documents from the google spreadsheets",
 	Example: `
 // Generate relationships documentss
-mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified\n\nUsage: mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
+		const errMsg = "[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified\n\nUsage: mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nRun 'mesheryctl relationship generate --help' to see detailed help message"
 
 		// Check if flag is set
 		if spreadsheeetID == "" || spreadsheeetCred == "" {

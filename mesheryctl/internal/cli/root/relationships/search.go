@@ -33,17 +33,17 @@ var (
 	searchKind      string
 )
 
-// represents the mesheryctl exp relationship search [query-text] subcommand.
+// represents the mesheryctl relationship search [query-text] subcommand.
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered relationship(s)",
 	Long:  "Search registred relationship(s) used by different models",
 	Example: `
 // Search for relationship using a query
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
+mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
-		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
+		const usage = "mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
+		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl relationship search --help'", usage)
 
 		if searchKind == "" && searchSubType == "" && searchType == "" && searchModelName == "" {
 			err := utils.ErrInvalidArgument(errMsg)
