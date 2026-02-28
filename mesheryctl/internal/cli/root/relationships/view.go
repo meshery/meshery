@@ -121,8 +121,11 @@ func formatLabel(rows []relationship.RelationshipDefinition) []string {
 	relationshipNames := []string{}
 
 	for _, _rel := range rows {
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
+		evaluationQuery := "N/A"
+		if _rel.EvaluationQuery != nil {
+			evaluationQuery = *_rel.EvaluationQuery
+		}
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
