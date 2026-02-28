@@ -9,7 +9,6 @@ import {
   DeleteIcon,
   HelpOutlinedIcon,
 } from '@sistent/sistent';
-// import { Delete, HelpOutline } from '@mui/icons-material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';

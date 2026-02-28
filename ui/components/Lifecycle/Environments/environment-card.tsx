@@ -1,7 +1,5 @@
 // @ts-nocheck
 import React from 'react';
-// import SyncAltIcon from '@mui/icons-material/SyncAlt';
-// import { Delete, Edit } from '@mui/icons-material';
 import { EditIcon, DeleteIcon, SyncAltIcon } from '@sistent/sistent';
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';

@@ -14,7 +14,6 @@ import {
   LockIcon,
   PublicIcon,
 } from '@sistent/sistent';
-// import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
   StyledAvatarContainer,

@@ -19,7 +19,6 @@ import {
   useTheme,
   SearchIcon,
 } from '@sistent/sistent';
-// import { Search } from '@mui/icons-material';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';

@@ -36,11 +36,9 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-// import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-// import { Edit, Lock, Public } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
