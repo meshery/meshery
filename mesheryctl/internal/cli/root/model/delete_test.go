@@ -52,7 +52,7 @@ func TestDeleteModel(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrNotFound(fmt.Errorf("no results for %s", "nonexistent-model")),
+			ExpectedError:    utils.ErrNotFound(fmt.Errorf("no results found for %s", "nonexistent-model")),
 		},
 	}
 
