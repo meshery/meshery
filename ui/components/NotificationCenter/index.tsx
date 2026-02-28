@@ -47,6 +47,7 @@ import {
   selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
+  setIsAllAcrossPagesSelected,
 } from '../../store/slices/events';
 import {
   useDeleteEventsMutation,
@@ -269,6 +270,7 @@ const BulkActions = () => {
 
   const dispatch = useDispatch();
   const areAllEventsChecked = useSelector(selectAreAllEventsChecked);
+  const isAllAcrossPagesSelected = useSelector((state) => state.events.isAllAcrossPagesSelected);
   const handleCheckboxChange = (_e, v) => {
     dispatch(updateCheckAllEvents(v));
   };
@@ -337,6 +339,16 @@ const BulkActions = () => {
           {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
         </Typography>
       </Box>
+      {areAllEventsChecked && !isAllAcrossPagesSelected && (
+        <Box sx={{ ml: '2rem', mt: 0.5 }}>
+          <Typography variant="body2">
+            All {checkedEvents.length} notifications on this page are selected.
+            <Button size="small" onClick={() => dispatch(setIsAllAcrossPagesSelected(true))}>
+              Select all notifications
+            </Button>
+          </Typography>
+        </Box>
+      )}
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
