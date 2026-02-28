@@ -54,10 +54,11 @@ const (
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
 	ErrContextNotExistsCode              = "mesheryctl-1196"
-	ErrInvalidLowerCaseCode              = "mesheryctl-1202"
 )
 
 var (
+	errArgMsg = `Please provide one context name.
+Usage: mesheryctl system context create [context-name]`
 	cmdType     string
 	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
 	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
@@ -337,14 +338,4 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
-}
-
-func ErrInvalidLowerCase(err error) error {
-	return errors.New(
-		ErrInvalidLowerCaseCode,
-		errors.Fatal,
-		[]string{"Invalid case"},
-		[]string{err.Error()},
-		[]string{"Context name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character"},
-		[]string{"Provide a valid context name using only lowercase alphanumeric characters or '-'."})
 }

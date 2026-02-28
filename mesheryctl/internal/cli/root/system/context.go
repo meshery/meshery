@@ -74,14 +74,14 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	`,
 	Annotations: linkDocContextCreate,
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg))
+		}
+
+		if len(args) > 1 {
 			const errMsg = `Please provide a context name.
 Usage: mesheryctl system context create [context-name]`
 			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "create"))
-		}
-
-		if args[0] != strings.ToLower(args[0]) {
-			return ErrInvalidLowerCase(fmt.Errorf("context name %s is invalid", args[0]))
 		}
 
 		return nil
@@ -112,7 +112,7 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Components = components
 		}
 
-		contextName := args[0]
+		contextName := strings.ToLower(args[0])
 
 		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), set, false)
 		if err != nil {
@@ -120,6 +120,9 @@ Usage: mesheryctl system context create [context-name]`
 		}
 
 		log.Printf("Added `%s` context", contextName)
+		if args[0] != strings.ToLower(args[0]) {
+			log.Printf("Context `%s` converted to lowercase `%s`", contextName, strings.ToLower(args[0]))
+		}
 		return nil
 	},
 }
@@ -146,7 +149,7 @@ mesheryctl system context delete [context name]`
 			return nil
 		}
 
-		contextName := args[0]
+		contextName := strings.ToLower(args[0])
 
 		_, exists := configuration.Contexts[contextName]
 		if !exists {
@@ -171,11 +174,11 @@ mesheryctl system context delete [context name]`
 			if newContext != "" {
 				_, exists := configuration.Contexts[newContext]
 				if !exists {
-					return errors.New("new context wrongly set")
+					return ErrSetCurrentContext(fmt.Errorf("new context wrongly set"))
 				}
 
 				if newContext == contextName {
-					return errors.New("choose a new context other than the context being deleted")
+					return ErrSetCurrentContext(fmt.Errorf("choose a new context other than the context being deleted"))
 				}
 
 				result = newContext
@@ -325,7 +328,7 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			currContext = args[0]
+			currContext = strings.ToLower(args[0])
 		}
 		if currContext == "" {
 			currContext = viper.GetString("current-context")
@@ -395,7 +398,7 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 			return nil
 		}
 
-		contextName := args[0]
+		contextName := strings.ToLower(args[0])
 
 		_, exists := configuration.Contexts[contextName]
 		if !exists {
