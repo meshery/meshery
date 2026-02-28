@@ -59,13 +59,14 @@ mesheryctl exp workspace list --orgId [orgId] --count
 		if err != nil {
 			return utils.ErrFlagsInvalid(err)
 		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+
 		if !utils.IsUUID(workspaceListFlagsProvided.OrganizationID) {
 			return utils.ErrInvalidUUID(fmt.Errorf("Organization Id provided not valid UUID: %s", workspaceListFlagsProvided.OrganizationID))
 		}
 
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		urlQuery := url.Values{}
 		urlQuery.Set("orgID", workspaceListFlagsProvided.OrganizationID)
 		urlQuery.Set("page", fmt.Sprintf("%d", workspaceListFlagsProvided.Page))
