@@ -222,8 +222,8 @@ func TestPromptAsyncPagination(t *testing.T) {
 		Items []testItem `json:"items"`
 	}
 
-	extractItems := func(data *promptAPIResponse) []testItem {
-		return data.Items
+	extractItems := func(data *promptAPIResponse) ([]testItem, int64) {
+		return data.Items, int64(len(data.Items))
 	}
 
 	formatLabel := func(rows []testItem) []string {
@@ -251,7 +251,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 			apiStatusCode: 200,
 			hasToken:      true,
 			expectError:   true,
-			errContains:   "no results for nonexistent",
+			errContains:   "no results found",
 		},
 		{
 			name:       "Given_Single_Result_When_PromptAsyncPagination_Then_AutoSelect",
