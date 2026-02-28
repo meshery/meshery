@@ -59,18 +59,18 @@ mesheryctl relationship list --count
 		var rows [][]string
 
 		for _, rel := range relationships.Relationships {
-			evaluationQuery := ""
-			if rel.EvaluationQuery != nil {
-				evaluationQuery = *rel.EvaluationQuery
-			}
 			if len(rel.GetEntityDetail()) > 0 {
-				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
+				modelName := "N/A"
+				if rel.Model.Name != "" {
+					modelName = rel.Model.Name
+				}
+				rows = append(rows, []string{string(rel.Kind), rel.Version, modelName, rel.RelationshipType, rel.SubType})
 			}
 		}
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "relationship",
-			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Header:           []string{"KIND", "API VERSION", "MODEL", "TYPE", "SUB-TYPE"},
 			Rows:             rows,
 			Count:            relationships.Count,
 			DisplayCountOnly: count,
