@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import { CloseIcon as RotatableCloseIcon, NoSsr } from '@sistent/sistent';
 import {
   CloseIcon as SistentCloseIcon,
   NoSsr,
@@ -21,7 +20,6 @@ import Moment from 'react-moment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-// import { Close } from '@mui/icons-material';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {

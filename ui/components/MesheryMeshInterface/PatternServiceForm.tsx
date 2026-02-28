@@ -1,15 +1,6 @@
 // @ts-check
-import {
-  AppBar,
-  Box,
-  IconButton,
-  Toolbar,
-  Tooltip,
-  useTheme,
-  DeleteIcon,
-  HelpOutlinedIcon,
-} from '@sistent/sistent';
-// import { Delete, HelpOutline } from '@mui/icons-material';
+import { AppBar, Box, IconButton, Toolbar, Tooltip, useTheme, DeleteIcon } from '@sistent/sistent';
+import { HelpOutline } from '@mui/icons-material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
@@ -121,7 +112,7 @@ function PatternServiceForm({
                   <label htmlFor="help-button">
                     <Tooltip title={schemaSet?.workload?.description} interactive>
                       <IconButton component="span">
-                        <HelpOutlinedIcon width="22px" style={{ color: '#fff' }} height="22px" />
+                        <HelpOutline width="22px" style={{ color: '#fff' }} height="22px" />
                       </IconButton>
                     </Tooltip>
                   </label>
