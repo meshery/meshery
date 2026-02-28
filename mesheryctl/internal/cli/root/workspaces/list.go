@@ -15,8 +15,10 @@ package workspaces
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 
@@ -24,10 +26,10 @@ import (
 )
 
 type workspaceListFlags struct {
-	OrganizationID string
-	Count          bool
-	Page           int
-	PageSize       int
+	OrganizationID string `json:"orgId" validate:"required"`
+	Count          bool   `json:"count" validate:"boolean"`
+	Page           int    `json:"page" validate:"omitempty,min=1"`
+	PageSize       int    `json:"pageSize" validate:"omitempty,min=1"`
 }
 
 var workspaceListFlagsProvided workspaceListFlags
@@ -43,33 +45,45 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/exp/works
 mesheryctl exp workspace list --orgId [orgId]
 
 // List of workspace under a specific organization for a specified page
-mesheryctl exp workspace list --orgId [orgId] --page [page-number]
+mesheryctl exp workspace list --orgId [orgId] --page [page-number] --pagesize [number-of-workspaces-per-page]
 
 // Display number of available  workspace under a specific organization
 mesheryctl exp workspace list --orgId [orgId] --count
 `,
-
-	Args: func(cmd *cobra.Command, args []string) error {
-		if workspaceListFlagsProvided.OrganizationID == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("[ Organization ID ] isn't specified\n\n%s", listUsageErrorMessage))
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(workspaceListFlagsProvided)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		orgID := workspaceListFlagsProvided.OrganizationID
+		if !utils.IsUUID(workspaceListFlagsProvided.OrganizationID) {
+			return utils.ErrInvalidUUID(fmt.Errorf("Organization Id provided not valid UUID: %s", workspaceListFlagsProvided.OrganizationID))
+		}
+
+		urlQuery := url.Values{}
+		urlQuery.Set("orgID", workspaceListFlagsProvided.OrganizationID)
+		urlQuery.Set("page", fmt.Sprintf("%d", workspaceListFlagsProvided.Page))
+		urlQuery.Set("pageSize", fmt.Sprintf("%d", workspaceListFlagsProvided.PageSize))
+
+		urlPath := fmt.Sprintf("%s?%s", workspacesApiPath, urlQuery.Encode())
 
 		modelData := display.DisplayDataAsync{
-			UrlPath:          workspacesApiPath + "?orgID=" + orgID,
+			UrlPath:          urlPath,
 			DataType:         "workspace",
 			Header:           []string{"ID", "Name", "Description", "Created At", "Updated At"},
 			Page:             workspaceListFlagsProvided.Page,
 			PageSize:         workspaceListFlagsProvided.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
-			DisplayCountOnly: cmd.Flags().Changed("count"),
+			DisplayCountOnly: workspaceListFlagsProvided.Count,
 		}
 
 		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
-
 	},
 }
 
@@ -87,5 +101,5 @@ func init() {
 	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlagsProvided.Count, "count", "c", false, "[optional] count total of registered workspaces")
 	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlagsProvided.OrganizationID, "orgId", "o", "", "Organization ID")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlagsProvided.Page, "page", "p", 0, "[optional] page number for paginated results")
-	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlagsProvided.PageSize, "pagesize", "s", 0, "[optional] number of workspaces per page for paginated results")
+	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlagsProvided.PageSize, "pagesize", "s", 10, "[optional] number of workspaces per page for paginated results (default is 10)")
 }

@@ -56,6 +56,8 @@ func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 		return nil, err
 	}
 
+	utils.Log.Debugf("API response data: %s\n", string(data))
+
 	var apiResult T
 	err = json.Unmarshal(data, &apiResult)
 	if err != nil {
