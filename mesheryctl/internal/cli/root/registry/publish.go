@@ -116,35 +116,29 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			case "Models":
 				modelCSVHelper, err = meshkitRegistryUtils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				err := modelCSVHelper.ParseModelsSheet(true, modelName)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			case "Components":
 				componentCSVHelper, err = meshkitRegistryUtils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				err := componentCSVHelper.ParseComponentsSheet(modelName)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			case "Relationships":
 				relationshipCSVHelper, err = meshkitRegistryUtils.NewRelationshipCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 		}
@@ -168,20 +162,17 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -268,8 +259,7 @@ func websiteSystem() error {
 		docsJSON += "]; export default data"
 		mOut, _ := filepath.Abs(filepath.Join(modelsOutputPath, "data.js"))
 		if err := meshkitUtils.WriteToFile(mOut, docsJSON); err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 	}
 
