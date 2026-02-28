@@ -1,0 +1,37 @@
+version: 0.0.1
+name: consul-on-kubernetes
+displayName: Consul on kubernetes
+createdAt: "2024-04-10T15:40:47Z"
+description: |-
+    Consul is a tool for discovering, configuring, and managing services in distributed systems. It provides features like service discovery, health checking, key-value storage, and distributed coordination.
+
+    In Kubernetes, Consul can be useful in several ways:
+
+    1. Service Discovery: Kubernetes already has built-in service discovery through DNS and environment variables. However, Consul provides more advanced features such as service registration, DNS-based service discovery, and health checking. This can be particularly useful if you have services deployed both within and outside of Kubernetes, as Consul can provide a unified service discovery mechanism across your entire infrastructure.
+
+    2. Configuration Management: Consul includes a key-value store that can be used to store configuration data. This can be used to configure applications dynamically at runtime, allowing for more flexible and dynamic deployments.
+
+    3. Health Checking Consul can perform health checks on services to ensure they are functioning correctly. If a service fails its health check, Consul can automatically remove it from the pool of available instances, preventing traffic from being routed to it until it recovers.
+
+    4. Service Mesh: Consul can also be used as a service mesh in Kubernetes, providing features like traffic splitting, encryption, and observability. This can help you to manage communication between services within your Kubernetes cluster more effectively.
+
+    Overall, Consul can complement Kubernetes by providing additional features and capabilities for managing services in distributed systems. It can help to simplify and streamline the management of complex microservices architectures, providing greater visibility, resilience, and flexibility.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ce4eb460-b6c0-429d-befb-88cf2f1f883f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "customize the design according to your requirements and the image is pulled from docker hub \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ce4eb460-b6c0-429d-befb-88cf2f1f883f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ce4eb460-b6c0-429d-befb-88cf2f1f883f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

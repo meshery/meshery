@@ -22,6 +22,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
@@ -226,14 +227,14 @@ var (
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
-	//MesheryOperator is the file for default Meshery operator
-	//check https://github.com/meshery/meshery-operator/blob/master/config/manifests/default.yaml
+	// MesheryOperator is the file for default Meshery operator
+	// check https://github.com/meshery/meshery-operator/blob/master/config/manifests/default.yaml
 	MesheryOperator = "default.yaml"
-	//MesheryOperatorBroker is the file for the Meshery broker
-	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	// MesheryOperatorBroker is the file for the Meshery broker
+	// check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
 	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
-	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
-	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	// MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
+	// check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
@@ -261,7 +262,7 @@ var (
 	Log logger.Handler
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-	//global logger error variable
+	// global logger error variable
 	LogError logger.Handler
 )
 
@@ -373,8 +374,10 @@ func BackupConfigFile(cfgFile string) {
 	}
 }
 
-const tokenName = "token"
-const providerName = "meshery-provider"
+const (
+	tokenName    = "token"
+	providerName = "meshery-provider"
+)
 
 var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
@@ -564,13 +567,14 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+
 func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
 // ClearLine clears the last line from output
 func ClearLine() {
-	clearCmd := exec.Command("clear") // for UNIX-like systems
+	clearCmd := exec.Command("clear", "-x") // for UNIX-like systems
 	if runtime.GOOS == "windows" {
 		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
 	}
@@ -718,7 +722,6 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
 	nameIdMap, err := GetName(mesheryServerUrl, configuration)
-
 	if err != nil {
 		return "", "", false, err
 	}
@@ -756,6 +759,20 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+// RunSelectPrompt displays a selection prompt with the given label and items.
+// Returns the selected index or ErrPromptCancelled if the user cancels (Ctrl+C/Ctrl+D).
+func RunSelectPrompt(label string, items []string) (int, error) {
+	prompt := promptui.Select{
+		Label: label,
+		Items: items,
+	}
+	i, _, err := prompt.Run()
+	if err != nil {
+		return 0, ErrPromptCancelled()
+	}
+	return i, nil
 }
 
 // ParseURLGithub checks URL and returns raw repo, path, error
@@ -1199,7 +1216,6 @@ func CheckFileExists(name string) (bool, error) {
 // Pagination allows users to navigate through the data using Enter or ↓ to continue,
 // Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
 func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
-
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
 
@@ -1287,8 +1303,9 @@ func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 	if !cmd.Flags().Changed("page") {
 		return "pagesize=all"
 	}
-	return fmt.Sprintf("page=%d", page)
+	return fmt.Sprintf("page=%d", page-1)
 }
+
 func IsValidUrl(path string) bool {
 	u, err := url.Parse(path)
 	if err != nil {
