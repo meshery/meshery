@@ -1,7 +1,6 @@
-import React, { Fragment, useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import dataFetch from "../lib/data-fetch";
-import ProviderLayout from "./ProviderLayout";
+import React, { Fragment, useEffect, useState, ReactNode } from 'react';
+import dataFetch from '../lib/data-fetch';
+import ProviderLayout from './ProviderLayout';
 import {
   CustomDiv,
   CustomDialog,
@@ -11,7 +10,7 @@ import {
   LearnMore,
   CustomTypography,
   StyledPopover,
-} from "./Provider.style";
+} from './Provider.style';
 import {
   Button,
   ButtonGroup,
@@ -29,9 +28,16 @@ import {
   accentGrey,
   CHINESE_SILVER,
   KEPPEL,
-} from "@sistent/sistent";
-import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
-function CustomDialogTitle(props) {
+} from '@sistent/sistent';
+import { CloseIcon, ClickAwayListener, DropDownIcon } from '@sistent/sistent';
+
+interface CustomDialogTitleProps {
+  id?: string;
+  children?: ReactNode;
+  onClose: () => void;
+}
+
+function CustomDialogTitle(props: CustomDialogTitleProps): React.ReactElement {
   const { children, onClose, ...other } = props;
 
   return (
@@ -42,9 +48,9 @@ function CustomDialogTitle(props) {
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: "16px",
-            top: "16px",
+            position: 'absolute',
+            right: '16px',
+            top: '16px',
             color: (theme) => theme.palette.grey[500],
           }}
         >
@@ -55,27 +61,23 @@ function CustomDialogTitle(props) {
   );
 }
 
-CustomDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
-};
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
   color: charcoal[100],
   marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
-  "& a": {
-    fontWeight: "normal",
+  '& a': {
+    fontWeight: 'normal',
   },
-  "& :hover": {
+  '& :hover': {
     color: CHINESE_SILVER,
   },
 }));
 
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
   color: theme.palette.text.inverse,
-  cursor: "pointer",
-  fontWeight: "normal",
+  cursor: 'pointer',
+  fontWeight: 'normal',
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
@@ -83,57 +85,67 @@ const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
   color: theme.palette.text.inverse,
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.IconButton,
+const StyledButton = styled(Button)(() => ({
+  // Background color is applied via sx prop when used
 }));
+
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
-  border: "none",
-  "& .MuiButtonGroup-grouped": {
-    border: "none !important",
+  border: 'none',
+  '& .MuiButtonGroup-grouped': {
+    border: 'none !important',
   },
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
   color: theme.palette.text.inverse,
   backgroundColor: charcoal[40],
-  padding: "1.2rem",
+  padding: '1.2rem',
 }));
 
-export default function Provider() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [availableProviders, setAvailableProviders] = useState({});
-  const [selectedProvider, setSelectedProvider] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  /* eslint-disable no-unused-vars */
-  const [openMenu, setOpenMenu] = useState(false);
-  const [openModal, setModalOpen] = React.useState(false);
+interface ProviderInfo {
+  provider_name: string;
+  provider_description?: string[];
+  ProviderType: string;
+}
 
-  const handleClick = (event) => {
+interface AvailableProviders {
+  [key: string]: ProviderInfo;
+}
+
+export default function Provider(): React.ReactElement {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [availableProviders, setAvailableProviders] = useState<AvailableProviders>({});
+  const [selectedProvider, setSelectedProvider] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [, setOpenMenu] = useState<boolean>(false);
+  const [openModal, setModalOpen] = useState<boolean>(false);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setAnchorEl(null);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "popover" : undefined;
+  const id = open ? 'popover' : undefined;
 
   useEffect(() => {
     loadProvidersFromServer();
   }, []);
 
-  function loadProvidersFromServer() {
-    dataFetch(
-      "/api/providers",
+  function loadProvidersFromServer(): void {
+    dataFetch<AvailableProviders>(
+      '/api/providers',
       {
-        method: "GET",
-        credentials: "include",
+        method: 'GET',
+        credentials: 'include',
       },
       (result) => {
-        if (typeof result !== "undefined") {
+        if (typeof result !== 'undefined') {
           Object.keys(result).forEach((key) => {
-            if (result[key].ProviderType === "remote") {
+            if (result[key].ProviderType === 'remote') {
               setSelectedProvider(selectedProvider);
             }
           });
@@ -146,22 +158,22 @@ export default function Provider() {
     );
   }
 
-  const handleMenuItemClick = (event, provider) => {
+  const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, provider: string): void => {
     event.preventDefault();
     setSelectedProvider(provider);
     setOpenMenu(false);
     setIsLoading(true);
     const existingQueryString = window.location.search;
     const existingQueryParams = new URLSearchParams(existingQueryString);
-    existingQueryParams.append("provider", encodeURIComponent(provider));
+    existingQueryParams.append('provider', encodeURIComponent(provider));
     window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
-  const handleModalOpen = () => {
+  const handleModalOpen = (): void => {
     setModalOpen(true);
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = (): void => {
     setModalOpen(false);
   };
 
@@ -169,14 +181,13 @@ export default function Provider() {
     <ProviderLayout>
       <MesheryLogo
         src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
-        onError={(e) =>
-          (e.target.src =
-            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png")
+        onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+          (e.currentTarget.src = '/static/img/meshery-logo/meshery-logo-dark-text-noBG.png')
         }
         alt="logo"
       />
       <CustomDiv>
-        {availableProviders !== "" && (
+        {Object.keys(availableProviders).length > 0 && (
           <Fragment>
             <StyledButtonGroup aria-label="split button">
               <Button
@@ -189,14 +200,9 @@ export default function Provider() {
                 disableElevation
               >
                 {isLoading && (
-                  <CircularProgress
-                    size={20}
-                    sx={{ color: "white", marginRight: 8 }}
-                  />
+                  <CircularProgress size={20} sx={{ color: 'white', marginRight: 8 }} />
                 )}
-                {selectedProvider !== ""
-                  ? selectedProvider
-                  : "Select your provider"}
+                {selectedProvider !== '' ? selectedProvider : 'Select your provider'}
 
                 <DropDownIcon />
               </Button>
@@ -208,12 +214,12 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
+                vertical: 'bottom',
+                horizontal: 'center',
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
+                vertical: 'top',
+                horizontal: 'center',
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
@@ -229,7 +235,7 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{ "&:hover": { backgroundColor: accentGrey[20] } }}
+                      sx={{ '&:hover': { backgroundColor: accentGrey[20] } }}
                     >
                       {key}
                     </MenuItem>
@@ -238,82 +244,79 @@ export default function Provider() {
                     sx={{
                       my: 0.5,
                       backgroundColor: accentGrey[40],
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "0px",
+                      width: '80%',
+                      margin: 'auto',
+                      marginBottom: '0px',
                     }}
                   />
-                  <MenuProviderDisabled
-                    sx={{ marginTop: "0px" }}
-                    disabled={true}
-                    key="Exoscale Labs"
-                  >
-                    Exoscale Labs{"\u00A0"}
+                  <MenuProviderDisabled sx={{ marginTop: '0px' }} disabled={true} key="Exoscale Labs">
+                    Exoscale Labs{'\u00A0'}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
-                    Equinix US-DAL{"\u00A0"}
+                    Equinix US-DAL{'\u00A0'}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="HPE Security">
-                    HPE Security{"\u00A0"}
+                    HPE Security{'\u00A0'}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="F5">
-                    F5 BIG IP iHealth{"\u00A0"}
+                    F5 BIG IP iHealth{'\u00A0'}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
-                    The University of Texas at Austin{"\u00A0"}
+                    The University of Texas at Austin{'\u00A0'}
                     <span> Offline</span>
                   </MenuProviderDisabled>
                   <Divider
                     sx={{
                       my: 0.5,
                       backgroundColor: accentGrey[40],
-                      width: "80%",
-                      margin: "auto",
-                      marginBottom: "0px",
+                      width: '80%',
+                      margin: 'auto',
+                      marginBottom: '0px',
                     }}
                   />
-                  {/* Use Sistent's Button as a link */}
+                  {/* Create provider link */}
                   <Button
                     component="a"
                     href="https://docs.meshery.io/extensibility/providers"
-                    aria-describedby={id}
+                    // @ts-expect-error - target and rel are valid for anchor elements
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-describedby={id}
                     aria-label="Create Provider"
                     data-cy="create_provider"
                     variant="text"
                     sx={{
-                      display: "flex",
-                      fontStyle: "italic",
-                      margin: "auto 0.5rem",
-                      textDecoration: "none",
-                      cursor: "pointer",
-                      width: "100%",
-                      backgroundColor: "none",
-                      justifySelf: "center",
-                      textAlign: "center",
-                      color: "#ccc",
-                      alignItems: "center",
-                      "&:hover": {
+                      display: 'flex',
+                      fontStyle: 'italic',
+                      margin: 'auto 0.5rem',
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                      width: '100%',
+                      justifyContent: 'center',
+                      textAlign: 'center',
+                      color: '#ccc',
+                      alignItems: 'center',
+                      padding: '6px 8px',
+                      '&:hover': {
                         backgroundColor: accentGrey[20],
-                        color: "#fff",
+                        color: '#fff',
                       },
                     }}
                   >
                     Create Your Own Provider&nbsp;
                     <img
                       src="/provider/static/img/external-link.svg"
-                      onError={(e) =>
-                        (e.target.src = "/static/img/external-link.svg")
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+                        (e.currentTarget.src = '/static/img/external-link.svg')
                       }
                       width="16px"
                       alt="External link"
                       style={{
-                        filter: "brightness(20)",
+                        filter: 'brightness(20)',
                       }}
                     />
                   </Button>
@@ -330,7 +333,7 @@ export default function Provider() {
             placement="bottom"
             data-cy="providers-tooltip"
           >
-            Learn more about providers
+            <span>Learn more about providers</span>
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
@@ -341,31 +344,23 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <StyledCustomDialogTitle
-          id="customized-dialog-title"
-          onClose={handleModalClose}
-        >
+        <StyledCustomDialogTitle id="customized-dialog-title" onClose={handleModalClose}>
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
 
         <StyledDialogBox id="customized-dialog-content">
-          Login to Meshery by choosing from the available providers. Providers
-          extend Meshery by offering various plugins and services, including
-          identity services, long-term persistence, advanced performance
-          analysis, multi-player user collaboration, and so on.
+          Login to Meshery by choosing from the available providers. Providers extend Meshery by
+          offering various plugins and services, including identity services, long-term persistence,
+          advanced performance analysis, multi-player user collaboration, and so on.
           <h2>Available Providers</h2>
           {Object.keys(availableProviders).map((key) => {
             return (
               <React.Fragment key={availableProviders[key].provider_name}>
-                <p style={{ fontWeight: 700 }}>
-                  {availableProviders[key].provider_name}
-                </p>
+                <p style={{ fontWeight: 700 }}>{availableProviders[key].provider_name}</p>
                 <ul>
-                  {availableProviders[key].provider_description?.map(
-                    (desc, i) => (
-                      <li key={`desc-${i}`}>{desc}</li>
-                    )
-                  )}
+                  {availableProviders[key].provider_description?.map((desc, i) => (
+                    <li key={`desc-${i}`}>{desc}</li>
+                  ))}
                 </ul>
               </React.Fragment>
             );
@@ -381,13 +376,9 @@ export default function Provider() {
             <li>Academic research and advanced studies by Ph.D. researchers</li>
             <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
-          <p style={{ fontWeight: 700 }}>
-            Cloud Native Computing Foundation Infrastructure Lab
-          </p>
+          <p style={{ fontWeight: 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
           <ul>
-            <li>
-              Performance and compatibility-centric research and validation
-            </li>
+            <li>Performance and compatibility-centric research and validation</li>
             <li>Used by various cloud native projects</li>
           </ul>
           <p style={{ fontWeight: 700 }}>HPE Security</p>
@@ -406,28 +397,29 @@ export default function Provider() {
             <Button
               component="a"
               href="https://docs.meshery.io/extensibility/providers"
+              // @ts-expect-error - target and rel are valid for anchor elements
               target="_blank"
               rel="noopener noreferrer"
               variant="text"
               sx={{
                 color: (theme) => theme.palette.text.inverse,
-                textTransform: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
+                textTransform: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
                 fontWeight: 400,
-                fontSize: "1rem",
-                "&:hover": {
-                  textDecoration: "underline",
-                  backgroundColor: "transparent",
+                fontSize: '1rem',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  backgroundColor: 'transparent',
                 },
               }}
             >
               Providers in Meshery Docs
               <img
                 src="/provider/static/img/external-link.svg"
-                onError={(e) =>
-                  (e.target.src = "/static/img/external-link.svg")
+                onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+                  (e.currentTarget.src = '/static/img/external-link.svg')
                 }
                 width="16px"
                 alt="External link"
@@ -440,11 +432,11 @@ export default function Provider() {
             data-cy="providers-modal-button-ok"
             sx={{
               background: KEPPEL,
-              marginRight: "1rem",
+              marginRight: '1rem',
               color: (theme) => theme.palette.text.inverse,
             }}
           >
-            {" "}
+            {' '}
             OK
           </StyledButton>
         </CustomDialogActions>
