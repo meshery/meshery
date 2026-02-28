@@ -5,3 +5,15 @@ integrations:
     - integrations 
     - for a particular 
     - version
+---
+
+## Accessibility Considerations
+
+When contributing to Meshery UI, integrations, and documentation:
+
+- Ensure interactive elements include proper ARIA roles
+- Maintain logical keyboard navigation
+- Provide visible focus indicators
+- Verify compatibility with screen readers
+
+Improving accessibility helps expand inclusivity across the Meshery community.
