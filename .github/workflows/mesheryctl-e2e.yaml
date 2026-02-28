@@ -34,9 +34,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: ['1.25']
-        k8s_version: ['v1.33.0', 'v1.34.3']
-        platform: ['kubernetes']
+        include:
+          - go: '1.25'
+            k8s_version: 'v1.33.0'
+            platform: 'kubernetes'
+            publish_to_qa: false
+          - go: '1.25'
+            k8s_version: 'v1.34.3'
+            platform: 'kubernetes'
+            publish_to_qa: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -94,20 +100,20 @@ jobs:
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         working-directory: qa
         run: |
           make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
 
       - name: Commit & push to qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
