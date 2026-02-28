@@ -40,7 +40,7 @@ func TestIsUUID(t *testing.T) {
         name := tc.in
         if name == "" {
             name = "empty string"
-        } else if len(name) > 0 && (name[0] == ' ' || name[len(name)-1] == ' ') {
+        } else if strings.TrimSpace(name) != name {
             name = "whitespace edge case: '" + tc.in + "'"
         }
 
