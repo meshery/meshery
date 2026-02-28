@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper" // Added this
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,18 +52,35 @@ func TestTerminalFormatter_Format(t *testing.T) {
 }
 
 // TestSetupMeshkitLogger ensures that the Meshkit logger handler
-// is correctly initialized with provided options and output writer.
+// is correctly initialized and messages are correctly written to the output.
 func TestSetupMeshkitLogger(t *testing.T) {
-	// We use a buffer to capture output instead of printing to console during tests
-	var buf bytes.Buffer
-	
-	t.Run("Initialize logger successfully", func(t *testing.T) {
+	t.Run("Initialize logger with debug enabled", func(t *testing.T) {
+		var buf bytes.Buffer
 		name := "test-logger"
-		debugLevel := true
 		
-		handler := SetupMeshkitLogger(name, debugLevel, &buf)
+		// Force Viper to a log level that allows Info/Debug
+		viper.Set("LOG_LEVEL", int(log.DebugLevel)) 
 		
-		// Assert that the handler was created and is not nil
-		assert.NotNil(t, handler, "Handler should not be nil")
+		handler := SetupMeshkitLogger(name, true, &buf)
+		assert.NotNil(t, handler)
+
+		handler.Info("info message")
+
+		output := buf.String()
+		assert.Contains(t, output, "info message", "Buffer should contain the logged message")
+	})
+
+	t.Run("Initialize logger with debug disabled", func(t *testing.T) {
+		var buf bytes.Buffer
+		name := "test-logger"
+		
+		viper.Set("LOG_LEVEL", int(log.InfoLevel))
+
+		handler := SetupMeshkitLogger(name, false, &buf)
+		assert.NotNil(t, handler)
+
+		handler.Info("info message")
+		output := buf.String()
+		assert.Contains(t, output, "info message")
 	})
 }
