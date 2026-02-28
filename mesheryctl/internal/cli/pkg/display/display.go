@@ -32,7 +32,8 @@ type DisplayDataAsync struct {
 	DisplayCountOnly bool
 	IsPage           bool
 	// Prompt-only field
-	SearchTerm string
+	SearchTerm     string
+	ErrNotFoundMsg string
 }
 
 type (
