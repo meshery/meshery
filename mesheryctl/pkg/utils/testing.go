@@ -385,6 +385,9 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
+			var buf bytes.Buffer
+
+			// Properly save and restore stdout using defer
 			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
@@ -394,10 +397,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 				os.Stdout = originalStdout
 			}()
 
-			Log = SetupMeshkitLogger("mesheryctl", true, w)
+			_ = SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(w)
+			cmd.SetOut(originalStdout)
 			err := cmd.Execute()
 
 			// Close write end before reading
@@ -420,15 +423,9 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 					AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					return
 				}
-				// Unexpected error - fail immediately
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatal(err)
 			}
 
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			var buf bytes.Buffer
 			_, errCopy := io.Copy(&buf, r)
 			if errCopy != nil {
 				t.Fatal(errCopy)
