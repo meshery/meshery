@@ -1,6 +1,7 @@
 package display
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -88,27 +89,29 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 // promptPageHandler creates a pageHandler that presents each fetched page as a selection prompt.
 func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData promptLabelBuilder[R], extractItem itemExtractor[T, R], selectedItem *R) pageHandler[T] {
 	return func(data *T, currentPage int, pgSize int) (bool, error) {
-		rows := extractItem(data)
+		rows, totalCount := extractItem(data)
 
-		switch len(rows) {
-		case 0:
+		if len(rows) == 0 {
 			if currentPage == 0 {
-				return false, utils.ErrNotFound(fmt.Errorf("no results for %s", displayData.SearchTerm))
+				return false, utils.ErrNotFound(errors.New("no results found"))
 			}
 			return false, nil
-		case 1:
+		}
+
+		// Auto-select if only one result on the first page
+		if len(rows) == 1 && currentPage == 0 {
 			*selectedItem = rows[0]
 			return false, nil
-		default:
-			picked, itemSelected, err := SelectFromPagedResults(rows, processData, pgSize)
-			if err != nil {
-				return false, err
-			}
-			if itemSelected {
-				*selectedItem = picked
-				return false, nil
-			}
-			return true, nil
 		}
+
+		picked, itemSelected, err := SelectFromPagedResults(rows, processData, pgSize, currentPage, totalCount)
+		if err != nil {
+			return false, err
+		}
+		if itemSelected {
+			*selectedItem = picked
+			return false, nil
+		}
+		return true, nil
 	}
 }

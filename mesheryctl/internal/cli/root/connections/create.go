@@ -24,7 +24,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -340,23 +339,11 @@ func setToken() error {
 
 	chosenCtx := contexts[0]
 	if len(contexts) > 1 {
-		fmt.Println("List of available contexts: ")
-
-		prompt := promptui.Select{
-			Label: "Select context for the connection",
-			Items: contexts,
+		i, err := utils.RunSelectPrompt("Select context for the connection", contexts)
+		if err != nil {
+			return err
 		}
-
-		for {
-			i, _, err := prompt.Run()
-			if err != nil {
-				continue
-			}
-
-			chosenCtx = contexts[i]
-			break
-		}
-
+		chosenCtx = contexts[i]
 	}
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 
