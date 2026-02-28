@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, NoSsr, Typography } from '@sistent/sistent';
+import { Box, CircularProgress, NoSsr, Typography, IconButton } from '@sistent/sistent';
+import CloseIcon from '@mui/icons-material/Close';
 
 const parseDuration = (value) => {
   if (!value) {
@@ -23,7 +24,7 @@ const parseDuration = (value) => {
   }
 };
 
-const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
+const LoadTestTimerDialog = ({ countDownComplete, t, open, onClose }) => {
   const [dur, setDur] = useState(() => parseDuration(t));
   const [timeLeft, setTimeLeft] = useState(() => parseDuration(t));
 
@@ -96,15 +97,30 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
           marginRight: 'auto',
           width: 400,
           position: 'relative',
-          zIndex: 0,
         }}
+        aria-label={`Performance test countdown: ${formattedTime} remaining`}
       >
+        {onClose && (
+          <IconButton
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              color: 'white',
+              zIndex: 1,
+            }}
+            aria-label="Close countdown timer"
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
         <Box sx={{ position: 'relative', display: 'inline-flex', width: 400, height: 400 }}>
           <CircularProgress
             variant="determinate"
             value={progress}
             size={400}
-            sx={{ color: '#667C89' }}
+            sx={{ color: 'white' }}
           />
           <Box
             sx={{
@@ -118,7 +134,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
               justifyContent: 'center',
             }}
           >
-            <Typography variant="h4" component="div" color="#667C89">
+            <Typography variant="h4" component="div" color="white">
               {formattedTime}
             </Typography>
           </Box>

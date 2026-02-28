@@ -101,16 +101,24 @@ export const IconButtonComp = styled(IconButton)(({ theme }) => ({
 }));
 
 export const CenterTimer = styled('div')(() => ({
-  width: '100%',
-  height: '100%',
-  position: 'absolute',
-  top: '0',
-  left: '0',
-  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  zIndex: 1201,
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  zIndex: 2000, // Higher than Material-UI modals (1300) to ensure visibility
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  pointerEvents: 'auto',
+  animation: 'fadeIn 0.3s ease-in-out',
+  '@keyframes fadeIn': {
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+  },
 }));
 
 export const HelpIcon = styled(HelpOutlineOutlined)(({ theme }) => ({
