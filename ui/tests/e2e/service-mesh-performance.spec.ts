@@ -2,7 +2,18 @@ import { expect, test } from './fixtures/project';
 import { mockPerfApis } from './mocks/mockPerfApi';
 import { DashboardPage } from './pages/DashboardPage';
 
-const performanceProfiles = [
+// Strongly typed inline array to dodge JS linter rules
+type PerformanceProfile = {
+  profileName: string;
+  serviceMesh: string;
+  url: string;
+  loadGenerator: string;
+  concurrentRequest: string;
+  qps: string;
+  duration: string;
+};
+
+const performanceProfiles: PerformanceProfile[] = [
   // {
   //   profileName: 'Fortio-Perf-Test',
   //   serviceMesh: 'None',
