@@ -134,7 +134,10 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return response.Patterns[0].ID.String(), nil
 	}
 
-	selectedPattern := selectPatternPrompt(response.Patterns, baseUrl)
+	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
+	if err != nil {
+		return "", err
+	}
 	return selectedPattern.ID.String(), nil
 }
 
@@ -266,7 +269,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	return fmt.Sprintf("%s %s", userProfile.FirstName, userProfile.LastName), nil
 }
 
-func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) models.MesheryPattern {
+func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (models.MesheryPattern, error) {
 	columns := []string{"Design Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
 	widths := []int{20, 20, 20, 20, 20, 10}
 
@@ -323,12 +326,13 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) model
 
 	for {
 		i, _, err := prompt.Run()
-		if err == nil {
-			if i == 0 {
-				continue
-			}
-			return patterns[i-1]
+		if err != nil {
+			return models.MesheryPattern{}, utils.ErrPromptCancelled()
 		}
+		if i == 0 {
+			continue // skip header row, re-prompt
+		}
+		return patterns[i-1], nil
 	}
 }
 

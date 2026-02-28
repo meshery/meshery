@@ -1658,6 +1658,15 @@
         "short_description": "",
         "probable_cause": "The command may require a specific context to be set in order to function properly",
         "suggested_remediation": "Ensure that the necessary contextis defined in the root command file and try again"
+      },
+      "1202": {
+        "name": "ErrPromptCancelledCode",
+        "code": "1202",
+        "severity": "Alert",
+        "long_description": "Selection prompt has been cancelled",
+        "short_description": "Selection cancelled",
+        "probable_cause": "The selection prompt was interrupted",
+        "suggested_remediation": "Run the command again and complete the selection"
       }
     }
   }
