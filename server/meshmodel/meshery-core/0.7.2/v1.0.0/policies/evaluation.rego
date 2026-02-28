@@ -233,31 +233,26 @@ evaluate := eval_results if {
 	})
 
 	design_file_with_identified_rels := actions.apply_all_actions_to_design(
-		design_file_to_evaluate,
-		validation_actions,
+		design_file_with_validated_rels,
+		new_identified_rels_actions,
 	)
 
 	print("New identified rels", count(new_identified_rels_actions))
 
 	#3. Actions
 
-	design_file_to_apply_actions := actions.apply_all_actions_to_design(
-		design_file_with_identified_rels,
-		new_identified_rels_actions,
-	)
-
-	print("All relationships", count(design_file_to_apply_actions.relationships))
+	print("All relationships", count(design_file_with_identified_rels.relationships))
 
 	actions_to_apply := union({actions |
 		some identifier in relationship_policy_identifiers
-		actions := eval.generate_actions_to_apply_on_design(design_file_to_apply_actions, identifier)
+		actions := eval.generate_actions_to_apply_on_design(design_file_with_identified_rels, identifier)
 		print("action for", identifier, count(actions))
 	})
 
 	print("All Actions", count(actions_to_apply))
 
 	actions_response := trace_from_actions(actions_to_apply)
-	design_to_return := actions.apply_all_actions_to_design(design_file_to_apply_actions, actions_to_apply)
+	design_to_return := actions.apply_all_actions_to_design(design_file_with_identified_rels, actions_to_apply)
 
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
