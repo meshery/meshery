@@ -9,4 +9,9 @@ linters:
     paths:
       - server/handlers/doc.go
       - server/models/meshmodel/core/register.go
- 
+
+linters-settings:
+  staticcheck:
+    checks:
+      - "all"
+      - "-ST1005"
