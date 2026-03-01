@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -54,6 +55,7 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			}()
 
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
@@ -125,5 +127,6 @@ func TestSearch_WithFlags(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(RelationshipCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
 }
