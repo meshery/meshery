@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,6 +20,9 @@ func TestIsUUID(t *testing.T) {
 		{"550E8400-E29B-41D4-A716-446655440000", true},
 		{"00000000-0000-0000-0000-000000000000", true}, // nil UUID
 		{"123e4567e89b12d3a456426614174000", true},     // no-hyphen form
+		{"{123e4567-e89b-12d3-a456-426614174000}", true}, // braced form
+		{"urn:uuid:123e4567-e89b-12d3-a456-426614174000", true}, // URN form
+
 
 		// invalid UUIDs
 		{"", false},
@@ -28,14 +32,23 @@ func TestIsUUID(t *testing.T) {
 		{"123e4567-e89b-12d3-a456-42661417400", false},   // too short
 		{"123e4567e89b12d3a45642661417400", false},       // too short no-hyphen
 		{"0000-0000-0000-0000-000000000000", false},      // wrong hyphen placement
+		{" 123e4567-e89b-12d3-a456-426614174000", false}, // leading space
+		{"123e4567-e89b-12d3-a456-426614174000 ", false}, // trailing space
+		{"123e4567-e89b-12d3-a456-426614174000-123", false}, // too long
 	}
 
 	for _, tc := range cases {
+		
+		tc := tc 
+		
 		name := tc.in
-		// if name == "" {
-		// 	name = "empty"
-		// }
-		tc := tc
+		if name == "" {
+			name = "empty string"
+		} else if strings.TrimSpace(name) != name { 
+			name = "whitespace edge case: '" + tc.in + "'"
+		}
+
+
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			got := IsUUID(tc.in)
