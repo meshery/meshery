@@ -48,6 +48,7 @@ func TestIsUUID(t *testing.T) {
 			name = "whitespace edge case: '" + tc.in + "'"
 		}
 
+
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			got := IsUUID(tc.in)
