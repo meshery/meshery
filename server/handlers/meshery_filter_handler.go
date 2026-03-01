@@ -103,19 +103,23 @@ func (h *Handler) handleFilterPOST(
 	var parsedBody *models.MesheryFilterRequestBody
 
 	actedUpon := &userID
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
+		if err == nil {
+			err = fmt.Errorf("request body cannot be null")
+		}
+
 		invalidReqBody := ErrRequestBody(err)
 		h.log.Error(invalidReqBody)
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": invalidReqBody,
-		}).WithDescription(fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)).Build()
+		}).WithDescription("Filter request body is corrupted or malformed.").Build()
 
 		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
-		addMeshkitErr(&res, ErrGetFilter(err))
+		addMeshkitErr(&res, ErrSaveFilter(err))
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
