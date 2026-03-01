@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,18 +38,20 @@ func TestIsUUID(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-        name := tc.in
-        if name == "" {
-            name = "empty string"
-        } else if len(name) > 0 && (name[0] == ' ' || name[len(name)-1] == ' ') {
-            name = "whitespace edge case: '" + tc.in + "'"
-        }
+		
+		tc := tc 
+		
+		name := tc.in
+		if name == "" {
+			name = "empty string"
+		} else if strings.TrimSpace(name) != name { 
+			name = "whitespace edge case: '" + tc.in + "'"
+		}
 
-        tc := tc 
-        t.Run(name, func(t *testing.T) {
-            t.Parallel()
-            got := IsUUID(tc.in)
-            assert.Equal(t, tc.want, got)
-        })
-    }
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			got := IsUUID(tc.in)
+			assert.Equal(t, tc.want, got)
+		})
+	}
 }
