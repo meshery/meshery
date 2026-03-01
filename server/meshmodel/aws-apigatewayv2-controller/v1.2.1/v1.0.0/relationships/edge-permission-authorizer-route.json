@@ -1,0 +1,64 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Edge",
+  "metadata": {
+    "description": "Permission relationship where an Authorizer grants access to a Route by injecting its name into the Route's authorizerRef."
+  },
+  "model": {
+    "name": "aws-apigatewayv2-controller",
+    "version": "v1.2.1",
+    "displayName": "AWS API Gateway v2",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy"
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Authorizer",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ]
+              ],
+              "description": "Extracts the Kubernetes object name from the Authorizer."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Route",
+            "model": {
+              "name": "aws-apigatewayv2-controller"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "authorizerRef",
+                  "from",
+                  "name"
+                ]
+              ],
+              "description": "Injects the Authorizer name into the Route's authorizerRef configuration."
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "Permission",
+  "type": "Edge",
+  "version": "v1.0.0"
+}
