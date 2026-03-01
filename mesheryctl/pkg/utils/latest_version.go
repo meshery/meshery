@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 )
-
+var LatestVersionURL = "https://docs.meshery.io/project/releases/latest"
 func GetLatestVersionForMesheryctl() (string, error) {
-	req, err := http.NewRequest(http.MethodGet, "https://docs.meshery.io/project/releases/latest", nil)
+	req, err := http.NewRequest(http.MethodGet, LatestVersionURL, nil)
 
 	if err != nil {
 		return "", err
