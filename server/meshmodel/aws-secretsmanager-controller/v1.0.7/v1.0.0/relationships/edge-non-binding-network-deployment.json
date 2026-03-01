@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Defines a non-binding network relationship from AWS Secrets Manager Secret to Kubernetes Deployment through Secrets Store CSI Driver volumes and volume mounts in Pod templates.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -14,10 +14,10 @@
   "model": {
     "version": "",
     "name": "aws-secretsmanager-controller",
-    "displayName": "",
+    "displayName": "AWS Secrets Manager Controller",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
-      "kind": ""
+      "kind": "artifacthub"
     },
     "model": {
       "version": "v1.0.7"
@@ -36,7 +36,7 @@
             "model": {
               "version": "",
               "name": "aws-secretsmanager-controller",
-              "displayName": "",
+              "displayName": "AWS Secrets Manager Controller",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "artifacthub"
@@ -68,7 +68,7 @@
             "model": {
               "version": "",
               "name": "kubernetes",
-              "displayName": "",
+              "displayName": "Kubernetes",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "artifacthub"
@@ -88,9 +88,19 @@
                   "spec",
                   "template",
                   "spec",
+                  "volumes",
+                  "_",
+                  "csi"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
                   "containers",
-                  "0",
-                  "envFrom"
+                  "_",
+                  "volumeMounts",
+                  "_"
                 ]
               ]
             }
