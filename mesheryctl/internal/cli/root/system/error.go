@@ -57,6 +57,8 @@ const (
 )
 
 var (
+	errArgMsg = `Please provide one context name.
+Usage: mesheryctl system context create [context-name]`
 	cmdType     string
 	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
 	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
@@ -336,5 +338,4 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
-
 }

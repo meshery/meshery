@@ -68,9 +68,7 @@ func TestViewContextCmd(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if err == nil {
-					t.Fatalf("expected error, got nil")
-				}
+				t.Fatalf("expected error, got nil")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata/context")
@@ -218,9 +216,16 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "add given context",
+			Name:             "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
 			Args:             []string{"context", "create", "local3"},
 			ExpectedResponse: "createContext.golden",
+		},
+		{
+			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
+			Args:           []string{"context", "create"},
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg)),
+			IsOutputGolden: false,
 		},
 	}
 	for _, tt := range tests {
@@ -230,8 +235,18 @@ func TestAddContextCmd(t *testing.T) {
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
+
 			if err != nil {
-				t.Error(err)
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := b.String()
