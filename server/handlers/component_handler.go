@@ -19,6 +19,7 @@ import (
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
 
 	// "github.com/meshery/meshkit/errors"
 	// "github.com/meshery/meshkit/errors"
@@ -516,7 +517,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		Annotations:  returnAnnotationComp,
 	})
 
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -594,7 +595,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
 	})
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -671,7 +672,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
 	})
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -749,7 +750,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Annotations: returnAnnotationComp,
 	})
 
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -825,7 +826,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -902,7 +903,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -976,7 +977,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 	if limit == 0 {
@@ -1051,7 +1052,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	comps := processComponentDefinitions(entities)
+	comps := processComponentDefinitions(entities, h.log)
 
 	var pgSize int64
 
@@ -1231,9 +1232,98 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
+// isUnresolvedRef checks if a $ref is an unresolved external reference that cannot be resolved.
+// These are typically Kubernetes OpenAPI refs that weren't fully dereferenced during component generation.
+func isUnresolvedRef(ref interface{}) bool {
+	refStr, ok := ref.(string)
+	if !ok {
+		return false
+	}
+	return strings.HasPrefix(refStr, "#/components/schemas/") || strings.HasPrefix(refStr, "#/definitions/")
+}
+
+// resolveSchemaRefs recursively resolves unresolved $refs in a schema by replacing them with generic object schemas.
+// This prevents RJSF from crashing when it encounters refs that point to non-existent definitions.
+func resolveSchemaRefs(schema map[string]interface{}) {
+	if schema == nil {
+		return
+	}
+
+	// Handle direct $ref
+	if ref, ok := schema["$ref"]; ok && isUnresolvedRef(ref) {
+		delete(schema, "$ref")
+		schema["type"] = "object"
+		schema["additionalProperties"] = true
+		return
+	}
+
+	// Recurse into allOf, oneOf, anyOf
+	for _, key := range []string{"allOf", "oneOf", "anyOf"} {
+		if arr, ok := schema[key].([]interface{}); ok {
+			for _, item := range arr {
+				if itemMap, ok := item.(map[string]interface{}); ok {
+					resolveSchemaRefs(itemMap)
+				}
+			}
+		}
+	}
+
+	// Recurse into properties
+	if props, ok := schema["properties"].(map[string]interface{}); ok {
+		for _, prop := range props {
+			if propMap, ok := prop.(map[string]interface{}); ok {
+				resolveSchemaRefs(propMap)
+			}
+		}
+	}
+
+	// Recurse into additionalProperties
+	if addProps, ok := schema["additionalProperties"].(map[string]interface{}); ok {
+		resolveSchemaRefs(addProps)
+	}
+
+	// Recurse into items (for arrays)
+	if items, ok := schema["items"].(map[string]interface{}); ok {
+		resolveSchemaRefs(items)
+	} else if itemsArr, ok := schema["items"].([]interface{}); ok {
+		for _, item := range itemsArr {
+			if itemMap, ok := item.(map[string]interface{}); ok {
+				resolveSchemaRefs(itemMap)
+			}
+		}
+	}
+}
+
+// processComponentSchema processes the schema field of a component to resolve unresolved $refs.
+func processComponentSchema(comp *component.ComponentDefinition, log logger.Handler) {
+	if comp == nil || comp.Component.Schema == "" {
+		return
+	}
+
+	var schema map[string]interface{}
+	if err := json.Unmarshal([]byte(comp.Component.Schema), &schema); err != nil {
+		if log != nil {
+			log.Warn(fmt.Errorf("failed to unmarshal component schema for %s: %w", comp.Component.Kind, err))
+		}
+		return
+	}
+
+	resolveSchemaRefs(schema)
+
+	processedSchema, err := json.Marshal(schema)
+	if err != nil {
+		if log != nil {
+			log.Warn(fmt.Errorf("failed to marshal processed schema for %s: %w", comp.Component.Kind, err))
+		}
+		return
+	}
+
+	comp.Component.Schema = string(processedSchema)
+}
+
 // processComponentDefinitions processes a list of entities and extracts component definitions,
-// it also sets the ModelReference field for each component definition.
-func processComponentDefinitions(entities []entity.Entity) []component.ComponentDefinition {
+// it also sets the ModelReference field for each component definition and resolves unresolved $refs in schemas.
+func processComponentDefinitions(entities []entity.Entity, log logger.Handler) []component.ComponentDefinition {
 	var comps []component.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(*component.ComponentDefinition)
@@ -1241,6 +1331,9 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 			if comp.Model != nil {
 				comp.ModelReference = comp.Model.ToReference()
 			}
+
+			// Process schema to resolve unresolved $refs
+			processComponentSchema(comp, log)
 
 			comps = append(comps, *comp)
 		}
