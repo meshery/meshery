@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Inventory",
+  "subType": "Inventory",
+  "metadata": {
+    "description": "A ReplicationGroup inherits Redis/Valkey engine configuration from a CacheParameterGroup. All nodes in the replication group share the same parameter group settings, ensuring consistent behaviour across primary and replica nodes."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheParameterGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "cacheParameterGroupName"]],
+              "description": "The CacheParameterGroup provides its name for the ReplicationGroup to reference."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "cacheParameterGroupName"]],
+              "description": "The ReplicationGroup uses the CacheParameterGroup name to inherit engine parameters."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_inventory_relationship"
+}

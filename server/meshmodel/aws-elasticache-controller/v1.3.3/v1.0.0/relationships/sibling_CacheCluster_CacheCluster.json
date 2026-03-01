@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Sibling",
+  "type": "Non-Binding",
+  "subType": "Sibling",
+  "metadata": {
+    "description": "In a Redis cluster mode disabled ReplicationGroup, individual CacheCluster nodes (one primary, up to 5 replicas) are siblings — they share the same ReplicationGroup parent, operate at the same hierarchical level, and replicate data between each other. Understanding this sibling relationship helps model the primary/replica topology within a single shard."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller"
+          }
+        ],
+        "to": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller"
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "sibling_relationship"
+}

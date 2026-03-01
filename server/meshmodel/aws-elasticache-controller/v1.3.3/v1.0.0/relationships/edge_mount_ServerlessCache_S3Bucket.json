@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Binding",
+  "subType": "Mount",
+  "metadata": {
+    "description": "A ServerlessCache can be restored from a snapshot stored in Amazon S3. The S3 bucket holds point-in-time RDB snapshot data that is loaded into the serverless cache during provisioning, enabling data migration and disaster recovery workflows."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ServerlessCache",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "snapshotARNsToRestore", "_"]],
+              "description": "The ServerlessCache references the S3 ARN of snapshot data to restore from."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Bucket",
+            "model": "aws-s3-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "arn"]],
+              "description": "The S3 Bucket holds snapshot data used to restore the ServerlessCache."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_mount_relationship"
+}

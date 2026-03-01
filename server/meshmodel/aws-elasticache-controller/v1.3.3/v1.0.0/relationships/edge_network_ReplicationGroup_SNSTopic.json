@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-Binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "A ReplicationGroup can send event notifications to an AWS SNS Topic. ElastiCache publishes cluster events (e.g., failovers, node additions/removals, parameter group changes) to the specified SNS topic, enabling downstream subscribers to react to infrastructure state changes."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "notificationTopicARN"]],
+              "description": "The ReplicationGroup holds the SNS Topic ARN to route ElastiCache event notifications."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Topic",
+            "model": "aws-sns-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "topicARN"]],
+              "description": "The SNS Topic receives ElastiCache event notifications from the ReplicationGroup."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_network_relationship"
+}

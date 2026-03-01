@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Binding",
+  "subType": "Mount",
+  "metadata": {
+    "description": "A ReplicationGroup can be seeded from a snapshot stored in Amazon S3. During creation, ElastiCache reads the RDB (Redis Database) snapshot file from the specified S3 bucket to populate the initial cache state. The S3 bucket must be in the same region as the ReplicationGroup."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "snapshotARNs", "_"]],
+              "description": "The ReplicationGroup references the S3 ARN of a snapshot file to seed the initial dataset."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Bucket",
+            "model": "aws-s3-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "arn"]],
+              "description": "The S3 Bucket stores the RDB snapshot file used to seed the ReplicationGroup."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_mount_relationship"
+}

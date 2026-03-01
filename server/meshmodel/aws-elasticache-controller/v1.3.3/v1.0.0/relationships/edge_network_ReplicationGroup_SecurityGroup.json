@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-Binding",
+  "subType": "Network",
+  "metadata": {
+    "description": "A ReplicationGroup is associated with one or more EC2 Security Groups to control network access to the Redis/Valkey cluster endpoints. Security groups restrict which resources (e.g., EC2 instances, Lambda functions, ECS tasks) can connect to the primary and reader endpoints."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "securityGroupIDs", "_"]],
+              "description": "The ReplicationGroup references security group IDs that govern its network access."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "SecurityGroup",
+            "model": "aws-ec2-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "groupID"]],
+              "description": "The EC2 SecurityGroup provides network access control to the ReplicationGroup."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_network_relationship"
+}

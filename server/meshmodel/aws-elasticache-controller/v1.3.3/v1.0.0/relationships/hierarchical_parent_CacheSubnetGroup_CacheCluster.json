@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Parent",
+  "metadata": {
+    "description": "A CacheCluster must be placed inside a CacheSubnetGroup to operate within a VPC. The CacheSubnetGroup defines which VPC subnets the cluster nodes can be placed in, making it a prerequisite (parent) for the CacheCluster (child)."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CacheCluster",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "cacheSubnetGroupName"]],
+              "description": "The CacheCluster references the CacheSubnetGroup by name to determine VPC subnet placement."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CacheSubnetGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "cacheSubnetGroupName"]],
+              "description": "The CacheSubnetGroup provides its name for CacheCluster to reference."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_parent_relationship"
+}

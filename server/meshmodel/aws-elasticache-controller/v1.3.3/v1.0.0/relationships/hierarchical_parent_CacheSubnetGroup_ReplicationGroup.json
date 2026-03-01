@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Parent",
+  "metadata": {
+    "description": "A ReplicationGroup must be placed inside a CacheSubnetGroup to operate within a VPC. The CacheSubnetGroup defines which subnets the ReplicationGroup's node groups and shards are deployed into."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "cacheSubnetGroupName"]],
+              "description": "The ReplicationGroup references the CacheSubnetGroup by name for VPC subnet placement."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CacheSubnetGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "cacheSubnetGroupName"]],
+              "description": "The CacheSubnetGroup provides its name to the ReplicationGroup."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_parent_relationship"
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Non-Binding",
+  "subType": "Permission",
+  "metadata": {
+    "description": "A UserGroup is associated with a ReplicationGroup to enforce Role-Based Access Control (RBAC) for Redis/Valkey. When linked, the ReplicationGroup only allows connections authenticated by Users that belong to the associated UserGroup, controlling which users (and their permissions) can access the cache."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "UserGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "userGroupID"]],
+              "description": "The UserGroup provides its ID to be attached to the ReplicationGroup for RBAC enforcement."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "userGroupIDs", "_"]],
+              "description": "The ReplicationGroup references the UserGroup ID to enable RBAC access control."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "edge_permission_relationship"
+}

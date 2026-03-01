@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Parent",
+  "metadata": {
+    "description": "A GlobalReplicationGroup acts as the parent of multiple regional ReplicationGroups, enabling cross-region active-active replication for Redis/Valkey. One ReplicationGroup is designated the primary (source), and additional ReplicationGroups in other AWS regions become secondary members. The GlobalReplicationGroup must exist before secondary regional clusters can join it."
+  },
+  "model": "aws-elasticache-controller",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["settings", "globalReplicationGroupID"]],
+              "description": "The ReplicationGroup references a GlobalReplicationGroup ID to join the cross-region replication topology."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "GlobalReplicationGroup",
+            "model": "aws-elasticache-controller",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["settings", "globalReplicationGroupID"]],
+              "description": "The GlobalReplicationGroup provides its ID for regional ReplicationGroups to reference."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ],
+  "evaluationQuery": "hierarchical_parent_relationship"
+}
