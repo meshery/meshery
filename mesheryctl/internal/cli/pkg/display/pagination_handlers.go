@@ -93,7 +93,12 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 
 		if len(rows) == 0 {
 			if currentPage == 0 {
-				return false, utils.ErrNotFound(errors.New("no results found"))
+				msg := "no results found"
+				if displayData.ErrNotFoundMsg != "" {
+					msg = displayData.ErrNotFoundMsg
+				}
+				return false, utils.ErrNotFound(errors.New(msg))
+
 			}
 			return false, nil
 		}
