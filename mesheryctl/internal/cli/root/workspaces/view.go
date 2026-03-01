@@ -52,7 +52,7 @@ mesheryctl exp workspace view [workspace-name|workspace-id] --output-format json
 
 // View details of a specific workspace and save it to a file
 mesheryctl exp workspace view [workspace-name|workspace-id] --output-format json --save
-`,
+	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp workspace view [workspace-name|workspace-id]\nRun 'mesheryctl exp workspace view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -65,7 +65,6 @@ mesheryctl exp workspace view [workspace-name|workspace-id] --output-format json
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workspaceNameOrID := args[0]
-
 		var selectedWorkspace *models.Workspace
 
 		if isWorkspaceArgumentUUID(workspaceNameOrID) {
@@ -103,12 +102,13 @@ mesheryctl exp workspace view [workspace-name|workspace-id] --output-format json
 		}
 
 		if workspaceViewFlagsProvided.save {
-			workspaceString := strings.ReplaceAll(fmt.Sprintf("%v", selectedWorkspace.Name), " ", "_")
+			workspaceString := strings.ReplaceAll(selectedWorkspace.Name, " ", "_")
 			if workspaceString == "" {
 				workspaceString = selectedWorkspace.ID.String()
 			}
 			fileName := fmt.Sprintf("workspace_%s.%s", workspaceString, strings.ToLower(workspaceViewFlagsProvided.outputFormat))
 			file := filepath.Join(homeDir, ".meshery", fileName)
+
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[models.Workspace]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.outputFormat, outputFormatter)
 			if err != nil {
@@ -125,7 +125,7 @@ mesheryctl exp workspace view [workspace-name|workspace-id] --output-format json
 	},
 }
 
-func selectWorkspacePrompt(workspacesList []models.Workspace) *models.Workspace {
+func selectWorkspacePrompt(workspacesList []models.Workspace) (*models.Workspace, error) {
 	workspaceNames := []string{}
 
 	for _, w := range workspacesList {
@@ -138,13 +138,14 @@ func selectWorkspacePrompt(workspacesList []models.Workspace) *models.Workspace 
 		Items: workspaceNames,
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
+	i, _, err := prompt.Run()
+	if err != nil {
+		if errors.Is(err, promptui.ErrInterrupt) {
+			return nil, errors.New("workspace selection cancelled")
 		}
-		return &workspacesList[i]
+		return nil, err
 	}
+	return &workspacesList[i], nil
 }
 
 func isWorkspaceArgumentUUID(arg string) bool {
@@ -178,7 +179,7 @@ func fetchWorkspaceByName(workspaceName string) (*models.Workspace, error) {
 	}
 
 	if workspacesResponse.TotalCount > 1 {
-		return selectWorkspacePrompt(workspacesResponse.Workspaces), nil
+		return selectWorkspacePrompt(workspacesResponse.Workspaces)
 	}
 
 	return &workspacesResponse.Workspaces[0], nil
