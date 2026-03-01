@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"os"
 
 	"github.com/fatih/color"
@@ -102,11 +103,16 @@ func renderTable(table *tablewriter.Table, data [][]string, header, footer []str
 	}
 }
 
-// PrintToTable prints the given data into a table format
+// PrintToTable prints the given data into a table format to os.Stdout
 func PrintToTable(header []string, data [][]string, footer []string) {
+	PrintToTableWithWriter(os.Stdout, header, data, footer)
+}
+
+// PrintToTableWithWriter allows providing a custom writer (useful for testing)
+func PrintToTableWithWriter(w io.Writer, header []string, data [][]string, footer []string) {
 	options := generateTableOptions()
 
-	table := tablewriter.NewTable(os.Stdout,
+	table := tablewriter.NewTable(w, // Use the passed writer instead of os.Stdout
 		options...,
 	)
 
