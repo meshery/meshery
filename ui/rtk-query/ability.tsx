@@ -99,16 +99,13 @@ const SelectedOrganizationProvider = ({ children }) => {
   }
 
   if (errorLoadingAbilities) {
+    const errorMessage =
+      (errorLoadingAbilities as any)?.message ||
+      'An error occurred while fetching your organization permissions';
     return (
       <>
         <DefaultError />
-        <CustomErrorMessage
-          message={
-            errorLoadingAbilities.message ||
-            'An error occurred while fetching your organization permissions'
-          }
-          showImage={false}
-        />
+        <CustomErrorMessage message={errorMessage} showImage={false} />
       </>
     );
   }

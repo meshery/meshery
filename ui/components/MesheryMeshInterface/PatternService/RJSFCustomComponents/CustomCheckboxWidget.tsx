@@ -41,13 +41,9 @@ export const CustomCheckboxWidget = (props) => {
         }
         label={
           <>
-            {labelValue(label, hideLabel, required)}
+            {labelValue(label, hideLabel, false)}
             {schema.description && (
-              <CustomTextTooltip
-                flag={props?.formContext?.overrideFlag}
-                title={schema?.description}
-                interactive={true}
-              >
+              <CustomTextTooltip title={schema?.description} interactive={true}>
                 <IconButton component="span" size="small">
                   <HelpOutlineIcon
                     width="14px"

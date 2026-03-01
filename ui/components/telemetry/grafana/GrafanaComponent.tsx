@@ -23,6 +23,7 @@ import {
 } from '@/rtk-query/telemetry';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
 import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '@/store/index';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateGrafanaConfig } from '@/store/slices/telemetry';
 
@@ -42,19 +43,19 @@ const GrafanaChartsWrapper = styled(Box)(() => {
 });
 
 const GrafanaComponent = (props) => {
-  const { grafana } = useSelector((state) => state.telemetry);
-  const [state, setState] = useState({
+  const { grafana } = useSelector((state: RootState) => state.telemetry);
+  const [state, setState] = useState<any>({
     urlError: false,
     grafanaConfigSuccess: grafana.grafanaURL !== '',
     grafanaBoardSearch: '',
     grafanaURL: grafana.grafanaURL,
     grafanaAPIKey: grafana.grafanaAPIKey,
-    grafanaBoards: grafana.grafanaBoards,
-    connectionID: grafana.connectionID,
-    connectionName: grafana.connectionName,
-    selectedBoardsConfigs: grafana.selectedBoardsConfigs,
+    grafanaBoards: grafana.grafanaBoards || [],
+    connectionID: (grafana as any).connectionID ?? '',
+    connectionName: (grafana as any).connectionName ?? '',
+    selectedBoardsConfigs: grafana.selectedBoardsConfigs || [],
     ts: grafana.ts,
-  });
+  } as any);
 
   //RTK Queries: Loading the Grafana configuration on component mount
   const {
@@ -74,15 +75,15 @@ const GrafanaComponent = (props) => {
   const updateState = (newState) => {
     setState((prev) => ({ ...prev, ...newState }));
   };
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig } = useSelector((state: RootState) => state.ui);
+  const { selectedK8sContexts } = useSelector((state: RootState) => state.ui);
   const dispatch = useDispatch();
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
-  const isValidGrafanaURL = (url) => {
-    const urlStr = url?.value;
+  const isValidGrafanaURL = (url: any) => {
+    const urlStr = typeof url === 'string' ? url : url?.value;
     return (
       Boolean(urlStr) &&
       (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
@@ -92,7 +93,7 @@ const GrafanaComponent = (props) => {
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
     // Validate URL with regex
-    if (!isValidGrafanaURL(grafanaURL.value)) {
+    if (!isValidGrafanaURL(grafanaURL)) {
       updateState({ urlError: true });
       return;
     }
@@ -140,7 +141,7 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    const urlStr = grafanaURL?.value;
+    const urlStr = typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value;
     if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
@@ -192,7 +193,7 @@ const GrafanaComponent = (props) => {
       const res = await getCredentialByID(grafanaConnectionObj.credential_id);
       const grafanaCfg = {
         grafanaURL: grafanaConnectionObj?.value || '',
-        grafanaAPIKey: res?.secret?.secret || '',
+        grafanaAPIKey: (res as any)?.secret?.secret || '',
         grafanaBoardSearch:
           grafanaConnectionObj?.metadata?.grafanaBoardSearch || state.grafanaBoardSearch,
         grafanaBoards: grafanaConnectionObj?.metadata?.grafana_boards || [],
@@ -261,11 +262,11 @@ const GrafanaComponent = (props) => {
     props.ping(state.connectionName, state.grafanaURL, state.connectionID);
   };
 
-  const addSelectedBoardPanelConfig = (boardsSelection) => {
+  const addSelectedBoardPanelConfig = (boardsSelection: any) => {
     const { selectedBoardsConfigs } = state;
     if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {
-      selectedBoardsConfigs?.push(boardsSelection);
-      persistBoardSelection(selectedBoardsConfigs);
+      const updatedConfigs = [...(selectedBoardsConfigs || []), boardsSelection];
+      persistBoardSelection(updatedConfigs);
     }
   };
 
@@ -318,9 +319,10 @@ const GrafanaComponent = (props) => {
   };
 
   useEffect(() => {
+    const grafanaAny = grafana as any;
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs, connectionID, connectionName, ts } =
-      grafana;
-    if (grafana.ts > state.ts) {
+      grafanaAny;
+    if (grafanaAny.ts > state.ts) {
       updateState({
         grafanaURL,
         grafanaAPIKey,
@@ -376,7 +378,7 @@ const GrafanaComponent = (props) => {
   } = state;
 
   if (grafanaConfigSuccess) {
-    let displaySelec = null;
+    let displaySelec: React.ReactElement | null = null;
     if (selectedBoardsConfigs?.length > 0) {
       displaySelec = (
         <>
@@ -404,7 +406,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={grafanaURL?.valu}
+            grafanaURL={typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}
@@ -421,7 +423,6 @@ const GrafanaComponent = (props) => {
   return (
     <NoSsr>
       <GrafanaConfigComponent
-        grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
         grafanaAPIKey={grafanaAPIKey}
         urlError={urlError}
         handleChange={(name) => (value) => {

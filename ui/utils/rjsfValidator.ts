@@ -1,43 +1,28 @@
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import { customizeValidator } from '@rjsf/validator-ajv8';
 
-// Create a custom ajv instance with OpenAPI/Kubernetes format support
-const ajv = new Ajv({
-  allErrors: true,
-  strict: false,
-  validateFormats: true,
-});
-
-// Add standard formats (date-time, email, etc.)
-addFormats(ajv);
-
-// Add custom format validators for OpenAPI/Kubernetes specific formats
-ajv.addFormat('int32', {
-  type: 'number',
-  validate: (value) => {
-    return Number.isInteger(value) && value >= -2147483648 && value <= 2147483647;
+// Create a custom validator using ajv options and custom formats for OpenAPI/Kubernetes
+const customValidator = customizeValidator({
+  ajvOptionsOverrides: {
+    allErrors: true,
+    strict: false,
+  },
+  customFormats: {
+    int32: (value: string) => {
+      const num = Number(value);
+      return Number.isInteger(num) && num >= -2147483648 && num <= 2147483647;
+    },
+    int64: (value: string) => {
+      const num = Number(value);
+      return (
+        Number.isInteger(num) && num >= Number.MIN_SAFE_INTEGER && num <= Number.MAX_SAFE_INTEGER
+      );
+    },
+    'int-or-string': (value: string) => {
+      // Accept either an integer-like value or any string
+      const num = Number(value);
+      return Number.isInteger(num) || typeof value === 'string';
+    },
   },
 });
-
-ajv.addFormat('int64', {
-  type: 'number',
-  validate: (value) => {
-    return (
-      Number.isInteger(value) &&
-      value >= Number.MIN_SAFE_INTEGER &&
-      value <= Number.MAX_SAFE_INTEGER
-    );
-  },
-});
-
-ajv.addFormat('int-or-string', {
-  validate: (value) => {
-    return typeof value === 'string' || Number.isInteger(value);
-  },
-});
-
-// Create a custom validator using the configured ajv instance
-const customValidator = customizeValidator({}, ajv);
 
 export default customValidator;

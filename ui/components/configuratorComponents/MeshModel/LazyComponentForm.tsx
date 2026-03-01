@@ -54,8 +54,8 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     } = model;
     try {
       if (isEmpty(schemaSet)) {
-        const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
-        if (res.components[0]) {
+        const res = (await getMeshModelComponent(modelName, kind, version, apiVersion)) as any;
+        if (res?.components?.[0]) {
           setSchemaSet({
             workload: JSON.parse(res.components[0].component.schema), // has to be removed
           });
@@ -65,9 +65,9 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
       }
     } catch (error) {
       notify({
-        message: `error getting schema: ${error?.message}`,
+        message: `error getting schema: ${(error as any)?.message}`,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
+        details: null,
       });
     }
   }
@@ -89,6 +89,11 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
               color={component?.styles?.primaryColor}
               {...otherprops}
               schemaSet={schemaSet}
+              onSubmit={() => {}}
+              onDelete={() => {}}
+              reference=""
+              namespace=""
+              onSettingsChange={() => {}}
             />
           )}
         </LazyAccordionDetails>

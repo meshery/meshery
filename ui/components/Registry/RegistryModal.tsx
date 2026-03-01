@@ -36,7 +36,9 @@ import { removeDuplicateVersions } from '../Settings/Registry/helper';
 
 const DRAWER_WIDTH = 250;
 
-const DrawerHeader = styled('div')(({ theme, open }) => ({
+const DrawerHeader = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }: any) => ({
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: open ? 'flex-end' : 'center',
@@ -136,7 +138,7 @@ const StyledModal = styled(Modal)(({ theme }) => ({
   },
 }));
 
-const getNavItems = (theme, counts) => {
+const getNavItems = (theme: any, counts: any) => {
   return [
     {
       id: MODELS,
@@ -146,7 +148,19 @@ const getNavItems = (theme, counts) => {
     {
       id: COMPONENTS,
       label: `Components (${counts.components})`,
-      icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
+      icon: (
+        <ComponentIcon
+          {...({
+            ...iconSmall,
+            width: String(iconSmall.width),
+            height: String(iconSmall.height),
+          } as any)}
+          fill={theme.palette.icon.default}
+          color={theme.palette.icon.default}
+          secondaryfill={theme.palette.icon.default}
+          className=""
+        />
+      ),
     },
     {
       id: RELATIONSHIPS,
@@ -168,7 +182,7 @@ const getNavItems = (theme, counts) => {
   ];
 };
 
-const NavItem = ({ item, open, selectedId, onSelect }) => {
+const NavItem = ({ item, open, selectedId, onSelect }: any) => {
   return (
     <CustomTooltip title={item.label} disableHoverListener={open} placement="right">
       <ListItem disablePadding sx={{ display: 'block' }}>
@@ -197,7 +211,7 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
   );
 };
 
-const RegistryContentWrapper = ({ selectedView, searchText, selectedItemUUID }) => {
+const RegistryContentWrapper = ({ selectedView, searchText, selectedItemUUID }: any) => {
   return (
     <MeshModelComponent
       externalView={selectedView}
@@ -207,7 +221,7 @@ const RegistryContentWrapper = ({ selectedView, searchText, selectedItemUUID }) 
   );
 };
 
-export const Navigation = ({ setHeaderInfo }) => {
+export const Navigation = ({ setHeaderInfo }: any) => {
   const theme = useTheme();
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
@@ -221,16 +235,16 @@ export const Navigation = ({ setHeaderInfo }) => {
     }
   }, [selectedView]);
 
-  const { data: modelsData, isLoading: modelsLoading } = useGetMeshModelsQuery({
+  const { data: modelsData, isLoading: _modelsLoading } = useGetMeshModelsQuery({
     params: { pagesize: 'all' },
   });
-  const { data: componentsData, isLoading: componentsLoading } = useGetComponentsQuery({
+  const { data: componentsData, isLoading: _componentsLoading } = useGetComponentsQuery({
     params: { pagesize: 'all' },
   });
-  const { data: relationshipsData, isLoading: relationshipsLoading } = useGetRelationshipsQuery({
+  const { data: relationshipsData, isLoading: _relationshipsLoading } = useGetRelationshipsQuery({
     params: { pagesize: 'all' },
   });
-  const { data: registrantsData, isLoading: registrantsLoading } = useGetRegistrantsQuery({
+  const { data: registrantsData, isLoading: _registrantsLoading } = useGetRegistrantsQuery({
     params: { pagesize: 'all' },
   });
   const counts = {
@@ -245,8 +259,8 @@ export const Navigation = ({ setHeaderInfo }) => {
     setOpen(!open);
   };
 
-  const updateHeaderInfo = (id) => {
-    const item = navConfig.find((nav) => nav.id === id);
+  const updateHeaderInfo = (id: string) => {
+    const item = navConfig.find((nav: any) => nav.id === id);
     if (item) {
       setHeaderInfo({
         title: `Registry - ${id}`,
@@ -255,8 +269,7 @@ export const Navigation = ({ setHeaderInfo }) => {
     }
   };
 
-  const handleItemSelect = (id) => {
-    setSelectedId(id);
+  const handleItemSelect = (id: string) => {
     registryContext.setSelectedView(id);
     updateHeaderInfo(id);
   };
@@ -281,6 +294,7 @@ export const Navigation = ({ setHeaderInfo }) => {
           ))}
         </List>
 
+        {/* @ts-expect-error - open is a custom prop handled by shouldForwardProp */}
         <DrawerHeader open={open}>
           <IconButton onClick={handleDrawerToggle}>
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -292,10 +306,6 @@ export const Navigation = ({ setHeaderInfo }) => {
           selectedView={selectedId}
           searchText={searchText}
           selectedItemUUID={selectedItemUUID}
-          counts={counts}
-          isLoading={
-            modelsLoading || componentsLoading || relationshipsLoading || registrantsLoading
-          }
         />
       </StyledMainContent>
     </Box>

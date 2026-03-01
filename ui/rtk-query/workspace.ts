@@ -27,8 +27,9 @@ const workspacesApi = api
           });
 
           if (expandInfo && workspaces.data && !workspaces.error) {
+            const workspacesData = workspaces.data as any;
             const modifiedWorkspaces = await Promise.all(
-              workspaces.data.workspaces.map(async (workspace) => {
+              workspacesData.workspaces.map(async (workspace) => {
                 const [designs, environments, views, teams] = await Promise.all([
                   dispatch(
                     workspacesApi.endpoints.getDesignsOfWorkspace.initiate({
@@ -62,12 +63,17 @@ const workspacesApi = api
                   ),
                 ]);
 
+                const designsData = designs.data as any;
+                const environmentsData = environments.data as any;
+                const viewsData = views.data as any;
+                const teamsData = teams.data as any;
+
                 return {
                   ...workspace,
-                  designCount: designs.data?.total_count || 0,
-                  environmentCount: environments.data?.total_count || 0,
-                  viewCount: views.data?.total_count || 0,
-                  teamCount: teams.data?.total_count || 0,
+                  designCount: designsData?.total_count || 0,
+                  environmentCount: environmentsData?.total_count || 0,
+                  viewCount: viewsData?.total_count || 0,
+                  teamCount: teamsData?.total_count || 0,
                 };
               }),
             );
@@ -151,7 +157,8 @@ const workspacesApi = api
             method: 'GET',
           });
           if (expandUser && designs.data && !designs.error) {
-            const withUsersPromises = designs.data.designs.map(async (design) => {
+            const designsData = designs.data as any;
+            const withUsersPromises = designsData.designs.map(async (design) => {
               const user = await dispatch(userApi.endpoints.getUserById.initiate(design.user_id));
               return {
                 ...design,
@@ -183,10 +190,12 @@ const workspacesApi = api
           if (arg.page === 0) {
             return newItems;
           }
+          const current = currentCache as any;
+          const incoming = newItems as any;
           return {
-            ...(currentCache || {}),
-            ...(newItems || {}),
-            designs: [...(currentCache?.designs || []), ...(newItems?.designs || [])],
+            ...(current || {}),
+            ...(incoming || {}),
+            designs: [...(current?.designs || []), ...(incoming?.designs || [])],
           };
         },
         forceRefetch({ currentArg, previousArg }) {
@@ -220,7 +229,8 @@ const workspacesApi = api
             method: 'GET',
           });
           if (expandUser && views.data && !views.error) {
-            const withUsersPromises = views.data.views.map(async (view) => {
+            const viewsData = views.data as any;
+            const withUsersPromises = viewsData.views.map(async (view) => {
               const user = await dispatch(userApi.endpoints.getUserById.initiate(view.user_id));
               return {
                 ...view,
@@ -251,10 +261,12 @@ const workspacesApi = api
           if (arg.page === 0) {
             return newItems;
           }
+          const current = currentCache as any;
+          const incoming = newItems as any;
           return {
-            ...(currentCache || {}),
-            ...(newItems || {}),
-            views: [...(currentCache?.views || []), ...(newItems?.views || [])],
+            ...(current || {}),
+            ...(incoming || {}),
+            views: [...(current?.views || []), ...(incoming?.views || [])],
           };
         },
         forceRefetch({ currentArg, previousArg }) {
@@ -264,7 +276,6 @@ const workspacesApi = api
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
         query: (queryArg) => ({
@@ -321,7 +332,7 @@ const workspacesApi = api
             order: queryArg.order,
           },
         }),
-        invalidatesTags: () => [{ type: TAGS.TEAMS }],
+        providesTags: () => [{ type: TAGS.TEAMS }],
       }),
     }),
   });

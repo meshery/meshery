@@ -81,15 +81,15 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
     const newId = e.target.value;
     setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
     updateSelectedWorkspace(selectedOrganization.id, newId);
-    openWorkspaceModal(true);
+    openWorkspaceModal();
   };
 
   if (workspaceError) {
-    return <div>Error: {workspaceError.message}</div>;
+    return <div>Error loading workspaces</div>;
   }
 
   if (isLoadingWorkspaces || isUpdatingSelectedWorkspace) {
-    return <CircularProgress height="1.5rem" width="1.5rem" />;
+    return <CircularProgress size="1.5rem" />;
   }
 
   return (
@@ -111,6 +111,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
             <FormGroup>
               <FormControlLabel
                 key="SpacesPreferences"
+                label=""
                 control={
                   <Grid2 container spacing={1} alignItems="flex-end" size="grow">
                     <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
@@ -151,7 +152,6 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             vertical: 'top',
                             horizontal: 'left',
                           },
-                          getContentAnchorEl: null,
                         }}
                       >
                         {allWorkspaces?.map((works) => (
@@ -175,7 +175,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                           <Button
                             variant="contained"
                             onClick={() => {
-                              openWorkspaceModal(true);
+                              openWorkspaceModal();
                             }}
                           >
                             Explore Workspaces
@@ -188,7 +188,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                                 name: 'All Workspaces',
                               });
                               setCreateNewWorkspaceModalOpen(true);
-                              openWorkspaceModal(true);
+                              openWorkspaceModal();
                             }}
                           >
                             Create Workspace

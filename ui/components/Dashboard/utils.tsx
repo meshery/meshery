@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FALLBACK_KUBERNETES_IMAGE_PATH, KUBERNETES } from '@/constants/common';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import { componentIcon } from '@sistent/sistent';
@@ -7,7 +6,15 @@ import React from 'react';
 
 const failedIconSources = new Set();
 
-const GetKubernetesNodeIcon = ({ kind, size, model }) => {
+const GetKubernetesNodeIcon = ({
+  kind,
+  size,
+  model,
+}: {
+  kind: string;
+  size?: any;
+  model?: string;
+}) => {
   const imgSrc = componentIcon({
     kind: kind?.toLowerCase(),
     color: 'color',

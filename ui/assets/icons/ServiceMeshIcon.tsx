@@ -2,14 +2,14 @@ import { useTheme } from '@sistent/sistent';
 
 const ServiceMeshIcon = (props) => {
   const theme = useTheme();
-  const fill = props.fill ? props.fill : theme.palette.background.constant.white;
+  const fill = props.fill ? props.fill : theme.palette.background?.constant?.white || '#ffffff';
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 172.63 184.19"
       width={props.width ? props.width : '24px'}
       height={props.height ? props.height : '24px'}
-      fill={props.fill ? props.fill : theme.palette.background.constant.white}
+      fill={props.fill ? props.fill : theme.palette.background?.constant?.white || '#ffffff'}
       onClick={props.onClick}
       className={props.className}
       color={props.color ? props.color : 'unset'}

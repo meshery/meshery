@@ -9,7 +9,15 @@ interface LayoutProps {
 
 const Layout = (props: LayoutProps) => (
   <div style={layoutStyle}>
-    <Header />
+    <Header
+      onDrawerToggle={() => {}}
+      onDrawerCollapse={false}
+      contexts={{}}
+      activeContexts={[]}
+      setActiveContexts={(_arg?: any) => {}}
+      searchContexts={(_arg?: any) => {}}
+      abilityUpdated={false}
+    />
     {props.children}
   </div>
 );

@@ -13,6 +13,8 @@ import {
 import { iconSmall } from '../../../../css/icons.styles';
 
 export default function SimpleAccordion(props) {
+  const accordionDetailsRef = React.useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     // for managing focus
     if (accordionDetailsRef.current) {
@@ -22,15 +24,19 @@ export default function SimpleAccordion(props) {
       });
     }
   }, []);
-  // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
-
-  const accordionDetailsRef = React.useRef(null);
   const theme = useTheme();
   return (
     <Box width={'100%'} marginBottom={'0rem'}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
-          expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}
+          expandIcon={
+            <ExpandMoreIcon
+              width={iconSmall.width}
+              height={iconSmall.height}
+              style={iconSmall}
+              fill="gray"
+            />
+          }
           aria-controls="panel1a-content"
           id="panel1a-header"
           style={{ backgroundColor: 'F7F7F7' }}
@@ -46,12 +52,16 @@ export default function SimpleAccordion(props) {
 
           {props.childProps.hasRemove && (
             <IconButton
-              style={{ padding: '0', iconSmall }}
-              // style={btnStyle, iconSmall}
+              style={{ padding: '0', ...iconSmall }}
               disabled={props.childProps.disabled || props.childProps.readonly}
               onClick={props.childProps.onDropIndexClick(props.childProps.index)}
             >
-              <DeleteIcon fill="gray" style={iconSmall} />
+              <DeleteIcon
+                width={iconSmall.width}
+                height={iconSmall.height}
+                fill="gray"
+                style={iconSmall}
+              />
             </IconButton>
           )}
         </MuiAccordionSummary>

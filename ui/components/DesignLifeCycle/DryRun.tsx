@@ -64,7 +64,7 @@ const ExpandableComponentErrors = ({
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
     isCurrentComponent(componentName),
   );
-  const currentComponentErrorRef = useRef(null);
+  const currentComponentErrorRef = useRef<HTMLDivElement | null>(null);
 
   const onErrorTap = (error) => {
     if (!validationMachine) {
@@ -96,8 +96,11 @@ const ExpandableComponentErrors = ({
       aria-labelledby="nested-list-subheader"
       ref={isCurrentComponent(componentName) ? currentComponentErrorRef : null}
     >
-      <DryRunComponentLabel button onClick={() => setIsComponentAccordionOpen((p) => !p)}>
-        {componentIcon && <ComponentIcon iconSrc={componentIcon} />}
+      <DryRunComponentLabel
+        {...({ button: true } as any)}
+        onClick={() => setIsComponentAccordionOpen((p) => !p)}
+      >
+        {componentIcon && <ComponentIcon iconSrc={componentIcon} label={componentName} />}
         <ListItemText primary={componentName} />({errors.length})
         {isComponentAccordionOpen ? <ExpandLess /> : <ExpandMore />}
       </DryRunComponentLabel>
@@ -106,7 +109,10 @@ const ExpandableComponentErrors = ({
         in={isComponentAccordionOpen}
         timeout="auto"
         unmountOnExit
-        style={{ height: '100%', border: `solid 2px ${theme.palette.background.error.default}` }}
+        style={{
+          height: '100%',
+          border: `solid 2px ${theme.palette.background?.error?.default || NOTIFICATIONCOLORS.ERROR}`,
+        }}
       >
         <List style={{ height: '100%' }}>
           {errors?.length > 0 &&
@@ -119,23 +125,17 @@ const ExpandableComponentErrors = ({
               >
                 <ListItemIcon>
                   {' '}
-                  <ErrorIcon
-                    height="24px"
-                    width="24px"
-                    bangFill="#fff"
-                    fill={NOTIFICATIONCOLORS.ERROR_DARK}
-                  />{' '}
+                  <ErrorIcon height="24px" width="24px" fill={NOTIFICATIONCOLORS.ERROR_DARK} />{' '}
                 </ListItemIcon>
 
                 {typeof err === 'string' ? (
                   <DryRunSignleError
                     disableTypography
                     primary={
-                      <Typography variant="subtitle2" disablePadding>
+                      <Typography variant="subtitle2" sx={{ padding: 0 }}>
                         {err}
                       </Typography>
                     }
-                    disablePadding
                   ></DryRunSignleError>
                 ) : (
                   <div
@@ -147,13 +147,13 @@ const ExpandableComponentErrors = ({
                   >
                     <Typography
                       variant="subtitle2"
-                      disablePadding
+                      sx={{ padding: 0 }}
                       style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}
                     >
                       {breakCapitalizedWords(err.Type || '')}: {getFieldPathString(err.FieldPath)}
                     </Typography>
 
-                    <Typography variant="subtitle2" disablePadding>
+                    <Typography variant="subtitle2" sx={{ padding: 0 }}>
                       {err.Message}
                     </Typography>
                   </div>
@@ -187,17 +187,21 @@ export const FormatDryRunResponse = ({
     <DryRunRootListStyled
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
+        <ValidationSubHeader disableSticky={true} component="div" id="nested-list-subheader">
           {canShowComponentCount && (
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.default }}>
+            <Typography
+              variant="h6"
+              sx={{ padding: 0 }}
+              style={{ color: theme.palette.text.default }}
+            >
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
           )}
           <Typography
             data-testid="dry-run-summary-errors"
-            varaint="h6"
-            disablePadding
+            variant="h6"
+            sx={{ padding: 0 }}
             style={{
               color: `${
                 totalDryRunErrors > 0
@@ -230,9 +234,9 @@ export const FormatDryRunResponse = ({
       ) : (
         <Typography
           data-testid="dry-run-summary-success"
-          varaint="h6"
+          variant="h6"
           align="center"
-          disablePadding
+          sx={{ padding: 0 }}
         >
           No deployment errors.
         </Typography>
@@ -265,6 +269,7 @@ const DryRunComponent = (props) => {
         design,
         k8sContexts: selectedK8sContexts,
         includeDependencies,
+        returnAddress: undefined,
       }),
     );
   }, [includeDependencies]);

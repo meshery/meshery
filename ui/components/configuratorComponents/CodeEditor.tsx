@@ -22,10 +22,10 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, onChange }) {
               gutters: ['CodeMirror-lint-markers'],
               mode: 'text/x-yaml',
             }}
-            onChange={(a, b, c) => {
-              onChange(a, b, c);
+            onChange={(value, viewUpdate) => {
+              onChange?.(value, viewUpdate);
             }}
-            onBlur={(a) => saveCodeEditorChanges(a)}
+            onBlur={(value) => saveCodeEditorChanges?.(value)}
           />
         </CodeMirrorWrapper>
       </CardContent>

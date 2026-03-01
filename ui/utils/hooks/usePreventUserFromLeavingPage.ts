@@ -1,12 +1,12 @@
-import SingletonRouter, { Router } from 'next/router';
+import SingletonRouter from 'next/router';
 import React from 'react';
 
 /**
  * Restrict the user to navigate away to another page
- * @param {bool} preventLeave
+ * @param {boolean} preventLeave
  * @returns
  */
-export default function usePreventUserFromLeavingPage(preventLeave) {
+export default function usePreventUserFromLeavingPage(preventLeave: boolean) {
   const confirmationMsg = 'You might have some unsaved changes. Are you sure you want to leave?';
   const [shouldPreventLeaving, setShouldPreventLeaving] = React.useState(!!preventLeave);
 
@@ -21,21 +21,26 @@ export default function usePreventUserFromLeavingPage(preventLeave) {
       window.onbeforeunload = () => {};
     }
 
-    if (shouldPreventLeaving) {
-      // Prevents next routing
-      SingletonRouter.router.change = (...args) => {
+    let originalChange: ((..._args: any[]) => any) | undefined;
+
+    if (shouldPreventLeaving && SingletonRouter.router) {
+      // Prevents next routing by monkey-patching the internal change method
+      const routerAny = SingletonRouter.router as any;
+      originalChange = routerAny.change;
+      routerAny.change = (...args: any[]) => {
         if (confirm(confirmationMsg)) {
-          return Router.prototype.change.apply(SingletonRouter.router, args);
-        } else {
-          /* eslint-disable */
-          return new Promise((resolve, reject) => resolve(false));
+          return originalChange?.apply(routerAny, args);
         }
+        return Promise.resolve(false);
       };
     }
 
-    // unmount
+    // unmount / dependency cleanup
     return () => {
-      delete SingletonRouter.router.change;
+      if (SingletonRouter.router && originalChange) {
+        (SingletonRouter.router as any).change = originalChange;
+      }
+      window.onbeforeunload = null;
     };
   }, [shouldPreventLeaving]);
 

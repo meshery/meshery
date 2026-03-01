@@ -29,14 +29,22 @@ const Level = ({ children }) => {
  * Pure function to format data
  * @returns {string}
  */
-export const formatDate = (date) => {
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+export const formatDate = (date: string | Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
   const formattedDate = new Date(date).toLocaleDateString('en-US', options);
   return formattedDate;
 };
 
-export const formatTime = (date) => {
-  const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+export const formatTime = (date: string | Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
   const formattedTime = new Date(date).toLocaleTimeString('en-US', options);
   return formattedTime;
 };
@@ -97,7 +105,7 @@ export const FormatId = ({ id }) => {
       </CustomTooltip>
       <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
-          <CopyIcon width="16px" height="16px" />
+          <CopyIcon width={16} height={16} />
         </IconButton>
       </CustomTooltip>
     </Box>
@@ -154,7 +162,7 @@ export const LinkFormatters = {
   },
   DEFAULT: {
     base_url: '',
-    formatter: (link) => <Link title={_.truncate(link, 30)} href={link} />,
+    formatter: (link) => <Link title={_.truncate(link, { length: 30 })} href={link} />,
   },
 };
 
@@ -267,7 +275,7 @@ export const ArrayFormatter = ({ items, style }) => {
       {items.map((item) => (
         <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
           <Level>
-            <DynamicFormatter data={item} />
+            <DynamicFormatter data={item} style={style} />
           </Level>
         </li>
       ))}
@@ -285,7 +293,19 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
+type DynamicFormatterProps = {
+  data: any;
+  uiSchema?: any;
+  isLevel?: boolean;
+  style?: any;
+};
+
+const DynamicFormatter = ({
+  data,
+  uiSchema,
+  isLevel = true,
+  style = {},
+}: DynamicFormatterProps) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
@@ -344,7 +364,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
             {title}
           </SectionHeading>
           <Level>
-            <DynamicFormatter level={level + 1} data={data} style={style} />
+            <DynamicFormatter data={data} style={style} />
           </Level>
         </Grid>
       );
@@ -357,9 +377,9 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
 export const FormatStructuredData = ({
   propertyFormatters = {},
   data,
-  uiSchema,
-  isLevel,
-  style,
+  uiSchema = {},
+  isLevel = true,
+  style = {},
 }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;

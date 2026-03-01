@@ -3,7 +3,28 @@ import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
 
-const initialState = {
+export interface UiState {
+  page: {
+    path: string;
+    title: string;
+    isBeta: boolean;
+  };
+  user: any;
+  k8sConfig: any[];
+  selectedK8sContexts: string[];
+  showProgress: boolean;
+  isDrawerCollapsed: boolean;
+  catalogVisibility: boolean;
+  extensionType: string;
+  capabilitiesRegistry: any;
+  controllerState: any;
+  connectionMetadataState: any;
+  organization: any;
+  workspace: any;
+  keys: any;
+}
+
+const initialState: UiState = {
   page: {
     path: '',
     title: '',
@@ -102,7 +123,6 @@ export const {
   toggleDrawer,
   toggleCatalogContent,
   setControllerState,
-  setMeshsyncSubscription,
   updateExtensionType,
   updateCapabilities,
   setConnectionMetadata,

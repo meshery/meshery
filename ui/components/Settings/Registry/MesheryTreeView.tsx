@@ -77,22 +77,24 @@ const MesheryTreeView = React.memo(
     const scrollRef = useRef<number | null>(null);
 
     const handleScroll = (scrollingView: string) => (event: React.UIEvent<HTMLDivElement>) => {
-      const div = event.target;
+      const div = event.target as HTMLDivElement;
       if (div.scrollTop >= div.scrollHeight - div.clientHeight - 1) {
         setPage((prevPage) => ({
           ...prevPage,
           [scrollingView]: Number(prevPage[scrollingView]) + 1,
         }));
       }
-      if (!data.length === 0) {
+      if (data.length !== 0) {
         scrollRef.current = div.scrollTop;
       }
     };
 
     useEffect(() => {
       if (scrollRef.current) {
-        const div = document.querySelector('.scrollElement');
-        div.scrollTop = scrollRef.current;
+        const div = document.querySelector('.scrollElement') as HTMLDivElement | null;
+        if (div) {
+          div.scrollTop = scrollRef.current;
+        }
       }
     }, [data]);
 
@@ -102,8 +104,8 @@ const MesheryTreeView = React.memo(
 
     // Expand first level tree
     const expandAll = () => {
-      const arr = [];
-      data.map((parent) => {
+      const arr: string[] = [];
+      data.map((parent: any) => {
         if (view === RELATIONSHIPS) {
           // Hard coded for relationships
           // parent id will be same as relationships[0].id
@@ -114,7 +116,7 @@ const MesheryTreeView = React.memo(
           arr.push(`${parent.id}.1`);
         } else {
           arr.push(parent.id);
-          parent.versionBasedData.map((child) => {
+          parent.versionBasedData.map((child: any) => {
             arr.push(`${parent.id}.${child.id}`);
             arr.push(`${parent.id}.${child.id}.1`);
           });
@@ -126,7 +128,7 @@ const MesheryTreeView = React.memo(
     const handleSelect = (_event: unknown, nodeIds: string | string[]) => {
       if ((Array.isArray(nodeIds) ? nodeIds.length : 1) >= 0) {
         const nodeIdList = Array.isArray(nodeIds) ? nodeIds : [nodeIds];
-        const selectedIdArr = nodeIdList[0].split('.');
+        const selectedIdArr = nodeIdList[0]?.split('.') || [];
         let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
 
         // update route -> not in modal mode
@@ -151,38 +153,52 @@ const MesheryTreeView = React.memo(
 
     useEffect(() => {
       // Compare previous data with current data and uuid
+      const currentUuid = Array.isArray(selectedItemUUID) ? selectedItemUUID[0] : selectedItemUUID;
       if (
         prevState.data &&
         JSON.stringify(prevState.data) === JSON.stringify(data) &&
-        prevState.uuid === selectedItemUUID
+        prevState.uuid === currentUuid
       ) {
         return;
       }
 
       // Update the state with the current data and uuid
-      setPrevState({ data, uuid: selectedItemUUID });
+      setPrevState({ data, uuid: currentUuid || '' });
 
       // No data present then return
       if (data.length === 0) {
         return;
       }
 
-      const selectedIdArr = selectedItemUUID.split('.');
+      if (!currentUuid) {
+        setExpanded([]);
+        setSelected([]);
+        setShowDetailsData({
+          type: '',
+          data: {},
+        });
+        return;
+      }
+
+      const selectedIdArr = currentUuid.split('.');
       if (selectedIdArr.length >= 0) {
         // Check if showDetailsData data matches with item from route
         // This will prevent unnecessary state update
         if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
           const newExpanded = selectedIdArr.reduce(
-            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+            (acc: string[], id: string, index: number) => [
+              ...acc,
+              index > 0 ? `${acc[index - 1]}.${id}` : id,
+            ],
             [],
           );
           if (JSON.stringify(newExpanded) !== JSON.stringify(expanded)) {
             setExpanded(newExpanded);
           }
-          if (JSON.stringify([selectedItemUUID]) !== JSON.stringify(selected)) {
-            setSelected([selectedItemUUID]);
+          if (JSON.stringify([currentUuid]) !== JSON.stringify(selected)) {
+            setSelected([currentUuid]);
           }
-          const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
+          const showData = getFilteredDataForDetailsComponent(data, currentUuid);
           if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
             setShowDetailsData(showData);
           }
@@ -195,21 +211,25 @@ const MesheryTreeView = React.memo(
           data: {},
         });
       }
-    }, [selectedItemUUID, data, showDetailsData]);
+    }, [selectedItemUUID, data, showDetailsData, expanded, selected, prevState]);
 
     useEffect(() => {
-      const selectedIdArr = selectedItemUUID.split('.');
+      const currentUuid = Array.isArray(selectedItemUUID) ? selectedItemUUID[0] : selectedItemUUID;
+      if (!currentUuid) {
+        return;
+      }
+      const selectedIdArr = currentUuid.split('.');
       if (selectedIdArr.length >= 0) {
         setTimeout(() => {
           requestAnimationFrame(() => {
-            const selectedNode = document.querySelector(`[data-id="${selectedItemUUID}"]`);
+            const selectedNode = document.querySelector(`[data-id="${currentUuid}"]`);
             if (selectedNode) {
               selectedNode.scrollIntoView({ behavior: 'smooth' });
             }
           });
         }, 1000);
       }
-    }, [view]);
+    }, [view, selectedItemUUID]);
 
     const disabledExpand = () => {
       return view === COMPONENTS;
@@ -294,17 +314,17 @@ const MesheryTreeView = React.memo(
             expanded={isSearchExpanded}
             setExpanded={setSearchExpand}
             placeholder="Search"
-            value={searchText}
+            value={searchText || undefined}
             setModelsFilters={setModelsFilters}
           />
         </div>
       </div>
     );
 
-    const setSearchExpand = (isExpand) => {
+    const setSearchExpand = (isExpand: boolean) => {
       if (!isExpand) {
-        setSearchText(() => null);
-        setResourcesDetail(() => []);
+        setSearchText(null);
+        setResourcesDetail([]);
         setPage({
           Models: 0,
           Components: 0,
@@ -315,7 +335,7 @@ const MesheryTreeView = React.memo(
       setIsSearchExpanded(isExpand);
     };
 
-    const renderTree = (treeComponent, type, isLoading) => {
+    const renderTree = (treeComponent: React.ReactNode, type: string, isLoading: boolean) => {
       const hasControlButtons = type === MODELS || type === RELATIONSHIPS;
       const scrollHeight = hasControlButtons ? '70vh' : '100vh';
       return (
@@ -358,11 +378,11 @@ const MesheryTreeView = React.memo(
               selected={selected}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
-              lastModelRef={lastItemRef[MODELS]}
-              isModelFetching={isFetching[MODELS]}
+              lastModelRef={lastItemRef[MODELS]!}
+              isModelFetching={isFetching[MODELS] ?? false}
             />,
             MODELS,
-            isLoading[view],
+            isLoading[view] ?? false,
           )}
         {view === REGISTRANTS &&
           renderTree(
@@ -374,11 +394,11 @@ const MesheryTreeView = React.memo(
               selected={selected}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
-              lastRegistrantRef={lastItemRef[REGISTRANTS]}
-              isRegistrantFetching={isFetching[REGISTRANTS]}
+              lastRegistrantRef={lastItemRef[REGISTRANTS]!}
+              isRegistrantFetching={isFetching[REGISTRANTS] ?? false}
             />,
             REGISTRANTS,
-            isLoading[view],
+            isLoading[view] ?? false,
           )}
         {view === COMPONENTS &&
           renderTree(
@@ -388,15 +408,12 @@ const MesheryTreeView = React.memo(
               expanded={expanded}
               selected={selected}
               data={data}
-              setExpanded={setExpanded}
-              setSelected={setSelected}
-              setSearchText={setSearchText}
               setShowDetailsData={setShowDetailsData}
-              lastComponentRef={lastItemRef[COMPONENTS]}
-              isComponentFetching={isFetching[COMPONENTS]}
+              lastComponentRef={lastItemRef[COMPONENTS]!}
+              isComponentFetching={isFetching[COMPONENTS] ?? false}
             />,
             COMPONENTS,
-            isLoading[view],
+            isLoading[view] ?? false,
           )}
         {view === RELATIONSHIPS &&
           renderTree(
@@ -407,11 +424,13 @@ const MesheryTreeView = React.memo(
               selected={selected}
               data={data}
               setShowDetailsData={setShowDetailsData}
-              lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
-              isRelationshipFetching={isFetching[RELATIONSHIPS]}
+              {...(lastItemRef[RELATIONSHIPS]
+                ? { lastRegistrantRef: lastItemRef[RELATIONSHIPS] }
+                : {})}
+              isRelationshipFetching={isFetching[RELATIONSHIPS] ?? false}
             />,
             RELATIONSHIPS,
-            isLoading[view],
+            isLoading[view] ?? false,
           )}
       </MesheryTreeViewWrapper>
     );

@@ -88,3 +88,4 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+ui/results.json

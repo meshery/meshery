@@ -7,7 +7,7 @@ import { Box, CircularProgress, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
-import { MesheryExtensionEarlyAccessCardPopup } from '../../components/General/Popup';
+import { MesheryExtensionEarlyAccessCard } from '../../components/General/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
@@ -20,6 +20,7 @@ import {
   updateTitle,
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 
 /**
  * getPath returns the current pathname
@@ -44,14 +45,14 @@ function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
   const dispatch = useDispatch();
-  const { extensionType } = useSelector((state) => state.ui);
-  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
+  const { extensionType } = useSelector((state: RootState) => state.ui);
+  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery(undefined);
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;
     dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
-    let extNames = [];
-    for (var key of Object.keys(capabilitiesRegistry.extensions)) {
+    const extNames: Array<{ name: string; uri: any }> = [];
+    for (const key of Object.keys(capabilitiesRegistry.extensions)) {
       if (Array.isArray(capabilitiesRegistry.extensions[key])) {
         capabilitiesRegistry.extensions[key].forEach((comp) => {
           if (comp?.type === 'full_page') {
@@ -97,17 +98,20 @@ function RemoteExtension() {
         {capabilitiesRegistry !== null && extensionType ? (
           <NoSsr>
             {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+              <ExtensionSandbox
+                type={extensionType as 'navigator' | 'user_prefs' | 'account' | 'collaborator'}
+                Extension={NavigatorExtension}
+              />
             ) : (
               <ExtensionSandbox
-                type={extensionType}
+                type={extensionType as 'navigator' | 'user_prefs' | 'account' | 'collaborator'}
                 Extension={(url) => RemoteComponent({ url })}
               />
             )}
           </NoSsr>
         ) : !isLoading ? (
           <Box display="flex" justifyContent="center">
-            <MesheryExtensionEarlyAccessCardPopup
+            <MesheryExtensionEarlyAccessCard
               rootStyle={{ position: 'relative' }}
               capabilitiesRegistry={capabilitiesRegistry}
             />

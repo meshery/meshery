@@ -24,12 +24,12 @@ const MesheryResults = () => {
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [results, setResults] = useState([]);
-  const [selectedRowData, setSelectedRowData] = useState(null);
-  const [searchTimeout, setSearchTimeout] = useState(null);
-  const { user } = useSelector((state) => state.ui);
+  const [results, setResults] = useState<any[]>([]);
+  const [selectedRowData, setSelectedRowData] = useState<any | null>(null);
+  const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const { user } = useSelector((state: any) => state.ui);
   const dispatch = useDispatch();
-  const { results_selection } = useSelector((state) => state.prefTest);
+  const { results_selection } = useSelector((state: any) => state.prefTest);
   // RTK Query hook for fetching results
   const [trigger, { isFetching, error }] = useLazyGetResultsQuery();
 
@@ -93,8 +93,8 @@ const MesheryResults = () => {
 
   // Format results for display in the table
   const resultsForDisplay = useMemo(() => {
-    return results.map((record) => {
-      const row = {
+    return results.map((record: any) => {
+      const row: any = {
         name: record.name,
         mesh: record.mesh,
         test_start_time: record.runner_results.StartTime,
@@ -104,7 +104,7 @@ const MesheryResults = () => {
       };
 
       const percentiles = record.runner_results.DurationHistogram?.Percentiles || [];
-      percentiles.forEach(({ Percentile, Value }) => {
+      percentiles.forEach(({ Percentile, Value }: any) => {
         row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
       });
 
@@ -253,7 +253,12 @@ const MesheryResults = () => {
             <IconButton
               aria-label="more"
               color="inherit"
-              onClick={() => setSelectedRowData(results[tableMeta.rowIndex])}
+              onClick={() => {
+                const rowData = results[tableMeta.rowIndex];
+                if (rowData) {
+                  setSelectedRowData(rowData);
+                }
+              }}
             >
               <MoreHorizIcon />
             </IconButton>
@@ -266,21 +271,21 @@ const MesheryResults = () => {
 
   // Handle row selection
   const handleRowSelection = useCallback(
-    (currentRowsSelected, allRowsSelected) => {
-      const selectedResults = {};
-      allRowsSelected.forEach(({ dataIndex }) => {
-        if (dataIndex < pageSize) {
+    (currentRowsSelected: any, allRowsSelected: any) => {
+      const selectedResults: any = {};
+      allRowsSelected.forEach(({ dataIndex }: any) => {
+        if (dataIndex < pageSize && results[dataIndex]) {
           selectedResults[dataIndex] = results[dataIndex];
         }
       });
       dispatch(updateResultsSelection({ page, results: selectedResults }));
     },
-    [page, pageSize, results, updateResultsSelection],
+    [page, pageSize, results, dispatch],
   );
 
   // Handle table state changes
   const handleTableChange = useCallback(
-    (action, tableState) => {
+    (action: string, tableState: any) => {
       switch (action) {
         case 'changePage':
           setPage(tableState.page);
@@ -295,13 +300,16 @@ const MesheryResults = () => {
               if (search !== tableState.searchText) {
                 setSearch(tableState.searchText || '');
               }
-            }, 500),
+            }, 500) as ReturnType<typeof setTimeout>,
           );
           break;
         case 'sort': {
           const sortInfo = tableState.announceText?.split(' : ') || [];
           const order = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
-          setSortOrder(`${columns[tableState.activeColumn].name} ${order}`);
+          const activeColumn = columns[tableState.activeColumn];
+          if (activeColumn) {
+            setSortOrder(`${activeColumn.name} ${order}`);
+          }
           break;
         }
         default:
@@ -342,10 +350,14 @@ const MesheryResults = () => {
         <CustomToolbarSelect setSelectedRows={setSelectedRows} />
       ),
       expandableRows: true,
-      renderExpandableRow: (rowData, rowMeta) => {
-        const row = results[rowMeta.dataIndex].runner_results;
-        const boardConfig = results[rowMeta.dataIndex].server_board_config;
-        const serverMetrics = results[rowMeta.dataIndex].server_metrics;
+      renderExpandableRow: (rowData: any, rowMeta: any) => {
+        const result = results[rowMeta.dataIndex];
+        if (!result || !result.runner_results) {
+          return null;
+        }
+        const row = result.runner_results;
+        const boardConfig = result.server_board_config;
+        const serverMetrics = result.server_metrics;
         const startTime = new Date(row.StartTime);
         const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
         const colSpan = rowData.length + 1;
@@ -354,7 +366,7 @@ const MesheryResults = () => {
           <TableRow>
             <TableCell colSpan={colSpan}>
               <div>
-                <MesheryChart rawdata={[results[rowMeta.dataIndex]]} data={[row]} hideTitle />
+                <MesheryChart rawdata={[result]} data={[row]} hideTitle />
               </div>
               {boardConfig && Object.keys(boardConfig).length > 0 && (
                 <div>

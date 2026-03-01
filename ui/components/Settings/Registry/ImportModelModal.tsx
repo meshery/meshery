@@ -36,14 +36,17 @@ const FinishDeploymentStep = ({
   deploymentType: string;
   handleClose: () => void;
 }) => {
-  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const context = useContext(NotificationCenterContext);
+  const operationsCenterActorRef = context?.operationsCenterActorRef;
   const [isDeploying, setIsDeploying] = useState(true);
   const [deployEvent, setDeployEvent] = useState<any>();
 
   useEffect(() => {
-    const subscription = operationsCenterActorRef.on(
+    if (!operationsCenterActorRef) return;
+
+    const subscription = (operationsCenterActorRef as any).on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-      (event) => {
+      (event: any) => {
         const serverEvent = event.data.event;
         if (serverEvent.action === deploymentType) {
           setIsDeploying(false);
@@ -53,7 +56,7 @@ const FinishDeploymentStep = ({
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [operationsCenterActorRef, deploymentType]);
 
   const progressMessage = `${capitalize(deploymentType)}ing model`;
 
@@ -116,15 +119,23 @@ const ImportModelModal = React.memo(
       setActiveStep(0);
     };
 
-    const handleImportModelSubmit = async (data) => {
+    const handleImportModelSubmit = async (data: any) => {
       const { uploadType, url, file } = data;
-      let requestBody = null;
+      let requestBody: any = null;
 
-      const fileElement = document.getElementById('root_file');
+      const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
 
       switch (uploadType) {
         case 'File Import': {
-          const fileName = fileElement.files[0].name;
+          if (!fileElement || !fileElement.files || fileElement.files.length === 0) {
+            console.error('Error: File element not found or no file selected');
+            return;
+          }
+          const fileName = fileElement.files[0]?.name;
+          if (!fileName) {
+            console.error('Error: File name is missing');
+            return;
+          }
           const fileData = getUnit8ArrayDecodedFile(file);
           if (fileData) {
             requestBody = {
@@ -195,7 +206,7 @@ const ImportModelModal = React.memo(
               {label}
             </Typography>
 
-            {enumOptions.map((option, index) => (
+            {enumOptions.map((option: any, index: number) => (
               <FormControlLabel
                 key={option.value}
                 value={option.value}
@@ -238,6 +249,7 @@ const ImportModelModal = React.memo(
               handleNext={handleNext}
               submitBtnText="Next"
               handleClose={handleClose}
+              title="Import Model"
               widgets={widgets}
               helpText={
                 <p>

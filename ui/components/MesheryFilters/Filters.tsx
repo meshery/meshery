@@ -30,10 +30,14 @@ import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
+  // @ts-expect-error - CustomColumnVisibilityControl exists at runtime but types may not be exported
   CustomColumnVisibilityControl,
   CustomTooltip,
+  // @ts-expect-error - ResponsiveDataTable exists at runtime but types may not be exported
   ResponsiveDataTable,
+  // @ts-expect-error - SearchBar exists at runtime but types may not be exported
   SearchBar,
+  // @ts-expect-error - UniversalFilter exists at runtime but types may not be exported
   UniversalFilter,
   importFilterSchema,
   importFilterUiSchema,
@@ -48,6 +52,7 @@ import {
   Button,
   Box,
   styled,
+  // @ts-expect-error - PROMPT_VARIANTS exists at runtime but types may not be exported
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
@@ -94,9 +99,9 @@ const YmlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
 
-const BtnText = styled('span')(({ theme }) => ({
+const BtnText = styled('span')(() => ({
   display: 'block',
-  [theme.breakpoints.down('700')]: {
+  [`@media (max-width: 700px)`]: {
     display: 'none',
   },
 }));
@@ -175,27 +180,21 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <YmlDialogTitle>
-        <DialogTitle
-          disableTypography
-          id="filter-dialog-title"
-          style={{ width: '100%', display: 'flex' }}
+      <YmlDialogTitle id="filter-dialog-title" style={{ width: '100%', display: 'flex' }}>
+        <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
+        <TooltipIcon
+          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+          onClick={toggleFullScreen}
         >
-          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
-          <TooltipIcon
-            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            onClick={toggleFullScreen}
-          >
-            {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
-            ) : (
-              <FullscreenIcon style={iconMedium} />
-            )}
-          </TooltipIcon>
-          <TooltipIcon title="Exit" onClick={onClose}>
-            <CloseIcon style={iconMedium} />
-          </TooltipIcon>
-        </DialogTitle>
+          {fullScreen ? (
+            <FullscreenExitIcon style={iconMedium} />
+          ) : (
+            <FullscreenIcon style={iconMedium} />
+          )}
+        </TooltipIcon>
+        <TooltipIcon title="Exit" onClick={onClose}>
+          <CloseIcon style={iconMedium} />
+        </TooltipIcon>
       </YmlDialogTitle>
       <Divider variant="fullWidth" light />
       <FullScreenCodeMirrorWrapper>
@@ -209,7 +208,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             lint: true,
             mode: 'text/x-yaml',
           }}
-          onChange={(_, data, val) => setYaml(val)}
+          onChange={(val) => setYaml(val)}
         />
       </FullScreenCodeMirrorWrapper>
       <Divider variant="fullWidth" light />
@@ -271,7 +270,7 @@ function MesheryFilters() {
   const [publishSchema, setPublishSchema] = useState<{ rjsfSchema?: any; uiSchema?: any }>({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState<any[]>([]);
-  const { user } = useSelector((state) => state.ui);
+  const { user } = useSelector((state: any) => state.ui);
   const [viewType, setViewType] = useState<TypeView>('grid');
 
   //hooks
@@ -300,7 +299,7 @@ function MesheryFilters() {
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
-  const { catalogVisibility } = useSelector((state) => state.ui);
+  const { catalogVisibility } = useSelector((state: any) => state.ui);
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
 
   const {
@@ -315,7 +314,7 @@ function MesheryFilters() {
     visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
 
-  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery(undefined);
 
   const [cloneFilter] = useCloneFilterMutation();
   const [publishFilter] = usePublishFilterMutation();
@@ -385,7 +384,8 @@ function MesheryFilters() {
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
-        const { models } = await getMeshModels();
+        const response = await getMeshModels();
+        const { models } = response as { models: any[] };
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 
@@ -439,6 +439,8 @@ function MesheryFilters() {
   const handleInfoModalClose = () => {
     setInfoModal({
       open: false,
+      ownerID: '',
+      selectedResource: {},
     });
   };
 
@@ -477,6 +479,7 @@ function MesheryFilters() {
         }
       };
     }
+    return async () => {};
   };
 
   const handlePublishModalClose = () => {
@@ -576,6 +579,7 @@ function MesheryFilters() {
     notify({
       message: `${action.error_msg}: ${error}`,
       event_type: EVENT_TYPES.ERROR,
+      // @ts-ignore - details type definition is incorrect, should accept string
       details: error.toString(),
     });
   };
@@ -681,16 +685,20 @@ function MesheryFilters() {
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       // todo: remove this
-      let body = { save: true };
+      let body: string;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body,
+          save: true,
           filter_data: { filter_file: data, name: metadata.name },
           config: metadata.config,
         });
-      }
-      if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url: data, name: metadata.name, config: metadata.config });
+      } else {
+        body = JSON.stringify({
+          save: true,
+          url: data,
+          name: metadata.name,
+          config: metadata.config,
+        });
       }
       uploadFilterFile({ uploadBody: body })
         .unwrap()
@@ -726,7 +734,7 @@ function MesheryFilters() {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadContent({ id, name, type: 'filter' });
+      downloadContent({ id, name, type: 'filter' } as any);
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" filter downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
@@ -734,7 +742,7 @@ function MesheryFilters() {
     }
   };
 
-  function uploadHandler(ev: React.ChangeEvent<HTMLInputElement>, _: unknown, metadata: any) {
+  function _uploadHandler(ev: React.ChangeEvent<HTMLInputElement>, _: unknown, metadata: any) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -742,15 +750,19 @@ function MesheryFilters() {
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
+      if (!event.target?.result || !(event.target.result instanceof ArrayBuffer)) return;
       let uint8 = new Uint8Array(event.target.result);
       handleSubmit({
-        data: Array.from(uint8),
+        data: Array.from(uint8).join(','),
         name: file?.name || 'meshery_' + Math.floor(trueRandom() * 100),
+        id: '',
         type: FILE_OPS.FILE_UPLOAD,
         metadata: metadata,
       });
     });
-    reader.readAsArrayBuffer(file);
+    if (file) {
+      reader.readAsArrayBuffer(file);
+    }
   }
 
   let colViews = [
@@ -776,6 +788,8 @@ function MesheryFilters() {
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -795,6 +809,8 @@ function MesheryFilters() {
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -817,6 +833,8 @@ function MesheryFilters() {
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={undefined}
+              tooltip={undefined}
             />
           );
         },
@@ -833,7 +851,7 @@ function MesheryFilters() {
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
       },
     },
@@ -845,7 +863,7 @@ function MesheryFilters() {
         sort: false,
         searchable: false,
         customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+          return <DefaultTableCell columnData={column} icon={undefined} tooltip={undefined} />;
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
@@ -909,7 +927,12 @@ function MesheryFilters() {
               ) : (
                 <TooltipIcon
                   title="Unpublish"
-                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
+                  onClick={(ev) => {
+                    const unpublishHandler = handleUnpublishModal(ev, rowData);
+                    if (unpublishHandler) {
+                      unpublishHandler();
+                    }
+                  }}
                   disabled={
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }
@@ -925,8 +948,8 @@ function MesheryFilters() {
   ];
 
   columns.forEach((column, idx) => {
-    if (column.name === sortOrder.split(' ')[0]) {
-      columns[idx].options.sortDirection = sortOrder.split(' ')[1];
+    if (column.name === sortOrder.split(' ')[0] && columns[idx]) {
+      (columns[idx].options as any).sortDirection = sortOrder.split(' ')[1];
     }
   });
 
@@ -997,8 +1020,8 @@ function MesheryFilters() {
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn) {
-        order = `${columns[tableState.activeColumn].name} desc`;
+      if (tableState.activeColumn !== undefined && tableState.activeColumn !== null) {
+        order = `${columns[tableState.activeColumn]?.name || ''} desc`;
       }
 
       switch (action) {
@@ -1031,11 +1054,15 @@ function MesheryFilters() {
           }, 500);
           break;
         case 'sort':
-          if (sortInfo.length === 2) {
+          if (
+            sortInfo.length === 2 &&
+            tableState.activeColumn !== undefined &&
+            tableState.activeColumn !== null
+          ) {
             if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
+              order = `${columns[tableState.activeColumn]?.name || ''} asc`;
             } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
+              order = `${columns[tableState.activeColumn]?.name || ''} desc`;
             }
           }
           if (order !== sortOrder) {
@@ -1077,7 +1104,7 @@ function MesheryFilters() {
   }) {
     updateProgress({ showProgress: true });
     const { uploadType, name, config, url, file } = data;
-    let requestBody = null;
+    let requestBody: string | null = null;
     switch (uploadType) {
       case 'File Upload':
         requestBody = JSON.stringify({
@@ -1101,20 +1128,22 @@ function MesheryFilters() {
         break;
     }
 
-    updateFilterFile({ updateBody: requestBody })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" filter uploaded`,
-          event_type: EVENT_TYPES.SUCCESS,
+    if (requestBody) {
+      updateFilterFile({ updateBody: requestBody })
+        .unwrap()
+        .then(() => {
+          updateProgress({ showProgress: false });
+          notify({
+            message: `"${name}" filter uploaded`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+          getFilters();
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_FILTERS);
         });
-        getFilters();
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_FILTERS);
-      });
+    }
   }
 
   const [tableCols, updateCols] = useState(columns);
@@ -1196,7 +1225,7 @@ function MesheryFilters() {
                         </Button>
                       </CreateButton>
                     )}
-                    <ViewSwitchButton style={{ jdisplay: 'flex' }}>
+                    <ViewSwitchButton style={{ display: 'flex' }}>
                       {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
@@ -1261,16 +1290,24 @@ function MesheryFilters() {
                   handleUploadImport={handleUploadImport}
                   handleClone={handleClone}
                   handleDownload={handleDownload}
-                  uploadHandler={uploadHandler}
                   setSelectedFilter={setSelectedFilter}
                   selectedFilter={selectedFilter}
                   pages={Math.ceil(count / pageSize)}
                   setPage={setPage}
                   selectedPage={page}
-                  publishModal={publishModal}
+                  publishModal={{
+                    ...publishModal,
+                    name: publishModal.name || publishModal.filter?.name || '',
+                  }}
                   setPublishModal={setPublishModal}
-                  publishSchema={publishSchema}
-                  fetch={() => getFilters()}
+                  publishSchema={
+                    publishSchema.rjsfSchema
+                      ? (publishSchema as { rjsfSchema: any; uiSchema: any })
+                      : {
+                          rjsfSchema: publishCatalogItemSchema,
+                          uiSchema: publishCatalogItemUiSchema,
+                        }
+                  }
                   handleInfoModal={handleInfoModal}
                 />
               )}
@@ -1279,7 +1316,7 @@ function MesheryFilters() {
                 CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
                   <PublishModal
                     handleClose={handlePublishModalClose}
-                    title={publishModal.filter?.name}
+                    title={publishModal.filter?.name || publishModal.name || ''}
                     handleSubmit={handlePublish}
                   />
                 )}
@@ -1299,7 +1336,9 @@ function MesheryFilters() {
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    formSchema={publishSchema}
+                    formSchema={
+                      publishSchema.rjsfSchema ? publishSchema : { rjsfSchema: {}, uiSchema: {} }
+                    }
                     meshModels={meshModels}
                     patternFetcher={getFilters}
                   />
@@ -1324,7 +1363,7 @@ const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModal
         open={true}
         closeModal={handleClose}
         headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+          <Filter fill="#fff" height="24px" width="24px" style={{ fontSize: '1.45rem' }} />
         }
         title="Import Design"
         maxWidth="sm"
@@ -1335,6 +1374,9 @@ const ImportModal = React.memo(({ handleClose, handleImportFilter }: ImportModal
           handleSubmit={handleImportFilter}
           submitBtnText="Import"
           handleClose={handleClose}
+          handleNext={() => {}}
+          title="Import Filter"
+          helpText=""
         />
       </SistentModal>
     </>
@@ -1353,7 +1395,7 @@ const PublishModal = React.memo(({ handleClose, handleSubmit, title }: PublishMo
       <SistentModal
         open={true}
         headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+          <Filter fill="#fff" height="24px" width="24px" style={{ fontSize: '1.45rem' }} />
         }
         closeModal={handleClose}
         aria-label="catalog publish"
@@ -1367,6 +1409,8 @@ const PublishModal = React.memo(({ handleClose, handleSubmit, title }: PublishMo
           handleSubmit={handleSubmit}
           helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           handleClose={handleClose}
+          handleNext={() => {}}
+          title={title}
         />
       </SistentModal>
     </>

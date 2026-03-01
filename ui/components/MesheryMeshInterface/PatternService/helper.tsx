@@ -113,15 +113,12 @@ const sortProperties = (properties) => {
       sortedProperties[key] = properties[key];
       if (properties[key]?.properties) {
         // Handles the Objects in the schema
-        sortedProperties[key].properties = sortProperties(properties[key].properties, sortOrder);
+        sortedProperties[key].properties = sortProperties(properties[key].properties);
       }
 
       if (properties[key].items?.properties) {
         // Handles Arrays in the schema
-        sortedProperties[key].items.properties = sortProperties(
-          properties[key].items.properties,
-          sortOrder,
-        );
+        sortedProperties[key].items.properties = sortProperties(properties[key].items.properties);
       }
 
       if (properties[key] || properties[key].items) {
@@ -137,14 +134,11 @@ const sortProperties = (properties) => {
         handleReserve.forEach((item, index) => {
           if (item.properties) {
             // Handles the Objects in the schema
-            handleReserve[index].properties = sortProperties(item.properties, sortOrder);
+            handleReserve[index].properties = sortProperties(item.properties);
           }
           if (item.items?.properties) {
             // Handles Arrays in the schema
-            handleReserve[index].items.properties = sortProperties(
-              item.items.properties,
-              sortOrder,
-            );
+            handleReserve[index].items.properties = sortProperties(item.items.properties);
           }
         });
       }

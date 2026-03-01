@@ -2,37 +2,54 @@ import React, { useState } from 'react';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 import { useLazyGetWorkspacesQuery } from '@/rtk-query/workspace';
 
-export const WorkspaceModalContext = React.createContext({
+type WorkspaceRef = { id: string; name: string };
+type OrgRef = { id: string; name: string };
+type CurrentLoadedResource = { id: string; org: OrgRef; workspace: WorkspaceRef };
+
+type WorkspaceModalContextType = {
+  open: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+  selectedWorkspace: WorkspaceRef;
+  setSelectedWorkspace: (_value: WorkspaceRef) => void;
+  openModalWithDefault: () => void;
+  multiSelectedContent: any[];
+  setMultiSelectedContent: React.Dispatch<React.SetStateAction<any[]>>;
+  createNewWorkspaceModalOpen: boolean;
+  setCreateNewWorkspaceModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  currentLoadedResource: CurrentLoadedResource;
+  onLoadResource: (_args: { id: string; workspaceId?: string; orgId?: string }) => Promise<void>;
+};
+
+export const WorkspaceModalContext = React.createContext<WorkspaceModalContextType>({
   open: false,
-  openModal: () => {},
-  closeModal: () => {},
+  openModal: () => undefined,
+  closeModal: () => undefined,
   selectedWorkspace: { id: '', name: '' },
-  setSelectedWorkspace: () => {},
-  openModalWithDefault: () => {},
+  setSelectedWorkspace: () => undefined,
+  openModalWithDefault: () => undefined,
   multiSelectedContent: [],
-  setMultiSelectedContent: () => {},
+  setMultiSelectedContent: (() => undefined) as unknown as React.Dispatch<
+    React.SetStateAction<any[]>
+  >,
   createNewWorkspaceModalOpen: false,
-  setCreateNewWorkspaceModalOpen: () => {},
+  setCreateNewWorkspaceModalOpen: (() => undefined) as unknown as React.Dispatch<
+    React.SetStateAction<boolean>
+  >,
   currentLoadedResource: {
     id: '',
-    org: {
-      id: '',
-      name: '',
-    },
-    workspace: {
-      id: '',
-      name: '',
-    },
+    org: { id: '', name: '' },
+    workspace: { id: '', name: '' },
   },
-  onLoadResource: () => {},
+  onLoadResource: async () => undefined,
 });
 
-const WorkspaceModalContextProvider = ({ children }) => {
+const WorkspaceModalContextProvider = ({ children }: React.PropsWithChildren) => {
   const { allOrganizations } = useGetSelectedOrganization();
   const [getWorkspaces] = useLazyGetWorkspacesQuery();
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
-  const [multiSelectedContent, setMultiSelectedContent] = useState([]);
+  const [multiSelectedContent, setMultiSelectedContent] = useState<any[]>([]);
   const [createNewWorkspaceModalOpen, setCreateNewWorkspaceModalOpen] = useState(false);
   // stores the context for currently loaded resource . sometime a user might be viewing a resource
   // from differnt org/workpace than the currently selected one
@@ -50,7 +67,11 @@ const WorkspaceModalContextProvider = ({ children }) => {
 
   const onLoadResource = async ({ id, workspaceId, orgId }) => {
     if (!workspaceId && !orgId) {
-      setCurrentLoadedResource({ id, workspace: { id: '' }, org: { id: '' } });
+      setCurrentLoadedResource({
+        id,
+        workspace: { id: '', name: '' },
+        org: { id: '', name: '' },
+      });
       return;
     }
 
@@ -64,11 +85,11 @@ const WorkspaceModalContextProvider = ({ children }) => {
       console.log('onload resource invoked', workspaceId, orgId, org, allOrganizations);
       if (org) {
         resource.org = org;
-        const workspaces = await getWorkspaces({
+        const workspaces = (await getWorkspaces({
           page: 0,
           pagesize: 'all',
           orgID: orgId,
-        }).unwrap();
+        }).unwrap()) as { workspaces?: Array<{ id: string; name: string }> };
         const workspace = (workspaces?.workspaces ?? []).find((w) => w.id == workspaceId);
         if (workspace) {
           resource.workspace = workspace;

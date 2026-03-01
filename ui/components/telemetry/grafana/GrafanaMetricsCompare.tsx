@@ -14,14 +14,14 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const GrafanaMetricsCompare = ({ chartCompare }) => {
-  const [panels, setPanels] = useState({});
+  const [panels, setPanels] = useState<Record<string, any>>({});
   const [panel, setPanel] = useState('');
   const [selectedSeries, setSelectedSeries] = useState('');
-  const [series, setSeries] = useState([]);
+  const [series, setSeries] = useState<string[]>([]);
 
   useEffect(() => {
     const computePanels = (chartCompare) => {
-      const panels = {};
+      const panels: Record<string, any> = {};
       if (chartCompare && chartCompare.length > 0) {
         chartCompare.forEach((cc) => {
           if (cc.boardConfig && cc.boardConfig.panels) {
@@ -37,29 +37,30 @@ const GrafanaMetricsCompare = ({ chartCompare }) => {
     const computedPanels = computePanels(chartCompare);
     setPanels(computedPanels);
 
-    const initialPanel =
-      Object.keys(computedPanels).length > 0 ? Object.keys(computedPanels)[0] : '';
-    let initialSeries = [];
-    if (computedPanels[initialPanel] && computedPanels[initialPanel].targets) {
-      initialSeries = computedPanels[initialPanel].targets.map((target) => target.expr);
+    const initialPanelKey = Object.keys(computedPanels)[0] ?? '';
+    let initialSeries: string[] = [];
+    const initialPanel = computedPanels[initialPanelKey];
+    if (initialPanel?.targets) {
+      initialSeries = initialPanel.targets.map((target: any) => target.expr as string);
     }
-    setPanel(initialPanel);
+    setPanel(initialPanelKey);
     setSeries(initialSeries);
-    setSelectedSeries(initialSeries.length > 0 ? initialSeries[0] : '');
+    setSelectedSeries(initialSeries[0] ?? '');
   }, [chartCompare]);
 
   const handleChange = (name) => (event) => {
     if (name === 'panel') {
-      const selectedPanel = event.target.value;
-      let newSeries = [];
-      if (panels[selectedPanel] && panels[selectedPanel].targets) {
-        newSeries = panels[selectedPanel].targets.map((target) => target.expr);
+      const selectedPanel = String((event as any)?.target?.value ?? '');
+      let newSeries: string[] = [];
+      const panelObj = panels[selectedPanel];
+      if (panelObj?.targets) {
+        newSeries = panelObj.targets.map((target: any) => target.expr as string);
       }
       setPanel(selectedPanel);
       setSeries(newSeries);
-      setSelectedSeries(newSeries.length > 0 ? newSeries[0] : '');
+      setSelectedSeries(newSeries[0] ?? '');
     } else if (name === 'series') {
-      setSelectedSeries(event.target.value);
+      setSelectedSeries(String((event as any)?.target?.value ?? ''));
     }
   };
 
