@@ -43,22 +43,16 @@
           name="versioningSelection"
           id="versioningSelection"
         >
-
           {{ $current := .RelPermalink }}
-          {{ $linkUrlSelected := "" }}
-
           {{ range .Site.Data.versions }}
             {{ $linkUrl := printf "/%s/" .url }}
             {{ $selected := "" }}
-
             {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
               {{ $selected = "selected" }}
-              {{ $linkUrlSelected = $linkUrl }}
             {{ end }}
-
             <option
               {{ $selected }}
-              value="{{ $.Site.BaseURL }}{{ .url }}"
+              value="{{ $.Site.BaseURL }}{{ .url }}/"
               class="nav-item mr-4 mb-2 text-black">
               {{ .version }}
             </option>

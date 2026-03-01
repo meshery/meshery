@@ -50,6 +50,7 @@ latest_release.json
 .hugo_build.lock
 *.tar.gz
 
+v0.7/
 v0.6/
 v0.5/
 v0.4/
