@@ -22,9 +22,11 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -171,13 +173,34 @@ func (h *Handler) EvaluateDesign(
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
+	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
-		// evaluate specified relationship policies
-		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
-			RelationshipPolicyPackageName,
-		)
+		var evaluationResponse pattern.EvaluationResponse
+		var err error
+
+		if useGoEngine && h.GoEngine != nil {
+			// Use native Go policy engine
+			// GetEntities returns (entities, totalCount, uniqueCount, error); counts are unused here.
+			registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+			if relErr != nil {
+				return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
+			}
+
+			// Convert entity.Entity slice to []interface{} for the Go engine
+			relInterfaces := make([]interface{}, len(registeredRels))
+			for idx, r := range registeredRels {
+				relInterfaces[idx] = r
+			}
+
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, relInterfaces)
+		} else {
+			// Use OPA/Rego policy engine (default)
+			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+				RelationshipPolicyPackageName,
+			)
+		}
 
 		if err != nil {
 			h.log.Debug(err)
