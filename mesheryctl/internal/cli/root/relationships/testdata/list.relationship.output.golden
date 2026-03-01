@@ -1,5 +1,10 @@
-Total number of relationships: 1
-[H[2J[3J
+[90;47;1mTotal number of relationships: 1[0;0;22m
+[3J[H[2J
 
+<<<<<<< HEAD
 KIND  API VERSION  MODEL  TYPE     SUB-TYPE  
 edge  v1.0.0       N/A    network  Mount     
+=======
+  [1mKIND[0m  [1mAPI VERSION[0m  [1mMODEL NAME[0m  [1mSUB TYPE[0m  [1mEVALUATION POLICY[0m  
+  edge  v1.0.0                   Mount                        
+>>>>>>> 12d3aa61247 (Revertanges in wrong branch)
