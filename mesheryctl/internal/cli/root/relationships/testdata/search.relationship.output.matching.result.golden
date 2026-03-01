@@ -1,10 +1,5 @@
 Total number of relationships: 1
 [H[2J[3J
 
-<<<<<<< HEAD
 KIND  API VERSION  MODEL  TYPE     SUB-TYPE  
 edge  v1.0.0       N/A    network  Mount     
-=======
-KIND  APIVERSION  MODEL-NAME  SUBTYPE  REGOQUERY  
-edge                          Mount               
->>>>>>> 80785cc2916 (fixed the break)
