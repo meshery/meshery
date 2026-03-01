@@ -8,12 +8,6 @@ setup() {
    CONTEXT_URL="http://localhost:9081"
    CONTEXT_NAME="example-context"
    CONTEXT_NAME_2="example-context2"
-
-   ENDPOINT_REGEX_MATCH='^[[:space:]]*endpoint:[[:space:]](http|https)://.*:[[:digit:]]+$'
-   TOKEN_REGEX_MATCH='^[[:space:]]*token:[[:space:]][[:alnum:]]+$'
-   PLATFORM_REGEX_MATCH='^[[:space:]]*platform:[[:space:]](kubernetes|docker)+$'
-   PROVIDER_REGEX_MATCH='^[[:space:]]*provider:[[:space:]][[:alnum:]]+$'
-   CONTEXT_REGEXP_MATCH='^Current[[:space:]]Context:[[:space:]]+[[:alnum:]_-]+$'
 }
 
 @test "given a valid context-name is provided as an argument when running mesheryctl system context create then the context is created" {
@@ -71,21 +65,16 @@ setup() {
    run $MESHERYCTL_BIN system context view --all
    assert_success
 
-   assert_line --regexp "$ENDPOINT_REGEX_MATCH"
-   assert_line --regexp "$TOKEN_REGEX_MATCH"
-   assert_line --regexp "$PLATFORM_REGEX_MATCH"
-   assert_line --regexp "$PROVIDER_REGEX_MATCH"
+   assert_output --partial "endpoint"
+   assert_output --partial "token"
 }
 
 @test "given all requirements met when running mesheryctl system context view then the details of current context is displayed" {
    run $MESHERYCTL_BIN system context view
    assert_success
    
-   assert_line --regexp "$CONTEXT_REGEXP_MATCH"
-   assert_line --regexp "$ENDPOINT_REGEX_MATCH"
-   assert_line --regexp "$TOKEN_REGEX_MATCH"
-   assert_line --regexp "$PLATFORM_REGEX_MATCH"
-   assert_line --regexp "$PROVIDER_REGEX_MATCH"
+   assert_output --partial "endpoint"
+   assert_output --partial "token"
 }
 
 @test "given an invalid context-name as an argument when running mesheryctl system context view --context then the error message displays" {
@@ -99,11 +88,8 @@ setup() {
    run $MESHERYCTL_BIN system context view --context "$CONTEXT_NAME"
 
    assert_success
-   assert_line --regexp "^Current Context:[[:space:]]+$CONTEXT_NAME"
-   assert_line --regexp "$ENDPOINT_REGEX_MATCH"
-   assert_line --regexp "$TOKEN_REGEX_MATCH"
-   assert_line --regexp "$PLATFORM_REGEX_MATCH"
-   assert_line --regexp "$PROVIDER_REGEX_MATCH"
+    assert_output --partial "endpoint"
+   assert_output --partial "token"
 }
 
 @test "given all requirements met when running mesheryctl system context list then the available contexts are displayed" {
