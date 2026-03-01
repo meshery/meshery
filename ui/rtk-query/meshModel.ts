@@ -170,9 +170,12 @@ export const useGetCategoriesSummary = () => {
     return categoryMap;
   };
 
-  useEffect(async () => {
-    const categoryMap = await fetchModelsForCategories();
-    setCategoryMap(categoryMap);
+  useEffect(() => {
+    const fetchData = async () => {
+      const categoryMap = await fetchModelsForCategories();
+      setCategoryMap(categoryMap);
+    };
+    fetchData();
   }, [categories]);
   return categoryMap;
 };

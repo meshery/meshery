@@ -159,6 +159,10 @@ export const NavigatorListItem = styled(ListItemButton, {
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
   fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -229,6 +233,10 @@ export const SideBarListItem = styled(ListItemButton, {
     ? theme.palette.background.brand.default
     : theme.palette.background.constant.disabled,
   fill: isActive ? theme.palette.background.brand.default : '#fff',
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
   '&:hover': {
     ...(link && {
       backgroundColor: 'rgba(0, 187, 166, 0.5)',
