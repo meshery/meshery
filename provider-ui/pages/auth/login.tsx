@@ -1,26 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { styled, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, WarningIcon } from "@sistent/sistent"
+import React, { useEffect, useState } from 'react';
+import {
+  styled,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  WarningIcon,
+} from '@sistent/sistent';
 
 const SessionExpired = styled(DialogContentText)(() => ({
   minWidth: 400,
-  overflowWrap: "anywhere",
-  textAlign: "center",
+  overflowWrap: 'anywhere',
+  textAlign: 'center',
   padding: 5,
   margin: 2,
-  display: "flex",
-  flexDirection: "column",
-  height: "7rem",
-  justifyContent: "space-evenly",
-}));
-const IconContainer = styled("div")(() => ({
-  width: "24px",
-  height: "24px",
-  marginRight: "1px",
+  display: 'flex',
+  flexDirection: 'column',
+  height: '7rem',
+  justifyContent: 'space-evenly',
 }));
 
-function AlertUnauthenticatedSession() {
-  const [open, setOpen] = useState(false);
-  const [countDown, setCountDown] = useState(3);
+const IconContainer = styled('div')(() => ({
+  width: '24px',
+  height: '24px',
+  marginRight: '1px',
+}));
+
+function AlertUnauthenticatedSession(): React.ReactElement {
+  const [open, setOpen] = useState<boolean>(false);
+  const [countDown, setCountDown] = useState<number>(3);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,7 +37,7 @@ function AlertUnauthenticatedSession() {
         handleClose();
         // Propagate existing request parameters, if present.
         const existingQueryString = window.location.search;
-        window.location = `/user/login${existingQueryString}`;
+        window.location.href = `/user/login${existingQueryString}`;
       }
       setCountDown((countDown) => countDown - 1);
     }, 1000);
@@ -39,7 +48,7 @@ function AlertUnauthenticatedSession() {
     setOpen(true);
   }, []);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setOpen(false);
   };
 
@@ -53,14 +62,14 @@ function AlertUnauthenticatedSession() {
       <DialogTitle
         id="alert-dialog-title"
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
           minWidth: 400,
-          padding: "10px",
-          color: "#ebf1f5",
-          backgroundColor: "#F0A303",
+          padding: '10px',
+          color: '#ebf1f5',
+          backgroundColor: '#F0A303',
         }}
       >
         <IconContainer>
@@ -71,9 +80,7 @@ function AlertUnauthenticatedSession() {
       <DialogContent>
         <SessionExpired id="alert-dialog-description">
           <Typography variant="body1">Your session has expired</Typography>
-          <Typography>
-            You will be redirected to login in {countDown}
-          </Typography>
+          <Typography>You will be redirected to login in {countDown}</Typography>
         </SessionExpired>
       </DialogContent>
     </Dialog>

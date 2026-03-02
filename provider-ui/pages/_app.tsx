@@ -1,32 +1,47 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Head from "next/head";
-import { CacheProvider } from "@emotion/react";
-import createEmotionCache from "../lib/createEmotionCache";
-import Footer from "../components/Footer";
-import { CssBaseline, charcoal, Box, Paper, SistentThemeProvider, styled, useTheme } from "@sistent/sistent";
-import '../public/static/style/index.css'
+import * as React from 'react';
+import Head from 'next/head';
+import { AppProps } from 'next/app';
+import { EmotionCache } from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import createEmotionCache from '../lib/createEmotionCache';
+import Footer from '../components/Footer';
+import {
+  CssBaseline,
+  charcoal,
+  Box,
+  Paper,
+  SistentThemeProvider,
+  styled,
+  useTheme,
+} from '@sistent/sistent';
+import '../public/static/style/index.css';
 
 //styled-components:
 const StyledBox = styled(Box)(() => ({
-  display: "flex",
+  display: 'flex',
   flex: 1,
-  flexDirection: "column",
+  flexDirection: 'column',
   background: charcoal[10],
 }));
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-const MesheryThemeProvider = ({ children }) => {
+interface MesheryThemeProviderProps {
+  children: React.ReactNode;
+}
+
+const MesheryThemeProvider = ({ children }: MesheryThemeProviderProps): React.ReactElement => {
   const theme = useTheme();
   const mode = theme.palette.mode;
-  return (
-    <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>
-  );
+  return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
 };
 
-export default function MyApp(props) {
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+export default function MyApp(props: MyAppProps): React.ReactElement {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
     <CacheProvider value={emotionCache}>
@@ -41,24 +56,24 @@ export default function MyApp(props) {
         <CssBaseline />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "100vh",
-            overflowY: "hidden",
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            overflowY: 'hidden',
           }}
         >
-          <Box sx={{ overflowY: "hidden",display: "flex", flexGrow: 1 }}>
+          <Box sx={{ overflowY: 'hidden', display: 'flex', flexGrow: 1 }}>
             <StyledBox>
               <Box
                 sx={{
                   flex: 1,
-                  alignContent: "center",
-                  padding: "auto",
-                  margin: "auto"
+                  alignContent: 'center',
+                  padding: 'auto',
+                  margin: 'auto',
                   // background: theme.palette.background.brand.default
                 }}
               >
-                <Paper sx={{ background: "none", }}>
+                <Paper sx={{ background: 'none' }}>
                   <Component {...pageProps} />
                 </Paper>
               </Box>
@@ -70,9 +85,3 @@ export default function MyApp(props) {
     </CacheProvider>
   );
 }
-
-MyApp.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  emotionCache: PropTypes.object,
-  pageProps: PropTypes.object.isRequired,
-};
