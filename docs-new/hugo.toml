@@ -83,6 +83,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
     style = "solarized-dark256"
     # Uncomment if you want your chosen highlight style used for code blocks without a specified language
     # guessSyntax = "true"
+    noClasses = false
 
 # Everything below this are Site Params
 
