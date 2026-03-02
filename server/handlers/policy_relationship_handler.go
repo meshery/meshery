@@ -44,6 +44,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if relationshipDeclaration.Selectors == nil {
+		return alias, false
+	}
 	selectors := *relationshipDeclaration.Selectors
 
 	if len(selectors) == 0 {
