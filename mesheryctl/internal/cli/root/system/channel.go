@@ -79,7 +79,7 @@ mesheryctl system channel view
 			return nil
 		}
 
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil || currCtx == nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -254,8 +254,8 @@ var channelCmd = &cobra.Command{
 		return config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		)
 	},
 

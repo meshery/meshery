@@ -91,11 +91,14 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 		utils.Log.Error(err)
 		return nil, err
 	}
-	err = mctlCfg.SetCurrentContext(tempContext)
-	if err != nil {
-		return nil, ErrSetCurrentContext(err)
+	// Only change context if tempContext is specified
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return nil, ErrSetCurrentContext(err)
+		}
 	}
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return nil, ErrGetCurrentContext(err)
 	}
@@ -152,8 +155,7 @@ mesheryctl system check --operator
 		}
 		hc, err := NewHealthChecker(hco)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
-			return nil
+			return ErrHealthCheckFailed(err)
 		}
 
 		// if --pre or --preflight has been passed we run preflight checks
@@ -180,13 +182,16 @@ mesheryctl system check --operator
 			return hc.runOperatorHealthChecks()
 		}
 
-		currContext, err := hc.mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
-		currPlatform := currContext.GetPlatform()
 
+		if currCtx == nil {
+			return fmt.Errorf("no valid context available")
+		}
+
+		currPlatform := currCtx.GetPlatform()
 		hc.Options.RunComponentChecks = true
 		// if platform is docker only then run docker checks
 		hc.Options.RunDockerChecks = currPlatform == "docker"

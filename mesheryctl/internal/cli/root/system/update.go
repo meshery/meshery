@@ -66,8 +66,8 @@ mesheryctl system update --skip-reset
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -90,7 +90,8 @@ mesheryctl system update --skip-reset
 				return nil
 			}
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+
 		if err != nil {
 			utils.Log.Error(err)
 			return nil

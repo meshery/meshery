@@ -89,7 +89,8 @@ mesheryctl system start --provider Meshery
 			utils.Log.Error(err)
 			return nil
 		}
-		ctx, err := cfg.GetCurrentContext()
+		ctx, err := cfg.CheckIfCurrentContextIsValid()
+
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -118,8 +119,8 @@ func start() error {
 	if err := config.MutateConfigIfNeeded(
 		utils.DefaultConfigPath,
 		utils.MesheryFolder,
-		utils.TemplateToken,
-		utils.TemplateContext,
+		config.TemplateToken,
+		config.TemplateContext,
 	); err != nil {
 		return err
 	}
@@ -142,7 +143,7 @@ func start() error {
 		}
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return err
 	}

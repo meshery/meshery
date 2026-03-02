@@ -127,7 +127,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
 	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
 
-	currCtx, _ := mctlCfg.GetCurrentContext()
+	currCtx, _ := mctlCfg.CheckIfCurrentContextIsValid()
 
 	urlEndpoint := currCtx.GetEndpoint()
 

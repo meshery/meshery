@@ -29,15 +29,6 @@ import (
 	"net/http"
 )
 
-// isEmptyFile checks if a file is empty
-func isEmptyFile(path string) bool {
-	stat, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return stat.Size() == 0
-}
-
 // Version unmarshals the json response from the server's version api
 type Version struct {
 	Build          string `json:"build,omitempty"`
@@ -115,50 +106,40 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 	return &Context{}, errors.New("context " + name + " does not exist")
 }
 
-// GetBaseMesheryURL returns the base meshery server URL
+// GetBaseMesheryURL returns the Meshery server endpoint safely.
+// Returns empty string if context or endpoint is missing.
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Error(err)
+	ctx := mc.GetCurrentContextSafe()
+	if ctx == nil {
 		return ""
 	}
-	return currentContext.Endpoint
+	return ctx.Endpoint
 }
 
 func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 	return mc.CurrentContext
 }
 
-// GetCurrentContext returns contents of the current context
-func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		return nil, err
-	}
-	return currentContext, nil
-}
-
 // Get any context
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	return context, nil
+
+	return context, err
 }
 
 // SetCurrentContext sets current context and returns contents of the current context
 func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
-	if contextName != "" {
-		mc.CurrentContext = contextName
+	if contextName == "" {
+		return errors.New("context name cannot be empty")
 	}
-	_, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Errorf("Error: %v", err.Error())
-
+	if _, ok := mc.Contexts[contextName]; !ok {
+		return errors.New("current context " + contextName + " does not exist")
 	}
-
-	return err
+	mc.CurrentContext = contextName
+	return nil
 }
 
 // GetTokenForContext takes in the contextName and returns the token name and path corresponding
@@ -266,12 +247,12 @@ func (ctx *Context) ValidateVersion() error {
 		}
 	}()
 
-	if resp.StatusCode == http.StatusNotFound {
-		return fmt.Errorf("version '%s' is not a valid Meshery release", ctx.Version)
+	if resp.StatusCode == 404 {
+		log.Fatal("version '" + ctx.Version + "' is not a valid Meshery release.")
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to validate Meshery release version %s", ctx.Version)
+		log.Fatal("failed to validate Meshery release version " + ctx.Version)
 	}
 
 	return nil
@@ -364,17 +345,9 @@ func AddTokenToConfig(token Token, configPath string) error {
 	}
 
 	viper.SetConfigFile(configPath)
-
-	// For empty files, initialize viper without reading
-	if isEmptyFile(configPath) {
-		viper.Set("tokens", []Token{})
-		viper.Set("contexts", map[string]Context{})
-		viper.Set("current-context", "")
-	} else {
-		err := viper.ReadInConfig()
-		if err != nil {
-			return err
-		}
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
@@ -388,8 +361,7 @@ func AddTokenToConfig(token Token, configPath string) error {
 
 	for i := range mctlCfg.Tokens {
 		if mctlCfg.Tokens[i].Name == token.Name {
-			// Token already exists
-			return errors.Wrap(fmt.Errorf("a token with same name already exists"), "error adding token")
+			return errors.New("error adding token: a token with same name already exists")
 		}
 	}
 
@@ -480,17 +452,9 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	viper.SetConfigFile(configPath)
-
-	// For empty files, initialize viper without reading
-	if isEmptyFile(configPath) {
-		viper.Set("tokens", []Token{})
-		viper.Set("contexts", map[string]Context{})
-		viper.Set("current-context", "")
-	} else {
-		err := viper.ReadInConfig()
-		if err != nil {
-			return err
-		}
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
@@ -504,8 +468,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		// Context already exists, skip adding (idempotent)
-		return nil
+		return errors.New("error adding context: a context with same name already exists")
 	}
 
 	mctlCfg.Contexts[contextName] = context
@@ -523,4 +486,20 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	return nil
+}
+
+// GetCurrentContextSafe returns current context without validation.
+// Returns nil if context is missing or invalid.
+// Safe for read-only commands like `version`.
+func (mc *MesheryCtlConfig) GetCurrentContextSafe() *Context {
+	if mc.CurrentContext == "" {
+		return nil
+	}
+
+	ctx, ok := mc.Contexts[mc.CurrentContext]
+	if !ok {
+		return nil
+	}
+
+	return &ctx
 }

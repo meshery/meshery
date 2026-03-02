@@ -57,8 +57,8 @@ func resetMesheryConfig() error {
 	if err := config.MutateConfigIfNeeded(
 		utils.DefaultConfigPath,
 		utils.MesheryFolder,
-		utils.TemplateToken,
-		utils.TemplateContext,
+		config.TemplateToken,
+		config.TemplateContext,
 	); err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func resetMesheryConfig() error {
 		}
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return ErrRetrievingCurrentContext(err)
 	}
@@ -113,7 +113,7 @@ func resetMesheryConfig() error {
 
 // Fetches manifests for meshery components based on the current context
 func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return ErrRetrievingCurrentContext(err)
 	}

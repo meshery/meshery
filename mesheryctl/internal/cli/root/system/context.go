@@ -77,8 +77,8 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -137,8 +137,8 @@ mesheryctl system context delete [context name]
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -399,8 +399,8 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -428,7 +428,7 @@ mesheryctl system context create `
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil

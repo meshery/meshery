@@ -113,7 +113,7 @@ mesheryctl system logs meshery-istio
 			}
 		}
 
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil

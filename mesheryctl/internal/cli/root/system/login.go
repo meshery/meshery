@@ -52,8 +52,8 @@ mesheryctl system login -p Meshery
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ mesheryctl system login -p Meshery
 			return errors.Wrap(err, "error processing config")
 		}
 
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			return err
 		}

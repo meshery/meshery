@@ -44,8 +44,8 @@ mesheryctl system logout
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}

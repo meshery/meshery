@@ -71,7 +71,7 @@ mesheryctl system restart --skip-update
 }
 
 func restart() error {
-	if err := config.MutateConfigIfNeeded(utils.DefaultConfigPath, utils.MesheryFolder, utils.TemplateToken, utils.TemplateContext); err != nil {
+	if err := config.MutateConfigIfNeeded(utils.DefaultConfigPath, utils.MesheryFolder, config.TemplateToken, config.TemplateContext); err != nil {
 		return err
 	}
 
@@ -90,7 +90,7 @@ func restart() error {
 		}
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return ErrRetrievingCurrentContext(err)
 	}

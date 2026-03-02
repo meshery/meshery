@@ -35,13 +35,18 @@ func MutateConfigIfNeeded(
 		if err := CreateConfigFile(configPath); err != nil {
 			return err
 		}
-
+		// Ignore duplicate token errors during initial config creation (idempotent)
 		if err := AddTokenToConfig(token, configPath); err != nil {
-			return err
+			if err.Error() != "error adding token: a token with same name already exists" {
+				return err
+			}
 		}
 
+		// Ignore duplicate context errors during initial config creation (idempotent)
 		if err := AddContextToConfig("local", ctx, configPath, true, false); err != nil {
-			return err
+			if err.Error() != "error adding context: a context with same name already exists" {
+				return err
+			}
 		}
 
 		log.Debugf("Default config file created at %s", configPath)

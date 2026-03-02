@@ -70,8 +70,8 @@ func deleteContainers() error {
 	if err := config.MutateConfigIfNeeded(
 		utils.DefaultConfigPath,
 		utils.MesheryFolder,
-		utils.TemplateToken,
-		utils.TemplateContext,
+		config.TemplateToken,
+		config.TemplateContext,
 	); err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func deleteContainers() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return err
 	}

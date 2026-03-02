@@ -75,8 +75,8 @@ mesheryctl system token create [token-name] -f [token-path] --set
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -118,8 +118,8 @@ mesheryctl system token delete [token-name]
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}
@@ -145,8 +145,8 @@ mesheryctl system token set [token-name]
 		if err := config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		); err != nil {
 			return err
 		}

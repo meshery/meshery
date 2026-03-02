@@ -29,8 +29,8 @@ Documentation for connection can be found at https://docs.meshery.io/reference/m
 		return config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		)
 	},
 

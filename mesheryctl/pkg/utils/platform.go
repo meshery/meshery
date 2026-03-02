@@ -426,7 +426,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 				if err != nil {
 					return errors.Wrap(err, "error processing meshconfig")
 				}
-				currCtx, err := mctlCfg.GetCurrentContext()
+				currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 				if err != nil {
 					return err
 				}

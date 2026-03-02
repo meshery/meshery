@@ -69,8 +69,8 @@ var dashboardCmd = &cobra.Command{
 		return config.MutateConfigIfNeeded(
 			utils.DefaultConfigPath,
 			utils.MesheryFolder,
-			utils.TemplateToken,
-			utils.TemplateContext,
+			config.TemplateToken,
+			config.TemplateContext,
 		)
 	},
 
@@ -96,7 +96,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -119,7 +119,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
