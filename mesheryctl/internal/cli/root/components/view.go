@@ -20,7 +20,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -87,7 +86,10 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 		if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
 		} else {
-			selectedComponent = selectComponentPrompt(componentResponse.Components)
+			selectedComponent, err = selectComponentPrompt(componentResponse.Components)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[component.ComponentDefinition]{}
@@ -130,25 +132,18 @@ func init() {
 	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
+// selectComponentPrompt lets user to select a component if components are more than one
+func selectComponentPrompt(components []component.ComponentDefinition) (component.ComponentDefinition, error) {
 	componentNames := make([]string, len(components))
 
 	for i, component := range components {
 		componentNames[i] = fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select component",
-		Items: componentNames,
+	i, err := utils.RunSelectPrompt("Select component", componentNames)
+	if err != nil {
+		return component.ComponentDefinition{}, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return components[i]
-	}
+	return components[i], nil
 }
