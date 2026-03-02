@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	ErrSpreadsheetFlagMissingCode = "mesheryctl-1202"
-	ErrEmptySheetDataCode         = "mesheryctl-1203"
+	ErrSpreadsheetFlagMissingCode = "mesheryctl-1203"
+	ErrEmptySheetDataCode         = "mesheryctl-1204"
 )
 
 var (
