@@ -39,7 +39,7 @@ type (
 	listRowBuilder[T any]       func(data *T) (rows [][]string, totalCount int64)
 	promptLabelBuilder[R any]   func(rows []R) (names []string)
 	pageHandler[T any]          func(data *T, currentPage int, pgSize int) (shouldContinue bool, err error)
-	itemExtractor[T any, R any] func(data *T) (rows []R)
+	itemExtractor[T any, R any] func(data *T) (rows []R, totalCount int64)
 )
 
 func List(data DisplayedData) error {
@@ -76,15 +76,15 @@ func PromptAsyncPagination[T any, R any](displayData DisplayDataAsync, processDa
 	)
 }
 
-func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pageSize int) (selected T,
+func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], pgSize int, currentPage int, totalCount int64) (selected T,
 	itemSelected bool,
 	err error,
 ) {
 	var zero T
-	itemCount := len(rows)
+	isLastPage := int64((currentPage+1)*pgSize) >= totalCount
 
 	names := formatLabel(rows)
-	if itemCount < pageSize {
+	if isLastPage {
 		noMoreLabel := color.New(color.FgHiBlack).Sprint("End of list")
 		names = append(names, noMoreLabel)
 	} else {
@@ -118,9 +118,9 @@ func SelectFromPagedResults[T any](rows []T, formatLabel func([]T) []string, pag
 		}
 
 		// Last item (Load More | End of list) selected
-		if i == itemCount {
+		if i == len(rows) {
 			// No more items to show
-			if itemCount < pageSize {
+			if isLastPage {
 				return zero, false, fmt.Errorf("no more items available")
 			}
 			return zero, false, nil
