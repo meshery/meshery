@@ -73,7 +73,10 @@ mesheryctl environment view --orgID [orgID]
 		case 1:
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
 		default:
-			selectedEnvironment = selectEnvironmentPrompt(environmentResponse.Environments)
+			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormat := strings.ToLower(environmentViewFlagsProvided.outputFormat)

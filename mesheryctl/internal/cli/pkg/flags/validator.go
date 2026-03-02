@@ -30,11 +30,10 @@ var vSemverRegex = regexp.MustCompile(`^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*
 func (fv *FlagValidator) Validate(s interface{}) error {
 	err := fv.validator.Struct(s)
 	if err != nil {
-		switch err.(type) {
+		switch vErr := err.(type) {
 		case *validator.InvalidValidationError:
 			return utils.ErrFlagsInvalid(err)
 		case validator.ValidationErrors:
-			vErr := err.(validator.ValidationErrors)
 			return utils.ErrFlagsInvalid(ReadValidationErrorMessages(vErr))
 		default:
 			return utils.ErrFlagsInvalid(err)
@@ -51,8 +50,8 @@ func validateSemver(fl validator.FieldLevel) bool {
 // This is necessary because the default validator does not have a built-in validation behaving as expected for boolean fields,
 // especially when using flags in cobra
 func validateBoolean(fl validator.FieldLevel) bool {
-	if val, ok := fl.Field().Interface().(bool); ok {
-		return val == true || val == false
+	if _, ok := fl.Field().Interface().(bool); ok {
+		return true
 	}
 	return false
 }

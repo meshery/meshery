@@ -21,7 +21,7 @@ func TestDeleteModel(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "given no model-id provided as an argument when running mesheryctl model delete then an error is returned",
+			Name:             "given no model name or ID provided when running model delete then ErrInvalidArgument is returned",
 			Args:             []string{"delete"},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
@@ -30,22 +30,10 @@ func TestDeleteModel(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ model-id ] is required\n\nUsage: mesheryctl model delete [model-id]\nRun 'mesheryctl model delete --help' to see detailed help message")),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg)),
 		},
 		{
-			Name:             "given an invalid model-id is provided as an argument when running mesheryctl model delete then an error is returned",
-			Args:             []string{"delete", "not-a-uuid"},
-			HttpMethod:       "DELETE",
-			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s", modelsApiPath),
-			Fixture:          "",
-			ExpectedResponse: "",
-			ExpectError:      true,
-			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidUUID(fmt.Errorf("invalid model ID: %q", "not-a-uuid")),
-		},
-		{
-			Name:             "given a valid model-id when running mesheryctl model delete then the model is deleted successfully",
+			Name:             "given a valid model-id when running model delete then model is deleted successfully",
 			Args:             []string{"delete", modelId},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
@@ -53,6 +41,18 @@ func TestDeleteModel(t *testing.T) {
 			Fixture:          "delete.model.response.golden",
 			ExpectedResponse: "delete.model.success.golden",
 			ExpectError:      false,
+		},
+		{
+			Name:             "given a non-existent model name when running model delete then ErrModelNotFound is returned",
+			Args:             []string{"delete", "nonexistent-model"},
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsApiPath),
+			Fixture:          "delete.model.empty.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrNotFound(fmt.Errorf("no results found for %s", "nonexistent-model")),
 		},
 	}
 

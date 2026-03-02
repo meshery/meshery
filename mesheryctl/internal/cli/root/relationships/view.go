@@ -19,7 +19,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -75,7 +74,10 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
 		default:
-			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			selectedModel, err = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
@@ -115,29 +117,24 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	},
 }
 
-// selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
-	relationshipNames := []string{}
+// selectRelationshipPrompt lets user to select a relation if relations are more than one
+func selectRelationshipPrompt(relationships []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
+	relationshipNames := make([]string, len(relationships))
 
-	for _, _rel := range relationship {
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
-		relationshipNames = append(relationshipNames, relationshipName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select a relationship:",
-		Items: relationshipNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
+	for i, _rel := range relationships {
+		evaluationQuery := "N/A"
+		if _rel.EvaluationQuery != nil {
+			evaluationQuery = *_rel.EvaluationQuery
 		}
-
-		return &relationship[i]
+		relationshipNames[i] = fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 	}
+
+	i, err := utils.RunSelectPrompt("Select a relationship:", relationshipNames)
+	if err != nil {
+		return nil, err
+	}
+
+	return &relationships[i], nil
 }
 
 func init() {
