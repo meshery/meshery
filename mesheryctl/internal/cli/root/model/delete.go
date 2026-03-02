@@ -38,14 +38,13 @@ mesheryctl model delete [model-id]
 // Delete a model by name
 mesheryctl model delete [model-name]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg))
 		}
 
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		modelArg := args[0]
 

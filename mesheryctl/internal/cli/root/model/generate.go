@@ -5,11 +5,18 @@ import (
 	"os"
 	"strings"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
+
+type cmdModelGenerateFlags struct {
+	File     string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+	Template string `json:"template" validate:"omitempty,filepath"`
+	Register bool   `json:"register" validate:"boolean"`
+}
 
 type ModelGenerator interface {
 	Generate() error
@@ -28,6 +35,8 @@ type CsvModelGenerator struct {
 	SkipRegister     bool
 }
 
+var modelGenerateFlags cmdModelGenerateFlags
+
 var generateModelCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate models from a file",
@@ -43,39 +52,43 @@ mesheryctl model generate --f [URL] -t [path-to-template.json]
 // Generate a model from a Uri baesd on a JSON template skipping registration
 mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(modelGenerateFlags)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model generate [ file | filePath | URL ]\nRun 'mesheryctl model generate --help' to see detailed help message"
-		file, _ := cmd.Flags().GetString("file")
-		if file == "" && len(args) == 0 {
-			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
+		if modelGenerateFlags.File == "" && len(args) == 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("either --file or a path as argument must be specified\n\n%v", errGenerateUsageMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errGenerateUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var path string
-		file, _ := cmd.Flags().GetString("file")
-		if file != "" {
-			path = file
-		} else {
+		path := modelGenerateFlags.File
+		// If file flag is not provided, use the argument as the path
+		if path == "" {
 			path = args[0]
+
 		}
+
 		isUrl := utils.IsValidUrl(path)
-
-		register, _ := cmd.Flags().GetBool("register")
-
-		// Path is a url
 		if isUrl {
-			template, _ := cmd.Flags().GetString("template")
-			if template == "" {
+			if modelGenerateFlags.Template == "" {
 				return ErrTemplateFileNotPresent()
 			}
 
 			urlModelGenerator := &UrlModelGenerator{
-				TemplateFile: template,
+				TemplateFile: modelGenerateFlags.Template,
 				Url:          path,
-				SkipRegister: register,
+				SkipRegister: modelGenerateFlags.Register,
 			}
 			return urlModelGenerator.Generate()
 		}
@@ -96,7 +109,7 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 			ModelFile:        modelcsvpath,
 			ComponentFile:    componentcsvpath,
 			RelationshipFile: relationshipcsvpath,
-			SkipRegister:     register,
+			SkipRegister:     modelGenerateFlags.Register,
 		}
 
 		return csvModelGenerator.Generate()
@@ -108,9 +121,9 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	generateModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
-	generateModelCmd.Flags().StringP("template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolP("register", "r", false, "Skip registration of the model")
+	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.File, "file", "f", "", "Specify path to the file or directory")
+	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Template, "template", "t", "", "Specify path to the template JSON file")
+	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "register", "r", false, "Skip registration of the model")
 
 }
 
