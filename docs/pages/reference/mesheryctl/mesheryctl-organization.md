@@ -1,35 +1,44 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship-search
-permalink: reference/mesheryctl/exp/relationship/search
-redirect_from: reference/mesheryctl/exp/relationship/search/
+title: mesheryctl-organization
+permalink: reference/mesheryctl/organization
+redirect_from: reference/mesheryctl/organization/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: relationship
+command: organization
+subcommand: nil
 ---
 
-# mesheryctl exp relationship search
+# mesheryctl organization
 
-Search registered relationship(s)
+Interact with registered organizations
 
 ## Synopsis
 
-Search registered relationship(s) used by different models
+Interact with registered organizations to display detailed information
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [flags]
+mesheryctl organization [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Search for a specific relationship
+Number of  registered orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+mesheryctl organization --count
+
+</div>
+</pre> 
+
+List registerd orgs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl organization list
 
 </div>
 </pre> 
@@ -38,11 +47,8 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help             help for search
-  -k, --kind string      search particular kind of relationships
-  -m, --model string     search relationships of particular model name
-  -s, --subtype string   search particular subtype of relationships
-  -t, --type string      search particular type of relationships
+      --count   total number of registered organizations
+  -h, --help    help for organization
 
 </div>
 </pre>
@@ -58,5 +64,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 </pre>
 
 ## See Also
+
+* [mesheryctl organization list](/reference/mesheryctl/organization/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
