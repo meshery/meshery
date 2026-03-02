@@ -32,6 +32,7 @@ type searchRelationshipFlags struct {
 	SubType string `json:"subtype" validate:"omitempty"`
 	Model   string `json:"model" validate:"omitempty"`
 	Type    string `json:"type" validate:"omitempty"`
+	Page    int    `json:"page" validate:"omitempty"`
 }
 
 var (
@@ -63,8 +64,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		page, _ := cmd.Flags().GetInt("page")
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(cmd, page))
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl(cmd))
 
 		if err != nil {
 			return err
@@ -102,9 +102,10 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchRelationshipFlagsProvided.SubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchRelationshipFlagsProvided.Model, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchRelationshipFlagsProvided.Type, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().IntVarP(&searchRelationshipFlagsProvided.Page, "page", "p", 1, "search particular page of relationships (default 1)")
 }
 
-func buildSearchUrl(cmd *cobra.Command, page int) string {
+func buildSearchUrl(cmd *cobra.Command) string {
 	var searchUrl strings.Builder
 
 	if searchRelationshipFlagsProvided.Model == "" {
@@ -129,7 +130,7 @@ func buildSearchUrl(cmd *cobra.Command, page int) string {
 		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
 	}
 
-	searchUrl.WriteString(utils.GetPageQueryParameter(cmd, page))
+	searchUrl.WriteString(utils.GetPageQueryParameter(cmd, searchRelationshipFlagsProvided.Page))
 
 	return searchUrl.String()
 }
