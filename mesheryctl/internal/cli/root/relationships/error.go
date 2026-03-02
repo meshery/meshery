@@ -8,6 +8,7 @@ import (
 
 var (
 	ErrSpreadsheetFlagMissingCode = "mesheryctl-1202"
+	ErrEmptySheetDataCode         = "mesheryctl-1203"
 )
 
 var (
@@ -25,4 +26,15 @@ func ErrSpreadsheetFlagMissing(err error) error {
 		[]string{err.Error()},
 		[]string{"Either --spreadsheet-id or --spreadsheet-cred flag was not specified"},
 		[]string{"Provide both --spreadsheet-id and --spreadsheet-cred flags to generate relationships"})
+}
+
+func ErrEmptySheetData(err error) error {
+	return errors.New(
+		ErrEmptySheetDataCode,
+		errors.Alert,
+		[]string{"Invalid spreadsheet"},
+		[]string{err.Error()},
+		[]string{"Ensure the spreadsheet contains valid relationship entries before importing"},
+		[]string{"Spreadsheet must contains two headers and values for it's headers"},
+	)
 }

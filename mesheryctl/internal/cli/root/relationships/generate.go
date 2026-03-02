@@ -1,11 +1,9 @@
 package relationships
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"os"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
@@ -70,7 +68,7 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 
 		// Since first two rows are headers
 		if len(resp.Values) <= 2 {
-			return errors.New("no relationship data found in sheet")
+			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
 		}
 
 		// If no error, fetch the data from the sheet
@@ -114,19 +112,11 @@ func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 		}
 	}
 
-	jsonData, err := json.MarshalIndent(customResp, "", "    ")
-	if err != nil {
-		return err
-	}
+	jsonFormatter := display.NewJSONOutputFormatter(customResp).(*display.JSONOutputFormatter[[]CustomValueRange])
 
-	jsonFile, err := os.Create(jsonFilePath)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = jsonFile.Close() }()
-	_, err = jsonFile.Write(jsonData)
-	if err != nil {
-		return err
-	}
-	return nil
+	saver := display.NewJSONOutputFormatterSaver(*jsonFormatter)
+
+	return saver.
+		WithFilePath(jsonFilePath).
+		Save()
 }
