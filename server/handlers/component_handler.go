@@ -1555,14 +1555,27 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// 1. Get the model data
+	//
+	// NOTE: this endpoint historically did a greedy lookup on `name` and returned the first result.
+	// That can lead to exporting the wrong model when multiple model names partially match (e.g.
+	// "kubernetes" and "aerospike-kubernetes-operator"). We still allow greedy lookup for
+	// convenience, but we always prefer an exact name match when one exists, and we fail fast on
+	// ambiguity instead of picking an arbitrary first match.
 	modelFilter := &regv1beta1.ModelFilter{
 		Id:            modelId,
 		Name:          name,
 		Components:    hasComponents,
 		Relationships: hasRelationships,
-		Greedy:        true,
+		Greedy:        modelId == "" && name != "",
 		Version:       version,
 	}
+
+	// If an ID is provided, resolve strictly by ID (ignore name-greedy behavior).
+	if modelId != "" {
+		modelFilter.Name = ""
+		modelFilter.Greedy = false
+	}
+
 	e, _, _, err := h.registryManager.GetEntities(modelFilter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
@@ -1594,7 +1607,13 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model := e[0].(*_model.ModelDefinition)
+	model, status, message := resolveModelForExport(e, modelId, name)
+	if status != 0 {
+		rw.WriteHeader(status)
+		fmt.Fprintln(rw, message)
+		return
+	}
+
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
 	//File is stored in Ui folder so we need to move 2 directories back
