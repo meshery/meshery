@@ -145,6 +145,58 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			wantOk: false,
 		},
 		{
+			name: "nil to.Id returns false",
+			input: func() relationship.RelationshipDefinition {
+				refs := [][]string{{"configuration", "spec", "containers"}}
+				ss := relationship.SelectorSet{
+					{
+						Allow: relationship.Selector{
+							From: []relationship.SelectorItem{
+								{
+									Id: &fromID,
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+										MutatedRef: &refs,
+									},
+								},
+							},
+							To: []relationship.SelectorItem{{Id: nil}},
+						},
+					},
+				}
+				return relationship.RelationshipDefinition{
+					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					Selectors: &ss,
+				}
+			}(),
+			wantOk: false,
+		},
+		{
+			name: "nil from.Id returns false",
+			input: func() relationship.RelationshipDefinition {
+				refs := [][]string{{"configuration", "spec", "containers"}}
+				ss := relationship.SelectorSet{
+					{
+						Allow: relationship.Selector{
+							From: []relationship.SelectorItem{
+								{
+									Id: nil,
+									Patch: &relationship.RelationshipDefinition_Selectors_Patch{
+										MutatedRef: &refs,
+									},
+								},
+							},
+							To: []relationship.SelectorItem{{Id: &toID}},
+						},
+					},
+				}
+				return relationship.RelationshipDefinition{
+					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					Selectors: &ss,
+				}
+			}(),
+			wantOk: false,
+		},
+		{
 			name: "valid alias relationship returns true",
 			input: func() relationship.RelationshipDefinition {
 				refs := [][]string{{"configuration", "spec", "containers"}}
