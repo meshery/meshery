@@ -1,11 +1,11 @@
 ---
 layout: swagger
 title: "REST API Reference"
-permalink: reference/rest-apis
-redirect_from: reference/rest-apis/
+permalink: reference/rest-apis/
+redirect_from: reference/rest-apis
 type: Reference
 abstract: "Meshery REST API Documentation and Reference"
-data: swagger
+data: openapi
 language: en
 ---
 
@@ -83,6 +83,6 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 ## Endpoints
 
-This section contains self-generated documentation derived from Meshery’s OpenAPI specification for its REST APIs.
+This section contains documentation derived from the OpenAPI specification published in the <a href='https://github.com/meshery/schemas'>meshery/schemas</a> repository. Only Meshery Server endpoints are included; cloud-only API endpoints are excluded.
 
 {% include alert.html type="info" title="An alternative overview" content="See the <a href='https://docs.google.com/spreadsheets/d/1ABJCbfQRi0uN_YoP2kmHZ-lTI4S4QuvRk1_unomKNRE/edit'>Meshery API Endpoints spreadsheet</a> for an alternative overview of these endpoints." %}
