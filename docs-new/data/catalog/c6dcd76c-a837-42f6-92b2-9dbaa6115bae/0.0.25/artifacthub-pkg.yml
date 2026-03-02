@@ -1,0 +1,24 @@
+version: 0.0.25
+name: devops-workflow
+displayName: DevOps-Workflow
+createdAt: "2025-10-04T13:07:10Z"
+description: A design showing DevOps workflow and cloud-native deployment pipeline with detailed explanatory text describing each stage of the development lifecycle.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c6dcd76c-a837-42f6-92b2-9dbaa6115bae/0.0.25/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Components: Developer Workstation, Git Repository, CI/CD Pipeline, Container Registry, Kubernetes Cluster, Monitoring & Logging \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: aab8040b-fe49-4f9d-9b15-36a2a0c7fd41
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c6dcd76c-a837-42f6-92b2-9dbaa6115bae-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c6dcd76c-a837-42f6-92b2-9dbaa6115bae-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

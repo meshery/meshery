@@ -23,7 +23,6 @@ contexts:
         platform: kubernetes
         channel: stable
         version: latest
-        provider: Layer5
 current-context: local
 tokens:
     - name: default

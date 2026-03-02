@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -227,5 +229,14 @@ func (y *YAMLOutputFormatter[T]) Display() error {
 		return ErrEncodingData(err, "yaml")
 	}
 
+	return nil
+}
+
+var validOutputFormat = []string{"json", "yaml"}
+
+func ValidateOutputFormat(outputFormat string) error {
+	if !slices.Contains(validOutputFormat, strings.ToLower(outputFormat)) {
+		return ErrInvalidOutputFormat(outputFormat)
+	}
 	return nil
 }

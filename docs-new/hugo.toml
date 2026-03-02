@@ -100,6 +100,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
 
 [params]
 copyright = "Meshery Authors"
+googleTagManager = "GTM-PCGTC98C"
 # Link to a privacy policy in footer, uncomment and define if wanted
 # privacy = "https://domain.com/privacy"
 

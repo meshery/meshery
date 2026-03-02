@@ -30,7 +30,15 @@ components:
   colorIcon: assets/img/integrations/aws-ecr-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 5
+- name: repository-creation-template
+  colorIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/color/repository-creation-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/white/repository-creation-template-white.svg
+  description: 
+- name: repository-creation-template
+  colorIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/color/repository-creation-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/white/repository-creation-template-white.svg
+  description: 
+components-count: 7
 relationships: 
 relationship-count: 0
 featureList: [

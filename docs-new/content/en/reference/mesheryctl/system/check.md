@@ -1,0 +1,113 @@
+---
+title: mesheryctl-system-check
+display_title: false
+command: system
+subcommand: check
+---
+
+# mesheryctl system check
+
+Pre-deployment and post-deployment healthchecks for Meshery
+
+## Synopsis
+
+Verify environment pre/post-deployment of Meshery.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+Run all system checks for both pre and post-deployment scenarios
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check
+
+</div>
+</pre> 
+
+Run pre-deployment checks (Docker and Kubernetes)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --preflight
+
+</div>
+</pre> 
+
+Run pre-deployment checks (Docker and Kubernetes)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --pre
+
+</div>
+</pre> 
+
+Run checks for all Meshery adapters
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapters
+
+</div>
+</pre> 
+
+Run checks on a specific Meshery adapter
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapter meshery-istio:10000
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapter meshery-istio
+
+</div>
+</pre> 
+
+Verify the health of Meshery Operator's deployment with MeshSync and Broker
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --operator
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --adapter string   Check status of specified meshery adapter
+      --adapters         Check status of meshery adapters
+      --components       Check status of Meshery components
+  -h, --help             help for check
+      --operator         Verify the health of Meshery Operator's deployment with MeshSync and Broker
+      --pre              Verify environment readiness to deploy Meshery
+      --preflight        Verify environment readiness to deploy Meshery
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+## Screenshots
+
+Usage of mesheryctl system check
+![check-usage](/reference/mesheryctl/images/check.png)
+
+## See Also
+
+Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

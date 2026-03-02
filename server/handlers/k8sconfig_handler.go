@@ -171,13 +171,16 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				RegistryManager:    h.registryManager,
 			}
 
-			if status == connections.CONNECTED {
+			switch status {
+			case connections.CONNECTED:
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
-			} else if status == connections.IGNORED {
+
+			case connections.IGNORED:
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
-			} else if status == connections.DISCOVERED {
+
+			case connections.DISCOVERED:
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}

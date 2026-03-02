@@ -1,0 +1,27 @@
+version: 0.0.1
+name: prometheus-dummy-exporter
+displayName: Prometheus dummy exporter
+createdAt: "2024-03-12T13:56:15Z"
+description: |-
+    A simple prometheus-dummy-exporter container exposes a single Prometheus metric with a constant value. The metric name, value and port on which it will be served can be passed by flags.
+
+    This container is then deployed in the same pod with another container, prometheus-to-sd, configured to use the same port. It scrapes the metric and publishes it to Stackdriver. This adapter isn't part of the sample code, but a standard component used by many Kubernetes applications. You can learn more about it  from given below link https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/prometheus-to-sd
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4fe5b8f3-d8c7-487c-9860-bc7cb8674d48/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "It is only  developed for Google Kubernetes Engine to collect metrics from system services in order to support Kubernetes users. We designed the tool to be lean when deployed as a sidecar in your pod. It's intended to support only the metrics the Kubernetes team at Google needs and is not meant for end-users. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4fe5b8f3-d8c7-487c-9860-bc7cb8674d48-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4fe5b8f3-d8c7-487c-9860-bc7cb8674d48-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

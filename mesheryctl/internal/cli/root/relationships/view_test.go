@@ -19,21 +19,29 @@ func TestView(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "View relationship without model name",
+			Name:             "given no model name provided when running relationship view then throw error",
 			Args:             []string{"view"},
 			URL:              "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
-			Fixture:          "view.relationship.api.response.golden",
+			Fixture:          "view.relationship.empty.response.golden",
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectError:      true,
 			ExpectedError:    utils.ErrInvalidArgument(errNoModelNameProvided),
 		},
 		{
-			Name:             "View registered relationship",
+			Name:             "given model name provided when running relationship view then display registered relationship",
 			Args:             []string{"view", "kubernetes"},
 			URL:              "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
 			Fixture:          "view.relationship.api.response.golden",
 			ExpectedResponse: "view.relationship.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given non existing model name provided when running relationship view then display no relationship found",
+			Args:             []string{"view", "nonexistent"},
+			URL:              "/api/meshmodels/models/nonexistent/relationships?pagesize=all",
+			Fixture:          "view.relationship.empty.response.golden",
+			ExpectedResponse: "view.relationship.non.existent.output.golden",
 			ExpectError:      false,
 		},
 	}

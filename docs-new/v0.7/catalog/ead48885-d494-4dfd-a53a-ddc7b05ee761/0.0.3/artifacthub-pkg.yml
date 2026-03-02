@@ -1,0 +1,24 @@
+version: 0.0.3
+name: glasskube-operator
+displayName: glasskube-operator
+createdAt: "2024-07-04T11:17:27Z"
+description: The Glasskube Operator is an open source Kubernetes operator that aims to simplify the deployment and maintenance of various popular open source tools. Each tool is represented by a new Kubernetes custom resource definition (CRD) and most user-facing configuration parameters are available via that CRD. philosophy is to emphasize ease-of-use and strong defaults over rich configuration. configurations are designed to cover as many use-cases as possible with minimal user configuration.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ead48885-d494-4dfd-a53a-ddc7b05ee761/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "for Caveats And Considerations checkout this docs https://glasskube.eu/docs/getting-started/settings/ \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ead48885-d494-4dfd-a53a-ddc7b05ee761-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ead48885-d494-4dfd-a53a-ddc7b05ee761-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,0 +1,29 @@
+version: 0.0.1
+name: knative-service
+displayName: knative-service
+createdAt: "2024-05-28T13:43:10Z"
+description: |-
+    This YAML configuration defines a Kubernetes Deployment for a Knative service. This Deployment, named "knative-service," specifies that a container will be created using a specified container image, which should be replaced with the actual image name. The container is configured to listen on port 8080. The Deployment ensures that a single replica of the container is maintained within the "knative-serving" namespace. The Deployment uses labels to identify the pods it manages.
+
+    Additionally, a Kubernetes Service is defined to expose the Deployment. This Service, named "knative-service," is also created within the "knative-serving" namespace. It uses a selector to match the pods labeled with "app: knative-service" and maps the Service port 80 to the container port 8080, facilitating external access to the deployed application.
+
+    Furthermore, a Knative Service resource is configured to manage the Knative service. This Knative Service, also named "knative-service" and located in the "knative-serving" namespace, is configured with the same container image and port settings. The Knative Service template includes metadata labels and container specifications, ensuring consistent deployment and management within the Knative environment. This setup allows the Knative service to handle HTTP requests efficiently and leverage Knative's autoscaling capabilities.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e5c65f06-4616-4ce7-9fe9-cb528128d242/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Image Pull Policy:Ensure the image pull policy is appropriately set, especially if using a custom or private container image. You may need to configure Kubernetes to access private image repositories by setting up image pull secrets.\n\nResource Requests and Limits: Define resource requests and limits for CPU and memory to ensure that the Knative service runs efficiently without exhausting cluster resources. This helps in resource allocation and autoscaling.\n\nNamespace Management: Deploying to the knative-serving namespace is typical for Knative components, but for user applications, consider using a separate namespace for better organization and access control.\n\nAutoscaling Configuration: Knative supports autoscaling based on metrics like concurrency or CPU usage. Configure autoscaling settings to match your application's load characteristics.\n\nNetworking and Ingress: Ensure your Knative service is properly exposed via an ingress or gateway if external access is required. Configure DNS settings and TLS for secure access.\n\nMonitoring and Logging: Implement monitoring and logging to track the performance and health of your Knative service. Use tools like Prometheus, Grafana, and Elasticsearch for this purpose.\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 74dac12a-bd26-4e79-9e74-a2da32efb5f2
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e5c65f06-4616-4ce7-9fe9-cb528128d242-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e5c65f06-4616-4ce7-9fe9-cb528128d242-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

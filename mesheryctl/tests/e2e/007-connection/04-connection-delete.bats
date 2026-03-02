@@ -11,13 +11,29 @@ teardown_file() {
     rm -rf "$TESTDATA_DIR"
 }
 
-@test "given non valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then a message error is displayed" {
+@test "given no connection-id provided as an argument when running mesheryctl connection delete then an error message is displayed" {
+    run $MESHERYCTL_BIN connection delete
+    assert_failure
+    assert_output --partial "[ connection-id ] is required" 
+    assert_output --partial "Error"
+}
+
+@test "given a non existing connection-id is provided as an argument when running mesheryctl connection delete non-existing-id then an error message is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
     assert_failure
-    assert_output --partial "Invalid API call" 
-    assert_output --partial "Failed"
+    assert_output --partial "connection ID does not exist" 
+    assert_output --partial "Error"
+}
+
+@test "given an invalid connection-id is provided as an argument when running mesheryctl connection delete invalid-connection-id then an error message is displayed" {
+    INVALID_ID="0000"
+
+    run $MESHERYCTL_BIN connection delete "$INVALID_ID"
+    assert_failure
+    assert_output --partial "Invalid ID format" 
+    assert_output --partial "Error"
 }
 
 @test "given a valid connection-id is provided as an argument when running mesheryctl connection delete connection-id then the existing connection is deleted" {

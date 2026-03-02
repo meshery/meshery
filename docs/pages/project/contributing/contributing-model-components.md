@@ -10,6 +10,8 @@ category: contributing
 list: include
 ---
 
+**Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{site.baseurl}}/project/contributing/contributing-schemas) for details.
+
 In Meshery, a [Components](/concepts/logical/components) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry](/concepts/logical/registry)), components are available for inclusion in [Designs](/concepts/logical/designs) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
 
 ## Overview of Steps to Create Components

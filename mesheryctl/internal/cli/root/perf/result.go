@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"slices"
 	"strings"
 	"time"
 
@@ -74,10 +73,7 @@ mesheryctl perf result saturday-profile --view
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check for valid output Format
 		if outputFormatFlag != "" {
-			outputFormatFlag = strings.ToLower(outputFormatFlag)
-			if !slices.Contains(validOutputFormats, outputFormatFlag) {
-				return utils.ErrInvalidArgument(fmt.Errorf(invalidOutputFormatMsg, outputFormatFlag))
-			}
+			return display.ValidateOutputFormat(outputFormatFlag)
 		}
 		return nil
 	},
@@ -148,7 +144,7 @@ mesheryctl perf result saturday-profile --view
 
 		if outputFormatFlag != "" {
 			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
-			outputFormatter, err := outputFormatterFactory.New(outputFormatFlag, results)
+			outputFormatter, err := outputFormatterFactory.New(strings.ToLower(outputFormatFlag), results)
 			if err != nil {
 				return err
 			}

@@ -19,11 +19,9 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -39,15 +37,11 @@ type connectionViewFlags struct {
 
 var connectionViewFlagsProvided connectionViewFlags
 
-var (
-	validOutputFormats = []string{"json", "yaml"}
-)
-
 var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
 	Long: `View a connection by its ID or name.
-Documentation for viewing connection can be found at https://docs.meshery.io/reference/mesheryctl/connection/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/view`,
 	Example: `
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
@@ -68,11 +62,9 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
 		}
 
-		if !slices.Contains(validOutputFormats, strings.ToLower(connectionViewFlagsProvided.outputFormat)) {
-			return utils.ErrInvalidArgument(errors.New(invalidOutputFormatMsg))
-		}
-		return nil
+		return display.ValidateOutputFormat(connectionViewFlagsProvided.outputFormat)
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connectionNameOrID := args[0]
 
@@ -143,27 +135,19 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 	},
 }
 
-func selectConnectionPrompt(connectionsList []*connection.Connection) *connection.Connection {
-	connectionNames := []string{}
+func selectConnectionPrompt(connectionsList []*connection.Connection) (*connection.Connection, error) {
+	connectionNames := make([]string, len(connectionsList))
 
-	for _, conn := range connectionsList {
-		connectionName := fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
-		connectionNames = append(connectionNames, connectionName)
+	for i, conn := range connectionsList {
+		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select connection",
-		Items: connectionNames,
+	i, err := utils.RunSelectPrompt("Select connection", connectionNames)
+	if err != nil {
+		return nil, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return connectionsList[i]
-	}
+	return connectionsList[i], nil
 }
 
 func isArgumentUUID(arg string) bool {
@@ -188,7 +172,6 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 	urlPath := fmt.Sprintf("%s?%s", connectionApiPath, viewUrlValue.Encode())
 
 	connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
-
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +181,7 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 	}
 
 	if connectionsResponse.TotalCount > 1 {
-		return selectConnectionPrompt(connectionsResponse.Connections), nil
+		return selectConnectionPrompt(connectionsResponse.Connections)
 	}
 
 	return connectionsResponse.Connections[0], nil

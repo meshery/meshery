@@ -2,6 +2,7 @@ package models
 
 import (
 	"net/url"
+	"slices"
 	"time"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -20,11 +21,13 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return ErrTestClient
 	}
 
+	validGenerators := []string{Wrk2LG.Name(), FortioLG.Name()}
 	for _, testClient := range perfTest.Clients {
 		if testClient.Protocol.String() == "" {
 			return ErrProtocol
 		}
-		if !(testClient.LoadGenerator == Wrk2LG.Name() || testClient.LoadGenerator == FortioLG.Name()) {
+		isValidGenerator := slices.Contains(validGenerators, testClient.LoadGenerator)
+		if !isValidGenerator {
 			return ErrLoadgenerator
 		}
 		if len(testClient.EndpointUrls) < 1 {

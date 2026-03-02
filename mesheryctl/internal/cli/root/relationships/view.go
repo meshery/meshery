@@ -17,15 +17,12 @@ package relationships
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -34,10 +31,7 @@ type relationshipViewFlags struct {
 	save         bool
 }
 
-var (
-	validOutputFormat             = []string{"json", "yaml"}
-	relationshipViewFlagsProvided relationshipViewFlags
-)
+var relationshipViewFlagsProvided relationshipViewFlags
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
@@ -60,13 +54,9 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 			return utils.ErrInvalidArgument(errTooManyArgs)
 		}
 
-		// Validate output-format
-		if !slices.Contains(validOutputFormat, strings.ToLower(relationshipViewFlagsProvided.outputFormat)) {
-			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid, use [json|yaml]"))
-		}
-
-		return nil
+		return display.ValidateOutputFormat(relationshipViewFlagsProvided.outputFormat)
 	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
@@ -79,12 +69,15 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 
 		switch relationshipsResponse.Count {
 		case 0:
-			utils.Log.Info("No relationship(s) found for the given name ", model)
+			fmt.Println("No relationship(s) found for the model with name:", model)
 			return nil
 		case 1:
 			selectedModel = &relationshipsResponse.Relationships[0]
 		default:
-			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			selectedModel, err = selectRelationshipPrompt(relationshipsResponse.Relationships)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
@@ -124,29 +117,24 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	},
 }
 
-// selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
-	relationshipNames := []string{}
+// selectRelationshipPrompt lets user to select a relation if relations are more than one
+func selectRelationshipPrompt(relationships []relationship.RelationshipDefinition) (*relationship.RelationshipDefinition, error) {
+	relationshipNames := make([]string, len(relationships))
 
-	for _, _rel := range relationship {
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
-		relationshipNames = append(relationshipNames, relationshipName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select a relationship:",
-		Items: relationshipNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
+	for i, _rel := range relationships {
+		evaluationQuery := "N/A"
+		if _rel.EvaluationQuery != nil {
+			evaluationQuery = *_rel.EvaluationQuery
 		}
-
-		return &relationship[i]
+		relationshipNames[i] = fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 	}
+
+	i, err := utils.RunSelectPrompt("Select a relationship:", relationshipNames)
+	if err != nil {
+		return nil, err
+	}
+
+	return &relationships[i], nil
 }
 
 func init() {
