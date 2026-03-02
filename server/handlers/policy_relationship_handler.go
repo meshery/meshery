@@ -72,6 +72,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if to.Id == nil || from.Id == nil {
+		return alias, false
+	}
+
 	alias.ImmediateParentId = *to.Id
 	alias.AliasComponentId = *from.Id
 	alias.RelationshipId = relationshipDeclaration.Id
