@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl component search --help' to see detailed help message"
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
