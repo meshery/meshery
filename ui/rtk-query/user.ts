@@ -3,7 +3,6 @@ import { api } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
-import { useRemoveUserFromTeamMutation } from '@meshery/schemas/dist/mesheryApi';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -214,6 +213,13 @@ export const userApi = api
         }),
         invalidatesTags: ['users'],
       }),
+      removeUserFromTeam: builder.mutation({
+        query: (queryArg) => ({
+          url: `extensions/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
+          method: 'DELETE',
+        }),
+        invalidatesTags: ['teams'],
+      }),
       handleUserInvite: builder.mutation({
         query: (queryArg) => ({
           url: `extensions/api/identity/orgs/${queryArg.orgId}/users/invite`,
@@ -266,12 +272,11 @@ export const {
   useHandleFeedbackFormSubmissionMutation,
   useGetUsersForOrgQuery,
   useGetAllUsersQuery,
+  useRemoveUserFromTeamMutation,
   useGetTeamsQuery,
   useLazyGetTeamsQuery,
   useGetSystemVersionQuery,
 } = userApi;
-
-export { useRemoveUserFromTeamMutation };
 
 export const getProviderCapabilities = async () => {
   const res = await initiateQuery(userApi.endpoints.getProviderCapabilities);
