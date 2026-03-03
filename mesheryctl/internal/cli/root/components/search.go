@@ -51,12 +51,11 @@ mesheryctl component search [query-text]
 		searchValue.Add("pagesize", "all")
 
 		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
-
 		if err != nil {
 			return err
 		}
 
-		header := []string{"Name", "Model", "Version"}
+		header := []string{"ID", "Name", "Model", "Version"}
 
 		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
 
