@@ -40,6 +40,7 @@ func TestModelInit(t *testing.T) {
 		return cmd
 	}
 
+	mesheryctlflags.InitValidators(initModelCmd)
 	// Helper function to create fresh commands for init tests
 	createFreshCommands := func() *cobra.Command {
 		cmd := createFreshModelCmd()
@@ -293,7 +294,6 @@ func TestModelInit(t *testing.T) {
 
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
-			mesheryctlflags.InitValidators(cmd)
 
 			err := cmd.Execute()
 			if err != nil {
