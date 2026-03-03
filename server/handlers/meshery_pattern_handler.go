@@ -1271,6 +1271,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return // prevent nil pointer dereference on respBody below
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' design submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
@@ -1348,6 +1349,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return // prevent nil pointer dereference on respBody below
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' design unpublished", respBody.ContentName)).Build()
