@@ -1,0 +1,26 @@
+version: 0.0.697
+name: loxilb-multi-cloud-vpn-&-connectivity
+displayName: LoxiLB Multi-Cloud VPN & Connectivity
+createdAt: "2025-10-18T15:45:35Z"
+description: |-
+    The design showcases a multi-cloud load balancing and VPN connectivity setup using LoxiLB.
+    It demonstrates how traffic originating from users within a Kubernetes cluster can reach workloads hosted on AWS and Azure, secured by IPSec tunnels and dynamically routed via BGP Peering.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/aaeda8bd-2133-4e52-bc3f-5014babb23a1/0.0.697/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a conceptual model illustrating traffic flow and connectivity across multiple clouds.\nIt focuses on representing secure and scalable external load balancing using LoxiLB in a multi-cloud Kubernetes environment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 5f456e61-75ed-4789-8c59-56cb3beb9ca2
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/aaeda8bd-2133-4e52-bc3f-5014babb23a1-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/aaeda8bd-2133-4e52-bc3f-5014babb23a1-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

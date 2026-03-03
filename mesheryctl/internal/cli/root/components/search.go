@@ -33,7 +33,7 @@ var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered components",
 	Long: `Search components registered in Meshery Server based on kind
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/search`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/search`,
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]
@@ -56,7 +56,7 @@ mesheryctl component search [query-text]
 			return err
 		}
 
-		header := []string{"Name", "Model", "kind", "Version"}
+		header := []string{"Name", "Model", "Version"}
 
 		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
 

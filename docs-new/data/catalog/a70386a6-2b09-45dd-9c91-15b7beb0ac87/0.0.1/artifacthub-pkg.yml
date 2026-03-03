@@ -1,0 +1,24 @@
+version: 0.0.1
+name: haproxy_ingress_controller
+displayName: HAProxy_Ingress_Controller
+createdAt: "2024-06-01T11:44:46Z"
+description: 'HAProxy Ingress is a Kubernetes ingress controller: it configures a HAProxy instance to route incoming requests from an external network to the in-cluster applications. The routing configurations are built reading specs from the Kubernetes cluster. Updates made to the cluster are applied on the fly to the HAProxy instance.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a70386a6-2b09-45dd-9c91-15b7beb0ac87/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Make sure that paths in ingress are configured correctly and for more Caveats And Considerations checkout this docs https://haproxy-ingress.github.io/docs/ \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a70386a6-2b09-45dd-9c91-15b7beb0ac87-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a70386a6-2b09-45dd-9c91-15b7beb0ac87-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

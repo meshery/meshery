@@ -1,0 +1,24 @@
+version: 0.0.382
+name: kubernetes-daemonset-pattern
+displayName: Kubernetes DaemonSet Pattern
+createdAt: "2025-08-04T08:11:05Z"
+description: A Kubernetes design pattern that illustrates the use of a DaemonSet. A DaemonSet ensures that all or a subset of nodes in a cluster run a copy of a specific Pod. This pattern is ideal for deploying cluster-wide agents like log collectors (e.g., Fluentd), monitoring agents (e.g., Prometheus Node Exporter), or storage daemons.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7191dfdd-2c44-4235-acb7-688f5e99750d/0.0.382/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 637f0d76-d582-4269-a08c-e85e6e5e2312
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7191dfdd-2c44-4235-acb7-688f5e99750d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7191dfdd-2c44-4235-acb7-688f5e99750d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

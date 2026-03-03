@@ -4,9 +4,9 @@ categories: [infrastructure]
 description: MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure.
 ---
 
-{{< alert type="info" title="MeshSync" >}}
+{{% alert color="info" title="MeshSync" %}}
 Managed by the <a href='/concepts/architecture/operator'>Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads. Learn more about <a href='/concepts/architecture/meshsync'>MeshSync</a>.
-{{< /alert >}}
+{{% /alert %}}
 
 MeshSync is your tool for efficient management and synchronization of Kubernetes clusters! This user guide will walk you through how to establish a connection with any element that Meshery is able to connect to and manage. Use the MeshSync page to register connections, view connection metadata, and perform connectivity tests, as weel as to manage credentials and environments.
 

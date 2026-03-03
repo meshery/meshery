@@ -1,0 +1,24 @@
+version: 0.0.11
+name: vpc-workflow-design
+displayName: VPC-WORKFLOW-DESIGN
+createdAt: "2025-02-22T03:02:35Z"
+description: This design contains all the necessary resources required to create the VPC and other networking components for EC2 instances. The resources that will be deployed include VPC, Private and Public Subnet, Internet gateway, NAT gateway, Elastic IP, Security Group, Route tables.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2f7597bd-9713-461e-b64f-c571415d2a86/0.0.11/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure the EC2 Controller has been deployed on your Kubernetes Cluster.  \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2f7597bd-9713-461e-b64f-c571415d2a86-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2f7597bd-9713-461e-b64f-c571415d2a86-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

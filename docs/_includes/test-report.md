@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: February 17th 2026, 11:28:53 pm
+- Testing started at: March 3rd 2026, 1:00:14 pm
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 3 failed
+- ✅ 68 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
 - ⏩ 2 skipped
 
-⌛ _Duration: 3 minutes and 46 seconds_
+⌛ _Duration: 3 minutes and 50 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,7 +30,7 @@
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
 | 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
-| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ❌ |
+| 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |
 | 12 | Meshery | chromium-meshery-provider | Import a Model via Url Import |  | ✅ |
 | 13 | Meshery | chromium-meshery-provider | Logout from current user session |  | ✅ |
@@ -143,20 +143,6 @@ Error: No connected Kubernetes cluster found to delete. Ensure a connection exis
  [90m 190 |[39m       )[33m;[39m
  [90m 191 |[39m     }[0m
 ```
-
-</details>
-
-<details>
-<summary>❌ Import a Model via CSV Import (Meshery - chromium-meshery-provider)</summary>
-
-**File Location:** `Not Found`
-
-**Error Message:**
-```
-[31mTest timeout of 60000ms exceeded.[39m
-```
-
-
 
 </details>
 

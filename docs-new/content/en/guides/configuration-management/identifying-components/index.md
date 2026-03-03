@@ -3,7 +3,7 @@ title: Identifying Meshery Components
 description: A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery UI.
 categories: [configuration]
 aliases:
-- extensions/component-shape-guide
+- /extensions/component-shape-guide
 ---
 
 Ever wondered what the different icons and shapes in Meshery represent? Whether you're looking at a dashboard, a settings page, or a design, you'll encounter a rich library of visual elements. This guide is here to help you understand what they mean.
@@ -14,9 +14,9 @@ The [components](/concepts/logical/components) in Meshery fall into two fundamen
 
 - **Non-semantic Components (Annotation):** These are visual elements used for documentation and organization, such as text boxes, arrows, shapes, and comments. Meshery ignores these during deployment as they don't represent actual infrastructure.
 
-{{< alert type="info" title="Visual Customization" >}}
+{{% alert color="info" title="Visual Customization" %}}
 All components, whether semantic or non-semantic, support rich visual customization. For example, you can change the color of a Kubernetes Pod icon, modify its shape, or customize its background - it's all configurable!
-{{< /alert >}}
+{{% /alert %}}
 
 ## Semantic Components
 
@@ -42,9 +42,9 @@ Meshery supports various technologies (like AWS, Prometheus, Istio, KEDA, etc.) 
   <img src="./images/AWS-models.png" style="width:50%; height:auto;" alt="AWS models in Meshery">
 </a>
 
-{{< alert type="info" title="Exploring All Integrations" >}}
+{{% alert color="info" title="Exploring All Integrations" %}}
 This guide covers the visual style of components. For a complete catalog of all technologies that Meshery integrates, visit the integrations directory. <strong><a href='/extensions/integrations'>Explore All Integrations</a></strong>
-{{< /alert >}}
+{{% /alert %}}
 
 ## Non-semantic Components
 
@@ -57,9 +57,9 @@ These components help you document and organize your designs without affecting t
 
 While these components are ignored during deployment, they support the same visual customization options as semantic components.
 
-{{< alert type="info" title="Edge Components" >}}
+{{% alert color="info" title="Edge Components" %}}
 To learn more about edge components and their visual styles, visit the <strong><a href='/extensions/edges-shape-guide'>Edge Components Guide</a></strong>
-{{< /alert >}}
+{{% /alert %}}
 
 ## Foundational Elements
 
@@ -74,13 +74,13 @@ In addition to the rich library of predefined icons, Meshery also provides a cor
 <br>
 These are the quintessential building blocks for many diagrams – your circles, squares, triangles, and basic polygons. They offer simple, clean, and universally understood forms for a wide range of uses.
 
-{% include extension-guide.html
+{{< extension-guide 
   data_file="foundational_geometric_shapes"
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
   guide_assests_folder="shapes"
-%}
+>}}
 
 </details>
 
@@ -89,13 +89,13 @@ These are the quintessential building blocks for many diagrams – your circles,
 <br>
 This group includes shapes that, by common convention, often evoke a more specific symbolic meaning, like using a "Barrel" for data storage or an "Actor" for a user role. Leveraging these established visual metaphors can make your custom diagrams more intuitive.
 
-{% include extension-guide.html
+{{< extension-guide 
   data_file="common_representational_shapes"
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
   guide_assests_folder="shapes"
-%}
+>}}
 
 </details>
 
@@ -104,13 +104,13 @@ This group includes shapes that, by common convention, often evoke a more specif
 <br>
 When your diagrams require a more distinct visual style or an element for emphasis, this collection offers a variety of options, from complex polygons to stylized forms like "Crescent," "Star," or "XWing." These shapes are less commonly used in Meshery and have no universally accepted meaning.
 
-{% include extension-guide.html
+{{< extension-guide 
   data_file="specialized_decorative_shapes"
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
   guide_assests_folder="shapes"
-%}
+>}}
 
 </details>
 

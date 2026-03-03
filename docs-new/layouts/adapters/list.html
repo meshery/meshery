@@ -1,0 +1,18 @@
+{{ define "main" }}
+<article>  
+  <table style="display: flex; align-self: center; justify-self: center">
+    <th>Adapter</th>
+    <th>Earliest Version</th>
+    {{ range where .Site.Pages "Type" "adapters" }}
+    {{ if .Params.image }}
+    <tr>
+      <td><img src="{{ .Params.image }}" style="width:20px" /> <a href="{{ .Permalink }}">{{ .Params.name }}</a></td>
+      <td>{{ .Params.earliest_version }}</td>
+    </tr>
+    {{ end }}
+    {{ end }}
+  </table>
+  
+  {{ .Content }}
+</article>
+{{ end }}

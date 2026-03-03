@@ -1,0 +1,220 @@
+name: api-backend
+version: 0.0.14
+services:
+  api-service:
+    annotations: {}
+    apiVersion: apiregistration.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: api-service
+    namespace: ""
+    settings:
+      spec:
+        group Priority Minimum: 1
+        version Priority: 1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 56f4cf47-8d54-4abd-8e89-2e19c5fb466b
+        label: api-service
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.4
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 1390
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: APIService
+    version: v1.25.4
+  backend:
+    annotations: {}
+    apiVersion: appmesh.k8s.aws/v1beta2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: appmesh-controller
+    name: backend
+    namespace: default
+    settings:
+      spec:
+        mesh Ref:
+          name: mysql-database
+          uid: "1"
+        virtualservices:
+        - name: mysql db
+          namespace: mysql-database
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 72be4fe4-06bb-494f-8cd8-a43835a8730b
+        label: backend
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: AWS App Mesh
+          metadata:
+            source_uri: https://aws.github.io/eks-charts/appmesh-controller-1.12.1.tgz
+            svgColor: ui/public/static/img/meshmodels/appmesh-controller/color/backendgroup-color.svg
+            svgWhite: ui/public/static/img/meshmodels/appmesh-controller/white/backendgroup-white.svg
+          name: appmesh-controller
+          version: 1.11.0
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://aws.amazon.com/architecture/icons/
+          model: appmesh-controller
+          modelDisplayName: AWS App Mesh
+          primaryColor: '#ff9900'
+          published: true
+          secondaryColor: '#F4BC79'
+          shape: circle
+          styleOverrides:
+            z-index: 3
+          subCategory: Service Mesh
+          svgColor: ui/public/static/img/meshmodels/appmesh-controller/color/backendgroup-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/appmesh-controller/white/backendgroup-white.svg
+        position:
+          posX: 1430
+          posY: 150
+        whiteboardData:
+          style: {}
+    type: BackendGroup
+    version: 1.11.0
+  jenkins:
+    annotations: {}
+    apiVersion: jenkins.io/v1alpha2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: jenkins-operator
+    name: jenkins
+    namespace: default
+    settings:
+      spec:
+        keycloak Spec:
+          realm: "1"
+          secret Name: admin
+        shared Libraries: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 15263762-676b-45f8-8175-aa9282434a05
+        label: jenkins
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: Jenkins Operator
+          metadata:
+            source_uri: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.8.0-beta.2.tgz
+            svgColor: ui/public/static/img/meshmodels/jenkins-operator/color/jenkins-color.svg
+            svgWhite: ui/public/static/img/meshmodels/jenkins-operator/white/jenkins-white.svg
+          name: jenkins-operator
+          version: 2.13.2
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: ""
+          model: jenkins-operator
+          modelDisplayName: Jenkins Operator
+          primaryColor: '#9cd6f4'
+          published: true
+          secondaryColor: ""
+          shape: circle
+          styleOverrides:
+            z-index: 5
+          subCategory: Continuous Integration & Delivery
+          svgColor: ui/public/static/img/meshmodels/jenkins-operator/color/jenkins-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/jenkins-operator/white/jenkins-white.svg
+        position:
+          posX: 1470
+          posY: 210
+        whiteboardData:
+          style: {}
+    type: Jenkins
+    version: 2.13.2
+  mysql-database:
+    annotations: {}
+    apiVersion: mysql.veilisorg.com/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: mysql-operator
+    name: mysql-database
+    namespace: default
+    settings:
+      database: users
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b3bcf796-837b-40c6-8620-40f947080273
+        label: mysql-database
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: MySQL Operator
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/mysql-operator/color/mysqlbackup-color.svg
+            svgWhite: ui/public/static/img/meshmodels/mysql-operator/white/mysqlbackup-white.svg
+          name: mysql-operator
+          version: 0.6.2999
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: ""
+          model: mysql-operator
+          modelDisplayName: MySQL Operator
+          primaryColor: '#00758F'
+          published: true
+          secondaryColor: '#F29111'
+          shape: circle
+          styleOverrides:
+            z-index: 4
+          subCategory: Database
+          svgColor: ui/public/static/img/meshmodels/mysql-operator/color/mysqlbackup-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/mysql-operator/white/mysqlbackup-white.svg
+        position:
+          posX: 1450
+          posY: 290
+        whiteboardData:
+          style: {}
+    type: MysqlDatabase
+    version: 0.6.2999
