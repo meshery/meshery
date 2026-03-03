@@ -66,14 +66,16 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentDefinition := args[0]
 		urlPath := componentApiPath
+		searchTerm := ""
 
 		// build url for uuid
 		if utils.IsUUID(componentDefinition) {
 			viewUrlValue := url.Values{}
 			viewUrlValue.Add("id", componentDefinition)
-			viewUrlValue.Add("pagesize", "all")
 
 			urlPath = fmt.Sprintf("%s?%s", urlPath, viewUrlValue.Encode())
+		} else {
+			searchTerm = componentDefinition
 		}
 
 		selectedComponent := new(component.ComponentDefinition)
@@ -81,7 +83,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
 				UrlPath:        urlPath,
-				ErrNotFoundMsg: fmt.Sprintf("No component(s) found with the name or ID: %s", componentDefinition),
+				ErrNotFoundMsg: fmt.Sprintf("%s%s", errNoComponentFound, componentDefinition),
+				SearchTerm:     searchTerm,
 			},
 			formatLabel,
 			func(data *models.MeshmodelComponentsAPIResponse) ([]component.ComponentDefinition, int64) {
