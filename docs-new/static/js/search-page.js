@@ -1,14 +1,16 @@
 (function ($) {
     'use strict';
 
-    // 1. HELPER: Escape Regex characters (Fixes Crash on symbols)
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // 2. HELPER: Sanitize HTML (Fixes XSS Security Risk)
     function escapeHTML(str) {
         return $('<div>').text(str).html();
+    }
+
+    function escapeLunrSearch(string) {
+        return string.replace(/[+\-&|!(){}\[\]^"~*?:\\]/g, '\\$&');
     }
 
     $(document).ready(function () {
@@ -17,8 +19,7 @@
         const $resultsContainer = $('#search-results');
         const $loading = $('#search-loading');
         const $title = $('#search-title');
-
-        // 3. FIX: Get Dynamic Path (Fixes Hardcoded URL issue)
+        
         const searchIndexElement = document.querySelector('[data-search-index]');
         const searchIndexUrl = (searchIndexElement && searchIndexElement.getAttribute('data-search-index')) 
                              ? searchIndexElement.getAttribute('data-search-index') 
@@ -33,7 +34,6 @@
         $title.text(`Showing results for "${searchQuery}"`);
 
         $.ajax(searchIndexUrl).then((data) => {
-            // 4. FIX: Create Map for Fast Lookup (Fixes Performance O(n) issue)
             const dataMap = new Map(data.map(item => [item.ref, item]));
 
             const idx = lunr(function () {
@@ -44,8 +44,8 @@
                 data.forEach((doc) => { this.add(doc); });
             });
 
-            // Search with escaped query
-            const results = idx.search(`${searchQuery} ${searchQuery}*`);
+            const safeLunrQuery = escapeLunrSearch(searchQuery);
+            const results = idx.search(`${safeLunrQuery} ${safeLunrQuery}*`);
             $loading.hide();
 
             if (results.length === 0) {
@@ -56,24 +56,21 @@
             const $list = $('<div class="search-results-list" style="padding-left: 10px;">');
 
             results.forEach((r) => {
-                // Use Map for instant lookup
                 const doc = dataMap.get(r.ref);
                 
-                // Guard: Skip if doc is missing or is a release note
                 if (!doc || doc.ref.includes("/project/releases/")) return;
+
+                if (!doc.ref.startsWith("/")) return;
 
                 let snippet = doc.description || doc.body.substring(0, 300);
                 if (snippet.length > 300) snippet = snippet.substring(0, 300) + "...";
 
-                // Prepare Logic
                 const escapedQuery = escapeRegExp(searchQuery);
                 const regex = new RegExp(`(${escapedQuery})`, "gi");
 
-                // 5. FIX: Sanitize text BEFORE highlighting (Fixes XSS)
                 const safeTitle = escapeHTML(doc.title);
                 const safeSnippet = escapeHTML(snippet);
 
-                // Apply Highlight to the Safe Title
                 const highlightedTitle = safeTitle.replace(
                     regex,
                     "<span style='color:#00b39f; font-weight:bold;'>$1</span>"
@@ -95,7 +92,7 @@
         }).catch((err) => {
             console.error("Error loading search index:", err);
             $loading.hide();
-            $resultsContainer.html('<p>Error loading search index.</p>');
+            $resultsContainer.html('<p>Error loading search index (Check console).</p>');
         });
     });
 })(jQuery);
