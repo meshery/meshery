@@ -1,0 +1,26 @@
+version: 0.0.1
+name: dapr-with-kubernetes-events
+displayName: Dapr with  Kubernetes events
+createdAt: "2024-05-07T10:08:16Z"
+description: |
+    This design will show an example of running Dapr with a Kubernetes events input binding. You'll be deploying the Node application and will require a component definition with a Kubernetes event binding component.
+    checkout this https://github.com/dapr/samples/tree/master/read-kubernetes-events#read-kubernetes-events for more info .
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e31a3c6d-2102-4215-8ea2-3ab399ca29f6/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "make sure to replace some things like docker images ,credentials to try out on your local cluster . \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e31a3c6d-2102-4215-8ea2-3ab399ca29f6-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e31a3c6d-2102-4215-8ea2-3ab399ca29f6-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

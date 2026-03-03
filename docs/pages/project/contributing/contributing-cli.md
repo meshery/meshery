@@ -16,7 +16,7 @@ list: include
     title="Meshery CLI Reference Documents"
     content='<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
-    <li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>Test cases for end-to-end testing of Meshery functionality.</li>
+    <li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>: Test cases for end-to-end testing of Meshery functionality.</li>
 	<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>' %}
 
 {% include member-form.html %}
@@ -161,7 +161,7 @@ This format should reference an external file where your manual changes are stor
 
 ### Integration Tests
 
-**Marking ingtegration tests under unit tests**
+**Marking integration tests under unit tests**
 
 Since there is no straightforward way to mark unit tests and integration tests differently. Here we use the `--short` flag while running tests to differentiate between unit tests and integration tests.
 
@@ -174,10 +174,6 @@ Since there is no straightforward way to mark unit tests and integration tests d
 {% include code.html code=code_content %}
 
 In the above code sample, the test is marked with **“Integration”** in the title and if a `--short` flag is passed with the command, this test is skipped.
-
-#### End-to-end Tests
-
-End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests](/project/contributing/contributing-cli-tests)
 
 ### Running tests in GitHub workflows
 
@@ -194,6 +190,3 @@ To update golden files with the test output use the `--update` flag:
 {% capture code_content %}var update = flag.Bool("update", false, "update golden files"){% endcapture %}
 {% include code.html code=code_content %}
 
-#### End-to-end Tests
-
-End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests](/project/contributing/contributing-cli-tests)

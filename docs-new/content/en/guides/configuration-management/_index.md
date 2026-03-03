@@ -5,5 +5,3 @@ description: Guides for understanding Meshery's ability to configure infrastruct
 ---
 
 Guides for understanding Meshery's ability to configure infrastructure and applications.
-
-{{< section-guides-list >}}

@@ -1,0 +1,25 @@
+version: 0.0.3
+name: ms-rbac-grpc
+displayName: ms-rbac-grpc
+createdAt: "2025-10-07T05:47:34Z"
+description: |
+    RBAC gRPC microservice helm chart from CodeDesignPlus. This design provides role-based access control functionality via gRPC protocol for microservices architecture.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5ace2887-9622-41da-bc55-55ce674ead02/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- Ensure gRPC ports are properly configured in your cluster\n- Review RBAC policies before deployment to production\n- Configure appropriate resource limits based on your workload\n- Verify connectivity between services that need to communicate via gRPC\n- Consider TLS/SSL configuration for secure gRPC communication \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e7937628-70c4-49b6-a346-6cb01efc7683
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5ace2887-9622-41da-bc55-55ce674ead02-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5ace2887-9622-41da-bc55-55ce674ead02-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

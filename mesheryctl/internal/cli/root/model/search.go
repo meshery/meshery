@@ -15,7 +15,7 @@ var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search model(s)",
 	Long: `Search model(s) by search string
-Documentation for models search can be found at https://docs.meshery.io/reference/mesheryctl/model/search`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/search`,
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]

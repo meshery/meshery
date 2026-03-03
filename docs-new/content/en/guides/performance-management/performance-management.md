@@ -2,10 +2,9 @@
 title: Performance Management with Meshery
 description: This guide is to help users get a better overview of running and managing performance tests in Meshery
 aliases: 
-- functionality/performance-management
+- /functionality/performance-management
 categories: [performance]
-params:
-  command: perf
+command: perf
 ---
 
 This guide walks through running performance benchmarks using Meshery. Users can either use the Meshery UI, the CLI, mesheryctl or run performance tests in their CI/CD pipelines using the Meshery GitHub Action.
@@ -132,9 +131,9 @@ _Downloading the token_
 
 You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
 
-{{< alert type="info" title="Using the token in GitHub workflows" >}}
+{{% alert color="info" title="Using the token in GitHub workflows" %}}
 You can use the <a href='https://docs.github.com/en/actions/reference/encrypted-secrets'>secrets feature in GitHub</a> to store the token.
-{{< /alert >}}
+{{% /alert %}}
 
 The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/layer5io/meshery-smp-action#smp-compatible-test-configuration-file).
 

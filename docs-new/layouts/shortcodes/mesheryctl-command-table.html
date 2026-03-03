@@ -1,0 +1,111 @@
+{{- $command_name := .Get "command" -}}
+{{- $commands := .Site.Data.mesheryctlcommands.cmds -}}
+{{- $command := index $commands $command_name -}}
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+</thead>
+<tbody>
+  {{- if $command }}
+    {{- if $command.name }}
+      <!-- Standard command structure (global, system, perf, adapter, etc.) -->
+      <tr>
+        <td rowspan="100"><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}">{{ $command.name }}</a></td>
+        <td></td>
+        <td></td>
+        <td>{{ $command.description }}</td>
+      </tr>
+      
+      <!-- Flags -->
+      {{- if $command.flags }}
+        {{- range $key, $flag := $command.flags }}
+      <tr>
+        <td></td>
+        <td>{{ $flag.name }}</td>
+        <td>{{ $flag.description }}</td>
+      </tr>
+        {{- end }}
+      {{- end }}
+      
+      <!-- Subcommands and their flags -->
+      {{- if $command.subcommands }}
+        {{- range $subkey, $subcommand := $command.subcommands }}
+      <tr>
+        <td><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ $subcommand.description }}</td>
+      </tr>
+          {{- if $subcommand.flags }}
+            {{- range $flagkey, $flag := $subcommand.flags }}
+      <tr>
+        <td></td>
+        <td>{{ $flag.name }}</td>
+        <td>{{ $flag.description }}</td>
+      </tr>
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- else }}
+      <!-- Nested command structure (exp with relationship, workspace, organization) -->
+      {{- range $subkey, $subcommand := $command }}
+      {{- $first := true }}
+      
+      <!-- Output category-level flags first with category name -->
+      {{- if $subcommand.flags }}
+        {{- range $flagkey, $flag := $subcommand.flags }}
+      <tr>
+        {{- if $first }}
+        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        {{- $first = false }}
+        {{- else }}
+        <td></td>
+        {{- end }}
+        <td></td>
+        <td>{{ $flag.name }}</td>
+        <td>{{ $flag.description }}</td>
+      </tr>
+        {{- end }}
+      {{- end }}
+      
+      <!-- Output subcommands -->
+      {{- if $subcommand.subcommands }}
+        {{- range $subsubkey, $subsubcommand := $subcommand.subcommands }}
+      <tr>
+        {{- if $first }}
+        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        {{- $first = false }}
+        {{- else }}
+        <td></td>
+        {{- end }}
+        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}/{{ $subsubkey }}">{{ $subsubcommand.name }}</a></td>
+        <td></td>
+        <td>{{ $subsubcommand.description }}</td>
+      </tr>
+          {{- if $subsubcommand.flags }}
+            {{- range $flagkey, $flag := $subsubcommand.flags }}
+      <tr>
+        <td></td>
+        <td></td>
+        <td>{{ $flag.name }}</td>
+        <td>{{ $flag.description }}</td>
+      </tr>
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    <tr>
+      <td colspan="4">Command "{{ $command_name }}" not found in data</td>
+    </tr>
+  {{- end }}
+</tbody>
+</table>

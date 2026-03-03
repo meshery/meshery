@@ -4,7 +4,7 @@ description: Screenshot service provided via Kanvas to capture a snapshot of you
 display_title: false
 categories: [kanvas]
 aliases: 
-- extensions/snapshot
+- /extensions/snapshot
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="/extensions/images/kanvas-icon-color.svg" /> Kanvas Snapshot

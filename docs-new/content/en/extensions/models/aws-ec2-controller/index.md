@@ -1,0 +1,169 @@
+---
+title: AWS EC2
+subtitle: Collaborative and visual infrastructure as design for AWS EC2
+image: /extensions/models/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
+description: 
+integrations-category: Provisioning
+integrations-subcategory: Compute
+registrant: GitHub
+components: 
+- name: field-export
+  colorIcon: /extensions/models/aws-ec2-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/field-export/icons/white/field-export-white.svg
+  description: 
+- name: adopted-resource
+  colorIcon: /extensions/models/aws-ec2-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  description: 
+- name: dhcp-options
+  colorIcon: /extensions/models/aws-ec2-controller/components/dhcp-options/icons/color/dhcp-options-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/dhcp-options/icons/white/dhcp-options-white.svg
+  description: 
+- name: elastic-ip-address
+  colorIcon: /extensions/models/aws-ec2-controller/components/elastic-ip-address/icons/color/elastic-ip-address-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/elastic-ip-address/icons/white/elastic-ip-address-white.svg
+  description: 
+- name: flow-log
+  colorIcon: /extensions/models/aws-ec2-controller/components/flow-log/icons/color/flow-log-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/flow-log/icons/white/flow-log-white.svg
+  description: 
+- name: instance
+  colorIcon: /extensions/models/aws-ec2-controller/components/instance/icons/color/instance-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/instance/icons/white/instance-white.svg
+  description: 
+- name: internet-gateway
+  colorIcon: /extensions/models/aws-ec2-controller/components/internet-gateway/icons/color/internet-gateway-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/internet-gateway/icons/white/internet-gateway-white.svg
+  description: 
+- name: nat-gateway
+  colorIcon: /extensions/models/aws-ec2-controller/components/nat-gateway/icons/color/nat-gateway-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/nat-gateway/icons/white/nat-gateway-white.svg
+  description: 
+- name: network-acl
+  colorIcon: /extensions/models/aws-ec2-controller/components/network-acl/icons/color/network-acl-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/network-acl/icons/white/network-acl-white.svg
+  description: 
+- name: route-table
+  colorIcon: /extensions/models/aws-ec2-controller/components/route-table/icons/color/route-table-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/route-table/icons/white/route-table-white.svg
+  description: 
+- name: security-group
+  colorIcon: /extensions/models/aws-ec2-controller/components/security-group/icons/color/security-group-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/security-group/icons/white/security-group-white.svg
+  description: 
+- name: subnet
+  colorIcon: /extensions/models/aws-ec2-controller/components/subnet/icons/color/subnet-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/subnet/icons/white/subnet-white.svg
+  description: 
+- name: transit-gateway
+  colorIcon: /extensions/models/aws-ec2-controller/components/transit-gateway/icons/color/transit-gateway-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/transit-gateway/icons/white/transit-gateway-white.svg
+  description: 
+- name: vpc
+  colorIcon: /extensions/models/aws-ec2-controller/components/vpc/icons/color/vpc-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/vpc/icons/white/vpc-white.svg
+  description: 
+- name: vpc-endpoint
+  colorIcon: /extensions/models/aws-ec2-controller/components/vpc-endpoint/icons/color/vpc-endpoint-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/vpc-endpoint/icons/white/vpc-endpoint-white.svg
+  description: 
+- name: vpc-peering-connection
+  colorIcon: /extensions/models/aws-ec2-controller/components/vpc-peering-connection/icons/color/vpc-peering-connection-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/vpc-peering-connection/icons/white/vpc-peering-connection-white.svg
+  description: 
+- name: vpc-endpoint-service-configuration
+  colorIcon: /extensions/models/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/color/vpc-endpoint-service-configuration-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/white/vpc-endpoint-service-configuration-white.svg
+  description: 
+- name: capacity-reservation
+  colorIcon: /extensions/models/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: capacity-reservation
+  colorIcon: /extensions/models/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: launch-template
+  colorIcon: /extensions/models/aws-ec2-controller/components/launch-template/icons/color/launch-template-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/launch-template/icons/white/launch-template-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: /extensions/models/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: /extensions/models/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: iam-role-selector
+  colorIcon: /extensions/models/aws-ec2-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  description: 
+- name: managed-prefix-list
+  colorIcon: /extensions/models/aws-ec2-controller/components/managed-prefix-list/icons/color/managed-prefix-list-color.svg
+  whiteIcon: /extensions/models/aws-ec2-controller/components/managed-prefix-list/icons/white/managed-prefix-list-white.svg
+  description: 
+components-count: 24
+relationships: 
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+- type: "parent"
+  kind: "hierarchical"
+  description: ""
+relationship-count: 16
+featureList: [
+  "Optimized CPU Configurations",
+  "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",
+  "High Precision Time with Amazon Time Sync Service
+"
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/aws-ec2-controller
+---

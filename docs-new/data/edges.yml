@@ -1,0 +1,56 @@
+- Edge: Arrow Head
+  Description: Represents general direction or flow in diagrams. In UML, it could indicate direction in an association or dependency.
+  SVG: "ArrowHead.svg"
+
+#- Edge: Arrow With Cross Head
+#  Description: 
+#  SVG: "ArrowWithCrossHead.svg"
+
+- Edge: Bezier Curve Line
+  Description: Used for curved relationships, which might indicate non-linear or non-direct connections. In UML, it could be used for inheritance or flow that isn't straightforward.
+  SVG: "BezierCurveLine.svg"
+
+- Edge: Filled Circle Head
+  Description: Used for aggregation in UML, where one class contains another but does not own it (e.g., a library containing books).
+  SVG: "FilledCircleHead.svg"
+
+- Edge: Filled Diamond Head
+  Description: Used for aggregation in UML, typically an empty diamond at the container end, indicating a "whole-part" relationship.
+  SVG: "FilledDiamondHead.svg"
+
+#- Edge: Filled Rectangle Head
+#  Description: 
+#  SVG: "FilledRectangleHead.svg"
+
+- Edge: Filled Square Head
+  Description: Represents composition in UML, a stronger relationship than aggregation, where the contained class cannot exist without the container (e.g., a house and its rooms).
+  SVG: "FilledSquareHead.svg"
+
+- Edge: Filled Triangle Head
+  Description: Often used for inheritance in UML, where one class is a subclass of another. It indicates the "is-a" relationship.
+  SVG: "FilledTriangleHead.svg"
+
+- Edge: Line With Circles
+  Description: Often represents a weak or indirect association in UML. It can also be used for dependencies or indicating optional relationships.
+  SVG: "LineWithCircles.svg"
+
+- Edge: Smooth Line With Circle
+  Description: Represents a smooth transition or flow between elements. It could be used in scenarios where gradual change or influence is depicted.
+  SVG: "SmoothLineWithCircle.svg"
+
+- Edge: Straight Line
+  Description: Represents a simple association or direct relationship between two entities or classes in UML.
+  SVG: "StraightLine.svg"
+
+- Edge: Tree Line
+  Description: Represents hierarchical relationships, such as a parent class with child classes, or a main system branching into subsystems.
+  SVG: "TreeLine.svg"
+
+- Edge: Wave Line
+  Description: Typically used to represent asynchronous signals or connections that aren't continuous. It may also denote complex relationships or uncertain flows in certain custom diagrams.
+  SVG: "WaveLine.svg"
+
+- Edge: Zigzag Line
+  Description: This is often used to represent signals with interference or noise. In system design, it can be used to indicate a disrupted or unreliable connection.
+  SVG: "ZigzagLine.svg"
+

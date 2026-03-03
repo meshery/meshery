@@ -1,8 +1,8 @@
 ---
 title: Managing Connections
 aliases: 
-- tasks/lifecycle-management
-- guides/infrastructure-management/managing-connections
+- /tasks/lifecycle-management
+- /guides/infrastructure-management/managing-connections
 categories: [infrastructure]
 description: Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery.
 ---

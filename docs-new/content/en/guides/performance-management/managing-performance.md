@@ -1,7 +1,7 @@
 ---
 title: Managing Performance
 aliases: 
-- tasks/performance/managing-performance
+- /tasks/performance/managing-performance
 categories: [performance]
 description: Advanced performance characterization with Meshery.
 ---
