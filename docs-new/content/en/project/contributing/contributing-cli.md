@@ -7,14 +7,16 @@ categories: [contributing]
 `mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.25+](https://go.dev/dl/). `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarize yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
 
 {{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
-    <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
-    <li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>Test cases for end-to-end testing of Meshery functionality.</li>
-	<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 
+<li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
+<li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>Test cases for end-to-end testing of Meshery functionality.</li>
+<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
+
+{{< member-form >}}
 
 ### Designing Commands
 
-The [Meshery CLI Style Guide](/project/contributing/contributing-cli-guide) outlines the process by which new commands are designed and contains a collection of principles and conventions that need to be followed while designing `mesheryctl` commands. `mesheryctl` might be the interface that the users first have with Meshery. As such, `mesheryctl` needs to provide a great UX. 
+The [Meshery CLI Style Guide](/project/contributing/contributing-cli-guide) outlines the process by which new commands are designed and contains a collection of principles and conventions that need to be followed while designing `mesheryctl` commands. `mesheryctl` might be the interface that the users first have with Meshery. As such, `mesheryctl` needs to provide a great UX.
 
 ### Building CLI
 
@@ -38,10 +40,10 @@ The documentation pages for `mesheryctl` reference are made with the help of the
 - Then, edit the Cobra macro variables present in the each file. An example is given below for reference.
 
 {{< code code=`var startCmd = &cobra.Command{
-Use:   "start",
+Use: "start",
 Short: "Start Meshery",
-Long:  'Start Meshery and each of its components.',
-Args:  cobra.NoArgs,
+Long: 'Start Meshery and each of its components.',
+Args: cobra.NoArgs,
 Example:
 // Start meshery
 mesheryctl system start
@@ -51,13 +53,13 @@ mesheryctl system context create k8s -p kubernetes -s,
 Annotations: linkScreenshot,
 ...` >}}
 
-  The variables present in above sample will be used in creating the doc pages for the specific command
+The variables present in above sample will be used in creating the doc pages for the specific command
 
 Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/project/contributing/images/patternApply.png)",
-	"caption": "Usage of mesheryctl design apply",
+"link": "![pattern-apply-usage](/project/contributing/images/patternApply.png)",
+"caption": "Usage of mesheryctl design apply",
 }
 ...
 Example:
@@ -79,7 +81,7 @@ Though the command page is generated automatically by the Cobra CLI library, the
 - [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
 
 ### Preserving Manually Added Documentation
-	
+
 `mesheryctl` uses Cobra CLI library and GitHub Actions to automate the generation of command documentation pages. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Jekyll `include` file. Follow file naming scheme outlined below:
 
 If your mesheryctl docs end like this, add the include tag at the end of the file. An example is given below
@@ -92,6 +94,7 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name],
 Annotations: linkDocPatternApply,
 ...
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
@@ -100,6 +103,7 @@ Annotations: linkDocPatternApply,
 
 </div>
 </pre>
+
 {% raw %}{% include permalink-of-file %}{% endraw %}` >}}
 
 ## Quality
