@@ -46,10 +46,10 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/component
 mesheryctl component view [component-name]
 
 // View details of a specific component in specifed format
-mesheryctl component view [component-name | components-id] -o [json|yaml]
+mesheryctl component view [component-name | component-id] -o [json|yaml]
 
 // View details of a specific component in specified format and save it as a file
-mesheryctl component view [component-name | components-id] -o [json|yaml] --save
+mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return display.ValidateOutputFormat(cmdComponentViewFlags.OutputFormat)
@@ -57,7 +57,7 @@ mesheryctl component view [component-name | components-id] -o [json|yaml] --save
 	Args: func(_ *cobra.Command, args []string) error {
 		// TODO see what leka has suggested in other PR
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[component-name | components-id] is required but not specified\n\n%s", errViewCmdMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[component-name | component-id] is required but not specified\n\n%s", errViewCmdMsg))
 		} else if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg))
 		}
