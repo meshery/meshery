@@ -9,7 +9,6 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -306,7 +305,7 @@ func TestModelInit(t *testing.T) {
 						utils.Equals(t, expectedResponse, err.Error())
 						return
 					}
-					utils.Equals(t, errors.GetCode(tc.ExpectedError), errors.GetCode(err))
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
 
 				}
