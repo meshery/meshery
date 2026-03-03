@@ -10,7 +10,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
 )
@@ -63,8 +62,9 @@ mesheryctl model view [model-name] --output-format json
 		default:
 			err := display.PromptAsyncPagination(
 				display.DisplayDataAsync{
-					UrlPath:    modelsApiPath,
-					SearchTerm: args[0],
+					UrlPath:        modelsApiPath,
+					SearchTerm:     args[0],
+					ErrNotFoundMsg: fmt.Sprintf("no results found for %s", args[0]),
 				},
 				formatLabel,
 				func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
@@ -73,9 +73,6 @@ mesheryctl model view [model-name] --output-format json
 				selectedModel,
 			)
 			if err != nil {
-				if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
-					return utils.ErrNotFound(fmt.Errorf("no results found for %s", args[0]))
-				}
 				return err
 			}
 		}
