@@ -44,7 +44,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/component
 // View details of a specific component
 mesheryctl component view [component-name | component-id]
 
-// View details of a specific component in specifed format
+// View details of a specific component in specified format
 mesheryctl component view [component-name | component-id] -o [json|yaml]
 
 // View details of a specific component in specified format and save it as a file

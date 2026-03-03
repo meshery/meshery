@@ -110,9 +110,6 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
 		componentID := component.Id.String()
-		if componentID == "" {
-			componentID = "N/A"
-		}
 		componentName := component.DisplayName
 		if componentName == "" {
 			componentName = "N/A"
