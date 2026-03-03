@@ -25,7 +25,7 @@ Models serve as the foundational packaging units for Meshery's logical object re
 
 {% include alert.html title="Creating your own models" type="light" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the <a href='/project/contributing/contributing-models'>Contributing to Models</a> guide." %}
 
-See [Contributing to Models](/project/contributing/contributing-models).
+
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities used to represent and manage cloud and cloud native systems.
 
