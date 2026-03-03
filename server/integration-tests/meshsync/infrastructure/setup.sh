@@ -16,6 +16,28 @@ PATH_TO_MESHERY_CHART="install/kubernetes/helm/meshery"
 TMP_KUBECONFIG_PATH="meshery-integration-test-meshsync-kubeconfig.yaml"
 LOCAL_SQLITE_PATH="meshery-integration-test-meshsync-mesherydb.sql"
 
+MESHERY_DEPLOYMENT_WAIT_TIMEOUT="${MESHERY_DEPLOYMENT_WAIT_TIMEOUT:-180s}"
+MESHERY_OPERATOR_WAIT_TIMEOUT="${MESHERY_OPERATOR_WAIT_TIMEOUT:-180s}"
+MESHERY_BROKER_WAIT_TIMEOUT="${MESHERY_BROKER_WAIT_TIMEOUT:-180s}"
+MESHERY_MESHSYNC_WAIT_TIMEOUT="${MESHERY_MESHSYNC_WAIT_TIMEOUT:-180s}"
+
+dump_meshery_namespace_debug() {
+  echo "WARN: dumping meshery namespace diagnostics..."
+  kubectl --namespace "$MESHERY_K8S_NAMESPACE" get deployment,pod,svc || true
+  echo ""
+
+  local meshery_pod_name
+  meshery_pod_name=$(kubectl --namespace "$MESHERY_K8S_NAMESPACE" get pods --selector=app.kubernetes.io/name=meshery -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
+  if [ -n "$meshery_pod_name" ]; then
+    echo "Describing meshery pod: $meshery_pod_name"
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" describe pod "$meshery_pod_name" || true
+    echo ""
+    echo "Meshery pod logs:"
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" logs "$meshery_pod_name" --all-containers=true --tail=200 || true
+  fi
+  echo ""
+}
+
 check_dependencies() {
   # Check for docker
   if ! command -v docker &> /dev/null; then
@@ -106,7 +128,10 @@ setup_cluster() {
     --namespace $MESHERY_K8S_NAMESPACE \
     --set image.tag=$DOCKER_IMAGE_TAG \
     --set image.pullPolicy=Never
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=64s
+  if ! kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout="$MESHERY_DEPLOYMENT_WAIT_TIMEOUT"; then
+    dump_meshery_namespace_debug
+    return 1
+  fi
   echo ""
 
   echo "Installing meshery operator..."
@@ -119,14 +144,14 @@ setup_cluster() {
   echo ""
 
   echo "Waiting for operator to be available..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout=64s
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout="$MESHERY_OPERATOR_WAIT_TIMEOUT"
   echo ""
   
   # broker is important to be present before submitting k8s context,
   # as server will attempt to connect
   echo "Waiting for broker to be ready..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-broker --timeout 64s
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app=meshery,component=broker --timeout=64s
+  kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-broker --timeout "$MESHERY_BROKER_WAIT_TIMEOUT"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app=meshery,component=broker --timeout="$MESHERY_BROKER_WAIT_TIMEOUT"
   echo ""
 
   echo "Outputing cluster resources..."
@@ -183,7 +208,7 @@ setup_connection() {
   echo ""
 
   echo "Waiting for meshsync to be available..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout="$MESHERY_MESHSYNC_WAIT_TIMEOUT"
   echo ""
 
   echo "Outputing cluster resources..."
