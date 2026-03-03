@@ -9,7 +9,7 @@ categories: [contributing]
 {{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
 
 <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
-<li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>Test cases for end-to-end testing of Meshery functionality.</li>
+<li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a> Test cases for end-to-end testing of Meshery functionality.</li>
 <li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 
 {{< member-form >}}
