@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -30,13 +31,13 @@ func TestViewModel(t *testing.T) {
 			URL:            "api/meshmodels/models",
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s%s", errNoArg, viewUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
 			IsOutputGolden: false,
 		},
 		{
-			Name:             "given an invalid model-name provided when running mesheryctl model view invalid-name then an error message is displayed",
+			Name:             "given an invalid model-name provided when running mesheryctl model view invalid-name then model not found is displayed",
 			Args:             []string{"view", "invalid"},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape("invalid")),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsApiPath, url.QueryEscape("invalid")),
 			Fixture:          "list.model.empty.api.response.golden",
 			ExpectedResponse: "view.model.empty.output.golden",
 			ExpectError:      false,
@@ -45,7 +46,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid model-name provided when running mesheryctl model view valid-name then the detailed information of the model is displayed",
 			Args:             []string{"view", modelName},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsApiPath, url.QueryEscape(modelName)),
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "view.model.output.golden",
 			ExpectError:      false,
@@ -58,7 +59,7 @@ func TestViewModel(t *testing.T) {
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s%s", errMultiArg, viewUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
 			IsOutputGolden:   false,
 		},
 		{
@@ -67,7 +68,7 @@ func TestViewModel(t *testing.T) {
 			URL:            fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  ErrModelUnsupportedOutputFormat(formaterrMsg),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'invalid-format': valid values are json yaml")),
 			IsOutputGolden: false,
 		},
 		{
@@ -81,5 +82,6 @@ func TestViewModel(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ModelCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
 }

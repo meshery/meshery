@@ -9,9 +9,9 @@ import (
 )
 
 type cmdModelListFlags struct {
-	Page     int
-	PageSize int
-	Count    bool
+	Page     int  `json:"page" validate:"gte=1"`
+	PageSize int  `json:"pageSize" validate:"gte=1"`
+	Count    bool `json:"count" validate:"boolean"`
 }
 
 var modelListFlags cmdModelListFlags

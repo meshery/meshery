@@ -6,8 +6,9 @@ import (
 	"runtime"
 	"testing"
 
+	"errors"
+
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 )
 
 func TestDeleteModel(t *testing.T) {
@@ -46,13 +47,12 @@ func TestDeleteModel(t *testing.T) {
 			Name:             "given a non-existent model name when running model delete then ErrModelNotFound is returned",
 			Args:             []string{"delete", "nonexistent-model"},
 			HttpMethod:       "GET",
-			HttpStatusCode:   200,
+			HttpStatusCode:   404,
 			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsApiPath),
 			Fixture:          "delete.model.empty.response.golden",
-			ExpectedResponse: "",
-			ExpectError:      true,
-			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrNotFound(fmt.Errorf("No model with name '%s' found", "nonexistent-model")),
+			ExpectedResponse: "delete.model.empty.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
 		},
 	}
 

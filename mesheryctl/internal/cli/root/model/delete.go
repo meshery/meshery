@@ -18,10 +18,7 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -42,7 +39,6 @@ mesheryctl model delete [model-name]
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg))
 		}
-
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -59,21 +55,14 @@ mesheryctl model delete [model-name]
 		}
 
 		// Delete model by name, for multiple matches use pagination selection prompt
-		selectedModel := new(model.ModelDefinition)
-		err := display.PromptAsyncPagination(
-			display.DisplayDataAsync{
-				UrlPath:        modelsApiPath,
-				SearchTerm:     modelArg,
-				ErrNotFoundMsg: fmt.Sprintf("No model with name '%s' found", modelArg),
-			},
-			formatLabel,
-			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-				return data.Models, data.Count
-			},
-			selectedModel,
-		)
+		selectedModel, err := promptModelSelection(modelArg, modelsApiPath)
 		if err != nil {
 			return err
+		}
+
+		if selectedModel == nil {
+			utils.Log.Infof("No model(s) found with the name: %s", modelArg)
+			return nil
 		}
 
 		// Delete the selected model by its UUID
@@ -85,14 +74,4 @@ mesheryctl model delete [model-name]
 
 		return nil
 	},
-}
-
-func formatLabel(rows []model.ModelDefinition) []string {
-	labels := []string{}
-
-	for _, m := range rows {
-		name := fmt.Sprintf("%s, version: %s", m.DisplayName, m.Version)
-		labels = append(labels, name)
-	}
-	return labels
 }

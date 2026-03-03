@@ -31,8 +31,8 @@ const (
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
 
-	errNoArg            = "must provide one argument: model name\n"
-	errMultiArg         = "too many args provided\n"
+	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)\n"
+
 	viewUsageMsg        = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
 	formaterrMsg        = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
 	errDeleteInvalidArg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id | model-name]\nRun 'mesheryctl model delete --help' to see detailed help message"
