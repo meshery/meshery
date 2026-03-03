@@ -21,16 +21,20 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
+  EditIcon,
+  DeleteIcon,
+  CloseIcon,
+  AddIcon,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import CloseIcon from '@mui/icons-material/Close';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './CustomToolbarSelect';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
+// import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import Moment from 'react-moment';
@@ -55,7 +59,6 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
