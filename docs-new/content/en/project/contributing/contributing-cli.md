@@ -155,7 +155,7 @@ This format should reference an external file where your manual changes are stor
 
 ### Integration Tests
 
-**Marking ingtegration tests under unit tests**
+**Marking integration tests under unit tests**
 
 Since there is no straightforward way to mark unit tests and integration tests differently. Here we use the `--short` flag while running tests to differentiate between unit tests and integration tests.
 
@@ -167,10 +167,6 @@ Since there is no straightforward way to mark unit tests and integration tests d
 }` >}}
 
 In the above code sample, the test is marked with **“Integration”** in the title and if a `--short` flag is passed with the command, this test is skipped.
-
-#### End-to-end Tests
-
-End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests](/project/contributing/contributing-cli-tests)
 
 ### Running tests in GitHub workflows
 
