@@ -54,7 +54,7 @@ mesheryctl component list
 mesheryctl component search [component-name]
 
 // View a specific component
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)

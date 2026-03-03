@@ -36,14 +36,13 @@ var cmdComponentViewFlags componentViewFlags
 
 // represents the mesheryctl component view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
-	// TODO reflect that it also uses uuid
 	Use:   "view",
 	Short: "View registered components",
 	Long: `View a component registered in Meshery Server
 Find more information at: https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 
 // View details of a specific component in specifed format
 mesheryctl component view [component-name | component-id] -o [json|yaml]
@@ -55,7 +54,6 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		return display.ValidateOutputFormat(cmdComponentViewFlags.OutputFormat)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		// TODO see what leka has suggested in other PR
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("[component-name | component-id] is required but not specified\n\n%s", errViewCmdMsg))
 		} else if len(args) > 1 {
