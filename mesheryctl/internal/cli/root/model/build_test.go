@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -256,8 +254,7 @@ func TestModelBuild(t *testing.T) {
 						utils.Equals(t, expectedResponse, err.Error())
 						return
 					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
 
 				}
