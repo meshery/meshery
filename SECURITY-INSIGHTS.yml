@@ -66,13 +66,13 @@ repository:
   accepts-change-request: true
   accepts-automated-change-request: false
   core-team:
-    - name:        Lee Calcote
+    - name: Lee Calcote
       affiliation: Layer5
-      social:      https://layer5.io/community/members/lee-calcote/
-      primary:     true
-    - name:        Sangram Rath
+      social: https://layer5.io/community/members/lee-calcote/
+      primary: true
+    - name: Sangram Rath
       affiliation: OD10
-      social:      https://layer5.io/community/members/sangram-rath/
+      social: https://layer5.io/community/members/sangram-rath/
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
     expression: Apache License 2.0
@@ -87,5 +87,5 @@ repository:
   release:
     automated-pipeline: true
     distribution-points:
-      - uri:  https://github.com/meshery/meshery/releases
+      - uri: https://github.com/meshery/meshery/releases
         comment: Meshery Releases page in GitHub
