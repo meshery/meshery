@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -277,7 +276,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 		provider, err = chooseDirectProvider(providers, option)
 	} else {
 		// Trigger prompt
-		provider = selectProviderPrompt(providers)
+		provider, err = selectProviderPrompt(providers)
 	}
 
 	if err != nil {
@@ -376,7 +375,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	return token, nil
 }
 
-func selectProviderPrompt(provs map[string]Provider) Provider {
+func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 	provArray := []Provider{}
 	provNames := []string{}
 
@@ -388,19 +387,12 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 		provNames = append(provNames, prov.ProviderName)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a Provider",
-		Items: provNames,
+	i, err := RunSelectPrompt("Select a Provider", provNames)
+	if err != nil {
+		return Provider{}, err
 	}
 
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return provArray[i]
-	}
+	return provArray[i], nil
 }
 
 func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
