@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="td-content">
+    <div class="container-fluid">
+        <h1 id="search-title" style="margin-bottom: 2rem;">Search Results</h1>
+        
+        <div id="search-results" 
+             data-search-index="{{ "offline-search-index.json" | relURL }}">
+        </div>
+        
+        <div id="search-loading" style="text-align: center; margin-top: 2rem;">
+            <p><i class="fas fa-spinner fa-spin"></i> Loading search index...</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+
+<script src="{{ "js/search-page.js" | relURL }}"></script>
+{{ end }}
