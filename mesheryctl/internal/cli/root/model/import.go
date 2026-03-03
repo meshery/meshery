@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -24,6 +25,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+type cmdModelImportFlags struct {
+	File string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+}
+
+var modelImportFlags cmdModelImportFlags
+
 var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
@@ -31,41 +38,50 @@ var importModelCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
 	Example: `
 // Import model
-mesheryctl model import -f [URI]
+mesheryctl model import --file [URI]
  
 // Import model from a URL to a meshery model
-mesheryctl model import -f [URL]
+mesheryctl model import --file [URL]
 
 // Import model from an OCI artifact
-mesheryctl model import -f [OCI]
+mesheryctl model import --file [OCI]
 
 // Import model from a tar.gz file
-mesheryctl model import -f [path-to-model.tar.gz]
+mesheryctl model import --file [path-to-model.tar.gz]
 
 // Import model from a path
-mesheryctl model import -f [path-to-model]
+mesheryctl model import --file [path-to-model]
 
 // Import model using CSV files
-mesheryctl model import -f [path-to-csv-directory]
+mesheryctl model import --file [path-to-csv-directory]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(modelImportFlags)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
-		file, _ := cmd.Flags().GetString("file")
-		if file == "" && len(args) == 0 {
-			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
+		if modelImportFlags.File == "" && len(args) == 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("either --file [ file | filepath | URL ] or an argument must be specified\n\n%s", errImportUsageMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%s", errImportUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var path string
-		file, _ := cmd.Flags().GetString("file")
-		if file != "" {
-			path = file
-		} else {
+		path := modelImportFlags.File
+		// If file flag is not provided, use the argument as the path
+		if path == "" {
 			path = args[0]
+
 		}
+
 		if utils.IsValidUrl(path) {
 			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
 			if err != nil {
@@ -524,6 +540,6 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	importModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
+	importModelCmd.Flags().StringVarP(&modelImportFlags.File, "file", "f", "", "Specify path to the file or directory")
 
 }
