@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -34,7 +35,7 @@ func TestViewModel(t *testing.T) {
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
+			ExpectedError:  utils.ErrInvalidArgument(errors.New(errInvalidArg)),
 			IsOutputGolden: false,
 		},
 		{
@@ -68,7 +69,7 @@ func TestViewModel(t *testing.T) {
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errInvalidArg)),
 			IsOutputGolden:   false,
 		},
 		{

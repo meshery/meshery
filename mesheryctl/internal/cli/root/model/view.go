@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -49,7 +50,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg))
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 		return nil
 	},
