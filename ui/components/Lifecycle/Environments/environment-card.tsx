@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import { Delete, Edit } from '@mui/icons-material';
+import { EditIcon, DeleteIcon, SyncAltIcon } from '@sistent/sistent';
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import CAN from '@/utils/can';
@@ -231,7 +230,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                   }
                 >
-                  <Edit sx={{ color: 'white', margin: '0 2px' }} />
+                  <EditIcon sx={{ color: 'white', margin: '0 2px' }} />
                 </IconButton>
                 <IconButton
                   onClick={onDelete}
@@ -241,7 +240,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                   }
                 >
-                  <Delete sx={{ color: 'white', margin: '0 2px' }} />
+                  <DeleteIcon sx={{ color: 'white', margin: '0 2px' }} />
                 </IconButton>
               </Grid2>
             </Grid2>

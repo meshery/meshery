@@ -1,8 +1,20 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+  DeleteIcon,
+  EditIcon,
+  LockIcon,
+  PublicIcon,
+} from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import Save from '@mui/icons-material/Save';
 import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
@@ -24,11 +36,9 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { Edit, Lock, Public } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
@@ -158,8 +168,8 @@ function MesheryPatternCard_({
                     onChange={() => {}}
                     enabled={false}
                     options={[
-                      [VIEW_VISIBILITY.PUBLIC, Public],
-                      [VIEW_VISIBILITY.PRIVATE, Lock],
+                      [VIEW_VISIBILITY.PUBLIC, PublicIcon],
+                      [VIEW_VISIBILITY.PRIVATE, LockIcon],
                     ]}
                   />
                 </div>
@@ -299,7 +309,9 @@ function MesheryPatternCard_({
                   style={{ padding: '6px 9px', borderRadius: '8px' }}
                   data-testid="pattern-btn-edit"
                 >
-                  <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
+                  <EditIcon
+                    style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
+                  />
                   <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}

@@ -24,8 +24,8 @@ import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
 import { ArrowBack } from '@mui/icons-material';
+import { SaveAsIcon } from '@sistent/sistent';
 import TooltipButton from '../../../utils/TooltipButton';
-import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
