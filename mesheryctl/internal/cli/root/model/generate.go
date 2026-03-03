@@ -65,9 +65,9 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if modelGenerateFlags.File == "" && len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("either --file or a path as argument must be specified\n\n%v", errGenerateUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("either --file or a path as argument must be specified\n\n%s", errGenerateUsageMsg))
 		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errGenerateUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%s", errGenerateUsageMsg))
 		}
 		return nil
 	},

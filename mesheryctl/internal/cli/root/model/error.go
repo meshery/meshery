@@ -38,6 +38,7 @@ const (
 	errDeleteInvalidArg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id | model-name]\nRun 'mesheryctl model delete --help' to see detailed help message"
 
 	errGenerateUsageMsg = "Usage: mesheryctl model generate [ file | filePath | URL ] path\nRun 'mesheryctl model generate --help' to see detailed help message"
+	errImportUsageMsg   = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
 )
 
 func ErrExportModel(err error, name string) error {
