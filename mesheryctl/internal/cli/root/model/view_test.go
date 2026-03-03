@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -33,7 +34,7 @@ func TestViewModel(t *testing.T) {
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s%s", errNoArg, viewUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
 			IsOutputGolden: false,
 		},
 		{
@@ -67,7 +68,7 @@ func TestViewModel(t *testing.T) {
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s%s", errMultiArg, viewUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg)),
 			IsOutputGolden:   false,
 		},
 		{
@@ -78,7 +79,7 @@ func TestViewModel(t *testing.T) {
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
 			ExpectError:    true,
-			ExpectedError:  ErrModelUnsupportedOutputFormat(formaterrMsg),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'invalid-format': valid values are json yaml")),
 			IsOutputGolden: false,
 		},
 		{
@@ -94,5 +95,6 @@ func TestViewModel(t *testing.T) {
 		},
 	}
 
-	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
+	mesheryctlflags.InitValidators(ModelCmd)
+	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
 }
