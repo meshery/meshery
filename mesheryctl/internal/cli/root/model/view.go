@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -47,7 +48,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf(errInvalidArg))
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 		return nil
 	},
@@ -95,25 +96,6 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 		return nil
 	},
-}
-
-func getValidOutputFormat() []string {
-	return []string{"yaml", "json"}
-}
-
-func selectModelPrompt(models []model.ModelDefinition) (model.ModelDefinition, error) {
-	modelNames := make([]string, len(models))
-
-	for i, model := range models {
-		modelNames[i] = fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
-	}
-
-	i, err := utils.RunSelectPrompt("Select a model", modelNames)
-	if err != nil {
-		return model.ModelDefinition{}, err
-	}
-
-	return models[i], nil
 }
 
 func init() {
