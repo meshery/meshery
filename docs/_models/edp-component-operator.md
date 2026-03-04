@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: EDP Component Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Component Operator
-image: /assets/img/integrations/edp-component-operator/icons/color/edp-component-operator-color.svg
-permalink: extensibility/integrations/edp-component-operator
+image: /extensions/models/edp-component-operator/icons/color/edp-component-operator-color.svg
+aliases: /extensibility/integrations/edp-component-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-component-operator
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Manages EDP components"
 howItWorksDetails: "Simplified management and orchestration of EDP components in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

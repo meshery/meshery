@@ -19,8 +19,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -61,21 +59,22 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
-		relationshipsResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](fmt.Sprintf("api/meshmodels/models/%s/relationships?pagesize=all", model))
+		relationshipAPIPath := fmt.Sprintf("api/meshmodels/models/%s/relationships", model)
+
+		selectedModel := new(relationship.RelationshipDefinition)
+
+		// Fetch paginated data with selection prompt
+		err := display.PromptAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:        relationshipAPIPath,
+				ErrNotFoundMsg: fmt.Sprintf("No relationship(s) found for the model with name: %s", model),
+			},
+			formatLabel,
+			func(data *MeshmodelRelationshipsAPIResponse) ([]relationship.RelationshipDefinition, int64) {
+				return data.Relationships, data.Count
+			}, selectedModel)
 		if err != nil {
 			return err
-		}
-
-		var selectedModel *relationship.RelationshipDefinition
-
-		switch relationshipsResponse.Count {
-		case 0:
-			fmt.Println("No relationship(s) found for the model with name:", model)
-			return nil
-		case 1:
-			selectedModel = &relationshipsResponse.Relationships[0]
-		default:
-			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[relationship.RelationshipDefinition]{}
@@ -115,29 +114,19 @@ mesheryctl exp relationship view [model-name] --output-format json --save
 	},
 }
 
-// selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
+func formatLabel(rows []relationship.RelationshipDefinition) []string {
 	relationshipNames := []string{}
 
-	for _, _rel := range relationship {
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
+	for _, _rel := range rows {
+		evaluationQuery := "N/A"
+		if _rel.EvaluationQuery != nil {
+			evaluationQuery = *_rel.EvaluationQuery
+		}
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, evaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
-	prompt := promptui.Select{
-		Label: "Select a relationship:",
-		Items: relationshipNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return &relationship[i]
-	}
+	return relationshipNames
 }
 
 func init() {

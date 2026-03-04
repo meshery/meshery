@@ -63,12 +63,13 @@ mesheryctl model delete [model-name]
 		selectedModel := new(model.ModelDefinition)
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath:    modelsApiPath,
-				SearchTerm: modelArg,
+				UrlPath:        modelsApiPath,
+				SearchTerm:     modelArg,
+				ErrNotFoundMsg: fmt.Sprintf("No model with name '%s' found", modelArg),
 			},
 			formatLabel,
-			func(data *models.MeshmodelsAPIResponse) []model.ModelDefinition {
-				return data.Models
+			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
+				return data.Models, data.Count
 			},
 			selectedModel,
 		)

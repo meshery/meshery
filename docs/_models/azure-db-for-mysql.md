@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure DB for MySQL
 subtitle: Collaborative and visual infrastructure as design for Azure DB for MySQL
-image: /assets/img/integrations/azure-db-for-mysql/icons/color/azure-db-for-mysql-color.svg
-permalink: extensibility/integrations/azure-db-for-mysql
+image: /extensions/models/azure-db-for-mysql/icons/color/azure-db-for-mysql-color.svg
+aliases: /extensibility/integrations/azure-db-for-mysql
 docURL: https://docs.meshery.io/extensibility/integrations/azure-db-for-mysql
 description: 
 integrations-category: Database
@@ -59,8 +58,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

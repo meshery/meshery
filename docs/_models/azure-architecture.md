@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Architecture
 subtitle: Collaborative and visual infrastructure as design for Azure Architecture
-image: /assets/img/integrations/azure-architecture/icons/color/azure-architecture-color.svg
-permalink: extensibility/integrations/azure-architecture
+image: /extensions/models/azure-architecture/icons/color/azure-architecture-color.svg
+aliases: /extensibility/integrations/azure-architecture
 docURL: https://docs.meshery.io/extensibility/integrations/azure-architecture
 description: 
 integrations-category: Orchestration & Management
@@ -428,8 +427,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
