@@ -11,7 +11,7 @@ enableMissingTranslationPlaceholders = true
 enableRobotsTXT = true
 
 # Ignore in build
-ignoreFiles = ["meetings/.*", "notes/.*", "integrations/.*" ]
+ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 
 # Will give values to .Lastmod etc.
 enableGitInfo = true
