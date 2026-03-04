@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Scheduler Plugins
 subtitle: Collaborative and visual infrastructure as design for Scheduler Plugins
-image: /assets/img/integrations/scheduler-plugins/icons/color/scheduler-plugins-color.svg
-permalink: extensibility/integrations/scheduler-plugins
+image: /extensions/models/scheduler-plugins/icons/color/scheduler-plugins-color.svg
+aliases: /extensibility/integrations/scheduler-plugins
 docURL: https://docs.meshery.io/extensibility/integrations/scheduler-plugins
 description: 
 integrations-category: Orchestration & Management
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates with scheduler plugins"
 howItWorksDetails: "Flexible and customizable scheduling within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

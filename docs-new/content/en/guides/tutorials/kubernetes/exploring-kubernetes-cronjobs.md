@@ -146,7 +146,7 @@ Use Meshery Playground to visualize the changes and observe the impact on the sc
     Within the design canvas, find the representation of the CronJob you wish to delete. It should be labeled as "CronJob" or have a specific icon associated with CronJobs.
 2. Select the CronJob Component:
     Click on the CronJob component to open the tooltip. This action will enable access to the delete icon. Click to delete the CronJob.
-    [![Save CronJob]({{site.baseurl}}/assets/img/kanvas/delete.png)]({{site.baseurl}}/assets/img/kanvas/delete.png)
+    [![Save CronJob](/guides/tutorials/images/delete.png)](/guides/tutorials/images/delete.png)
 3. Save Changes:
     After deleting the CronJob, save the changes made within the Kanvas Designer interface to reflect the cleanup.
     [![Save CronJob](/guides/tutorials/images/save-app.png)](/guides/tutorials/images/save-app.png)
