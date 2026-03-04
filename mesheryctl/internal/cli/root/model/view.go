@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -45,36 +44,21 @@ mesheryctl model view [model-name] --output-format json
 	RunE: func(cmd *cobra.Command, args []string) error {
 		urlPath := getModelViewUrlPath(args[0])
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](urlPath)
-
-		if err != nil {
-			return err
-		}
-
 		selectedModel := new(model.ModelDefinition)
 
-		switch modelsResponse.Count {
-		case 0:
-			utils.Log.Infof("No model(s) found for the given name or ID: %s", args[0])
-			return nil
-		case 1:
-			*selectedModel = modelsResponse.Models[0]
-		default:
-			err := display.PromptAsyncPagination(
-				display.DisplayDataAsync{
-					UrlPath:        modelsApiPath,
-					SearchTerm:     args[0],
-					ErrNotFoundMsg: fmt.Sprintf("no results found for %s", args[0]),
-				},
-				formatLabel,
-				func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-					return data.Models, data.Count
-				},
-				selectedModel,
-			)
-			if err != nil {
-				return err
-			}
+		err := display.PromptAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:        urlPath,
+				ErrNotFoundMsg: fmt.Sprintf("No model(s) found for the given name or ID %s", args[0]),
+			},
+			formatLabel,
+			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
+				return data.Models, data.Count
+			},
+			selectedModel,
+		)
+		if err != nil {
+			return err
 		}
 
 		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
