@@ -62,7 +62,7 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 		}
 		err := flagValidator.Validate(cmdRelationshipGenerateFlag)
 		if err != nil {
-			return utils.ErrFlagsInvalid(fmt.Errorf("%s", errMsg))
+			return err
 		}
 		return nil
 	},
