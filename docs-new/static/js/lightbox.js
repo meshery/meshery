@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.addEventListener("keydown", function (e) {
-        if ((e.key === "Escape" || e.keyCode === 27) && lightbox.classList.contains("active")) {
+        if (e.key === "Escape" && lightbox.classList.contains("active")) {
             e.preventDefault();
             closeLightbox();
         }
@@ -66,12 +66,11 @@ document.addEventListener("DOMContentLoaded", function () {
             
             images.forEach(function (contentImg) {
                 if (!contentImg.dataset.lightboxReady) {
-                    if (contentImg.height < 50 && contentImg.width < 50) {
+                    if (contentImg.dataset.noLightbox !== undefined || (contentImg.height < 50 && contentImg.width < 50)) {
                         return;
                     }
                     
                     contentImg.dataset.lightboxReady = "true";
-                    contentImg.style.cursor = "zoom-in";
                     contentImg.addEventListener("click", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -84,6 +83,16 @@ document.addEventListener("DOMContentLoaded", function () {
     
     attachLightbox();
     
-    setTimeout(attachLightbox, 500);
-    setTimeout(attachLightbox, 1000);
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length > 0) {
+                attachLightbox();
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });

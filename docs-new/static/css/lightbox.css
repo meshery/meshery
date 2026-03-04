@@ -36,6 +36,10 @@
     user-select: none;
 }
 
+.content-image {
+    cursor: zoom-in;
+}
+
 /* Image inside lightbox */
 #lightbox img {
     max-width: 90%;
