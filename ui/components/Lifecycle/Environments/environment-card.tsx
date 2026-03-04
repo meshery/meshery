@@ -29,7 +29,6 @@ export const formattoLongDate = (date) => {
     year: 'numeric',
   });
 };
-
 export const TransferButton = ({ title, count, onAssign, disabled }) => {
   const theme = useTheme();
   return (
@@ -74,6 +73,7 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
 }) => {
+  const theme = useTheme();
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
@@ -230,7 +230,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                   }
                 >
-                  <EditIcon sx={{ color: 'white', margin: '0 2px' }} />
+                  <EditIcon fill={theme.palette.icon.default} style={{ margin: '0 2px' }} />
                 </IconButton>
                 <IconButton
                   onClick={onDelete}
@@ -240,7 +240,7 @@ const EnvironmentCard = ({
                       : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                   }
                 >
-                  <DeleteIcon sx={{ color: 'white', margin: '0 2px' }} />
+                  <DeleteIcon fill={theme.palette.icon.default} style={{ margin: '0 2px' }} />
                 </IconButton>
               </Grid2>
             </Grid2>

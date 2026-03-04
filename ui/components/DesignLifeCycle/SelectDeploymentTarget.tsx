@@ -161,6 +161,7 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
   const organization = useContext(DeploymentTargetContext).organization;
+  const theme = useTheme();
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
   if (isLoading) {
@@ -182,7 +183,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
               >
-                <EditIcon />
+                <EditIcon fill={theme.palette.icon.default} style={{ margin: '0 2px' }} />
               </IconButton>
             </div>
           </CustomTooltip>
