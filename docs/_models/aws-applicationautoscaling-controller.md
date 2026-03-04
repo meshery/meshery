@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Applilcation Autoscaling
 subtitle: Collaborative and visual infrastructure as design for AWS Applilcation Autoscaling
-image: /assets/img/integrations/aws-applicationautoscaling-controller/icons/color/aws-applicationautoscaling-controller-color.svg
-permalink: extensibility/integrations/aws-applicationautoscaling-controller
+image: /extensions/models/aws-applicationautoscaling-controller/icons/color/aws-applicationautoscaling-controller-color.svg
+aliases: /extensibility/integrations/aws-applicationautoscaling-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-applicationautoscaling-controller
 description: 
 integrations-category: Provisioning
@@ -56,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Application Autoscaling"
 howItWorksDetails: "Automated scaling of resources for Kubernetes applications on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

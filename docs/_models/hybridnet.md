@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Hybridnet
 subtitle: Collaborative and visual infrastructure as design for Hybridnet
-image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg
-permalink: extensibility/integrations/hybridnet
+image: /extensions/models/hybridnet/icons/color/hybridnet-color.svg
+aliases: /extensibility/integrations/hybridnet
 docURL: https://docs.meshery.io/extensibility/integrations/hybridnet
 description: 
 integrations-category: Cloud Native Network
@@ -84,8 +83,5 @@ featureList: [
 ]
 howItWorks: "Integrates Hybridnet configurations"
 howItWorksDetails: "Streamlined network management and flexibility in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
