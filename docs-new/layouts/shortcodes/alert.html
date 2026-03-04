@@ -1,0 +1,34 @@
+{{/*
+  alert.html - Alert/callout box shortcode
+
+  Usage:
+    {{< alert title="Note" color="info" >}}
+    Alert content goes here. Supports **markdown**.
+    {{< /alert >}}
+
+    {{< alert color="warning" >}}
+    Content without a title.
+    {{< /alert >}}
+
+  Parameters:
+    - color: info (default) | warning | danger | success | primary | secondary | light | dark
+    - title: optional heading text
+
+  Replaces Jekyll include:
+    {% include alert.html type="warning" title="..." %}
+
+  CSS Dependencies (in assets/scss/_alert.scss):
+    - .alert
+    - .alert-{color}
+    - .alert-heading
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+{{- $color := .Get "color" | default "info" -}}
+{{- $title := .Get "title" -}}
+<div class="alert alert-{{ $color }}" role="alert">
+  {{- if $title -}}
+  <h4 class="alert-heading">{{ $title }}</h4>
+  {{- end -}}
+  {{ .Inner }}
+</div>

@@ -1,9 +1,50 @@
-{{- $tag := .Get "tag" -}}
-<div class="related-discussions">
-  <h3>Recent Discussions with "meshery" Tag</h3>
-  <p>
-    <a href="https://discuss.layer5.io/tag/{{ $tag }}" target="_blank" rel="noopener noreferrer">
-      View discussions tagged with <code>{{ $tag }}</code>
-    </a>
-  </p>
-</div>
+{{/*
+  related-discussions.html - Display recent discussion forum topics
+
+  Usage:
+    {{< related-discussions tag="meshery" >}}
+    {{< related-discussions tag="mesheryctl" >}}
+
+  Parameters:
+    - tag: "meshery" (default) or "mesheryctl"
+
+  Replaces Jekyll include:
+    {% include related-discussions.html tag="mesheryctl" %}
+
+  Data Dependencies:
+    - data/discuss/meshery.json
+    - data/discuss/mesheryctl.json
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
+{{- $tag := .Get "tag" | default "meshery" -}}
+{{- $dataFile := printf "discuss/%s" $tag -}}
+{{- $data := index .Site.Data.discuss $tag -}}
+
+<h2>Recent Discussions with "{{ $tag }}" Tag</h2>
+
+{{- if $data -}}
+  {{- $users := $data.users -}}
+  {{- $topics := $data.topic_list.topics -}}
+
+  <ul class="discuss-posts">
+    {{- range first 10 $topics -}}
+      {{- $posterId := index (index .posters 0) "user_id" -}}
+      {{- $authorName := "" -}}
+      {{- range $users -}}
+        {{- if eq .id $posterId -}}
+          {{- $authorName = .name -}}
+        {{- end -}}
+      {{- end -}}
+      <li class="discuss-post">
+        <span class="discuss-post-date">{{ .created_at | time.Format "Jan 02" }} | </span>
+        <a href="https://discuss.meshery.io/t/{{ .slug }}/{{ .id }}">{{ .title }}</a>
+        {{- if $authorName -}}
+          <span class="discuss-post-author"> by {{ $authorName }}</span>
+        {{- end -}}
+      </li>
+    {{- end -}}
+  </ul>
+{{- else -}}
+  <p>Visit the <a href="https://discuss.meshery.io/tag/{{ $tag }}">{{ $tag }} discussions</a> on the forum.</p>
+{{- end -}}

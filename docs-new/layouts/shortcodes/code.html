@@ -1,5 +1,25 @@
-<pre class="codeblock-pre" style="font-size: 1.75rem !important;">
+{{/*
+  code.html - Code block with clipboard copy functionality
+
+  Usage:
+    {{< code code="kubectl apply -f meshery.yaml" >}}
+
+  Multi-line (use backtick):
+    {{< code code=`line one
+    line two` >}}
+
+  Replaces Jekyll include:
+    {% capture code_content %}...{% endcapture %}
+    {% include code.html code=code_content %}
+
+  CSS Dependencies (in assets/scss/_clipboard.scss):
+    - .codeblock-pre
+    - .codeblock
+    - .clipboardjs
+    - .clipbtn
+
+  Issue: https://github.com/meshery/meshery/issues/17244
+*/}}
 <div class="codeblock">
-<code class="clipboardjs">{{ .Get "code" | html }}</code>
+<pre class="codeblock-pre"><code class="clipboardjs">{{ .Get "code" | html }}</code></pre>
 </div>
-</pre>
