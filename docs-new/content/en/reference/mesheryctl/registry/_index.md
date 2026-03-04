@@ -12,7 +12,7 @@ Manage the capability registry
 ## Synopsis
 
 Manage the state and contents of Meshery’s internal registry of capabilities.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry [flags]
@@ -48,7 +48,6 @@ mesheryctl registry [subcommand]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

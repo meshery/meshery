@@ -12,7 +12,7 @@ Manage models in the registery
 ## Synopsis
 
 Export, generate, import, list, search and view model(s) and detailed informations
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]
@@ -58,6 +58,14 @@ List available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
+
+</div>
+</pre> 
+
+Delete avaialbe model(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model delete [model-id]
 
 </div>
 </pre> 
@@ -121,7 +129,6 @@ mesheryctl model build [model-name]/[model-version]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

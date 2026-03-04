@@ -12,7 +12,7 @@ Manage Meshery connections
 ## Synopsis
 
 View and manage your Meshery connection.
-Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection [flags]
@@ -102,7 +102,6 @@ mesheryctl connection delete [connection_id]
 </div>
 </pre>
 
+## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
-
-## See Also

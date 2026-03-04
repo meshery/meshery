@@ -63,7 +63,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 ## Screenshots
 
 Usage of mesheryctl adapter validate
-![mesh-validate-usage](/reference/mesheryctl/images/mesh-validate.png)
+![mesh-validate-usage](/reference/images/mesh-validate.png)
 
 ## See Also
 
