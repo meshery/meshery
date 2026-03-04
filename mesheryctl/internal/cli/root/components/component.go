@@ -57,7 +57,7 @@ mesheryctl component search [component-name]
 mesheryctl component view [component-name | component-id]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-return mesheryctlflags.ValidateCmdFlags(cmd, &componentFlagsProvided)
+		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
