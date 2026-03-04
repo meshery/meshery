@@ -1,7 +1,6 @@
 package relationships
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -56,10 +55,7 @@ func TestGenerateErrorOutput(t *testing.T) {
 				cmdRelationshipGenerateFlag.SpreadsheetID = ""
 			}()
 
-			flagValidator := mesheryctlflags.NewFlagValidator()
-			ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, flagValidator)
-			RelationshipCmd.SetContext(ctx)
-
+			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
 

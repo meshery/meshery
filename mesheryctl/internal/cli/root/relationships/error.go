@@ -10,7 +10,6 @@ var (
 )
 
 var (
-	viewUsageMsg  = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
 	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)"
 	errMsg        = "both of [--spreadsheet-id, --spreadsheet-cred] is required\n\nUsage: mesheryctl exp relationship generate [--spreadsheet-id <sheet-ID>] [--spreadsheet-cred <sheet-CRED>]\nRun 'mesheryctl exp relationship generate --help'"
 )
