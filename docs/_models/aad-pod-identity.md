@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Active Directory (AAD)
 subtitle: Collaborative and visual infrastructure as design for Azure Active Directory (AAD)
-image: /assets/img/integrations/aad-pod-identity/icons/color/aad-pod-identity-color.svg
-permalink: extensibility/integrations/aad-pod-identity
+image: /extensions/models/aad-pod-identity/icons/color/aad-pod-identity-color.svg
+aliases: /extensibility/integrations/aad-pod-identity
 docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
 description: 
 integrations-category: Provisioning
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Federate with any external identity provider"
 howItWorksDetails: "Azure AD workload identity authentication method replaces pod-managed identity, which integrates with the Kubernetes native capabilities to federate with any external identity providers on behalf of the application."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

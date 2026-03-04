@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubedb Grafana Dashboards
 subtitle: Collaborative and visual infrastructure as design for Kubedb Grafana Dashboards
-image: /assets/img/integrations/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
-permalink: extensibility/integrations/kubedb-grafana-dashboards
+image: /extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
+aliases: /extensibility/integrations/kubedb-grafana-dashboards
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-grafana-dashboards
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cortex
 subtitle: Collaborative and visual infrastructure as design for Cortex
-image: /assets/img/integrations/cortex/icons/color/cortex-color.svg
-permalink: extensibility/integrations/cortex
+image: /extensions/models/cortex/icons/color/cortex-color.svg
+aliases: /extensibility/integrations/cortex
 docURL: https://docs.meshery.io/extensibility/integrations/cortex
 description: 
 integrations-category: Observability and Analysis
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

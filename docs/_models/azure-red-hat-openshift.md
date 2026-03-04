@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Red Hat OpenShift
 subtitle: Collaborative and visual infrastructure as design for Azure Red Hat OpenShift
-image: /assets/img/integrations/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
-permalink: extensibility/integrations/azure-red-hat-openshift
+image: /extensions/models/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
+aliases: /extensibility/integrations/azure-red-hat-openshift
 docURL: https://docs.meshery.io/extensibility/integrations/azure-red-hat-openshift
 description: 
 integrations-category: Provisioning
@@ -27,8 +26,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

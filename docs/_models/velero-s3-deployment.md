@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Velero S3 Deployment
 subtitle: Collaborative and visual infrastructure as design for Velero S3 Deployment
-image: /assets/img/integrations/velero-s3-deployment/icons/color/velero-s3-deployment-color.svg
-permalink: extensibility/integrations/velero-s3-deployment
+image: /extensions/models/velero-s3-deployment/icons/color/velero-s3-deployment-color.svg
+aliases: /extensibility/integrations/velero-s3-deployment
 docURL: https://docs.meshery.io/extensibility/integrations/velero-s3-deployment
 description: 
 integrations-category: Runtime
@@ -64,8 +63,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Velero S3 backups"
 howItWorksDetails: "Reliable and secure backups of Kubernetes resources to Amazon S3"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

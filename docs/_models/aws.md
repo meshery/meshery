@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Amazon Web Services
 subtitle: Collaborative and visual infrastructure as design for Amazon Web Services
-image: /assets/img/integrations/aws/icons/color/aws-color.svg
-permalink: extensibility/integrations/aws
+image: /extensions/models/aws/icons/color/aws-color.svg
+aliases: /extensibility/integrations/aws
 docURL: https://docs.meshery.io/extensibility/integrations/aws
 description: 
 integrations-category: Provisioning
@@ -1264,8 +1263,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

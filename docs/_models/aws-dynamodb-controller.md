@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS DynamoDB
 subtitle: Collaborative and visual infrastructure as design for AWS DynamoDB
-image: /assets/img/integrations/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
-permalink: extensibility/integrations/aws-dynamodb-controller
+image: /extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
+aliases: /extensibility/integrations/aws-dynamodb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
 description: 
 integrations-category: App Definition and Development
@@ -72,8 +71,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
