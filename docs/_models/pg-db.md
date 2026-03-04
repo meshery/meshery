@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Postgres Database (CrunchyData)
 subtitle: Collaborative and visual infrastructure as design for Postgres Database (CrunchyData)
-image: /assets/img/integrations/pg-db/icons/color/pg-db-color.svg
-permalink: extensibility/integrations/pg-db
+image: /extensions/models/pg-db/icons/color/pg-db-color.svg
+aliases: /extensibility/integrations/pg-db
 docURL: https://docs.meshery.io/extensibility/integrations/pg-db
 description: 
 integrations-category: Database
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

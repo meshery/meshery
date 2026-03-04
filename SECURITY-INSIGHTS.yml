@@ -1,44 +1,91 @@
 header:
-  schema-version: 1.0.0
-  expiration-date: '2026-03-31T05:05:05.000Z'
-  creation-date: '2025-04-03'
-  last-updated: '2025-08-21'
-  last-reviewed: '2025-08-21'
-  project-url: https://github.com/meshery/meshery/
-project-lifecycle:
-  stage: active
-  bug-fixes-only: false
-  core-maintainers:
-  - "@meshery/core-maintainers"
-  - github:leecalcote
-  - github:aabidsofi19
-contribution-policy:
-  accepts-pull-requests: true
-  code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
-documentation:
-- https://github.com/meshery/meshery/blob/master/README.md
-security-testing:
-- tool-type: sca
-  tool-name: Dependabot
-  tool-version: latest
-  integration:
-    ad-hoc: false
-    ci: true
-    before-release: true
+  schema-version: 2.0.0
+  last-updated: '2026-03-03'
+  last-reviewed: '2026-03-03'
+  url: https://github.com/meshery/meshery/blob/master/SECURITY-INSIGHTS.yml
   comment: |
-    Dependabot is enabled for this repo.
-security-contacts:
-- type: email
-  value: security@meshery.dev
-vulnerability-reporting:
-  accepts-vulnerability-reports: true
-  security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
-  email-contact: security@meshery.dev
-  comment: |
-    The first and best way to report a vulnerability is by using private security issues in GitHub. See https://docs.meshery.io/project/security-vulnerabilities for a list of announced vulnerabilities.
-dependencies:
-  third-party-packages: true
-  dependencies-lists:
-  - https://github.com/meshery/meshery/blob/master/go.mod
-  - https://github.com/meshery/meshery/blob/master/ui/package.json
-  - Meshery's Software Bill of Materials (SBOM) is available as a build artifact - https://github.com/meshery/meshery/actions/workflows/bom.yaml
+    This file contains the security information for the Meshery project.
+
+project:
+  name: Meshery
+  homepage: https://meshery.io
+  roadmap: https://github.com/meshery/meshery/blob/master/ROADMAP.md
+  administrators:
+    - name: Lee Calcote
+      affiliation: Layer5
+      social: https://layer5.io/community/members/lee-calcote/
+      primary: true
+  repositories:
+    - name: Meshery
+      url: https://github.com/meshery/meshery
+      comment: |
+        Meshery is the core repository for the Meshery CNCF project.
+    - name: meshery.io
+      url: https://github.com/meshery/meshery.io
+      comment: |
+        The source code and content for the official Meshery website (meshery.io).
+    - name: meshkit
+      url: https://github.com/meshery/meshkit
+      comment: |
+        A common microservices framework used across various Meshery components for consistent toolkit functionality.
+    - name: meshery-operator
+      url: https://github.com/meshery/meshery-operator
+      comment: |
+        The Kubernetes operator for Meshery, managing the lifecycle of Meshery components within a cluster.
+    - name: meshsync
+      url: https://github.com/meshery/meshsync
+      comment: |
+        A custom controller that performs multi-cluster resource discovery and keeps Meshery in sync with infrastructure changes.
+    - name: schemas
+      url: https://github.com/meshery/schemas
+      comment: |
+        Contains the logical object models and JSON schemas that define Meshery's cloud native resources.
+    - name: play
+      url: https://github.com/meshery/play
+      comment: |
+        The Cloud Native Playground, a hosted environment for exploring Kubernetes and CNCF projects using Meshery.
+    - name: qa
+      url: https://github.com/meshery/qa
+      comment: |
+        The project quality dashboard and testing infrastructure for ensuring Meshery's compatibility and performance.
+    - name: meshery-adapter-library
+      url: https://github.com/meshery/meshery-adapter-library
+      comment: |
+        A Go library providing common functionality for building and maintaining Meshery adapters.
+  vulnerability-reporting:
+    reports-accepted: true
+    bug-bounty-available: false
+    contact:
+      name: Meshery Security
+      email: security@meshery.dev
+      primary: true
+
+repository:
+  url: https://github.com/meshery/meshery
+  status: active
+  accepts-change-request: true
+  accepts-automated-change-request: false
+  core-team:
+    - name: Lee Calcote
+      affiliation: Layer5
+      social: https://layer5.io/community/members/lee-calcote/
+      primary: true
+    - name: Sangram Rath
+      affiliation: OD10
+      social: https://layer5.io/community/members/sangram-rath/
+  license:
+    url: https://github.com/meshery/meshery/blob/master/LICENSE
+    expression: Apache License 2.0
+  security:
+    assessments:
+      self:
+        comment: |
+          Self assessment has not yet been completed.
+  documentation:
+    contributing-guide: https://docs.meshery.io/project/contributing
+    governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
+  release:
+    automated-pipeline: true
+    distribution-points:
+      - uri: https://github.com/meshery/meshery/releases
+        comment: Meshery Releases page in GitHub

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Node Termination Handler
 subtitle: Collaborative and visual infrastructure as design for AWS Node Termination Handler
-image: /assets/img/integrations/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
-permalink: extensibility/integrations/aws-node-termination-handler-2
+image: /extensions/models/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
+aliases: /extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
