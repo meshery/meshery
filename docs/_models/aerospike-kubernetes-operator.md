@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Aerospike Kubernetes Operator
 subtitle: Collaborative and visual infrastructure as design for Aerospike Kubernetes Operator
-image: /assets/img/integrations/aerospike-kubernetes-operator/icons/color/aerospike-kubernetes-operator-color.svg
-permalink: extensibility/integrations/aerospike-kubernetes-operator
+image: /extensions/models/aerospike-kubernetes-operator/icons/color/aerospike-kubernetes-operator-color.svg
+aliases: /extensibility/integrations/aerospike-kubernetes-operator
 docURL: https://docs.meshery.io/extensibility/integrations/aerospike-kubernetes-operator
 description: Aerospike Kubernetes Operator automates the configuration, provisioning, scaling, and recovery of Aerospike clusters. It reduces the complexity of manual deployment and lifecycle management, and enables the use of declarative configuration for Aerospike clusters.
 integrations-category: App Definition and Development
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

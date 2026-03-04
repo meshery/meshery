@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Altinity ClickHouse
 subtitle: Collaborative and visual infrastructure as design for Altinity ClickHouse
-image: /assets/img/integrations/altinity-clickhouse-operator/icons/color/altinity-clickhouse-operator-color.svg
-permalink: extensibility/integrations/altinity-clickhouse-operator
+image: /extensions/models/altinity-clickhouse-operator/icons/color/altinity-clickhouse-operator-color.svg
+aliases: /extensibility/integrations/altinity-clickhouse-operator
 docURL: https://docs.meshery.io/extensibility/integrations/altinity-clickhouse-operator
 description: 
 integrations-category: Database
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages ClickHouse"
 howItWorksDetails: "Managed ClickHouse service for Kubernetes with enhanced features"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Trickster
 subtitle: Collaborative and visual infrastructure as design for Trickster
-image: /assets/img/integrations/trickster/icons/color/trickster-color.svg
-permalink: extensibility/integrations/trickster
+image: /extensions/models/trickster/icons/color/trickster-color.svg
+aliases: /extensibility/integrations/trickster
 docURL: https://docs.meshery.io/extensibility/integrations/trickster
 description: 
 integrations-category: Observability and Analysis
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

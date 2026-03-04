@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vault Secrets
 subtitle: Collaborative and visual infrastructure as design for Vault Secrets
-image: /assets/img/integrations/vault-secrets/icons/color/vault-secrets-color.svg
-permalink: extensibility/integrations/vault-secrets
+image: /extensions/models/vault-secrets/icons/color/vault-secrets-color.svg
+aliases: /extensibility/integrations/vault-secrets
 docURL: https://docs.meshery.io/extensibility/integrations/vault-secrets
 description: 
 integrations-category: Provisioning
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Manages Vault secrets"
 howItWorksDetails: "Improved secret management and security within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
