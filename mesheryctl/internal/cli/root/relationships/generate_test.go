@@ -158,10 +158,7 @@ func TestGenerateDataOutput(t *testing.T) {
 				}, nil
 			}
 
-			flagValidator := mesheryctlflags.NewFlagValidator()
-			ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, flagValidator)
-			RelationshipCmd.SetContext(ctx)
-
+			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
 			err := RelationshipCmd.Execute()
