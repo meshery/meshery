@@ -1,0 +1,11 @@
+{
+  "name": "normalize-configuration-file",
+  "version": "1.0.0",
+  "description": "This is a simple node program that would convert the text version of pattern file to a typed array of 8-bit unsigned integer values.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

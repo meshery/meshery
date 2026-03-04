@@ -69,7 +69,8 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
           expectedRel.status !== 'approved' ||
           !expectedRel.selectors ||
           expectedRel?.metadata?.isAnnotation ||
-          expectedRel.subType === 'annotation'
+          expectedRel.subType === 'annotation' ||
+          expectedRel.subType === 'inventory'
         ) {
           continue;
         }

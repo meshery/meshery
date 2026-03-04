@@ -1,0 +1,90 @@
+# name: 'JSON e2e test'
+# on: # rebuild any PRs and main branch changes
+#   pull_request:
+#   push:
+#     branches:
+#       - main
+#       - master
+#       - 'releases/*'
+
+# jobs:
+#   test: # make sure the action works on a clean machine without building
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           path: './'
+#       - uses: actions/upload-artifact@v3
+#         with: 
+#           name: output.json
+#           path: "./__tests__/output.json"
+#       - uses: ./
+#         name: run test
+#         with:
+#           jsonArtifact: "./__tests__/ouput.json"
+   
+#   download:
+#     runs-on: ubuntu-latest
+#     needs: test
+#     steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           path: './'
+#       - uses: actions/download-artifact@v3
+#         with: 
+#           name: output.json
+#           path: "./"
+#       - uses: ./
+#         name: run test
+#         with:
+#           jsonArtifact: '/home/runner/work/cypress-test-summary/cypress-test-summary/ouput.json'
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # - run: |
+# #     echo 'OUTPUT<<EOF' >> $GITHUB_ENV
+# #     echo ./__tests__/output.json >> $GITHUB_ENV
+# #     echo 'EOF' >> $GITHUB_ENV
+# # - run: |
+# #     # echo 'OUTPUT2<<EOF' >> $GITHUB_ENV
+# #     "OUTPUT2=$(jq @json <<< cat ./__tests__/output.json)" >> $GITHUB_ENV
+# #     # echo 'EOF' >> $GITHUB_ENV
+# # - name:  show output
+# #   run: echo ${{env.OUTPUT2}}
+# # - id: test_result
+# #   if: always()
+# #   name: "Run Test on the output.json"
+# #   uses: ./
+# #   with: echo $(jq @json <<< echo ${{fromJson(env.OUTPUT)}})
+# # - id: test_result2
+# #   if: always()
+# #   name: "Run Test on the output.json"
+# #   uses: ./
+# #   with: ${{env.OUTPUT2}}
