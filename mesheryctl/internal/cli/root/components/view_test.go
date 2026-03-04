@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -63,7 +62,7 @@ func TestComponentView(t *testing.T) {
 			Fixture:        "components.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
-			ExpectedError:  display.ErrInvalidOutputFormat("invalid"),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-type 'invalid': valid values are json yaml")),
 		},
 		{
 			Name:             "given a valid argument is provided for --output-format flag when running mesheryctl component view valid-component --output-format valid-format then a detailed output is displayed in specified format",

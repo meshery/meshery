@@ -119,10 +119,5 @@ func ValidateCmdFlags[T any](cmd *cobra.Command, cmdFlags *T) error {
 		return utils.ErrCommandContextMissing(string(FlagValidatorKey))
 	}
 
-	err := flagValidator.Validate(cmdFlags)
-	if err != nil {
-		return utils.ErrFlagsInvalid(err)
-	}
-
-	return nil
+	return flagValidator.Validate(cmdFlags)
 }

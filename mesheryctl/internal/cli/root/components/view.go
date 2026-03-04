@@ -52,7 +52,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml]
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
