@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -218,7 +217,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --path './%s': directory does not exist", buildTestNonExistentFolder)),
 		},
 	}
 	for _, tc := range tests {
@@ -244,6 +243,7 @@ func TestModelBuild(t *testing.T) {
 			cmd := createFreshCommands()
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
+			mesheryctlflags.InitValidators(cmd)
 			err := cmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
@@ -254,9 +254,7 @@ func TestModelBuild(t *testing.T) {
 						utils.Equals(t, expectedResponse, err.Error())
 						return
 					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
-					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
 
 				}

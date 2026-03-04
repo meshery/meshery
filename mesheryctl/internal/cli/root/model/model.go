@@ -19,6 +19,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
@@ -29,8 +30,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+type cmdModelFlags struct {
+	Count bool
+}
+
+var modelFlags cmdModelFlags
+
 var (
-	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommands
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
@@ -73,6 +79,17 @@ mesheryctl model init [model-name]
 mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
+		}
+		err := flagValidator.Validate(modelFlags)
+		if err != nil {
+			return utils.ErrFlagsInvalid(err)
+		}
+		return nil
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
@@ -115,7 +132,7 @@ mesheryctl model build [model-name]/[model-version]
 
 func init() {
 	ModelCmd.AddCommand(availableSubcommands...)
-	ModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
+	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
 }
 
 func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Command) error {

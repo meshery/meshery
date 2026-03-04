@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -38,6 +39,7 @@ func TestModelInit(t *testing.T) {
 		return cmd
 	}
 
+	mesheryctlflags.InitValidators(initModelCmd)
 	// Helper function to create fresh commands for init tests
 	createFreshCommands := func() *cobra.Command {
 		cmd := createFreshModelCmd()
@@ -231,7 +233,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedVersion(errInitInvalidVersion),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --version '1.2': version must be in format vX.X.X")),
 		},
 		{
 			Name:             "model init with invalid output format",
@@ -239,7 +241,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(errInitUnsupportedFormat, "json, yaml")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'protobuf': valid values are json yaml")),
 		},
 		{
 			Name:             "model init no model name",
@@ -287,8 +289,11 @@ func TestModelInit(t *testing.T) {
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			// Create fresh commands using helper function
 			cmd := createFreshCommands()
+			defer utils.ResetCommandFlags(cmd, t)
+
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
+
 			err := cmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

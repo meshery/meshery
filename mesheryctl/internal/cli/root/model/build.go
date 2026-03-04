@@ -6,12 +6,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+type cmdModelBuildFlags struct {
+	Path string `json:"path" validate:"dirpath"`
+}
+
+var cmdModelBuildFlagsProvided cmdModelBuildFlags
 
 var buildModelCmd = &cobra.Command{
 	Use:   "build",
@@ -30,8 +35,18 @@ mesheryctl model build [model-name]/[model-version]
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
 
+		{
+			flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+			if !ok || flagValidator == nil {
+				return utils.ErrCommandContextMissing("flags-validator")
+			}
+			err := flagValidator.Validate(cmdModelBuildFlagsProvided)
+			if err != nil {
+				return utils.ErrFlagsInvalid(err)
+			}
+		}
+
 		inputParam := args[0]
-		path, _ := cmd.Flags().GetString("path")
 		name := ""
 		version := ""
 
@@ -54,7 +69,7 @@ mesheryctl model build [model-name]/[model-version]
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
 
-		folder := buildModelCompileFolderName(path, name, version)
+		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 		// check if combined folder exists
 		{
 			// if folder does not exist return with error
@@ -102,17 +117,11 @@ mesheryctl model build [model-name]/[model-version]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return ErrModelBuild(err)
-		}
-
 		// validation (if any) is done in PreRunE (so args certainly has one element)
 		name, version := buildModelParseModelInput(args[0])
-		path, _ := cmd.Flags().GetString("path")
 
 		// validation done above that args contains exactly one argument
-		folder := buildModelCompileFolderName(path, name, version)
+		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
 		img, errBuildImage := meshkitOci.BuildImage(folder)
@@ -133,7 +142,7 @@ mesheryctl model build [model-name]/[model-version]
 }
 
 func init() {
-	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
+	buildModelCmd.Flags().StringVarP(&cmdModelBuildFlagsProvided.Path, "path", "p", ".", "(optional) target directory to get model from (default: current dir)")
 }
 
 // parseModelInput parses the user input into model name and version.
