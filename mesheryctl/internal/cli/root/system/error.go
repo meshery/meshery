@@ -57,11 +57,12 @@ const (
 )
 
 var (
-	errArgMsg = `Please provide one context name.
-Usage: mesheryctl system context create [context-name]`
-	cmdType     string
-	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
-	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+	errNoArgMsg        = "no argument specified"
+	errMultiArgMsg     = "too many arguments specified"
+	errContextUsageMsg = `Usage: mesheryctl system context create [context-name]`
+	cmdType            string
+	contextdocs        string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
+	contextDir         string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
 )
 
 // A Format reference that returns Mesheryctl's URL docs for system command and sub commands
