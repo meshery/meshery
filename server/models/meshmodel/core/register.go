@@ -31,6 +31,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1"
 
 	_component "github.com/meshery/meshkit/utils/component"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/manifests"
 
@@ -240,21 +241,53 @@ const customResourceKey = "isCustomResource"
 const namespacedKey = "isNamespaced"
 
 func getResolvedManifest(manifest string) (string, error) {
-	cuectx := cuecontext.New()
-	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
-	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
+	loader := openapi3.NewLoader()
+	doc, err := loader.LoadFromData([]byte(manifest))
 	if err != nil {
 		return "", err
 	}
-	resol := manifests.ResolveOpenApiRefs{}
-	cache := make(map[string][]byte)
-	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
+	if doc.Components != nil {
+		for _, schemaRef := range doc.Components.Schemas {
+			clearSchemaRefs(schemaRef)
+		}
+	}
+	resolved, err := json.Marshal(doc)
 	if err != nil {
 		return "", err
 	}
-	manifest = string(resolved)
-	return manifest, nil
+	return string(resolved), nil
+}
+
+// clearSchemaRefs recursively clears $ref strings on all nested SchemaRefs
+// so that json.Marshal outputs fully inlined schemas.
+func clearSchemaRefs(sr *openapi3.SchemaRef) {
+	if sr == nil {
+		return
+	}
+	sr.Ref = ""
+	s := sr.Value
+	if s == nil {
+		return
+	}
+	for _, child := range s.AllOf {
+		clearSchemaRefs(child)
+	}
+	for _, child := range s.AnyOf {
+		clearSchemaRefs(child)
+	}
+	for _, child := range s.OneOf {
+		clearSchemaRefs(child)
+	}
+	clearSchemaRefs(s.Not)
+	if s.Items != nil {
+		clearSchemaRefs(s.Items)
+	}
+	for _, prop := range s.Properties {
+		clearSchemaRefs(prop)
+	}
+	if s.AdditionalProperties.Schema != nil {
+		clearSchemaRefs(s.AdditionalProperties.Schema)
+	}
 }
 
 type crdResponse struct {
