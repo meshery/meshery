@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -51,7 +52,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml]
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateFlags(cmd, &cmdComponentListFlag)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {

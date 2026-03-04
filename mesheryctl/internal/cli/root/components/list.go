@@ -16,6 +16,7 @@ package components
 
 import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/spf13/cobra"
 )
 
@@ -47,7 +48,7 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 mesheryctl component list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateFlags(cmd, &cmdComponentListFlag)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{

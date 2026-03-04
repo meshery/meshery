@@ -57,7 +57,7 @@ mesheryctl component search [component-name]
 mesheryctl component view [component-name | component-id]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateFlags(cmd, &cmdComponentListFlag)
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
@@ -119,18 +119,4 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 	}
 
 	return rows, int64(componentsResponse.Count)
-}
-
-func validateFlags[T any](cmd *cobra.Command, cmdFlags *T) error {
-	flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-	if !ok || flagValidator == nil {
-		return utils.ErrCommandContextMissing(string(mesheryctlflags.FlagValidatorKey))
-	}
-
-	err := flagValidator.Validate(cmdFlags)
-	if err != nil {
-		return utils.ErrFlagsInvalid(err)
-	}
-
-	return nil
 }
