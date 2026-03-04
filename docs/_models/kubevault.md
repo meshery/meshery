@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault
 subtitle: Collaborative and visual infrastructure as design for Kubevault
-image: /assets/img/integrations/kubevault/icons/color/kubevault-color.svg
-permalink: extensibility/integrations/kubevault
+image: /extensions/models/kubevault/icons/color/kubevault-color.svg
+aliases: /extensibility/integrations/kubevault
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault
 description: 
 integrations-category: Security & Compliance
@@ -132,8 +131,5 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault deployments"
 howItWorksDetails: "Streamlined and secure Vault management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

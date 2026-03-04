@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Compute
 subtitle: Collaborative and visual infrastructure as design for Azure Compute
-image: /assets/img/integrations/azure-compute/icons/color/azure-compute-color.svg
-permalink: extensibility/integrations/azure-compute
+image: /extensions/models/azure-compute/icons/color/azure-compute-color.svg
+aliases: /extensibility/integrations/azure-compute
 docURL: https://docs.meshery.io/extensibility/integrations/azure-compute
 description: 
 integrations-category: Provisioning
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
