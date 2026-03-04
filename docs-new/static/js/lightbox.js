@@ -31,6 +31,37 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.style.overflow = "hidden";
     }
 
+    function isLightboxImage(element) {
+        if (element.tagName !== "IMG") return false;
+        if (element.dataset.noLightbox !== undefined) return false;
+        if (element.height < 50 && element.width < 50) return false;
+        
+        var contentSelectors = [
+            "article",
+            ".content",
+            ".main-content",
+            "main",
+            ".td-content",
+            ".page-content"
+        ];
+        
+        for (var i = 0; i < contentSelectors.length; i++) {
+            if (element.closest(contentSelectors[i])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    document.addEventListener("click", function (e) {
+        if (isLightboxImage(e.target)) {
+            e.preventDefault();
+            e.stopPropagation();
+            openLightbox(e.target.getAttribute("src"), e.target.getAttribute("alt") || "");
+        }
+    });
+
     lightbox.addEventListener("click", function (e) {
         if (e.target === lightbox || e.target.id === "lightbox-caption") {
             closeLightbox();
@@ -49,50 +80,5 @@ document.addEventListener("DOMContentLoaded", function () {
             closeLightbox();
         }
     });
-
-    function attachLightbox() {
-        var contentSelectors = [
-            "article img",
-            ".content img",
-            ".main-content img",
-            "img.content-image",
-            "main img",
-            ".td-content img",
-            ".page-content img"
-        ];
-        
-        contentSelectors.forEach(function(selector) {
-            var images = document.querySelectorAll(selector);
-            
-            images.forEach(function (contentImg) {
-                if (!contentImg.dataset.lightboxReady) {
-                    if (contentImg.dataset.noLightbox !== undefined || (contentImg.height < 50 && contentImg.width < 50)) {
-                        return;
-                    }
-                    
-                    contentImg.dataset.lightboxReady = "true";
-                    contentImg.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openLightbox(this.getAttribute("src"), this.getAttribute("alt") || "");
-                    });
-                }
-            });
-        });
-    }
-    
-    attachLightbox();
-    
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                attachLightbox();
-            }
-        });
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
 });
+
