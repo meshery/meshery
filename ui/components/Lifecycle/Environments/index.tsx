@@ -28,6 +28,7 @@ import {
   Grid2,
   Typography,
   SearchBar,
+  useTheme,
   PROMPT_VARIANTS,
 } from '@sistent/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
@@ -439,7 +440,7 @@ const Environments = () => {
       );
     }
   };
-
+  const theme = useTheme();
   return (
     <NoSsr>
       {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
@@ -489,7 +490,8 @@ const Environments = () => {
               </Typography>
               <Button>
                 <DeleteIcon
-                  sx={{ color: 'red', margin: '0 2px' }}
+                  fill={theme.palette.icon.default}
+                  style={{ margin: '0 2px' }}
                   onClick={handleBulkDeleteEnvironmentConfirm}
                   disabled={
                     selectedEnvironments.length > 0
