@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: March 3rd 2026, 5:54:13 pm
+- Testing started at: March 4th 2026, 1:09:59 am
 
 **📦 Test Result Summary**
 
-- ✅ 66 passed
+- ✅ 67 passed
 - ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 4 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 4 minutes and 59 seconds_
+⌛ _Duration: 5 minutes and 11 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -28,7 +28,7 @@
 | 5 | Meshery | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | Meshery | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 7 | Meshery | chromium-meshery-provider | Create a Model |  | ✅ |
-| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 8 | Meshery | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ✅ |
 | 9 | Meshery | chromium-meshery-provider | Grafana elements on metrics tab |  | ✅ |
 | 10 | Meshery | chromium-meshery-provider | Import a Model via CSV Import |  | ✅ |
 | 11 | Meshery | chromium-meshery-provider | Import a Model via File Import |  | ✅ |

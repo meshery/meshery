@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Terraform
 subtitle: Collaborative and visual infrastructure as design for Terraform
-image: /assets/img/integrations/terraform/icons/color/terraform-color.svg
-permalink: extensibility/integrations/terraform
+image: /extensions/models/terraform/icons/color/terraform-color.svg
+aliases: /extensibility/integrations/terraform
 docURL: https://docs.meshery.io/extensibility/integrations/terraform
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates Terraform configurations"
 howItWorksDetails: "Infrastructure as code management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

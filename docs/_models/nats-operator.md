@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: NATS Operator
 subtitle: Collaborative and visual infrastructure as design for NATS Operator
-image: /assets/img/integrations/nats-operator/icons/color/nats-operator-color.svg
-permalink: extensibility/integrations/nats-operator
+image: /extensions/models/nats-operator/icons/color/nats-operator-color.svg
+aliases: /extensibility/integrations/nats-operator
 docURL: https://docs.meshery.io/extensibility/integrations/nats-operator
 description: 
 integrations-category: App Definition and Development
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

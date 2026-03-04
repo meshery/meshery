@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Grafana UI Server
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /assets/img/integrations/grafana-ui-server/icons/color/grafana-ui-server-color.svg
-permalink: extensibility/integrations/grafana-ui-server
+image: /extensions/models/grafana-ui-server/icons/color/grafana-ui-server-color.svg
+aliases: /extensibility/integrations/grafana-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-ui-server
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
