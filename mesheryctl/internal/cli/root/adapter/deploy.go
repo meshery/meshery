@@ -25,7 +25,7 @@ import (
 )
 
 var linkDocMeshDeploy = map[string]string{
-	"link":    "![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)",
+	"link":    "![mesh-deploy-usage](/reference/images/deploy-mesh.png)",
 	"caption": "Usage of mesheryctl adapter deploy",
 }
 

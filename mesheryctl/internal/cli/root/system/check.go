@@ -114,7 +114,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 }
 
 var linkDocCheck = map[string]string{
-	"link":    "![check-usage](/assets/img/mesheryctl/check.png)",
+	"link":    "![check-usage](/reference/images/check.png)",
 	"caption": "Usage of mesheryctl system check",
 }
 

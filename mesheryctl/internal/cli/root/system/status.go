@@ -34,7 +34,7 @@ import (
 var verboseStatus bool
 
 var linkDocStatus = map[string]string{
-	"link":    "![status-usage](/assets/img/mesheryctl/status.png)",
+	"link":    "![status-usage](/reference/images/status.png)",
 	"caption": "Usage of mesheryctl system status",
 }
 

@@ -38,7 +38,7 @@ import (
 var sourceType string // pattern file type (manifest / compose)
 
 var linkDocpatternOnboard = map[string]string{
-	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
+	"link":    "![pattern-onboard-usage](/reference/images/pattern-onboard.png)",
 	"caption": "Usage of mesheryctl design onboard",
 }
 

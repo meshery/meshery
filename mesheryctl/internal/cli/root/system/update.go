@@ -29,7 +29,7 @@ import (
 )
 
 var linkDocUpdate = map[string]string{
-	"link":    "![update-usage](/assets/img/mesheryctl/update.png)",
+	"link":    "![update-usage](/reference/images/update.png)",
 	"caption": "Usage of mesheryctl system update",
 }
 

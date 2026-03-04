@@ -54,7 +54,7 @@ var (
 )
 
 var linkDocPerfApply = map[string]string{
-	"link":    "![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)",
+	"link":    "![perf-apply-usage](/reference/images/perf-apply.png)",
 	"caption": "Usage of mesheryctl perf apply",
 }
 
