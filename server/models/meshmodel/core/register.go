@@ -247,8 +247,9 @@ func getResolvedManifest(manifest string) (string, error) {
 		return "", err
 	}
 	if doc.Components != nil {
+		visited := make(map[*openapi3.SchemaRef]bool)
 		for _, schemaRef := range doc.Components.Schemas {
-			clearSchemaRefs(schemaRef)
+			clearSchemaRefs(schemaRef, visited)
 		}
 	}
 	resolved, err := json.Marshal(doc)
@@ -259,34 +260,36 @@ func getResolvedManifest(manifest string) (string, error) {
 }
 
 // clearSchemaRefs recursively clears $ref strings on all nested SchemaRefs
-// so that json.Marshal outputs fully inlined schemas.
-func clearSchemaRefs(sr *openapi3.SchemaRef) {
-	if sr == nil {
+// so that json.Marshal outputs fully inlined schemas. The visited set
+// prevents infinite recursion on circular references.
+func clearSchemaRefs(sr *openapi3.SchemaRef, visited map[*openapi3.SchemaRef]bool) {
+	if sr == nil || visited[sr] {
 		return
 	}
+	visited[sr] = true
 	sr.Ref = ""
 	s := sr.Value
 	if s == nil {
 		return
 	}
 	for _, child := range s.AllOf {
-		clearSchemaRefs(child)
+		clearSchemaRefs(child, visited)
 	}
 	for _, child := range s.AnyOf {
-		clearSchemaRefs(child)
+		clearSchemaRefs(child, visited)
 	}
 	for _, child := range s.OneOf {
-		clearSchemaRefs(child)
+		clearSchemaRefs(child, visited)
 	}
-	clearSchemaRefs(s.Not)
+	clearSchemaRefs(s.Not, visited)
 	if s.Items != nil {
-		clearSchemaRefs(s.Items)
+		clearSchemaRefs(s.Items, visited)
 	}
 	for _, prop := range s.Properties {
-		clearSchemaRefs(prop)
+		clearSchemaRefs(prop, visited)
 	}
 	if s.AdditionalProperties.Schema != nil {
-		clearSchemaRefs(s.AdditionalProperties.Schema)
+		clearSchemaRefs(s.AdditionalProperties.Schema, visited)
 	}
 }
 

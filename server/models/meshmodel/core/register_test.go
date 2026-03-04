@@ -251,11 +251,30 @@ func TestClearSchemaRefs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			clearSchemaRefs(tt.sr)
+			visited := make(map[*openapi3.SchemaRef]bool)
+			clearSchemaRefs(tt.sr, visited)
 			if tt.sr != nil && tt.sr.Ref != "" {
 				t.Errorf("Ref = %q, want empty", tt.sr.Ref)
 			}
 		})
+	}
+}
+
+func TestClearSchemaRefs_Circular(t *testing.T) {
+	// Build a circular reference: A -> B -> A
+	a := &openapi3.SchemaRef{Ref: "#/components/schemas/A", Value: &openapi3.Schema{}}
+	b := &openapi3.SchemaRef{Ref: "#/components/schemas/B", Value: &openapi3.Schema{}}
+	a.Value.Properties = openapi3.Schemas{"b": b}
+	b.Value.Properties = openapi3.Schemas{"a": a}
+
+	visited := make(map[*openapi3.SchemaRef]bool)
+	clearSchemaRefs(a, visited) // must not hang or panic
+
+	if a.Ref != "" {
+		t.Errorf("a.Ref = %q, want empty", a.Ref)
+	}
+	if b.Ref != "" {
+		t.Errorf("b.Ref = %q, want empty", b.Ref)
 	}
 }
 
