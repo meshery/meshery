@@ -22,7 +22,18 @@ var ConnectionsCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage Meshery connections",
 	Long: `View and manage your Meshery connection.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/connection`,
+
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/connection`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		utils.SetKubeConfig()
+		return config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			utils.TemplateToken,
+			utils.TemplateContext,
+		)
+	},
+
 	Example: `
 // Display total count of all available connections
 mesheryctl connection --count
