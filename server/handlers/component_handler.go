@@ -1082,7 +1082,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 //
 // Validate the given value with the given schema
 // responses:
-// 	200:
+// 	200: noContentWrapper
 
 // request body should be json
 // request body should be of ComponentCapability format
@@ -1576,8 +1576,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 // ```?output_format={output_format}``` Can be `json`, `yaml`, or `oci`. Default is `oci`
 //
 // responses:
-//
-//	200: []byte
+//	200: noContentWrapper
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")

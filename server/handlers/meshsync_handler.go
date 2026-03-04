@@ -414,7 +414,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 // swagger:route GET /api/system/meshsync/resources/{id} GetMeshSyncResourceByID idGetMeshSyncResourceByID
 // Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
 // responses:
-// 200: meshsyncResourceByIDResponseWrapper
+// 200: meshsyncResourcesResponseWrapper
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
