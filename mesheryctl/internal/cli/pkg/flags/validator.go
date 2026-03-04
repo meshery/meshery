@@ -59,7 +59,6 @@ func validateBoolean(fl validator.FieldLevel) bool {
 // ReadValidationErrorMessages reads the validation error and returns a slice of error messages for each validation error encountered
 // This is a centralized function to read validation error messages for all the commands in mesheryctl and return user friendly error messages based on the type of validation error encountered
 func ReadValidationErrorMessages(err validator.ValidationErrors) error {
-
 	if len(err) == 0 {
 		return nil
 	}
@@ -112,4 +111,18 @@ func InitValidators(cmd *cobra.Command) {
 	validate := NewFlagValidator()
 	ctx := context.WithValue(context.Background(), FlagValidatorKey, validate)
 	cmd.SetContext(ctx)
+}
+
+func ValidateCmdFlags[T any](cmd *cobra.Command, cmdFlags *T) error {
+	flagValidator, ok := cmd.Context().Value(FlagValidatorKey).(*FlagValidator)
+	if !ok || flagValidator == nil {
+		return utils.ErrCommandContextMissing(string(FlagValidatorKey))
+	}
+
+	err := flagValidator.Validate(cmdFlags)
+	if err != nil {
+		return utils.ErrFlagsInvalid(err)
+	}
+
+	return nil
 }

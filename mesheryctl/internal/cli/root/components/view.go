@@ -28,8 +28,8 @@ import (
 )
 
 type componentViewFlags struct {
-	OutputFormat string
-	Save         bool
+	OutputFormat string `json:"output-type" validate:"required,oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
 }
 
 var cmdComponentViewFlags componentViewFlags
@@ -51,7 +51,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml]
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return display.ValidateOutputFormat(cmdComponentViewFlags.OutputFormat)
+		return validateFlags(cmd, &cmdComponentListFlag)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
