@@ -43,6 +43,7 @@
           name="versioningSelection"
           id="versioningSelection"
         >
+          {{ $current := .RelPermalink }}
           {{ range .Site.Data.versions }}
             {{ $linkUrl := printf "/%s/" .url }}
             {{ $selected := "" }}
