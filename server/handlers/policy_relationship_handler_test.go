@@ -227,8 +227,15 @@ func TestParseRelationshipToAlias(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, ok := parseRelationshipToAlias(tt.input)
+			alias, ok := parseRelationshipToAlias(tt.input)
 			assert.Equal(t, tt.wantOk, ok, "parseRelationshipToAlias() ok mismatch")
+
+			if tt.wantOk {
+				assert.Equal(t, toID, alias.ImmediateParentId, "ImmediateParentId should match to.Id")
+				assert.Equal(t, fromID, alias.AliasComponentId, "AliasComponentId should match from.Id")
+				assert.Equal(t, tt.input.Id, alias.RelationshipId, "RelationshipId should match the relationship's Id")
+				assert.Equal(t, []string{"configuration", "spec", "containers"}, alias.ImmediateRefFieldPath, "ImmediateRefFieldPath should match first mutatedRef entry")
+			}
 		})
 	}
 }
