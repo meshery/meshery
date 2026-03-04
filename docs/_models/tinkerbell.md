@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Tinkerbell
 subtitle: Collaborative and visual infrastructure as design for Tinkerbell
-image: /assets/img/integrations/tinkerbell/icons/color/tinkerbell-color.svg
-permalink: extensibility/integrations/tinkerbell
+image: /extensions/models/tinkerbell/icons/color/tinkerbell-color.svg
+aliases: /extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
 description: 
 integrations-category: Provisioning
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

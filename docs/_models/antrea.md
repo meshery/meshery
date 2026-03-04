@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Antrea
 subtitle: Collaborative and visual infrastructure as design for Antrea
-image: /assets/img/integrations/antrea/icons/color/antrea-color.svg
-permalink: extensibility/integrations/antrea
+image: /extensions/models/antrea/icons/color/antrea-color.svg
+aliases: /extensibility/integrations/antrea
 docURL: https://docs.meshery.io/extensibility/integrations/antrea
 description: 
 integrations-category: Runtime
@@ -96,8 +95,5 @@ featureList: [
 ]
 howItWorks: "Integrates Antrea configurations"
 howItWorksDetails: "Simplified network policy management and enhanced networking in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

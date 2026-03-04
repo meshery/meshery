@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Dapr
 subtitle: Collaborative and visual infrastructure as design for Dapr
-image: /assets/img/integrations/dapr/icons/color/dapr-color.svg
-permalink: extensibility/integrations/dapr
+image: /extensions/models/dapr/icons/color/dapr-color.svg
+aliases: /extensibility/integrations/dapr
 docURL: https://docs.meshery.io/extensibility/integrations/dapr
 description: 
 integrations-category: Serverless
@@ -132,8 +131,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
