@@ -22,7 +22,8 @@ var (
 var (
 	deleteUsageMsg = "Usage: mesheryctl connection delete --help' to see detailed help message"
 	viewUsageMsg   = "Usage: mesheryctl connection view --help' to see detailed help message"
-	errNoArgMsg    = "connection ID isn't specified"
+	errNoArgMsg    = "connection name or ID isn't specified"
+	errMultiArgMsg = "too many arguments specified"
 )
 
 func errInvalidConnectionType(connectionType string) error {

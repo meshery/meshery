@@ -58,7 +58,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments"))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, viewUsageMsg))
 		}
 
 		return display.ValidateOutputFormat(connectionViewFlagsProvided.outputFormat)
@@ -82,7 +82,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			}
 
 			if fetchedConnection == nil {
-				fmt.Println("No connection(s) found for the given name: ", connectionNameOrID)
+				fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
 				return nil
 			}
 

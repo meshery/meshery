@@ -34,7 +34,7 @@ func TestConnectionViewCmd(t *testing.T) {
 			Args:           []string{"view", "foo", "bar"},
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("too many arguments")),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, viewUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
