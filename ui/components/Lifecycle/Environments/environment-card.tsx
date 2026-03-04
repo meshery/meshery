@@ -1,12 +1,12 @@
 // @ts-nocheck
 import React from 'react';
-import { EditIcon, DeleteIcon, SyncAltIcon } from '@sistent/sistent';
+import { EditIcon, DeleteIcon } from '@sistent/sistent';
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Grid2, useTheme } from '@sistent/sistent';
-
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import {
   Name,
   IconButton,
