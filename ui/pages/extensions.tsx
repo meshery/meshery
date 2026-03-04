@@ -12,6 +12,7 @@ import { keys } from '@/utils/permission_constants';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updatePage } from '@/store/slices/mesheryUi';
+import type { RootState } from '../store';
 import { getPath } from 'lib/path';
 
 const UnifiedCardContainer = ({ children, sx = {} }) => {
@@ -586,14 +587,14 @@ const Extensions = () => {
     dispatch(updatePage({ path: getPath(), title: 'Extensions' }));
   }, []);
 
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
 
   const {
     data: userData,
     isSuccess: userDataFetched,
     isError: isUserError,
     error: userError,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery(undefined);
 
   const handleToggle = () => {
     dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));

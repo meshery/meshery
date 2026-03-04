@@ -18,6 +18,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '@/store/index';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updatePrometheusConfig } from '@/store/slices/telemetry';
 
@@ -56,19 +57,22 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const PrometheusComponent = (props) => {
-  const { prometheus: initialPrometheus } = useSelector((state) => state.telemetry);
+  const initialPrometheus = (useSelector((state: RootState) => state.telemetry).prometheus ??
+    {}) as any;
   const [urlError, setUrlError] = useState(false);
   const [prometheusConfigSuccess, setPrometheusConfigSuccess] = useState(
     initialPrometheus.prometheusURL !== '',
   );
-  const [selectedPrometheusBoardsConfigs, setSelectedPrometheusBoardsConfigs] = useState(
+  const [selectedPrometheusBoardsConfigs, setSelectedPrometheusBoardsConfigs] = useState<any[]>(
     initialPrometheus.selectedPrometheusBoardsConfigs || [],
   );
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
-  const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
-  const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const [connectionID, setConnectionID] = useState<string>(initialPrometheus.connectionID || '');
+  const [connectionName, setConnectionName] = useState<string>(
+    initialPrometheus.connectionName || '',
+  );
+  const { k8sConfig } = useSelector((state: RootState) => state.ui);
+  const { selectedK8sContexts } = useSelector((state: RootState) => state.ui);
   const dispatch = useDispatch();
 
   const getK8sClusterIds = () => {
@@ -289,7 +293,6 @@ const PrometheusComponent = (props) => {
     <NoSsr>
       <StyledBox>
         <PrometheusConfigComponent
-          prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
           urlError={urlError}
           handleChange={handleChange}
           handlePrometheusConfigure={handlePrometheusConfigure}

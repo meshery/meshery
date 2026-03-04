@@ -42,17 +42,27 @@ import { iconMedium } from 'css/icons.styles';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { StyledMuiDoubleCheckbox, StyledResponsiveButton } from './styles';
 
+type UserOption = {
+  id?: string;
+  user_id?: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+  deleted_at?: { Valid?: boolean };
+};
+
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState([]);
+  const [options, setOptions] = React.useState<UserOption[]>([]);
   const [inputValue, setInputValue] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  const fetchUsers = async (search) => {
+  const fetchUsers = async (search: string) => {
     setLoading(true);
     try {
       const { data } = await getAllUsers({ page: 0, pagesize: 10, search });
-      setOptions(data.data || []);
+      setOptions(((data as any)?.data ?? []) as UserOption[]);
     } catch (err) {
       console.error('Failed to fetch users', err);
       setOptions([]);
@@ -61,7 +71,7 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
     }
   };
 
-  const handleInputChange = (event, value) => {
+  const handleInputChange = (_event: unknown, value: string) => {
     setInputValue(value);
     fetchUsers(value);
   };
@@ -81,16 +91,18 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
       onOpen={handleOpen}
       onClose={handleClose}
       onInputChange={handleInputChange}
-      onChange={(_, value) => {
-        handleAuthorChange(value?.user_id || null);
+      onChange={(_, value: any) => {
+        handleAuthorChange(value?.user_id || value?.id || null);
       }}
       inputValue={inputValue}
-      options={options}
+      options={options as any}
       loading={loading}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option) => option.email || ''}
-      renderOption={(props, option) => (
-        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+      isOptionEqualToValue={(option: any, value: any) =>
+        (option?.user_id || option?.id) === (value?.user_id || value?.id)
+      }
+      getOptionLabel={(option: any) => option?.email || ''}
+      renderOption={(props, option: any) => (
+        <li {...props} style={{ listStyle: 'none' }}>
           <Grid2 container alignItems="center" size="grow">
             <Grid2>
               <Box sx={{ color: 'text.secondary', mr: 2 }}>
@@ -99,7 +111,7 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
                 </Avatar>
               </Box>
             </Grid2>
-            <Grid2 size={{ sx: 12 }}>
+            <Grid2 size={{ xs: 12 }}>
               {option.deleted_at?.Valid ? (
                 <Typography variant="body2" color="text.secondary">
                   {option.email} (deleted)
@@ -116,23 +128,28 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
               )}
             </Grid2>
           </Grid2>
-        </Box>
+        </li>
       )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Author"
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
+      renderInput={(params) => {
+        const { size, ...rest } = params as any;
+        return (
+          <TextField
+            {...rest}
+            size={size ?? 'small'}
+            label="Author"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        );
+      }}
     />
   );
 };
@@ -151,8 +168,8 @@ export const VisibilitySelect = ({ visibility, handleVisibilityChange, visibilit
         label="Visibility"
         multiple
         input={<OutlinedInput label="Tag" />}
-        renderValue={(selected) => {
-          return selected.map((value) => capitalize(value)).join(', ');
+        renderValue={(selected: any) => {
+          return (selected as string[]).map((value) => capitalize(value)).join(', ');
         }}
         onChange={handleVisibilityChange}
       >
@@ -223,6 +240,7 @@ export const TableListHeader = ({
         <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
           <FormGroup>
             <FormControlLabel
+              label=""
               control={
                 <StyledMuiDoubleCheckbox
                   checked={
@@ -326,11 +344,19 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file } = data;
 
-    let requestBody = null;
+    let requestBody: string | null = null;
     switch (uploadType) {
       case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
+        const fileElement = document.getElementById('root_file') as HTMLInputElement | null;
+        const fileName = fileElement?.files?.[0]?.name;
+        if (!fileName) {
+          updateProgress({ showProgress: false });
+          notify({
+            message: 'No file selected',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          return;
+        }
         requestBody = JSON.stringify({
           name,
           file_name: fileName,
@@ -393,7 +419,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
           padding: '0.85rem !important',
           width: '100%',
         }}
-        startIcon={<FileUpload color={theme.palette.common.white} />}
+        startIcon={<FileUpload sx={{ color: theme.palette.common.white }} />}
       >
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Import</Box>
       </StyledResponsiveButton>

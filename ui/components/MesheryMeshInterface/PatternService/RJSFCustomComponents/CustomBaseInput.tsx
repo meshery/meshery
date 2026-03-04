@@ -13,7 +13,9 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 
-const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
+const CustomTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== 'overrideFlag',
+})(({ theme, overrideFlag }: any) => {
   return {
     '& div': {
       backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
@@ -39,7 +41,7 @@ const BaseInput = (props) => {
   const getInputLabelStyle = () => {
     if (prettifiedName === 'name' || prettifiedName === 'namespace') {
       return {
-        color: theme.palette.secondary.text,
+        color: theme.palette.text.secondary,
         backgroundColor: theme.palette.mode === 'dark' ? '#303030' : 'white',
         padding: '0.2rem',
         height: '1rem',
@@ -61,7 +63,7 @@ const BaseInput = (props) => {
           variant={additional ? 'standard' : 'outlined'}
           size="small"
           focused={focused}
-          overrideFlag={props.formContext.overrideFlag}
+          {...({ overrideFlag: props.formContext.overrideFlag } as any)}
           type={props.options?.inputType}
           key={props.id}
           disabled={props?.disabled || props?.readonly}
@@ -103,7 +105,6 @@ const BaseInput = (props) => {
                 {props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
                     bgColor={ERROR_COLOR}
-                    flag={props?.formContext?.overrideFlag}
                     title={props.rawErrors?.join('  ')}
                     interactive={true}
                   >
@@ -118,11 +119,7 @@ const BaseInput = (props) => {
                   </CustomTextTooltip>
                 )}
                 {props.schema?.description && (
-                  <CustomTextTooltip
-                    flag={props?.formContext?.overrideFlag}
-                    title={props.schema?.description}
-                    interactive={true}
-                  >
+                  <CustomTextTooltip title={props.schema?.description} interactive={true}>
                     <IconButton component="span" size="small" tabIndex={-1}>
                       <HelpOutlineIcon
                         width="14px"

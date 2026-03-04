@@ -20,7 +20,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import omit from 'lodash/omit';
 
-const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
+const SelectorsForm = ({ selectorsSchema, formData, onChange }: any) => {
   const [tabValue, setTabValue] = React.useState(0);
   const [selectorsData, setSelectorsData] = React.useState(
     formData?.selectors || {
@@ -36,23 +36,23 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     ]),
   };
 
-  const [expandedPanels, setExpandedPanels] = React.useState({});
-  const [selectedModelInfo, setSelectedModelInfo] = React.useState({});
+  const [expandedPanels, setExpandedPanels] = React.useState<any>({});
+  const [selectedModelInfo, setSelectedModelInfo] = React.useState<any>({});
   const { models, categories, getModelFromCategory } = useMeshModelComponents();
-  const [categorySelections, setCategorySelections] = React.useState({});
+  const [categorySelections, setCategorySelections] = React.useState<any>({});
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event: any, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handlePanelChange = (panelId) => (event, isExpanded) => {
+  const handlePanelChange = (panelId: string) => (event: any, isExpanded: boolean) => {
     setExpandedPanels({
       ...expandedPanels,
       [panelId]: isExpanded,
     });
   };
 
-  const handleCategoryChange = (type, direction, index, event) => {
+  const handleCategoryChange = (type: string, direction: string, index: number, event: any) => {
     const category = event.target.value;
     setCategorySelections((prev) => ({
       ...prev,
@@ -66,13 +66,13 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     getModelFromCategory(category);
   };
 
-  const handleModelChange = (type, direction, index, event) => {
+  const handleModelChange = (type: string, direction: string, index: number, event: any) => {
     const modelName = event.target.value;
     const panelKey = `${type}.${direction}.${index}`;
     const category = categorySelections[panelKey]?.category;
 
     if (category && modelName) {
-      const modelData = models[category]?.find((model) => model.name === modelName);
+      const modelData = models[category]?.find((model: any) => model.name === modelName);
 
       if (modelData) {
         const updatedSelectors = cloneDeep(selectorsData);
@@ -104,7 +104,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     }
   };
 
-  const addSelector = (type, direction) => {
+  const addSelector = (type: string, direction: string) => {
     const newSelector = {
       kind: '',
       model: {
@@ -123,7 +123,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     });
   };
 
-  const updateSelector = (type, direction, index, selectorData) => {
+  const updateSelector = (type: string, direction: string, index: number, selectorData: any) => {
     const updatedSelectors = cloneDeep(selectorsData);
     updatedSelectors[type][direction][index] = {
       ...updatedSelectors[type][direction][index],
@@ -137,7 +137,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     });
   };
 
-  const removeSelector = (type, direction, index) => {
+  const removeSelector = (type: string, direction: string, index: number) => {
     const updatedSelectors = cloneDeep(selectorsData);
     updatedSelectors[type][direction].splice(index, 1);
 
@@ -148,7 +148,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     });
   };
 
-  const renderSelectorForm = (type, direction) => {
+  const renderSelectorForm = (type: string, direction: string) => {
     const selectors = selectorsData[type][direction] || [];
 
     return (
@@ -169,7 +169,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
             No {direction} selectors added yet. Click the button above to add one.
           </Typography>
         ) : (
-          selectors.map((selector, index) => {
+          selectors.map((selector: any, index: number) => {
             const panelKey = `${type}.${direction}.${index}`;
             const panelExpanded = expandedPanels[panelKey] || false;
             const currentCategory = categorySelections[panelKey]?.category;
@@ -235,7 +235,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           <MenuItem value="" disabled>
                             <em>Select Category</em>
                           </MenuItem>
-                          {categories.map((cat) => (
+                          {categories.map((cat: any) => (
                             <MenuItem key={cat.name} value={cat.name}>
                               {cat.name}
                             </MenuItem>
@@ -259,11 +259,12 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           <MenuItem value="" disabled>
                             <em>Select Model</em>
                           </MenuItem>
-                          {models?.[currentCategory]?.map((model, idx) => (
-                            <MenuItem key={`${model.name}-${idx}`} value={model.name}>
-                              {model.displayName || model.name}
-                            </MenuItem>
-                          ))}
+                          {currentCategory &&
+                            models?.[currentCategory]?.map((model: any, idx: number) => (
+                              <MenuItem key={`${model.name}-${idx}`} value={model.name}>
+                                {model.displayName || model.name}
+                              </MenuItem>
+                            ))}
                         </TextField>
                       </FormControl>
                     </Grid2>

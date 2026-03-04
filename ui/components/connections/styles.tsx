@@ -137,11 +137,11 @@ export const DiscoveredChip = styled(Chip)(() => ({
 export const DeletedChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles,
   '& .MuiChip-label': {
-    color: theme.palette.background.error.default,
+    color: theme.palette.background.error?.default || theme.palette.error.main,
   },
-  background: `${theme.palette.background.error.default}30 !important`,
+  background: `${(theme.palette.background.error?.default || theme.palette.error.main) as string}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.error.default} !important`,
+    color: `${theme.palette.background.error?.default || theme.palette.error.main} !important`,
   },
 }));
 
@@ -159,11 +159,11 @@ export const RegisteredChip = styled(Chip)(({ theme }) => ({
 export const ConnectedChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles,
   '& .MuiChip-label': {
-    color: theme.palette.background.success.default,
+    color: theme.palette.background.success?.default || theme.palette.success.main,
   },
-  background: `${theme.palette.background.success.default}30 !important`,
+  background: `${(theme.palette.background.success?.default || theme.palette.success.main) as string}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.success.default} !important`,
+    color: `${theme.palette.background.success?.default || theme.palette.success.main} !important`,
   },
 }));
 
@@ -181,11 +181,11 @@ export const IgnoredChip = styled(Chip)(({ theme }) => ({
 export const DisconnectedChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles,
   '& .MuiChip-label': {
-    color: theme.palette.background.warning.default,
+    color: theme.palette.background.warning?.default || theme.palette.warning.main,
   },
-  background: `${theme.palette.background.warning.default}30 !important`,
+  background: `${(theme.palette.background.warning?.default || theme.palette.warning.main) as string}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.warning.default} !important`,
+    color: `${theme.palette.background.warning?.default || theme.palette.warning.main} !important`,
   },
 }));
 
@@ -194,7 +194,7 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.text.disabled,
   },
-  background: `${theme.palette.background.disabled}30 !important`,
+  background: `${theme.palette.action.disabled}30 !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.icon.default} !important`,
   },
@@ -226,12 +226,14 @@ export const OperationButton = styled(Grid2)(({ theme }) => ({
 export const FormatterWrapper = styled(Box)({
   marginBlock: '0.4rem',
 });
-export const ContentContainer = styled(Grid2)(({ theme }) => ({
-  [theme?.breakpoints?.down(1050)]: {
-    flexDirection: 'column',
-  },
-  flexWrap: 'noWrap',
-}));
+export const ContentContainer = styled(Grid2)`
+  ${({ theme }) => `
+    ${theme?.breakpoints?.down(1050)}: {
+      flex-direction: column;
+    }
+    flex-wrap: nowrap;
+  `}
+`;
 
 export const StepperContainer = styled(Stepper)(() => ({
   width: '80%',

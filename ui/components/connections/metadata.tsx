@@ -27,12 +27,12 @@ const MESHERY = 'meshery';
 
 const customIdFormatter = (title, id) => (
   <FormatterWrapper>
-    <KeyValue Key={title} Value={<FormatId id={id} />} />
+    <KeyValue Key={title} Value={<FormatId id={id} />} style={{}} />
   </FormatterWrapper>
 );
 const customDateFormatter = (title, date) => (
   <FormatterWrapper>
-    <KeyValue Key={title} Value={<FormattedDate date={date} />} />
+    <KeyValue Key={title} Value={<FormattedDate date={date} />} style={{}} />
   </FormatterWrapper>
 );
 
@@ -68,15 +68,27 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   };
 
   const handleNATSClick = () => {
-    pingNats({ connectionID: connection.id });
+    pingNats({
+      connectionID: connection.id,
+      subscribe: false,
+      onSuccess: () => {},
+      onError: () => {},
+    });
   };
 
   const handleOperatorClick = () => {
-    pingMesheryOperator({ connectionID: connection.id });
+    pingMesheryOperator({
+      connectionID: connection.id,
+    });
   };
 
   const handleMeshSyncClick = () => {
-    pingMeshSync({ connectionID: connection.id });
+    pingMeshSync({
+      connectionID: connection.id,
+      subscribe: false,
+      onSuccess: () => {},
+      onError: () => {},
+    });
   };
 
   const { operatorState, meshSyncState, natsState, operatorVersion, meshSyncVersion, natsVersion } =
@@ -97,7 +109,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     title={metadata.name}
                     status={connection.status}
                     iconSrc={'/static/img/kubernetes.svg'}
-                    handlePing={() => handleKubernetesClick(connection.id)}
+                    handlePing={handleKubernetesClick}
                   />
                 </ListItem>
               </List>
@@ -139,7 +151,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       wordWrap: 'break-word',
                     }}
                     primary="Server"
-                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                    secondary={<Link title={metadata.server} href={metadata.server} />}
                   />
                 </ListItem>
               </List>
@@ -292,7 +304,7 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
   });
 
   return (
-    <Box backgroundColor={theme.palette.background.card} width="100%" padding={'1rem'}>
+    <Box sx={{ backgroundColor: theme.palette.background.card }} width="100%" padding={'1rem'}>
       <FormatStructuredData
         data={metadata}
         uiSchema={uiSchema}
@@ -323,7 +335,7 @@ const FormatConnectionMetadata = (props) => {
   };
   const formatter = formatterByKind[connection.kind] || formatterByKind.default;
   return (
-    <Box backgroundColor={theme.palette.background.card} padding={'1rem'}>
+    <Box sx={{ backgroundColor: theme.palette.background.card }} padding={'1rem'}>
       {formatter()}
     </Box>
   );

@@ -1,4 +1,5 @@
-import { expect, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 export const waitForSnackBar = async (page: Page, message: string): Promise<void> => {
   const snackbar = page.locator(`text=${message}`).first();

@@ -1,14 +1,17 @@
-// @ts-nocheck
 /* eslint-disable react/jsx-filename-extension */
 import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
-  CustomColumnVisibilityControl,
-  ResponsiveDataTable,
-  SearchBar,
   Slide,
+  // @ts-expect-error - CustomColumnVisibilityControl exists at runtime but types may not be exported
+  CustomColumnVisibilityControl,
+  // @ts-expect-error - ResponsiveDataTable exists at runtime but types may not be exported
+  ResponsiveDataTable,
+  // @ts-expect-error - SearchBar exists at runtime but types may not be exported
+  SearchBar,
+  // @ts-expect-error - UniversalFilter exists at runtime but types may not be exported
   UniversalFilter,
 } from '@sistent/sistent';
 import View from '../view';
@@ -18,9 +21,11 @@ import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
-
+import type { RootState } from '../../../store';
 import { useRouter } from 'next/router';
+// @ts-expect-error
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+// @ts-expect-error
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 
 export const ACTION_TYPES = {
@@ -30,14 +35,23 @@ export const ACTION_TYPES = {
   },
 };
 
-const ResourcesTable = (props) => {
+interface ResourcesTableProps {
+  updateProgress: (_progress: { showProgress: boolean }) => void;
+  k8sConfig: any;
+  resourceConfig: any;
+  submenu: boolean;
+  workloadType: string;
+  selectedK8sContexts: any[];
+}
+
+const ResourcesTable: React.FC<ResourcesTableProps> = (props) => {
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [meshSyncResources, setMeshSyncResources] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState<number>(10);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [namespaceFilter, setNamespaceFilter] = useState('');
@@ -48,9 +62,9 @@ const ResourcesTable = (props) => {
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
-  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const handleApplyFilter = () => {
-    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
+    const namespaceFilter = selectedFilters.namespace === 'All' ? '' : selectedFilters.namespace;
     setNamespaceFilter(namespaceFilter);
   };
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
@@ -106,9 +120,11 @@ const ResourcesTable = (props) => {
     setLoading(true);
     const { query } = router;
     const resourceName =
-      query.resourceName ||
-      (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
-    const resourceCategory = query.resource || tableConfig.name;
+      (query.resourceName as string) ||
+      (['Node', 'Namespace'].includes(query.resource as string)
+        ? (query.resource as string)
+        : search);
+    const resourceCategory = (query.resource as string) || tableConfig.name;
     const decodedClusterIds = JSON.parse(decodeURIComponent(encodedClusterIds));
     if (decodedClusterIds.length === 0) {
       setLoading(false);
@@ -157,8 +173,8 @@ const ResourcesTable = (props) => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    tableConfig.columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
+    tableConfig.columns.forEach((col: any) => {
+      (initialVisibility as any)[col.name] = (showCols as any)[col.name];
     });
     return initialVisibility;
   });

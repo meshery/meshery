@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import {
   Tab,
@@ -15,6 +14,7 @@ import {
   NoSsr,
   TachometerIcon,
   useTheme,
+  // @ts-expect-error
   ErrorBoundary,
 } from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
@@ -56,6 +56,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
+import type { RootState } from '../../store';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -128,33 +129,35 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
-  const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('user_prefs')());
+  const [userPrefs, setUserPrefs] = useState(
+    ExtensionPointSchemaValidator('user_prefs')(undefined),
+  );
   const [providerType, setProviderType] = useState('');
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   const { width } = useWindowDimensions();
   const [value, setValue] = useState(0);
-  const [providerInfo, setProviderInfo] = useState({});
+  const [providerInfo, setProviderInfo] = useState<_ProviderInfo>({});
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state: RootState) => state.ui);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
     isError: isUserDataError,
     error: userDataError,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery(undefined);
 
   const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
+    useGetProviderCapabilitiesQuery(undefined);
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
 
   const { notify } = useNotification();
 
-  const handleValChange = (event, newVal) => {
+  const handleValChange = (_event: React.SyntheticEvent, newVal: number) => {
     setValue(newVal);
   };
 
@@ -227,7 +230,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       });
   };
 
-  const handleTabValChange = (event, newVal) => {
+  const handleTabValChange = (_event: React.SyntheticEvent, newVal: number) => {
     setTabVal(newVal);
   };
 
@@ -316,7 +319,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                                   component={HideScrollbar}
                                   style={{ marginRight: '20px' }}
                                 >
-                                  {provider}
+                                  {provider as React.ReactNode}
                                 </Typography>
                               </BoxWrapper>
                             </CardContent>
@@ -352,7 +355,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               component={HideScrollbar}
                               style={{ marginRight: '20px' }}
                             >
-                              {provider}
+                              {String(provider)}
                             </Typography>
 
                             <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
@@ -470,7 +473,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
             </Typography>
             {providerInfo.extensions &&
               Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
-                <div key={index} margin="20px 0px">
+                <div key={index}>
                   <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
                   <Grid2 container spacing={2} size="grow" style={{ margin: '10px 0 20px 0' }}>
                     <GridExtensionHeader
@@ -503,7 +506,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         padding: '20px 20px',
                       }}
                     >
-                      <Typography variant="body1">{extension[0].component}</Typography>
+                      <Typography variant="body1">
+                        {(extension as ProviderExtension[])[0]?.component}
+                      </Typography>
                     </GridExtensionItem>
                     <GridExtensionItem
                       size={{ xs: 6 }}
@@ -513,7 +518,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                       }}
                     >
                       <Typography variant="body1">
-                        {convertToTitleCase(extension[0].type)}
+                        {convertToTitleCase((extension as ProviderExtension[])[0]?.type || '')}
                       </Typography>
                     </GridExtensionItem>
                   </Grid2>
@@ -536,8 +541,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           <Tabs
             value={tabVal}
             onChange={handleTabValChange}
-            variant={width < 600 ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
+            scrollButtons={width < 600 ? 'auto' : false}
             allowScrollButtonsMobile={true}
             indicatorColor="primary"
             textColor="primary"
@@ -570,14 +574,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           {tabVal === 0 && (
             <>
               <FormContainerWrapper>
-                <FormGroupWrapper component="fieldset">
-                  <FormLegend component="legend">Extensions</FormLegend>
+                <FormGroupWrapper>
+                  <FormLegend>Extensions</FormLegend>
                   <FormGroup>
                     <FormControlLabel
                       key="CatalogContentPreference"
                       control={
                         <Switch
-                          checked={catalogContent}
+                          checked={!!catalogContent}
                           onChange={handleCatalogContentToggle}
                           color="primary"
                           data-cy="CatalogContentPreference"
@@ -590,14 +594,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 </FormGroupWrapper>
               </FormContainerWrapper>
               <FormContainerWrapper>
-                <FormGroupWrapper component="fieldset">
-                  <FormLegend component="legend">Analytics and Improvement Program</FormLegend>
+                <FormGroupWrapper>
+                  <FormLegend>Analytics and Improvement Program</FormLegend>
                   <FormGroup>
                     <FormControlLabel
                       key="UsageStatsPreference"
                       control={
                         <Switch
-                          checked={anonymousStats}
+                          checked={!!anonymousStats}
                           onChange={handleToggle('anonymousUsageStats')}
                           color="primary"
                           data-cy="UsageStatsPreference"
@@ -610,7 +614,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                       key="PerfResultPreference"
                       control={
                         <Switch
-                          checked={perfResultStats}
+                          checked={!!perfResultStats}
                           onChange={handleToggle('anonymousPerfResults')}
                           color="primary"
                           data-cy="PerfResultPreference"
@@ -623,13 +627,13 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 </FormGroupWrapper>
               </FormContainerWrapper>
               <FormContainerWrapper>
-                <FormGroupWrapper component="fieldset">
-                  <FormLegend component="legend">Theme</FormLegend>
-
+                <FormGroupWrapper>
+                  <FormLegend>Theme</FormLegend>
                   <FormGroup>
                     <ThemeToggler
-                      handleUpdateUserPref={handleUpdateUserPref}
-                      classes={props.classes}
+                      handleUpdateUserPref={(theme) =>
+                        handleUpdateUserPref('remoteProviderPreferences.theme', theme)
+                      }
                     />
                   </FormGroup>
                 </FormGroupWrapper>
@@ -642,8 +646,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               <SecondaryTabs
                 value={value}
                 onChange={handleValChange}
-                variant={width < 600 ? 'scrollable' : 'fullWidth'}
-                scrollButtons="on"
+                scrollButtons={width < 600 ? 'auto' : false}
                 allowScrollButtonsMobile={true}
                 indicatorColor="primary"
                 textColor="primary"
