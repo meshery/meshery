@@ -14,6 +14,75 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
+func expectedViewFlagError(spreadsheetId string, spreadsheetCred string) error {
+	fv := mesheryctlflags.NewFlagValidator()
+	return fv.Validate(&relationshipGenerateFlag{SpreadsheetID: spreadsheetId, SpreadsheetCred: spreadsheetCred})
+}
+
+func TestGenerateErrorOutput(t *testing.T) {
+	// setup current context
+	utils.SetupContextEnv(t)
+
+	// test scenarios for fetching data
+	tests := []struct {
+		Name             string
+		Args             []string
+		Fixture          string
+		ExpectedResponse string
+		ExpectError      bool
+		IsOutputGolden   bool  `default:"true"`
+		ExpectedError    error `default:"nil"`
+	}{
+
+		{
+			Name:           "Generate registered relationships without spreadsheet creadentials",
+			Args:           []string{"generate", "--spreadsheet-id", "1"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedViewFlagError("1", ""),
+		},
+		{
+			Name:           "Generate registered relationships without spreadsheet id",
+			Args:           []string{"generate", "--spreadsheet-cred", "$CRED"},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedViewFlagError("", "$CRED"),
+		},
+	}
+
+	// run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+
+			defer func() {
+				cmdRelationshipGenerateFlag.SpreadsheetCred = ""
+				cmdRelationshipGenerateFlag.SpreadsheetID = ""
+			}()
+
+			mesheryctlflags.InitValidators(RelationshipCmd)
+			RelationshipCmd.SetArgs(tt.Args)
+			err := RelationshipCmd.Execute()
+
+			// to validate the expected errors
+			if err != nil {
+				if tt.ExpectError {
+
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected an error but command succeeded")
+			}
+
+		})
+		t.Log("Generate experimental relationship test for argument validation has passed")
+	}
+}
+
 func TestGenerateDataOutput(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
