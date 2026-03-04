@@ -1,4 +1,8 @@
-document.addEventListener("DOMContentLoaded", function () {
+(function initLightbox() {
+    if (document.getElementById("lightbox")) {
+        return;
+    }
+
     var lightbox = document.createElement("div");
     lightbox.setAttribute("id", "lightbox");
 
@@ -80,5 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
             closeLightbox();
         }
     });
-});
+})();
+
+if (window.addEventListener) {
+    window.addEventListener("popstate", function() {
+        setTimeout(initLightbox, 100);
+    });
+}
+
 
