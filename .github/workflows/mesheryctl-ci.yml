@@ -36,7 +36,7 @@ jobs:
           go-version: "1.25"
           check-latest: "true"
       - name: Remove current docs pages for mesheryctl
-        run: rm -rf docs/pages/reference/mesheryctl/*
+        run: rm -rf docs/content/en/reference/mesheryctl/*
       - name: Run script 📜
         run: |
           cd mesheryctl
