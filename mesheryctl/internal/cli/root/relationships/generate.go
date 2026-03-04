@@ -4,16 +4,19 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 )
 
-var (
-	spreadsheetID   string
-	spreadsheetCred string
-)
+type relationshipGenerateFlag struct {
+	SpreadsheetID   string `json:"spreadsheet-id" validate:"required"`
+	SpreadsheetCred string `json:"spreadsheet-cred" validate:"required"`
+}
+
+var cmdRelationshipGenerateFlag relationshipGenerateFlag
 
 var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 	srv, err := meshkit.NewSheetSRV(cred)
@@ -51,17 +54,20 @@ var generateCmd = &cobra.Command{
 // Generate relationships documentss
 mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
-	Args: func(cmd *cobra.Command, args []string) error {
-
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check if flag is set
-		if spreadsheetID == "" || spreadsheetCred == "" {
-			return ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg))
+		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
+		if !ok || flagValidator == nil {
+			return utils.ErrCommandContextMissing("flags-validator")
 		}
-
+		err := flagValidator.Validate(cmdRelationshipGenerateFlag)
+		if err != nil {
+			return utils.ErrFlagsInvalid(fmt.Errorf("%s", errMsg))
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := fetchSheetValues(spreadsheetID, spreadsheetCred)
+		resp, err := fetchSheetValues(cmdRelationshipGenerateFlag.SpreadsheetID, cmdRelationshipGenerateFlag.SpreadsheetCred)
 		if err != nil {
 			return err
 		}
@@ -82,8 +88,8 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&spreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
-	generateCmd.PersistentFlags().StringVar(&spreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&cmdRelationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&cmdRelationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {

@@ -1,6 +1,7 @@
 package relationships
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/sheets/v4"
@@ -34,14 +36,14 @@ func TestGenerateErrorOutput(t *testing.T) {
 			Args:           []string{"generate", "--spreadsheet-id", "1"},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg)),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("%s", errMsg)),
 		},
 		{
 			Name:           "Generate registered relationships without spreadsheet id",
 			Args:           []string{"generate", "--spreadsheet-cred", "$CRED"},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrSpreadsheetFlagMissing(fmt.Errorf("%s", errMsg)),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("%s", errMsg)),
 		},
 	}
 
@@ -50,9 +52,13 @@ func TestGenerateErrorOutput(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 
 			defer func() {
-				spreadsheetCred = ""
-				spreadsheetID = ""
+				cmdRelationshipGenerateFlag.SpreadsheetCred = ""
+				cmdRelationshipGenerateFlag.SpreadsheetID = ""
 			}()
+
+			flagValidator := mesheryctlflags.NewFlagValidator()
+			ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, flagValidator)
+			RelationshipCmd.SetContext(ctx)
 
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
@@ -113,8 +119,8 @@ func TestGenerateDataOutput(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 
 			defer func() {
-				spreadsheetCred = ""
-				spreadsheetID = ""
+				cmdRelationshipGenerateFlag.SpreadsheetCred = ""
+				cmdRelationshipGenerateFlag.SpreadsheetID = ""
 			}()
 
 			fixturesDir := filepath.Join(currDir, "fixtures")
@@ -151,6 +157,10 @@ func TestGenerateDataOutput(t *testing.T) {
 					},
 				}, nil
 			}
+
+			flagValidator := mesheryctlflags.NewFlagValidator()
+			ctx := context.WithValue(context.Background(), mesheryctlflags.FlagValidatorKey, flagValidator)
+			RelationshipCmd.SetContext(ctx)
 
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
