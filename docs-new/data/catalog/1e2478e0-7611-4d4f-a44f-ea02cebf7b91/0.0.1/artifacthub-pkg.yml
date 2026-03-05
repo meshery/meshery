@@ -1,0 +1,24 @@
+version: 0.0.1
+name: postgresql-cluster
+displayName: postgreSQL cluster
+createdAt: "2024-04-02T09:46:16Z"
+description: This YAML configuration defines a PostgreSQL cluster deployment tailored for Google Kubernetes Engine (GKE) utilizing the Cloud Native PostgreSQL (CNPG) operator. The cluster, named "gke-pg-cluster," is designed to offer a standard PostgreSQL environment, featuring three instances for redundancy and high availability. Each instance is provisioned with 2Gi of premium storage, ensuring robust data persistence. Resource allocations are specified, with each instance requesting 1Gi of memory and 1000m (milliCPU) of CPU, and limits set to the same values. Additionally, the cluster is configured with pod anti-affinity, promoting distribution across nodes for fault tolerance. Host-based authentication is enabled for security, permitting access from IP range 10.48.0.0/20 using the "md5" method. Monitoring capabilities are integrated, facilitated by enabling pod monitoring. The configuration also includes tolerations and additional pod affinity rules, enhancing scheduling flexibility and optimizing resource utilization within the Kubernetes environment. This deployment exemplifies a robust and scalable PostgreSQL infrastructure optimized for cloud-native environments, aligning with best practices for reliability, performance, and security.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1e2478e0-7611-4d4f-a44f-ea02cebf7b91/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Resource Requirements: The specified resource requests and limits (memory and CPU) should be carefully evaluated to ensure they align with the expected workload demands. Adjustments may be necessary based on actual usage patterns and performance requirements.\n\n2. Storage Class: The choice of storage class (\"premium-rwo\" in this case) should be reviewed to ensure it meets performance, availability, and cost requirements. Depending on the workload characteristics, other storage classes may be more suitable.\n\n3. Networking Configuration: The configured host-based authentication rules may need adjustment based on the network environment and security policies in place. Ensure that only authorized entities have access to the PostgreSQL cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1e2478e0-7611-4d4f-a44f-ea02cebf7b91-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1e2478e0-7611-4d4f-a44f-ea02cebf7b91-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

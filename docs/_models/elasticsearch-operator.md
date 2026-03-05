@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Elastic Search
 subtitle: Collaborative and visual infrastructure as design for Elastic Search
-image: /assets/img/integrations/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg
-permalink: extensibility/integrations/elasticsearch-operator
+image: /extensions/models/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg
+aliases: /extensibility/integrations/elasticsearch-operator
 docURL: https://docs.meshery.io/extensibility/integrations/elasticsearch-operator
 description: 
 integrations-category: Observability and Analysis
@@ -60,8 +59,5 @@ featureList: [
 ]
 howItWorks: "Integrates Elastic Search"
 howItWorksDetails: "Powerful search and analytics capabilities for Kubernetes data"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,0 +1,24 @@
+version: 0.0.399
+name: kubernetes-cluster-architecture
+displayName: Kubernetes Cluster Architecture
+createdAt: "2025-07-24T11:57:55Z"
+description: This design illustrates the high-level architecture of a Kubernetes cluster, distinguishing between the control plane and worker nodes. It is a recreation of a diagram from the Exoscale documentation.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c3180105-0fac-492c-810e-47aa41778ed2/0.0.399/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4910f4a0-b6e1-4f80-baa7-183a8218484e
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c3180105-0fac-492c-810e-47aa41778ed2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/c3180105-0fac-492c-810e-47aa41778ed2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

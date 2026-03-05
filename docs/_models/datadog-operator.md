@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Datadog Operator
 subtitle: Collaborative and visual infrastructure as design for Datadog Operator
-image: /assets/img/integrations/datadog-operator/icons/color/datadog-operator-color.svg
-permalink: extensibility/integrations/datadog-operator
+image: /extensions/models/datadog-operator/icons/color/datadog-operator-color.svg
+aliases: /extensibility/integrations/datadog-operator
 docURL: https://docs.meshery.io/extensibility/integrations/datadog-operator
 description: 
 integrations-category: Observability and Analysis
@@ -76,8 +75,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Kubernetes resources"
 howItWorksDetails: "Deploys and manages Datadog agents"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

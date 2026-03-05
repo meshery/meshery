@@ -227,7 +227,7 @@ mesheryctl system context list
 		if currContext == "" {
 			log.Print("Current context not set\n")
 		} else {
-			log.Printf("Current context: %s\n", currContext)
+			log.Printf("Current context: %s", currContext)
 		}
 		log.Print("Available contexts:\n")
 
@@ -323,8 +323,12 @@ mesheryctl system context view --all
 
 		contextData, ok := configuration.Contexts[currContext]
 		if !ok {
-			log.Printf("context \"%s\" doesn't exists, run the following to create:\n\nmesheryctl system context create %s", currContext, currContext)
-			return nil
+			return ErrContextNotExists(
+				fmt.Errorf(
+					"context `%s` does not exist",
+					currContext,
+				),
+			)
 		}
 
 		if contextData.Token == "" {

@@ -14,7 +14,7 @@ import {
   IconButton,
 } from '@sistent/sistent';
 import Filter from './filter';
-import BellIcon from '../../assets/icons/BellIcon.js';
+import BellIcon from '../../assets/icons/BellIcon';
 import { iconMedium } from '../../css/icons.styles';
 import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,

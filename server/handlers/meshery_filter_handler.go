@@ -450,6 +450,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' filter submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
@@ -527,6 +528,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' filter unpublished", respBody.ContentName)).Build()

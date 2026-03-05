@@ -62,9 +62,6 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		return nil
 	},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return getSourceTypes()
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -76,10 +73,12 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		// If pattern file is passed via flags
 		if sourceType != "" {
-			if sourceType, err = getFullSourceType(sourceType); err != nil {
-				utils.Log.Debugf("%s is not a valid source type. Valid types are Helm Chart, Kubernetes Manifest, Docker Compose, Meshery Design", sourceType)
-				validSourceTypes := []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
-				return ErrInValidSource(sourceType, validSourceTypes)
+			validSourceTypes, err := getDesignSourceTypes()
+			if err != nil {
+				return err
+			}
+			if sourceType, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
+				return err
 			}
 		}
 

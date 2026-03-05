@@ -1,0 +1,35 @@
+{{ $name := .Params.name }}
+{{ $title := .Title }}
+{{ $component := .Params.component }}
+{{ $earliest_version := .Params.earliest_version }}
+{{ $github_link := .Params.github_link }}
+{{ $project_status := .Params.project_status }}
+
+<h3>Lifecycle management</h3>
+
+<p>The {{ $name }} can install <strong>{{ $earliest_version }}</strong> of {{ $component }}. A number of sample applications can be installed using the {{ $name }}.</p>
+
+{{ if ne $project_status "stable" }}
+  <p>The {{ $name }} is currently under construction ({{ $project_status }} state), which means that the adapter is not fully functional. Want to contribute? Check our <a href="{{ $github_link }}">progress</a>.</p>
+{{ end }}
+
+
+{{ $adapterPath := strings.ToLower $component }}
+{{ $adapterPath = replace $adapterPath " " "-" }}
+
+{{ $adapterImagePath := printf "content/en/extensions/adapters/%s/images/%s-adapter.png" $adapterPath $adapterPath }}
+{{ $installImagePath := printf "content/en/extensions/adapters/%s/images/%s-install.png" $adapterPath $adapterPath }}
+
+{{ if and (os.FileExists $adapterImagePath) (os.FileExists $installImagePath) }}
+    <h3>Install {{ $component }}</h3>
+    <p>In Meshery's UI, choose the Meshery Adapter for {{ $component }}.</p>
+  <a href="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-adapter.png">
+    <img style="width:500px;" src="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-adapter.png" />
+  </a>
+
+  <p>Click on (+) and choose the <strong>{{ $earliest_version }}</strong> of the {{ $component }}.</p>
+
+  <a href="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-install.png">
+    <img style="width:500px;" src="/extensions/adapters/{{ $adapterPath }}/images/{{ $adapterPath }}-install.png" />
+  </a>
+{{ end }}

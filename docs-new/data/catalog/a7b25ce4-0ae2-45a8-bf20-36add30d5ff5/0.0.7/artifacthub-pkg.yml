@@ -1,0 +1,24 @@
+version: 0.0.7
+name: ms-catalogs-worker
+displayName: ms-catalogs-worker
+createdAt: "2025-11-18T11:13:49Z"
+description: Meshery design for ms-catalogs-worker Helm chart, exposing the worker service on port 8080.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a7b25ce4-0ae2-45a8-bf20-36add30d5ff5/0.0.7/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This metadata will appear in the Cloud Catalog entry. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 32fb6e58-f1bc-4fb4-9f79-02708fbb8124
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a7b25ce4-0ae2-45a8-bf20-36add30d5ff5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/a7b25ce4-0ae2-45a8-bf20-36add30d5ff5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

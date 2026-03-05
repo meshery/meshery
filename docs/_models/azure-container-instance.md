@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Container Instance
 subtitle: Collaborative and visual infrastructure as design for Azure Container Instance
-image: /assets/img/integrations/azure-container-instance/icons/color/azure-container-instance-color.svg
-permalink: extensibility/integrations/azure-container-instance
+image: /extensions/models/azure-container-instance/icons/color/azure-container-instance-color.svg
+aliases: /extensibility/integrations/azure-container-instance
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-instance
 description: 
 integrations-category: Provisioning
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

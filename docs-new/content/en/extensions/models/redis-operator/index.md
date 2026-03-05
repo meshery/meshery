@@ -1,0 +1,52 @@
+---
+title: Redis Operator
+subtitle: Collaborative and visual infrastructure as design for Redis Operator
+image: /extensions/models/redis-operator/icons/color/redis-operator-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
+description: 
+integrations-category: Database
+integrations-subcategory: Database
+registrant: Github
+components: 
+- name: redis-failover
+  colorIcon: /extensions/models/redis-operator/components/redis-failover/icons/color/redis-failover-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis-failover/icons/white/redis-failover-white.svg
+  description: 
+- name: redis-cluster
+  colorIcon: /extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
+  description: 
+- name: redis
+  colorIcon: /extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
+  description: 
+- name: redis-cluster
+  colorIcon: /extensions/models/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
+  description: 
+- name: redis-replication
+  colorIcon: /extensions/models/redis-operator/components/redis-replication/icons/color/redis-replication-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis-replication/icons/white/redis-replication-white.svg
+  description: 
+- name: redis-sentinel
+  colorIcon: /extensions/models/redis-operator/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis-sentinel/icons/white/redis-sentinel-white.svg
+  description: 
+- name: redis
+  colorIcon: /extensions/models/redis-operator/components/redis/icons/color/redis-color.svg
+  whiteIcon: /extensions/models/redis-operator/components/redis/icons/white/redis-white.svg
+  description: 
+components-count: 7
+relationships: 
+relationship-count: 0
+featureList: [
+  "Automates Redis cluster deployment and scaling",
+  "Backup and recovery functionality",
+  "High availability and failover"
+]
+howItWorks: "Deploys and manages Redis clusters"
+howItWorksDetails: "Simplified Redis cluster management within Kubernetes"
+categories: [integrations]
+aliases:
+- /extensibility/integrations/redis-operator
+---

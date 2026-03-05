@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Porter
 subtitle: Collaborative and visual infrastructure as design for Porter
-image: /assets/img/integrations/porter/icons/color/porter-color.svg
-permalink: extensibility/integrations/porter
+image: /extensions/models/porter/icons/color/porter-color.svg
+aliases: /extensibility/integrations/porter
 docURL: https://docs.meshery.io/extensibility/integrations/porter
 description: 
 integrations-category: App Definition and Development
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates Porter bundles"
 howItWorksDetails: "Streamlined application packaging and deployment in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

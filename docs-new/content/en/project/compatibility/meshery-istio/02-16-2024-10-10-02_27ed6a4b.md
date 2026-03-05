@@ -1,0 +1,19 @@
+---
+timestamp: "2024-02-16 10:10:18 UTC Fri"
+meshery-component: meshery-istio
+meshery-component-version: edge
+meshery-server-version: "v0.7.20"
+k8s-distro: minikube
+k8s-version: "v1.29.0"
+service-mesh: istio
+service-mesh-version: "1.20.3"
+tests:
+  pod/istiod: "Not Running"
+  pod/details: "Not Running"
+  pod/productpage: "Not Running"
+  pod/ratings: "Not Running"
+  pod/reviews-v1: "Not Running"
+  pod/reviews-v2: "Not Running"
+  pod/reviews-v3: "Not Running"
+overall-status: "failing"
+---

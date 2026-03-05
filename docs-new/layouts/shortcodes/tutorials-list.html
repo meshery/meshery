@@ -1,0 +1,23 @@
+<div class="section">
+  {{ $tutorials := slice }}
+  
+  {{ range .Site.AllPages }}
+    {{ if and (eq .Section "guides") (not .IsSection) (in .Params.categories "tutorials") }}
+      {{ $tutorials = $tutorials | append . }}
+    {{ end }}
+  {{ end }}
+  
+  {{ $sortedTutorials := sort $tutorials "Params.model" }}
+  {{ $lastModel := "" }}
+  
+  {{ range $sortedTutorials }}
+    {{ if ne .Params.model $lastModel }}
+      {{ if ne $lastModel "" }}</ul>{{ end }}
+      <strong>{{ upper .Params.model }}</strong>
+      <ul style="list-style-type: circle;">
+      {{ $lastModel = .Params.model }}
+    {{ end }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{ end }}
+  {{ if ne (len $sortedTutorials) 0 }}</ul>{{ end }}
+</div>

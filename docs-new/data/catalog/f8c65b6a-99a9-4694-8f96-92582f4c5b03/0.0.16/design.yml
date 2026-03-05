@@ -1,0 +1,4743 @@
+{
+  "id": "f8c65b6a-99a9-4694-8f96-92582f4c5b03",
+  "name": "discoursedesign",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.17",
+  "metadata": {
+    "resolvedAliases": {
+      "9565c2e2-d8c5-476d-8d3b-114e409d4770": {
+        "alias_component_id": "9565c2e2-d8c5-476d-8d3b-114e409d4770",
+        "immediate_parent_id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "0"
+        ],
+        "relationship_id": "14846e2e-d471-467e-9b10-e68403f21398",
+        "resolved_parent_id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "0"
+        ]
+      },
+      "d1053a38-6f8f-4126-83dc-32ee3c069365": {
+        "alias_component_id": "d1053a38-6f8f-4126-83dc-32ee3c069365",
+        "immediate_parent_id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "1"
+        ],
+        "relationship_id": "38e9a0a0-3b12-405b-bd3d-7cb5a80dd505",
+        "resolved_parent_id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "template",
+          "spec",
+          "containers",
+          "1"
+        ]
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "63b83546-d857-4c89-b5d5-f3679f3d997d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 482.68833714605506,
+          "y": -344.5269988523359
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "DISCOURSE_DATABASE_HOST": "discourse-postgresql",
+          "DISCOURSE_DATABASE_NAME": "bitnami_application",
+          "DISCOURSE_DATABASE_PORT_NUMBER": "5432",
+          "DISCOURSE_DATABASE_USER": "bn_discourse",
+          "DISCOURSE_EMAIL": "user@example.com",
+          "DISCOURSE_HOST": "127.0.0.1",
+          "DISCOURSE_REDIS_HOST": "discourse-redis-master",
+          "DISCOURSE_REDIS_PORT_NUMBER": "6379",
+          "DISCOURSE_SITE_NAME": "My Site!",
+          "DISCOURSE_SKIP_INSTALL": "no",
+          "DISCOURSE_USERNAME": "user",
+          "POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS": "hstore,pg_trgm,vector",
+          "POSTGRESQL_CLIENT_CREATE_DATABASE_NAME": "bitnami_application",
+          "POSTGRESQL_CLIENT_DATABASE_HOST": "discourse-postgresql",
+          "POSTGRESQL_CLIENT_DATABASE_PORT_NUMBER": "5432",
+          "POSTGRESQL_CLIENT_POSTGRES_USER": "postgres"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "cb393e46-fc14-4b1d-a8bc-b0b78add12cb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-configuration",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 740.2867354085917,
+          "y": -376.96380539337696
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "master.conf": "dir /data\n# User-supplied master configuration:\nrename-command FLUSHDB \"\"\nrename-command FLUSHALL \"\"\n# End of master configuration",
+          "redis.conf": "# User-supplied common configuration:\n# Enable AOF https://redis.io/topics/persistence#append-only-file\nappendonly yes\n# Disable RDB persistence, AOF persistence already enabled.\nsave \"\"\n# End of common configuration",
+          "replica.conf": "dir /data\n# User-supplied replica configuration:\nrename-command FLUSHDB \"\"\nrename-command FLUSHALL \"\"\n# End of replica configuration",
+          "users.acl": ""
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-configuration",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "72aa4a97-84dd-47f7-aeb0-ad3dd2e9d675",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-health",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 898.1043711799109,
+          "y": -89.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "ping_liveness_local.sh": "#!/bin/bash\n\n[[ -f $REDIS_PASSWORD_FILE ]] \u0026\u0026 export REDIS_PASSWORD=\"$(\u003c \"${REDIS_PASSWORD_FILE}\")\"\n[[ -n \"$REDIS_PASSWORD\" ]] \u0026\u0026 export REDISCLI_AUTH=\"$REDIS_PASSWORD\"\nresponse=$(\n  timeout -s 15 $1 \\\n  redis-cli \\\n    -h localhost \\\n    -p $REDIS_PORT \\\n    ping\n)\nif [ \"$?\" -eq \"124\" ]; then\n  echo \"Timed out\"\n  exit 1\nfi\nresponseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')\nif [ \"$response\" != \"PONG\" ] \u0026\u0026 [ \"$responseFirstWord\" != \"LOADING\" ] \u0026\u0026 [ \"$responseFirstWord\" != \"MASTERDOWN\" ]; then\n  echo \"$response\"\n  exit 1\nfi",
+          "ping_liveness_local_and_master.sh": "script_dir=\"$(dirname \"$0\")\"\nexit_status=0\n\"$script_dir/ping_liveness_local.sh\" $1 || exit_status=$?\n\"$script_dir/ping_liveness_master.sh\" $1 || exit_status=$?\nexit $exit_status",
+          "ping_liveness_master.sh": "#!/bin/bash\n\n[[ -f $REDIS_MASTER_PASSWORD_FILE ]] \u0026\u0026 export REDIS_MASTER_PASSWORD=\"$(\u003c \"${REDIS_MASTER_PASSWORD_FILE}\")\"\n[[ -n \"$REDIS_MASTER_PASSWORD\" ]] \u0026\u0026 export REDISCLI_AUTH=\"$REDIS_MASTER_PASSWORD\"\nresponse=$(\n  timeout -s 15 $1 \\\n  redis-cli \\\n    -h $REDIS_MASTER_HOST \\\n    -p $REDIS_MASTER_PORT_NUMBER \\\n    ping\n)\nif [ \"$?\" -eq \"124\" ]; then\n  echo \"Timed out\"\n  exit 1\nfi\nresponseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')\nif [ \"$response\" != \"PONG\" ] \u0026\u0026 [ \"$responseFirstWord\" != \"LOADING\" ]; then\n  echo \"$response\"\n  exit 1\nfi",
+          "ping_readiness_local.sh": "#!/bin/bash\n\n[[ -f $REDIS_PASSWORD_FILE ]] \u0026\u0026 export REDIS_PASSWORD=\"$(\u003c \"${REDIS_PASSWORD_FILE}\")\"\n[[ -n \"$REDIS_PASSWORD\" ]] \u0026\u0026 export REDISCLI_AUTH=\"$REDIS_PASSWORD\"\nresponse=$(\n  timeout -s 15 $1 \\\n  redis-cli \\\n    -h localhost \\\n    -p $REDIS_PORT \\\n    ping\n)\nif [ \"$?\" -eq \"124\" ]; then\n  echo \"Timed out\"\n  exit 1\nfi\nif [ \"$response\" != \"PONG\" ]; then\n  echo \"$response\"\n  exit 1\nfi",
+          "ping_readiness_local_and_master.sh": "script_dir=\"$(dirname \"$0\")\"\nexit_status=0\n\"$script_dir/ping_readiness_local.sh\" $1 || exit_status=$?\n\"$script_dir/ping_readiness_master.sh\" $1 || exit_status=$?\nexit $exit_status",
+          "ping_readiness_master.sh": "#!/bin/bash\n\n[[ -f $REDIS_MASTER_PASSWORD_FILE ]] \u0026\u0026 export REDIS_MASTER_PASSWORD=\"$(\u003c \"${REDIS_MASTER_PASSWORD_FILE}\")\"\n[[ -n \"$REDIS_MASTER_PASSWORD\" ]] \u0026\u0026 export REDISCLI_AUTH=\"$REDIS_MASTER_PASSWORD\"\nresponse=$(\n  timeout -s 15 $1 \\\n  redis-cli \\\n    -h $REDIS_MASTER_HOST \\\n    -p $REDIS_MASTER_PORT_NUMBER \\\n    ping\n)\nif [ \"$?\" -eq \"124\" ]; then\n  echo \"Timed out\"\n  exit 1\nfi\nif [ \"$response\" != \"PONG\" ]; then\n  echo \"$response\"\n  exit 1\nfi"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-health",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e8d5c950-4674-42a2-9cd4-83c1d803ff1f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-scripts",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 914.1043711799109,
+          "y": -197.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "start-master.sh": "#!/bin/bash\n\n[[ -f $REDIS_PASSWORD_FILE ]] \u0026\u0026 export REDIS_PASSWORD=\"$(\u003c \"${REDIS_PASSWORD_FILE}\")\"\nif [[ -f /opt/bitnami/redis/mounted-etc/master.conf ]];then\n    cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf\nfi\nif [[ -f /opt/bitnami/redis/mounted-etc/redis.conf ]];then\n    cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf\nfi\nif [[ -f /opt/bitnami/redis/mounted-etc/users.acl ]];then\n    cp /opt/bitnami/redis/mounted-etc/users.acl /opt/bitnami/redis/etc/users.acl\nfi\nARGS=(\"--port\" \"${REDIS_PORT}\")\nARGS+=(\"--requirepass\" \"${REDIS_PASSWORD}\")\nARGS+=(\"--masterauth\" \"${REDIS_PASSWORD}\")\nARGS+=(\"--include\" \"/opt/bitnami/redis/etc/redis.conf\")\nARGS+=(\"--include\" \"/opt/bitnami/redis/etc/master.conf\")\nexec redis-server \"${ARGS[@]}\"\n"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-scripts",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "9565c2e2-d8c5-476d-8d3b-114e409d4770",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.0",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-09T07:09:41.540930235Z",
+          "updated_at": "2025-10-09T07:09:41.540930235Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 342.5780510010539,
+          "y": -345.4911266581486
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d1053a38-6f8f-4126-83dc-32ee3c069365",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "containers.1",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "status": "enabled",
+        "registrant": {
+          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+          "name": "meshery",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "meshery",
+          "status": "registered",
+          "created_at": "2025-10-09T07:09:41.540930235Z",
+          "updated_at": "2025-10-09T07:09:41.540930235Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 291.5237421668155,
+          "y": -343.0908597019047
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "position": {
+          "x": 318.3008965839347,
+          "y": -335.29099318002665
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "discourse"
+            }
+          },
+          "strategy": {
+            "rollingUpdate": {},
+            "type": "RollingUpdate"
+          },
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/config": "4143cac0efcbc31778cebe995edd47b0be0f8c3c11428b8f62e128c0da638e38",
+                "checksum/secrets-database": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+                "checksum/secrets-discourse": "5fb49d87925ee8f370b0fbfa9f633fed47ed62a2d98eae92317713e567a77aa2",
+                "checksum/secrets-redis": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+              },
+              "labels": {
+                "app.kubernetes.io/instance": "discourse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "discourse",
+                "app.kubernetes.io/version": "3.5.0",
+                "helm.sh/chart": "discourse-17.0.1"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/instance": "discourse",
+                            "app.kubernetes.io/name": "discourse"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DISCOURSE_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "discourse-password",
+                          "name": "discourse-discourse"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DISCOURSE_PORT_NUMBER",
+                      "value": "8080"
+                    },
+                    {
+                      "name": "DISCOURSE_EXTERNAL_HTTP_PORT_NUMBER",
+                      "value": "80"
+                    },
+                    {
+                      "name": "DISCOURSE_DATABASE_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "password",
+                          "name": "discourse-postgresql"
+                        }
+                      }
+                    },
+                    {
+                      "name": "POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "password",
+                          "name": "discourse-postgresql"
+                        }
+                      }
+                    },
+                    {
+                      "name": "POSTGRESQL_CLIENT_POSTGRES_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "postgres-password",
+                          "name": "discourse-postgresql"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DISCOURSE_REDIS_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "redis-password",
+                          "name": "discourse-redis"
+                        }
+                      }
+                    }
+                  ],
+                  "envFrom": [
+                    {
+                      "configMapRef": {
+                        "name": "discourse"
+                      }
+                    }
+                  ],
+                  "image": "docker.io/bitnami/discourse:3.5.0-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 500,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "tcpSocket": {
+                      "port": "http"
+                    },
+                    "timeoutSeconds": 5
+                  },
+                  "name": "discourse",
+                  "ports": [
+                    {
+                      "containerPort": 8080,
+                      "name": "http",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/srv/status",
+                      "port": "http"
+                    },
+                    "initialDelaySeconds": 180,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "6.0",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "12288Mi"
+                    },
+                    "requests": {
+                      "cpu": "1.0",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "3072Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "add": [
+                        "CHOWN",
+                        "SYS_CHROOT",
+                        "FOWNER",
+                        "SETGID",
+                        "SETUID",
+                        "DAC_OVERRIDE"
+                      ],
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 0,
+                    "runAsNonRoot": false,
+                    "runAsUser": 0,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/discourse",
+                      "name": "discourse-data",
+                      "subPath": "discourse"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    "/opt/bitnami/scripts/discourse-sidekiq/run.sh"
+                  ],
+                  "command": [
+                    "/opt/bitnami/scripts/discourse/entrypoint.sh"
+                  ],
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DISCOURSE_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "discourse-password",
+                          "name": "discourse-discourse"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DISCOURSE_POSTGRESQL_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "password",
+                          "name": "discourse-postgresql"
+                        }
+                      }
+                    },
+                    {
+                      "name": "REDIS_PASSWORD",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "redis-password",
+                          "name": "discourse-redis"
+                        }
+                      }
+                    }
+                  ],
+                  "envFrom": [
+                    {
+                      "configMapRef": {
+                        "name": "discourse"
+                      }
+                    }
+                  ],
+                  "image": "docker.io/bitnami/discourse:3.5.0-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh",
+                        "-c",
+                        "pgrep -f ^sidekiq"
+                      ]
+                    },
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 500,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "sidekiq",
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh",
+                        "-c",
+                        "pgrep -f ^sidekiq"
+                      ]
+                    },
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "750m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "768Mi"
+                    },
+                    "requests": {
+                      "cpu": "500m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "add": [
+                        "CHOWN",
+                        "SYS_CHROOT",
+                        "FOWNER",
+                        "SETGID",
+                        "SETUID",
+                        "DAC_OVERRIDE"
+                      ],
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": false,
+                    "runAsGroup": 0,
+                    "runAsNonRoot": false,
+                    "runAsUser": 0,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/bitnami/discourse",
+                      "name": "discourse-data",
+                      "subPath": "discourse"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [],
+              "securityContext": {
+                "fsGroup": 0,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "discourse",
+              "volumes": [
+                {
+                  "name": "discourse-data",
+                  "persistentVolumeClaim": {
+                    "claimName": "discourse"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4f230bf0-98e4-4d08-8656-00ca1c0a7cd5",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 638.1043711799109,
+          "y": -197.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 5432
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "primary",
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "postgresql"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "90c4cc12-539c-4067-a232-528e776b7ebb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 644.359480882881,
+          "y": -373.0365508676663
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 8080
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "discourse"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b1dc2b6c-7025-4ed2-8827-be663cf6ffc7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 730.1043711799109,
+          "y": -197.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis",
+          "namespace": "default"
+        },
+        "spec": {
+          "egress": [
+            {}
+          ],
+          "ingress": [
+            {
+              "ports": [
+                {
+                  "port": 6379
+                }
+              ]
+            }
+          ],
+          "podSelector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "redis"
+            }
+          },
+          "policyTypes": [
+            "Ingress",
+            "Egress"
+          ]
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      }
+    },
+    {
+      "id": "014ee138-2835-4068-92a6-c4dcbc178ecb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 530.1043711799109,
+          "y": 2.745546404770522
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/persistentvolumeclaim-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/persistentvolumeclaim-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        },
+        "spec": {
+          "accessModes": [
+            "ReadWriteOnce"
+          ],
+          "resources": {
+            "requests": {
+              "storage": "10Gi"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8a4442b3-daba-4885-a694-b6dc61b8aba8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-master",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 854.1043711799109,
+          "y": -305.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "master",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-master",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "master",
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "redis"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7955290a-56e6-4d00-9970-e4a74c22d569",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 822.1043711799109,
+          "y": -197.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "primary",
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "postgresql"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8115cf34-1875-44f7-9715-f56ecd83dfd9",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 530.1043711799109,
+          "y": -89.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "concave-hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/poddisruptionbudget-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/poddisruptionbudget-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        },
+        "spec": {
+          "maxUnavailable": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "discourse"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d82834e6-1549-47d9-8f56-a004d3c1cc71",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "position": {
+          "x": 796.1043711799109,
+          "y": 0.745546404770522
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "discourse-password": "cWZpcEl1ZU1wcA=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse-discourse",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "3576a1e3-eaea-4e47-84c5-6ddaccefd7c9",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "position": {
+          "x": 620.1043711799109,
+          "y": 0.745546404770522
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "password": "Qmc3eHJWUEE4eg==",
+          "postgres-password": "Yml0bmFtaQ=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "37ec91d0-bcaa-40a6-bb8a-c7bdf50866ab",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "position": {
+          "x": 708.1043711799109,
+          "y": 0.745546404770522
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "redis-password": "b2dXQlZIYk5Zag=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "4e270b6b-0d2e-4d72-a4ed-651bf69cf5aa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql-hl",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 557.4503293019166,
+          "y": -361.10929634195566
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": null,
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql-hl",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "tcp-postgresql",
+              "port": 5432,
+              "targetPort": "tcp-postgresql"
+            }
+          ],
+          "publishNotReadyAddresses": true,
+          "selector": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/name": "postgresql"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a410fbed-0fda-4b0a-b373-59baa3807047",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-master",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 754.1043711799109,
+          "y": -297.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "master",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-master",
+          "namespace": "default"
+        },
+        "spec": {
+          "internalTrafficPolicy": "Cluster",
+          "ports": [
+            {
+              "name": "tcp-redis",
+              "nodePort": null,
+              "port": 6379,
+              "targetPort": "redis"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "master",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/name": "redis"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "eca69fda-776c-48cf-88ad-5f084a98673e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 553.8133892827535,
+          "y": -295.94536875332597
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "tcp-postgresql",
+              "nodePort": null,
+              "port": 5432,
+              "targetPort": "tcp-postgresql"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/name": "postgresql"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e1e10f02-9c7b-4e4f-9bdb-0ad8b275670c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 538.1043711799109,
+          "y": -189.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "nodePort": null,
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/name": "discourse"
+          },
+          "sessionAffinity": "None",
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f05ae9ed-bd5a-44d1-bd91-8ec2be6fa60c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-headless",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 646.1043711799109,
+          "y": -297.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-headless",
+          "namespace": "default"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "tcp-redis",
+              "port": 6379,
+              "targetPort": "redis"
+            }
+          ],
+          "selector": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/name": "redis"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a424d817-9a77-4e1a-80e6-e395508137ec",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 806.1043711799109,
+          "y": -89.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "discourse",
+            "app.kubernetes.io/version": "3.5.0",
+            "helm.sh/chart": "discourse-17.0.1"
+          },
+          "name": "discourse",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "97584cf0-1ad3-4088-a61c-eb6bc9dcf4b0",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 622.1043711799109,
+          "y": -89.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "848f3de5-f4a5-4f2b-bdce-86d3f9798c71",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-master",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "position": {
+          "x": 714.1043711799109,
+          "y": -89.2544535952295
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": false,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-master",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "80424e96-610c-4088-8989-01e192bd229f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-redis-master",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 854.0866019304697,
+          "y": -373.4911266581486
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "master",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "redis",
+            "app.kubernetes.io/version": "8.2.1",
+            "helm.sh/chart": "redis-22.0.4"
+          },
+          "name": "discourse-redis-master",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "revisionHistoryLimit": 10,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "master",
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "redis"
+            }
+          },
+          "serviceName": "discourse-redis-headless",
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/configmap": "2a9ab4a5432825504d910f022638674ce88eaefe9f9f595ad8bc107377d104fb",
+                "checksum/health": "aff24913d801436ea469d8d374b2ddb3ec4c43ee7ab24663d5f8ff1a1b6991a9",
+                "checksum/scripts": "0717e77fd3bb941f602860e9be4f2ed87b481cddeadf37be463f8512ecde0c3e",
+                "checksum/secret": "5cd4547daa9e6552cd6f962f2cba6c9bb931edc57768e4e9d3268d68f2ed20be"
+              },
+              "labels": {
+                "app.kubernetes.io/component": "master",
+                "app.kubernetes.io/instance": "discourse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "redis",
+                "app.kubernetes.io/version": "8.2.1",
+                "helm.sh/chart": "redis-22.0.4"
+              }
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "master",
+                            "app.kubernetes.io/instance": "discourse",
+                            "app.kubernetes.io/name": "redis"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "args": [
+                    "-ec",
+                    "/opt/bitnami/scripts/start-scripts/start-master.sh"
+                  ],
+                  "command": [
+                    "/bin/bash"
+                  ],
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "REDIS_REPLICATION_MODE",
+                      "value": "master"
+                    },
+                    {
+                      "name": "ALLOW_EMPTY_PASSWORD",
+                      "value": "no"
+                    },
+                    {
+                      "name": "REDIS_PASSWORD_FILE",
+                      "value": "/opt/bitnami/redis/secrets/redis-password"
+                    },
+                    {
+                      "name": "REDIS_TLS_ENABLED",
+                      "value": "no"
+                    },
+                    {
+                      "name": "REDIS_PORT",
+                      "value": "6379"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/redis:8.2.1-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-ec",
+                        "/health/ping_liveness_local.sh 5"
+                      ]
+                    },
+                    "failureThreshold": 5,
+                    "initialDelaySeconds": 20,
+                    "periodSeconds": 5,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 6
+                  },
+                  "name": "redis",
+                  "ports": [
+                    {
+                      "containerPort": 6379,
+                      "name": "redis"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/bash",
+                        "-ec",
+                        "/health/ping_readiness_local.sh 1"
+                      ]
+                    },
+                    "failureThreshold": 5,
+                    "initialDelaySeconds": 20,
+                    "periodSeconds": 5,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 2
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "150m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "192Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "128Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/bitnami/scripts/start-scripts",
+                      "name": "start-scripts"
+                    },
+                    {
+                      "mountPath": "/health",
+                      "name": "health"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/redis/secrets/",
+                      "name": "redis-password"
+                    },
+                    {
+                      "mountPath": "/data",
+                      "name": "redis-data"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/redis/mounted-etc",
+                      "name": "config"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/redis/etc/",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    }
+                  ]
+                }
+              ],
+              "enableServiceLinks": true,
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "discourse-redis-master",
+              "terminationGracePeriodSeconds": 30,
+              "volumes": [
+                {
+                  "configMap": {
+                    "defaultMode": 493,
+                    "name": "discourse-redis-scripts"
+                  },
+                  "name": "start-scripts"
+                },
+                {
+                  "configMap": {
+                    "defaultMode": 493,
+                    "name": "discourse-redis-health"
+                  },
+                  "name": "health"
+                },
+                {
+                  "name": "redis-password",
+                  "secret": {
+                    "items": [
+                      {
+                        "key": "redis-password",
+                        "path": "redis-password"
+                      }
+                    ],
+                    "secretName": "discourse-redis"
+                  }
+                },
+                {
+                  "configMap": {
+                    "name": "discourse-redis-configuration"
+                  },
+                  "name": "config"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "labels": {
+                  "app.kubernetes.io/component": "master",
+                  "app.kubernetes.io/instance": "discourse",
+                  "app.kubernetes.io/name": "redis"
+                },
+                "name": "redis-data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1924c248-703a-4d3e-960b-cbd5a534503f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "discourse-postgresql",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-09T07:09:48.724719062Z",
+          "updated_at": "2025-10-09T07:09:48.724719062Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "position": {
+          "x": 879.1043711799109,
+          "y": -4.254453595229478
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "primary",
+            "app.kubernetes.io/instance": "discourse",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "postgresql",
+            "app.kubernetes.io/version": "17.6.0",
+            "helm.sh/chart": "postgresql-16.7.26"
+          },
+          "name": "discourse-postgresql",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app.kubernetes.io/component": "primary",
+              "app.kubernetes.io/instance": "discourse",
+              "app.kubernetes.io/name": "postgresql"
+            }
+          },
+          "serviceName": "discourse-postgresql-hl",
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/component": "primary",
+                "app.kubernetes.io/instance": "discourse",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "postgresql",
+                "app.kubernetes.io/version": "17.6.0",
+                "helm.sh/chart": "postgresql-16.7.26"
+              },
+              "name": "discourse-postgresql"
+            },
+            "spec": {
+              "affinity": {
+                "nodeAffinity": null,
+                "podAffinity": null,
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app.kubernetes.io/component": "primary",
+                            "app.kubernetes.io/instance": "discourse",
+                            "app.kubernetes.io/name": "postgresql"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 1
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": false,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "BITNAMI_DEBUG",
+                      "value": "false"
+                    },
+                    {
+                      "name": "POSTGRESQL_PORT_NUMBER",
+                      "value": "5432"
+                    },
+                    {
+                      "name": "POSTGRESQL_VOLUME_DIR",
+                      "value": "/bitnami/postgresql"
+                    },
+                    {
+                      "name": "PGDATA",
+                      "value": "/bitnami/postgresql/data"
+                    },
+                    {
+                      "name": "POSTGRES_USER",
+                      "value": "bn_discourse"
+                    },
+                    {
+                      "name": "POSTGRES_PASSWORD_FILE",
+                      "value": "/opt/bitnami/postgresql/secrets/password"
+                    },
+                    {
+                      "name": "POSTGRES_POSTGRES_PASSWORD_FILE",
+                      "value": "/opt/bitnami/postgresql/secrets/postgres-password"
+                    },
+                    {
+                      "name": "POSTGRES_DATABASE",
+                      "value": "bitnami_application"
+                    },
+                    {
+                      "name": "POSTGRESQL_ENABLE_LDAP",
+                      "value": "no"
+                    },
+                    {
+                      "name": "POSTGRESQL_ENABLE_TLS",
+                      "value": "no"
+                    },
+                    {
+                      "name": "POSTGRESQL_LOG_HOSTNAME",
+                      "value": "false"
+                    },
+                    {
+                      "name": "POSTGRESQL_LOG_CONNECTIONS",
+                      "value": "false"
+                    },
+                    {
+                      "name": "POSTGRESQL_LOG_DISCONNECTIONS",
+                      "value": "false"
+                    },
+                    {
+                      "name": "POSTGRESQL_PGAUDIT_LOG_CATALOG",
+                      "value": "off"
+                    },
+                    {
+                      "name": "POSTGRESQL_CLIENT_MIN_MESSAGES",
+                      "value": "error"
+                    },
+                    {
+                      "name": "POSTGRESQL_SHARED_PRELOAD_LIBRARIES",
+                      "value": "pgaudit"
+                    }
+                  ],
+                  "image": "docker.io/bitnami/postgresql:17.6.0-debian-12-r0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh",
+                        "-c",
+                        "exec pg_isready -U \"bn_discourse\" -d \"dbname=bitnami_application\" -h 127.0.0.1 -p 5432"
+                      ]
+                    },
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "postgresql",
+                  "ports": [
+                    {
+                      "containerPort": 5432,
+                      "name": "tcp-postgresql"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh",
+                        "-c",
+                        "-e",
+                        "exec pg_isready -U \"bn_discourse\" -d \"dbname=bitnami_application\" -h 127.0.0.1 -p 5432\n[ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]\n"
+                      ]
+                    },
+                    "failureThreshold": 6,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "150m",
+                      "ephemeral-storage": "2Gi",
+                      "memory": "192Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "ephemeral-storage": "50Mi",
+                      "memory": "128Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    },
+                    "privileged": false,
+                    "readOnlyRootFilesystem": true,
+                    "runAsGroup": 1001,
+                    "runAsNonRoot": true,
+                    "runAsUser": 1001,
+                    "seLinuxOptions": {},
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/tmp",
+                      "name": "empty-dir",
+                      "subPath": "tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/postgresql/conf",
+                      "name": "empty-dir",
+                      "subPath": "app-conf-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/postgresql/tmp",
+                      "name": "empty-dir",
+                      "subPath": "app-tmp-dir"
+                    },
+                    {
+                      "mountPath": "/opt/bitnami/postgresql/secrets/",
+                      "name": "postgresql-password"
+                    },
+                    {
+                      "mountPath": "/dev/shm",
+                      "name": "dshm"
+                    },
+                    {
+                      "mountPath": "/bitnami/postgresql",
+                      "name": "data"
+                    }
+                  ]
+                }
+              ],
+              "hostIPC": false,
+              "hostNetwork": false,
+              "securityContext": {
+                "fsGroup": 1001,
+                "fsGroupChangePolicy": "Always",
+                "supplementalGroups": [],
+                "sysctls": []
+              },
+              "serviceAccountName": "discourse-postgresql",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "empty-dir"
+                },
+                {
+                  "name": "postgresql-password",
+                  "secret": {
+                    "secretName": "discourse-postgresql"
+                  }
+                },
+                {
+                  "emptyDir": {
+                    "medium": "Memory"
+                  },
+                  "name": "dshm"
+                }
+              ]
+            }
+          },
+          "updateStrategy": {
+            "rollingUpdate": {},
+            "type": "RollingUpdate"
+          },
+          "volumeClaimTemplates": [
+            {
+              "apiVersion": "v1",
+              "kind": "PersistentVolumeClaim",
+              "metadata": {
+                "name": "data"
+              },
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "8Gi"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "14846e2e-d471-467e-9b10-e68403f21398",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9565c2e2-d8c5-476d-8d3b-114e409d4770",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "38e9a0a0-3b12-405b-bd3d-7cb5a80dd505",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "d1053a38-6f8f-4126-83dc-32ee3c069365",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "1"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "1"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "1"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "1"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "86720b20-14e1-495b-8503-e7989c7596fb",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines network edges between components",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "e1e10f02-9c7b-4e4f-9bdb-0ad8b275670c",
+                "kind": "Service",
+                "match": {},
+                "match_strategy_matrix": [
+                  [
+                    "to_contains_from",
+                    "not_null"
+                  ],
+                  [
+                    "equal_as_strings",
+                    "not_null"
+                  ],
+                  [
+                    "equal"
+                  ]
+                ],
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "targetPort"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "name"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0",
+                      "ports",
+                      "0",
+                      "protocol"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "network",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "9b772297-c3ed-489e-bdcd-943da4858544",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\\n\\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "63b83546-d857-4c89-b5d5-f3679f3d997d",
+                "kind": "ConfigMap",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": null,
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "containers",
+                      "0",
+                      "envFrom",
+                      "0",
+                      "configMapRef",
+                      "name"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "reference",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "a56ef50d-1be8-47b3-a694-5a7660cdb453",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "A Deployment references a PVC in its Pod template using the volumes and volumeMounts fields. This tells Kubernetes to mount the claimed persistent storage into the container at a specified path.\nThis relationship is namespaced and allows Pods to access persistent storage through a logical, portable claim.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "014ee138-2835-4068-92a6-c4dcbc178ecb",
+                "kind": "PersistentVolumeClaim",
+                "match": {},
+                "match_strategy_matrix": [
+                  [
+                    "equal_as_strings",
+                    "not_null"
+                  ]
+                ],
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "d2ada7b6-aab6-4b23-b053-eeee0331508c",
+                "kind": "Deployment",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "github",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "template",
+                      "spec",
+                      "volumes",
+                      "0",
+                      "persistentVolumeClaim",
+                      "claimName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "reference",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    }
+  ]
+}

@@ -29,6 +29,9 @@ export const PureHtmlLoadingScreen = (props) => {
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
+        fontFamily: 'QanelasSoftRegular, sans-serif',
+        fontWeight: 'normal',
+        fontSize: '1.15rem',
         backgroundColor: '#263238', // color of navigation menu
         color: '#dedede', // soften the subtitle / message
         ...(other.style || {}),
@@ -48,7 +51,7 @@ export const PureHtmlLoadingScreen = (props) => {
           id={id + '-text-message'}
           style={{
             fontFamily: 'QanelasSoftRegular, sans-serif', // this is important to have consistent font between prereact render
-            fontSize: '.9rem',
+            fontSize: '1.15rem',
             fontWeight: 'normal',
             marginTop: '0rem',
           }}

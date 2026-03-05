@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Elastic Container Registry
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic Container Registry
-image: /assets/img/integrations/aws-ecr-controller/icons/color/aws-ecr-controller-color.svg
-permalink: extensibility/integrations/aws-ecr-controller
+image: /extensions/models/aws-ecr-controller/icons/color/aws-ecr-controller-color.svg
+aliases: /extensibility/integrations/aws-ecr-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ecr-controller
 description: 
 integrations-category: Provisioning
@@ -30,7 +29,15 @@ components:
   colorIcon: assets/img/integrations/aws-ecr-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 5
+- name: repository-creation-template
+  colorIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/color/repository-creation-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/white/repository-creation-template-white.svg
+  description: 
+- name: repository-creation-template
+  colorIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/color/repository-creation-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository-creation-template/icons/white/repository-creation-template-white.svg
+  description: 
+components-count: 7
 relationships: 
 relationship-count: 0
 featureList: [
@@ -42,8 +49,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

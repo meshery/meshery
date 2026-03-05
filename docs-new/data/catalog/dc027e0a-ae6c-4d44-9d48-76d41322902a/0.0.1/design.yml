@@ -1,0 +1,3050 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "datadog-3.127.1.tgz",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "2163b5f9-4095-43d6-9147-76593fe6e5f1",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": true,
+        "metadata": {
+          "labels": {
+            "app": "datadog",
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "chart": "datadog-3.127.1",
+            "helm.sh/chart": "datadog-3.127.1",
+            "heritage": "Helm",
+            "release": "datadog"
+          },
+          "name": "datadog-cluster-agent",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "06dbfe29-bbe7-41e8-bcf5-1d5b03eaf735",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "automountServiceAccountToken": true,
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ServiceAccount",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d1b5342b-3ea2-43fb-bed3-ac213b24a0cd",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "api-key": "TUlTU0lORw=="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c436f65a-5040-4c03-a843-7b57f815cb7e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "token": "NVZUU3pGb2RUdFVEeG9oV1BiWGI3ODZKQWtaVldJd2M="
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent",
+          "namespace": "default"
+        },
+        "type": "Opaque"
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f867eff0-6db4-4fb8-83f8-445b1237facb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent-confd",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "kubernetes_apiserver.yaml": "init_config:\ninstances:\n  -\n    filtering_enabled: false\n    unbundle_events: false",
+          "kubernetes_state_core.yaml.default": "init_config:\ninstances:\n  - collectors:\n    - secrets\n    - configmaps\n    - nodes\n    - pods\n    - services\n    - resourcequotas\n    - replicationcontrollers\n    - limitranges\n    - persistentvolumeclaims\n    - persistentvolumes\n    - namespaces\n    - endpoints\n    - daemonsets\n    - deployments\n    - replicasets\n    - statefulsets\n    - cronjobs\n    - jobs\n    - horizontalpodautoscalers\n    - poddisruptionbudgets\n    - storageclasses\n    - volumeattachments\n    - ingresses\n    labels_as_tags:\n      {}\n    annotations_as_tags:\n      {}"
+        },
+        "metadata": {
+          "annotations": {
+            "checksum/confd-config": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          },
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent-confd",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d5e07aaf-0273-4d2e-b194-acd641eace41",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-installinfo",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "install_info": "---\ninstall_method:\n  tool: helm\n  tool_version: Helm\n  installer_version: datadog-3.127.1\n"
+        },
+        "metadata": {
+          "annotations": {
+            "checksum/install_info": "532b4549925cdd7e13ccd3d6a01d0e2cd33d426f4ad26c8dac1c21a1e486ac69"
+          },
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-installinfo",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "b5160049-51eb-413f-8fd4-e9a9b1b75ab4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-kpi-telemetry-configmap",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "install_id": "62a4461d-b782-4527-a8ea-eed4d0e02c3b",
+          "install_time": "1760890905",
+          "install_type": "k8s_manual"
+        },
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-kpi-telemetry-configmap",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      }
+    },
+    {
+      "id": "48a79125-02a0-42b6-b55f-d99c5b599355",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "services",
+              "endpoints",
+              "pods",
+              "nodes",
+              "namespaces",
+              "componentstatuses",
+              "limitranges"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "events"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch",
+              "create"
+            ]
+          },
+          {
+            "apiGroups": [
+              "discovery.k8s.io"
+            ],
+            "resources": [
+              "endpointslices"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "quota.openshift.io"
+            ],
+            "resources": [
+              "clusterresourcequotas"
+            ],
+            "verbs": [
+              "get",
+              "list"
+            ]
+          },
+          {
+            "apiGroups": [
+              "autoscaling"
+            ],
+            "resources": [
+              "horizontalpodautoscalers"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resourceNames": [
+              "datadogtoken",
+              "datadogtoken"
+            ],
+            "resources": [
+              "configmaps"
+            ],
+            "verbs": [
+              "get",
+              "update"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resourceNames": [
+              "datadog-leader-election",
+              "datadog-leader-election"
+            ],
+            "resources": [
+              "configmaps"
+            ],
+            "verbs": [
+              "get",
+              "update"
+            ]
+          },
+          {
+            "apiGroups": [
+              "coordination.k8s.io"
+            ],
+            "resourceNames": [
+              "datadog-leader-election"
+            ],
+            "resources": [
+              "leases"
+            ],
+            "verbs": [
+              "get",
+              "update"
+            ]
+          },
+          {
+            "apiGroups": [
+              "coordination.k8s.io"
+            ],
+            "resources": [
+              "leases"
+            ],
+            "verbs": [
+              "create"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "configmaps",
+              "events"
+            ],
+            "verbs": [
+              "create"
+            ]
+          },
+          {
+            "nonResourceURLs": [
+              "/version",
+              "/healthz"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resourceNames": [
+              "kube-system"
+            ],
+            "resources": [
+              "namespaces"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resourceNames": [
+              "datadog-cluster-id"
+            ],
+            "resources": [
+              "configmaps"
+            ],
+            "verbs": [
+              "create",
+              "get",
+              "update"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "persistentvolumes",
+              "persistentvolumeclaims",
+              "serviceaccounts"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apps"
+            ],
+            "resources": [
+              "deployments",
+              "replicasets",
+              "daemonsets",
+              "statefulsets"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "batch"
+            ],
+            "resources": [
+              "cronjobs",
+              "jobs"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "networking.k8s.io"
+            ],
+            "resources": [
+              "ingresses",
+              "networkpolicies"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "rbac.authorization.k8s.io"
+            ],
+            "resources": [
+              "roles",
+              "rolebindings",
+              "clusterroles",
+              "clusterrolebindings"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "storage.k8s.io"
+            ],
+            "resources": [
+              "storageclasses"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "autoscaling.k8s.io"
+            ],
+            "resources": [
+              "verticalpodautoscalers"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apiextensions.k8s.io"
+            ],
+            "resources": [
+              "customresourcedefinitions"
+            ],
+            "verbs": [
+              "list",
+              "get",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "admissionregistration.k8s.io"
+            ],
+            "resourceNames": [
+              "datadog-webhook"
+            ],
+            "resources": [
+              "validatingwebhookconfigurations",
+              "mutatingwebhookconfigurations"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch",
+              "update",
+              "delete"
+            ]
+          },
+          {
+            "apiGroups": [
+              "admissionregistration.k8s.io"
+            ],
+            "resources": [
+              "validatingwebhookconfigurations",
+              "mutatingwebhookconfigurations"
+            ],
+            "verbs": [
+              "create"
+            ]
+          },
+          {
+            "apiGroups": [
+              "batch"
+            ],
+            "resources": [
+              "jobs",
+              "cronjobs"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apps"
+            ],
+            "resources": [
+              "statefulsets",
+              "replicasets",
+              "deployments",
+              "daemonsets"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "replicationcontrollers"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              "security.openshift.io"
+            ],
+            "resourceNames": [
+              "datadog-cluster-agent",
+              "hostnetwork"
+            ],
+            "resources": [
+              "securitycontextconstraints"
+            ],
+            "verbs": [
+              "use"
+            ]
+          },
+          {
+            "apiGroups": [
+              "policy"
+            ],
+            "resources": [
+              "poddisruptionbudgets"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      }
+    },
+    {
+      "id": "ec1a06f0-9214-42f5-803a-60d06dc85372",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-ksm-core",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-ksm-core"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "secrets",
+              "configmaps",
+              "nodes",
+              "pods",
+              "services",
+              "resourcequotas",
+              "replicationcontrollers",
+              "limitranges",
+              "persistentvolumeclaims",
+              "persistentvolumes",
+              "namespaces",
+              "endpoints",
+              "events"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "extensions"
+            ],
+            "resources": [
+              "daemonsets",
+              "deployments",
+              "replicasets"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apps"
+            ],
+            "resources": [
+              "statefulsets",
+              "daemonsets",
+              "deployments",
+              "replicasets"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "batch"
+            ],
+            "resources": [
+              "cronjobs",
+              "jobs"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "autoscaling"
+            ],
+            "resources": [
+              "horizontalpodautoscalers"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "policy"
+            ],
+            "resources": [
+              "poddisruptionbudgets"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "storage.k8s.io"
+            ],
+            "resources": [
+              "storageclasses",
+              "volumeattachments"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "networking.k8s.io"
+            ],
+            "resources": [
+              "ingresses"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          },
+          {
+            "apiGroups": [
+              "apiextensions.k8s.io"
+            ],
+            "resources": [
+              "customresourcedefinitions"
+            ],
+            "verbs": [
+              "list",
+              "watch"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      }
+    },
+    {
+      "id": "be7f6a2c-93ae-4be6-a7ec-6a912057e97b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog"
+        },
+        "rules": [
+          {
+            "nonResourceURLs": [
+              "/metrics",
+              "/metrics/slis"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "nodes/metrics",
+              "nodes/spec",
+              "nodes/proxy",
+              "nodes/stats"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "endpoints"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              "security.openshift.io"
+            ],
+            "resourceNames": [
+              "datadog",
+              "hostaccess",
+              "privileged"
+            ],
+            "resources": [
+              "securitycontextconstraints"
+            ],
+            "verbs": [
+              "use"
+            ]
+          },
+          {
+            "apiGroups": [
+              "coordination.k8s.io"
+            ],
+            "resources": [
+              "leases"
+            ],
+            "verbs": [
+              "get"
+            ]
+          },
+          {
+            "apiGroups": [
+              "metrics.eks.amazonaws.com"
+            ],
+            "resources": [
+              "kcm/metrics",
+              "ksh/metrics"
+            ],
+            "verbs": [
+              "get"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "schema": ""
+      }
+    },
+    {
+      "id": "ece63609-1095-4620-8de9-bb1608c18cce",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "datadog-cluster-agent"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "datadog-cluster-agent",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "6b99a42c-5783-4230-9fdc-ee5d805092b4",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-ksm-core",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-ksm-core"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "datadog-ksm-core"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "datadog-cluster-agent",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e6bd00b6-c86d-4ec9-b068-fc698fb37324",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "ClusterRole",
+          "name": "datadog"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "datadog",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "8d11a9f9-93c3-405f-bcca-583552ac32e9",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent-main",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/role-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/role-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent-main",
+          "namespace": "default"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "secrets"
+            ],
+            "verbs": [
+              "get",
+              "list",
+              "watch",
+              "update",
+              "create"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "Role",
+        "schema": ""
+      }
+    },
+    {
+      "id": "7e602bd9-8b11-4344-8f19-9e54f2674346",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-dca-flare",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 22,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/role-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/role-white.svg",
+        "width": 22,
+        "x": 8.5,
+        "y": 7.5,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-dca-flare",
+          "namespace": "default"
+        },
+        "rules": [
+          {
+            "apiGroups": [
+              ""
+            ],
+            "resources": [
+              "secrets",
+              "configmaps"
+            ],
+            "verbs": [
+              "get",
+              "list"
+            ]
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "Role",
+        "schema": ""
+      }
+    },
+    {
+      "id": "00c64acb-4abb-46c6-89ba-59c0ed5503eb",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent-main",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent-main",
+          "namespace": "default"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "Role",
+          "name": "datadog-cluster-agent-main"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "datadog-cluster-agent",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "RoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "65ffaaea-5cd2-4946-947c-9739293ee031",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-dca-flare",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "height": 25,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg",
+        "width": 25,
+        "x": 7,
+        "y": 7,
+        "z-index": 4
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-dca-flare",
+          "namespace": "default"
+        },
+        "roleRef": {
+          "apiGroup": "rbac.authorization.k8s.io",
+          "kind": "Role",
+          "name": "datadog-dca-flare"
+        },
+        "subjects": [
+          {
+            "kind": "ServiceAccount",
+            "name": "datadog-cluster-agent",
+            "namespace": "default"
+          }
+        ]
+      },
+      "component": {
+        "version": "rbac.authorization.k8s.io/v1",
+        "kind": "RoleBinding",
+        "schema": ""
+      }
+    },
+    {
+      "id": "f541b6ea-d7e8-4412-99b4-299e75c203dc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "agentport",
+              "port": 5005,
+              "protocol": "TCP"
+            }
+          ],
+          "selector": {
+            "app": "datadog-cluster-agent"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "c33483c4-a757-45e3-9744-cf0e76cddb22",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent-admission-controller",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "datadog",
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "chart": "datadog-3.127.1",
+            "helm.sh/chart": "datadog-3.127.1",
+            "heritage": "Helm",
+            "release": "datadog"
+          },
+          "name": "datadog-cluster-agent-admission-controller",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "datadog-webhook",
+              "port": 443,
+              "protocol": "TCP",
+              "targetPort": 8000
+            }
+          ],
+          "selector": {
+            "app": "datadog-cluster-agent"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      }
+    },
+    {
+      "id": "dc034c6e-bb4c-487b-aa5e-87bfc21db9d7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "datadog-cluster-agent",
+      "description": "",
+      "format": "",
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+          "name": "Github",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "github",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-10-19T16:11:27.436285595Z",
+          "updated_at": "2025-10-19T16:11:27.436285595Z",
+          "deleted_at": "0001-01-01T00:00:00Z",
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/component": "cluster-agent",
+            "app.kubernetes.io/instance": "datadog",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "datadog",
+            "app.kubernetes.io/version": "7",
+            "helm.sh/chart": "datadog-3.127.1"
+          },
+          "name": "datadog-cluster-agent",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "revisionHistoryLimit": 10,
+          "selector": {
+            "matchLabels": {
+              "app": "datadog-cluster-agent"
+            }
+          },
+          "strategy": {
+            "rollingUpdate": {
+              "maxSurge": 1,
+              "maxUnavailable": 0
+            },
+            "type": "RollingUpdate"
+          },
+          "template": {
+            "metadata": {
+              "annotations": {
+                "checksum/api_key": "8bb43f9943a2df0cd74e2ff58ad6923f4855fd1c6e5f9ad8f3ed4410debeefca",
+                "checksum/application_key": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+                "checksum/clusteragent-configmap": "40eb0ed75f0c09300ee2172dfffb069e56d725a10932f30c2840c6b7357391fe",
+                "checksum/clusteragent_token": "79bde1dac5149497c6c5a5d69b5e1d98ab6c9bcacf30749fe7f13ddf1424cd89",
+                "checksum/install_info": "532b4549925cdd7e13ccd3d6a01d0e2cd33d426f4ad26c8dac1c21a1e486ac69"
+              },
+              "labels": {
+                "admission.datadoghq.com/enabled": "false",
+                "app": "datadog-cluster-agent",
+                "app.kubernetes.io/component": "cluster-agent",
+                "app.kubernetes.io/instance": "datadog",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "datadog"
+              },
+              "name": "datadog-cluster-agent"
+            },
+            "spec": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchLabels": {
+                            "app": "datadog-cluster-agent"
+                          }
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 50
+                    }
+                  ]
+                }
+              },
+              "automountServiceAccountToken": true,
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "DD_POD_NAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "metadata.name"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME",
+                      "valueFrom": {
+                        "fieldRef": {
+                          "fieldPath": "spec.serviceAccountName"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DD_HEALTH_PORT",
+                      "value": "5556"
+                    },
+                    {
+                      "name": "DD_API_KEY",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "api-key",
+                          "name": "datadog",
+                          "optional": true
+                        }
+                      }
+                    },
+                    {
+                      "name": "KUBERNETES",
+                      "value": "yes"
+                    },
+                    {
+                      "name": "DD_CSI_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_LANGUAGE_DETECTION_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_LANGUAGE_DETECTION_REPORTING_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_MUTATION_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_WEBHOOK_NAME",
+                      "value": "datadog-webhook"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_SERVICE_NAME",
+                      "value": "datadog-cluster-agent-admission-controller"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE",
+                      "value": "socket"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME",
+                      "value": "datadog"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_FAILURE_POLICY",
+                      "value": "Ignore"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_PORT",
+                      "value": "8000"
+                    },
+                    {
+                      "name": "DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY",
+                      "value": "gcr.io/datadoghq"
+                    },
+                    {
+                      "name": "DD_REMOTE_CONFIGURATION_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_CLUSTER_CHECKS_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_EXTRA_CONFIG_PROVIDERS",
+                      "value": "kube_endpoints kube_services"
+                    },
+                    {
+                      "name": "DD_EXTRA_LISTENERS",
+                      "value": "kube_endpoints kube_services"
+                    },
+                    {
+                      "name": "DD_LOG_LEVEL",
+                      "value": "INFO"
+                    },
+                    {
+                      "name": "DD_LEADER_ELECTION",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_LEADER_ELECTION_DEFAULT_RESOURCE",
+                      "value": "configmap"
+                    },
+                    {
+                      "name": "DD_LEADER_LEASE_NAME",
+                      "value": "datadog-leader-election"
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_TOKEN_NAME",
+                      "value": "datadogtoken"
+                    },
+                    {
+                      "name": "DD_COLLECT_KUBERNETES_EVENTS",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_KUBERNETES_USE_ENDPOINT_SLICES",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME",
+                      "value": "datadog-cluster-agent"
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_AUTH_TOKEN",
+                      "valueFrom": {
+                        "secretKeyRef": {
+                          "key": "token",
+                          "name": "datadog-cluster-agent"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_COLLECT_KUBERNETES_TAGS",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_KUBE_RESOURCES_NAMESPACE",
+                      "value": "default"
+                    },
+                    {
+                      "name": "CHART_RELEASE_NAME",
+                      "value": "datadog"
+                    },
+                    {
+                      "name": "AGENT_DAEMONSET",
+                      "value": "datadog"
+                    },
+                    {
+                      "name": "CLUSTER_AGENT_DEPLOYMENT",
+                      "value": "datadog-cluster-agent"
+                    },
+                    {
+                      "name": "DD_ORCHESTRATOR_EXPLORER_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED",
+                      "value": "true"
+                    },
+                    {
+                      "name": "DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED",
+                      "value": "false"
+                    },
+                    {
+                      "name": "DD_INSTRUMENTATION_INSTALL_TIME",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "install_time",
+                          "name": "datadog-kpi-telemetry-configmap"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DD_INSTRUMENTATION_INSTALL_ID",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "install_id",
+                          "name": "datadog-kpi-telemetry-configmap"
+                        }
+                      }
+                    },
+                    {
+                      "name": "DD_INSTRUMENTATION_INSTALL_TYPE",
+                      "valueFrom": {
+                        "configMapKeyRef": {
+                          "key": "install_type",
+                          "name": "datadog-kpi-telemetry-configmap"
+                        }
+                      }
+                    }
+                  ],
+                  "image": "gcr.io/datadoghq/cluster-agent:7.68.3",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/live",
+                      "port": 5556,
+                      "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 15,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "cluster-agent",
+                  "ports": [
+                    {
+                      "containerPort": 5005,
+                      "name": "agentport",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 5000,
+                      "name": "agentmetrics",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 8000,
+                      "name": "datadog-webhook",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/ready",
+                      "port": 5556,
+                      "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 15,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {},
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "readOnlyRootFilesystem": true
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 6,
+                    "httpGet": {
+                      "path": "/startup",
+                      "port": 5556,
+                      "scheme": "HTTP"
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 15,
+                    "successThreshold": 1,
+                    "timeoutSeconds": 5
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/datadog-agent/run",
+                      "name": "datadogrun",
+                      "readOnly": false
+                    },
+                    {
+                      "mountPath": "/var/log/datadog",
+                      "name": "varlog",
+                      "readOnly": false
+                    },
+                    {
+                      "mountPath": "/tmp",
+                      "name": "tmpdir",
+                      "readOnly": false
+                    },
+                    {
+                      "mountPath": "/etc/datadog-agent/install_info",
+                      "name": "installinfo",
+                      "readOnly": true,
+                      "subPath": "install_info"
+                    },
+                    {
+                      "mountPath": "/conf.d",
+                      "name": "confd",
+                      "readOnly": true
+                    },
+                    {
+                      "mountPath": "/etc/datadog-agent",
+                      "name": "config"
+                    }
+                  ]
+                }
+              ],
+              "initContainers": [
+                {
+                  "args": [
+                    "/etc/datadog-agent",
+                    "/opt"
+                  ],
+                  "command": [
+                    "cp",
+                    "-r"
+                  ],
+                  "image": "gcr.io/datadoghq/cluster-agent:7.68.3",
+                  "imagePullPolicy": "IfNotPresent",
+                  "name": "init-volume",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/opt/datadog-agent",
+                      "name": "config"
+                    }
+                  ]
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              },
+              "serviceAccountName": "datadog-cluster-agent",
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "datadogrun"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "varlog"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "tmpdir"
+                },
+                {
+                  "configMap": {
+                    "name": "datadog-installinfo"
+                  },
+                  "name": "installinfo"
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "kubernetes_state_core.yaml.default",
+                        "path": "kubernetes_state_core.yaml.default"
+                      },
+                      {
+                        "key": "kubernetes_apiserver.yaml",
+                        "path": "kubernetes_apiserver.yaml"
+                      }
+                    ],
+                    "name": "datadog-cluster-agent-confd"
+                  },
+                  "name": "confd"
+                },
+                {
+                  "emptyDir": {},
+                  "name": "config"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      }
+    }
+  ],
+  "relationships": null
+}

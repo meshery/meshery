@@ -34,7 +34,7 @@ import PatternIcon from '../../../../assets/icons/Pattern';
 import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { useGetUserByIdQuery } from '../../../../rtk-query/user.js';
+import { useGetUserByIdQuery } from '../../../../rtk-query/user';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import {
   getDesignVersion,

@@ -22,6 +22,21 @@ func Fetch[T any](url string) (*T, error) {
 	return generateDataFromBodyResponse[T](resp)
 }
 
+func FetchData(url string) ([]byte, error) {
+	resp, err := makeRequest(url, http.MethodGet, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+
+	return data, nil
+}
+
 func Delete(url string) (*http.Response, error) {
 	return makeRequest(url, http.MethodDelete, nil, nil)
 }
@@ -44,7 +59,8 @@ func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 	var apiResult T
 	err = json.Unmarshal(data, &apiResult)
 	if err != nil {
-		return nil, err
+		utils.Log.Debugf("Error unmarshalling Api response\nData: %s\nType: %T\n", string(data), apiResult)
+		return nil, utils.ErrUnmarshal(err)
 	}
 
 	return &apiResult, nil
@@ -58,6 +74,8 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 	}
 
 	baseUrl := mctlCfg.GetBaseMesheryURL()
+
+	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseUrl, urlPath)
 
 	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseUrl, urlPath), body)
 	if err != nil {
