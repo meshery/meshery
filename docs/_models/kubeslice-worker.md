@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubeslice Worker
 subtitle: Collaborative and visual infrastructure as design for Kubeslice Worker
-image: /assets/img/integrations/kubeslice-worker/icons/color/kubeslice-worker-color.svg
-permalink: extensibility/integrations/kubeslice-worker
+image: /extensions/models/kubeslice-worker/icons/color/kubeslice-worker-color.svg
+aliases: /extensibility/integrations/kubeslice-worker
 docURL: https://docs.meshery.io/extensibility/integrations/kubeslice-worker
 description: 
 integrations-category: Provisioning
@@ -96,8 +95,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

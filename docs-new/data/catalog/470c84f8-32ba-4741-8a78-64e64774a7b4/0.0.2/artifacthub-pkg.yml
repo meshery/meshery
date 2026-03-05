@@ -1,0 +1,24 @@
+version: 0.0.2
+name: kafka-32.3.10.tgz
+displayName: kafka-32.3.10.tgz
+createdAt: "2025-10-30T14:54:30Z"
+description: Apache Kafka distributed event streaming platform for high-performance data pipelines, streaming analytics, and mission-critical applications
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/470c84f8-32ba-4741-8a78-64e64774a7b4/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires persistent storage (PVCs). Configure Zookeeper settings. Review resource requests/limits. Consider setting up proper authentication and ACLs for production use. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f2ea3e8-17e5-43cb-9484-47d586f9dbe5
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/470c84f8-32ba-4741-8a78-64e64774a7b4-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/470c84f8-32ba-4741-8a78-64e64774a7b4-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

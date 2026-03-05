@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cloudbees Previews
 subtitle: Collaborative and visual infrastructure as design for Cloudbees Previews
-image: /assets/img/integrations/cloudbees-previews/icons/color/cloudbees-previews-color.svg
-permalink: extensibility/integrations/cloudbees-previews
+image: /extensions/models/cloudbees-previews/icons/color/cloudbees-previews-color.svg
+aliases: /extensibility/integrations/cloudbees-previews
 docURL: https://docs.meshery.io/extensibility/integrations/cloudbees-previews
 description: 
 integrations-category: App Definition and Development
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Integrates CloudBees Previews"
 howItWorksDetails: "Streamlined preview environment management for Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

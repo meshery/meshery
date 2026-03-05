@@ -1,0 +1,29 @@
+version: 0.0.73
+name: configure-a-pod-to-use-a-configmap
+displayName: Configure a Pod to Use a ConfigMap
+createdAt: "2024-10-31T03:39:48Z"
+description: |-
+    Many applications rely on configuration which is used during either application initialization or runtime. Most times, there is a requirement to adjust values assigned to configuration parameters. ConfigMaps are a Kubernetes mechanism that let you inject configuration data into application pods.
+
+    The ConfigMap concept allow you to decouple configuration artifacts from image content to keep containerized applications portable. For example, you can download and run the same container image to spin up containers for the purposes of local development, system test, or running a live end-user workload.
+
+    This design provides a usage example demonstrating how to create ConfigMaps and configure Pods using data stored in ConfigMaps.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e0989a1d-1aa1-49cb-9eb4-a963f61fd328/0.0.73/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "In essence, this configuration creates a Deployment that:\n\nRuns 3 replicas of a pod.\nEach pod uses the alpine:3 image.\nInside each pod, a script continuously prints the current date and a message with a preferred sport fetched from a ConfigMap named \"sport\".\nThe ConfigMap provides the \"sport\" data that's mounted into the container's file system.\nThis example demonstrates how to use ConfigMaps to inject configuration data into your pods, allowing you to decouple configuration from your application's image. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a5eb9e0a-c9e3-4b66-890c-8f018e729306
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0989a1d-1aa1-49cb-9eb4-a963f61fd328-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e0989a1d-1aa1-49cb-9eb4-a963f61fd328-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

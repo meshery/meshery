@@ -1,0 +1,24 @@
+version: 0.0.1
+name: aspnet-core-7.0.35.tgz
+displayName: aspnet-core-7.0.35.tgz
+createdAt: "2025-09-20T07:16:01Z"
+description: aspnet-core v7.0.35 imported from Bitnami
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1012970d-bbf5-4bc5-b5e2-f6cb1da64b84/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "requires Kubernetes 1.21+ and Helm 3 \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c2779b1a-5307-429a-9e3b-f19c87c3276a
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1012970d-bbf5-4bc5-b5e2-f6cb1da64b84-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1012970d-bbf5-4bc5-b5e2-f6cb1da64b84-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

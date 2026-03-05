@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Systems Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Systems Manager
-image: /assets/img/integrations/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
-permalink: extensibility/integrations/aws-ssm-controller
+image: /extensions/models/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
+aliases: /extensibility/integrations/aws-ssm-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ssm-controller
 description: 
 integrations-category: Orchestration & Management
@@ -38,7 +37,11 @@ components:
   colorIcon: assets/img/integrations/aws-ssm-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: assets/img/integrations/aws-ssm-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 7
+- name: parameter
+  colorIcon: assets/img/integrations/aws-ssm-controller/components/parameter/icons/color/parameter-color.svg
+  whiteIcon: assets/img/integrations/aws-ssm-controller/components/parameter/icons/white/parameter-white.svg
+  description: 
+components-count: 8
 relationships: 
 - type: "non-binding"
   kind: "edge"
@@ -60,8 +63,5 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS SSM"
 howItWorksDetails: "Streamlined AWS resource management and automation within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

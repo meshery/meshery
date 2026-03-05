@@ -231,7 +231,7 @@ const (
 // if csv output is not directory based
 // should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
-1. cd {modelFolder}
+1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
 3. Add your components in the components/ directory
 4. Define relationships in relationships/ directory

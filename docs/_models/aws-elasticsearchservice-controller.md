@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS ElasticSearch Service
 subtitle: Collaborative and visual infrastructure as design for AWS ElasticSearch Service
-image: /assets/img/integrations/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
-permalink: extensibility/integrations/aws-elasticsearchservice-controller
+image: /extensions/models/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
+aliases: /extensibility/integrations/aws-elasticsearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
 description: 
 integrations-category: Observability and Analysis
@@ -34,8 +33,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Elasticsearch"
 howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

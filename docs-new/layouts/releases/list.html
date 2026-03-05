@@ -1,0 +1,14 @@
+{{ define "main" }}
+{{ $sorted := sort .Pages "Date" "desc" }}
+{{ .Content }}
+<table>
+<tr><th> Version </th><th> Date </th></tr>
+
+{{ range $sorted }}
+    <tr>
+        <td style="text-align:center"> <a href="{{ .RelPermalink }}">{{ .Params.tag }}</a> </td>
+        <td style="text-align:center"> {{ .Date.Format "January 02, 2006" }} </td>
+    </tr>
+{{ end }}
+</table>
+{{ end }}

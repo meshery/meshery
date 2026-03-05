@@ -391,7 +391,7 @@ GEM
       stringio
     public_suffix (5.1.1)
     racc (1.8.1)
-    rack (3.2.3)
+    rack (3.2.5)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)

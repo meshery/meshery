@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Mattermost Operator
 subtitle: Collaborative and visual infrastructure as design for Mattermost Operator
-image: /assets/img/integrations/mattermost-operator/icons/color/mattermost-operator-color.svg
-permalink: extensibility/integrations/mattermost-operator
+image: /extensions/models/mattermost-operator/icons/color/mattermost-operator-color.svg
+aliases: /extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 
 integrations-category: Tools
@@ -33,8 +32,5 @@ featureList: [
 howItWorks: "Connect Mattermost with any of your favorite cloud native apps in just a few clicks. Design, build, and automate anything for your work by integrating apps like Mattermost to create visual automated workflows. Choose from thousands of ready-made apps or use our no-code toolkit to connect to apps not yet in our library."
 howItWorksDetails: "Configuring your own Mattermost environment
 See the Mattermost documentation - https://docs.mattermost.com."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -3,8 +3,8 @@ title: Edge Styles Guide
 description: Learn about the different edge styles and how to interpret their visual meaning in Meshery's component relationships.
 categories: [configuration]
 aliases:
-- extensions/edges-shape-guide
-- extensions/edges-shape-guide/
+- /extensions/edges-shape-guide
+- /extensions/edges-shape-guide/
 ---
 
 In Meshery, the line that connects [components](/concepts/logical/components) is called an **edge**. Each edge visually represents a [relationship](/concepts/logical/relationships) and uses a specific style to communicate its nature.
@@ -41,10 +41,10 @@ Color provides an additional hint about an edge's nature.
 
 The following gallery showcases the full range of visual styles available for edges in Meshery.
 
-{% include extension-guide.html
+{{< extension-guide 
   data_file="edges"
-  guide_title="Edge"
+  guide_title="Edge" 
   guide_description="Description"
   guide_svg="SVG"
   guide_assests_folder="shapes"
-%}
+>}}

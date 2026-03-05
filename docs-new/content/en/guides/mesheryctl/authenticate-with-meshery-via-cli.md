@@ -36,15 +36,15 @@ If `mesheryctl` is running in a system that does not have a browser, you can dow
 1. Navigate to [https://cloud.layer5.io/security/tokens](https://cloud.layer5.io/security/tokens) and sign-in.
 Ensure you are in the right organization and click **Create**.
 
-<a href="./images/create-token.png"><img alt="Create Token" src="./images/create-token.png" /></a>
+<a href="/guides/mesheryctl/images/create-token.png"><img alt="Create Token" src="/guides/mesheryctl/images/create-token.png" /></a>
 
 2. Provide a token name and purpose. Click **Create** to generate.
 
-    <a href="./images/generate-token.png"><img alt="Generate Token" src="./images/generate-token.png" /></a>x
+    <a href="/guides/mesheryctl/images/generate-token.png"><img alt="Generate Token" src="/guides/mesheryctl/images/generate-token.png" /></a>
 
 3. Click the **Download** icon to download the `auth.json` file.
 
-    <a href="./images/download-token.png"><img alt="Download Token" src="./images/download-token.png" /></a>
+    <a href="/guides/mesheryctl/images/download-token.png"><img alt="Download Token" src="/guides/mesheryctl/images/download-token.png" /></a>
 
 Then run `mesheryctl system check` to ensure you do not see an authentication error.   
 

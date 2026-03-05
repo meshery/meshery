@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
+var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl component search --help' to see detailed help message"
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -51,12 +51,11 @@ mesheryctl component search [query-text]
 		searchValue.Add("pagesize", "all")
 
 		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
-
 		if err != nil {
 			return err
 		}
 
-		header := []string{"Name", "Model", "kind", "Version"}
+		header := []string{"ID", "Name", "Model", "Version"}
 
 		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
 

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Contour
 subtitle: Collaborative and visual infrastructure as design for Contour
-image: /assets/img/integrations/contour-operator/icons/color/contour-operator-color.svg
-permalink: extensibility/integrations/contour-operator
+image: /extensions/models/contour-operator/icons/color/contour-operator-color.svg
+aliases: /extensibility/integrations/contour-operator
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 
 integrations-category: Cloud Native Network
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

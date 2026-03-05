@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cubefs
 subtitle: Collaborative and visual infrastructure as design for Cubefs
-image: /assets/img/integrations/cubefs/icons/color/cubefs-color.svg
-permalink: extensibility/integrations/cubefs
+image: /extensions/models/cubefs/icons/color/cubefs-color.svg
+aliases: /extensibility/integrations/cubefs
 docURL: https://docs.meshery.io/extensibility/integrations/cubefs
 description: 
 integrations-category: Runtime
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
