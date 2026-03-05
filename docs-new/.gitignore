@@ -52,9 +52,9 @@ latest_release.json
 
 static/v0.8/
 static/v0.7/
-static/v0.6/
-static/v0.5/
-static/v0.4/
+# static/v0.6/
+# static/v0.5/
+# static/v0.4/
 dist/
 
 docs/v0.8/
