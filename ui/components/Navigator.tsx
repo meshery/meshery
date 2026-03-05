@@ -10,10 +10,6 @@ import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_sv
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import ConfigurationIcon from '../assets/icons/ConfigurationIcon';
-import DocumentIcon from '../assets/icons/DocumentIcon';
-import SlackIcon from '../assets/icons/SlackIcon';
-import GithubIcon from '../assets/icons/GithubIcon';
-import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
@@ -31,6 +27,10 @@ import {
   ExternalLinkIcon as IconExternalLink,
   TachographDigitalIcon,
   useTheme,
+  SlackIcon,
+  FileIcon,
+  GithubIcon,
+  DiscussForumIcon,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
@@ -364,7 +364,8 @@ const Navigator_ = () => {
       id: 'doc',
       href: 'https://docs.meshery.io',
       title: 'Documentation',
-      icon: <DocumentIcon style={drawerIconsStyle} />,
+      icon: <FileIcon height="20px" width="20px" />,
+      hovericon: <FileIcon fill="#00b39f" height="20px" width="20px" />,
       external_icon: ExternalLinkIcon,
     },
     {
@@ -372,22 +373,32 @@ const Navigator_ = () => {
       href: 'https://slack.meshery.io',
       title: 'Community',
       icon: (
-        <SlackIcon style={{ ...drawerIconsStyle, height: '24px', width: '24px', marginTop: '' }} />
+        <SlackIcon
+          primaryColor="currentColor"
+          secondaryColor="currentColor"
+          tertiaryColor="currentColor"
+          quaternaryColor="currentColor"
+          height={20}
+          width={20}
+        />
       ),
+      hovericon: <SlackIcon height={20} width={20} />,
       external_icon: ExternalLinkIcon,
     },
     {
       id: 'forum',
       href: 'https://meshery.io/community#community-forums',
       title: 'Discussion Forum',
-      icon: <ChatIcon style={drawerIconsStyle} />,
+      icon: <DiscussForumIcon fill="currentColor" height="28px" width="28px" />,
+      hovericon: <DiscussForumIcon height="28px" width="28px" />,
       external_icon: ExternalLinkIcon,
     },
     {
       id: 'issues',
       href: 'https://github.com/meshery/meshery/issues/new/choose',
       title: 'Issues',
-      icon: <GithubIcon style={drawerIconsStyle} />,
+      icon: <GithubIcon />,
+      hovericon: <GithubIcon orgIcon />,
       external_icon: ExternalLinkIcon,
     },
   ];
@@ -984,6 +995,8 @@ const Navigator_ = () => {
     </>
   );
 
+  const [hoveredHelpIcon, setHoveredHelpIcon] = React.useState(null);
+
   const HelpIcons = (
     <>
       <NavigatorHelpIcons
@@ -991,11 +1004,14 @@ const Navigator_ = () => {
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
-        {externlinks.map(({ id, icon, title, href }, index) => {
+        {externlinks.map(({ id, icon, hovericon, title, href }, index) => {
+          const isHovered = hoveredHelpIcon === id;
           return (
             <HelpListItem
               key={id}
               style={isDrawerCollapsed && !state.showHelperButton ? { display: 'none' } : {}}
+              onMouseEnter={() => setHoveredHelpIcon(id)}
+              onMouseLeave={() => setHoveredHelpIcon(null)}
             >
               <Grow
                 in={state.showHelperButton || !isDrawerCollapsed}
@@ -1012,7 +1028,7 @@ const Navigator_ = () => {
                   }
                 >
                   <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
-                    <ListIconSide>{icon}</ListIconSide>
+                    <ListIconSide>{isHovered && hovericon ? hovericon : icon}</ListIconSide>
                   </CustomTextTooltip>
                 </a>
               </Grow>

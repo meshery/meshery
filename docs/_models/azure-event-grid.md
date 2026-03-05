@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Event Grid
 subtitle: Collaborative and visual infrastructure as design for Azure Event Grid
-image: /assets/img/integrations/azure-event-grid/icons/color/azure-event-grid-color.svg
-permalink: extensibility/integrations/azure-event-grid
+image: /extensions/models/azure-event-grid/icons/color/azure-event-grid-color.svg
+aliases: /extensibility/integrations/azure-event-grid
 docURL: https://docs.meshery.io/extensibility/integrations/azure-event-grid
 description: 
 integrations-category: Observability and Analysis
@@ -45,8 +44,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
