@@ -20,7 +20,7 @@ The [Meshery CLI Style Guide](/project/contributing/contributing-cli-guide) outl
 
 ### Building CLI
 
-The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`. Fork and clone the Meshery repo. `cd mesheryctl` to change directory mesheryctl's source. After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
+The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`. Fork and clone the Meshery repo. `cd mesheryctl` to change directory mesheryctl's source. After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`
 
 ### Understand Model and Configuration Data
 
