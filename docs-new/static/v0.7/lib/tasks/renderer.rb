@@ -20,7 +20,8 @@ module Graphql
         @output_dir = output_dir
         @template = template
         @schema = schema
-        @layout = Haml::Template.new { File.read(template) }
+        template_content = File.read(template)
+        @layout = Haml::Template.new(escape_html: false) { template_content }
         @parsed_schema = GraphQLDocs::Parser.new(schema, {}).parse
         @seen = Set.new
       end
