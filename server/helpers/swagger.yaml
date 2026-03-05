@@ -1241,22 +1241,24 @@ definitions:
         type: object
         x-go-package: github.com/docker/docker/api/types/volume
     CreateResponse:
-        description: OK response to NetworkCreate operation
+        description: OK response to ContainerCreate operation
         properties:
             Id:
-                description: The ID of the created network.
+                description: The ID of the created container
                 type: string
                 x-go-name: ID
-            Warning:
+            Warnings:
                 description: Warnings encountered when creating the container
-                type: string
+                items:
+                    type: string
+                type: array
         required:
             - Id
-            - Warnings
             - Warning
-        title: CreateResponse NetworkCreateResponse
+            - Warnings
+        title: CreateResponse ContainerCreateResponse
         type: object
-        x-go-package: github.com/docker/docker/api/types/network
+        x-go-package: github.com/docker/docker/api/types/container
     DashboardPrefs:
         additionalProperties: {}
         description: DashboardPrefs Preferences specific to dashboard behavior
