@@ -113,6 +113,7 @@ const (
 	ErrCloneFilterCode                     = "meshery-server-1102"
 	ErrGenerateComponentsCode              = "meshery-server-1103"
 	ErrPublishCatalogPatternCode           = "meshery-server-1104"
+	ErrUnPublishCatalogPatternCode         = "meshery-server-1135"
 	ErrPublishCatalogFilterCode            = "meshery-server-1105"
 	ErrGetMeshModelsCode                   = "meshery-server-1106"
 	ErrGetUserDetailsCode                  = "meshery-server-1107"
@@ -536,6 +537,10 @@ func ErrCloneFilter(err error) error {
 
 func ErrPublishCatalogPattern(err error) error {
 	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog design"}, []string{err.Error()}, []string{"Failed to publish catalog design"}, []string{"Check if the design ID is correct and you are admin"})
+}
+
+func ErrUnPublishCatalogPattern(err error) error {
+	return errors.New(ErrUnPublishCatalogPatternCode, errors.Alert, []string{"Error failed to unpublish catalog design"}, []string{err.Error()}, []string{"Failed to unpublish catalog design"}, []string{"Check if the design ID is correct and you are admin"})
 }
 
 func ErrPublishCatalogFilter(err error) error {

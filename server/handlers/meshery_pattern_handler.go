@@ -1274,6 +1274,18 @@ func (h *Handler) PublishCatalogPatternHandler(
 		return // prevent nil pointer dereference on respBody below
 	}
 
+	if respBody == nil {
+		errNilBody := fmt.Errorf("provider returned null response body")
+		h.log.Error(ErrPublishCatalogPattern(errNilBody))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogPattern(errNilBody),
+		}).WithDescription("Provider returned an empty publish response.").Build()
+		_ = provider.PersistEvent(*e, nil)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		http.Error(rw, ErrPublishCatalogPattern(errNilBody).Error(), http.StatusInternalServerError)
+		return
+	}
+
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' design submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
 	_ = provider.PersistEvent(*e, nil)
 	go h.config.EventBroadcaster.Publish(userID, e)
@@ -1327,29 +1339,41 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	}
 	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
-		h.log.Error(ErrPublishCatalogPattern(err))
+		h.log.Error(ErrUnPublishCatalogPattern(err))
 		e := eventBuilder.WithSeverity(events.Error).
 			WithMetadata(map[string]interface{}{
-				"error": ErrPublishCatalogPattern(err),
+				"error": ErrUnPublishCatalogPattern(err),
 			}).
-			WithDescription("Error publishing design.").Build()
+			WithDescription("Error unpublishing design.").Build()
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		http.Error(rw, ErrUnPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
 	if err != nil {
-		h.log.Error(ErrPublishCatalogPattern(err))
+		h.log.Error(ErrUnPublishCatalogPattern(err))
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrPublishCatalogPattern(err),
+			"error": ErrUnPublishCatalogPattern(err),
 		}).WithDescription("Error parsing response.").Build()
 		_ = provider.PersistEvent(*e, nil)
 		go h.config.EventBroadcaster.Publish(userID, e)
-		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		http.Error(rw, ErrUnPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return // prevent nil pointer dereference on respBody below
+	}
+
+	if respBody == nil {
+		errNilBody := fmt.Errorf("provider returned null response body")
+		h.log.Error(ErrUnPublishCatalogPattern(errNilBody))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrUnPublishCatalogPattern(errNilBody),
+		}).WithDescription("Provider returned an empty unpublish response.").Build()
+		_ = provider.PersistEvent(*e, nil)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		http.Error(rw, ErrUnPublishCatalogPattern(errNilBody).Error(), http.StatusInternalServerError)
+		return
 	}
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' design unpublished", respBody.ContentName)).Build()
