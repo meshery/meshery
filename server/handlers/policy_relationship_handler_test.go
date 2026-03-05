@@ -11,6 +11,7 @@ import (
 func TestParseRelationshipToAlias(t *testing.T) {
 	fromID := uuid.Must(uuid.NewV4())
 	toID := uuid.Must(uuid.NewV4())
+	relID := uuid.Must(uuid.NewV4())
 
 	tests := []struct {
 		name   string
@@ -216,10 +217,12 @@ func TestParseRelationshipToAlias(t *testing.T) {
 						},
 					},
 				}
-				return relationship.RelationshipDefinition{
+				rd := relationship.RelationshipDefinition{
 					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
 					Selectors: &ss,
 				}
+				rd.Id = relID
+				return rd
 			}(),
 			wantOk: true,
 		},
@@ -233,7 +236,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			if tt.wantOk {
 				assert.Equal(t, toID, alias.ImmediateParentId, "ImmediateParentId should match to.Id")
 				assert.Equal(t, fromID, alias.AliasComponentId, "AliasComponentId should match from.Id")
-				assert.Equal(t, tt.input.Id, alias.RelationshipId, "RelationshipId should match the relationship's Id")
+				assert.Equal(t, relID, alias.RelationshipId, "RelationshipId should match the relationship's Id")
 				assert.Equal(t, []string{"configuration", "spec", "containers"}, alias.ImmediateRefFieldPath, "ImmediateRefFieldPath should match first mutatedRef entry")
 			}
 		})
