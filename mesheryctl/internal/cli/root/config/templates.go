@@ -10,4 +10,6 @@ var TemplateToken = Token{
 var TemplateContext = Context{
 	Endpoint: "",
 	Platform: "docker",
+	Channel:  "stable",
+	Version:  "latest",
 }

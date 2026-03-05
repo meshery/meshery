@@ -10,8 +10,6 @@ services:
             - PORT=9081
             - MESHERY_SERVER_CALLBACK_URL=
             - PROVIDER=
-            - MESHERY_SERVER_CALLBACK_URL=
-            - PROVIDER=
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro
