@@ -9,7 +9,7 @@ Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness fo
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl system check</div></div>
 </pre>
-<br/>
+<p><br/><p>
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">Verify environment pre/post-deployment of Meshery.
 
