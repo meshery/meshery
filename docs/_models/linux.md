@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Linux
 subtitle: Collaborative and visual infrastructure as design for Linux
-image: /assets/img/integrations/linux/icons/color/linux-color.svg
-permalink: extensibility/integrations/linux
+image: /extensions/models/linux/icons/color/linux-color.svg
+aliases: /extensibility/integrations/linux
 docURL: https://docs.meshery.io/installation/linux-mac
 description: 
 integrations-category: Platform
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

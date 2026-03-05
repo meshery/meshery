@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Contrail Analytics
 subtitle: Collaborative and visual infrastructure as design for Contrail Analytics
-image: /assets/img/integrations/contrail-analytics/icons/color/contrail-analytics-color.svg
-permalink: extensibility/integrations/contrail-analytics
+image: /extensions/models/contrail-analytics/icons/color/contrail-analytics-color.svg
+aliases: /extensibility/integrations/contrail-analytics
 docURL: https://docs.meshery.io/extensibility/integrations/contrail-analytics
 description: 
 integrations-category: Cloud Native Network
@@ -180,8 +179,5 @@ featureList: [
 ]
 howItWorks: "Manages network connections with Connect"
 howItWorksDetails: "Simplified network connectivity management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

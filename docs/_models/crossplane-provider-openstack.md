@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenStack (Crossplane)
 subtitle: Collaborative and visual infrastructure as design for OpenStack (Crossplane)
-image: /assets/img/integrations/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
-permalink: extensibility/integrations/crossplane-provider-openstack
+image: /extensions/models/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
+aliases: /extensibility/integrations/crossplane-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-openstack
 description: 
 integrations-category: Orchestration & Management
@@ -388,8 +387,5 @@ featureList: [
 ]
 howItWorks: "Manages OpenStack resources with Crossplane"
 howItWorksDetails: "Unified management of OpenStack and Kubernetes resources"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

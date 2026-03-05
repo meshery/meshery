@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Entra
 subtitle: Collaborative and visual infrastructure as design for Azure Entra
-image: /assets/img/integrations/azure-entra/icons/color/azure-entra-color.svg
-permalink: extensibility/integrations/azure-entra
+image: /extensions/models/azure-entra/icons/color/azure-entra-color.svg
+aliases: /extensibility/integrations/azure-entra
 docURL: https://docs.meshery.io/extensibility/integrations/azure-entra
 description: 
 integrations-category: Cloud Native Network
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

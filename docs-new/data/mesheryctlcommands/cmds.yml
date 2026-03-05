@@ -902,6 +902,11 @@ model:
             - mesheryctl model build aws-ec2-controller --path ./some/folder/where/to/look/for/files
             - mesheryctl model build aws-ec2-controller/v1.2.3 --path .
             - mesheryctl model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
+    delete:
+      name: delete
+      description: Delete a registered model by ID
+      usage: mesheryctl model delete [model-id]
+      example: mesheryctl model delete [model-id]
     export:
       name: export
       description: Export a model by name to the given output type (default is oci).

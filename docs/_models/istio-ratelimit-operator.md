@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Istio Rate Limit Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /assets/img/integrations/istio-ratelimit-operator/icons/color/istio-ratelimit-operator-color.svg
-permalink: extensibility/integrations/istio-ratelimit-operator
+image: /extensions/models/istio-ratelimit-operator/icons/color/istio-ratelimit-operator-color.svg
+aliases: /extensibility/integrations/istio-ratelimit-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 
 integrations-category: Cloud Native Network
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

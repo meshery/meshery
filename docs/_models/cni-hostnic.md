@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: CNI Host NIC
 subtitle: Collaborative and visual infrastructure as design for CNI Host NIC
-image: /assets/img/integrations/cni-hostnic/icons/color/cni-hostnic-color.svg
-permalink: extensibility/integrations/cni-hostnic
+image: /extensions/models/cni-hostnic/icons/color/cni-hostnic-color.svg
+aliases: /extensibility/integrations/cni-hostnic
 docURL: https://docs.meshery.io/extensibility/integrations/cni-hostnic
 description: 
 integrations-category: Cloud Native Network
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

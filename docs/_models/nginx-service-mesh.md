@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: NGINX Service Mesh
 subtitle: Collaborative and visual infrastructure as design for NGINX Service Mesh
-image: /assets/img/integrations/nginx-service-mesh/icons/color/nginx-service-mesh-color.svg
-permalink: extensibility/integrations/nginx-service-mesh
+image: /extensions/models/nginx-service-mesh/icons/color/nginx-service-mesh-color.svg
+aliases: /extensibility/integrations/nginx-service-mesh
 docURL: https://docs.meshery.io/extensibility/adapters/nginx-sm
 description: 
 integrations-category: Cloud Native Network
@@ -56,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Manages NGINX Service Mesh"
 howItWorksDetails: "Streamlined service mesh management with enhanced features in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

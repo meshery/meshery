@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Litmus Chaos
 subtitle: Collaborative and visual infrastructure as design for Litmus Chaos
-image: /assets/img/integrations/litmus-core/icons/color/litmus-core-color.svg
-permalink: extensibility/integrations/litmus-core
+image: /extensions/models/litmus-core/icons/color/litmus-core-color.svg
+aliases: /extensibility/integrations/litmus-core
 docURL: https://docs.meshery.io/extensibility/integrations/litmus-core
 description: 
 integrations-category: Observability and Analysis
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Integrates chaos experiments"
 howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

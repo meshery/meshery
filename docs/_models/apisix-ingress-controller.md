@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: APISIX Ingress Controller
 subtitle: Collaborative and visual infrastructure as design for APISIX Ingress Controller
-image: /assets/img/integrations/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
-permalink: extensibility/integrations/apisix-ingress-controller
+image: /extensions/models/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
+aliases: /extensibility/integrations/apisix-ingress-controller
 docURL: https://docs.meshery.io/extensibility/integrations/apisix-ingress-controller
 description: 
 integrations-category: Cloud Native Network
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

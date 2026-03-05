@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kanister Operator
 subtitle: Collaborative and visual infrastructure as design for Kanister Operator
-image: /assets/img/integrations/kanister-operator/icons/color/kanister-operator-color.svg
-permalink: extensibility/integrations/kanister-operator
+image: /extensions/models/kanister-operator/icons/color/kanister-operator-color.svg
+aliases: /extensibility/integrations/kanister-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kanister-operator
 description: 
 integrations-category: App Definition and Development
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
