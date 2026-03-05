@@ -115,6 +115,17 @@ Usage: mesheryctl system context create [context-name]`
 
 		err := config.AddContextToConfig(args[0], tempCntxt, utils.DefaultConfigPath, set, false)
 		if err != nil {
+			// If context already exists and --set flag is used, just switch to it (idempotent behavior)
+			if err.Error() == "error adding context: a context with same name already exists" && set {
+				viper.SetConfigFile(utils.DefaultConfigPath)
+				_ = viper.ReadInConfig()
+				viper.Set("current-context", args[0])
+				if writeErr := viper.WriteConfig(); writeErr != nil {
+					return writeErr
+				}
+				log.Printf("Context `%s` already exists. Switched to existing context.", args[0])
+				return nil
+			}
 			return err
 		}
 

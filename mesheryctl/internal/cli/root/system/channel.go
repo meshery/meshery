@@ -53,18 +53,21 @@ mesheryctl system channel view
 		if len(args) != 0 {
 			return errors.New(utils.SystemChannelSubError("this command takes no arguments.\n", "view"))
 		}
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-		if err != nil || mctlCfg == nil {
+		localMctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil || localMctlCfg == nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		focusedContext := tempContext
+
+		// Use a local variable to avoid race conditions with the global
+		contextOverride := cmd.Flag("context").Value.String()
+		focusedContext := contextOverride
 		if focusedContext == "" {
-			focusedContext = mctlCfg.CurrentContext
+			focusedContext = localMctlCfg.CurrentContext
 		}
 
 		if showForAllContext {
-			for k, v := range mctlCfg.Contexts {
+			for k, v := range localMctlCfg.Contexts {
 				cmd.Println(PrintChannelAndVersionToStdout(v, k))
 				cmd.Println()
 			}
@@ -72,13 +75,13 @@ mesheryctl system channel view
 			return nil
 		}
 
-		err = mctlCfg.SetCurrentContext(focusedContext)
+		err = localMctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
 			utils.Log.Error(ErrSetCurrentContext(err))
 			return nil
 		}
 
-		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+		currCtx, err := localMctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil || currCtx == nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -108,16 +111,17 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+		localMctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
 
-		focusedContext := mctlCfg.CurrentContext
-
-		if len(tempContext) > 0 {
-			focusedContext = tempContext
+		// Use local variable from flag to avoid race with global
+		contextOverride := cmd.Flag("context").Value.String()
+		focusedContext := localMctlCfg.CurrentContext
+		if contextOverride != "" {
+			focusedContext = contextOverride
 		}
 
 		channelVersion := args[0]
@@ -139,14 +143,14 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 				}
 			case "stable":
 				if channelNameSeperated[1] != "latest" {
-					currCtx := mctlCfg.Contexts[focusedContext]
+					currCtx := localMctlCfg.Contexts[focusedContext]
 					currCtx.Version = channelNameSeperated[1]
 				}
 			}
 			version = channelNameSeperated[1]
 		}
 
-		ContextContent, ok := mctlCfg.Contexts[focusedContext]
+		ContextContent, ok := localMctlCfg.Contexts[focusedContext]
 		if !ok {
 			utils.Log.Error(ErrContextContent())
 			return nil
@@ -161,8 +165,8 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			return nil
 		}
 
-		mctlCfg.Contexts[focusedContext] = ContextContent
-		viper.Set("contexts", mctlCfg.Contexts)
+		localMctlCfg.Contexts[focusedContext] = ContextContent
+		viper.Set("contexts", localMctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
 			utils.Log.Error(ErrWriteConfig(err))
@@ -207,13 +211,16 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+		localMctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 		}
-		focusedContext := tempContext
-		if focusedContext == "" {
-			focusedContext = mctlCfg.CurrentContext
+
+		// Use local variable from flag to avoid race with global
+		contextOverride := cmd.Flag("context").Value.String()
+		focusedContext := localMctlCfg.CurrentContext
+		if contextOverride != "" {
+			focusedContext = contextOverride
 		}
 
 		//skip asking confirmation if -y flag used
@@ -275,7 +282,7 @@ mesheryctl system channel view
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
