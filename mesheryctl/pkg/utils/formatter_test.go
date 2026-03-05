@@ -54,33 +54,35 @@ func TestTerminalFormatter_Format(t *testing.T) {
 // TestSetupMeshkitLogger ensures that the Meshkit logger handler
 // is correctly initialized and messages are correctly written to the output.
 func TestSetupMeshkitLogger(t *testing.T) {
-	t.Run("Initialize logger with debug enabled", func(t *testing.T) {
-		var buf bytes.Buffer
-		name := "test-logger"
-		
-		// Force Viper to a log level that allows Info/Debug
-		viper.Set("LOG_LEVEL", int(log.DebugLevel)) 
-		
-		handler := SetupMeshkitLogger(name, true, &buf)
-		assert.NotNil(t, handler)
+    t.Run("Initialize logger with debug enabled", func(t *testing.T) {
+        var buf bytes.Buffer
+        name := "test-logger"
+        
+        handler := SetupMeshkitLogger(name, true, &buf)
+        assert.NotNil(t, handler)
 
-		handler.Info("info message")
+        handler.Info("info message")
+        handler.Debug("debug message")
 
-		output := buf.String()
-		assert.Contains(t, output, "info message", "Buffer should contain the logged message")
-	})
+        output := buf.String()
+        assert.Contains(t, output, "info message")
+        assert.Contains(t, output, "debug message")
+    })
 
-	t.Run("Initialize logger with debug disabled", func(t *testing.T) {
-		var buf bytes.Buffer
-		name := "test-logger"
-		
-		viper.Set("LOG_LEVEL", int(log.InfoLevel))
+    t.Run("Initialize logger with debug disabled", func(t *testing.T) {
+        var buf bytes.Buffer
+        name := "test-logger"
+        
+        viper.Set("LOG_LEVEL", int(log.InfoLevel))
 
-		handler := SetupMeshkitLogger(name, false, &buf)
-		assert.NotNil(t, handler)
+        handler := SetupMeshkitLogger(name, false, &buf)
+        assert.NotNil(t, handler)
 
-		handler.Info("info message")
-		output := buf.String()
-		assert.Contains(t, output, "info message")
-	})
+        handler.Info("info message")
+        handler.Debug("hidden debug message") 
+
+        output := buf.String()
+        assert.Contains(t, output, "info message")
+        assert.NotContains(t, output, "hidden debug message", "Debug logs should be hidden when debugLevel is false")
+    })
 }
