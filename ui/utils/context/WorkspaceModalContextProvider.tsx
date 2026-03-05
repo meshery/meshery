@@ -56,11 +56,13 @@ const WorkspaceModalContextProvider = ({ children }) => {
           id: '',
           name: '',
         },
-        org: { id: '' },
+        org: {
+          id: '',
+          name: '',
+        },
       });
       return;
     }
-
     try {
       const resource = {
         id,
