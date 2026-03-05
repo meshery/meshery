@@ -20,8 +20,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -44,20 +42,20 @@ var viewComponentCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 
-// View details of a specific component in specifed format 
-mesheryctl component view [component-name] -o [json|yaml]
+// View details of a specific component in specified format
+mesheryctl component view [component-name | component-id] -o [json|yaml]
 
 // View details of a specific component in specified format and save it as a file
-mesheryctl component view [component-name] -o [json|yaml] --save
+mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return display.ValidateOutputFormat(cmdComponentViewFlags.OutputFormat)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errViewCmdMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[component-name | component-id] is required but not specified\n\n%s", errViewCmdMsg))
 		} else if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errViewCmdMsg))
 		}
@@ -65,35 +63,39 @@ mesheryctl component view [component-name] -o [json|yaml] --save
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentDefinition := args[0]
+		urlPath := componentApiPath
+		searchTerm := ""
 
-		viewUrlValue := url.Values{}
-		viewUrlValue.Add("search", componentDefinition)
-		viewUrlValue.Add("pagesize", "all")
+		// build url for uuid
+		if utils.IsUUID(componentDefinition) {
+			viewUrlValue := url.Values{}
+			viewUrlValue.Add("id", componentDefinition)
 
-		urlPath := fmt.Sprintf("%s?%s", componentApiPath, viewUrlValue.Encode())
+			urlPath = fmt.Sprintf("%s?%s", urlPath, viewUrlValue.Encode())
+		} else {
+			searchTerm = componentDefinition
+		}
 
-		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
+		selectedComponent := new(component.ComponentDefinition)
+
+		err := display.PromptAsyncPagination(
+			display.DisplayDataAsync{
+				UrlPath:        urlPath,
+				ErrNotFoundMsg: fmt.Sprintf("%s%s", errNoComponentFound, componentDefinition),
+				SearchTerm:     searchTerm,
+			},
+			formatLabel,
+			func(data *models.MeshmodelComponentsAPIResponse) ([]component.ComponentDefinition, int64) {
+				return data.Components, data.Count
+			},
+			selectedComponent,
+		)
 		if err != nil {
 			return err
 		}
 
-		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found with the name:", componentDefinition)
-			return nil
-		}
-
-		var selectedComponent component.ComponentDefinition
-
-		if componentResponse.Count == 1 {
-			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
-		} else {
-			selectedComponent = selectComponentPrompt(componentResponse.Components)
-		}
-
 		outputFormatterFactory := display.OutputFormatterFactory[component.ComponentDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(cmdComponentViewFlags.OutputFormat, selectedComponent)
-		// outputFormatter.WithOutput(cmd.OutOrStdout())
-
+		outputFormatter, err := outputFormatterFactory.New(cmdComponentViewFlags.OutputFormat, *selectedComponent)
 		if err != nil {
 			return err
 		}
@@ -130,25 +132,12 @@ func init() {
 	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }
 
-// selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
-	componentNames := make([]string, len(components))
+func formatLabel(components []component.ComponentDefinition) []string {
+	labels := []string{}
 
-	for i, component := range components {
-		componentNames[i] = fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
+	for _, component := range components {
+		name := fmt.Sprintf("%s, version: %s", component.DisplayName, component.Component.Version)
+		labels = append(labels, name)
 	}
-
-	prompt := promptui.Select{
-		Label: "Select component",
-		Items: componentNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return components[i]
-	}
+	return labels
 }

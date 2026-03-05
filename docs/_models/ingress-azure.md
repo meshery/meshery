@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Ingress Azure
 subtitle: Collaborative and visual infrastructure as design for Ingress Azure
-image: /assets/img/integrations/ingress-azure/icons/color/ingress-azure-color.svg
-permalink: extensibility/integrations/ingress-azure
+image: /extensions/models/ingress-azure/icons/color/ingress-azure-color.svg
+aliases: /extensibility/integrations/ingress-azure
 docURL: https://docs.meshery.io/extensibility/integrations/ingress-azure
 description: 
 integrations-category: Cloud Native Network
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Manages Ingress Azure configuration"
 howItWorksDetails: "Simplified ingress management for Kubernetes on Azure"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

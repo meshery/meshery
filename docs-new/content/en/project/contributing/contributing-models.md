@@ -297,7 +297,7 @@ During model generation, corresponding components are created. Next step is to e
 2. **Identify Relationships**
 
    - **2.1. Review Available Types**
-     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships)
+     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"](/concepts/logical/relationships)
 
    - **2.2. Map Component Relationships**
 
