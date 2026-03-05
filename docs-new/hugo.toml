@@ -122,7 +122,7 @@ archived_version = false
 # The version number for the version of the docs represented in this doc set.
 # Used in the "version-banner" partial to display a version number for the
 # current doc set.
-version = "0.7"
+version = "0.6"
 
 # A link to latest version of the docs. Used in the "version-banner" partial to
 # point people to the main doc site.
