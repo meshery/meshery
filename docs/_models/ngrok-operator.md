@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Ngrok Operator
 subtitle: Collaborative and visual infrastructure as design for Ngrok Operator
-image: /assets/img/integrations/ngrok-operator/icons/color/ngrok-operator-color.svg
-permalink: extensibility/integrations/ngrok-operator
+image: /extensions/models/ngrok-operator/icons/color/ngrok-operator-color.svg
+aliases: /extensibility/integrations/ngrok-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ngrok-operator
 description: 
 integrations-category: Tools
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Extends Meshery's capabilities to AWS"
 howItWorksDetails: "Cloud-native management of Kubernetes on AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cilium
 subtitle: The easiest way to get production-grade Kubernetes clusters with Cilium up and running
-image: /assets/img/integrations/cilium/icons/color/cilium-color.svg
-permalink: extensibility/integrations/cilium
+image: /extensions/models/cilium/icons/color/cilium-color.svg
+aliases: /extensibility/integrations/cilium
 docURL: https://docs.meshery.io/extensibility/adapters/cilium
 description: 
 integrations-category: Cloud Native Network
@@ -92,8 +91,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

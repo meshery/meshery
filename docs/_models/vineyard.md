@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Vineyard
 subtitle: Collaborative and visual infrastructure as design for Vineyard
-image: /assets/img/integrations/vineyard/icons/color/vineyard-color.svg
-permalink: extensibility/integrations/vineyard
+image: /extensions/models/vineyard/icons/color/vineyard-color.svg
+aliases: /extensibility/integrations/vineyard
 docURL: https://docs.meshery.io/extensibility/integrations/vineyard
 description: 
 integrations-category: Runtime
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

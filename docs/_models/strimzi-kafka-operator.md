@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Strimzi Kafka Operator
 subtitle: Collaborative and visual infrastructure as design for Strimzi Kafka Operator
-image: /assets/img/integrations/strimzi-kafka-operator/icons/color/strimzi-kafka-operator-color.svg
-permalink: extensibility/integrations/strimzi-kafka-operator
+image: /extensions/models/strimzi-kafka-operator/icons/color/strimzi-kafka-operator-color.svg
+aliases: /extensibility/integrations/strimzi-kafka-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-kafka-operator
 description: 
 integrations-category: App Definition and Development
@@ -64,8 +63,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

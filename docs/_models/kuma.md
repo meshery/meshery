@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kuma
 subtitle: Collaborative and visual infrastructure as design for Kuma
-image: /assets/img/integrations/kuma/icons/color/kuma-color.svg
-permalink: extensibility/integrations/kuma
+image: /extensions/models/kuma/icons/color/kuma-color.svg
+aliases: /extensibility/integrations/kuma
 docURL: https://docs.meshery.io/extensibility/integrations/kuma
 description: 
 integrations-category: Cloud Native Network
@@ -232,8 +231,5 @@ featureList: [
 ]
 howItWorks: "Manages Kuma configurations"
 howItWorksDetails: "Simplified service mesh management and enhanced observability in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

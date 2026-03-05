@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS EMR Containers
 subtitle: Collaborative and visual infrastructure as design for AWS EMR Containers
-image: /assets/img/integrations/aws-emrcontainers-controller/icons/color/aws-emrcontainers-controller-color.svg
-permalink: extensibility/integrations/aws-emrcontainers-controller
+image: /extensions/models/aws-emrcontainers-controller/icons/color/aws-emrcontainers-controller-color.svg
+aliases: /extensibility/integrations/aws-emrcontainers-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-emrcontainers-controller
 description: 
 integrations-category: Analytics
@@ -46,8 +45,5 @@ featureList: [
 ]
 howItWorks: "Runs containers on EMR"
 howItWorksDetails: "Easier big data processing on Kubernetes with EMR"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

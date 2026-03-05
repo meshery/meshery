@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure App Service
 subtitle: Collaborative and visual infrastructure as design for Azure App Service
-image: /assets/img/integrations/azure-app-service/icons/color/azure-app-service-color.svg
-permalink: extensibility/integrations/azure-app-service
+image: /extensions/models/azure-app-service/icons/color/azure-app-service-color.svg
+aliases: /extensibility/integrations/azure-app-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-app-service
 description: 
 integrations-category: App Definition and Development
@@ -39,8 +38,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
