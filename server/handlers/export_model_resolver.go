@@ -85,6 +85,10 @@ func uniqueModelCandidates(entities []entity.Entity) []*modelv1beta1.ModelDefini
 }
 
 func modelCandidateKey(md *modelv1beta1.ModelDefinition) string {
+	if md == nil {
+		return "nil-model"
+	}
+
 	if md.Id != uuid.Nil {
 		return "id:" + md.Id.String()
 	}
