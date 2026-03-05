@@ -864,15 +864,17 @@ const MesheryPerformanceComponent_ = (props) => {
                     margin="normal"
                     variant="outlined"
                     onChange={handleChange('profileName')}
-                    inputProps={{
-                      maxLength: 300,
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
+                    slotProps={{
+                      htmlInput: {
+                        maxLength: 300,
+                      },
+                      input: {
+                        endAdornment: (
+                          <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                          </CustomTooltip>
+                        ),
+                      },
                     }}
                   />
                 </Grid2>
@@ -918,12 +920,14 @@ const MesheryPerformanceComponent_ = (props) => {
                     margin="normal"
                     variant="outlined"
                     onChange={handleChange('url')}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="The Endpoint where the load will be generated and the performance test will run against.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <CustomTooltip title="The Endpoint where the load will be generated and the performance test will run against.">
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                          </CustomTooltip>
+                        ),
+                      },
                     }}
                   />
                 </Grid2>
@@ -936,17 +940,19 @@ const MesheryPerformanceComponent_ = (props) => {
                     type="number"
                     fullWidth
                     value={cState}
-                    inputProps={{ min: '0', step: '1' }}
                     margin="normal"
                     variant="outlined"
                     onChange={handleChange('c')}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
+                    slotProps={{
+                      htmlInput: { min: '0', step: '1' },
+                      inputLabel: { shrink: true },
+                      input: {
+                        endAdornment: (
+                          <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                          </CustomTooltip>
+                        ),
+                      },
                     }}
                   />
                 </Grid2>
@@ -959,17 +965,19 @@ const MesheryPerformanceComponent_ = (props) => {
                     type="number"
                     fullWidth
                     value={qpsState}
-                    inputProps={{ min: '0', step: '1' }}
                     margin="normal"
                     variant="outlined"
                     onChange={handleChange('qps')}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
+                    slotProps={{
+                      htmlInput: { min: '0', step: '1' },
+                      inputLabel: { shrink: true },
+                      input: {
+                        endAdornment: (
+                          <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                          </CustomTooltip>
+                        ),
+                      },
                     }}
                   />
                 </Grid2>

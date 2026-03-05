@@ -83,51 +83,53 @@ export default function CustomSelectWidget({
         onBlur={_onBlur}
         onFocus={_onFocus}
         size="small"
-        InputProps={{
-          style: { paddingRight: '0px' },
-          endAdornment: (
-            <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-              {rawErrors?.length > 0 && (
-                <CustomTextTooltip
-                  bgColor={ERROR_COLOR}
-                  flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('  ')}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small">
-                    <ErrorOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={ERROR_COLOR}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-              {schema?.description && (
-                <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
-                  title={schema?.description}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
-                    <HelpOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-            </InputAdornment>
-          ),
-        }}
         {...textFieldProps}
         select
-        InputLabelProps={{
-          ...textFieldProps.InputLabelProps,
-          shrink: !isEmpty,
+        slotProps={{
+          input: {
+            style: { paddingRight: '0px' },
+            endAdornment: (
+              <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
+                {rawErrors?.length > 0 && (
+                  <CustomTextTooltip
+                    bgColor={ERROR_COLOR}
+                    flag={formContext?.overrideFlag}
+                    title={rawErrors?.join('  ')}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small">
+                      <ErrorOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={ERROR_COLOR}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+                {schema?.description && (
+                  <CustomTextTooltip
+                    flag={formContext?.overrideFlag}
+                    title={schema?.description}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                      <HelpOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+              </InputAdornment>
+            ),
+          },
+          inputLabel: {
+            ...textFieldProps.InputLabelProps,
+            shrink: !isEmpty,
+          },
         }}
         SelectProps={{
           ...textFieldProps.SelectProps,

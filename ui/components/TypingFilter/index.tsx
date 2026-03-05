@@ -303,7 +303,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
               {...params}
               placeholder={placeholder}
               onKeyDown={handleKeyDown}
-              InputProps={customInputProps}
+              slotProps={{ input: customInputProps }}
             />
           );
         }}

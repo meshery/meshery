@@ -61,15 +61,17 @@ function Control(props) {
     <TextField
       fullWidth
       variant="outlined"
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          style: {
-            display: 'flex',
+      slotProps={{
+        input: {
+          inputComponent,
+          inputProps: {
+            style: {
+              display: 'flex',
+            },
+            inputRef: props.innerRef,
+            children: props.children,
+            ...props.innerProps,
           },
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps,
         },
       }}
       {...props.selectProps.textFieldProps}
