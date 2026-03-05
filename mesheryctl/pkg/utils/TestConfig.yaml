@@ -1,19 +1,19 @@
 contexts:
     gke:
-        endpoint: http://localhost:9081
-        token: default
-        platform: gke
+        channel: stable
         components:
             - meshery-istio
-        channel: stable
+        endpoint: http://localhost:9081
+        platform: gke
+        token: default
         version: latest
     local:
-        endpoint: http://localhost:9081
-        token: default
-        platform: docker
+        channel: stable
         components:
             - meshery-istio
-        channel: stable
+        endpoint: http://localhost:9081
+        platform: docker
+        token: default
         version: latest
     local2:
         endpoint: http://localhost:9081
