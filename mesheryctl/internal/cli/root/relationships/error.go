@@ -8,7 +8,7 @@ var (
 	ErrEmptySheetDataCode = "mesheryctl-1203"
 )
 
-var (
+const (
 	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)"
 )
 
@@ -19,6 +19,6 @@ func ErrEmptySheetData(err error) error {
 		[]string{"Invalid spreadsheet"},
 		[]string{err.Error()},
 		[]string{"Ensure the spreadsheet contains valid relationship entries before importing"},
-		[]string{"Spreadsheet must contains two headers and values for it's headers"},
+		[]string{"Spreadsheet must contain two headers and values for it's headers"},
 	)
 }

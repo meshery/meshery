@@ -35,7 +35,7 @@ func TestGenerateErrorOutput(t *testing.T) {
 	}{
 
 		{
-			Name:           "Generate registered relationships without spreadsheet creadentials",
+			Name:           "Generate registered relationships without spreadsheet credentials",
 			Args:           []string{"generate", "--spreadsheet-id", "1"},
 			ExpectError:    true,
 			IsOutputGolden: false,
