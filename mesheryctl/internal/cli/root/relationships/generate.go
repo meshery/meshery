@@ -11,12 +11,12 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-type relationshipGenerateFlag struct {
+type cmdRelationshipGenerateFlag struct {
 	SpreadsheetID   string `json:"spreadsheet-id" validate:"required"`
 	SpreadsheetCred string `json:"spreadsheet-cred" validate:"required"`
 }
 
-var cmdRelationshipGenerateFlag relationshipGenerateFlag
+var relationshipGenerateFlag cmdRelationshipGenerateFlag
 
 var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 	srv, err := meshkit.NewSheetSRV(cred)
@@ -60,14 +60,14 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 		if !ok || flagValidator == nil {
 			return utils.ErrCommandContextMissing("flags-validator")
 		}
-		err := flagValidator.Validate(cmdRelationshipGenerateFlag)
+		err := flagValidator.Validate(relationshipGenerateFlag)
 		if err != nil {
 			return err
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := fetchSheetValues(cmdRelationshipGenerateFlag.SpreadsheetID, cmdRelationshipGenerateFlag.SpreadsheetCred)
+		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
 		if err != nil {
 			return err
 		}
@@ -82,14 +82,13 @@ mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreads
 		if err != nil {
 			return err
 		}
-		utils.Log.Info("Relationships data generated in docs/_data/RelationshipsData.json")
 		return nil
 	},
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&cmdRelationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
-	generateCmd.PersistentFlags().StringVar(&cmdRelationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {

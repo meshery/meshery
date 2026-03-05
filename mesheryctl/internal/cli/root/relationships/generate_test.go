@@ -16,7 +16,7 @@ import (
 
 func expectedViewFlagError(spreadsheetId string, spreadsheetCred string) error {
 	fv := mesheryctlflags.NewFlagValidator()
-	return fv.Validate(&relationshipGenerateFlag{SpreadsheetID: spreadsheetId, SpreadsheetCred: spreadsheetCred})
+	return fv.Validate(&cmdRelationshipGenerateFlag{SpreadsheetID: spreadsheetId, SpreadsheetCred: spreadsheetCred})
 }
 
 func TestGenerateErrorOutput(t *testing.T) {
@@ -55,8 +55,8 @@ func TestGenerateErrorOutput(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 
 			defer func() {
-				cmdRelationshipGenerateFlag.SpreadsheetCred = ""
-				cmdRelationshipGenerateFlag.SpreadsheetID = ""
+				relationshipGenerateFlag.SpreadsheetCred = ""
+				relationshipGenerateFlag.SpreadsheetID = ""
 			}()
 
 			mesheryctlflags.InitValidators(RelationshipCmd)
@@ -119,8 +119,8 @@ func TestGenerateDataOutput(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 
 			defer func() {
-				cmdRelationshipGenerateFlag.SpreadsheetCred = ""
-				cmdRelationshipGenerateFlag.SpreadsheetID = ""
+				relationshipGenerateFlag.SpreadsheetCred = ""
+				relationshipGenerateFlag.SpreadsheetID = ""
 			}()
 
 			fixturesDir := filepath.Join(currDir, "fixtures")
