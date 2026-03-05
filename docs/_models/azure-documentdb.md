@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure DocumentDB
 subtitle: Collaborative and visual infrastructure as design for Azure DocumentDB
-image: /assets/img/integrations/azure-documentdb/icons/color/azure-documentdb-color.svg
-permalink: extensibility/integrations/azure-documentdb
+image: /extensions/models/azure-documentdb/icons/color/azure-documentdb-color.svg
+aliases: /extensibility/integrations/azure-documentdb
 docURL: https://docs.meshery.io/extensibility/integrations/azure-documentdb
 description: 
 integrations-category: Database
@@ -127,8 +126,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
