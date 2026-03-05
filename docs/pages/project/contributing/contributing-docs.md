@@ -11,7 +11,7 @@ list: include
 
 {% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
 
-Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. After making changes, you can test locally, sign-off, commit, and push your changes for review.
+Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 
 {% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and its information architecture." %}
 
