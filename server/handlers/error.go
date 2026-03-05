@@ -113,7 +113,7 @@ const (
 	ErrCloneFilterCode                     = "meshery-server-1102"
 	ErrGenerateComponentsCode              = "meshery-server-1103"
 	ErrPublishCatalogPatternCode           = "meshery-server-1104"
-	ErrUnPublishCatalogPatternCode         = "meshery-server-1135"
+	ErrUnPublishCatalogPatternCode         = "meshery-server-1375"
 	ErrPublishCatalogFilterCode            = "meshery-server-1105"
 	ErrGetMeshModelsCode                   = "meshery-server-1106"
 	ErrGetUserDetailsCode                  = "meshery-server-1107"
