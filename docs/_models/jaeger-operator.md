@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Jaeger Operator
 subtitle: Collaborative and visual infrastructure as design for Jaeger Operator
-image: /assets/img/integrations/jaeger-operator/icons/color/jaeger-operator-color.svg
-permalink: extensibility/integrations/jaeger-operator
+image: /extensions/models/jaeger-operator/icons/color/jaeger-operator-color.svg
+aliases: /extensibility/integrations/jaeger-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger-operator
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Jaeger"
 howItWorksDetails: "Streamlined Jaeger management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Argo CD Applications
 subtitle: Collaborative and visual infrastructure as design for Argo CD Applications
-image: /assets/img/integrations/argo-cd/icons/color/argo-cd-color.svg
-permalink: extensibility/integrations/argo-cd
+image: /extensions/models/argo-cd/icons/color/argo-cd-color.svg
+aliases: /extensibility/integrations/argo-cd
 docURL: https://docs.meshery.io/extensibility/integrations/argo-cd
 description: 
 integrations-category: App Definition and Development
@@ -36,8 +35,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

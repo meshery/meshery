@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kyverno
 subtitle: Collaborative and visual infrastructure as design for Kyverno
-image: /assets/img/integrations/kyverno/icons/color/kyverno-color.svg
-permalink: extensibility/integrations/kyverno
+image: /extensions/models/kyverno/icons/color/kyverno-color.svg
+aliases: /extensibility/integrations/kyverno
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno
 description: 
 integrations-category: Security & Compliance
@@ -141,8 +140,5 @@ match resources using label selectors and wildcards.",
 ]
 howItWorks: "Block non-conformant resources"
 howItWorksDetails: "Using Kanvas, apply best practice design templates for admission control over non-conformant resources."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

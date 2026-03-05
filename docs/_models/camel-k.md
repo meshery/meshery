@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Camel K
 subtitle: Collaborative and visual infrastructure as design for Camel K
-image: /assets/img/integrations/camel-k/icons/color/camel-k-color.svg
-permalink: extensibility/integrations/camel-k
+image: /extensions/models/camel-k/icons/color/camel-k-color.svg
+aliases: /extensibility/integrations/camel-k
 docURL: https://docs.meshery.io/extensibility/integrations/camel-k
 description: 
 integrations-category: App Definition and Development
@@ -56,8 +55,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
