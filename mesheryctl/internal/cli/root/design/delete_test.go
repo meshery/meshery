@@ -71,11 +71,7 @@ func TestDeleteCmd(t *testing.T) {
 			Token:          filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError: func() error {
-				body := "{\"error\": \"design not found\"}\n"
-				innerErr := utils.ErrNotFound(fmt.Errorf("%s", body))
-				return ErrDeleteDesign(innerErr, nonExistentID)
-			}(),
+			ExpectedError:  ErrDesignNotFound(nonExistentID),
 		},
 	}
 

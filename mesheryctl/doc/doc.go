@@ -306,7 +306,8 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 
 	_, err := os.Stat(filename)
 	if err != nil {
-		return manuallyAddedContentMap, err
+		// Return empty map if file doesn't exist (not an error condition)
+		return manuallyAddedContentMap, nil
 	}
 
 	existingContent, err := os.ReadFile(filename)
