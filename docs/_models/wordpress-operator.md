@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Wordpress Operator
 subtitle: Collaborative and visual infrastructure as design for Wordpress Operator
-image: /assets/img/integrations/wordpress-operator/icons/color/wordpress-operator-color.svg
-permalink: extensibility/integrations/wordpress-operator
+image: /extensions/models/wordpress-operator/icons/color/wordpress-operator-color.svg
+aliases: /extensibility/integrations/wordpress-operator
 docURL: https://docs.meshery.io/extensibility/integrations/wordpress-operator
 description: 
 integrations-category: Tools
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

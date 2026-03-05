@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Accurate
 subtitle: Collaborative and visual infrastructure as design for Accurate
-image: /assets/img/integrations/accurate/icons/color/accurate-color.svg
-permalink: extensibility/integrations/accurate
+image: /extensions/models/accurate/icons/color/accurate-color.svg
+aliases: /extensibility/integrations/accurate
 docURL: https://docs.meshery.io/extensibility/integrations/accurate
 description: 
 integrations-category: Provisioning
@@ -28,8 +27,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
