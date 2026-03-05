@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Curiefense
 subtitle: Collaborative and visual infrastructure as design for Curiefense
-image: /assets/img/integrations/curiefense/icons/color/curiefense-color.svg
-permalink: extensibility/integrations/curiefense
+image: /extensions/models/curiefense/icons/color/curiefense-color.svg
+aliases: /extensibility/integrations/curiefense
 docURL: https://docs.meshery.io/extensibility/integrations/curiefense
 description: 
 integrations-category: Provisioning
@@ -68,8 +67,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

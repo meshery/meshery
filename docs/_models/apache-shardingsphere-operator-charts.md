@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Apache ShardingSphere
 subtitle: Collaborative and visual infrastructure as design for Apache ShardingSphere
-image: /assets/img/integrations/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
-permalink: extensibility/integrations/apache-shardingsphere-operator-charts
+image: /extensions/models/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
+aliases: /extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
 description: 
 integrations-category: App Definition and Development
@@ -44,8 +43,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

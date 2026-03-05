@@ -59,7 +59,8 @@ func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 	var apiResult T
 	err = json.Unmarshal(data, &apiResult)
 	if err != nil {
-		return nil, err
+		utils.Log.Debugf("Error unmarshalling Api response\nData: %s\nType: %T\n", string(data), apiResult)
+		return nil, utils.ErrUnmarshal(err)
 	}
 
 	return &apiResult, nil
@@ -73,6 +74,8 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 	}
 
 	baseUrl := mctlCfg.GetBaseMesheryURL()
+
+	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseUrl, urlPath)
 
 	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseUrl, urlPath), body)
 	if err != nil {

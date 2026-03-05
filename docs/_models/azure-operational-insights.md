@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Operational Insights
 subtitle: Collaborative and visual infrastructure as design for Azure Operational Insights
-image: /assets/img/integrations/azure-operational-insights/icons/color/azure-operational-insights-color.svg
-permalink: extensibility/integrations/azure-operational-insights
+image: /extensions/models/azure-operational-insights/icons/color/azure-operational-insights-color.svg
+aliases: /extensibility/integrations/azure-operational-insights
 docURL: https://docs.meshery.io/extensibility/integrations/azure-operational-insights
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

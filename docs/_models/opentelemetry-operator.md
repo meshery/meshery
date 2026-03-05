@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenTelemetry Operator
 subtitle: Collaborative and visual infrastructure as design for OpenTelemetry Operator
-image: /assets/img/integrations/opentelemetry-operator/icons/color/opentelemetry-operator-color.svg
-permalink: extensibility/integrations/opentelemetry-operator
+image: /extensions/models/opentelemetry-operator/icons/color/opentelemetry-operator-color.svg
+aliases: /extensibility/integrations/opentelemetry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/opentelemetry-operator
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages OpenTelemetry"
 howItWorksDetails: "Streamlined observability setup and management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
