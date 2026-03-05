@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Postgres With Operator
 subtitle: Collaborative and visual infrastructure as design for Postgres With Operator
-image: /assets/img/integrations/postgres-with-operator/icons/color/postgres-with-operator-color.svg
-permalink: extensibility/integrations/postgres-with-operator
+image: /extensions/models/postgres-with-operator/icons/color/postgres-with-operator-color.svg
+aliases: /extensibility/integrations/postgres-with-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-with-operator
 description: 
 integrations-category: Database
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Streamlined PostgreSQL management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

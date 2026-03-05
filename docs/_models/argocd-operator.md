@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Argo CD Operator
 subtitle: Collaborative and visual infrastructure as design for Argo CD Operator
-image: /assets/img/integrations/argocd-operator/icons/color/argocd-operator-color.svg
-permalink: extensibility/integrations/argocd-operator
+image: /extensions/models/argocd-operator/icons/color/argocd-operator-color.svg
+aliases: /extensibility/integrations/argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/argocd-operator
 description: 
 integrations-category: App Definition and Development
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Argo CD"
 howItWorksDetails: "Simplified Argo CD management within Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

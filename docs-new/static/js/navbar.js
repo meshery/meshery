@@ -37,3 +37,26 @@ function updateLogos() {
         }
     });
 }
+
+document.addEventListener("keydown", function (event) {
+  const searchInput = document.getElementById("sidebar-search-input");
+  if (!searchInput) return;
+
+  const activeEl = document.activeElement;
+
+  const isEditable =
+    activeEl &&
+    (activeEl.isContentEditable ||
+      ["INPUT", "TEXTAREA"].includes(activeEl.tagName));
+
+  if (
+    event.key === "/" &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.altKey &&
+    !isEditable
+  ) {
+    event.preventDefault();
+    searchInput.focus();
+  }
+});

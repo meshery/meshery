@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Github Actions Runners
 subtitle: Collaborative and visual infrastructure as design for Github Actions Runners
-image: /assets/img/integrations/github-actions-runners/icons/color/github-actions-runners-color.svg
-permalink: extensibility/integrations/github-actions-runners
+image: /extensions/models/github-actions-runners/icons/color/github-actions-runners-color.svg
+aliases: /extensibility/integrations/github-actions-runners
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runners
 description: 
 integrations-category: App Definition and Development
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

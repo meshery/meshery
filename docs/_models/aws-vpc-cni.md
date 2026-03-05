@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS VPC CNI
 subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
-image: /assets/img/integrations/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
-permalink: extensibility/integrations/aws-vpc-cni
+image: /extensions/models/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
+aliases: /extensibility/integrations/aws-vpc-cni
 docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 
 integrations-category: Cloud Native Network
@@ -37,8 +36,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

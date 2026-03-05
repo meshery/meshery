@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Alerts Management
 subtitle: Collaborative and visual infrastructure as design for Azure Alerts Management
-image: /assets/img/integrations/azure-alerts-management/icons/color/azure-alerts-management-color.svg
-permalink: extensibility/integrations/azure-alerts-management
+image: /extensions/models/azure-alerts-management/icons/color/azure-alerts-management-color.svg
+aliases: /extensibility/integrations/azure-alerts-management
 docURL: https://docs.meshery.io/extensibility/integrations/azure-alerts-management
 description: 
 integrations-category: Observability and Analysis
@@ -37,8 +36,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

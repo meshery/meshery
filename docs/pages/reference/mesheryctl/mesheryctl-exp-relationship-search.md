@@ -16,7 +16,7 @@ Search registered relationship(s)
 
 ## Synopsis
 
-Search registred relationship(s) used by different models
+Search registered relationship(s) used by different models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship search [flags]
@@ -26,10 +26,10 @@ mesheryctl exp relationship search [flags]
 
 ## Examples
 
-Search for relationship using a query
+Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
 </pre> 

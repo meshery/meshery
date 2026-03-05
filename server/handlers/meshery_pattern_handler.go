@@ -272,7 +272,8 @@ func (h *Handler) VerifyAndConvertToDesign(
 		sourceContent := mesheryPattern.SourceContent
 		if len(mesheryPattern.SourceContent) == 0 {
 			h.log.Info("Pattern file doesn't contain SourceContent, fetching from remote provider")
-			sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
+			var err error
+			sourceContent, err = provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
 			if err != nil {
 				return ErrDesignSourceContent(err, "get ")
 			}
