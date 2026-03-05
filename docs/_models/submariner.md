@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Submariner
 subtitle: Collaborative and visual infrastructure as design for Submariner
-image: /assets/img/integrations/submariner/icons/color/submariner-color.svg
-permalink: extensibility/integrations/submariner
+image: /extensions/models/submariner/icons/color/submariner-color.svg
+aliases: /extensibility/integrations/submariner
 docURL: https://docs.meshery.io/extensibility/integrations/submariner
 description: 
 integrations-category: Runtime
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

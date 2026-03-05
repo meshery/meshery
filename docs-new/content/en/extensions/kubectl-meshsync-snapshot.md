@@ -3,7 +3,7 @@ title: kubectl MeshSync Snapshot
 description: A native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
 display_title: false
 aliases: 
-- extensions/kubectl-kanvas-snapshot
+- /extensions/kubectl-kanvas-snapshot
 categories: [kanvas]
 ---
 

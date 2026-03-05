@@ -8,19 +8,19 @@ import (
 )
 
 var (
-	ErrListPaginationCode         = "mesheryctl-1157"
+	ErrPaginationCode             = "mesheryctl-1157"
 	ErrEncodingDataCode           = "mesheryctl-1183"
 	ErrUnsupportedFormatCode      = "mesheryctl-1184"
 	ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
 	ErrInvalidOutputFormatCode    = "mesheryctl-1198"
 )
 
-func ErrorListPagination(err error, currentPage int) error {
-	return errors.New(ErrListPaginationCode, errors.Alert,
-		[]string{"Failed to fetch data from Meshery server."},
+func ErrPagination(err error, currentPage int) error {
+	return errors.New(ErrPaginationCode, errors.Alert,
+		[]string{"Failed to fetch paginated data from Meshery server."},
 		[]string{fmt.Errorf("failed to fetch data for page %d: %w", currentPage, err).Error()},
-		[]string{"While fetching data from Meshery server an error occurred."},
-		[]string{"Please check if returned data is valid"})
+		[]string{"An error occurred while fetching paginated data from Meshery server."},
+		[]string{"Please check if the server is running and the returned data is valid."})
 }
 
 func ErrEncodingData(err error, encoder string) error {

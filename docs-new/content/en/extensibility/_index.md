@@ -14,12 +14,14 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 _Figure: Extension points available throughout Meshery_
 
+## List of Extensions
+
+A browsable collection of various Meshery extensions is available at [https://meshery.io/extensions](https://meshery.io/extensions).
+
 ## Types of Extension Points
 
 The following points of extension are currently incorporated into Meshery.
 
-{{< extensibility-list >}}
-
-## List of Extensions
-
-A browsable collection of various Meshery extensions is available at [https://meshery.io/extensions](https://meshery.io/extensions).
+<ul style="margin:0;"> 
+    <li style="list-style-type: inherit; margin: 0"><a href="/extensions/adapters">Extensibility: Meshery Adapters</a> - Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="/extensions/adapters">adapters</a>, <a href="/extensibility/load-generators">load generators</a> and <a href="/extensibility/providers">providers.</a></li>
+</ul>

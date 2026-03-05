@@ -10,9 +10,9 @@ Import your existing Models and existing custom resource definition (CRD) into M
 
 ## Import Models Using Meshery CLI
 
-{{< alert type="warning" title="Limitation on Importing Connections" >}}
+{{% alert color="warning" title="Limitation on Importing Connections" %}}
 The `mesheryctl model import` command currently supports importing Models containing Components, Relationships, and Policies. Importing Models with `Connection` definitions is not yet supported. This functionality may be added in a future release.
-{{< /alert >}}
+{{% /alert %}}
 
 **Step 1: Install Meshery CLI**
 

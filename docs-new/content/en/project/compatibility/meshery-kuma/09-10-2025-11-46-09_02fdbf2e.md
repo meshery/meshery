@@ -1,0 +1,13 @@
+---
+timestamp: "2025-09-10 11:45:32 UTC Wed"
+meshery-component: meshery-kuma
+meshery-component-version: edge
+meshery-server-version: "v0.8.132"
+k8s-distro: minikube
+k8s-version: "v1.31.4"
+service-mesh: Kuma
+service-mesh-version: "2.12.0"
+tests:
+  pod/kuma-control-plane: "Not Running"
+overall-status: "failing"
+---

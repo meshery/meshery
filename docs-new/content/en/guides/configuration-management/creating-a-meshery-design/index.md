@@ -2,15 +2,14 @@
 title: Creating a Meshery Design
 description: Learn how to create a Meshery design from scratch or from a template.
 aliases: 
-- guides/creating-a-meshery-design
+- /guides/creating-a-meshery-design
 categories: [configuration]
-params:
-  suggested_reading: false
+suggested_reading: false
 ---
 
-{{< alert type="info" title="Learn about Designs">}}
+{{% alert color="info" title="Learn about Designs"%}}
 Learn more about <a href='/concepts/logical/designs'>what a Meshery Design</a> is and how it fits into Meshery's approach to cloud native management.
-{{< /alert >}}
+{{% /alert %}}
 
 ## Ways to create a Meshery Design
 
@@ -42,6 +41,6 @@ Another way to create a Meshery design is to use an already curated template. Yo
 3. A modal will pop up requesting you to clone (create a copy of) the design you've selected.
 4. Click "clone" and a copy of the design will appear on your Kanvas canvas. You can then configure the design to suit your purposes.
 
-{{< alert type="info" title="Learn about Patterns">}}
+{{% alert color="info" title="Learn about Patterns"%}}
 Learn more about <a href='/concepts/logical/patterns'>what a Meshery Pattern</a> is and how it fits into Meshery's approach to cloud native management.
-{{< /alert >}}
+{{% /alert %}}

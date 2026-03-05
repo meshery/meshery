@@ -17,7 +17,7 @@ Manage Meshery components
 ## Synopsis
 
 List, search and view component(s) and detailed informations
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component [flags]
@@ -54,7 +54,7 @@ mesheryctl component search [component-name]
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl component view [component-name | component-id]
 
 </div>
 </pre> 

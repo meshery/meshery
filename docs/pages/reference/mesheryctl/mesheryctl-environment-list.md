@@ -17,7 +17,7 @@ List registered environments
 ## Synopsis
 
 List detailed information of all registered environments
-Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment list [flags]

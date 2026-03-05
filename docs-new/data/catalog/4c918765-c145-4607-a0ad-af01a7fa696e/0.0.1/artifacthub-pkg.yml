@@ -1,0 +1,24 @@
+version: 0.0.1
+name: jenkins-13.6.17.tgz
+displayName: jenkins-13.6.17.tgz
+createdAt: "2025-09-20T19:19:34Z"
+description: Jenkins CI/CD pipeline tool imported from Bitnami Helm charts. Provides continuous integration and deployment capabilities for DevOps workflows.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4c918765-c145-4607-a0ad-af01a7fa696e/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "⚠️ Important Notes:\n• Requires Java 11+ runtime environment\n• Needs persistent storage for build history and artifacts\n• Configure Jenkins admin password during initial deployment\n• Scale Jenkins agents based on workload requirements\n• Monitor disk space for build logs and workspace data\n• Configure security settings for production use \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 76208fae-1bc4-4038-aa3b-32757437ffe1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4c918765-c145-4607-a0ad-af01a7fa696e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4c918765-c145-4607-a0ad-af01a7fa696e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

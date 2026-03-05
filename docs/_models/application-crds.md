@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AppsCode Application
 subtitle: Collaborative and visual infrastructure as design for AppsCode Application
-image: /assets/img/integrations/application-crds/icons/color/application-crds-color.svg
-permalink: extensibility/integrations/application-crds
+image: /extensions/models/application-crds/icons/color/application-crds-color.svg
+aliases: /extensibility/integrations/application-crds
 docURL: https://docs.meshery.io/extensibility/integrations/application-crds
 description: 
 integrations-category: Platform
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates with AppsCode applications"
 howItWorksDetails: "Streamlined deployment and management of AppsCode applications in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

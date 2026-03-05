@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Network
 subtitle: Collaborative and visual infrastructure as design for Azure Network
-image: /assets/img/integrations/azure-network/icons/color/azure-network-color.svg
-permalink: extensibility/integrations/azure-network
+image: /extensions/models/azure-network/icons/color/azure-network-color.svg
+aliases: /extensibility/integrations/azure-network
 docURL: https://docs.meshery.io/extensibility/integrations/azure-network
 description: 
 integrations-category: Cloud Native Network
@@ -376,8 +375,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

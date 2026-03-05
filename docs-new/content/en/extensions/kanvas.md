@@ -1,7 +1,7 @@
 ---
 title: Kanvas
 aliases:
-- extensions/meshmap
+- /extensions/meshmap
 description: Collaborative cloud native visual designer to design and manage infrastructure and applications.
 display_title: false
 categories: [kanvas]

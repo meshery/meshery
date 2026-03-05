@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure App Configuration
 subtitle: Collaborative and visual infrastructure as design for Azure App Configuration
-image: /assets/img/integrations/azure-app-configuration/icons/color/azure-app-configuration-color.svg
-permalink: extensibility/integrations/azure-app-configuration
+image: /extensions/models/azure-app-configuration/icons/color/azure-app-configuration-color.svg
+aliases: /extensibility/integrations/azure-app-configuration
 docURL: https://docs.meshery.io/extensibility/integrations/azure-app-configuration
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubeflow
 subtitle: Collaborative and visual infrastructure as design for Kubeflow
-image: /assets/img/integrations/kubeflow/icons/color/kubeflow-color.svg
-permalink: extensibility/integrations/kubeflow
+image: /extensions/models/kubeflow/icons/color/kubeflow-color.svg
+aliases: /extensibility/integrations/kubeflow
 docURL: https://docs.meshery.io/extensibility/integrations/kubeflow
 description: 
 integrations-category: Machine Learning
@@ -52,8 +51,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

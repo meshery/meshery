@@ -2,7 +2,7 @@
 title: Create Models
 description: A comprehensive guide on creating models in Meshery, covering both CLI and UI methods.
 aliases: 
-- guides/configuration-management/generating-models
+- /guides/configuration-management/generating-models
 categories: [configuration]
 ---
 
@@ -80,9 +80,9 @@ This section walks you through the **Create** workflow — perfect for users who
       </li>
     </ul>
 
-{{< alert type="light" title="Need a Source URL?" >}}
+{{% alert color="light" title="Need a Source URL?" %}}
 Check the <code>sourceURL</code> column in the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw' target='_blank' rel='noopener'>Meshery Integration Sheet</a> and try one of the listed sources.
-{{< /alert >}}
+{{% /alert %}}
 
   <a href="./images/create-ui-source.png">
       <img src="./images/create-ui-source.png" alt="registry generate model source selection" style="width: 50%; max-width: 400px;">
@@ -98,9 +98,9 @@ Check the <code>sourceURL</code> column in the <a href='https://docs.google.com/
       <img src="./images/create-ui-details.png" alt="registry generate model additional settings" style="width: 50%; max-width: 400px;">
     </a>
 
-{{< alert type="light" title="Visual Annotation Models" >}}
+{{% alert color="light" title="Visual Annotation Models" %}}
 When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management.
-{{< /alert >}}
+{{% /alert %}}
 
   <h4>Step 7: Finalize and Create Your Model</h4>
     <p>Review your model details. If everything looks good, click "Generate" to create your model.</p>
@@ -116,9 +116,9 @@ When a model is marked for visual annotation only, it means the model will be us
     <p>If any issues occur, Meshery will display an error message detailing what went wrong so you can correct it and try again.</p>
     <p>A notification will also appear in the <a href="/guides/events-management">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
-{{< alert type="warning" title="Note on Deletion" >}}
+{{% alert color="warning" title="Note on Deletion" %}}
 Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead.
-{{< /alert >}}
+{{% /alert %}}
     
   </section>
 
@@ -134,9 +134,9 @@ Once a model is generated, it cannot be deleted from the Meshery UI. If you no l
       <li>Install the Meshery CLI by following the <a href="/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
     </ul>
 
-{{< alert type="info" title="Generating Models does not require Meshery Server" >}}
+{{% alert color="info" title="Generating Models does not require Meshery Server" %}}
 Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit's libraries for ongoing programmatic generation of models and components.
-{{< /alert >}}
+{{% /alert %}}
 
   <br />
     <div class="tab-container">
@@ -259,14 +259,14 @@ Meshery Server is not required to generate models. The Meshery CLI can be used t
   <h4>3. Verification</h4>
         <p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
 
-{{< alert type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" >}}
+{{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:
 
 - `mesheryctl registry` - interact with and update spreadsheets
 - `mesheryctl models` - interact with and update Meshery Server
 - `mesheryctl component` - interact with and update Meshery Server
 - `mesheryctl relationships` - interact with and update Meshery Server
-{{< /alert >}}
+{{% /alert %}}
 
   </section>
   </div>

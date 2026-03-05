@@ -10,6 +10,9 @@ enableMissingTranslationPlaceholders = true
 
 enableRobotsTXT = true
 
+# Ignore in build
+ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
+
 # Will give values to .Lastmod etc.
 enableGitInfo = true
 
@@ -202,3 +205,4 @@ enable = false
   [[module.mounts]]
     source = "static"
     target = "static"
+    disableWatch = true

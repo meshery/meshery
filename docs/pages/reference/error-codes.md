@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Error Code Reference
+display-title: "false"
 abstract: "Meshery Error Code Reference"
 permalink: reference/error-codes
 redirect_from: reference/error-codes/
@@ -73,6 +74,8 @@ td {
           }
     }
 </script>
+
+# Error Code Reference
 
 ## Error Codes and Troubleshooting
 

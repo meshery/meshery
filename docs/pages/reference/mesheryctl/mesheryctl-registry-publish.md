@@ -17,7 +17,7 @@ Publish Meshery Models to Websites, Remote Provider, Meshery Server
 ## Synopsis
 
 Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/publish
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]

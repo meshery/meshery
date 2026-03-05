@@ -17,7 +17,7 @@ Generates scaffolding for convenient model creation
 ## Synopsis
 
 Generates a folder structure and guides user on model creation
-Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model init [flags]
