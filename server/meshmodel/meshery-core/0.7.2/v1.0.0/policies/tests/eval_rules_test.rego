@@ -132,3 +132,169 @@ test_cleanup_deleted_relationships_actions_none if {
 	result := eval_rules.cleanup_deleted_relationships_actions(relationships)
 	count(result) == 0
 }
+
+# Test identify_relationships_based_on_matching_mutator_and_mutated_fields with deny selectors
+test_identify_relationships_denied_by_deny_selectors if {
+	relationship := {
+		"id": "test-rel",
+		"kind": "edge",
+		"type": "non-binding",
+		"subType": "network",
+		"status": "enabled",
+		"selectors": [{
+			"allow": {
+				"from": [{
+					"kind": "Service",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatorRef": [["configuration", "spec", "selector"]],
+					},
+				}],
+				"to": [{
+					"kind": "Service",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatedRef": [["configuration", "spec", "selector"]],
+					},
+				}],
+			},
+			"deny": {
+				"from": [{"kind": "Service", "model": {"name": "kubernetes"}}],
+				"to": [{"kind": "Service", "model": {"name": "kubernetes"}}],
+			},
+		}],
+	}
+
+	design_file := {"components": [
+		{
+			"id": "svc-1",
+			"component": {"kind": "Service"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"app": "myapp"}}},
+		},
+		{
+			"id": "svc-2",
+			"component": {"kind": "Service"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"app": "myapp"}}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 0
+}
+
+# Test identify_relationships_based_on_matching_mutator_and_mutated_fields without deny selectors
+test_identify_relationships_allowed_without_deny_selectors if {
+	relationship := {
+		"id": "test-rel",
+		"kind": "edge",
+		"type": "non-binding",
+		"subType": "network",
+		"status": "enabled",
+		"selectors": [{
+			"allow": {
+				"from": [{
+					"kind": "Service",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatorRef": [["configuration", "spec", "selector"]],
+					},
+				}],
+				"to": [{
+					"kind": "Deployment",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatedRef": [["configuration", "spec", "selector", "matchLabels"]],
+					},
+				}],
+			},
+			"deny": {
+				"from": [],
+				"to": [],
+			},
+		}],
+	}
+
+	design_file := {"components": [
+		{
+			"id": "svc-1",
+			"component": {"kind": "Service"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"app": "myapp"}}},
+		},
+		{
+			"id": "deploy-1",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"matchLabels": {"app": "myapp"}}}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 1
+}
+
+# Test deny selectors only block matching kinds, not all pairs
+test_identify_relationships_deny_only_blocks_matching_kinds if {
+	relationship := {
+		"id": "test-rel",
+		"kind": "edge",
+		"type": "non-binding",
+		"subType": "network",
+		"status": "enabled",
+		"selectors": [{
+			"allow": {
+				"from": [{
+					"kind": "Service",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatorRef": [["configuration", "spec", "selector"]],
+					},
+				}],
+				"to": [{
+					"kind": "Deployment",
+					"id": null,
+					"model": {"name": "kubernetes"},
+					"patch": {
+						"patchStrategy": "replace",
+						"mutatedRef": [["configuration", "spec", "selector", "matchLabels"]],
+					},
+				}],
+			},
+			"deny": {
+				"from": [{"kind": "Service", "model": {"name": "kubernetes"}}],
+				"to": [{"kind": "Service", "model": {"name": "kubernetes"}}],
+			},
+		}],
+	}
+
+	design_file := {"components": [
+		{
+			"id": "svc-1",
+			"component": {"kind": "Service"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"app": "myapp"}}},
+		},
+		{
+			"id": "deploy-1",
+			"component": {"kind": "Deployment"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"spec": {"selector": {"matchLabels": {"app": "myapp"}}}},
+		},
+	]}
+
+	# Service->Deployment should still be allowed since deny only blocks Service->Service
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 1
+}
