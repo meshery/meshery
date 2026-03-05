@@ -22,7 +22,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -66,10 +65,10 @@ mesheryctl system channel view
 
 		if showForAllContext {
 			for k, v := range mctlCfg.Contexts {
-				log.Println(PrintChannelAndVersionToStdout(v, k))
-				log.Println()
+				cmd.Println(PrintChannelAndVersionToStdout(v, k))
+				cmd.Println()
 			}
-			log.Printf("Current Context: %v", focusedContext)
+			cmd.Printf("Current Context: %v", focusedContext)
 			return nil
 		}
 
@@ -84,8 +83,8 @@ mesheryctl system channel view
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		log.Print(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
-		log.Println()
+		cmd.Println(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
+		cmd.Println()
 		return nil
 	},
 }
@@ -169,7 +168,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 			utils.Log.Error(ErrWriteConfig(err))
 			return nil
 		}
-		log.Infof("Channel set to %s-%s", ContextContent.Channel, ContextContent.Version)
+		cmd.Printf("Channel set to %s-%s\n", ContextContent.Channel, ContextContent.Version)
 		return nil
 	},
 }
