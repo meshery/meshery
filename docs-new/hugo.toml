@@ -1,4 +1,4 @@
-baseURL = "http://localhost:1313/"
+baseURL = "https://docs.meshery.io"
 title = "Documentation"
 
 # Language settings
