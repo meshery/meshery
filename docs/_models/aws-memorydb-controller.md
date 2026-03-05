@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS MemoryDB for Redis
 subtitle: Collaborative and visual infrastructure as design for AWS MemoryDB for Redis
-image: /assets/img/integrations/aws-memorydb-controller/icons/color/aws-memorydb-controller-color.svg
-permalink: extensibility/integrations/aws-memorydb-controller
+image: /extensions/models/aws-memorydb-controller/icons/color/aws-memorydb-controller-color.svg
+aliases: /extensibility/integrations/aws-memorydb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-memorydb-controller
 description: 
 integrations-category: Provisioning
@@ -87,8 +86,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

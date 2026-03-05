@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: OpenEBS
 subtitle: Collaborative and visual infrastructure as design for OpenEBS
-image: /assets/img/integrations/openebs/icons/color/openebs-color.svg
-permalink: extensibility/integrations/openebs
+image: /extensions/models/openebs/icons/color/openebs-color.svg
+aliases: /extensibility/integrations/openebs
 docURL: https://docs.meshery.io/extensibility/integrations/openebs
 description: 
 integrations-category: Cloud Native Storage
@@ -164,8 +163,5 @@ featureList: [
 ]
 howItWorks: "Integrates OpenEBS storage"
 howItWorksDetails: "Simplified and scalable storage management in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

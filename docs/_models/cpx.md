@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Citrix Service Mesh
 subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
-image: /assets/img/integrations/cpx/icons/color/cpx-color.svg
-permalink: extensibility/integrations/cpx
+image: /extensions/models/cpx/icons/color/cpx-color.svg
+aliases: /extensibility/integrations/cpx
 docURL: https://docs.meshery.io/extensibility/adapters/cpx
 description: 
 integrations-category: Cloud Native Network
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
