@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
 import { initiateQuery } from './utils';
+import { useRegisterMeshmodelsMutation } from '@meshery/schemas/dist/mesheryApi';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -149,6 +150,8 @@ export const {
   useGetComponentsByModelAndKindQuery,
   useImportMeshModelMutation,
 } = meshModelApi;
+
+export { useRegisterMeshmodelsMutation };
 
 export const useGetCategoriesSummary = () => {
   const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
