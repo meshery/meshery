@@ -21,8 +21,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -112,7 +110,7 @@ func restart() error {
 				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
 			}
 			if !userResponse {
-				log.Info("Restart aborted.")
+				utils.Log.Info("Restart aborted.")
 				return nil
 			}
 			// take a backup of silentFlag value to pass it to start() function later
@@ -121,7 +119,7 @@ func restart() error {
 			utils.SilentFlag = true
 		}
 
-		log.Info("Restarting Meshery...")
+		utils.Log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)

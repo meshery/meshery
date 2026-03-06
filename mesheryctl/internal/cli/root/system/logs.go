@@ -28,7 +28,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
 
 	"github.com/spf13/cobra"
@@ -49,7 +48,7 @@ func printLogs(logs string, podName string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
 		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
 
-		log.Print(logStr)
+		utils.Log.Info(logStr)
 	}
 }
 
@@ -132,11 +131,11 @@ mesheryctl system logs meshery-istio
 				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
 				return nil
 			}
-			log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				log.Errorf("%s does not exists", utils.DockerComposeFile)
-				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+				utils.Log.Errorf("%s does not exists", utils.DockerComposeFile)
+				utils.Log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
 			}
 
@@ -173,9 +172,9 @@ mesheryctl system logs meshery-istio
 			// Get and display current context
 			currentContext, err := utils.GetCurrentK8sContext(client)
 			if err != nil {
-				log.Warn("Unable to determine current Kubernetes context: ", err)
+				utils.Log.Warnf("Unable to determine current Kubernetes context: %s", err)
 			} else {
-				log.Info("Using Kubernetes context: ", currentContext)
+				utils.Log.Info("Using Kubernetes context: ", currentContext)
 			}
 
 			// List the pods in the MesheryNamespace
@@ -198,7 +197,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
-			log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 			wg := &sync.WaitGroup{}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
@@ -253,7 +252,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
-									log.Println("error occurred while processing logs", err)
+									utils.Log.Infof("error occurred while processing logs: %s", err)
 									break
 								}
 								logBuf = buf[0:numBytes]

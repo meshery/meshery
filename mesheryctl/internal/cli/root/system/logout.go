@@ -22,8 +22,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var logoutCmd = &cobra.Command{
@@ -53,11 +51,11 @@ mesheryctl system logout
 
 		// Replace the content of the token file with empty content
 		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
-			log.Error("logout failed: ", err)
+			utils.Log.Errorf("logout failed: %s", err.Error())
 			return nil
 		}
 
-		log.Println("logged out")
+		utils.Log.Info("logged out")
 		return nil
 	},
 }
