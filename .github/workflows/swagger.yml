@@ -22,7 +22,9 @@ jobs:
       - name: swagger-spec
         run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
-        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+        run: |
+          swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+          swagger generate spec -o ./docs-new/data/swagger.yml --scan-models && swagger flatten ./docs-new/data/swagger.yml -o ./docs-new/data/swagger.yml --with-expand --format=yaml
 
       - name: Pull changes from remote
         run: git pull origin master
@@ -30,7 +32,7 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          file_pattern: docs server/helpers/
+          file_pattern: docs docs-new/data/swagger.yml server/helpers/
           commit_user_name: l5io
           commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
