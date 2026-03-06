@@ -131,6 +131,13 @@ export const eventsSlice = createSlice({
       }
 
       if (action.payload.ui) {
+        if (action.payload.ui.icon && typeof action.payload.ui.icon !== 'string') {
+          console.warn(
+            '[Redux Sanitization] Non-string icon payload detected in openNotificationCenter. Falling back to default string.',
+          );
+          action.payload.ui.icon = 'BellIcon';
+        }
+
         state.ui = {
           ...state.ui,
           ...action.payload.ui,
