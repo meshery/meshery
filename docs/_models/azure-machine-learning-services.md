@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Machine Learning Services
 subtitle: Collaborative and visual infrastructure as design for Azure Machine Learning Services
-image: /assets/img/integrations/azure-machine-learning-services/icons/color/azure-machine-learning-services-color.svg
-permalink: extensibility/integrations/azure-machine-learning-services
+image: /extensions/models/azure-machine-learning-services/icons/color/azure-machine-learning-services-color.svg
+aliases: /extensibility/integrations/azure-machine-learning-services
 docURL: https://docs.meshery.io/extensibility/integrations/azure-machine-learning-services
 description: 
 integrations-category: Machine Learning
@@ -51,8 +50,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

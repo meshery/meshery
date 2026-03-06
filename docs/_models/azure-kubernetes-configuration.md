@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Kubernetes Configuration
 subtitle: Collaborative and visual infrastructure as design for Azure Kubernetes Configuration
-image: /assets/img/integrations/azure-kubernetes-configuration/icons/color/azure-kubernetes-configuration-color.svg
-permalink: extensibility/integrations/azure-kubernetes-configuration
+image: /extensions/models/azure-kubernetes-configuration/icons/color/azure-kubernetes-configuration-color.svg
+aliases: /extensibility/integrations/azure-kubernetes-configuration
 docURL: https://docs.meshery.io/extensibility/integrations/azure-kubernetes-configuration
 description: 
 integrations-category: Orchestration & Management
@@ -34,8 +33,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

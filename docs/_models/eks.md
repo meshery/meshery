@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
-image: /assets/img/integrations/eks/icons/color/eks-color.svg
-permalink: extensibility/integrations/eks
+image: /extensions/models/eks/icons/color/eks-color.svg
+aliases: /extensibility/integrations/eks
 docURL: https://docs.meshery.io/installation/kubernetes/eks
 description: 
 integrations-category: Orchestration & Management
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

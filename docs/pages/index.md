@@ -36,7 +36,7 @@ list: exclude
       {% for item in sorted_installation  %}
       {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        {% if item.abstract %}
+        {% if item.abstract and item.abstract | strip != "" %}
           - {{ item.abstract }}
         {% endif %}
         </li>
@@ -63,8 +63,8 @@ list: exclude
         {% for item in sorted_concepts %}
         {% if item.type=="concepts" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
-         -  {{ item.abstract }}
+          {% if item.abstract and item.abstract != "" %}
+         - {{ item.abstract }}
           {% endif %}
           </li>
           {% endif %}
@@ -82,7 +82,7 @@ list: exclude
         {% for item in sorted_components %}
         {% if item.type=="components" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
+            {% if item.abstract and item.abstract != "" %}
             - {{ item.abstract }}
             {% endif %}
           </li>
@@ -111,7 +111,7 @@ list: exclude
         {% for item in sorted_mesheryctl %}
         {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
+          {% if item.abstract and item.abstract != "" %}
             - {{ item.abstract }}
           {% endif %}
           </li>
@@ -130,7 +130,7 @@ list: exclude
         {% for item in sorted_tutorials %}
         {% if item.type=="guides" and item.category=="tutorials" and item.list=="include" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
+          {% if item.abstract and item.abstract != "" %}
             - {{ item.abstract }}
           {% endif %}
           </li>
@@ -149,8 +149,8 @@ list: exclude
           {% for item in sorted_infrastructure %}
           {% if item.type=="guides" and item.category=="infrastructure" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+            {% if item.abstract and item.abstract != "" %}
+              - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -168,7 +168,7 @@ list: exclude
           {% for item in performance %}
           {% if item.type=="guides" and item.category=="performance" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
+            {% if item.abstract and item.abstract != "" %}
               - {{ item.abstract }}
             {% endif %}
             </li>
@@ -179,7 +179,7 @@ list: exclude
       <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Configuration Management</a>
+          <a href="{{ site.baseurl }}/guides/configuration-management" class="text-black">Configuration Management</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -187,8 +187,8 @@ list: exclude
           {% for item in configuration %}
           {% if item.type=="guides" and item.category=="configuration" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-            -  {{ item.abstract }}
+            {% if item.abstract and item.abstract != "" %}
+            - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -198,7 +198,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting Guides</a>
+          <a href="{{ site.baseurl }}/guides/troubleshooting" class="text-black">Troubleshooting Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -206,8 +206,8 @@ list: exclude
           {% for item in troubleshooting %}
           {% if item.type=="guides" and item.category=="troubleshooting" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
+            {% if item.abstract and item.abstract != "" %}
+              - {{ item.abstract }}
             {% endif %}
             </li>
             {% endif %}
@@ -232,7 +232,7 @@ list: exclude
         {% for item in sorted_extensions %}
         {% if item.type=="extensions" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
+          {% if item.abstract and item.abstract != "" %}
             - {{ item.abstract }}
           {% endif %}
           </li>
@@ -249,11 +249,11 @@ list: exclude
       <ul class="section-title">
         {% assign sorted_ints = site.models | sort: "name" | alphabetical %}
         <ul><li>
-        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
+        See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integrations</a></li></ul>
         {% for item in sorted_ints %}
         {% if item.type=="extensibility" and item.category=="integration" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
+          {% if item.abstract and item.abstract != "" %}
             - {{ item.abstract }}
           {% endif %}
           </li>
@@ -292,7 +292,7 @@ list: exclude
           {% for item in contributing %}
           {% if item.category=="contributing" and item.language=="en" -%}
             <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
+            {% if item.abstract and item.abstract != "" %}
               - {{ item.abstract }}
             {% endif %}
             </li>
@@ -339,7 +339,7 @@ list: exclude
           {% if item.list != "exclude" and item.language == "en" %}
             <li>
               <a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-              {% if item.abstract != " " %}
+              {% if item.abstract and item.abstract != "" %}
                 - {{ item.abstract }}
               {% endif %}
             </li>
