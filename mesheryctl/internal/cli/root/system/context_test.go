@@ -216,14 +216,16 @@ func TestAddContextCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
-			Args:             []string{"context", "create", "local3"},
-			ExpectedResponse: "createContext.golden",
+			Name:                 "given a valid context name provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Args:                 []string{"context", "create", "local3"},
+			ExpectedResponse:     "createContext.golden",
+			ExpectedResponseYaml: "addExpected.golden",
 		},
 		{
-			Name:             "given a valid context name which contains uppercase letters provided when running mesheryctl system context create [valid-name] then a context gets created",
-			Args:             []string{"context", "create", "Local4"},
-			ExpectedResponse: "createContext.uppercase.golden",
+			Name:                 "given a valid context name which contains uppercase letters provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Args:                 []string{"context", "create", "Local4"},
+			ExpectedResponse:     "createContext.uppercase.golden",
+			ExpectedResponseYaml: "addExpected.uppercase.golden",
 		},
 		{
 			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
@@ -283,7 +285,7 @@ func TestAddContextCmd(t *testing.T) {
 				t.Error(err)
 			}
 			actualResponse = string(content)
-			golden = utils.NewGoldenFile(t, "addExpected.golden", testdataDir)
+			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdataDir)
 			if *update {
 				golden.Write(actualResponse)
 			}

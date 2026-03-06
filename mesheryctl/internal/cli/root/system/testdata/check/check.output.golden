@@ -7,12 +7,12 @@ Docker
 Kubernetes API 
 --------------
 ✓ can initialize Kubernetes client
-!! cannot query the Kubernetes API
+✓ can query the Kubernetes API
 
 Kubernetes Version 
 --------------
-!! cannot check Kubernetes version
-!! exit status 1
+✓ running the minimum Kubernetes version
+✓ running the minimum kubectl version
 
 --------------
 --------------

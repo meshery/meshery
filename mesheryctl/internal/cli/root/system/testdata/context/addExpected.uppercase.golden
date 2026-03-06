@@ -23,6 +23,12 @@ contexts:
         platform: kubernetes
         channel: stable
         version: latest
+    local4:
+        endpoint: http://localhost:9081
+        token: default
+        platform: kubernetes
+        channel: stable
+        version: latest
 current-context: local
 tokens:
     - name: default
