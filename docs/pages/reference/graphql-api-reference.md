@@ -92,7 +92,7 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetavailableaddonsfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) |  |
+| <a id="querygetavailableaddonsfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
 
 ### `Query.getAvailableNamespaces`
 
@@ -112,7 +112,7 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) |  |
+| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
 ### `Query.getDataPlanes`
 
@@ -122,7 +122,7 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetdataplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) |  |
+| <a id="querygetdataplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
 ### `Query.getKubectlDescribe`
 
@@ -205,7 +205,7 @@ The `Query` type contains the API's top-level entry points for all executable qu
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="queryresyncclusterk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
-| <a id="queryresyncclusterselector"></a>`selector` | [`ReSyncActions`](#resyncactions) |  |
+| <a id="queryresyncclusterselector"></a>`selector` | [`ReSyncActions`](#resyncactions) | Selector to control several resync actions. |
 
 ## `Mutation` type
 
@@ -221,9 +221,9 @@ All mutations receive their arguments in a single input object named `input`.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="mutationchangeadapterstatusadapter"></a>`adapter` | [`String!`](#string) |  |
-| <a id="mutationchangeadapterstatustargetport"></a>`targetPort` | [`String!`](#string) |  |
-| <a id="mutationchangeadapterstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) |  |
+| <a id="mutationchangeadapterstatusadapter"></a>`adapter` | [`String!`](#string) | Name of the adapter to be deployed. |
+| <a id="mutationchangeadapterstatustargetport"></a>`targetPort` | [`String!`](#string) | The port on which adapter will be deployed. |
+| <a id="mutationchangeadapterstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
 
 ###### **Returns** [`Status!`](#status).
 
@@ -236,7 +236,7 @@ All mutations receive their arguments in a single input object named `input`.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="mutationchangeoperatorstatuscontextid"></a>`contextID` | [`String!`](#string) |  |
-| <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) |  |
+| <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
 
 ###### **Returns** [`Status!`](#status).
 
@@ -267,6 +267,8 @@ The `Subscription` type contains all the Subscriptions you can listen to.
 | <a id="subscriptionsubscribeconfigurationpatternselector"></a>`patternSelector` | [`PageFilter!`](#pagefilter) |  |
 
 ### `Subscription.subscribeEvents`
+
+Publish events to user.
 
 ###### **Returns** [`Event!`](#event).
 
@@ -336,12 +338,14 @@ on `graphql.org`.
 
 ### `AddonList`
 
+Deatils about the Addon Component.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="addonlistname"></a>`name` | [`String!`](#string) |  |
-| <a id="addonlistowner"></a>`owner` | [`String!`](#string) |  |
+| <a id="addonlistname"></a>`name` | [`String!`](#string) | Name. |
+| <a id="addonlistowner"></a>`owner` | [`String!`](#string) | Owner. |
 
 ### `ApplicationPage`
 
@@ -405,6 +409,8 @@ on `graphql.org`.
 
 ### `ClusterResources`
 
+Details about discovered workloads.
+
 #### **Fields**
 
 | Name | Type | Description |
@@ -430,8 +436,8 @@ on `graphql.org`.
 | <a id="containercontainername"></a>`containerName` | [`String!`](#string) |  |
 | <a id="containercontrolplanemembername"></a>`controlPlaneMemberName` | [`String!`](#string) |  |
 | <a id="containerimage"></a>`image` | [`String!`](#string) |  |
-| <a id="containerports"></a>`ports` | [`[Container_Port]`](#container_port) |  |
-| <a id="containerresources"></a>`resources` | [`Any`](#any) |  |
+| <a id="containerports"></a>`ports` | [`[Container_Port]`](#container_port) | args: NOT IMPLEMENTED. |
+| <a id="containerresources"></a>`resources` | [`Any`](#any) | env: NOT IMPLEMENTED,. |
 | <a id="containerstatus"></a>`status` | [`Container_Status`](#container_status) |  |
 
 ### `Container_Port`
@@ -457,38 +463,44 @@ on `graphql.org`.
 | <a id="container_statuslaststate"></a>`lastState` | [`Any`](#any) |  |
 | <a id="container_statusready"></a>`ready` | [`Boolean!`](#boolean) |  |
 | <a id="container_statusrestartcount"></a>`restartCount` | [`Any`](#any) |  |
-| <a id="container_statusstarted"></a>`started` | [`Boolean!`](#boolean) |  |
+| <a id="container_statusstarted"></a>`started` | [`Boolean!`](#boolean) | image: String! imageID: String! containerID: String!. |
 | <a id="container_statusstate"></a>`state` | [`Any`](#any) |  |
 
 ### `ControlPlane`
 
+Control Plane data for a particular Mesh.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="controlplanemembers"></a>`members` | [`[ControlPlaneMember!]!`](#controlplanemember) |  |
-| <a id="controlplanename"></a>`name` | [`String!`](#string) |  |
+| <a id="controlplanemembers"></a>`members` | [`[ControlPlaneMember!]!`](#controlplanemember) | Members of the Mesh. |
+| <a id="controlplanename"></a>`name` | [`String!`](#string) | Service Mesh Name. |
 
 ### `ControlPlaneMember`
 
+Member Details.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="controlplanemembercomponent"></a>`component` | [`String!`](#string) |  |
-| <a id="controlplanememberdata_planes"></a>`data_planes` | [`[Container!]`](#container) |  |
-| <a id="controlplanemembername"></a>`name` | [`String!`](#string) |  |
-| <a id="controlplanemembernamespace"></a>`namespace` | [`String!`](#string) |  |
-| <a id="controlplanememberversion"></a>`version` | [`String!`](#string) |  |
+| <a id="controlplanemembercomponent"></a>`component` | [`String!`](#string) | Component. |
+| <a id="controlplanememberdata_planes"></a>`data_planes` | [`[Container!]`](#container) | DataPlanes. |
+| <a id="controlplanemembername"></a>`name` | [`String!`](#string) | Name. |
+| <a id="controlplanemembernamespace"></a>`namespace` | [`String!`](#string) | Namespace. |
+| <a id="controlplanememberversion"></a>`version` | [`String!`](#string) | Version. |
 
 ### `DataPlane`
 
+Data Plane for a particular Mesh.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="dataplanename"></a>`name` | [`String!`](#string) |  |
-| <a id="dataplaneproxies"></a>`proxies` | [`[Container!]!`](#container) |  |
+| <a id="dataplanename"></a>`name` | [`String!`](#string) | Service Mesh Name. |
+| <a id="dataplaneproxies"></a>`proxies` | [`[Container!]!`](#container) | Members of the Mesh. |
 
 ### `Error`
 
@@ -496,8 +508,8 @@ on `graphql.org`.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="errorcode"></a>`code` | [`String!`](#string) |  |
-| <a id="errordescription"></a>`description` | [`String!`](#string) |  |
+| <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
+| <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
 ### `Event`
 
@@ -616,6 +628,8 @@ on `graphql.org`.
 
 ### `MeshModelSummary`
 
+Type MeshModelComponentsSummary define the summary of a Mesh Model.
+
 #### **Fields**
 
 | Name | Type | Description |
@@ -665,11 +679,13 @@ on `graphql.org`.
 
 ### `NameSpace`
 
+Type to define a k8s Namespace.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) |  |
+| <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) | Namespace Name. |
 
 ### `NullString`
 
@@ -682,15 +698,17 @@ on `graphql.org`.
 
 ### `OperatorControllerStatus`
 
+Controllers of Meshery Operator.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="operatorcontrollerstatusconnectionid"></a>`connectionID` | [`String!`](#string) |  |
-| <a id="operatorcontrollerstatuserror"></a>`error` | [`Error`](#error) |  |
-| <a id="operatorcontrollerstatusname"></a>`name` | [`String!`](#string) |  |
-| <a id="operatorcontrollerstatusstatus"></a>`status` | [`Status!`](#status) |  |
-| <a id="operatorcontrollerstatusversion"></a>`version` | [`String!`](#string) |  |
+| <a id="operatorcontrollerstatuserror"></a>`error` | [`Error`](#error) | Controller Error Log. |
+| <a id="operatorcontrollerstatusname"></a>`name` | [`String!`](#string) | Controller Name. |
+| <a id="operatorcontrollerstatusstatus"></a>`status` | [`Status!`](#status) | Controller Status. |
+| <a id="operatorcontrollerstatusversion"></a>`version` | [`String!`](#string) | Controller Verison. |
 
 ### `PatternPageResult`
 
@@ -775,8 +793,8 @@ on `graphql.org`.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="resourcecount"></a>`count` | [`Int!`](#int) |  |
-| <a id="resourcekind"></a>`kind` | [`String!`](#string) |  |
+| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
+| <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
 
 ### `TelemetryComp`
 
@@ -806,6 +824,8 @@ on `graphql.org`.
 | <a id="meshsynceventtypemodified"></a>`MODIFIED` |  |
 
 ### `MeshType`
+
+Service Mesh Types.
 
 | Value | Description |
 | ----- | ----------- |
@@ -913,13 +933,15 @@ For more information, read about [Scalar Types](https://graphql.org/learn/schema
 
 ### `AddonStatusInput`
 
+Input for changing Addon Status.
+
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
-| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) |  |
-| <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) |  |
+| <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) | kubernetes context ID. |
+| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
+| <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
 
 ### `CatalogSelector`
 
@@ -967,6 +989,8 @@ For more information, read about [Scalar Types](https://graphql.org/learn/schema
 
 ### `ReSyncActions`
 
+Type ReSyncActions define the actions involved during resync.
+
 #### **Arguments**
 
 | Name | Type | Description |
@@ -977,9 +1001,11 @@ For more information, read about [Scalar Types](https://graphql.org/learn/schema
 
 ### `ServiceMeshFilter`
 
+Filter Control Plane Query.
+
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="servicemeshfilterk8sclusterids"></a>`k8sClusterIDs` | [`[String!]`](#string) |  |
-| <a id="servicemeshfiltertype"></a>`type` | [`MeshType`](#meshtype) |  |
+| <a id="servicemeshfiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |

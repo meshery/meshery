@@ -10,21 +10,32 @@ import (
 	"time"
 )
 
+// Input for status change of Meshery Operator
 type AdapterStatusInput struct {
+	// Desired status for Meshery Operator
 	TargetStatus Status `json:"targetStatus"`
-	TargetPort   string `json:"targetPort"`
-	Adapter      string `json:"adapter"`
+	// The port on which adapter will be deployed
+	TargetPort string `json:"targetPort"`
+	// Name of the adapter to be deployed
+	Adapter string `json:"adapter"`
 }
 
+// Deatils about the Addon Component
 type AddonList struct {
-	Name  string `json:"name"`
+	// Name
+	Name string `json:"name"`
+	// Owner
 	Owner string `json:"owner"`
 }
 
+// Input for changing Addon Status
 type AddonStatusInput struct {
-	Selector     *MeshType `json:"selector,omitempty"`
-	K8scontextID string    `json:"k8scontextID"`
-	TargetStatus Status    `json:"targetStatus"`
+	// Filter by Serice Mesh
+	Selector *MeshType `json:"selector,omitempty"`
+	// kubernetes context ID
+	K8scontextID string `json:"k8scontextID"`
+	// Desired Status
+	TargetStatus Status `json:"targetStatus"`
 }
 
 type ApplicationPage struct {
@@ -86,6 +97,7 @@ type CatalogSelector struct {
 	WorkspaceID []*string `json:"workspaceID,omitempty"`
 }
 
+// Details about discovered workloads
 type ClusterResources struct {
 	Resources []*Resource `json:"resources"`
 }
@@ -101,8 +113,10 @@ type Container struct {
 	ContainerName          string           `json:"containerName"`
 	Image                  string           `json:"image"`
 	Status                 *ContainerStatus `json:"status,omitempty"`
-	Ports                  []*ContainerPort `json:"ports,omitempty"`
-	Resources              any              `json:"resources,omitempty"`
+	// args: NOT IMPLEMENTED
+	Ports []*ContainerPort `json:"ports,omitempty"`
+	// env: NOT IMPLEMENTED,
+	Resources any `json:"resources,omitempty"`
 }
 
 type ContainerPort struct {
@@ -118,31 +132,48 @@ type ContainerStatus struct {
 	LastState           any    `json:"lastState,omitempty"`
 	Ready               bool   `json:"ready"`
 	RestartCount        any    `json:"restartCount,omitempty"`
-	Started             bool   `json:"started"`
-	ImageID             any    `json:"imageID,omitempty"`
-	ContainerID         any    `json:"containerID,omitempty"`
+	// image: String!
+	// imageID: String!
+	// containerID: String!
+	Started     bool `json:"started"`
+	ImageID     any  `json:"imageID,omitempty"`
+	ContainerID any  `json:"containerID,omitempty"`
 }
 
+// Control Plane data for a particular Mesh
 type ControlPlane struct {
-	Name    string                `json:"name"`
+	// Service Mesh Name
+	Name string `json:"name"`
+	// Members of the Mesh
 	Members []*ControlPlaneMember `json:"members"`
 }
 
+// Member Details
 type ControlPlaneMember struct {
-	Name       string       `json:"name"`
-	Component  string       `json:"component"`
-	Version    string       `json:"version"`
-	Namespace  string       `json:"namespace"`
+	// Name
+	Name string `json:"name"`
+	// Component
+	Component string `json:"component"`
+	// Version
+	Version string `json:"version"`
+	// Namespace
+	Namespace string `json:"namespace"`
+	// DataPlanes
 	DataPlanes []*Container `json:"data_planes,omitempty"`
 }
 
+// Data Plane for a particular Mesh
 type DataPlane struct {
-	Name    string       `json:"name"`
+	// Service Mesh Name
+	Name string `json:"name"`
+	// Members of the Mesh
 	Proxies []*Container `json:"proxies"`
 }
 
 type Error struct {
-	Code        string `json:"code"`
+	// Error Code
+	Code string `json:"code"`
+	// Error Details
 	Description string `json:"description"`
 }
 
@@ -225,6 +256,7 @@ type MeshModelRelationship struct {
 	Count int    `json:"count"`
 }
 
+// Type MeshModelComponentsSummary define the summary of a Mesh Model
 type MeshModelSummary struct {
 	Components    []*MeshModelComponent    `json:"components,omitempty"`
 	Relationships []*MeshModelRelationship `json:"relationships,omitempty"`
@@ -265,7 +297,9 @@ type MesheryResult struct {
 type Mutation struct {
 }
 
+// Type to define a k8s Namespace
 type NameSpace struct {
+	// Namespace Name
 	Namespace string `json:"namespace"`
 }
 
@@ -274,15 +308,22 @@ type NullString struct {
 	Valid  bool   `json:"Valid"`
 }
 
+// Controllers of Meshery Operator
 type OperatorControllerStatus struct {
-	Name         string `json:"name"`
-	Version      string `json:"version"`
-	Status       Status `json:"status"`
+	// Controller Name
+	Name string `json:"name"`
+	// Controller Verison
+	Version string `json:"version"`
+	// Controller Status
+	Status Status `json:"status"`
+	// Controller Error Log
 	Error        *Error `json:"error,omitempty"`
 	ConnectionID string `json:"connectionID"`
 }
 
+// Input for status change of Meshery Operator
 type OperatorStatusInput struct {
+	// Desired status for Meshery Operator
 	TargetStatus Status `json:"targetStatus"`
 	ContextID    string `json:"contextID"`
 }
@@ -360,6 +401,7 @@ type PerfProfile struct {
 type Query struct {
 }
 
+// Type ReSyncActions define the actions involved during resync
 type ReSyncActions struct {
 	ClearDb   string `json:"clearDB"`
 	ReSync    string `json:"ReSync"`
@@ -367,11 +409,15 @@ type ReSyncActions struct {
 }
 
 type Resource struct {
-	Kind  string `json:"kind"`
-	Count int    `json:"count"`
+	// Name of resource
+	Kind string `json:"kind"`
+	// Number of resouce
+	Count int `json:"count"`
 }
 
+// Filter Control Plane Query
 type ServiceMeshFilter struct {
+	// Filter by Service Mesh
 	Type          *MeshType `json:"type,omitempty"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs,omitempty"`
 }
@@ -442,6 +488,7 @@ func (e MeshSyncEventType) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Service Mesh Types
 type MeshType string
 
 const (
