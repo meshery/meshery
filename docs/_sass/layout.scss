@@ -84,7 +84,7 @@ ol {
     list-style: none;
   }
 
-  & #breadcrumbs {
+ & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
     & a {
@@ -93,6 +93,11 @@ ol {
       &:hover {
         color: var(--color-secondary-dark);
       }
+    }
+    & .breadcrumb-current {
+      color: var(--color-secondary-dark);
+      font-weight: 600;
+      pointer-events: none;
     }
   }
 }
