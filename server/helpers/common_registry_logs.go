@@ -38,6 +38,7 @@ type EntityTypeCountWithErrors struct {
 type logRegistryHandler struct {
 	NonImportModel   map[string]_models.EntitySummary
 	RegisterAttempts map[string]*EntityTypeCountWithErrors
+	globalMu         sync.RWMutex // Protects both NonImportModel and RegisterAttempts maps
 }
 
 var LogHandler logRegistryHandler
@@ -50,6 +51,7 @@ func init() {
 }
 
 func HandleError(c connection.Connection, en entity.Entity, err error, isModelError bool, isRegistrantError bool) {
+	LogHandler.globalMu.Lock()
 	if LogHandler.RegisterAttempts == nil {
 		LogHandler.RegisterAttempts = make(map[string]*EntityTypeCountWithErrors)
 	}
@@ -63,6 +65,7 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			Registry:     make(map[string]EntityErrorCount),
 		}
 	}
+	LogHandler.globalMu.Unlock()
 
 	switch entity := en.(type) {
 	case *component.ComponentDefinition:
@@ -81,12 +84,15 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			} else {
 				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Component[entityName] = EntityErrorCount{Attempt: 1, Error: err}
 			}
+			attemptCount := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Component[entityName].Attempt
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Component[entityName].Attempt == 1 {
+			if attemptCount == 1 {
+				LogHandler.globalMu.Lock()
 				currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 				currentValue.Components++
 				LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue
+				LogHandler.globalMu.Unlock()
 			}
 		}
 
@@ -101,18 +107,22 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			} else {
 				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = EntityErrorCount{Attempt: 1, Error: err}
 			}
+			attemptCount := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id].Attempt
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id].Attempt == 1 {
+			if attemptCount == 1 {
+				LogHandler.globalMu.Lock()
 				currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 				currentValue.Relationships++
 				LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue
+				LogHandler.globalMu.Unlock()
 			}
 		}
 	}
 }
 
 func handleModelOrRegistrantError(c connection.Connection, modelName string, err error, isModelError, isRegistrantError bool) {
+	LogHandler.globalMu.Lock()
 	if LogHandler.RegisterAttempts == nil {
 		LogHandler.RegisterAttempts = make(map[string]*EntityTypeCountWithErrors)
 	}
@@ -123,6 +133,7 @@ func handleModelOrRegistrantError(c connection.Connection, modelName string, err
 			Registry: make(map[string]EntityErrorCount),
 		}
 	}
+	LogHandler.globalMu.Unlock()
 
 	switch {
 	case isModelError:
@@ -133,12 +144,15 @@ func handleModelOrRegistrantError(c connection.Connection, modelName string, err
 		} else {
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Model[modelName] = EntityErrorCount{Attempt: 1, Error: err}
 		}
+		attemptCount := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Model[modelName].Attempt
 		LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-		if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Model[modelName].Attempt == 1 {
+		if attemptCount == 1 {
+			LogHandler.globalMu.Lock()
 			currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 			currentValue.Models++
 			LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue
+			LogHandler.globalMu.Unlock()
 		}
 	case isRegistrantError:
 		LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Lock()
@@ -153,7 +167,9 @@ func handleModelOrRegistrantError(c connection.Connection, modelName string, err
 }
 
 func FailedMsgCompute(failedMsg string, hostName string) (string, error) {
+	LogHandler.globalMu.RLock()
 	nonImportModel := LogHandler.NonImportModel[hostName]
+	LogHandler.globalMu.RUnlock()
 
 	if nonImportModel.Models > 0 || nonImportModel.Components > 0 || nonImportModel.Relationships > 0 || nonImportModel.Policies > 0 {
 		failedMsg = "Failed to import"
@@ -206,6 +222,7 @@ func WriteLogsToFiles() error {
 	var logMessage strings.Builder
 
 	// Marshal RegisterAttempts without empty entries
+	LogHandler.globalMu.RLock()
 	nonEmptyRegisterAttempts := make(map[string]*EntityTypeCountWithErrors)
 	for host, attempts := range LogHandler.RegisterAttempts {
 		nonEmptyEntity := EntityTypeCountWithErrors{
@@ -219,6 +236,7 @@ func WriteLogsToFiles() error {
 			nonEmptyRegisterAttempts[host] = &nonEmptyEntity
 		}
 	}
+	LogHandler.globalMu.RUnlock()
 
 	// Iterate over non-empty register attempts and construct the log message
 	for host, attempts := range nonEmptyRegisterAttempts {
