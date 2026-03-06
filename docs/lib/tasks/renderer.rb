@@ -21,7 +21,8 @@ module Graphql
         @template = template
         @schema = schema
         template_content = File.read(template)
-        @layout = Haml::Template.new(escape_html: false) { template_content }
+        options = { escape_html: false }
+        @layout = Haml::Template.new(options) { template_content }
         @parsed_schema = GraphQLDocs::Parser.new(schema, {}).parse
         @seen = Set.new
       end
