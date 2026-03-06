@@ -57,8 +57,7 @@ const (
 )
 
 var (
-	errNoArgMsg        = "no argument specified"
-	errMultiArgMsg     = "too many arguments specified"
+	errArgMsg          = "only one argument must be provided"
 	errContextUsageMsg = `Usage: mesheryctl system context create [context-name]`
 	cmdType            string
 	contextdocs        string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."

@@ -221,25 +221,31 @@ func TestAddContextCmd(t *testing.T) {
 			ExpectedResponse: "createContext.golden",
 		},
 		{
+			Name:             "given a valid context name which contains uppercase letters provided when running mesheryctl system context create [valid-name] then a context gets created",
+			Args:             []string{"context", "create", "Local4"},
+			ExpectedResponse: "createContext.uppercase.golden",
+		},
+		{
 			Name:           "given no valid context name provided when running mesheryctl system context create [valid-name] then an error message displayed",
 			Args:           []string{"context", "create"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, errContextUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg)),
 			IsOutputGolden: false,
 		},
 		{
 			Name:           "given multiple context name provided when running mesheryctl system context create then an error message displayed",
 			Args:           []string{"context", "create", "local1", "local2"},
 			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, errContextUsageMsg)),
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg)),
 			IsOutputGolden: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			utils.SetupMeshkitLoggerTesting(t, false)
-			b := utils.SetupLogrusGrabTesting(t, false)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+
 			SystemCmd.SetOut(b)
+			SystemCmd.SetErr(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 

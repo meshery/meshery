@@ -74,12 +74,8 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	`,
 	Annotations: linkDocContextCreate,
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, errContextUsageMsg))
-		}
-
-		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, errContextUsageMsg))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, errContextUsageMsg))
 		}
 
 		return nil
@@ -118,9 +114,9 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 		}
 
 		if args[0] != strings.ToLower(args[0]) {
-			log.Printf("Added `%s` context (converted to lowercase)", contextName)
+			utils.Log.Infof("Added `%s` context (converted to lowercase)", contextName)
 		} else {
-			log.Printf("Added `%s` context", contextName)
+			utils.Log.Infof("Added `%s` context", contextName)
 		}
 		return nil
 	},
