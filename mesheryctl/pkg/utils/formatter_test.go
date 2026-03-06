@@ -54,9 +54,11 @@ func TestTerminalFormatter_Format(t *testing.T) {
 // TestSetupMeshkitLogger ensures that the Meshkit logger handler
 // is correctly initialized and messages are correctly written to the output.
 func TestSetupMeshkitLogger(t *testing.T) {
+    viper.Reset()
+
     t.Run("Initialize logger with debug enabled", func(t *testing.T) {
         var buf bytes.Buffer
-        name := "test-logger"
+        name := "test-logger-debug"
         
         handler := SetupMeshkitLogger(name, true, &buf)
         assert.NotNil(t, handler)
@@ -71,7 +73,7 @@ func TestSetupMeshkitLogger(t *testing.T) {
 
     t.Run("Initialize logger with debug disabled", func(t *testing.T) {
         var buf bytes.Buffer
-        name := "test-logger"
+        name := "test-logger-no-debug"
         
         viper.Set("LOG_LEVEL", int(log.InfoLevel))
 
@@ -83,6 +85,6 @@ func TestSetupMeshkitLogger(t *testing.T) {
 
         output := buf.String()
         assert.Contains(t, output, "info message")
-        assert.NotContains(t, output, "hidden debug message", "Debug logs should be hidden when debugLevel is false")
+        assert.NotContains(t, output, "hidden debug message")
     })
 }
