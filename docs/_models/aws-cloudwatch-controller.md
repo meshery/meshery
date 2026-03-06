@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS CloudWatch
 subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch
-image: /assets/img/integrations/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg
-permalink: extensibility/integrations/aws-cloudwatch-controller
+image: /extensions/models/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg
+aliases: /extensibility/integrations/aws-cloudwatch-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatch-controller
 description: 
 integrations-category: Observability and Analysis
@@ -59,8 +58,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

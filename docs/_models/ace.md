@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AppsCode Container Engine
 subtitle: Collaborative and visual infrastructure as design for AppsCode Container Engine
-image: /assets/img/integrations/ace/icons/color/ace-color.svg
-permalink: extensibility/integrations/ace
+image: /extensions/models/ace/icons/color/ace-color.svg
+aliases: /extensibility/integrations/ace
 docURL: https://docs.meshery.io/extensibility/integrations/ace
 description: 
 integrations-category: Platform
@@ -72,8 +71,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

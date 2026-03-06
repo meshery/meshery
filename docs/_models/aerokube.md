@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Aerokube
 subtitle: Collaborative and visual infrastructure as design for Aerokube
-image: /assets/img/integrations/aerokube/icons/color/aerokube-color.svg
-permalink: extensibility/integrations/aerokube
+image: /extensions/models/aerokube/icons/color/aerokube-color.svg
+aliases: /extensibility/integrations/aerokube
 docURL: https://docs.meshery.io/extensibility/integrations/aerokube
 description: 
 integrations-category: App Definition and Development
@@ -40,8 +39,5 @@ featureList: [
 ]
 howItWorks: "Integrates with Aerokube tests"
 howItWorksDetails: "Streamlined web application testing within Kubernetes environments"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

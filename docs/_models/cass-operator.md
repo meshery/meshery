@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Apache Cassandra
 subtitle: Collaborative and visual infrastructure as design for Apache Cassandra
-image: /assets/img/integrations/cass-operator/icons/color/cass-operator-color.svg
-permalink: extensibility/integrations/cass-operator
+image: /extensions/models/cass-operator/icons/color/cass-operator-color.svg
+aliases: /extensibility/integrations/cass-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cass-operator
 description: 
 integrations-category: App Definition and Development
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Simplified Cassandra management in Kubernetes"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

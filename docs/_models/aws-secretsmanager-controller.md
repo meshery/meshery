@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS Secrets Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Secrets Manager
-image: /assets/img/integrations/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
-permalink: extensibility/integrations/aws-secretsmanager-controller
+image: /extensions/models/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
+aliases: /extensibility/integrations/aws-secretsmanager-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
 description: 
 integrations-category: Security & Compliance
@@ -51,8 +50,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

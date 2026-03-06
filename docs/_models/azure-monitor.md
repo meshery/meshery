@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Monitor
 subtitle: Collaborative and visual infrastructure as design for Azure Monitor
-image: /assets/img/integrations/azure-monitor/icons/color/azure-monitor-color.svg
-permalink: extensibility/integrations/azure-monitor
+image: /extensions/models/azure-monitor/icons/color/azure-monitor-color.svg
+aliases: /extensibility/integrations/azure-monitor
 docURL: https://docs.meshery.io/extensibility/integrations/azure-monitor
 description: 
 integrations-category: Observability and Analysis
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
