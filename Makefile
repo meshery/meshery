@@ -467,7 +467,8 @@ redocly-docs-build:
 
 ## Build Meshery GraphQL API documentation
 graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+	cd docs; bundle exec rake graphql:compile_docs; \
+	cd ../docs-new; bundle exec rake graphql:compile_docs
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check

@@ -29,6 +29,9 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+          cd ../docs-new
+          bundle install
+          bundle exec rake graphql:compile_docs
 
       - name: Pull changes from remote
         run: git pull origin master
@@ -36,7 +39,7 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          file_pattern: docs/
+          file_pattern: docs/ docs-new/content/en/reference/graphql-apis.md
           commit_user_name: l5io
           commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
