@@ -55,3 +55,20 @@ updates:
   labels:
   - kind/chore
   - pr/dependencies
+- package-ecosystem: npm
+  directory: "/docs-new"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 5
+  labels:
+  - kind/chore
+  - pr/dependencies
+- package-ecosystem: gomod
+  directory: "/docs-new"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 5
+  labels:
+  - pr/dependencies
+  - kind/chore
+  - language/go
