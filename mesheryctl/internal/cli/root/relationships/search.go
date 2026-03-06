@@ -46,7 +46,10 @@ var searchCmd = &cobra.Command{
 	Long:  "Search registered relationship(s) used by different models",
 	Example: `
 // Search for a specific relationship
-mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]`,
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+
+// Search a relationship for specified page
+mesheryctl exp relationship search [--page <int>]`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
 		if !ok || flagValidator == nil {
