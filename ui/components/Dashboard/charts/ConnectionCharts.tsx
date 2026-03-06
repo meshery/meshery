@@ -7,13 +7,12 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import { InfoOutlined } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, Typography, useTheme } from '@sistent/sistent';
+import { Box, Typography, useTheme, InfoIcon } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
   const { data: connectionsData } = useGetConnectionsQuery({
@@ -88,7 +87,7 @@ export default function ConnectionStatsChart() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
