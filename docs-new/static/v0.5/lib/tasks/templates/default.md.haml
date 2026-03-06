@@ -1,0 +1,173 @@
+-# haml-lint:disable UnnecessaryStringOutput
+
+= auto_generated_comment
+
+:plain
+  Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the [GraphQL Playground](./extensibility). Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
+
+  WARNING:
+  Fields that are deprecated are marked with **{warning-solid}**.
+
+  <!-- vale off -->
+\
+
+:plain
+  ## `Query` type
+
+  The `Query` type contains the API's top-level entry points for all executable queries.
+\
+
+- fields_of('Query').each do |field|
+  = render_full_field(field, heading_level: 3, owner: 'Query')
+  \
+
+:plain
+  ## `Mutation` type
+
+  The `Mutation` type contains all the mutations you can execute.
+
+  All mutations receive their arguments in a single input object named `input`.
+
+\
+
+- mutations.each do |field|
+  = render_full_field(field, heading_level: 3, owner: 'Mutation')
+  \
+
+
+:plain
+  ## `Subscription` type
+
+  The `Subscription` type contains all the Subscriptions you can listen to.
+
+
+\
+
+
+- subscriptions.each do |field|
+  = render_full_field(field, heading_level: 3, owner: 'Subscription')
+  \
+
+:plain
+  ## Object types
+
+  Object types represent the resources that the Meshery GraphQL API can return.
+  They contain _fields_. Each field has its own type, which will either be one of the
+  basic GraphQL [scalar types](https://graphql.org/learn/schema/#scalar-types)
+  (e.g.: `String` or `Boolean`) or other object types. Fields may have arguments.
+  Fields with arguments are exactly like top-level queries, and are listed beneath
+  the table of fields for each object type.
+
+  For more information, see
+  [Object Types and Fields](https://graphql.org/learn/schema/#object-types-and-fields)
+  on `graphql.org`.
+\
+
+- object_types.each do |type|
+  = render_name_and_description(type)
+  \
+  = render_object_fields(type[:fields], owner: type)
+  \
+
+:plain
+  ## Enumeration types
+
+  Also called _Enums_, enumeration types are a special kind of scalar that
+  is restricted to a particular set of allowed values.
+
+  For more information, see
+  [Enumeration Types](https://graphql.org/learn/schema/#enumeration-types)
+  on `graphql.org`.
+\
+
+- enums.each do |enum|
+  = render_name_and_description(enum)
+  \
+  ~ "| Value | Description |"
+  ~ "| ----- | ----------- |"
+  - enum[:values].each do |value|
+    = render_enum_value(enum, value)
+  \
+
+:plain
+  ## Scalar types
+
+  Scalar values are atomic values, and do not have fields of their own.
+  Basic scalars include strings, boolean values, and numbers. This schema also
+  defines various custom scalar values, such as types for times and dates.
+
+  This schema includes custom scalar types for identifiers, with a specific type for
+  each kind of object.
+
+  For more information, read about [Scalar Types](https://graphql.org/learn/schema/#scalar-types) on `graphql.org`.
+\
+
+- graphql_scalar_types.each do |type|
+  = render_name_and_description(type)
+  \
+
+  -# Current GraphQL is not using Abstract Types. Can be uncommented for future use.
+
+  -# :plain
+  -#   ## Abstract types
+
+  -#   Abstract types (unions and interfaces) are ways the schema can represent
+  -#   values that may be one of several concrete types.
+
+  -#   - A [`Union`](https://graphql.org/learn/schema/#union-types) is a set of possible types.
+  -#     The types might not have any fields in common.
+  -#   - An [`Interface`](https://graphql.org/learn/schema/#interfaces) is a defined set of fields.
+  -#     Types may `implement` an interface, which
+  -#     guarantees that they have all the fields in the set. A type may implement more than
+  -#     one interface.
+
+  -#   See the [GraphQL documentation](https://graphql.org/learn/) for more information on using
+  -#   abstract types.
+  -# \
+
+  -# :plain
+  -#   ### Unions
+  -# \
+
+  -# - graphql_union_types.each do |type|
+  -#   = render_name_and_description(type, level: 4)
+  -#   \
+  -#   One of:
+  -#   \
+  -#   - type[:possible_types].each do |member|
+  -#     = render_union_member(member)
+  -#   \
+
+  -# :plain
+  -#   ### Interfaces
+  -# \
+
+  -# - interfaces.each do |type|
+  -#   = render_name_and_description(type, level: 4)
+  -#   \
+  -#   Implementations:
+  -#   \
+  -#   - type[:implemented_by].each do |type_name|
+  -#     ~ "- [`#{type_name}`](##{type_name.downcase})"
+  -#   \
+  -#   = render_object_fields(type[:fields], owner: type, level_bump: 1)
+  -#   \
+
+:plain
+  ## Input types
+
+  Types that may be used as arguments (all scalar types may also
+  be used as arguments).
+
+  Only general use input types are listed here. For mutation input types,
+  see the associated mutation type above.
+
+  For more information, read about [Scalar Types](https://graphql.org/learn/schema/#input-types) on `graphql.org`.
+
+\
+
+- input_types.each do |type|
+  = render_name_and_description(type)
+  \
+  = render_argument_table(3, type[:input_fields], type[:name])
+  \

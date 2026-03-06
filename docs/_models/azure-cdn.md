@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure CDN
 subtitle: Collaborative and visual infrastructure as design for Azure CDN
-image: /assets/img/integrations/azure-cdn/icons/color/azure-cdn-color.svg
-permalink: extensibility/integrations/azure-cdn
+image: /extensions/models/azure-cdn/icons/color/azure-cdn-color.svg
+aliases: /extensibility/integrations/azure-cdn
 docURL: https://docs.meshery.io/extensibility/integrations/azure-cdn
 description: 
 integrations-category: Cloud Native Storage
@@ -106,8 +105,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: February 28th 2026, 11:29:51 pm
+- Testing started at: March 6th 2026, 4:44:17 pm
 
 **📦 Test Result Summary**
 
 - ✅ 68 passed
-- ❌ 2 failed
+- ❌ 1 failed
 - ⚠️ 0 flaked
-- ⏩ 2 skipped
+- ⏩ 3 skipped
 
-⌛ _Duration: 3 minutes and 50 seconds_
+⌛ _Duration: 4 minutes and 32 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -65,7 +65,7 @@
 | 42 | None | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 43 | None | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ➖ |
 | 44 | None | chromium-local-provider | Create a Model |  | ✅ |
-| 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ❌ |
+| 45 | None | chromium-local-provider | Delete Kubernetes cluster connections |  | ➖ |
 | 46 | None | chromium-local-provider | Grafana elements on metrics tab |  | ✅ |
 | 47 | None | chromium-local-provider | Import a Model via CSV Import |  | ✅ |
 | 48 | None | chromium-local-provider | Import a Model via File Import |  | ✅ |
@@ -120,29 +120,6 @@ The following tests failed. Click on each to see the failure reason:
 ```
 
 
-
-</details>
-
-<details>
-<summary>❌ Delete Kubernetes cluster connections (None - chromium-local-provider)</summary>
-
-**File Location:** `/home/runner/work/meshery/meshery/ui/tests/e2e/connections.spec.js`
-
-**Error Message:**
-```
-Error: No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.
-```
-
-**Code Snippet:**
-```
-[0m [90m 186 |[39m     [90m// Fail the test if the connection is not found[39m
- [90m 187 |[39m     [36mif[39m (([36mawait[39m row[33m.[39mcount()) [33m===[39m [35m0[39m) {
-[31m[1m>[22m[39m[90m 188 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m(
- [90m     |[39m             [31m[1m^[22m[39m
- [90m 189 |[39m         [32m'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.'[39m[33m,[39m
- [90m 190 |[39m       )[33m;[39m
- [90m 191 |[39m     }[0m
-```
 
 </details>
 

@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Backend
 subtitle: Collaborative and visual infrastructure as design for Backend
-image: /assets/img/integrations/backend/icons/color/backend-color.svg
-permalink: extensibility/integrations/backend
+image: /extensions/models/backend/icons/color/backend-color.svg
+aliases: /extensibility/integrations/backend
 docURL: https://docs.meshery.io/extensibility/integrations/backend
 description: 
 integrations-category: Tools
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates backend services"
 howItWorksDetails: "Seamless integration of backend services with Kubernetes applications"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

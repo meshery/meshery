@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Kubevault Catalog
 subtitle: Collaborative and visual infrastructure as design for Kubevault Catalog
-image: /assets/img/integrations/kubevault-catalog/icons/color/kubevault-catalog-color.svg
-permalink: extensibility/integrations/kubevault-catalog
+image: /extensions/models/kubevault-catalog/icons/color/kubevault-catalog-color.svg
+aliases: /extensibility/integrations/kubevault-catalog
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-catalog
 description: 
 integrations-category: Security & Compliance
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Integrates with KubeVault Catalog"
 howItWorksDetails: "Easier and faster Vault setup with pre-defined configurations"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
