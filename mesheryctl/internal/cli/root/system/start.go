@@ -304,13 +304,11 @@ func start() error {
 		userResponse := false
 
 		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
-		if utils.SilentFlag || (len(userPort) > 1 && strings.HasSuffix(userPort[1], "localhost")) {
+		if utils.SilentFlag || len(userPort) > 1 {
 			userResponse = true
 		} else {
-			// ask user for confirmation
 			userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
 		}
-
 		if userResponse {
 			portStr := userPort[len(userPort)-1]
 
@@ -319,7 +317,11 @@ func start() error {
 			}
 
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
+
 			ctxName := mctlCfg.GetCurrentContextName()
+			if ctxName == "" {
+				return errors.New("current context not set")
+			}
 
 			currCtx.SetEndpoint(endpoint.Address + ":" + portStr)
 

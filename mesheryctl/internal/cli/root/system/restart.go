@@ -71,11 +71,20 @@ mesheryctl system restart --skip-update
 }
 
 func restart() error {
-	if err := config.MutateConfigIfNeeded(utils.DefaultConfigPath, utils.MesheryFolder, config.TemplateToken, config.TemplateContext); err != nil {
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		config.TemplateToken,
+		config.TemplateContext,
+	); err != nil {
 		return err
 	}
 
-	// Get viper instance used for context
+	viper.SetConfigFile(utils.DefaultConfigPath)
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		utils.Log.Error(err)
