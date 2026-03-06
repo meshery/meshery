@@ -21,6 +21,7 @@ import (
 	"os"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -229,5 +230,10 @@ func setVerbose() {
 }
 
 func setupLogger() {
-	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	logLevel := logrus.InfoLevel
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+
+	utils.Log = *mesheryctllogger.NewLogger(logLevel)
 }
