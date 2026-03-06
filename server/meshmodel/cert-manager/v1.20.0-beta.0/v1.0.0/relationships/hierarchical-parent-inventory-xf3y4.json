@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which Order (child) belongs to ClusterIssuer (parent) in the ACME certificate issuance flow.",
+    "description": "A hierarchical inventory relationship in which Challenge (child) references Order (parent) in the ACME certificate flow.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -30,6 +30,37 @@
         "from": [
           {
             "id": null,
+            "kind": "Challenge",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "cert-manager",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "issuerRef",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
             "kind": "Order",
             "match": {},
             "match_strategy_matrix": null,
@@ -48,37 +79,6 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "issuerRef",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "ClusterIssuer",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "cert-manager",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
                 [
                   "displayName"
                 ]

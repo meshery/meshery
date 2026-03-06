@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which Certificate (child) is issued by ClusterIssuer (parent).",
+    "description": "A hierarchical inventory relationship in which Certificate (child) references Issuer (parent) for certificate signing.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -47,7 +47,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -61,7 +61,7 @@
         "to": [
           {
             "id": null,
-            "kind": "ClusterIssuer",
+            "kind": "Issuer",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -78,7 +78,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "displayName"
                 ]

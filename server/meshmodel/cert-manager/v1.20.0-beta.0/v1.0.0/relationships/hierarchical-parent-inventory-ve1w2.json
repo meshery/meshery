@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which CertificateRequest (child) is processed by Issuer (parent).",
+    "description": "A hierarchical inventory relationship in which Order (child) references ClusterIssuer (parent) in the ACME certificate flow.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -30,38 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "CertificateRequest",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "cert-manager",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "issuerRef",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Issuer",
+            "kind": "Order",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -79,6 +48,37 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "issuerRef",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ClusterIssuer",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "cert-manager",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "displayName"
                 ]
