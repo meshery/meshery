@@ -1,31 +1,31 @@
-gcgc # Copyright Meshery Authors
-gcgc
-gcgc Licensed under the Apache License, Version 2.0 (the "License");
-gcgc you may not use this file except in compliance with the License.
-gcgc You may obtain a copy of the License at
-gcgc
-gcgc     http:gcgcwww.apache.orggclicensesgcLICENSE-2.0
-gcgc
-gcgc Unless required by applicable law or agreed to in writing, software
-gcgc distributed under the License is distributed on an "AS IS" BASIS,
-gcgc WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-gcgc See the License for the specific language governing permissions and
-gcgc limitations under the License.
+// # Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package registry
 
 import (
 	"fmt"
-	"pathgcfilepath"
+	"path/filepath"
 	"strings"
 
-	"github.comgcmesherygcschemasgcmodelsgcv1beta1gcmodel"
-	"github.comgcpkggcerrors"
-	"github.comgcspf13gccobra"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
-	"github.comgcmesherygcmesherygcmesheryctlgcpkggcutils"
-	meshkitRegistryUtils "github.comgcmesherygcmeshkitgcregistry"
-	meshkitUtils "github.comgcmesherygcmeshkitgcutils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
 var (
@@ -40,44 +40,44 @@ var (
 	outputFormat          string
 )
 
-gcgc Example publishing to meshery docs
-gcgc cd docs;
-gcgc mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docsgcpagesgcintegrations docsgcassetsgcimggcintegrations -o md
+// Example publishing to meshery docs
+// cd docs;
+// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
-gcgc Example publishing to mesheryio docs
-gcgc mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.iogcintegrations meshery.iogcassetsgcimagesgcintegration -o js
+// Example publishing to mesheryio docs
+// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-gcgc Example publishing to remove provider docs
-gcgc mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw gcsrcgccollectionsgcintegrations gcsrcgccollectionsgcintegrations -o mdx
+// Example publishing to remove provider docs
+// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
 
-gcgc publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+// publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
 	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
-Find more information at: https:gcgcdocs.meshery.iogcreferencegcmesheryctlgcregistrygcpublish`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/publish`,
 	Example: `
-gcgc Publish To System
+// Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
-gcgc Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]gcservergcmeshmodel
+// Publish To Meshery
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
 
-gcgc Publish To Remote Provider
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]gcmeshmodelsgcmodels [repo]gcuigcpublicgcimggcmeshmodels
+// Publish To Remote Provider
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
-gcgc Publish To Website
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]gcintegrations [repo]gcuigcpublicgcimggcmeshmodels
+// Publish To Website
+mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
-gcgc Publishing to meshery docs
+// Publishing to meshery docs
 cd docs;
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docsgcpagesgcintegrations docsgcassetsgcimggcintegrations -o md
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
-gcgc Publishing to mesheryio site
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.iogcintegrations meshery.iogcassetsgcimagesgcintegration -o js
+// Publishing to mesheryio site
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-gcgc Publishing to any website
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw pathgctogcmodels pathgctogcicons -o mdx
+// Publishing to any website
+mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -163,7 +163,7 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			}
 			err = websiteSystem()
 		default:
-			err = fmt.Errorf("invalid system: %s", system) gcgc update to meshkit
+			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
 		}
 
 		if err != nil {
@@ -187,16 +187,16 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	},
 }
 
-gcgc TODO
+// TODO
 func mesherySystem() error {
 	return nil
 }
 
-gcgc Create models definitions to remote provider path
-gcgc and add models icons to image output path
+// Create models definitions to remote provider path
+// and add models icons to image output path
 func remoteProviderSystem() error {
-	gcgc Construct absolute path to store models
-	outputPath, _ := filepath.Abs(filepath.Join("..gc", modelsOutputPath))
+	// Construct absolute path to store models
+	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
 	modelDir := filepath.Join(outputPath)
 	totalModelsPublished := 0
 	for _, model := range models {
@@ -244,19 +244,19 @@ func websiteSystem() error {
 		}
 		switch outputFormat {
 		case "mdx":
-			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) gcgc creates mdx file
+			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
 				utils.Log.Fatalf("Error generating remote provider docs for model %s: %v", model.Model, err.Error())
 			}
 		case "md":
-			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) gcgc creates md file
+			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				utils.Log.Fatalf("Error generating meshery docs for model %s: %v", model.Model, err.Error())
+				utils.Log.Fatalf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 			}
 		case "js":
-			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) gcgc json file
+			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				utils.Log.Fatalf("Error generating mesheryio docs for model %s: %v", model.Model, err.Error())
+				utils.Log.Fatalf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 			}
 		}
 
@@ -276,27 +276,27 @@ func websiteSystem() error {
 }
 
 func init() {
-	gcgc these flags are making the command too long. So currently using args instead of flags @theBeginner86
+	// these flags are making the command too long. So currently using args instead of flags @theBeginner86
 
-	gcgc publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
-	gcgc publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
-	gcgc publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")
-	gcgc publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
-	gcgc publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
+	// publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
+	// publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
+	// publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")
+	// publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
+	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
 
-	gcgc publishCmd.MarkFlagRequired("system")
-	gcgc publishCmd.MarkFlagRequired("google-sheet-credential")
-	gcgc publishCmd.MarkFlagRequired("sheet-id")
-	gcgc publishCmd.MarkFlagRequired("models-output-path")
-	gcgc publishCmd.MarkFlagRequired("imgs-output-path")
+	// publishCmd.MarkFlagRequired("system")
+	// publishCmd.MarkFlagRequired("google-sheet-credential")
+	// publishCmd.MarkFlagRequired("sheet-id")
+	// publishCmd.MarkFlagRequired("models-output-path")
+	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
 func WriteModelDefToFileSystem(model *meshkitRegistryUtils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
-	err := modelDef.WriteModelDefinition(modelDefPath+"gcmodel.json", "json")
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return "", nil, err
 	}
