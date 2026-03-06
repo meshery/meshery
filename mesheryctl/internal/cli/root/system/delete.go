@@ -65,6 +65,16 @@ mesheryctl system delete -y
 }
 
 func deleteContainers() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		config.TemplateToken,
+		config.TemplateContext,
+	); err != nil {
+		return err
+	}
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -77,7 +87,7 @@ func deleteContainers() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return err
 	}

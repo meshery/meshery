@@ -17,7 +17,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -130,29 +129,35 @@ func GetTokenLocation(token config.Token) (string, error) {
 
 // GetCurrentAuthToken returns location of current context token
 func GetCurrentAuthToken() (string, error) {
-	// get config.yaml struct
+	// Try to load mesheryctl config (optional for read-only commands)
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Get token of current-context
-	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
-	if err != nil {
-		// Attempt to create token if it doesn't already exists
-		token.Location = AuthConfigFile
-
-		// Write new entry in the config
-		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
-			return "", err
-		}
-	}
-	// grab actual token location with home directory
-	TokenLocation, err := GetTokenLocation(token)
 	if err != nil {
 		return "", err
 	}
 
-	return TokenLocation, nil
+	// No current context → no auth token (caller decides)
+	if mctlCfg.GetCurrentContextName() == "" {
+		return "", errors.New("no current context configured")
+	}
+
+	// Get token of current-context
+	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+	if err != nil {
+		// Attempt to create token if it doesn't already exist
+		token.Location = AuthConfigFile
+
+		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
+			return "", err
+		}
+	}
+
+	// Resolve token path
+	tokenLocation, err := GetTokenLocation(token)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenLocation, nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request
@@ -253,7 +258,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 	go func() {
 		if err := srv.Serve(listener); err != nil {
 			if err != http.ErrServerClosed {
-				log.Println("error creating temporary server")
+				Log.Info("error creating temporary server")
 			}
 		}
 	}()
@@ -285,7 +290,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 
 	var token string
 
-	log.Println("Initiating login...")
+	Log.Info("Initiating login...")
 
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {

@@ -11,9 +11,11 @@ import (
 )
 
 func TestFetchKubernetesVersion(t *testing.T) {
+	// skipping integration test with --short flag
 	if testing.Short() {
-		t.Skip("skipping tests")
+		t.Skip("skipping integration test")
 	}
+
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)

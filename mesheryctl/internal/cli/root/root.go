@@ -17,7 +17,6 @@ package root
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -35,10 +34,9 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	logrus "github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -68,8 +66,6 @@ mesheryctl system start --help
 mesheryctl -v [or] --verbose
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		// Initialize a validator and add it to the command context
-		// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 		mesheryctlflags.InitValidators(cmd)
 		return nil
 	},
@@ -79,7 +75,9 @@ mesheryctl -v [or] --verbose
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.RootError(
+				fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl --help' to display usage guide.\n", args[0]),
+			))
 		}
 
 		return nil
@@ -87,31 +85,22 @@ mesheryctl -v [or] --verbose
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() error {
-	//log formatter for improved UX
-	// Removing printing command usage on error
+	utils.SetupLogrusFormatter()
 	RootCmd.SilenceUsage = true
-	err := RootCmd.Execute()
-	return err
+	return RootCmd.Execute()
 }
 
 func init() {
-	err := utils.SetFileLocation()
-	if err != nil {
+	if err := utils.SetFileLocation(); err != nil {
 		log.Fatal(err)
 	}
 
 	cobra.OnInitialize(setupLogger)
 	cobra.OnInitialize(setVerbose)
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(prepareConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
-
-	// Preparing for an "edge" channel
-	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
-
-	// global verbose flag for verbose logs
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
@@ -156,76 +145,21 @@ func TreePath() *cobra.Command {
 	return RootCmd
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
+// prepareConfig loads config globally (read-only safe)
+func prepareConfig() {
 	utils.CfgFile = cfgFile
-	// initialize the path to the kubeconfig file
-	utils.SetKubeConfig()
-	// Allow user to override config file with use of --config global flag
-	if cfgFile != utils.DefaultConfigPath {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-		// Otherwise, use the default `config.yaml` config file
-	} else {
-		stat, err := os.Stat(utils.DefaultConfigPath)
-		createDefaultConfig := false
-
-		switch {
-		case os.IsNotExist(err):
-			utils.Log.Info("Missing Meshery config file.")
-			createDefaultConfig = true
-
-		case err == nil && stat.Size() == 0:
-			utils.Log.Info("Empty meshconfig. Please populate it before running a command")
-			createDefaultConfig = true
-
-		case err != nil:
-			utils.Log.Infof("Cannot access Meshery config file. Please check permissions. Error: %v", err)
-			return
-		}
-
-		// Only create + mutate config when needed
-		if createDefaultConfig {
-			if err := os.MkdirAll(utils.MesheryFolder, 0o775); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			if err := utils.CreateConfigFile(); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			if err := config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			if err := config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false); err != nil {
-				utils.Log.Fatal(err)
-			}
-
-			utils.Log.Infof("Default config file created at %s", utils.DefaultConfigPath)
-		}
-	}
-
-	viper.SetConfigFile(cfgFile)
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	if err := viper.ReadInConfig(); err != nil {
-		utils.Log.Debugf("unable to read config file: %v", err)
-	} else {
-		utils.Log.Debug("Using config file:", viper.ConfigFileUsed())
-	}
+	_ = config.PrepareConfig(cfgFile)
 }
 
-// setVerbose sets the log level to debug if the -v flag is set
+// setVerbose sets log level
 func setVerbose() {
-	utils.Log.SetLevel(logrus.InfoLevel)
-
+	log.SetLevel(log.InfoLevel)
 	if verbose {
-		utils.Log.SetLevel(logrus.DebugLevel)
+		log.SetLevel(log.DebugLevel)
 	}
 }
 
 func setupLogger() {
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }

@@ -64,6 +64,7 @@ var createContextCmd = &cobra.Command{
 	Use:   "create context-name",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
+
 	Example: `
 // Create new context
 mesheryctl system context create [context-name]
@@ -73,6 +74,15 @@ mesheryctl system context create context-name --components meshery-nsm --platfor
 	`,
 	Annotations: linkDocContextCreate,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			config.TemplateToken,
+			config.TemplateContext,
+		); err != nil {
+			return err
+		}
+
 		if len(args) == 0 {
 			const errMsg = `Please provide a context name.
 Usage: mesheryctl system context create [context-name]`
@@ -103,8 +113,19 @@ Usage: mesheryctl system context create [context-name]`
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
+		err := config.AddContextToConfig(args[0], tempCntxt, utils.DefaultConfigPath, set, false)
 		if err != nil {
+			// If context already exists and --set flag is used, just switch to it (idempotent behavior)
+			if err.Error() == "error adding context: a context with same name already exists" && set {
+				viper.SetConfigFile(utils.DefaultConfigPath)
+				_ = viper.ReadInConfig()
+				viper.Set("current-context", args[0])
+				if writeErr := viper.WriteConfig(); writeErr != nil {
+					return writeErr
+				}
+				log.Printf("Context `%s` already exists. Switched to existing context.", args[0])
+				return nil
+			}
 			return err
 		}
 
@@ -124,6 +145,17 @@ mesheryctl system context delete [context name]
 	`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			config.TemplateToken,
+			config.TemplateContext,
+		); err != nil {
+			return err
+		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		_ = viper.ReadInConfig()
+
 		if len(args) == 0 {
 			const errMsg = `Please provide a context name to delete:
 mesheryctl system context delete [context name]`
@@ -375,6 +407,17 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 	},
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.MutateConfigIfNeeded(
+			utils.DefaultConfigPath,
+			utils.MesheryFolder,
+			config.TemplateToken,
+			config.TemplateContext,
+		); err != nil {
+			return err
+		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		_ = viper.ReadInConfig()
+
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			utils.Log.Error(ErrUnmarshallConfig(err))
@@ -396,7 +439,7 @@ mesheryctl system context create `
 			utils.Log.Error(err)
 			return nil
 		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil

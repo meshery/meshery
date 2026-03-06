@@ -89,7 +89,8 @@ mesheryctl system start --provider Meshery
 			utils.Log.Error(err)
 			return nil
 		}
-		ctx, err := cfg.GetCurrentContext()
+		ctx, err := cfg.CheckIfCurrentContextIsValid()
+
 		if err != nil {
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
@@ -113,12 +114,21 @@ mesheryctl system start --provider Meshery
 }
 
 func start() error {
+	utils.SetKubeConfig()
+
+	if err := config.MutateConfigIfNeeded(
+		utils.DefaultConfigPath,
+		utils.MesheryFolder,
+		config.TemplateToken,
+		config.TemplateContext,
+	); err != nil {
+		return err
+	}
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 			return ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -133,7 +143,7 @@ func start() error {
 		}
 	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
 	if err != nil {
 		return err
 	}
@@ -294,18 +304,28 @@ func start() error {
 		userResponse := false
 
 		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
-		if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
+		if utils.SilentFlag || len(userPort) > 1 || utils.IsNonInteractiveSession() {
 			userResponse = true
 		} else {
-			// ask user for confirmation
 			userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
 		}
-
 		if userResponse {
-			endpoint.Address = utils.EndpointProtocol + "://localhost"
-			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
+			portStr := userPort[len(userPort)-1]
 
-			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
+			if portStr == "" {
+				portStr = "9081"
+			}
+
+			endpoint.Address = utils.EndpointProtocol + "://localhost"
+
+			ctxName := mctlCfg.GetCurrentContextName()
+			if ctxName == "" {
+				return errors.New("current context not set")
+			}
+
+			currCtx.SetEndpoint(endpoint.Address + ":" + portStr)
+
+			err = config.UpdateContextInConfig(currCtx, ctxName)
 			if err != nil {
 				return err
 			}
@@ -313,7 +333,13 @@ func start() error {
 			endpoint.Address = userPort[0]
 		}
 
-		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
+		portStr := userPort[len(userPort)-1]
+
+		if portStr == "" {
+			portStr = "9081"
+		}
+
+		tempPort, err := strconv.Atoi(portStr)
 		if err != nil {
 			return err
 		}
@@ -478,6 +504,10 @@ func start() error {
 		// switch to default case if the platform specified is not supported
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
+	}
+
+	if utils.IsNonInteractiveSession() {
+		skipBrowserFlag = true
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
