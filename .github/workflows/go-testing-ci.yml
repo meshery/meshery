@@ -132,7 +132,7 @@ jobs:
       - name: Run mesheryctl integration tests
         run: |
           chmod +x ./mesheryctl;
-          ./mesheryctl system start -p ${{ matrix.platform }};
+          ./mesheryctl system start -p ${{ matrix.platform }} -y --skip-browser --skip-update;
           ./mesheryctl system update -y;
           ./mesheryctl system status -y;
           ./mesheryctl system restart -y;

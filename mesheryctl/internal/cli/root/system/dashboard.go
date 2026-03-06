@@ -240,6 +240,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 		}
 
+		if utils.IsNonInteractiveSession() {
+			skipBrowserFlag = true
+		}
+
 		if !skipBrowserFlag {
 			log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())

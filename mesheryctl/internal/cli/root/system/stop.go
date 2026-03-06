@@ -103,9 +103,11 @@ func stop() error {
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context
-	err = mctlCfg.SetCurrentContext(tempContext)
-	if err != nil {
-		return errors.Wrap(err, "failed to retrieve current-context")
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to retrieve current-context")
+		}
 	}
 
 	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()

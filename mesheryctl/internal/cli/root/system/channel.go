@@ -31,6 +31,26 @@ var err error
 
 var showForAllContext bool
 
+func getContextOverride(cmd *cobra.Command) string {
+	if tempContext != "" {
+		return tempContext
+	}
+
+	if cmd == nil {
+		return tempContext
+	}
+
+	if flag := cmd.Flags().Lookup("context"); flag != nil {
+		return flag.Value.String()
+	}
+
+	if flag := cmd.InheritedFlags().Lookup("context"); flag != nil {
+		return flag.Value.String()
+	}
+
+	return tempContext
+}
+
 // PrintChannelAndVersionToStdout to return current release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
@@ -60,7 +80,7 @@ mesheryctl system channel view
 		}
 
 		// Use a local variable to avoid race conditions with the global
-		contextOverride := cmd.Flag("context").Value.String()
+		contextOverride := getContextOverride(cmd)
 		focusedContext := contextOverride
 		if focusedContext == "" {
 			focusedContext = localMctlCfg.CurrentContext
@@ -118,7 +138,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		}
 
 		// Use local variable from flag to avoid race with global
-		contextOverride := cmd.Flag("context").Value.String()
+		contextOverride := getContextOverride(cmd)
 		focusedContext := localMctlCfg.CurrentContext
 		if contextOverride != "" {
 			focusedContext = contextOverride
@@ -217,7 +237,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 
 		// Use local variable from flag to avoid race with global
-		contextOverride := cmd.Flag("context").Value.String()
+		contextOverride := getContextOverride(cmd)
 		focusedContext := localMctlCfg.CurrentContext
 		if contextOverride != "" {
 			focusedContext = contextOverride

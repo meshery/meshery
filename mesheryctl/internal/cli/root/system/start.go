@@ -304,7 +304,7 @@ func start() error {
 		userResponse := false
 
 		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
-		if utils.SilentFlag || len(userPort) > 1 {
+		if utils.SilentFlag || len(userPort) > 1 || utils.IsNonInteractiveSession() {
 			userResponse = true
 		} else {
 			userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
@@ -504,6 +504,10 @@ func start() error {
 		// switch to default case if the platform specified is not supported
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
+	}
+
+	if utils.IsNonInteractiveSession() {
+		skipBrowserFlag = true
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
