@@ -45,7 +45,15 @@
                 "version": ""
               }
             },
-            "patch": {}
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "TaskDefinition is registered within an ECS Cluster for task execution."
+            }
           }
         ],
         "to": [
@@ -66,7 +74,15 @@
                 "version": ""
               }
             },
-            "patch": {}
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "Cluster manages the execution environment for the TaskDefinition."
+            }
           }
         ]
       },
