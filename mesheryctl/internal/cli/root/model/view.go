@@ -42,7 +42,8 @@ mesheryctl model view [model-name] --output-format json
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		urlPath := getModelViewUrlPath(args[0])
+		modelorId := args[0]
+		urlPath := getModelViewUrlPath(modelorId)
 
 		selectedModel := new(model.ModelDefinition)
 
@@ -82,17 +83,14 @@ func getValidOutputFormat() []string {
 
 func getModelViewUrlPath(modelNameOrId string) string {
 	queryParams := url.Values{}
-	var modelsUrlPath string
 
 	if !utils.IsUUID(modelNameOrId) {
-		modelsUrlPath = fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelNameOrId))
-		queryParams.Add("pagesize", "all")
+		queryParams.Add("search", modelNameOrId)
 	} else {
-		modelsUrlPath = modelsApiPath
 		queryParams.Add("id", modelNameOrId)
 	}
 
-	return fmt.Sprintf("%s?%s", modelsUrlPath, queryParams.Encode())
+	return fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
 }
 
 func init() {

@@ -50,7 +50,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid model-name provided when running mesheryctl model view valid-name then the detailed information of the model is displayed",
 			Args:             []string{"view", modelName},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -73,7 +73,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:           "given an invalid format provided for --output-format flag when running mesheryctl model view valid-name --output-format invalid-format then an error message is displayed",
 			Args:           []string{"view", modelName, "--output-format", "invalid-format"},
-			URL:            fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
+			URL:            fmt.Sprintf("/%s?search=%s", modelsApiPath, url.QueryEscape(modelName)),
 			HttpMethod:     "GET",
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
@@ -84,7 +84,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid format provided when running mesheryctl model view valid-name --output-format valid-format then a detailed information of the model is displayed",
 			Args:             []string{"view", modelName, "--output-format", "json"},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/%s?search=%s&page=0&pagesize=10", modelsApiPath, url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
