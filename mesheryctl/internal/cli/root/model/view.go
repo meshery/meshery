@@ -42,15 +42,15 @@ mesheryctl model view [model-name] --output-format json
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelorId := args[0]
-		urlPath := getModelViewUrlPath(modelorId)
+		modelNameorId := args[0]
+		urlPath := getModelViewUrlPath(modelNameorId)
 
 		selectedModel := new(model.ModelDefinition)
 
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
 				UrlPath:        urlPath,
-				ErrNotFoundMsg: fmt.Sprintf("No model(s) found for the given name or ID %s", args[0]),
+				ErrNotFoundMsg: fmt.Sprintf("No model(s) found for the given name or ID %s", modelNameorId),
 			},
 			formatLabel,
 			func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
