@@ -151,7 +151,7 @@ const KubernetesSubscription = ({ setAppState }) => {
       return () => {};
     }
 
-    return subscribeK8sContext(
+    const subscription = subscribeK8sContext(
       (result) => {
         // Initialize activeContexts with all context IDs plus "all"
         const allContexts = [];
@@ -177,6 +177,15 @@ const KubernetesSubscription = ({ setAppState }) => {
         },
       },
     );
+
+    // `requestSubscription` returns a Disposable with a `dispose` method.
+    // Return a cleanup function that calls `dispose` so callers can treat
+    // this as a simple function to unsubscribe.
+    return () => {
+      if (subscription && typeof subscription.dispose === 'function') {
+        subscription.dispose();
+      }
+    };
   };
 
   useEffect(() => {
@@ -615,7 +624,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                           updateExtensionType={updateCurrentExtensionType}
                           canShowNav={canShowNav}
                         />
-                        <StyledAppContent canShowNav={canShowNav}>
+                        <StyledAppContent
+                          canShowNav={canShowNav}
+                          isDrawerCollapsed={isDrawerCollapsed}
+                        >
                           <SnackbarProvider
                             anchorOrigin={{
                               vertical: 'bottom',
@@ -653,6 +665,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                               )}
                               <StyledContentWrapper>
                                 <StyledMainContent
+                                  id="meshery-main"
                                   style={{
                                     padding: extensionType === 'navigator' && '0px',
                                   }}

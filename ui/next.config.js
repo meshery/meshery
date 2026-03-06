@@ -74,6 +74,28 @@ const nextConfig = {
       type: 'asset/source',
     });
 
+    // `import.meta.webpackHot.accept()` into CommonJS MUI files under @mui/material.
+    // Treat all JS files in this package as generic JS modules so `import.meta`
+    // is accepted and dev server can compile.
+    config.module.rules.push({
+      test: /node_modules[\\/]@mui[\\/]material[\\/].*\.js$/,
+      type: 'javascript/auto',
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+
+    // Similarly, billboard.js is bundled as CommonJS and is being transformed
+    // by React Fast Refresh. Treat its dist bundle as generic JS as well so
+    // injected `import.meta.webpackHot.accept()` is accepted.
+    config.module.rules.push({
+      test: /node_modules[\\/]billboard\.js[\\/]dist[\\/].*\.js$/,
+      type: 'javascript/auto',
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+
     return config;
   },
 };

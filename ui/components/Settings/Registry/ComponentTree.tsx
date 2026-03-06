@@ -35,16 +35,16 @@ const ComponentTree = ({
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<DotSquare />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
       multiSelect
-      expanded={expanded}
-      selected={selected}
+      expandedItems={expanded}
+      selectedItems={selected}
     >
       {data.map((component, index) => (
         <StyledTreeItem
           key={index}
-          nodeId={`${component.id}`}
+          itemId={`${component.id}`}
           data-id={`${component.id}`}
           labelText={component.displayName}
           onClick={() => {
