@@ -100,11 +100,8 @@ module Graphql
       def auto_generated_comment
         <<-MD.strip_heredoc
           ---
-          layout: default
-          title: "GraphQL API Reference"
-          permalink: reference/graphql-apis
-          type: Reference
-          abstract: 'Meshery GraphQL API Documentation and Reference'
+          title: GraphQL API Reference
+          description: Meshery GraphQL API Documentation and Reference
           ---
 
           <!---
