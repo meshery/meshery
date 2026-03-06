@@ -1,0 +1,29 @@
+name: 'File Path Build Test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - 'releases/*'
+
+jobs:
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set PR number
+        run: |
+          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
+      - uses: actions/checkout@v4
+        with:
+          path: action
+      - id: test_result
+        uses: ./action
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          mesheryToken: ${{ secrets.MESHERY_TOKEN }}
+          prNumber: ${{ env.PULL_NO }}
+          application_type: "Kubernetes Manifest"
+          filePath: "action/__tests__/manifest-test"
+
