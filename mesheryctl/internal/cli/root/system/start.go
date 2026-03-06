@@ -304,7 +304,7 @@ func start() error {
 		userResponse := false
 
 		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
-		if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
+		if utils.SilentFlag || (len(userPort) > 1 && strings.HasSuffix(userPort[1], "localhost")) {
 			userResponse = true
 		} else {
 			// ask user for confirmation
@@ -312,10 +312,18 @@ func start() error {
 		}
 
 		if userResponse {
-			endpoint.Address = utils.EndpointProtocol + "://localhost"
-			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
+			portStr := userPort[len(userPort)-1]
 
-			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
+			if portStr == "" {
+				portStr = "9081"
+			}
+
+			endpoint.Address = utils.EndpointProtocol + "://localhost"
+			ctxName := mctlCfg.GetCurrentContextName()
+
+			currCtx.SetEndpoint(endpoint.Address + ":" + portStr)
+
+			err = config.UpdateContextInConfig(currCtx, ctxName)
 			if err != nil {
 				return err
 			}
@@ -323,7 +331,13 @@ func start() error {
 			endpoint.Address = userPort[0]
 		}
 
-		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
+		portStr := userPort[len(userPort)-1]
+
+		if portStr == "" {
+			portStr = "9081"
+		}
+
+		tempPort, err := strconv.Atoi(portStr)
 		if err != nil {
 			return err
 		}
