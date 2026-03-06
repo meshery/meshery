@@ -42,7 +42,17 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/component
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]
+
+// Search for components using a query with specified page number (10 components per page)
+mesheryctl component search [query-text] --page [page-number]
+
+// Search for components using a query with specified page size (number of components per page)
+mesheryctl component search [query-text] --pagesize [page-size]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// return mesheryctlflags.ValidateFlags(cmd, componentSearchCmdFlags)
+		return nil
+	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("[search term] isn't specified. Please enter component name to search\n\n%v", usageErrorMessage))
@@ -54,7 +64,6 @@ mesheryctl component search [query-text]
 		searchValue := url.Values{}
 		searchValue.Set("search", componentName)
 
-		// rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
 		searchUrlPath := fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode())
 
 		componentData := display.DisplayDataAsync{
@@ -72,6 +81,6 @@ mesheryctl component search [query-text]
 }
 
 func init() {
-	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.PageSize, "pagesize", "", 10, "(optional) List next set of components with --pagesize (default = 10)")
-	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.Page, "page", "", 1, "(optional) List next set of components with --page (default = 1)")
+	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
 }
