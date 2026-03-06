@@ -11,8 +11,10 @@ import {
   Checkbox,
   FormGroup,
   Typography,
+  LockIcon,
+  PublicIcon,
 } from '@sistent/sistent';
-import { Lock, Public } from '@mui/icons-material';
+// import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
   StyledAvatarContainer,
@@ -149,8 +151,8 @@ const DesignViewListItem = ({
               onChange={(value) => onVisibilityChange(value, selectedItem)}
               enabled={canChangeVisibility}
               options={[
-                [VIEW_VISIBILITY.PUBLIC, Public],
-                [VIEW_VISIBILITY.PRIVATE, Lock],
+                [VIEW_VISIBILITY.PUBLIC, PublicIcon],
+                [VIEW_VISIBILITY.PRIVATE, LockIcon],
               ]}
             />
           </Grid2>

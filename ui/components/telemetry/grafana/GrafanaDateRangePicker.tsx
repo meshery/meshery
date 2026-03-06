@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
 import {
+  CloseIcon as SistentCloseIcon,
+  NoSsr,
   Button,
   TextField,
   MenuItem,
@@ -19,7 +20,6 @@ import Moment from 'react-moment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-import { Close } from '@mui/icons-material';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -41,7 +41,7 @@ const CloseIconButton = styled(IconButton)(() => ({
   color: 'white',
 }));
 
-const CloseIcon = styled(Close)({
+const RotatableCloseIcon = styled(SistentCloseIcon)({
   transform: 'rotate(-90deg)',
   '&:hover': {
     transform: 'rotate(90deg)',
@@ -595,7 +595,7 @@ const GrafanaDateRangePicker = (props) => {
         <DialogTitleBar>
           <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
           <CloseIconButton aria-label="close" onClick={handleClose}>
-            <CloseIcon />
+            <RotatableCloseIcon />
           </CloseIconButton>
         </DialogTitleBar>
         <DialogContent>

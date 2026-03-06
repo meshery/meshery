@@ -24,8 +24,11 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
+  LockIcon,
+  PublicIcon,
+  CloseIcon,
 } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
+// import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
@@ -46,7 +49,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelector } from 'react-redux';
-import { Lock, Public } from '@mui/icons-material';
+// import { Lock, Public } from '@mui/icons-material';
 import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {
@@ -420,8 +423,8 @@ const InfoModal_ = React.memo((props) => {
                       }}
                       enabled={canChangeVisibility}
                       options={[
-                        [VIEW_VISIBILITY.PUBLIC, Public],
-                        [VIEW_VISIBILITY.PRIVATE, Lock],
+                        [VIEW_VISIBILITY.PUBLIC, PublicIcon],
+                        [VIEW_VISIBILITY.PRIVATE, LockIcon],
                       ]}
                     />
                   </Typography>
