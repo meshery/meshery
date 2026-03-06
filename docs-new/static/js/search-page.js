@@ -79,6 +79,11 @@
             $list.append($item);
         });
 
+        if ($list.children().length === 0) {
+            $resultsContainer.html('<p>No results found.</p>');
+            return;
+        }
+
         $resultsContainer.append($list);
     }
 
