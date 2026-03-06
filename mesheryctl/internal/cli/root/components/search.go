@@ -19,14 +19,19 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var usageErrorMessage = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl component search --help' to see detailed help message"
+
+type componentSearchFlags struct {
+	PageSize int `json:"pageSize" validate:"gte=1"`
+	Page     int `json:"page" validate:"gte=1"`
+}
+
+var componentSearchCmdFlags componentSearchFlags
 
 // represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
@@ -47,32 +52,26 @@ mesheryctl component search [query-text]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentName := strings.Join(args, " ")
 		searchValue := url.Values{}
-		searchValue.Add("search", componentName)
-		searchValue.Add("pagesize", "all")
+		searchValue.Set("search", componentName)
 
-		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()))
-		if err != nil {
-			return err
-		}
+		// rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
+		searchUrlPath := fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode())
 
-		header := []string{"ID", "Name", "Model", "Version"}
-
-		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
-
-		dataToDisplay := display.DisplayedData{
-			DataType:         "components",
-			Header:           header,
-			Rows:             rows,
-			Count:            componentsCount,
+		componentData := display.DisplayDataAsync{
+			UrlPath:          searchUrlPath,
+			DataType:         "component",
+			Header:           []string{"ID", "Name", "Model", "Version"},
+			Page:             componentSearchCmdFlags.Page,
+			PageSize:         componentSearchCmdFlags.PageSize,
+			IsPage:           cmd.Flags().Changed("page"),
 			DisplayCountOnly: false,
-			IsPage:           false,
 		}
 
-		err = display.List(dataToDisplay)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 	},
+}
+
+func init() {
+	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.PageSize, "pagesize", "", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	searchComponentsCmd.Flags().IntVarP(&componentSearchCmdFlags.Page, "page", "", 1, "(optional) List next set of components with --page (default = 1)")
 }
