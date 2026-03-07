@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: AWS OpenSearch Service
 subtitle: Collaborative and visual infrastructure as design for AWS OpenSearch Service
-image: /assets/img/integrations/aws-opensearchservice-controller/icons/color/aws-opensearchservice-controller-color.svg
-permalink: extensibility/integrations/aws-opensearchservice-controller
+image: /extensions/models/aws-opensearchservice-controller/icons/color/aws-opensearchservice-controller-color.svg
+aliases: /extensibility/integrations/aws-opensearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-opensearchservice-controller
 description: 
 integrations-category: Observability and Analysis
@@ -45,8 +44,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages OpenSearch"
 howItWorksDetails: "Simplified OpenSearch management and integration with AWS"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

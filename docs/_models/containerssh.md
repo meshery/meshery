@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Containerssh
 subtitle: Collaborative and visual infrastructure as design for Containerssh
-image: /assets/img/integrations/containerssh/icons/color/containerssh-color.svg
-permalink: extensibility/integrations/containerssh
+image: /extensions/models/containerssh/icons/color/containerssh-color.svg
+aliases: /extensibility/integrations/containerssh
 docURL: https://docs.meshery.io/extensibility/integrations/containerssh
 description: 
 integrations-category: Tools
@@ -20,8 +19,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Secure and flexible SSH access to Kubernetes resources"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

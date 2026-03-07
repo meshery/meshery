@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: MinIO Operator
 subtitle: Collaborative and visual infrastructure as design for MinIO Operator
-image: /assets/img/integrations/minio-operator/icons/color/minio-operator-color.svg
-permalink: extensibility/integrations/minio-operator
+image: /extensions/models/minio-operator/icons/color/minio-operator-color.svg
+aliases: /extensibility/integrations/minio-operator
 docURL: https://docs.meshery.io/extensibility/integrations/minio-operator
 description: 
 integrations-category: App Definition and Development
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

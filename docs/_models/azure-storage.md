@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Storage
 subtitle: Collaborative and visual infrastructure as design for Azure Storage
-image: /assets/img/integrations/azure-storage/icons/color/azure-storage-color.svg
-permalink: extensibility/integrations/azure-storage
+image: /extensions/models/azure-storage/icons/color/azure-storage-color.svg
+aliases: /extensibility/integrations/azure-storage
 docURL: https://docs.meshery.io/extensibility/integrations/azure-storage
 description: 
 integrations-category: Cloud Native Storage
@@ -87,8 +86,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

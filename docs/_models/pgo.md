@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: PGO (CrunchyData)
 subtitle: Collaborative and visual infrastructure as design for PGO (CrunchyData)
-image: /assets/img/integrations/pgo/icons/color/pgo-color.svg
-permalink: extensibility/integrations/pgo
+image: /extensions/models/pgo/icons/color/pgo-color.svg
+aliases: /extensibility/integrations/pgo
 docURL: https://docs.meshery.io/extensibility/integrations/pgo
 description: 
 integrations-category: Database
@@ -32,8 +31,5 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

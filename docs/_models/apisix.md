@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: APISIX
 subtitle: Collaborative and visual infrastructure as design for APISIX
-image: /assets/img/integrations/apisix/icons/color/apisix-color.svg
-permalink: extensibility/integrations/apisix
+image: /extensions/models/apisix/icons/color/apisix-color.svg
+aliases: /extensibility/integrations/apisix
 docURL: https://docs.meshery.io/extensibility/integrations/apisix
 description: 
 integrations-category: Provisioning
@@ -48,8 +47,5 @@ featureList: [
 ]
 howItWorks: "Integrates APISIX configurations"
 howItWorksDetails: "Streamlined API gateway management and enhanced traffic routing in Kubernetes"
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

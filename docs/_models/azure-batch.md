@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Azure Batch
 subtitle: Collaborative and visual infrastructure as design for Azure Batch
-image: /assets/img/integrations/azure-batch/icons/color/azure-batch-color.svg
-permalink: extensibility/integrations/azure-batch
+image: /extensions/models/azure-batch/icons/color/azure-batch-color.svg
+aliases: /extensibility/integrations/azure-batch
 docURL: https://docs.meshery.io/extensibility/integrations/azure-batch
 description: 
 integrations-category: Orchestration & Management
@@ -24,8 +23,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---

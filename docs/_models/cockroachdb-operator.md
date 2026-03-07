@@ -1,9 +1,8 @@
 ---
-layout: integration
 title: Cockroachdb Operator
 subtitle: Collaborative and visual infrastructure as design for Cockroachdb Operator
-image: /assets/img/integrations/cockroachdb-operator/icons/color/cockroachdb-operator-color.svg
-permalink: extensibility/integrations/cockroachdb-operator
+image: /extensions/models/cockroachdb-operator/icons/color/cockroachdb-operator-color.svg
+aliases: /extensibility/integrations/cockroachdb-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cockroachdb-operator
 description: 
 integrations-category: Database
@@ -25,8 +24,5 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-language: en
-list: include
-type: extensibility
-category: integrations
+categories: [integrations]
 ---
