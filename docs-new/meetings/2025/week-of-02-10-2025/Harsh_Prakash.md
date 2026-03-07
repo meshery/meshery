@@ -1,0 +1,4 @@
+- Name: Harsh Prakash
+- Github: https://github.com/GARY121github
+- LinkedIn: https://www.linkedin.com/in/harsh-prakash-096b78227
+- Twitter: https://x.com/HARSH_GARY

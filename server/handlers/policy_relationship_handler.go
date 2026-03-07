@@ -44,6 +44,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 		return alias, false
 	}
 
+	if relationshipDeclaration.Selectors == nil {
+		return alias, false
+	}
 	selectors := *relationshipDeclaration.Selectors
 
 	if len(selectors) == 0 {
@@ -66,6 +69,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 	mutatedRefs := *from.Patch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
+		return alias, false
+	}
+
+	if to.Id == nil || from.Id == nil {
 		return alias, false
 	}
 
