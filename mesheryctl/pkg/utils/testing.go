@@ -706,8 +706,9 @@ func RunMesheryctlMultipleURLsListTests(t *testing.T, updateGoldenFile *bool, cm
 			err := cmd.Execute()
 
 			// Close write end before reading
-			w.Close()
-
+			if err := w.Close(); err != nil {
+				t.Logf("error closing writer: %v", err)
+			}
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
