@@ -2,12 +2,12 @@
 
 ## Supported Versions
 
-We support the current minor version and its patch releases. The current minor version is v0.8.
+We support the current minor version and its patch releases.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.8.x   | :white_check_mark: |
-| 0.7.x   | :x:                |
+| Version        | Supported          |
+| -------------- | ------------------ |
+| Latest Minor   | :white_check_mark: |
+| Older Versions | :x:                |
 
 ## Reporting a Vulnerability
 
