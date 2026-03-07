@@ -1,0 +1,29 @@
+<svg version="1.1"
+	 id="Layer_1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)" sodipodi:docname="Apache_Solr_logo.svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 67.2 67"
+	 style="enable-background:new 0 0 67.2 67;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#D93321;}
+	.st1{clip-path:url(#SVGID_00000135680719921879176920000003571920552419328146_);}
+</style>
+<sodipodi:namedview  bordercolor="#666666" borderopacity="1" gridtolerance="10" guidetolerance="10" inkscape:current-layer="svg2070" inkscape:cx="174.20232" inkscape:cy="114.24045" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="1014" inkscape:window-maximized="1" inkscape:window-width="1920" inkscape:window-x="0" inkscape:window-y="36" inkscape:zoom="1.6614858" objecttolerance="10" pagecolor="#ffffff" showgrid="false">
+	</sodipodi:namedview>
+<path class="st0" d="M57.8,10.6l-33,35.7l41.5-19.1c-1.2-6.3-4.2-12-8.5-16.5"/>
+<path class="st0" d="M32.8,0c-4.6,0-8.9,0.9-12.9,2.6l-4.4,37.3L37.6,0.4C36,0.1,34.4,0,32.8,0"/>
+<g>
+	<defs>
+		<rect id="SVGID_1_" x="26.8" y="29" width="40" height="23"/>
+	</defs>
+	<clipPath id="SVGID_00000114770980032977438500000010248988210512668296_">
+		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+	</clipPath>
+	<g style="clip-path:url(#SVGID_00000114770980032977438500000010248988210512668296_);">
+		<path class="st0" d="M66.8,29.2l-39.3,22l36.9-4.4c1.8-4.1,2.7-8.5,2.7-13.2C67.2,32.1,67,30.7,66.8,29.2"/>
+	</g>
+</g>
+<path class="st0" d="M51.8,61.4c4.4-3,8-7,10.6-11.6l-34.6,6.9L51.8,61.4z"/>
+<path class="st0" d="M39.8,0.7L20.6,42.4l35.7-33C51.9,5.1,46.2,2,39.9,0.7"/>
+<path class="st0" d="M35.8,67c3.7-0.3,7.3-1.2,10.5-2.6l-19.4-2.3L35.8,67z"/>
+<path class="st0" d="M2.8,19.8c-1.5,3.3-2.5,7-2.8,10.8l5.2,9.3L2.8,19.8z"/>
+<path class="st0" d="M17.8,4C13.1,6.5,9,10.1,6,14.6L10.9,39L17.8,4z"/>
+</svg>

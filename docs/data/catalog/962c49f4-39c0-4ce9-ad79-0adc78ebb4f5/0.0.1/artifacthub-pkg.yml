@@ -1,0 +1,28 @@
+version: 0.0.1
+name: dapr-oauth-authorization-to-external-service
+displayName: Dapr OAuth Authorization to External Service
+createdAt: "2024-05-07T09:37:09Z"
+description: |+
+    This design walks you through the steps of setting up the OAuth middleware to enable a service to interact with external services requiring authentication. This design seperates the authentication/authorization concerns from the application.
+
+    checkout this https://github.com/dapr/samples/tree/master/middleware-oauth-microsoftazure for more inoformation and try out in your own environment.
+
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/962c49f4-39c0-4ce9-ad79-0adc78ebb4f5/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Certainly! Here's how you would replace the placeholders with actual values and apply the configuration to your Kubernetes cluster:\n\n1. Replace `\"YOUR_APPLICATION_ID\"`, `\"YOUR_CLIENT_SECRET\"`, and `\"YOUR_TENANT_ID\"` with your actual values in the `msgraphsp` component metadata:\n\n```yaml\n  metadata:\n    # OAuth2 ClientID, for Microsoft Identity Platform it is the AAD Application ID\n  - name: clientId\n    value: \"your_actual_application_id\"\n    # OAuth2 Client Secret\n  - name: clientSecret\n    value: \"your_actual_client_secret\"\n    # Application Scope for Microsoft Graph API (vs. User Scope)\n  - name: scopes\n    value: \"https://graph.microsoft.com/.default\"\n    # Token URL for Microsoft Identity Platform, TenantID is the Tenant (also sometimes called Directory) ID of the AAD\n  - name: tokenURL\n    value: \"https://login.microsoftonline.com/your_actual_tenant_id/oauth2/v2.0/token\"\n```\n\n2. Apply the modified YAML configuration to your Kubernetes cluster using `kubectl apply -f your_file.yaml`.\n\nEnsure you've replaced `\"your_actual_application_id\"`, `\"your_actual_client_secret\"`, and `\"your_actual_tenant_id\"` with the appropriate values corresponding to your Microsoft Graph application and Azure Active Directory configuration before applying the configuration to your cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/962c49f4-39c0-4ce9-ad79-0adc78ebb4f5-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/962c49f4-39c0-4ce9-ad79-0adc78ebb4f5-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

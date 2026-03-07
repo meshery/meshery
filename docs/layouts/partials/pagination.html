@@ -1,0 +1,79 @@
+{{ $nav := site.Data.toc }}
+{{ $pages := slice }}
+
+{{ range $nav }}
+
+  {{/* ADD TOP LEVEL PAGE */}}
+  {{ if .url }}
+    {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+  {{ end }}
+
+  {{ with .links }}
+    {{ range . }}
+
+      {{ if .url }}
+        {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+      {{ end }}
+
+      {{ with .children }}
+        {{ range . }}
+
+          {{ if .url }}
+            {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+          {{ end }}
+
+          {{ with .grandchildren }}
+            {{ range . }}
+              {{ if .url }}
+                {{ $pages = $pages | append (dict "title" .title "url" .url) }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+
+        {{ end }}
+      {{ end }}
+
+    {{ end }}
+  {{ end }}
+
+{{ end }}
+
+{{ $index := -1 }}
+{{ $current := trim .RelPermalink "/" }} {{/* Get current page path */}}
+
+{{ range $i, $p := $pages }}
+  {{ $normalizedURL := trim ($p.url | relURL) "/" }}
+  {{ if eq $normalizedURL $current }}
+    {{ $index = $i }}
+  {{ end }}
+{{ end }}
+
+{{ if ge $index 0 }}
+
+<div class="toc-pagination-wrapper">
+
+  {{ if gt $index 0 }}
+    {{ $prev := index $pages (sub $index 1) }}
+    <a class="toc-card prev" href="{{ $prev.url | relURL }}">   
+      <div class="toc-label">Previous</div>
+      <div class="toc-title">
+        <span class="arrow"><i class="fa-solid fa-chevron-left"></i></span>
+        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.title) }}
+      </div>
+    </a>
+  {{ end }}
+
+  {{ if lt $index (sub (len $pages) 1) }}
+    {{ $next := index $pages (add $index 1) }}
+    <a class="toc-card next" href="{{ $next.url | relURL }}">
+      <div class="toc-label">Next</div>
+      <div class="toc-title">
+        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}
+        <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </div>
+    </a>
+  {{ end }}
+
+</div>
+
+{{ end }}

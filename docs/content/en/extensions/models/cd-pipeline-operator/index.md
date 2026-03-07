@@ -1,0 +1,32 @@
+---
+title: KubeRocketCI Pipeline Operator
+subtitle: Collaborative and visual infrastructure as design for KubeRocketCI Pipeline Operator
+image: /extensions/models/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
+docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
+description: 
+integrations-category: App Definition and Development
+integrations-subcategory: Continuous Integration & Delivery
+registrant: Artifact Hub
+components: 
+- name: cd-pipeline
+  colorIcon: /extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
+  whiteIcon: /extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
+  description: 
+- name: stage
+  colorIcon: /extensions/models/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
+  whiteIcon: /extensions/models/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
+  description: 
+components-count: 2
+relationships: 
+relationship-count: 0
+featureList: [
+  "Provides a pre-defined set of CI/CD patterns and tools.",
+  "Allows shortening the time that is passed before an active development.",
+  "Security covers authentication, authorization, and SSO for platform services."
+]
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+categories: [integrations]
+aliases:
+- /extensibility/integrations/cd-pipeline-operator
+---

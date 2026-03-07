@@ -1,0 +1,25 @@
+version: 0.0.8
+name: kibana-helm-design-fixed
+displayName: kibana-helm-design-fixed
+createdAt: "2025-09-30T17:14:26Z"
+description: |
+    Kibana Helm chart imported as a Meshery Design using mesheryctl. Includes core Kibana Deployment and Service rendered from the charts default values and validated on Kanvas.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3e027027-05dc-4c10-9bd0-287cb34c2b09/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "• Requires an accessible Elasticsearch endpoint at runtime (this design does not deploy Elasticsearch).\n• Images/versions are taken from chart defaults adjust for your environment.\n• Security/auth not configured (no TLS/SASL for Kafka; no X-Pack for Kibana/Elasticsearch).\n• Intended as a minimal, single-namespace demo; production hardening and scaling are left to the user.\n• Optional resources (Ingress, HPA, extra ConfigMaps) are disabled by default; enable via Helm values and re-import if needed.\n• Service/ports/hostnames should be updated per your cluster (e.g., service type ClusterIP/NodePort/LoadBalancer).\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 985074f5-27a0-406c-b83a-7f247ba77746
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3e027027-05dc-4c10-9bd0-287cb34c2b09-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3e027027-05dc-4c10-9bd0-287cb34c2b09-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

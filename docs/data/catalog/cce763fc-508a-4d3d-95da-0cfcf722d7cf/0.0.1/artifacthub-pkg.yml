@@ -1,0 +1,24 @@
+version: 0.0.1
+name: instana-agent-for-kubernetes
+displayName: instana-agent-for-Kubernetes
+createdAt: "2024-06-12T06:55:37Z"
+description: "instana agent is built for microservices that enables IT Ops to build applications faster and deliver higher quality services by automating monitoring, tracing and root cause analysis.\nIt provides automated observability with AI and the ability to democratize observability, making it accessible to anyone across DevOps, SRE, platform engineering, ITOps and development. \n\nInstana gives you 1-second granularity, which helps you quickly detect problems or transactions \nAdditionally, you get 100% traces that allow you to fix issues easily \nInstana contextualizes data from all sources, including OpenTelemetry, to provide the insights needed to keep up with the pace of change"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "for Caveats And Considerations consider checking this docs https://www.ibm.com/products/instana\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cce763fc-508a-4d3d-95da-0cfcf722d7cf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cce763fc-508a-4d3d-95da-0cfcf722d7cf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
