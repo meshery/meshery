@@ -1499,8 +1499,6 @@ github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
 github.com/meshery/meshkit v0.8.68 h1:RjSeU4Z6SmuE/QSmVCpZKifgKqwc2aFiLvRuI0RuPMo=
 github.com/meshery/meshkit v0.8.68/go.mod h1:9XYjjk6dH4o8G4CNcFs2oAMqyi+S5eMb/phQq8yAk2U=
-github.com/meshery/meshkit v0.8.69-0.20260306122830-d1a255593d87 h1:oaoYbpV82j9tzeWy1azgbjfBMlYVARNXaPSbgVwwMWE=
-github.com/meshery/meshkit v0.8.69-0.20260306122830-d1a255593d87/go.mod h1:9XYjjk6dH4o8G4CNcFs2oAMqyi+S5eMb/phQq8yAk2U=
 github.com/meshery/meshsync v0.8.26 h1:GM5jzECZMCQGx3BMNo9cahcAfD/TXYue/DPWFGpjnho=
 github.com/meshery/meshsync v0.8.26/go.mod h1:RNQnmmg/hq/TaGbu6hIVAPCnjB4dIMm9Nmi729OgmFM=
 github.com/meshery/schemas v0.8.116 h1:0h1j6SRkvgwdi4TkqV/E7kvnwYxuUhuqgZPybNF3lPo=
