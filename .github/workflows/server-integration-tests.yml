@@ -34,6 +34,9 @@ jobs:
       - name: file system info 00
         run: df -h
 
+      - name: Fetch all history for all tags and branches
+        run: git fetch --unshallow --tags || git fetch --tags
+
         # TODO  think about if we could reuse image build from ui-and-server build workflow?
       - name: Build meshery image
         run: make docker-build

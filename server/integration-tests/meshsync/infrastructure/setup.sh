@@ -144,6 +144,8 @@ setup_cluster() {
   echo ""
 
   echo "Waiting for operator to be available..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE describe deployment meshery-operator || true
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get pods -o wide || true
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout="$MESHERY_OPERATOR_WAIT_TIMEOUT"
   echo ""
   
