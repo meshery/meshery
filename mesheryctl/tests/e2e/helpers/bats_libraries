@@ -1,0 +1,5 @@
+_load_bats_libraries() {
+  # Load the support and assert libraries relative to the helpers path
+  load "$E2E_HELPERS_PATH/libs/bats-support/load.bash"
+  load "$E2E_HELPERS_PATH/libs/bats-assert/load.bash"
+}

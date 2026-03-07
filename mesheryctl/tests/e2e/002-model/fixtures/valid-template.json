@@ -1,0 +1,5 @@
+{
+  "modelDisplayName": "{{.modelDisplayName}}",
+  "component": "{{.component}}",
+  "kind": "{{.kind}}"
+}
