@@ -1048,6 +1048,8 @@ const Navigator_ = () => {
                   '&:hover': {
                     opacity: 1,
                     background: 'transparent',
+                    height: '35px',
+                    width: '35px',
                   },
                   '&:focus': {
                     opacity: 1,
