@@ -95,7 +95,6 @@ func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, k8sClusterID
 func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getPerfResult(ctx, provider, id)
-	// panic(fmt.Errorf("not implemented"))
 }
 
 // FetchResults is the resolver for the fetchResults field.
