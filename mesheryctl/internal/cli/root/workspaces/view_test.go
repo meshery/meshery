@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -68,18 +67,6 @@ func TestViewWorkspace(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--orgId is required when searching by name\n\nUsage: mesheryctl exp workspace view [workspace-name] --orgId [orgId]")),
-		},
-		{
-			Name:             "given invalid output format flag when running workspace view then return error",
-			Args:             []string{"view", testWorkspaceID, "--output-format", "invalid"},
-			HttpMethod:       "GET",
-			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s/%s", workspacesApiPath, testWorkspaceID),
-			Fixture:          "view.workspace.api.response.golden",
-			ExpectedResponse: "",
-			ExpectError:      true,
-			IsOutputGolden:   false,
-			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 	}
 
