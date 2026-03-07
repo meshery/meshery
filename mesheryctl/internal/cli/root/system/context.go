@@ -370,10 +370,6 @@ mesheryctl system context switch sample
 	`,
 	Annotations: linkDocContextSwitch,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system context switch [context name]
-Example: mesheryctl system context switch k8s-sample
-Description: Configures mesheryctl to actively use one one context vs. the another context`
-
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n", errArgMsg))
 		}
