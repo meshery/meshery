@@ -1,0 +1,99 @@
+name: Meshery UI and Server
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  build-backend:
+    uses: ./.github/workflows/build-meshery-server.yml
+   
+  build-ui:
+    uses: ./.github/workflows/build-meshery-ui.yml
+
+  tests-ui-e2e:
+    needs: [build-backend, build-ui]
+    name: UI end-to-end tests
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.13.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.25"
+          cache-dependency-path: "**/*.sum"
+          cache: true
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Download Build Artifacts
+        uses: ./.github/actions/download-artifacts
+        with:
+            backend-artifact: ${{ needs.build-backend.outputs.backend-artifact }}
+            ui-artifact: ${{ needs.build-ui.outputs.ui-artifact }}
+            provider-ui-artifact: ${{ needs.build-ui.outputs.provider-ui-artifact }}
+        
+      - name: Run Meshery UI and Server
+        run: |
+          chmod +x ./main
+          make server-binary &
+          sleep 90
+
+      - name: Install Playwright
+        run: make ui-setup-ci
+      - name: Install Playwright Browsers
+        run: make ui-test-setup
+      - name: Run Playwright End-to-End Tests
+        env:
+          MESHERY_SERVER_URL: "http://localhost:9081"
+          REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
+          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+        run: make ui-test-e2e-ci
+      
+      - name: Upload Test Artifacts
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/upload-test-artifacts
+
+  # validate graphQL schema
+  graphql_validate:
+    name: Validate GraphQL schema
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check if schema was modified
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            modified:
+              - added|modified: 'server/internal/graphql/schema/schema.graphql'
+      - name: Set up Ruby
+        if: steps.filter.outputs.modified == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.6
+          bundler-cache: true
+      - name: graphql-docs
+        if: steps.filter.outputs.modified == 'true'
+        run: |
+          cd docs
+          bundle install
+          bundle exec rake graphql:compile_docs
