@@ -1,4 +1,4 @@
-name: "Download Build Artifacts"
+name: "Download Meshery Build Artifacts"
 description: "Download backend, UI, and provider UI artifacts"
 
 inputs:
