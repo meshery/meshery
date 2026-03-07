@@ -28,7 +28,7 @@ import (
 )
 
 var linkDocReset = map[string]string{
-	"link":    "![reset-usage](/assets/img/mesheryctl/reset.png)",
+	"link":    "![reset-usage](/reference/images/reset.png)",
 	"caption": "Usage of mesheryctl system reset",
 }
 

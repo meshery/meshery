@@ -34,13 +34,8 @@ import (
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
 const markdownTemplateCommand = `---
-layout: default
 title: %s
-permalink: %s
-redirect_from: %s/
-type: reference
-display-title: "false"
-language: en
+display_title: false
 command: %s
 subcommand: %s
 ---
@@ -57,52 +52,75 @@ type cmdDoc struct {
 
 // prepender is a function to prepend the frontmatter to the markdown file
 func prepender(filename string) string {
-	file := strings.Split(filename, ".md")
-	title := filepath.Base(file[0])
-	words := strings.Split(title, "-")
-	if len(words) <= 1 {
-		url := "reference/" + words[0] + "/main"
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0], "nil")
+	idx := strings.Index(filename, "mesheryctl")
+	if idx == -1 {
+		base := strings.TrimSuffix(filepath.Base(filename), ".md")
+		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil")
 	}
-	if len(words) >= 3 {
-		url := "reference/" + words[0] + "/" + strings.Join(words[1:], "/")
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
-	}
-	url := "reference/" + words[0] + "/" + words[1]
-	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], "nil")
-}
 
-// subLinkHandler is a function to generate the link for the subcommands. This is used for the "see also" section
-func subLinkHandler(name string) string {
-	base := strings.TrimSuffix(name, path.Ext(name))
-	words := strings.Split(base, "-")
-	var url string
-	if len(words) > 1 {
-		url = "/reference/mesheryctl/" + strings.Join(words, "/")
-	} else {
-		url = "/reference/mesheryctl/main"
+	relPath := strings.TrimSuffix(filename[idx:], ".md")
+	parts := strings.Split(relPath, string(os.PathSeparator))
+
+	if len(parts) == 0 {
+		return ""
 	}
-	return url
+
+	if parts[len(parts)-1] == "_index" {
+		parts = parts[:len(parts)-1]
+	}
+
+	var command, subcommand string
+
+	if len(parts) == 1 {
+		command = parts[0]
+		subcommand = "nil"
+	} else if len(parts) == 2 {
+		command = parts[1] // Set the first part as the command
+		subcommand = "nil" // Root command has no subcommand
+	} else {
+		command = parts[1]    // Set the first part as the command
+		subcommand = parts[2] // Set the second part as the subcommand
+	}
+
+	title := strings.Join(parts, "-")
+
+	return fmt.Sprintf(markdownTemplateCommand,
+		title,
+		command,
+		subcommand,
+	)
 }
 
 func linkHandler(name string) string {
-	base := strings.TrimSuffix(name, path.Ext(name))
-	words := strings.Split(base, "-")
-	if len(words) <= 1 {
-		return "/main"
+	// Normalize path
+	name = filepath.ToSlash(name)
+
+	// Find the reference root
+	idx := strings.Index(name, "reference/mesheryctl")
+	if idx == -1 {
+		return ""
 	}
-	if len(words) == 3 {
-		return strings.ToLower(words[2])
+
+	// Trim everything before reference/mesheryctl
+	trimmed := name[idx:]
+
+	// Remove file extension
+	trimmed = strings.TrimSuffix(trimmed, path.Ext(trimmed))
+
+	// Remove trailing _index
+	trimmed = strings.TrimSuffix(trimmed, "/_index")
+
+	// Ensure leading slash
+	if !strings.HasPrefix(trimmed, "/") {
+		trimmed = "/" + trimmed
 	}
-	if len(words) == 4 {
-		return strings.ToLower(words[2]) + "/" + strings.ToLower(words[3])
-	}
-	return strings.ToLower(words[1])
+
+	return trimmed
 }
 
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
-	markDownPath := "../../docs/pages/reference/mesheryctl/" // Path for docs
+	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
@@ -231,16 +249,6 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 					cmd.DisableAutoGenTag = c.DisableAutoGenTag
 				}
 			})
-			if cmd.HasAvailableSubCommands() {
-				for _, subCmd := range cmd.Commands() {
-					if subCmd.IsAvailableCommand() {
-						subCmdPathParts := strings.Split(subCmd.CommandPath(), " ")
-						subCmdString := strings.Join(subCmdPathParts[1:], "-")
-						fmt.Fprintf(buf, "* [%s](%s)\n", subCmd.CommandPath(), subLinkHandler(subCmdString))
-					}
-				}
-				buf.WriteString("\n")
-			}
 		}
 		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
 		buf.WriteString("\n")
@@ -278,8 +286,41 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 		}
 	}
 
-	basename := strings.ReplaceAll(cmd.CommandPath(), " ", "-") + ".md"
-	filename := filepath.Join(dir, basename)
+	pathParts := strings.Split(cmd.CommandPath(), " ")
+	if len(pathParts) > 0 && pathParts[0] == "mesheryctl" {
+		pathParts = pathParts[1:]
+	}
+
+	var currentDir string
+	if cmd.HasAvailableSubCommands() {
+		currentDir = filepath.Join(dir, filepath.Join(pathParts...))
+		err := os.MkdirAll(currentDir, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	} else {
+		currentDir = dir
+	}
+
+	var filename string
+	if cmd.HasAvailableSubCommands() {
+		filename = filepath.Join(currentDir, "_index.md")
+	} else {
+		if len(pathParts) == 0 {
+			filename = filepath.Join(dir, "_index.md")
+		} else if len(pathParts) == 1 {
+			filename = filepath.Join(dir, pathParts[0]+".md")
+		} else {
+			parentDirs := filepath.Join(pathParts[:len(pathParts)-1]...)
+			filename = filepath.Join(dir, parentDirs, pathParts[len(pathParts)-1]+".md")
+		}
+	}
+
+	// Skip overwriting the root _index.md file
+	if filename == filepath.Join(dir, "_index.md") {
+		fmt.Println("Skipping root _index.md file: ", filename)
+		return nil
+	}
 
 	manuallyAddedContent, _ := getManuallyAddedContentMap(filename)
 

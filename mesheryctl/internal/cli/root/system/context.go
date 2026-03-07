@@ -55,7 +55,7 @@ type contextWithLocation struct {
 }
 
 var linkDocContextCreate = map[string]string{
-	"link":    "![context-create-usage](/assets/img/mesheryctl/newcontext.png)",
+	"link":    "![context-create-usage](/reference/images/newcontext.png)",
 	"caption": "Usage of mesheryctl context create",
 }
 
@@ -250,7 +250,7 @@ mesheryctl system context list
 }
 
 var linkDocContextView = map[string]string{
-	"link":    "![context-view-usage](/assets/img/mesheryctl/context-view.png)",
+	"link":    "![context-view-usage](/reference/images/context-view.png)",
 	"caption": "Usage of mesheryctl context view",
 }
 
@@ -349,7 +349,7 @@ mesheryctl system context view --all
 }
 
 var linkDocContextSwitch = map[string]string{
-	"link":    "![context-switch-usage](/assets/img/mesheryctl/contextswitch.png)",
+	"link":    "![context-switch-usage](/reference/images/contextswitch.png)",
 	"caption": "Usage of mesheryctl context switch",
 }
 

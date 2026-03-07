@@ -1,31 +1,39 @@
 ---
-title: mesheryctl-environment-view
+title: mesheryctl-model-delete
 display_title: false
-command: environment
-subcommand: view
+command: model
+subcommand: delete
 ---
 
-# mesheryctl environment view
+# mesheryctl model delete
 
-View registered environmnents
+Delete a model
 
 ## Synopsis
 
-View details of an environment registered in Meshery Server for a specific organization
+Delete a model by ID or Name
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view [flags]
+mesheryctl model delete [model-id | model-name] [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View details of a specific environment
+Delete a model by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgID [orgID]
+mesheryctl model delete [model-id]
+
+</div>
+</pre> 
+
+Delete a model by name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model delete [model-name]
 
 </div>
 </pre> 
@@ -34,10 +42,7 @@ mesheryctl environment view --orgID [orgID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for view
-      --orgID string           Organization ID
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
-  -s, --save                   (optional) save output as a JSON/YAML file
+  -h, --help   help for delete
 
 </div>
 </pre>

@@ -24,68 +24,57 @@ import (
 )
 
 func TestPrepender(t *testing.T) {
-	t.Run("Simple file", func(t *testing.T) {
+
+	t.Run("Root mesheryctl index", func(t *testing.T) {
 		expected := `---
-layout: default
-title: test
-permalink: reference/test/main
-redirect_from: reference/test/main/
-type: reference
-display-title: "false"
-language: en
-command: test
+title: mesheryctl
+display_title: false
+command: mesheryctl
 subcommand: nil
 ---
 
 `
-		assert.Equal(t, expected, prepender("test.md"))
+		filename := "docs/content/en/reference/mesheryctl/_index.md"
+		assert.Equal(t, expected, prepender(filename))
 	})
 
-	t.Run("File with subcommands", func(t *testing.T) {
+	t.Run("First-level command (_index.md)", func(t *testing.T) {
 		expected := `---
-layout: default
-title: test-sub
-permalink: reference/test/sub
-redirect_from: reference/test/sub/
-type: reference
-display-title: "false"
-language: en
-command: sub
+title: mesheryctl-adapter
+display_title: false
+command: adapter
 subcommand: nil
 ---
 
 `
-		assert.Equal(t, expected, prepender("test-sub.md"))
+		filename := "docs/content/en/reference/mesheryctl/adapter/_index.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
 
-		expected = `---
-layout: default
-title: test-sub-sub
-permalink: reference/test/sub/sub
-redirect_from: reference/test/sub/sub/
-type: reference
-display-title: "false"
-language: en
-command: sub
-subcommand: sub
+	t.Run("Leaf command (single subcommand)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-adapter-deploy
+display_title: false
+command: adapter
+subcommand: deploy
 ---
 
 `
-		assert.Equal(t, expected, prepender("test-sub-sub.md"))
+		filename := "docs/content/en/reference/mesheryctl/adapter/deploy.md"
+		assert.Equal(t, expected, prepender(filename))
+	})
 
-		expected = `---
-layout: default
-title: test-sub-sub-sub
-permalink: reference/test/sub/sub/sub
-redirect_from: reference/test/sub/sub/sub/
-type: reference
-display-title: "false"
-language: en
-command: sub
-subcommand: sub
+	t.Run("Nested command (two levels deep)", func(t *testing.T) {
+		expected := `---
+title: mesheryctl-exp-relationship-generate
+display_title: false
+command: exp
+subcommand: relationship
 ---
 
 `
-		assert.Equal(t, expected, prepender("test-sub-sub-sub.md"))
+		filename := "docs/content/en/reference/mesheryctl/exp/relationship/generate.md"
+		assert.Equal(t, expected, prepender(filename))
 	})
 }
 
@@ -94,18 +83,33 @@ func TestDoc(t *testing.T) {
 		Use: "test",
 	}
 
-	t.Run("Test linkHandler function", func(t *testing.T) {
-		assert.Equal(t, "/main", linkHandler("test.md"))
-		assert.Equal(t, "sub", linkHandler("test-sub-sub.md"))
-		assert.Equal(t, "sub/sub", linkHandler("test-sub-sub-sub.md"))
-		assert.Equal(t, "sub", linkHandler("test-sub-sub-sub-sub.md"))
+	t.Run("Test linkHandler function (directory structure)", func(t *testing.T) {
+		assert.Equal(t,
+			"/reference/mesheryctl",
+			linkHandler("docs/content/en/reference/mesheryctl/_index.md"),
+		)
+
+		assert.Equal(t,
+			"/reference/mesheryctl/adapter",
+			linkHandler("docs/content/en/reference/mesheryctl/adapter/_index.md"),
+		)
+
+		assert.Equal(t,
+			"/reference/mesheryctl/adapter/deploy",
+			linkHandler("docs/content/en/reference/mesheryctl/adapter/deploy.md"),
+		)
+
+		assert.Equal(t,
+			"/reference/mesheryctl/exp/relationship/generate",
+			linkHandler("docs/content/en/reference/mesheryctl/exp/relationship/generate.md"),
+		)
 	})
 
 	t.Run("Test GenMarkdownTreeCustom function", func(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
-		markDownPath := "../../docs/pages/reference/mesheryctl/"
+		markDownPath := "../../docs/content/en/reference/mesheryctl/"
 		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
 		assert.NoError(t, err)
 	})
@@ -165,7 +169,7 @@ func TestDoc(t *testing.T) {
 		cmd.AddCommand(&cobra.Command{
 			Use: "sub",
 		})
-		yamlPath := "../../docs/pages/reference/mesheryctl/"
+		yamlPath := "../../docs/content/en/reference/mesheryctl/"
 		err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
 		assert.NoError(t, err)
 	})

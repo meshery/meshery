@@ -62,7 +62,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 ## Screenshots
 
 Usage of mesheryctl design onboard
-![pattern-onboard-usage](/reference/mesheryctl/images/pattern-onboard.png)
+![pattern-onboard-usage](/reference/images/pattern-onboard.png)
 
 ## See Also
 
