@@ -67,7 +67,7 @@ var (
 	ErrUploadFileWithParamsCode    = "mesheryctl-1185"
 	ErrCommandContextMissingCode   = "mesheryctl-1201"
 	ErrPromptCancelledCode         = "mesheryctl-1202"
-	ErrInternalServerErrorCode     = "replace_me"
+	ErrInternalServerErrorCode     = "mesheryctl-1203"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
