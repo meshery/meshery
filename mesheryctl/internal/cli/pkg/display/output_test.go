@@ -78,7 +78,9 @@ func Test_Given_JSONOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Cr
 	assert.NoError(t, err)
 	tmpFilePath := tmpFile.Name()
 	_ = tmpFile.Close()
-	defer os.Remove(tmpFilePath)
+	defer func() {
+		_ = os.Remove(tmpFilePath)
+	}()
 
 	jsonFormatter := JSONOutputFormatter[testStruct]{
 		Data: data,
@@ -126,7 +128,9 @@ func Test_Given_YAMLOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Cr
 	assert.NoError(t, err)
 	tmpFilePath := tmpFile.Name()
 	_ = tmpFile.Close()
-	defer os.Remove(tmpFilePath)
+	defer func() {
+		_ = os.Remove(tmpFilePath)
+	}()
 
 	yamlFormatter := YAMLOutputFormatter[testStruct]{
 		Data: data,
@@ -160,7 +164,9 @@ func TestYAMLOutputFormatterSaver_Save_WriteError(t *testing.T) {
 	// Use a directory path to force a write error (os.WriteFile will error on writing to directory)
 	tmpDir, err := os.MkdirTemp("", "meshery_output_dir_*")
 	assert.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		_ = os.RemoveAll(tmpDir)
+	}()
 
 	yamlFormatter := YAMLOutputFormatter[testStruct]{
 		Data: data,
