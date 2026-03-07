@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -123,7 +122,7 @@ mesheryctl system status --verbose
 			}
 
 			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+				utils.Log.Info(outputString)
 			}
 
 			hcOptions := &HealthCheckOptions{
@@ -206,7 +205,7 @@ mesheryctl system status --verbose
 			// Print the data to a table for readability
 			utils.PrintToTable(columnNames, data, nil)
 
-			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
+			utils.Log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}
 		return nil
 	},

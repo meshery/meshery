@@ -22,7 +22,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -63,10 +62,10 @@ mesheryctl system provider view
 
 		if showProviderForAllContext {
 			for k, v := range mctlCfg.Contexts {
-				log.Println(PrintProviderToStdout(v, k))
-				log.Println()
+				utils.Log.Info(PrintProviderToStdout(v, k))
+				utils.Log.Info()
 			}
-			log.Printf("Current Context: %v", focusedContext)
+			utils.Log.Infof("Current Context: %v", focusedContext)
 			return nil
 		}
 
@@ -81,8 +80,8 @@ mesheryctl system provider view
 			utils.Log.Error(ErrGetCurrentContext(err))
 			return nil
 		}
-		log.Print(PrintProviderToStdout(*currCtx, focusedContext))
-		log.Println()
+		utils.Log.Info(PrintProviderToStdout(*currCtx, focusedContext))
+		utils.Log.Info()
 		return nil
 	},
 }
@@ -125,14 +124,14 @@ mesheryctl system provider list
 			return nil
 		}
 
-		log.Printf("Current provider: %s\n", currCtx.Provider)
+		utils.Log.Infof("Current provider: %s\n", currCtx.Provider)
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
+			utils.Log.Fatal(errors.New("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers"))
 		}
 
-		log.Print("Available providers:\n")
+		utils.Log.Info("Available providers:\n")
 
 		//sorting the contexts to get a consistent order on each subsequent run
 		keys := make([]string, 0, len(providers))
@@ -142,17 +141,17 @@ mesheryctl system provider list
 		sort.Strings(keys)
 
 		for _, k := range keys {
-			log.Printf("- %s", k)
+			utils.Log.Infof("- %s", k)
 		}
 
 		if currCtx.Provider == "" {
 			if tempContext == "" {
-				log.Print("\nRun `mesheryctl system provider set [provider]` to set the provider")
+				utils.Log.Infof("\nRun `mesheryctl system provider set [provider]` to set the provider")
 			} else {
-				log.Printf("\nRun `mesheryctl system provider set [provider] --context %s` to set the provider", tempContext)
+				utils.Log.Infof("\nRun `mesheryctl system provider set [provider] --context %s` to set the provider", tempContext)
 			}
 		}
-		log.Println()
+		utils.Log.Info()
 		return nil
 	},
 }
@@ -220,11 +219,11 @@ mesheryctl system provider set [provider]
 			if !isValidProvider {
 				utils.Log.Error(ErrValidProvider())
 
-				log.Print("Available providers:\n")
+				utils.Log.Info("Available providers:\n")
 				//sorting the contexts to get a consistent order on each subsequent run
 				sort.Strings(keys)
 				for _, k := range keys {
-					log.Printf("- %s", k)
+					utils.Log.Infof("- %s", k)
 				}
 				os.Exit(1)
 			}
@@ -240,7 +239,7 @@ mesheryctl system provider set [provider]
 			return nil
 		}
 
-		log.Infof("Provider set to %s", currCtx.Provider)
+		utils.Log.Infof("Provider set to %s", currCtx.Provider)
 		return nil
 	},
 }
@@ -360,7 +359,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
+		utils.Log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
 		return nil
 	},
 }
