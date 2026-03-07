@@ -54,7 +54,7 @@ const (
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
 	ErrContextNotExistsCode              = "mesheryctl-1196"
-	ErrSkipK8sHealthCheckCode            = "mesheryctl-1202"
+	ErrSkipK8sHealthCheckCode            = "mesheryctl-1203"
 )
 
 var (
