@@ -135,6 +135,14 @@ setup_cluster() {
   echo ""
 
   echo "Installing meshery operator..."
+  # Pre-pull operator images and load them into Kind to avoid image pull delays
+  echo "Pre-pulling meshery-operator images for Kind cluster..."
+  docker pull meshery/meshery-operator:stable-latest || true
+  docker pull gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0 || true
+  kind load docker-image meshery/meshery-operator:stable-latest --name $CLUSTER_NAME || true
+  kind load docker-image gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0 --name $CLUSTER_NAME || true
+  echo ""
+
   # kubectl apply -f $PATH_TO_CRDS_YAML
   helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
   echo ""
@@ -144,9 +152,14 @@ setup_cluster() {
   echo ""
 
   echo "Waiting for operator to be available..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE describe deployment meshery-operator || true
-  kubectl --namespace $MESHERY_K8S_NAMESPACE get pods -o wide || true
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout="$MESHERY_OPERATOR_WAIT_TIMEOUT"
+  if ! kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout="$MESHERY_OPERATOR_WAIT_TIMEOUT"; then
+    echo "WARN: meshery-operator did not become available in time. Dumping diagnostics..."
+    kubectl --namespace $MESHERY_K8S_NAMESPACE describe deployment meshery-operator || true
+    kubectl --namespace $MESHERY_K8S_NAMESPACE get pods -o wide || true
+    kubectl --namespace $MESHERY_K8S_NAMESPACE describe pods -l app.kubernetes.io/name=meshery-operator || true
+    kubectl --namespace $MESHERY_K8S_NAMESPACE get events --sort-by=.metadata.creationTimestamp || true
+    return 1
+  fi
   echo ""
   
   # broker is important to be present before submitting k8s context,
